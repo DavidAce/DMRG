@@ -31,6 +31,8 @@ Includes
 
 - ``class_algorithm_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_finite.h`)
 
+- ``general/nmspc_random_numbers.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`)
+
 - ``h5pp/h5pp.h``
 
 - ``io/class_hdf5_log_buffer.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_hdf5_log_buffer.h`)
@@ -43,7 +45,7 @@ Includes
 
 - ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
 
-- ``state/tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`)
+- ``tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`)
 
 
 

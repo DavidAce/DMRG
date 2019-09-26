@@ -32,15 +32,36 @@ Program Listing for File nmspc_settings.h
        extern void load_from_file(class_settings_reader &indata);
        extern void load_from_hdf5(h5pp::File &h5ppFile);
    
-       namespace input{
-           inline std::string input_file = "input/input.cfg";
-           inline std::string input_filename = "input.cfg";
+       namespace threading{
+           inline int num_threads_eigen  = 0;                                                        
+           inline int num_threads_omp    = 0;                                                        
+           inline int num_threads_blas   = 0;                                                        
        }
+   
+       namespace input{
+           inline std::string input_file       = "input/input.cfg";
+           inline std::string input_filename   = "input.cfg";
+       }
+   
+       namespace output {
+           inline bool         save_logs            = true;                         
+           inline bool         save_profiling       = true;                         
+           inline std::string  access_mode          = "READWRITE" ;                 
+           inline std::string  create_mode          = "RENAME";                     
+           inline std::string  output_filename      = "output/default.h5";          
+           inline StorageLevel storage_level        = StorageLevel::NORMAL;         
+       }
+   
        //Parameters for the model Hamiltonian
        namespace model {
-           inline std::string  model_type     = "tf_ising";        
-           inline int          seed_init      = 1;                 
-           inline std::string  initial_sector = "sx";              
+           inline std::string  model_type     = "tf_ising";                
+           inline int          seed_model      = 1;                         
+           inline int          seed_state     = -1;                        
+           inline bool         use_seed_state_as_enumeration = true;       
+           inline bool         project_when_saturated        = true;       
+           inline bool         use_pauli_eigvecs             = true;       
+           inline std::string  initial_parity_sector = "x";                
+           inline std::string  target_parity_sector  = "x";                
            //Parameters for the transverse-field Ising model
            namespace tf_ising {
                inline double       J  = 1;                         
@@ -78,8 +99,14 @@ Program Listing for File nmspc_settings.h
            inline double   VarConvergenceThreshold      = 1e-8  ;   
            inline double   VarSaturationThreshold       = 1e-4  ;   
            inline double   EntEntrSaturationThreshold   = 1e-4  ;   
+           inline double   SubspaceQualityFactor        = 1     ;   
+           inline double   MaxSubspaceQuality           = 1e-4  ;   
+           inline size_t   MaxSitesMultiDmrg            = 2     ;   
            inline size_t   MaxSizeFullDiag              = 2048  ;   
            inline size_t   MaxSizePartDiag              = 4096  ;   
+           inline size_t   MaxSizeDirect                = 131072;   
+           inline double   MaxNormError                 = 1e-10 ;   
+           inline size_t   MaxResets                    = 4     ;   
        }
    
        //Parameters controlling iDMRG
@@ -132,14 +159,7 @@ Program Listing for File nmspc_settings.h
            inline size_t   write_freq   = 100;                      
        }
    
-       namespace hdf5 {
-           inline bool         save_logs            = true;                         
-           inline bool         save_profiling       = true;                         
-           inline std::string  access_mode          = "READWRITE" ;                 
-           inline std::string  create_mode          = "RENAME";                     
-           inline std::string  output_filename      = "output/default.h5";          
-           inline StorageLevel storage_level        = StorageLevel::NORMAL;         
-       }
+   
        //Profiling
        namespace profiling {
            inline bool     on        = false;             

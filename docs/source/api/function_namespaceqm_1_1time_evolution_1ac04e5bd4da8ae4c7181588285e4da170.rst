@@ -3,7 +3,7 @@
 Function qm::timeEvolution::compute_G
 =====================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.cpp`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.h`
 
 
 Function Documentation

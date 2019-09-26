@@ -5,29 +5,29 @@
     <includes refid="class__tic__toc_8h" local="yes">class_tic_toc.h</includes>
     <includes local="no">iomanip</includes>
     <incdepgraph>
-      <node id="589">
+      <node id="579">
         <label>iomanip</label>
       </node>
-      <node id="586">
+      <node id="576">
         <label>class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="587" relation="include">
+        <childnode refid="577" relation="include">
         </childnode>
-        <childnode refid="588" relation="include">
+        <childnode refid="578" relation="include">
         </childnode>
       </node>
-      <node id="585">
+      <node id="575">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp</label>
         <link refid="class__tic__toc_8cpp"/>
-        <childnode refid="586" relation="include">
+        <childnode refid="576" relation="include">
         </childnode>
-        <childnode refid="589" relation="include">
+        <childnode refid="579" relation="include">
         </childnode>
       </node>
-      <node id="588">
+      <node id="578">
         <label>iostream</label>
       </node>
-      <node id="587">
+      <node id="577">
         <label>chrono</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" line="114" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="114" bodyend="121"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" line="120" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="120" bodyend="127"/>
         <references refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" compoundref="class__tic__toc_8h" startline="17">class_tic_toc::profiling</references>
         <references refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" compoundref="class__tic__toc_8h" startline="18">class_tic_toc::print_precision</references>
         <references refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" compoundref="class__tic__toc_8h" startline="20">class_tic_toc::padding</references>
@@ -150,41 +150,47 @@
 <codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="85"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"></highlight></codeline>
-<codeline lineno="87"><highlight class="normal"></highlight></codeline>
-<codeline lineno="88" refid="classclass__tic__toc_1af3ccb4e4f286036249748458fa653703" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1af3ccb4e4f286036249748458fa653703" kindref="member">class_tic_toc::print_total_reset</ref>(){</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" kindref="member">profiling</ref>)<sp/>{</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::setprecision(<ref refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kindref="member">print_precision</ref>)<sp/><sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setw(<ref refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kindref="member">print_precision</ref><sp/>+<sp/><ref refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" kindref="member">padding</ref>)</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" kindref="member">name</ref></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::chrono::duration_cast&lt;std::chrono::duration&lt;double&gt;&gt;(<ref refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" kindref="member">measured_time</ref>).count()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>s\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" kindref="member">reset</ref>();</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="95"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"></highlight></codeline>
-<codeline lineno="97" refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" kindref="member">class_tic_toc::get_age</ref>()<sp/>{</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::chrono::duration_cast&lt;std::chrono::duration&lt;double&gt;&gt;<sp/>(std::chrono::high_resolution_clock::now()<sp/>-<sp/><ref refid="classclass__tic__toc_1ad66c8af4798c5763cd5db868c78eb452" kindref="member">start_timepoint</ref>).count();</highlight></codeline>
-<codeline lineno="99"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101" refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">class_tic_toc::get_last_time_interval</ref>()<sp/>{</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::chrono::duration_cast&lt;std::chrono::duration&lt;double&gt;&gt;<sp/>(<ref refid="classclass__tic__toc_1aa7910bc2adf5c1a03542d3b880a104b2" kindref="member">delta_time</ref>).count();</highlight></codeline>
-<codeline lineno="103"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"></highlight></codeline>
-<codeline lineno="105" refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" kindref="member">class_tic_toc::reset</ref>()<sp/>{</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" kindref="member">profiling</ref>)<sp/>{</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" kindref="member">measured_time</ref><sp/><sp/><sp/>=<sp/>std::chrono::high_resolution_clock::duration::zero();</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1aa7910bc2adf5c1a03542d3b880a104b2" kindref="member">delta_time</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::chrono::high_resolution_clock::duration::zero();</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1ad66c8af4798c5763cd5db868c78eb452" kindref="member">start_timepoint</ref><sp/>=<sp/>std::chrono::high_resolution_clock::now();</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="111"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"></highlight></codeline>
-<codeline lineno="113"><highlight class="normal"></highlight></codeline>
-<codeline lineno="114" refid="class__tic__toc_8cpp_1a9c49adf05a20c65c928eeb2e822556ec" refkind="member"><highlight class="normal">std::ostream<sp/>&amp;<ref refid="classclass__tic__toc_1a865195fe25d8d8c85bcc7c3301c3ceb6" kindref="member">operator&lt;&lt;</ref>(std::ostream<sp/>&amp;os,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/>&amp;t)<sp/>{</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(t.<ref refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" kindref="member">profiling</ref>)<sp/>{</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>os<sp/><sp/>&lt;&lt;<sp/>std::setprecision(t.<ref refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kindref="member">print_precision</ref>)<sp/><sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setw(t.<ref refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kindref="member">print_precision</ref><sp/>+<sp/>t.<ref refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" kindref="member">padding</ref>)</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>t.<ref refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" kindref="member">name</ref></highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>t.<ref refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" kindref="member">measured_time</ref>.count();</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>os;</highlight></codeline>
-<codeline lineno="121"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="87" refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">class_tic_toc::print_time_w_percent_if_nonzero</ref>(<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/>&amp;parent){</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" kindref="member">measured_time</ref>.count()<sp/>&gt;<sp/>0.0){</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(parent);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="classclass__tic__toc_1af3ccb4e4f286036249748458fa653703" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1af3ccb4e4f286036249748458fa653703" kindref="member">class_tic_toc::print_total_reset</ref>(){</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" kindref="member">profiling</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::setprecision(<ref refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kindref="member">print_precision</ref>)<sp/><sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setw(<ref refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kindref="member">print_precision</ref><sp/>+<sp/><ref refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" kindref="member">padding</ref>)</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/><ref refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" kindref="member">name</ref></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::chrono::duration_cast&lt;std::chrono::duration&lt;double&gt;&gt;(<ref refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" kindref="member">measured_time</ref>).count()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>s\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" kindref="member">reset</ref>();</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" kindref="member">class_tic_toc::get_age</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::chrono::duration_cast&lt;std::chrono::duration&lt;double&gt;&gt;<sp/>(std::chrono::high_resolution_clock::now()<sp/>-<sp/><ref refid="classclass__tic__toc_1ad66c8af4798c5763cd5db868c78eb452" kindref="member">start_timepoint</ref>).count();</highlight></codeline>
+<codeline lineno="105"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107" refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">class_tic_toc::get_last_time_interval</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::chrono::duration_cast&lt;std::chrono::duration&lt;double&gt;&gt;<sp/>(<ref refid="classclass__tic__toc_1aa7910bc2adf5c1a03542d3b880a104b2" kindref="member">delta_time</ref>).count();</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="111" refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" kindref="member">class_tic_toc::reset</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" kindref="member">profiling</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" kindref="member">measured_time</ref><sp/><sp/><sp/>=<sp/>std::chrono::high_resolution_clock::duration::zero();</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1aa7910bc2adf5c1a03542d3b880a104b2" kindref="member">delta_time</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::chrono::high_resolution_clock::duration::zero();</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc_1ad66c8af4798c5763cd5db868c78eb452" kindref="member">start_timepoint</ref><sp/>=<sp/>std::chrono::high_resolution_clock::now();</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="class__tic__toc_8cpp_1a9c49adf05a20c65c928eeb2e822556ec" refkind="member"><highlight class="normal">std::ostream<sp/>&amp;<ref refid="classclass__tic__toc_1a865195fe25d8d8c85bcc7c3301c3ceb6" kindref="member">operator&lt;&lt;</ref>(std::ostream<sp/>&amp;os,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/>&amp;t)<sp/>{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(t.<ref refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" kindref="member">profiling</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>os<sp/><sp/>&lt;&lt;<sp/>std::setprecision(t.<ref refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kindref="member">print_precision</ref>)<sp/><sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setw(t.<ref refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" kindref="member">print_precision</ref><sp/>+<sp/>t.<ref refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" kindref="member">padding</ref>)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>t.<ref refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" kindref="member">name</ref></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>t.<ref refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" kindref="member">measured_time</ref>.count();</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>os;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal">}</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp"/>
   </compounddef>

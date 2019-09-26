@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="19" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" prot="private" static="no">
         <type>Eigen::Matrix&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="20" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="17" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="16" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="14" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -58,10 +58,62 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="17" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass___s_v_d_1a57c2d0856227b0933d8116a7f1ff7c4f" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_SVD::use_lapacke</definition>
+        <argsstring></argsstring>
+        <name>use_lapacke</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="42" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
+      <memberdef kind="function" id="classclass___s_v_d_1a972e614144e76de88b4495463a491860" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>std::tuple&lt; <ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;, <ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">VectorType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;, <ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;, long &gt;</type>
+        <definition>template std::tuple&lt; class_SVD::MatrixType&lt; cplx &gt;, class_SVD::VectorType&lt; cplx &gt;, class_SVD::MatrixType&lt; cplx &gt;, long &gt; do_svd_lapacke</definition>
+        <argsstring>(const Scalar *mat_ptr, long rows, long cols, long rank_max)</argsstring>
+        <name>do_svd_lapacke</name>
+        <param>
+          <type>const <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> *</type>
+          <declname>mat_ptr</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>cols</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>rank_max</declname>
+        </param>
+        <briefdescription>
+<para>force instantiation of do_svd_lapacke for type &apos;std::complex&lt;double&gt;&apos; </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" bodystart="43" bodyend="111"/>
+        <references refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" compoundref="class__svd__wrapper_8h" startline="14">SVDThreshold</references>
+        <references refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" compoundref="class__svd__wrapper_8h" startline="15">truncation_error</references>
+      </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
@@ -124,9 +176,10 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="49" bodyend="89"/>
-        <references refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" compoundref="class__svd__wrapper_8h" startline="16">SVDThreshold</references>
-        <references refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" compoundref="class__svd__wrapper_8h" startline="17">truncation_error</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="52" bodyend="120"/>
+        <references refid="classclass___s_v_d_1a57c2d0856227b0933d8116a7f1ff7c4f" compoundref="class__svd__wrapper_8h" startline="42">use_lapacke</references>
+        <references refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" compoundref="class__svd__wrapper_8h" startline="14">SVDThreshold</references>
+        <references refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" compoundref="class__svd__wrapper_8h" startline="15">truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1aec25da4eeeaf36ca6723a1106bcf1933" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -152,8 +205,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="88" bodyend="90"/>
-        <references refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" compoundref="class__svd__wrapper_8cpp" startline="49" endline="89">do_svd</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="94" bodyend="96"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1aa4015b12214b465e6cd9709c75f4e328" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -175,8 +227,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="94" bodyend="97"/>
-        <references refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" compoundref="class__svd__wrapper_8cpp" startline="49" endline="89">do_svd</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="100" bodyend="103"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -191,7 +242,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="39" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="41" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -204,8 +255,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="30" bodyend="32"/>
-        <references refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" compoundref="class__svd__wrapper_8h" startline="17">truncation_error</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="33" bodyend="35"/>
+        <references refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" compoundref="class__svd__wrapper_8h" startline="15">truncation_error</references>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -222,17 +273,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="34" bodyend="36"/>
-        <references refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" compoundref="class__svd__wrapper_8h" startline="16">SVDThreshold</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="37" bodyend="39"/>
+        <references refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" compoundref="class__svd__wrapper_8h" startline="14">SVDThreshold</references>
       </memberdef>
-      <memberdef kind="function" id="classclass___s_v_d_1a5dd93aeb8e55813f0fbb896ac2887033" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
           </param>
         </templateparamlist>
         <type>Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 2 &gt; class_SVD::pseudo_inverse</definition>
+        <definition>template Eigen::Tensor&lt; cplx, 2 &gt; pseudo_inverse</definition>
         <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
         <name>pseudo_inverse</name>
         <param>
@@ -240,13 +291,12 @@
           <declname>tensor</declname>
         </param>
         <briefdescription>
-        </briefdescription>
+<para>force instantiation of pseudo_inverse for type &apos;std::complex&lt;double&gt;&apos; </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="103" bodyend="108"/>
-        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="142" bodyend="147"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -268,10 +318,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="114" bodyend="121"/>
-        <references refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" compoundref="class__svd__wrapper_8cpp" startline="49" endline="89">do_svd</references>
-        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
-        <references refid="namespace_textra_1ac457f29be7f94d9d773b47592c65eef3" compoundref="nmspc__tensor__extra_8h" startline="195" endline="197">Textra::Matrix_to_Tensor1</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="111" bodyend="118"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1ac08447697e913ccc4297b14c7a071222" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -297,10 +344,29 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="134" bodyend="141"/>
-        <references refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" compoundref="class__svd__wrapper_8cpp" startline="49" endline="89">do_svd</references>
-        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
-        <references refid="namespace_textra_1ac457f29be7f94d9d773b47592c65eef3" compoundref="nmspc__tensor__extra_8h" startline="195" endline="197">Textra::Matrix_to_Tensor1</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="131" bodyend="138"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___s_v_d_1a3f4c3e9979c30e2fc16a2161b7947e77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>std::tuple&lt; <ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;,<ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">VectorType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;, <ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt; &gt;</type>
+        <definition>std::tuple&lt; class_SVD::MatrixType&lt; Scalar &gt;,class_SVD::VectorType&lt; Scalar &gt;, class_SVD::MatrixType&lt; Scalar &gt; &gt; class_SVD::decompose</definition>
+        <argsstring>(const MatrixType&lt; Scalar &gt; &amp;matrix)</argsstring>
+        <name>decompose</name>
+        <param>
+          <type>const <ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="142" bodyend="148"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1a9be5995e9e0a65c250b10b9ddd951c3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -330,8 +396,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="125" bodyend="128"/>
-        <references refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" compoundref="class__svd__wrapper_8h" startline="114" endline="121">decompose</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="122" bodyend="125"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -378,31 +443,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="145" bodyend="153"/>
-        <references refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" compoundref="class__svd__wrapper_8cpp" startline="49" endline="89">do_svd</references>
-        <references refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" compoundref="nmspc__tensor__extra_8h" startline="166" endline="176">Textra::Matrix_to_Tensor</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass___s_v_d_1a9a6feff8be9ee75379574102a5547ad9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
-          </param>
-        </templateparamlist>
-        <type>std::tuple&lt; Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 3 &gt;,Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 1 &gt;, Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
-        <definition>std::tuple&lt;Eigen::Tensor&lt;Scalar, 3&gt; ,Eigen::Tensor&lt;Scalar, 1&gt;, Eigen::Tensor&lt;Scalar, 3&gt; &gt; class_SVD::schmidt</definition>
-        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
-        <name>schmidt</name>
-        <param>
-          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
-          <declname>tensor</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="61" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="66" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="153" bodyend="161"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1ae3edbe7b3f3022de58790cf6b294b808" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -432,7 +473,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="64" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="70" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1ae0c7c86a804b2376fb71427298cb651b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -458,8 +499,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="173" bodyend="179"/>
-        <references refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" compoundref="class__svd__wrapper_8h" startline="145" endline="153">schmidt</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="181" bodyend="187"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1ac9220a11678bda98f801b10b3ec91c80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -481,9 +521,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="161" bodyend="169"/>
-        <references refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" compoundref="nmspc__settings_8h" startline="85">settings::idmrg::chi_max</references>
-        <references refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" compoundref="class__svd__wrapper_8h" startline="145" endline="153">schmidt</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="169" bodyend="177"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -505,8 +543,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="184" bodyend="191"/>
-        <references refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" compoundref="nmspc__settings_8h" startline="85">settings::idmrg::chi_max</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="192" bodyend="199"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1a25ca2c3061b5eca7e5adf5113de78f01" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -532,9 +569,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="195" bodyend="215"/>
-        <references refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" compoundref="class__svd__wrapper_8cpp" startline="49" endline="89">do_svd</references>
-        <references refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" compoundref="nmspc__tensor__extra_8h" startline="166" endline="176">Textra::Matrix_to_Tensor</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="203" bodyend="223"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="related">
@@ -561,28 +596,73 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" line="94" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" line="125" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___s_v_d_1aa139b894d0566a0f5d82ebc2a270a0f0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>template Eigen::Tensor&lt; double, 2 &gt;</type>
+        <definition>template Eigen::Tensor&lt; double, 2 &gt; pseudo_inverse</definition>
+        <argsstring>(const Eigen::Tensor&lt; double, 2 &gt; &amp;tensor)</argsstring>
+        <name>pseudo_inverse</name>
+        <param>
+          <type>const Eigen::Tensor&lt; double, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+<para>force instantiation of pseudo_inverse for type &apos;double&apos; </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" line="153" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass___s_v_d_1a027c04583072b6a96b5e120dc01edc09" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>template std::tuple&lt; <ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType</ref>&lt; double &gt;, <ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType</ref>&lt; double &gt;, <ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType</ref>&lt; double &gt;, long &gt;</type>
+        <definition>template std::tuple&lt; class_SVD::MatrixType&lt; double &gt;, class_SVD::VectorType&lt; double &gt;, class_SVD::MatrixType&lt; double &gt;, long &gt; do_svd_lapacke</definition>
+        <argsstring>(const double *, long, long, long)</argsstring>
+        <name>do_svd_lapacke</name>
+        <param>
+          <type>const double *</type>
+        </param>
+        <param>
+          <type>long</type>
+        </param>
+        <param>
+          <type>long</type>
+        </param>
+        <param>
+          <type>long</type>
+        </param>
+        <briefdescription>
+<para>force instantiation of do_svd_lapacke for type &apos;double&apos; </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" line="118" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="14" bodyend="79"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" bodystart="12" bodyend="85"/>
     <listofallmembers>
       <member refid="classclass___s_v_d_1aff43b93da28d20df50cb11ee85bb475d" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>class_SVD</name></member>
       <member refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>decompose</name></member>
       <member refid="classclass___s_v_d_1ac08447697e913ccc4297b14c7a071222" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>decompose</name></member>
+      <member refid="classclass___s_v_d_1a3f4c3e9979c30e2fc16a2161b7947e77" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>decompose</name></member>
       <member refid="classclass___s_v_d_1a9be5995e9e0a65c250b10b9ddd951c3c" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>decompose</name></member>
       <member refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>do_svd</name></member>
       <member refid="classclass___s_v_d_1aec25da4eeeaf36ca6723a1106bcf1933" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>do_svd</name></member>
       <member refid="classclass___s_v_d_1aa4015b12214b465e6cd9709c75f4e328" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>do_svd</name></member>
       <member refid="classclass___s_v_d_1a482d84ed44ce16c371c1340432bf3888" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>do_svd</name></member>
+      <member refid="classclass___s_v_d_1a972e614144e76de88b4495463a491860" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>do_svd_lapacke</name></member>
+      <member refid="classclass___s_v_d_1a027c04583072b6a96b5e120dc01edc09" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>do_svd_lapacke</name></member>
       <member refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>get_truncation_error</name></member>
       <member refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>MatrixType</name></member>
-      <member refid="classclass___s_v_d_1a5dd93aeb8e55813f0fbb896ac2887033" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>pseudo_inverse</name></member>
+      <member refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>pseudo_inverse</name></member>
+      <member refid="classclass___s_v_d_1aa139b894d0566a0f5d82ebc2a270a0f0" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>pseudo_inverse</name></member>
       <member refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>schmidt</name></member>
-      <member refid="classclass___s_v_d_1a9a6feff8be9ee75379574102a5547ad9" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>schmidt</name></member>
       <member refid="classclass___s_v_d_1ae3edbe7b3f3022de58790cf6b294b808" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>schmidt</name></member>
       <member refid="classclass___s_v_d_1ae0c7c86a804b2376fb71427298cb651b" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>schmidt</name></member>
       <member refid="classclass___s_v_d_1ac9220a11678bda98f801b10b3ec91c80" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>schmidt</name></member>
@@ -591,6 +671,7 @@
       <member refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>setThreshold</name></member>
       <member refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>SVDThreshold</name></member>
       <member refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>truncation_error</name></member>
+      <member refid="classclass___s_v_d_1a57c2d0856227b0933d8116a7f1ff7c4f" prot="public" virt="non-virtual"><scope>class_SVD</scope><name>use_lapacke</name></member>
       <member refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" prot="private" virt="non-virtual"><scope>class_SVD</scope><name>VectorType</name></member>
     </listofallmembers>
   </compounddef>

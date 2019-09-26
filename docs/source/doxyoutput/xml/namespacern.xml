@@ -14,33 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="10" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="10" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacern_1a4f2745fb1b4e2243d0adccf9c324b447" prot="public" static="no" mutable="no">
-        <type>int const int</type>
-        <definition>double const double rn::max</definition>
-        <argsstring></argsstring>
-        <name>max</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" bodystart="17" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="namespacern_1a8acfa7910a59e292539148e81bf5cc12" prot="public" static="no" mutable="no">
-        <type>double const double</type>
-        <definition>double const double rn::std</definition>
-        <argsstring></argsstring>
-        <name>std</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" bodystart="21" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -59,7 +33,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="11" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="11" bodyend="14"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="11" bodyend="14"/>
+        <references refid="namespacern_1a3ef7cecaf695dc6bd5b521a805cceb98" compoundref="nmspc__random__numbers_8cpp" startline="10">rng</references>
       </memberdef>
       <memberdef kind="function" id="namespacern_1ae46f00b1b7922896c9e5c6599ee733e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -72,7 +47,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="16" bodyend="19"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="16" bodyend="19"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -93,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="21" bodyend="24"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="21" bodyend="24"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1a944d5c278348c264b602518396217e75" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -106,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="26" bodyend="29"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="26" bodyend="29"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1a99c661dad967fa63f9948a845f68ee92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -127,12 +102,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="31" bodyend="34"/>
-        <references refid="namespacern_1a4f2745fb1b4e2243d0adccf9c324b447" compoundref="nmspc__random__numbers_8h" startline="17">max</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="31" bodyend="34"/>
       </memberdef>
-      <memberdef kind="function" id="namespacern_1a9282126ae8fda744c101fbaa96a35267" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacern_1afbf68e8422a48d791f0d7b4378868ab0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::complex&lt; double &gt;</type>
-        <definition>std::complex&lt;double&gt; rn::uniform_complex_1</definition>
+        <definition>std::complex&lt; double &gt; rn::uniform_complex_1</definition>
         <argsstring>()</argsstring>
         <name>uniform_complex_1</name>
         <briefdescription>
@@ -141,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="37" bodyend="40"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="37" bodyend="40"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1aa64669e6a44143d9262c955f80fe79b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -162,92 +136,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="44" bodyend="47"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacern_1a7ace7d5a4b63f8332f590564052ced0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>ArrayXd</type>
-        <definition>ArrayXd rn::random_with_replacement</definition>
-        <argsstring>(const ArrayXd &amp;in)</argsstring>
-        <name>random_with_replacement</name>
-        <param>
-          <type>const ArrayXd &amp;</type>
-          <declname>in</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="49" bodyend="55"/>
-        <references refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" compoundref="nmspc__random__numbers_8cpp" startline="21" endline="24">uniform_integer</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>ArrayXd</type>
-        <definition>ArrayXd rn::random_with_replacement</definition>
-        <argsstring>(const ArrayXd &amp;in, const int n)</argsstring>
-        <name>random_with_replacement</name>
-        <param>
-          <type>const ArrayXd &amp;</type>
-          <declname>in</declname>
-        </param>
-        <param>
-          <type>const int</type>
-          <declname>n</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="56" bodyend="63"/>
-        <references refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" compoundref="nmspc__random__numbers_8cpp" startline="21" endline="24">uniform_integer</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>double</type>
-        <definition>double rn::gaussian_truncated</definition>
-        <argsstring>(const double lowerLimit, const double upperLimit, const double mean, const double std)</argsstring>
-        <name>gaussian_truncated</name>
-        <param>
-          <type>const double</type>
-          <declname>lowerLimit</declname>
-        </param>
-        <param>
-          <type>const double</type>
-          <declname>upperLimit</declname>
-        </param>
-        <param>
-          <type>const double</type>
-          <declname>mean</declname>
-        </param>
-        <param>
-          <type>const double</type>
-          <declname>std</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="65" bodyend="76"/>
-      </memberdef>
-      <memberdef kind="function" id="namespacern_1ac79818cbb5bf3f344cbc4890a00b9340" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>int</type>
-        <definition>double rn::__attribute__</definition>
-        <argsstring>((hot)) uniform_integer_1()</argsstring>
-        <name>__attribute__</name>
-        <param>
-          <type>(hot)</type>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="16" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="44" bodyend="47"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1a9c2f32006765f0cd276cf3296f868255" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::ArrayXd</type>
@@ -287,6 +176,35 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="23" column="1"/>
       </memberdef>
+      <memberdef kind="function" id="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double rn::gaussian_truncated</definition>
+        <argsstring>(const double lowerLimit, const double upperLimit, const double mean, const double std)</argsstring>
+        <name>gaussian_truncated</name>
+        <param>
+          <type>const double</type>
+          <declname>lowerLimit</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>upperLimit</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>mean</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>std</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="65" bodyend="76"/>
+      </memberdef>
       <memberdef kind="function" id="namespacern_1afa9a8b7b6becd55be568fcf68b56e3dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
@@ -308,13 +226,50 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" bodystart="27" bodyend="51"/>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacern_1a7ace7d5a4b63f8332f590564052ced0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>ArrayXd</type>
+        <definition>ArrayXd rn::random_with_replacement</definition>
+        <argsstring>(const ArrayXd &amp;in)</argsstring>
+        <name>random_with_replacement</name>
+        <param>
+          <type>const ArrayXd &amp;</type>
+          <declname>in</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="49" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>ArrayXd</type>
+        <definition>ArrayXd rn::random_with_replacement</definition>
+        <argsstring>(const ArrayXd &amp;in, const int n)</argsstring>
+        <name>random_with_replacement</name>
+        <param>
+          <type>const ArrayXd &amp;</type>
+          <declname>in</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="56" bodyend="63"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="9" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="12" column="1"/>
   </compounddef>
 </doxygen>

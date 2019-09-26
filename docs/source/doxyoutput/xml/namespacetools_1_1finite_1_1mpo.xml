@@ -26,18 +26,46 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mpo.cpp" bodystart="10" bodyend="19"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPO_L</references>
-        <references refid="classclass__model__factory_1abcf6ff6ee79d5ef9af4a219d2ade32d3" compoundref="class__model__factory_8cpp" startline="14" endline="30">class_model_factory::create_mpo</references>
-        <references refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPO_R</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" compoundref="finite_2measure_8cpp" startline="30" endline="32">tools::finite::measure::length</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp" bodystart="10" bodyend="19"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" compoundref="class__finite__state_8h" startline="63">class_finite_state::MPO_L</references>
+        <references refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" compoundref="class__model__factory_8cpp" startline="14" endline="30">class_model_factory::create_mpo</references>
+        <references refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" compoundref="class__finite__state_8h" startline="64">class_finite_state::MPO_R</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1mpo_1a9790abf794f1914ac585a6ec1a87cfcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mpo_1aa0628180a4357210b942e7807368f7cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::mpo::randomize</definition>
-        <argsstring>(class_finite_state &amp;state)</argsstring>
+        <argsstring>(class_finite_state &amp;state, int seed_state=-1)</argsstring>
         <name>randomize</name>
+        <param>
+          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>seed_state</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp" bodystart="22" bodyend="48"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" compoundref="nmspc__random__numbers_8cpp" startline="11" endline="14">rn::seed</references>
+        <references refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" compoundref="class__finite__state_8h" startline="63">class_finite_state::MPO_L</references>
+        <references refid="classclass__model__base_1ad774bf318ecff3bf13f8e7821aacdf4a">class_model_base::randomize_hamiltonian</references>
+        <references refid="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b">class_model_base::get_parameter_values</references>
+        <references refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" compoundref="class__finite__state_8h" startline="64">class_finite_state::MPO_R</references>
+        <references refid="classclass__model__base_1a4803a9abc26a3282e512dc7a691dc837">class_model_base::set_full_lattice_parameters</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mpo_1a1965229e7240a7c5c4b4e581d617006c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mpo::reduce_mpo_energy</definition>
+        <argsstring>(class_finite_state &amp;state)</argsstring>
+        <name>reduce_mpo_energy</name>
         <param>
           <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
           <declname>state</declname>
@@ -48,16 +76,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mpo.cpp" bodystart="22" bodyend="40"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPO_L</references>
-        <references refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPO_R</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp" bodystart="52" bodyend="58"/>
+        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="539" endline="541">class_finite_state::unset_measurements</references>
+        <references refid="classclass__finite__state_1aa826b1da2dc225002a215e8741fbcbfb" compoundref="class__finite__state_8cpp" startline="543" endline="545">class_finite_state::clear_cache</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a81b06529556e68f882c591397b39ef2f" compoundref="finite_2measure_8cpp" startline="174" endline="180">tools::finite::measure::energy_per_site</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__finite__state_1a676679d2e78d031b43016baca197da13" compoundref="class__finite__state_8cpp" startline="315" endline="321">class_finite_state::set_reduced_energy</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="47" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="55" column="1"/>
   </compounddef>
 </doxygen>

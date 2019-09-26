@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="120" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="120" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="129" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="129" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1ad919b3c023f53ec0e8ea4d64f8ce7fbc" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="121" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="121" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="130" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="130" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a2c680c33c7d1830faeb25b3ad67f1802" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="122" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="122" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="131" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a5f2f23782d437da163a5480b8a1fc4eb" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="123" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="132" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="132" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a683a333ee4d8b9512743e542e8b7b778" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="124" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="133" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1ae73c1ae418b4d85a278f9de6921c35f2" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="124" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="133" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a8caeb845651370b766d0d5b3b100786e" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="124" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="133" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1ae6de75c6a20e7056cc4fd8f46f0b472e" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -105,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="125" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="134" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a4d4978dedacea6cb89abc16653919e10" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="125" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="134" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a1c8280643a0495706aa15aca84b15e8a" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -131,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="125" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="134" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a7232f3c10242a6c708a25e8a97386d57" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -144,7 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="126" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="135" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="135" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a7caa5219793c8f56da0682d87674b489" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -157,7 +157,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="127" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="127" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="136" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="136" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a1aa9feb621ccde42113a033e6c56b7d3" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -170,7 +170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="128" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="128" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="137" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="137" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1aaf87d2faed69a7822cf330abea15a0a7" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -183,89 +183,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="129" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="129" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-func">
-      <memberdef kind="function" id="structclass__log__tebd_1_1data__struct_1ade68555bc77521970c8ad8f80ffda9ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type></type>
-        <definition>class_log_tebd::data_struct::data_struct</definition>
-        <argsstring>(int iteration_, long chi_, long chi_max_, double time_step_, double energy_mpo_, double energy_ham_, double energy_mom_, double variance_mpo_, double variance_ham_, double variance_mom_, double entropy_, double truncation_error_, double phys_time_, double wall_time_)</argsstring>
-        <name>data_struct</name>
-        <param>
-          <type>int</type>
-          <declname>iteration_</declname>
-        </param>
-        <param>
-          <type>long</type>
-          <declname>chi_</declname>
-        </param>
-        <param>
-          <type>long</type>
-          <declname>chi_max_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>time_step_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>energy_mpo_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>energy_ham_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>energy_mom_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>variance_mpo_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>variance_ham_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>variance_mom_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>entropy_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>truncation_error_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>phys_time_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>wall_time_</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="131" bodyend="152"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="138" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="138" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="119" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="119" bodyend="153"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="128" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="128" bodyend="139"/>
     <listofallmembers>
       <member refid="structclass__log__tebd_1_1data__struct_1ad919b3c023f53ec0e8ea4d64f8ce7fbc" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>chi</name></member>
       <member refid="structclass__log__tebd_1_1data__struct_1a2c680c33c7d1830faeb25b3ad67f1802" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>chi_max</name></member>
-      <member refid="structclass__log__tebd_1_1data__struct_1ade68555bc77521970c8ad8f80ffda9ce" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>data_struct</name></member>
       <member refid="structclass__log__tebd_1_1data__struct_1ae73c1ae418b4d85a278f9de6921c35f2" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>energy_ham</name></member>
       <member refid="structclass__log__tebd_1_1data__struct_1a8caeb845651370b766d0d5b3b100786e" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>energy_mom</name></member>
       <member refid="structclass__log__tebd_1_1data__struct_1a683a333ee4d8b9512743e542e8b7b778" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>energy_mpo</name></member>

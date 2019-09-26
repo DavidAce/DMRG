@@ -2,7 +2,6 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="dir_a32acfe4a752551b45646f1c64efe790" kind="dir">
     <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state</compoundname>
-    <innerdir refid="dir_2eac01281c8cf528e024b6f2c84d21fb">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools</innerdir>
     <innerfile refid="class__environment_8cpp">class_environment.cpp</innerfile>
     <innerfile refid="class__environment_8h">class_environment.h</innerfile>
     <innerfile refid="class__finite__state_8cpp">class_finite_state.cpp</innerfile>

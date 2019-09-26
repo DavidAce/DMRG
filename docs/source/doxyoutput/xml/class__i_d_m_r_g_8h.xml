@@ -6,151 +6,151 @@
     <includedby refid="class__algorithm__launcher_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__i_d_m_r_g_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</includedby>
     <incdepgraph>
-      <node id="413">
+      <node id="406">
         <label>list</label>
       </node>
-      <node id="406">
+      <node id="399">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h</label>
         <link refid="class__i_d_m_r_g_8h"/>
-        <childnode refid="407" relation="include">
+        <childnode refid="400" relation="include">
         </childnode>
       </node>
-      <node id="422">
+      <node id="415">
         <label>string</label>
       </node>
-      <node id="426">
+      <node id="419">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="419">
+      <node id="412">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="420" relation="include">
+        <childnode refid="413" relation="include">
         </childnode>
-        <childnode refid="415" relation="include">
-        </childnode>
-      </node>
-      <node id="410">
-        <label>map</label>
-      </node>
-      <node id="424">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
-        <childnode refid="409" relation="include">
-        </childnode>
-        <childnode refid="422" relation="include">
-        </childnode>
-        <childnode refid="415" relation="include">
-        </childnode>
-        <childnode refid="411" relation="include">
-        </childnode>
-        <childnode refid="416" relation="include">
-        </childnode>
-        <childnode refid="425" relation="include">
-        </childnode>
-        <childnode refid="426" relation="include">
-        </childnode>
-      </node>
-      <node id="423">
-        <label>unordered_set</label>
-      </node>
-      <node id="418">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="407">
-        <label>class_algorithm_infinite.h</label>
-        <link refid="class__algorithm__infinite_8h"/>
         <childnode refid="408" relation="include">
         </childnode>
       </node>
+      <node id="403">
+        <label>map</label>
+      </node>
+      <node id="417">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="402" relation="include">
+        </childnode>
+        <childnode refid="415" relation="include">
+        </childnode>
+        <childnode refid="408" relation="include">
+        </childnode>
+        <childnode refid="404" relation="include">
+        </childnode>
+        <childnode refid="409" relation="include">
+        </childnode>
+        <childnode refid="418" relation="include">
+        </childnode>
+        <childnode refid="419" relation="include">
+        </childnode>
+      </node>
+      <node id="416">
+        <label>unordered_set</label>
+      </node>
       <node id="411">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="400">
+        <label>class_algorithm_infinite.h</label>
+        <link refid="class__algorithm__infinite_8h"/>
+        <childnode refid="401" relation="include">
+        </childnode>
+      </node>
+      <node id="404">
         <label>vector</label>
       </node>
-      <node id="408">
+      <node id="401">
         <label>algorithms/class_algorithm_base.h</label>
         <link refid="class__algorithm__base_8h"/>
+        <childnode refid="402" relation="include">
+        </childnode>
+        <childnode refid="403" relation="include">
+        </childnode>
+        <childnode refid="404" relation="include">
+        </childnode>
+        <childnode refid="405" relation="include">
+        </childnode>
+        <childnode refid="406" relation="include">
+        </childnode>
+        <childnode refid="407" relation="include">
+        </childnode>
+        <childnode refid="412" relation="include">
+        </childnode>
+        <childnode refid="414" relation="include">
+        </childnode>
+        <childnode refid="417" relation="include">
+        </childnode>
+      </node>
+      <node id="410">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="409">
+        <label>array</label>
+      </node>
+      <node id="418">
+        <label>hdf5.h</label>
+      </node>
+      <node id="408">
+        <label>iostream</label>
+      </node>
+      <node id="407">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="408" relation="include">
+        </childnode>
         <childnode refid="409" relation="include">
+        </childnode>
+        <childnode refid="403" relation="include">
+        </childnode>
+        <childnode refid="405" relation="include">
+        </childnode>
+        <childnode refid="404" relation="include">
         </childnode>
         <childnode refid="410" relation="include">
         </childnode>
         <childnode refid="411" relation="include">
         </childnode>
-        <childnode refid="412" relation="include">
-        </childnode>
-        <childnode refid="413" relation="include">
-        </childnode>
-        <childnode refid="414" relation="include">
-        </childnode>
-        <childnode refid="419" relation="include">
-        </childnode>
-        <childnode refid="421" relation="include">
-        </childnode>
-        <childnode refid="424" relation="include">
-        </childnode>
       </node>
-      <node id="417">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      <node id="413">
+        <label>chrono</label>
       </node>
-      <node id="416">
-        <label>array</label>
-      </node>
-      <node id="425">
-        <label>hdf5.h</label>
-      </node>
-      <node id="415">
-        <label>iostream</label>
+      <node id="405">
+        <label>complex</label>
       </node>
       <node id="414">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
         <childnode refid="415" relation="include">
         </childnode>
         <childnode refid="416" relation="include">
         </childnode>
-        <childnode refid="410" relation="include">
-        </childnode>
-        <childnode refid="412" relation="include">
-        </childnode>
-        <childnode refid="411" relation="include">
-        </childnode>
-        <childnode refid="417" relation="include">
-        </childnode>
-        <childnode refid="418" relation="include">
+        <childnode refid="404" relation="include">
         </childnode>
       </node>
-      <node id="420">
-        <label>chrono</label>
-      </node>
-      <node id="412">
-        <label>complex</label>
-      </node>
-      <node id="421">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="422" relation="include">
-        </childnode>
-        <childnode refid="423" relation="include">
-        </childnode>
-        <childnode refid="411" relation="include">
-        </childnode>
-      </node>
-      <node id="409">
+      <node id="402">
         <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="427">
+      <node id="420">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h</label>
         <link refid="class__i_d_m_r_g_8h"/>
-        <childnode refid="428" relation="include">
+        <childnode refid="421" relation="include">
         </childnode>
-        <childnode refid="429" relation="include">
+        <childnode refid="422" relation="include">
         </childnode>
       </node>
-      <node id="428">
+      <node id="421">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="429">
+      <node id="422">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
         <link refid="class__i_d_m_r_g_8cpp"/>
       </node>
@@ -170,29 +170,28 @@
 <codeline lineno="7"><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__algorithm__infinite_8h" kindref="compound">class_algorithm_infinite.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__log__dmrg" kindref="compound">class_log_dmrg</ref>;</highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight></codeline>
-<codeline lineno="15" refid="classclass__i_d_m_r_g" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__i_d_m_r_g" kindref="compound">class_iDMRG</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite" kindref="compound">class_algorithm_infinite</ref><sp/>{</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Inherit<sp/>the<sp/>constructor<sp/>of<sp/>class_algorithm_base</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" kindref="member">class_algorithm_infinite::class_algorithm_infinite</ref>;</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1a3df56b81d9ded5d5d83de10f4d593fdf" kindref="member">class_iDMRG</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_);</highlight></codeline>
-<codeline lineno="20" refid="classclass__i_d_m_r_g_1ab220b123094555b09d36d4e1880d1fb2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;class_hdf5_log&lt;class_log_dmrg&gt;&gt;<sp/><ref refid="classclass__i_d_m_r_g_1ab220b123094555b09d36d4e1880d1fb2" kindref="member">log_dmrg</ref>;</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1a1ed3270932c01d1b3368b4641ce58294" kindref="member">single_DMRG_step</ref>(std::string<sp/>ritz);</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1af7b8ff1ff8a2ba0784cecab54ac25ba6" kindref="member">run_simulation</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1ad06337dc6d59f356ae4b408db1e34dbf" kindref="member">check_convergence</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1aaf0ecf5569f9c2670d98871e7cbeec33" kindref="member">write_logs</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__i_d_m_r_g_1ad20909b9e63dfcb1724a0c53268bdb51" kindref="member">sim_on</ref><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__i_d_m_r_g_1a904706d36e61c0739a15823d672c0ca7" kindref="member">chi_max</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><ref refid="classclass__i_d_m_r_g_1afb5e5b37f63d3a92f2171c0685e50043" kindref="member">num_sites</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><ref refid="classclass__i_d_m_r_g_1a1eb94f25ffcd7a6d634327bfde1bf14d" kindref="member">write_freq</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><ref refid="classclass__i_d_m_r_g_1a6831d6885838a4e9a94ebe27ce6dc201" kindref="member">print_freq</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__i_d_m_r_g_1ab329d7ed446dab62ccbf2330c53b6874" kindref="member">chi_grow</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="classclass__i_d_m_r_g" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__i_d_m_r_g" kindref="compound">class_iDMRG</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite" kindref="compound">class_algorithm_infinite</ref><sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Inherit<sp/>the<sp/>constructor<sp/>of<sp/>class_algorithm_base</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" kindref="member">class_algorithm_infinite::class_algorithm_infinite</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1a3df56b81d9ded5d5d83de10f4d593fdf" kindref="member">class_iDMRG</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::unique_ptr&lt;class_hdf5_log&lt;class_log_infinite_dmrg_measurements&gt;&gt;<sp/>log_dmrg;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1a1ed3270932c01d1b3368b4641ce58294" kindref="member">single_DMRG_step</ref>(std::string<sp/>ritz);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1af7b8ff1ff8a2ba0784cecab54ac25ba6" kindref="member">run_simulation</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1ad06337dc6d59f356ae4b408db1e34dbf" kindref="member">check_convergence</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_d_m_r_g_1aaf0ecf5569f9c2670d98871e7cbeec33" kindref="member">write_logs</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__i_d_m_r_g_1ad20909b9e63dfcb1724a0c53268bdb51" kindref="member">sim_on</ref><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__i_d_m_r_g_1a904706d36e61c0739a15823d672c0ca7" kindref="member">chi_max</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><ref refid="classclass__i_d_m_r_g_1afb5e5b37f63d3a92f2171c0685e50043" kindref="member">num_sites</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><ref refid="classclass__i_d_m_r_g_1a1eb94f25ffcd7a6d634327bfde1bf14d" kindref="member">write_freq</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><ref refid="classclass__i_d_m_r_g_1a6831d6885838a4e9a94ebe27ce6dc201" kindref="member">print_freq</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__i_d_m_r_g_1ab329d7ed446dab62ccbf2330c53b6874" kindref="member">chi_grow</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//DMRG_CLASS_INFINITE_DMRG_H</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//DMRG_CLASS_INFINITE_DMRG_H</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h"/>
   </compounddef>

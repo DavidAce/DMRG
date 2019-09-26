@@ -15,7 +15,7 @@
 <para>Turns fDMRG simulation on/off. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="93" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="120" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="120" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a11e487d6f9af65a1d479a6631578ef6c" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -29,7 +29,7 @@
 <para>Number of sites on the chain </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="94" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="121" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="121" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a06f9b3649e0f8f8a5b76b5f315f9d4ec" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -43,7 +43,7 @@
 <para>Max number sweeps along the chain. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="95" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="122" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="122" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1ae628b1a6ea887a9f04c1e27acfe3868b" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -57,7 +57,7 @@
 <para>Min number sweeps along the chain. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="96" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="123" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a591fd10b121c47245c0ededecc4fa238" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -71,7 +71,7 @@
 <para>Bond dimension of the current position (maximum number of singular values to keep in SVD). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="97" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="97" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="124" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a1ec29f5e29fb084816e19eb3200232af" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -85,7 +85,7 @@
 <para>Whether to increase chi slowly up to chi_max or go up to chi_max directly. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="98" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="98" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="125" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1aa13535832cc406268ce9d8cb84cf49ab" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -99,7 +99,7 @@
 <para>Print frequency for console output. In units of sweeps. (0 = off). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="99" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="99" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="126" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a4d5eed12a79f9d570135c218942c5401" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -113,7 +113,7 @@
 <para>Write frequency,for output file buffer. In units of sweeps. (0 = off). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="100" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="100" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="127" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="127" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a2c6ec0c3892141068a29cc36c34b9398" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -127,13 +127,13 @@
 <para>Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length &gt; 14 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="101" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="101" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="128" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="128" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="92" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="119" column="1"/>
   </compounddef>
 </doxygen>

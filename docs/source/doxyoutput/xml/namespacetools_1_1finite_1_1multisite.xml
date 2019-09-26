@@ -3,18 +3,18 @@
   <compounddef id="namespacetools_1_1finite_1_1multisite" kind="namespace" language="C++">
     <compoundname>tools::finite::multisite</compoundname>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1multisite_1af46a3d42fcb2f03718e87d62c69ab0f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::list&lt; size_t &gt;</type>
-        <definition>std::list&lt; size_t &gt; tools::finite::multisite::generate_site_list</definition>
-        <argsstring>(class_finite_state &amp;state, long threshold)</argsstring>
-        <name>generate_site_list</name>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1multisite_1a1fe27a2b64badb43c42ddc1279eb0d62" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::DSizes&lt; long, 3 &gt;</type>
+        <definition>Eigen::DSizes&lt; long, 3 &gt; tools::finite::multisite::get_dimensions</definition>
+        <argsstring>(const class_finite_state &amp;state, const std::list&lt; size_t &gt; &amp;list_of_sites)</argsstring>
+        <name>get_dimensions</name>
         <param>
-          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
-          <type>long</type>
-          <declname>threshold</declname>
+          <type>const std::list&lt; size_t &gt; &amp;</type>
+          <declname>list_of_sites</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -22,21 +22,67 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="11" bodyend="54"/>
-        <references refid="classclass__finite__state_1a304474ccfccd73c3371441ab4b1c2e0e" compoundref="class__finite__state_8cpp" startline="52" endline="52">class_finite_state::get_direction</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="46" endline="46">class_finite_state::get_position</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" compoundref="finite_2measure_8cpp" startline="30" endline="32">tools::finite::measure::length</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" compoundref="class__finite__state_8cpp" startline="146" endline="148">class_finite_state::get_G</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" compoundref="nmspc__settings_8h" startline="45">settings::model::tf_ising::d</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="24" bodyend="42"/>
+        <references refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" compoundref="class__finite__state_8cpp" startline="214" endline="216">class_finite_state::get_G</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1multisite_1a8f8903b5e719e33fa273ca6026e97cd5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t tools::finite::multisite::get_problem_size</definition>
+        <argsstring>(const class_finite_state &amp;state, const std::list&lt; size_t &gt; &amp;list_of_sites)</argsstring>
+        <name>get_problem_size</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::list&lt; size_t &gt; &amp;</type>
+          <declname>list_of_sites</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="45" bodyend="48"/>
+        <references refid="namespacetools_1_1finite_1_1multisite_1a1fe27a2b64badb43c42ddc1279eb0d62" compoundref="multisite_8cpp" startline="24" endline="42">get_dimensions</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1multisite_1a4f3f0123799362edd861eaedd6ed4510" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::list&lt; size_t &gt;</type>
+        <definition>std::list&lt; size_t &gt; tools::finite::multisite::generate_site_list</definition>
+        <argsstring>(class_finite_state &amp;state, const size_t threshold, const size_t max_sites)</argsstring>
+        <name>generate_site_list</name>
+        <param>
+          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>threshold</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>max_sites</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="53" bodyend="92"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
+        <references refid="classclass__finite__state_1a304474ccfccd73c3371441ab4b1c2e0e" compoundref="class__finite__state_8cpp" startline="106" endline="106">class_finite_state::get_direction</references>
+        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="91" endline="91">class_finite_state::get_position</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
+        <references refid="namespacetools_1_1finite_1_1multisite_1a8f8903b5e719e33fa273ca6026e97cd5" compoundref="multisite_8cpp" startline="45" endline="48">get_problem_size</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="81" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="90" column="1"/>
   </compounddef>
 </doxygen>

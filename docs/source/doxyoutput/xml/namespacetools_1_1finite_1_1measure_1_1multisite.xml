@@ -2,7 +2,39 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="namespacetools_1_1finite_1_1measure_1_1multisite" kind="namespace" language="C++">
     <compoundname>tools::finite::measure::multisite</compoundname>
+    <innernamespace refid="namespacetools_1_1finite_1_1measure_1_1multisite_1_1internal">tools::finite::measure::multisite::internal</innernamespace>
       <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a0fd2d63d2a507c3e9de4b1b6252a121d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy_minus_energy_reduced</definition>
+        <argsstring>(const class_finite_state &amp;state, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;multitheta)</argsstring>
+        <name>energy_minus_energy_reduced</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>multitheta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="132" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="107" bodyend="129"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="313">tools::common::profile::t_ene</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" compoundref="class__finite__state_8cpp" startline="366" endline="389">class_finite_state::get_multimpo</references>
+        <references refid="classclass__finite__state_1a7aedc2c9a2f2f33bf376431395a499d1" compoundref="class__finite__state_8cpp" startline="246" endline="252">class_finite_state::get_ENVL</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">class_environment::block</references>
+        <references refid="classclass__finite__state_1a4573393d6b6d20bd80ece83113f9c442" compoundref="class__finite__state_8cpp" startline="254" endline="262">class_finite_state::get_ENVR</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1ad9a7cbe28a97e920a0a9a2a548d219c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
         <definition>double tools::finite::measure::multisite::energy</definition>
@@ -22,12 +54,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="112" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="61" bodyend="76"/>
-        <references refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" compoundref="class__finite__state_8cpp" startline="270" endline="291">class_finite_state::get_multimpo</references>
-        <references refid="classclass__finite__state_1a7aedc2c9a2f2f33bf376431395a499d1" compoundref="class__finite__state_8cpp" startline="178" endline="184">class_finite_state::get_ENVL</references>
-        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
-        <references refid="classclass__finite__state_1a4573393d6b6d20bd80ece83113f9c442" compoundref="class__finite__state_8cpp" startline="186" endline="194">class_finite_state::get_ENVR</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="132" bodyend="141"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a0fd2d63d2a507c3e9de4b1b6252a121d" compoundref="multisite_8cpp" startline="107" endline="129">energy_minus_energy_reduced</references>
+        <references refid="classclass__finite__state_1a9836c470ac6318f415b1df4034d6530e" compoundref="class__finite__state_8cpp" startline="306" endline="313">class_finite_state::get_energy_reduced</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a3ca2e5084269a08210015d32d3846407" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -48,9 +77,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="113" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="79" bodyend="81"/>
-        <references refid="namespacetools_1_1finite_1_1measure_1ad0bf82691db6ea773183f4f38c245636" compoundref="finite_2measure_8cpp" startline="139" endline="157">tools::finite::measure::energy</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="144" bodyend="146"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1ad9a7cbe28a97e920a0a9a2a548d219c2" compoundref="multisite_8cpp" startline="132" endline="141">energy</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a1f013bbadfd297761a42a0f1ea874d90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -71,14 +100,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="114" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="84" bodyend="97"/>
-        <references refid="namespacetools_1_1finite_1_1measure_1ad0bf82691db6ea773183f4f38c245636" compoundref="finite_2measure_8cpp" startline="139" endline="157">tools::finite::measure::energy</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1ad9a7cbe28a97e920a0a9a2a548d219c2" compoundref="multisite_8cpp" startline="61" endline="76">energy</references>
-        <references refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" compoundref="class__finite__state_8cpp" startline="270" endline="291">class_finite_state::get_multimpo</references>
-        <references refid="classclass__finite__state_1accbbf1266e0015b4693aefa54a3614b9" compoundref="class__finite__state_8cpp" startline="196" endline="202">class_finite_state::get_ENV2L</references>
-        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
-        <references refid="classclass__finite__state_1aa221609ca29e4f80632b6d9b5fd078de" compoundref="class__finite__state_8cpp" startline="204" endline="213">class_finite_state::get_ENV2R</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="135" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="149" bodyend="228"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="314">tools::common::profile::t_var</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" compoundref="class__finite__state_8cpp" startline="366" endline="389">class_finite_state::get_multimpo</references>
+        <references refid="classclass__finite__state_1accbbf1266e0015b4693aefa54a3614b9" compoundref="class__finite__state_8cpp" startline="264" endline="270">class_finite_state::get_ENV2L</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
+        <references refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" compoundref="class__environment_8h" startline="81">class_environment_var::block</references>
+        <references refid="classclass__finite__state_1aa221609ca29e4f80632b6d9b5fd078de" compoundref="class__finite__state_8cpp" startline="272" endline="281">class_finite_state::get_ENV2R</references>
+        <references refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" compoundref="class__finite__state_8cpp" startline="331" endline="333">class_finite_state::active_dimensions</references>
+        <references refid="multisite_8cpp_1aa36b94570f9bfb59ef6f173f590ffb5a" compoundref="multisite_8cpp" startline="15">dev_multisite</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="classclass__finite__state_1a3a7052caca98bd5c1b2d99aa8582e3c3" compoundref="class__finite__state_8cpp" startline="298" endline="303">class_finite_state::isReduced</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a0fd2d63d2a507c3e9de4b1b6252a121d" compoundref="multisite_8cpp" startline="107" endline="129">energy_minus_energy_reduced</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1ad9a7cbe28a97e920a0a9a2a548d219c2" compoundref="multisite_8cpp" startline="132" endline="141">energy</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1_1internal_1a95fcd276b50bef76eeb7aa805abba689" compoundref="multisite_8cpp" startline="99" endline="105">tools::finite::measure::multisite::internal::significant_digits</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a04c5c28b2a39351e57ef347780876bec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -99,15 +136,113 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="115" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/multisite.cpp" bodystart="100" bodyend="102"/>
-        <references refid="namespacetools_1_1finite_1_1measure_1a5a593749b940023e4150387fb657fcd6" compoundref="finite_2measure_8cpp" startline="169" endline="186">tools::finite::measure::energy_variance</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="136" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="231" bodyend="233"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a1f013bbadfd297761a42a0f1ea874d90" compoundref="multisite_8cpp" startline="149" endline="228">energy_variance</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1aff1df935135e499c395cd2b79fc4b502" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy</definition>
+        <argsstring>(const class_finite_state &amp;state)</argsstring>
+        <name>energy</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="137" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="237" bodyend="245"/>
+        <references refid="classclass__finite__state_1acaa20c4b46a3ca61b278d3f9ab026309" compoundref="class__finite__state_8h" startline="165">class_finite_state::measurements</references>
+        <references refid="structclass__finite__state_1_1_measurements_1a7cfa40e6d2c88d78e6418094f603603d" compoundref="class__finite__state_8h" startline="153">class_finite_state::Measurements::energy</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1ad0bf82691db6ea773183f4f38c245636" compoundref="finite_2measure_8cpp" startline="163" endline="171">tools::finite::measure::energy</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="313">tools::common::profile::t_ene</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__finite__state_1a8f37806611e917bcf0ba5322044c5949" compoundref="class__finite__state_8cpp" startline="340" endline="364">class_finite_state::get_multitheta</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1ad9a7cbe28a97e920a0a9a2a548d219c2" compoundref="multisite_8cpp" startline="132" endline="141">energy</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a0c033314d0ae7a595b56a176b54f9d09" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy_per_site</definition>
+        <argsstring>(const class_finite_state &amp;state)</argsstring>
+        <name>energy_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="138" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="247" bodyend="254"/>
+        <references refid="classclass__finite__state_1acaa20c4b46a3ca61b278d3f9ab026309" compoundref="class__finite__state_8h" startline="165">class_finite_state::measurements</references>
+        <references refid="structclass__finite__state_1_1_measurements_1a7d515b15cfdd205b7ca1bf6e51ebbd15" compoundref="class__finite__state_8h" startline="154">class_finite_state::Measurements::energy_per_site</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a81b06529556e68f882c591397b39ef2f" compoundref="finite_2measure_8cpp" startline="174" endline="180">tools::finite::measure::energy_per_site</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1aff1df935135e499c395cd2b79fc4b502" compoundref="multisite_8cpp" startline="237" endline="245">energy</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1aa607e75b578edf4411760bead3e5d5e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy_variance</definition>
+        <argsstring>(const class_finite_state &amp;state)</argsstring>
+        <name>energy_variance</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="139" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="256" bodyend="265"/>
+        <references refid="classclass__finite__state_1acaa20c4b46a3ca61b278d3f9ab026309" compoundref="class__finite__state_8h" startline="165">class_finite_state::measurements</references>
+        <references refid="structclass__finite__state_1_1_measurements_1a8b47be757b3751ca9ee49c07a6102324" compoundref="class__finite__state_8h" startline="155">class_finite_state::Measurements::energy_variance_mpo</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a5a593749b940023e4150387fb657fcd6" compoundref="finite_2measure_8cpp" startline="183" endline="192">tools::finite::measure::energy_variance</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="314">tools::common::profile::t_var</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__finite__state_1a8f37806611e917bcf0ba5322044c5949" compoundref="class__finite__state_8cpp" startline="340" endline="364">class_finite_state::get_multitheta</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a1f013bbadfd297761a42a0f1ea874d90" compoundref="multisite_8cpp" startline="149" endline="228">energy_variance</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1_1multisite_1a69a97c8b02c6b4cb9654815e56940350" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::multisite::energy_variance_per_site</definition>
+        <argsstring>(const class_finite_state &amp;state)</argsstring>
+        <name>energy_variance_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="140" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="267" bodyend="274"/>
+        <references refid="classclass__finite__state_1acaa20c4b46a3ca61b278d3f9ab026309" compoundref="class__finite__state_8h" startline="165">class_finite_state::measurements</references>
+        <references refid="structclass__finite__state_1_1_measurements_1a5d9b8e22eb2c5fbb1532ac82658e7157" compoundref="class__finite__state_8h" startline="156">class_finite_state::Measurements::energy_variance_per_site</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a0435b2ea12613bfa030adc9dab6c8e52" compoundref="finite_2measure_8cpp" startline="195" endline="201">tools::finite::measure::energy_variance_per_site</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1aa607e75b578edf4411760bead3e5d5e8" compoundref="multisite_8cpp" startline="256" endline="265">energy_variance</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="111" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="127" column="1"/>
   </compounddef>
 </doxygen>

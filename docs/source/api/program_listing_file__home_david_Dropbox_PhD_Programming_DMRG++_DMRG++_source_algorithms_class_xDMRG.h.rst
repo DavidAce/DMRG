@@ -21,29 +21,26 @@ Program Listing for File class_xDMRG.h
    #include <unsupported/Eigen/CXX11/Tensor>
    #include <Eigen/Core>
    
-   class class_log_dmrg;
-   
-   
-   
    
    class class_finite_state;
    class class_xDMRG : public class_algorithm_finite {
    private:
-   
+       double energy_window_growth_factor = 1.1;
    public:
        //Inherit the constructor of class_algorithm_base
        using class_algorithm_finite::class_algorithm_finite;
        explicit class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
-       std::unique_ptr<class_hdf5_log<class_log_dmrg>> log_dmrg;
    
-       bool   projected_during_saturation  = false;
+       bool   has_projected  = false;
    
        void find_energy_range();
+       void inflate_initial_state();
+       void reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason );
        void single_DMRG_step();
        void run_preprocessing()                final;
        void run_simulation()                   final;
        void check_convergence()                final;
-       void write_logs(bool force = false)     final;
+   
        bool   sim_on()                         final;
        long   chi_max()                        final;
        size_t num_sites()                      final;

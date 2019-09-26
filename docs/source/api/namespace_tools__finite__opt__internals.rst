@@ -24,54 +24,46 @@ Classes
 -------
 
 
-- :ref:`exhale_struct_structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components`
+- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor`
 
-- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1base__functor`
+- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1ceres__direct__functor`
 
-- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor`
-
-- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor`
-
-- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1subspace__functor`
+- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1ceres__subspace__functor`
 
 
 Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1ad8dd1bea73386ce201be145dbeb0e57d`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1ab9f6fa872c8f3136ce5e0d5961a55991`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a3a07b29376c4353abadb1848f43f4a45`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a02896ebab9e1bc1796bef72046654e05`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1afc4f5fa072ebf99048b4e3b939700b31`
-
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a4d15c2b7a280aba9221f4c4d006872c4`
-
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a89cc203be6152c9aaca3a5fc5f1a2a8d`
-
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a60312ffa8738bc2d1f9da4a2aafb2172`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a72d2d2f8f1c279a2898ec6bb624c5c28`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1aa1db6babfc380d6c6a511918c8db623a`
-
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a5eb33e8b616c0bf8688c0d49c9b2c75c`
-
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a4c06ba68e3212f27854e1b739aa189f4`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1abf188bdd9eea8846171397cde417e3cf`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a155cb27332a5aaa6703b52f44bbf69e8`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a549885cf1b279a10f29e57018a665b81`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a1cc46ef0e5c0a5741c9dc7ebcdcbe8cc`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1aaea23b2c5c97a47f32d9a90a306ef173`
 
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1abf188bdd9eea8846171397cde417e3cf`
+
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a9e8c07dd960d644a8ca197fbbfb0a2bc`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1aa374ce62e0b0ce5913af1a8459f689d5`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a54d55d18dbbbf7f0258c049658e4858b`
-
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a92f862c7cdbda41609a5681d48bebcec`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a712a13efbabdce3004b25a616e0987a3`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba`
 
@@ -80,18 +72,15 @@ Functions
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e`
 
 
-Typedefs
---------
-
-
-- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1ad66627a992ba69e6c014c6850e2c08fd`
-
-
 Variables
 ---------
 
 
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1aba87cf812f7a597539e2d3732d780472`
+
 - :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469`
+
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1ac4a810933ed04160f1126492b1fa28b1`
 
 - :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2`
 

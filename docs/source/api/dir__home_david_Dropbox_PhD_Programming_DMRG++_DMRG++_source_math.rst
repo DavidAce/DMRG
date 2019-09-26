@@ -24,6 +24,7 @@ Files
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_eigsolver.h`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_svd_wrapper.cpp`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_svd_wrapper.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_svd_wrapper_lapacke.cpp`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_eigutils.h`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_math.h`
 

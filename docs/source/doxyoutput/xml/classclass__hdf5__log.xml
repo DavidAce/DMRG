@@ -5,7 +5,9 @@
     <includes refid="class__algorithm__base_8h" local="no">class_algorithm_base.h</includes>
     <templateparamlist>
       <param>
-        <type>typename log_type</type>
+        <type>typename</type>
+        <declname>log_type</declname>
+        <defname>log_type</defname>
       </param>
     </templateparamlist>
       <sectiondef kind="private-attrib">
@@ -187,13 +189,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.cpp" bodystart="56" bodyend="71"/>
-        <references refid="classclass__hdf5__log_1a8a98fe1e5890ee6e96faa442362e75f0" compoundref="class__hdf5__log__buffer_8h" startline="26">class_hdf5_log&lt; log_type &gt;::log_entries</references>
-        <references refid="classclass__hdf5__log_1a1770ce6ec2c87e2819a9a31b80a73e97" compoundref="class__hdf5__log__buffer_8h" startline="36">class_hdf5_log&lt; log_type &gt;::log_is_ready</references>
-        <references refid="classclass__hdf5__log_1a98193479fcc9425804e3263772d46a92" compoundref="class__hdf5__log__buffer_8h" startline="31">class_hdf5_log&lt; log_type &gt;::log</references>
-        <references refid="classclass__hdf5__log_1a051963a8b1d9054117323a78d8fd4090" compoundref="class__hdf5__log__buffer_8h" startline="28">class_hdf5_log&lt; log_type &gt;::log_name</references>
-        <references refid="classclass__hdf5__log_1aaafa54f3a00977b266caed321df162ce" compoundref="class__hdf5__log__buffer_8h" startline="25">class_hdf5_log&lt; log_type &gt;::h5ppFile</references>
-        <references refid="classclass__hdf5__log_1a04975b1924b8c51173ebd344afed33ed" compoundref="class__hdf5__log__buffer_8h" startline="27">class_hdf5_log&lt; log_type &gt;::group_name</references>
-        <references refid="classclass__hdf5__log_1a95686fd9c41874227d0b07b9e9d34cd3" compoundref="class__hdf5__log__buffer_8h" startline="29">class_hdf5_log&lt; log_type &gt;::log_path</references>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__log_1af443466f1fc2f9417e2f94c5952bfb88" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -207,15 +202,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.cpp" bodystart="78" bodyend="93"/>
-        <references refid="classclass__hdf5__log_1a8a98fe1e5890ee6e96faa442362e75f0" compoundref="class__hdf5__log__buffer_8h" startline="26">class_hdf5_log&lt; log_type &gt;::log_entries</references>
-        <references refid="classclass__hdf5__log_1a1770ce6ec2c87e2819a9a31b80a73e97" compoundref="class__hdf5__log__buffer_8h" startline="36">class_hdf5_log&lt; log_type &gt;::log_is_ready</references>
-        <references refid="classclass__hdf5__log_1a98193479fcc9425804e3263772d46a92" compoundref="class__hdf5__log__buffer_8h" startline="31">class_hdf5_log&lt; log_type &gt;::log</references>
-        <references refid="classclass__hdf5__log_1a051963a8b1d9054117323a78d8fd4090" compoundref="class__hdf5__log__buffer_8h" startline="28">class_hdf5_log&lt; log_type &gt;::log_name</references>
-        <references refid="classclass__hdf5__log_1aaafa54f3a00977b266caed321df162ce" compoundref="class__hdf5__log__buffer_8h" startline="25">class_hdf5_log&lt; log_type &gt;::h5ppFile</references>
-        <references refid="classclass__hdf5__log_1a04975b1924b8c51173ebd344afed33ed" compoundref="class__hdf5__log__buffer_8h" startline="27">class_hdf5_log&lt; log_type &gt;::group_name</references>
-        <references refid="classclass__hdf5__log_1a95686fd9c41874227d0b07b9e9d34cd3" compoundref="class__hdf5__log__buffer_8h" startline="29">class_hdf5_log&lt; log_type &gt;::log_path</references>
-        <references refid="classclass__hdf5__log_1a6a552344656bef69d6916992529661cd" compoundref="class__hdf5__log__buffer_8h" startline="30">class_hdf5_log&lt; log_type &gt;::recorded_elements</references>
-        <references refid="classclass__hdf5__log_1aeda5a6ce4a8f17b558c145f6c22482a4" compoundref="class__hdf5__log__buffer_8h" startline="35">class_hdf5_log&lt; log_type &gt;::buffer_is_empty</references>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -236,10 +222,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.cpp" bodystart="16" bodyend="20"/>
-        <references refid="classclass__hdf5__log_1a98193479fcc9425804e3263772d46a92" compoundref="class__hdf5__log__buffer_8h" startline="31">class_hdf5_log&lt; log_type &gt;::log</references>
-        <references refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" compoundref="nmspc__logger_8h" startline="33" endline="44">Logger::setLogger</references>
-        <references refid="classclass__hdf5__log_1a8fd2452f70fb0dd436223ac5b2e18eb5" compoundref="class__hdf5__log__buffer_8h" startline="33">class_hdf5_log&lt; log_type &gt;::logName</references>
-        <references refid="classclass__hdf5__log_1a312cbf474015e3bd6de42355c9ffabdb" compoundref="class__hdf5__log__buffer_8h" startline="32">class_hdf5_log&lt; log_type &gt;::logLevel</references>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__log_1a0dd439b25e9332eaaec5543efd910511" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -253,10 +235,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.cpp" bodystart="46" bodyend="52"/>
-        <references refid="classclass__hdf5__log_1aaafa54f3a00977b266caed321df162ce" compoundref="class__hdf5__log__buffer_8h" startline="25">class_hdf5_log&lt; log_type &gt;::h5ppFile</references>
-        <references refid="classclass__hdf5__log_1af443466f1fc2f9417e2f94c5952bfb88" compoundref="class__hdf5__log__buffer_8cpp" startline="78" endline="93">class_hdf5_log&lt; log_type &gt;::write_buffer_to_file</references>
-        <references refid="classclass__hdf5__log_1aeda5a6ce4a8f17b558c145f6c22482a4" compoundref="class__hdf5__log__buffer_8h" startline="35">class_hdf5_log&lt; log_type &gt;::buffer_is_empty</references>
-        <references refid="classclass__hdf5__log_1a98193479fcc9425804e3263772d46a92" compoundref="class__hdf5__log__buffer_8h" startline="31">class_hdf5_log&lt; log_type &gt;::log</references>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__log_1a6cfa432523cefb71845a79d5c2e1f871" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -292,15 +270,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_hdf5_log_buffer.cpp" bodystart="25" bodyend="42"/>
-        <references refid="classclass__hdf5__log_1a98193479fcc9425804e3263772d46a92" compoundref="class__hdf5__log__buffer_8h" startline="31">class_hdf5_log&lt; log_type &gt;::log</references>
-        <references refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" compoundref="nmspc__logger_8h" startline="33" endline="44">Logger::setLogger</references>
-        <references refid="classclass__hdf5__log_1a8fd2452f70fb0dd436223ac5b2e18eb5" compoundref="class__hdf5__log__buffer_8h" startline="33">class_hdf5_log&lt; log_type &gt;::logName</references>
-        <references refid="classclass__hdf5__log_1a312cbf474015e3bd6de42355c9ffabdb" compoundref="class__hdf5__log__buffer_8h" startline="32">class_hdf5_log&lt; log_type &gt;::logLevel</references>
-        <references refid="classclass__hdf5__log_1a8a98fe1e5890ee6e96faa442362e75f0" compoundref="class__hdf5__log__buffer_8h" startline="26">class_hdf5_log&lt; log_type &gt;::log_entries</references>
-        <references refid="classclass__hdf5__log_1a95686fd9c41874227d0b07b9e9d34cd3" compoundref="class__hdf5__log__buffer_8h" startline="29">class_hdf5_log&lt; log_type &gt;::log_path</references>
-        <references refid="classclass__hdf5__log_1a04975b1924b8c51173ebd344afed33ed" compoundref="class__hdf5__log__buffer_8h" startline="27">class_hdf5_log&lt; log_type &gt;::group_name</references>
-        <references refid="classclass__hdf5__log_1a051963a8b1d9054117323a78d8fd4090" compoundref="class__hdf5__log__buffer_8h" startline="28">class_hdf5_log&lt; log_type &gt;::log_name</references>
-        <references refid="classclass__hdf5__log_1a3cabbd99bd9fc7bb0d56d9dc7cb9841b" compoundref="class__hdf5__log__buffer_8cpp" startline="56" endline="71">class_hdf5_log&lt; log_type &gt;::initialize_table</references>
       </memberdef>
       <memberdef kind="function" id="classclass__hdf5__log_1a4a1b1b3bed4de69fea4dd6f5d906810a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -331,6 +300,32 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
+    <collaborationgraph>
+      <node id="181">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="179">
+        <label>class_hdf5_log&lt; log_type &gt;</label>
+        <link refid="classclass__hdf5__log"/>
+        <childnode refid="180" relation="usage">
+          <edgelabel>log_name</edgelabel>
+          <edgelabel>log_path</edgelabel>
+          <edgelabel>logName</edgelabel>
+          <edgelabel>group_name</edgelabel>
+        </childnode>
+        <childnode refid="182" relation="usage">
+          <edgelabel>log_entries</edgelabel>
+        </childnode>
+      </node>
+      <node id="182">
+        <label>std::unique_ptr&lt; log_type &gt;</label>
+      </node>
+      <node id="180">
+        <label>std::string</label>
+        <childnode refid="181" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="19" bodyend="-1"/>
     <listofallmembers>
       <member refid="classclass__hdf5__log_1a4a1b1b3bed4de69fea4dd6f5d906810a" prot="public" virt="non-virtual"><scope>class_hdf5_log</scope><name>append_record</name></member>

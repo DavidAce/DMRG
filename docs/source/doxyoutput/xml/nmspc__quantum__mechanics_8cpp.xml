@@ -10,98 +10,98 @@
     <includes refid="nmspc__quantum__mechanics_8h" local="yes">nmspc_quantum_mechanics.h</includes>
     <includes refid="nmspc__tensor__extra_8h" local="yes">nmspc_tensor_extra.h</includes>
     <incdepgraph>
-      <node id="671">
+      <node id="659">
         <label>iomanip</label>
       </node>
-      <node id="669">
+      <node id="657">
         <label>iterator</label>
       </node>
-      <node id="658">
+      <node id="646">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp</label>
         <link refid="nmspc__quantum__mechanics_8cpp"/>
-        <childnode refid="659" relation="include">
+        <childnode refid="647" relation="include">
         </childnode>
-        <childnode refid="660" relation="include">
+        <childnode refid="648" relation="include">
         </childnode>
-        <childnode refid="661" relation="include">
+        <childnode refid="649" relation="include">
         </childnode>
-        <childnode refid="662" relation="include">
+        <childnode refid="650" relation="include">
         </childnode>
-        <childnode refid="663" relation="include">
+        <childnode refid="651" relation="include">
         </childnode>
-        <childnode refid="664" relation="include">
+        <childnode refid="652" relation="include">
         </childnode>
-        <childnode refid="667" relation="include">
+        <childnode refid="655" relation="include">
         </childnode>
-      </node>
-      <node id="672">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="673" relation="include">
-        </childnode>
-        <childnode refid="659" relation="include">
-        </childnode>
-        <childnode refid="665" relation="include">
-        </childnode>
-      </node>
-      <node id="659">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="663">
-        <label>unsupported/Eigen/MatrixFunctions</label>
-      </node>
-      <node id="673">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="665">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="668">
-        <label>Eigen/Sparse</label>
       </node>
       <node id="660">
-        <label>vector</label>
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="661" relation="include">
+        </childnode>
+        <childnode refid="647" relation="include">
+        </childnode>
+        <childnode refid="653" relation="include">
+        </childnode>
+      </node>
+      <node id="647">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="651">
+        <label>unsupported/Eigen/MatrixFunctions</label>
       </node>
       <node id="661">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="653">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="656">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="648">
+        <label>vector</label>
+      </node>
+      <node id="649">
         <label>complex.h</label>
       </node>
-      <node id="670">
+      <node id="658">
         <label>iostream</label>
       </node>
-      <node id="664">
+      <node id="652">
         <label>nmspc_quantum_mechanics.h</label>
         <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="659" relation="include">
+        <childnode refid="647" relation="include">
         </childnode>
-        <childnode refid="665" relation="include">
+        <childnode refid="653" relation="include">
         </childnode>
-        <childnode refid="666" relation="include">
+        <childnode refid="654" relation="include">
         </childnode>
-        <childnode refid="660" relation="include">
+        <childnode refid="648" relation="include">
         </childnode>
       </node>
-      <node id="662">
+      <node id="650">
         <label>unsupported/Eigen/KroneckerProduct</label>
       </node>
-      <node id="666">
+      <node id="654">
         <label>complex</label>
       </node>
-      <node id="667">
+      <node id="655">
         <label>nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="647" relation="include">
+        </childnode>
+        <childnode refid="656" relation="include">
+        </childnode>
+        <childnode refid="653" relation="include">
+        </childnode>
+        <childnode refid="657" relation="include">
+        </childnode>
+        <childnode refid="658" relation="include">
+        </childnode>
         <childnode refid="659" relation="include">
         </childnode>
-        <childnode refid="668" relation="include">
-        </childnode>
-        <childnode refid="665" relation="include">
-        </childnode>
-        <childnode refid="669" relation="include">
-        </childnode>
-        <childnode refid="670" relation="include">
-        </childnode>
-        <childnode refid="671" relation="include">
-        </childnode>
-        <childnode refid="672" relation="include">
+        <childnode refid="660" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -146,34 +146,34 @@
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33" refid="namespaceqm_1_1spin_one_half" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceqm_1_1spin_one_half" kindref="compound">qm::spinOneHalf</ref><sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceqm_1_1spin_one_half" kindref="compound">qm::spinOneHalf</ref><sp/>{</highlight></codeline>
 <codeline lineno="34" refid="namespaceqm_1_1spin_one_half_1a4a5ef724088c97b34f5f3e155d744bfd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespaceqm_1_1_spin_one_1a2cb3a58469788ec07f5541f8f0cd7966" kindref="member">imp</ref><sp/>=<sp/>std::complex&lt;double&gt;(0.0,1.0);</highlight></codeline>
 <codeline lineno="35" refid="namespaceqm_1_1spin_one_half_1ab88be651b3e1d394601bc28584d72c7f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespaceqm_1_1_spin_one_1a5cc15bf655fe972142e3a7a38d3f43b3" kindref="member">imn</ref><sp/>=<sp/>std::complex&lt;double&gt;(0.0,-1.0);</highlight></codeline>
-<codeline lineno="36" refid="namespaceqm_1_1spin_one_1afd4053f405789c5556b138bce9da5c32" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Matrix2cd<sp/><ref refid="namespaceqm_1_1_spin_one_1a86943091b0ad27c0dfee22caf74bb2ab" kindref="member">sx</ref><sp/>=<sp/>(Matrix2cd()<sp/>&lt;&lt;</highlight></codeline>
+<codeline lineno="36" refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Matrix2cd<sp/><ref refid="namespaceqm_1_1_spin_one_1a86943091b0ad27c0dfee22caf74bb2ab" kindref="member">sx</ref><sp/>=<sp/>(Matrix2cd()<sp/>&lt;&lt;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0.0,<sp/>1.0,</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1.0,<sp/>0.0).finished();</highlight></codeline>
-<codeline lineno="39" refid="namespaceqm_1_1spin_one_1a47d668cb08219573f14c3272fe91d590" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Matrix2cd<sp/><ref refid="namespaceqm_1_1_spin_one_1af28cf0235b73d38aec6b09a8bf313e10" kindref="member">sy</ref><sp/>=<sp/>(Matrix2cd()<sp/>&lt;&lt;</highlight></codeline>
+<codeline lineno="39" refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Matrix2cd<sp/><ref refid="namespaceqm_1_1_spin_one_1af28cf0235b73d38aec6b09a8bf313e10" kindref="member">sy</ref><sp/>=<sp/>(Matrix2cd()<sp/>&lt;&lt;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0.0,<sp/><ref refid="namespaceqm_1_1_spin_one_1a5cc15bf655fe972142e3a7a38d3f43b3" kindref="member">imn</ref>,</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceqm_1_1_spin_one_1a2cb3a58469788ec07f5541f8f0cd7966" kindref="member">imp</ref>,<sp/>0.0).finished();</highlight></codeline>
-<codeline lineno="42" refid="namespaceqm_1_1spin_one_1a7597e8930d8789c711c7329705f41546" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Matrix2cd<sp/><ref refid="namespaceqm_1_1_spin_one_1a0ca088bc79d8ed29c00a7e33d9af1386" kindref="member">sz</ref><sp/>=<sp/>(Matrix2cd()<sp/>&lt;&lt;</highlight></codeline>
+<codeline lineno="42" refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Matrix2cd<sp/><ref refid="namespaceqm_1_1_spin_one_1a0ca088bc79d8ed29c00a7e33d9af1386" kindref="member">sz</ref><sp/>=<sp/>(Matrix2cd()<sp/>&lt;&lt;</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>1.0,<sp/>0.0,</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0.0,<sp/>-1.0).finished();</highlight></codeline>
-<codeline lineno="45" refid="namespaceqm_1_1spin_one_1a5c431fd9b35ce1b76fe9aa1ae6988df2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Matrix2cd<sp/><ref refid="namespaceqm_1_1_spin_one_1a17e0039df14d4cf49c6d7a75d19a5912" kindref="member">Id</ref><sp/><sp/>=<sp/>(Matrix2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/>0.0,</highlight></codeline>
+<codeline lineno="45" refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Matrix2cd<sp/><ref refid="namespaceqm_1_1_spin_one_1a17e0039df14d4cf49c6d7a75d19a5912" kindref="member">Id</ref><sp/><sp/>=<sp/>(Matrix2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/>0.0,</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>0.0,<sp/>1.0).finished();</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48" refid="namespaceqm_1_1spin_one_half_1af1cf3689c866e495c05a773e13e75aad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1af1cf3689c866e495c05a773e13e75aad" kindref="member">sx_eigvecs</ref><sp/>{(Vector2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/>1.0).finished()/std::sqrt(2),</highlight></codeline>
+<codeline lineno="48" refid="namespaceqm_1_1spin_one_half_1a108205fa9b3f65edcb8baca98edd5925" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a108205fa9b3f65edcb8baca98edd5925" kindref="member">sx_eigvecs</ref><sp/>{(Vector2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/>1.0).finished()/std::sqrt(2),</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(Vector2cd()<sp/>&lt;&lt;<sp/>1.0,-1.0).finished()/std::sqrt(2)};</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51" refid="namespaceqm_1_1spin_one_half_1a291ae65d7edaaaf7dc6f42e5bf54b099" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a291ae65d7edaaaf7dc6f42e5bf54b099" kindref="member">sy_eigvecs</ref><sp/>{(Vector2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/><ref refid="namespaceqm_1_1_spin_one_1a2cb3a58469788ec07f5541f8f0cd7966" kindref="member">imp</ref>).finished()/std::sqrt(2),</highlight></codeline>
+<codeline lineno="51" refid="namespaceqm_1_1spin_one_half_1ac1296391083d31f641019131926507ad" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1ac1296391083d31f641019131926507ad" kindref="member">sy_eigvecs</ref><sp/>{(Vector2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/><ref refid="namespaceqm_1_1_spin_one_1a2cb3a58469788ec07f5541f8f0cd7966" kindref="member">imp</ref>).finished()/std::sqrt(2),</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(Vector2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/><ref refid="namespaceqm_1_1_spin_one_1a5cc15bf655fe972142e3a7a38d3f43b3" kindref="member">imn</ref>).finished()/std::sqrt(2)};</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="54" refid="namespaceqm_1_1spin_one_half_1ac0544219bcd024372d765b4e4ff96591" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1ac0544219bcd024372d765b4e4ff96591" kindref="member">sz_eigvecs</ref><sp/>{(Vector2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/>0.0).finished()/std::sqrt(2),</highlight></codeline>
+<codeline lineno="54" refid="namespaceqm_1_1spin_one_half_1a6c647e6a015b60e161400c3fbe4072f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a6c647e6a015b60e161400c3fbe4072f5" kindref="member">sz_eigvecs</ref><sp/>{(Vector2cd()<sp/>&lt;&lt;<sp/>1.0,<sp/>0.0).finished()/std::sqrt(2),</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(Vector2cd()<sp/>&lt;&lt;<sp/>0.0,<sp/>1.0).finished()/std::sqrt(2)};</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57" refid="namespaceqm_1_1spin_one_1a76e83986f3dd3f21f66745e74b0d1efb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1_spin_one_1a0cf3051ee9d58ece101644b557e55c15" kindref="member">SX</ref>;</highlight></codeline>
-<codeline lineno="58" refid="namespaceqm_1_1spin_one_1a7c6642ecb1e387631b5f828a95abb948" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1_spin_one_1a08baefd079e4334232a1591a0c666e12" kindref="member">SY</ref>;</highlight></codeline>
-<codeline lineno="59" refid="namespaceqm_1_1spin_one_1a3c7ab9ab64201bb7e9913202acbf234e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1_spin_one_1a4b1681da66f3f407284652f0853f2418" kindref="member">SZ</ref>;</highlight></codeline>
-<codeline lineno="60" refid="namespaceqm_1_1spin_one_1a526b15cbef6524e5d7f496992aa4124e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1_spin_one_1a208f922ad886e2d517e30fbaeedbb855" kindref="member">II</ref>;</highlight></codeline>
+<codeline lineno="57" refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1_spin_one_1a0cf3051ee9d58ece101644b557e55c15" kindref="member">SX</ref>;</highlight></codeline>
+<codeline lineno="58" refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1_spin_one_1a08baefd079e4334232a1591a0c666e12" kindref="member">SY</ref>;</highlight></codeline>
+<codeline lineno="59" refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1_spin_one_1a4b1681da66f3f407284652f0853f2418" kindref="member">SZ</ref>;</highlight></codeline>
+<codeline lineno="60" refid="namespaceqm_1_1spin_one_half_1acfc44d248aa25773edc90c232a54f47f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1_spin_one_1a208f922ad886e2d517e30fbaeedbb855" kindref="member">II</ref>;</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
 <codeline lineno="62"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"></highlight></codeline>
@@ -203,7 +203,7 @@
 <codeline lineno="87"><highlight class="normal"></highlight></codeline>
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90" refid="namespaceqm_1_1time_evolution" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceqm_1_1time_evolution" kindref="compound">qm::timeEvolution</ref>{</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceqm_1_1time_evolution" kindref="compound">qm::timeEvolution</ref>{</highlight></codeline>
 <codeline lineno="91"><highlight class="normal"></highlight></codeline>
 <codeline lineno="92" refid="namespaceqm_1_1time_evolution_1a78103280aef02f54e28b7d670f5d6837" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1time_evolution_1a78103280aef02f54e28b7d670f5d6837" kindref="member">Suzuki_Trotter_1st_order</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;<sp/>t,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;h_evn,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;h_odd){</highlight></codeline>
 <codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{(t*h_evn).exp(),</highlight></codeline>

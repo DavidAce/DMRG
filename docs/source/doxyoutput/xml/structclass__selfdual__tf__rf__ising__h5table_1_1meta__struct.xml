@@ -160,6 +160,31 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
+    <collaborationgraph>
+      <node id="440">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="438">
+        <label>class_selfdual_tf_rf_ising_h5table::meta_struct</label>
+        <link refid="structclass__selfdual__tf__rf__ising__h5table_1_1meta__struct"/>
+        <childnode refid="439" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="440" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="441" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="441">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="439">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+    </collaborationgraph>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="46" bodyend="82"/>
     <listofallmembers>
       <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1meta__struct_1a739cf6c5061f61c1ed1353c4c2c11534" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::meta_struct</scope><name>chunk_size</name></member>

@@ -91,6 +91,8 @@ Functions
 
 - :ref:`exhale_function_namespace_textra_1abec7b372b4239eac14573685fae5f2e7`
 
+- :ref:`exhale_function_namespace_textra_1a8dfdb8fa19d99af6fcfec8ebacf16235`
+
 - :ref:`exhale_function_namespace_textra_1a6ce185ef869dc59048058546aedeb24e`
 
 - :ref:`exhale_function_namespace_textra_1ab92f06daa8fdd15320f38aa89bfa7894`

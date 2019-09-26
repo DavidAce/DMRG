@@ -9,48 +9,118 @@
     <includedby refid="arpackpp__solver_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</includedby>
     <includedby refid="class__eigsolver_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</includedby>
     <incdepgraph>
-      <node id="1076">
+      <node id="1063">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="1077" relation="include">
+        <childnode refid="1064" relation="include">
         </childnode>
-        <childnode refid="1078" relation="include">
+        <childnode refid="1065" relation="include">
         </childnode>
       </node>
-      <node id="1081">
+      <node id="1068">
         <label>map</label>
       </node>
-      <node id="1074">
+      <node id="1061">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</label>
         <link refid="arpackpp__solver_8h"/>
+        <childnode refid="1062" relation="include">
+        </childnode>
+        <childnode refid="1063" relation="include">
+        </childnode>
+        <childnode refid="1066" relation="include">
+        </childnode>
+        <childnode refid="1069" relation="include">
+        </childnode>
+      </node>
+      <node id="1071">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1062">
+        <label>vector</label>
+      </node>
+      <node id="1070">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1067">
+        <label>array</label>
+      </node>
+      <node id="1065">
+        <label>iostream</label>
+      </node>
+      <node id="1066">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1065" relation="include">
+        </childnode>
+        <childnode refid="1067" relation="include">
+        </childnode>
+        <childnode refid="1068" relation="include">
+        </childnode>
+        <childnode refid="1069" relation="include">
+        </childnode>
+        <childnode refid="1062" relation="include">
+        </childnode>
+        <childnode refid="1070" relation="include">
+        </childnode>
+        <childnode refid="1071" relation="include">
+        </childnode>
+      </node>
+      <node id="1064">
+        <label>chrono</label>
+      </node>
+      <node id="1069">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1080">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
+        <link refid="finite_2opt_8cpp"/>
+      </node>
+      <node id="1081">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1076">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
+        <link refid="class__infinite__state_8cpp"/>
+      </node>
+      <node id="1077">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1072">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
+        <childnode refid="1073" relation="include">
+        </childnode>
+        <childnode refid="1074" relation="include">
+        </childnode>
+      </node>
+      <node id="1073">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
+        <link refid="arpackpp__solver_8cpp"/>
+      </node>
+      <node id="1078">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
+      </node>
+      <node id="1075">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
+        <link refid="class__eigsolver_8cpp"/>
+      </node>
+      <node id="1074">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
         <childnode refid="1075" relation="include">
         </childnode>
         <childnode refid="1076" relation="include">
         </childnode>
-        <childnode refid="1079" relation="include">
+        <childnode refid="1077" relation="include">
         </childnode>
-        <childnode refid="1082" relation="include">
-        </childnode>
-      </node>
-      <node id="1084">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="1075">
-        <label>vector</label>
-      </node>
-      <node id="1083">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="1080">
-        <label>array</label>
-      </node>
-      <node id="1078">
-        <label>iostream</label>
-      </node>
-      <node id="1079">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
         <childnode refid="1078" relation="include">
+        </childnode>
+        <childnode refid="1079" relation="include">
         </childnode>
         <childnode refid="1080" relation="include">
         </childnode>
@@ -58,84 +128,14 @@
         </childnode>
         <childnode refid="1082" relation="include">
         </childnode>
-        <childnode refid="1075" relation="include">
-        </childnode>
-        <childnode refid="1083" relation="include">
-        </childnode>
-        <childnode refid="1084" relation="include">
-        </childnode>
       </node>
-      <node id="1077">
-        <label>chrono</label>
-      </node>
-      <node id="1082">
-        <label>complex</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="1091">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ground_state.cpp</label>
+      <node id="1079">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
         <link refid="ground__state_8cpp"/>
       </node>
-      <node id="1089">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
-        <link refid="class__infinite__state_8cpp"/>
-      </node>
-      <node id="1085">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</label>
-        <link refid="arpackpp__solver_8h"/>
-        <childnode refid="1086" relation="include">
-        </childnode>
-        <childnode refid="1087" relation="include">
-        </childnode>
-      </node>
-      <node id="1086">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
-        <link refid="arpackpp__solver_8cpp"/>
-      </node>
-      <node id="1095">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/opt.cpp</label>
+      <node id="1082">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
-      </node>
-      <node id="1090">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp</label>
-        <link refid="views_8cpp"/>
-      </node>
-      <node id="1093">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp</label>
-        <link refid="finite_2opt_8cpp"/>
-      </node>
-      <node id="1094">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp</label>
-        <link refid="infinite_2measure_8cpp"/>
-      </node>
-      <node id="1092">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp</label>
-        <link refid="subspace_8cpp"/>
-      </node>
-      <node id="1088">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
-        <link refid="class__eigsolver_8cpp"/>
-      </node>
-      <node id="1087">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
-        <link refid="class__eigsolver_8h"/>
-        <childnode refid="1088" relation="include">
-        </childnode>
-        <childnode refid="1089" relation="include">
-        </childnode>
-        <childnode refid="1090" relation="include">
-        </childnode>
-        <childnode refid="1091" relation="include">
-        </childnode>
-        <childnode refid="1092" relation="include">
-        </childnode>
-        <childnode refid="1093" relation="include">
-        </childnode>
-        <childnode refid="1094" relation="include">
-        </childnode>
-        <childnode refid="1095" relation="include">
-        </childnode>
       </node>
     </invincdepgraph>
     <innerclass refid="classarpackpp__solver" prot="public">arpackpp_solver</innerclass>

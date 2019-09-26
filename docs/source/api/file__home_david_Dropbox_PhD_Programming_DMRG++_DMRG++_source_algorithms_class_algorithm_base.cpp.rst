@@ -35,8 +35,6 @@ Includes
 
 - ``fstream``
 
-- ``general/nmspc_quantum_mechanics.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.h`)
-
 - ``general/nmspc_random_numbers.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`)
 
 - ``h5pp/h5pp.h``
@@ -49,26 +47,11 @@ Includes
 
 - ``math/nmspc_math.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_math.h`)
 
-- ``state/class_environment.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_environment.h`)
-
-- ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
-
-- ``state/class_infinite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`)
-
-- ``state/class_mps_2site.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.h`)
-
-- ``state/tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`)
+- ``tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`)
 
 
 
 
-
-
-Namespaces
-----------
-
-
-- :ref:`namespace_std`
 
 
 Typedefs

@@ -112,7 +112,12 @@
 </para><para>[ ]<ndash/>0 0<ndash/>[LB]<ndash/>1 1<ndash/>[ GA ]<ndash/>2 [ ] | [ ] 0 [ ] [ ] 2 [ ] | [ left ]<ndash/>2 0<ndash/>[ M ]<ndash/>1 [ ] | [ ] 3 [ ] [ ] 0 [ ] | [ ]<ndash/>1 0<ndash/>[LB]<ndash/>1 1<ndash/>[GA conj ]<ndash/>2</para><para><heading level="1">Right environment contraction</heading>
 </para><para>1<ndash/>[ GB conj ]<ndash/>2 0<ndash/>[LB]<ndash/>1 0<ndash/>[ ] | [ ] 0 [ ] [ ] 2 [ ] | [ ] 0<ndash/>[ M ]<ndash/>1 2<ndash/>[ right] | [ ] 3 [ ] [ ] 0 [ ] | [ ] 1<ndash/>[ GB ]<ndash/>2 0<ndash/>[LB]<ndash/>1 1<ndash/>[ ]</para>        </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="35" bodyend="90"/>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__environment_1a07a78fc055d953768e686ef522bb6d0c" compoundref="class__environment_8h" startline="45">sites</references>
+        <references refid="classclass__environment_1adcff9fdad16c923c107ff530c39d4030" compoundref="class__environment_8h" startline="41">edge_has_been_set</references>
+        <references refid="classclass__environment_1a5b4955f143dc67cf0e68c2a5227552e5" compoundref="class__environment_8cpp" startline="101" endline="108">set_edge_dims</references>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">block</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -132,6 +137,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="47" bodyend="47"/>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
       </memberdef>
       <memberdef kind="function" id="classclass__environment_1ac9ab0876f86f9f3cc64c22a5ea7ebe94" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -157,9 +163,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="48" bodyend="55"/>
-        <references refid="classclass__environment_1a336dbeb10ff5a3982fb65d7571d7e19d" compoundref="class__environment_8cpp" startline="92" endline="99">set_edge_dims</references>
-        <references refid="classclass__environment_1a43b3c6f5b47361dc747252a84ab9a0fb" compoundref="class__environment_8cpp" startline="13" endline="15">isReal</references>
-        <references refid="classclass__environment_1a43703a851ebd1aab014c596889b4207a" compoundref="class__environment_8cpp" startline="35" endline="90">enlarge</references>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
+        <references refid="classclass__environment_1aff7db6e36396f74969184d658ba0d5ab" compoundref="class__environment_8cpp" startline="110" endline="128">set_edge_dims</references>
       </memberdef>
       <memberdef kind="function" id="classclass__environment_1a43b3c6f5b47361dc747252a84ab9a0fb" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -173,7 +178,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="13" bodyend="15"/>
-        <references refid="namespace_textra_1a134cee5e3300feee66018395aa0ffa05" compoundref="nmspc__tensor__extra_8h" startline="280" endline="289">Textra::isReal</references>
+        <references refid="namespace_textra_1ae7794bc6f089ffe1c7121692c28c7592" compoundref="nmspc__tensor__extra_8h" startline="299" endline="302">Textra::isReal</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">block</references>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
       </memberdef>
       <memberdef kind="function" id="classclass__environment_1acef2c531bcfe796f126dd712aca57ef0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -195,7 +202,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="23" bodyend="31"/>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
+        <references refid="classclass__environment_1a43703a851ebd1aab014c596889b4207a" compoundref="class__environment_8cpp" startline="35" endline="90">enlarge</references>
         <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
+        <references refid="classclass__environment_1aea094f20c48033f8e638e397352bc6c1" compoundref="class__environment_8h" startline="40">position</references>
         <references refid="classclass__vidal__site_1a84dea9ec6b9cf8d8dee09dc8e5168014" compoundref="class__vidal__site_8cpp" startline="27" endline="30">class_vidal_site::get_position</references>
         <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">class_vidal_site::get_B</references>
       </memberdef>
@@ -219,6 +229,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="92" bodyend="99"/>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
+        <references refid="classclass__environment_1aff7db6e36396f74969184d658ba0d5ab" compoundref="class__environment_8cpp" startline="110" endline="128">set_edge_dims</references>
         <references refid="classclass__vidal__site_1a874b7bbe0e666637647e5772deaeaa37" compoundref="class__vidal__site_8cpp" startline="21" endline="21">class_vidal_site::get_chiL</references>
         <references refid="classclass__vidal__site_1a5508860d2e60dcc634d89fb0fc86fa53" compoundref="class__vidal__site_8cpp" startline="22" endline="22">class_vidal_site::get_chiR</references>
       </memberdef>
@@ -242,6 +254,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="59" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="101" bodyend="108"/>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
+        <references refid="classclass__environment_1aff7db6e36396f74969184d658ba0d5ab" compoundref="class__environment_8cpp" startline="110" endline="128">set_edge_dims</references>
       </memberdef>
       <memberdef kind="function" id="classclass__environment_1aff7db6e36396f74969184d658ba0d5ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -263,6 +277,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="110" bodyend="128"/>
+        <references refid="classclass__environment_1adcff9fdad16c923c107ff530c39d4030" compoundref="class__environment_8h" startline="41">edge_has_been_set</references>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">block</references>
+        <references refid="classclass__environment_1a07a78fc055d953768e686ef522bb6d0c" compoundref="class__environment_8h" startline="45">sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__environment_1ae3f06ae154ab3d2919c6d8bab92048c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -280,6 +298,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="61" bodyend="61"/>
+        <references refid="classclass__environment_1aea094f20c48033f8e638e397352bc6c1" compoundref="class__environment_8h" startline="40">position</references>
       </memberdef>
       <memberdef kind="function" id="classclass__environment_1a03977a3c06d86183f55b26af2c05509b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -293,12 +312,31 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="62" bodyend="65"/>
+        <references refid="classclass__environment_1aea094f20c48033f8e638e397352bc6c1" compoundref="class__environment_8h" startline="40">position</references>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">side</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
+    <collaborationgraph>
+      <node id="112">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="110">
+        <label>class_environment</label>
+        <link refid="classclass__environment"/>
+        <childnode refid="111" relation="usage">
+          <edgelabel>side</edgelabel>
+        </childnode>
+      </node>
+      <node id="111">
+        <label>std::string</label>
+        <childnode refid="112" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="36" bodyend="67"/>
     <listofallmembers>
       <member refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" prot="public" virt="non-virtual"><scope>class_environment</scope><name>block</name></member>

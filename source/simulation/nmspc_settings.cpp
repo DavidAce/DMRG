@@ -47,7 +47,7 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<double>     ("precision::VarSaturationThreshold"          , precision::VarSaturationThreshold);
     indata.find_parameter<double>     ("precision::EntEntrSaturationThreshold"      , precision::EntEntrSaturationThreshold);
     indata.find_parameter<double>     ("precision::SubspaceQualityFactor"           , precision::SubspaceQualityFactor);
-    indata.find_parameter<double>     ("precision::MaxSubspaceQuality"              , precision::MaxSubspaceQuality);
+    indata.find_parameter<double>     ("precision::MaxSubspaceError"                , precision::MaxSubspaceError);
     indata.find_parameter<size_t>     ("precision::MaxSitesMultiDmrg"               , precision::MaxSitesMultiDmrg);
     indata.find_parameter<size_t>     ("precision::MaxSizeFullDiag"                 , precision::MaxSizeFullDiag);
     indata.find_parameter<size_t>     ("precision::MaxSizePartDiag"                 , precision::MaxSizePartDiag);

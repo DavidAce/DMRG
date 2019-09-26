@@ -63,7 +63,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="21" bodyend="30"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" compoundref="class__algorithm__launcher_8h" startline="14">log</references>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -83,9 +83,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="34" bodyend="40"/>
+        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="19">h5ppFile</references>
         <references refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" compoundref="class__algorithm__launcher_8cpp" startline="21" endline="30">setLogger</references>
         <references refid="classclass__algorithm__launcher_1ac61f1ac1f2836bdd3bdcef6901d7fbba" compoundref="class__algorithm__launcher_8h" startline="20">hdf5_path</references>
-        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="19">h5ppFile</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -98,12 +98,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="41" bodyend="70"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="41" bodyend="66"/>
         <references refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" compoundref="class__algorithm__launcher_8cpp" startline="21" endline="30">setLogger</references>
-        <references refid="namespacesettings_1_1hdf5_1ad8b122803098f54ae88dc287460c2639" compoundref="nmspc__settings_8h" startline="137">settings::hdf5::create_mode</references>
+        <references refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" compoundref="nmspc__settings_8h" startline="44">settings::output::create_mode</references>
         <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="19">h5ppFile</references>
-        <references refid="namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d" compoundref="nmspc__settings_8h" startline="138">settings::hdf5::output_filename</references>
-        <references refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" compoundref="class__algorithm__launcher_8h" startline="14">log</references>
+        <references refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" compoundref="nmspc__settings_8h" startline="45">settings::output::output_filename</references>
         <references refid="classclass__algorithm__launcher_1ac61f1ac1f2836bdd3bdcef6901d7fbba" compoundref="class__algorithm__launcher_8h" startline="20">hdf5_path</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -117,11 +116,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="73" bodyend="81"/>
-        <references refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" compoundref="class__algorithm__launcher_8cpp" startline="84" endline="89">run_iDMRG</references>
-        <references refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" compoundref="class__algorithm__launcher_8cpp" startline="92" endline="97">run_fDMRG</references>
-        <references refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" compoundref="class__algorithm__launcher_8cpp" startline="99" endline="104">run_xDMRG</references>
-        <references refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" compoundref="class__algorithm__launcher_8cpp" startline="106" endline="111">run_iTEBD</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="69" bodyend="77"/>
+        <references refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" compoundref="class__algorithm__launcher_8cpp" startline="80" endline="85">run_iDMRG</references>
+        <references refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" compoundref="class__algorithm__launcher_8cpp" startline="88" endline="93">run_fDMRG</references>
+        <references refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" compoundref="class__algorithm__launcher_8cpp" startline="95" endline="100">run_xDMRG</references>
+        <references refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" compoundref="class__algorithm__launcher_8cpp" startline="102" endline="107">run_iTEBD</references>
         <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="19">h5ppFile</references>
         <references refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" compoundref="class__algorithm__launcher_8h" startline="14">log</references>
       </memberdef>
@@ -136,11 +135,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="84" bodyend="89"/>
-        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="83">settings::idmrg::on</references>
-        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f">iDMRG</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="80" bodyend="85"/>
+        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="110">settings::idmrg::on</references>
+        <references refid="classclass__i_d_m_r_g_1a3df56b81d9ded5d5d83de10f4d593fdf" compoundref="class__i_d_m_r_g_8cpp" startline="17" endline="19">class_iDMRG::class_iDMRG</references>
         <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="19">h5ppFile</references>
-        <references refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" compoundref="class__algorithm__infinite_8cpp" startline="26" endline="31">class_algorithm_infinite::run</references>
+        <references refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" compoundref="class__algorithm__infinite_8cpp" startline="26" endline="33">class_algorithm_infinite::run</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -153,9 +152,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="92" bodyend="97"/>
-        <references refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" compoundref="nmspc__settings_8h" startline="93">settings::fdmrg::on</references>
-        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb">fDMRG</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="88" bodyend="93"/>
+        <references refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" compoundref="nmspc__settings_8h" startline="120">settings::fdmrg::on</references>
+        <references refid="classclass__f_d_m_r_g_1a8ad33fc90e97bfd0e1bd81ade8d7ef02" compoundref="class__f_d_m_r_g_8cpp" startline="22" endline="27">class_fDMRG::class_fDMRG</references>
         <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="19">h5ppFile</references>
         <references refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" compoundref="class__algorithm__finite_8cpp" startline="43" endline="116">class_algorithm_finite::run</references>
       </memberdef>
@@ -170,9 +169,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="99" bodyend="104"/>
-        <references refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" compoundref="nmspc__settings_8h" startline="106">settings::xdmrg::on</references>
-        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae">xDMRG</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="95" bodyend="100"/>
+        <references refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" compoundref="nmspc__settings_8h" startline="133">settings::xdmrg::on</references>
+        <references refid="classclass__x_d_m_r_g_1a61930e63cbdb8cb330892a9686ae6f9c" compoundref="class__x_d_m_r_g_8cpp" startline="27" endline="31">class_xDMRG::class_xDMRG</references>
         <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="19">h5ppFile</references>
         <references refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" compoundref="class__algorithm__finite_8cpp" startline="43" endline="116">class_algorithm_finite::run</references>
       </memberdef>
@@ -187,17 +186,34 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="106" bodyend="111"/>
-        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="121">settings::itebd::on</references>
-        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f">iTEBD</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="102" bodyend="107"/>
+        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="148">settings::itebd::on</references>
+        <references refid="classclass__i_t_e_b_d_1acdaaf2d282fa4540c38c0f4673de1d5c" compoundref="class__i_t_e_b_d_8cpp" startline="21" endline="30">class_iTEBD::class_iTEBD</references>
         <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="19">h5ppFile</references>
-        <references refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" compoundref="class__algorithm__infinite_8cpp" startline="26" endline="31">class_algorithm_infinite::run</references>
+        <references refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" compoundref="class__algorithm__infinite_8cpp" startline="26" endline="33">class_algorithm_infinite::run</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
+    <collaborationgraph>
+      <node id="94">
+        <label>class_algorithm_launcher</label>
+        <link refid="classclass__algorithm__launcher"/>
+        <childnode refid="95" relation="usage">
+          <edgelabel>hdf5_path</edgelabel>
+        </childnode>
+      </node>
+      <node id="96">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="95">
+        <label>std::string</label>
+        <childnode refid="96" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" bodystart="12" bodyend="31"/>
     <listofallmembers>
       <member refid="classclass__algorithm__launcher_1aea0ae01e042e1117991c4fbc1f7b0a93" prot="public" virt="non-virtual"><scope>class_algorithm_launcher</scope><name>class_algorithm_launcher</name></member>

@@ -67,7 +67,10 @@ Program Listing for File nmspc_type_check.h
            }
        }
    
-   
+       template<typename T>
+       constexpr bool is_complex(){
+           return is_specialization<T,std::complex>::value;
+       }
    
    
    

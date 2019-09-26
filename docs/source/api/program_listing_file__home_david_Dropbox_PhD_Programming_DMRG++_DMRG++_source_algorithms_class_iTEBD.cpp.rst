@@ -19,7 +19,7 @@ Program Listing for File class_iTEBD.cpp
    #include <simulation/nmspc_settings.h>
    #include <state/class_infinite_state.h>
    #include <state/class_mps_2site.h>
-   #include <state/tools/nmspc_tools.h>
+   #include <tools/nmspc_tools.h>
    #include <model/class_model_base.h>
    #include <math/nmspc_math.h>
    #include <general/nmspc_quantum_mechanics.h>
@@ -32,10 +32,8 @@ Program Listing for File class_iTEBD.cpp
    
    class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
            : class_algorithm_infinite(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
-   //    initialize_constants();
        log_tebd = std::make_unique<class_hdf5_log<class_log_tebd>>(h5pp_file, sim_name + "/logs", "measurements", sim_name);
        sim_status.delta_t      = settings::itebd::delta_t0;
-   //    initialize_superblock(settings::model::initial_state);
        auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
        auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
        auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -46,16 +44,15 @@ Program Listing for File class_iTEBD.cpp
    
    
    void class_iTEBD::run_preprocessing() {
-       t_tot.tic();
+       t_pre.tic();
        sim_status.delta_t = settings::itebd::delta_t0;
        unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(sim_status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
-       t_tot.toc();
+       t_pre.toc();
    }
    
    
    void class_iTEBD::run_simulation()    {
        log->info("Starting {} simulation", sim_name);
-       t_tot.tic();
        while(sim_status.iteration < settings::itebd::max_steps and not sim_status.simulation_has_converged) {
            single_TEBD_step(sim_status.chi_temp);
            sim_status.phys_time += sim_status.delta_t;
@@ -67,17 +64,18 @@ Program Listing for File class_iTEBD.cpp
            check_convergence();
            sim_status.iteration++;
        }
-       t_tot.toc();
    }
    
    
    void class_iTEBD::run_postprocessing(){
+       t_pos.tic();
        print_status_full();
        print_profiling();
+       t_pos.toc();
    }
    
    void class_iTEBD::single_TEBD_step(long chi){
-       t_sim.tic();
+       t_run.tic();
        for (auto &U: unitary_time_evolving_operators){
            Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::time_evolve_theta(*state ,U);
            tools::infinite::opt::truncate_theta(theta, *state, chi, settings::precision::SVDThreshold);
@@ -85,22 +83,12 @@ Program Listing for File class_iTEBD.cpp
                state->swap_AB();        }
        }
        state->unset_measurements();
-       t_sim.toc();
+       t_run.toc();
        sim_status.wall_time = t_tot.get_age();
-       sim_status.simu_time = t_sim.get_age();
+       sim_status.simu_time = t_run.get_measured_time();
    }
    
    
-   void class_iTEBD::check_convergence_time_step(){
-       if(sim_status.delta_t <= settings::itebd::delta_tmin){
-           sim_status.time_step_has_converged = true;
-       }else if (sim_status.bond_dimension_has_reached_max and sim_status.entanglement_has_converged) {
-           sim_status.delta_t = std::max(settings::itebd::delta_tmin, sim_status.delta_t * 0.5);
-           unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-sim_status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
-   //        state->H->update_evolution_step_size(-sim_status.delta_t, settings::itebd::suzuki_order);
-           clear_saturation_status();
-       }
-   }
    
    void class_iTEBD::check_convergence(){
        t_con.tic();
@@ -120,6 +108,16 @@ Program Listing for File class_iTEBD.cpp
        t_con.toc();
    }
    
+   void class_iTEBD::check_convergence_time_step(){
+       if(sim_status.delta_t <= settings::itebd::delta_tmin){
+           sim_status.time_step_has_converged = true;
+       }else if (sim_status.bond_dimension_has_reached_max and sim_status.entanglement_has_converged) {
+           sim_status.delta_t = std::max(settings::itebd::delta_tmin, sim_status.delta_t * 0.5);
+           unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-sim_status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
+   //        state->H->update_evolution_step_size(-sim_status.delta_t, settings::itebd::suzuki_order);
+           clear_saturation_status();
+       }
+   }
    
    //void class_iTEBD::store_log_entry_progress(bool force){
    //    if (not force){
@@ -148,9 +146,9 @@ Program Listing for File class_iTEBD.cpp
    
    void class_iTEBD::write_logs(bool force){
        if(not force){
-           if (not settings::hdf5::save_logs){return;}
+           if (not settings::output::save_logs){return;}
            if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-           if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
+           if (settings::output::storage_level < StorageLevel::NORMAL){return;}
        }
        log_sim_status->append_record(sim_status);
    //    log_profiling->append_record();

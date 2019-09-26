@@ -43,12 +43,10 @@ Program Listing for File class_selfdual_tf_rf_ising.cpp
        h_rnd       = rn::log_normal(h_log_mean,h_sigma);
        delta       = J_log_mean - h_log_mean;
    
-   
-   
    }
    
    
-   void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::vector<double> parameters) {
+   void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> & MPO_, std::vector<double> & parameters) {
        mpo_internal = MPO_;
        set_hamiltonian(parameters);
        auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_ .data(),MPO_ .size());
@@ -57,18 +55,18 @@ Program Listing for File class_selfdual_tf_rf_ising.cpp
        if(mpo1 != mpo2)throw std::runtime_error("MPO mismatch");
    }
    
-   void   class_selfdual_tf_rf_ising::set_hamiltonian(const std::vector<double> parameters) {
+   void   class_selfdual_tf_rf_ising::set_hamiltonian(const std::vector<double> & parameters) {
        auto temp = Eigen::Map<const Eigen::VectorXd>(parameters.data(),parameters.size());
        set_hamiltonian(temp);
    }
    
    
-   void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::MatrixXd all_parameters, int position) {
+   void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::MatrixXd & all_parameters, int position) {
        set_hamiltonian (all_parameters.row(position));
    }
    
    
-   void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
+   void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd & parameters) {
        if((int)parameters.size() != num_params ) throw std::runtime_error("Wrong number of parameters given to initialize this model");
        assert((int)parameters.size() == num_params and "ERROR: wrong number of parameters given to initialize this model");
        position       = parameters(0);
@@ -121,7 +119,6 @@ Program Listing for File class_selfdual_tf_rf_ising.cpp
            mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
            mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
        }
-   
    }
    
    
@@ -152,10 +149,9 @@ Program Listing for File class_selfdual_tf_rf_ising.cpp
    }
    
    
-   std::shared_ptr<class_model_base> class_selfdual_tf_rf_ising::clone() const {return std::make_unique<class_selfdual_tf_rf_ising>(*this);}
+   std::unique_ptr<class_model_base> class_selfdual_tf_rf_ising::clone() const {return std::make_unique<class_selfdual_tf_rf_ising>(*this);}
    
    
-   void   class_selfdual_tf_rf_ising::set_reduced_energy(double site_energy)         {e_reduced = site_energy;}
    size_t class_selfdual_tf_rf_ising::get_spin_dimension()                     const {return spin_dim;}
    //double class_selfdual_tf_rf_ising::get_energy_reduced()                        const {return e_reduced;}
    //double class_selfdual_tf_rf_ising::get_random_field()                          const {return h_rnd;}
@@ -217,7 +213,23 @@ Program Listing for File class_selfdual_tf_rf_ising.cpp
        };
    }
    
-   
+   //std::vector<double> class_selfdual_tf_rf_ising::get_random_parameter_values() const {
+   //
+   //    return {(double)get_position(),
+   //            J_rnd,
+   //            h_rnd,
+   //            J_log_mean,
+   //            h_log_mean,
+   //            J_avg,
+   //            h_avg,
+   //            J_sigma,
+   //            h_sigma,
+   //            lambda,
+   //            delta,
+   //            e_reduced,
+   //            (double)spin_dim
+   //    };
+   //}
    
    std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
        return {(double)get_position(),
@@ -238,18 +250,35 @@ Program Listing for File class_selfdual_tf_rf_ising.cpp
    
    
    
-   void class_selfdual_tf_rf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters){
+   void class_selfdual_tf_rf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters, bool reverse){
        // Calculate average J_rnd on the whole state
        all_mpo_parameters_have_been_set = true;
-       std::vector<double> J_rnd_vec;
-       std::vector<double> h_rnd_vec;
-       for (auto &params : chain_parameters){
-           J_rnd_vec.push_back(params[1]);
-           h_rnd_vec.push_back(params[2]);
+       std::list<double> J_rnd_list;
+       std::list<double> h_rnd_list;
+       if(reverse){
+           J_rnd_list.emplace_front(0.0);
+           for (auto &params : chain_parameters){
+               J_rnd_list.emplace_front(params[1]);
+               h_rnd_list.emplace_front(params[2]);
+           }
+           J_rnd_list.pop_front();
+       }else{
+           for (auto &params : chain_parameters){
+               J_rnd_list.push_back(params[1]);
+               h_rnd_list.push_back(params[2]);
+           }
+           J_rnd_list.back() = 0.0;
        }
-       double J_rnd_avg = std::accumulate(J_rnd_vec.begin(),J_rnd_vec.end(),0.0)/J_rnd_vec.size();
-       double h_rnd_avg = std::accumulate(h_rnd_vec.begin(),h_rnd_vec.end(),0.0)/h_rnd_vec.size();
+   
+       J_rnd = *std::next(J_rnd_list.begin(), get_position());
+       h_rnd = *std::next(h_rnd_list.begin(), get_position());
+       J_rnd_list.pop_back();   // Take average of all minus last
+   //    h_rnd_list.pop_back(); // Take average of all
+   
+       double J_rnd_avg = std::accumulate(J_rnd_list.begin(),J_rnd_list.end(),0.0)/J_rnd_list.size();
+       double h_rnd_avg = std::accumulate(h_rnd_list.begin(),h_rnd_list.end(),0.0)/h_rnd_list.size();
        set_realization_averages(J_rnd_avg,h_rnd_avg);
+   
    }
    
    

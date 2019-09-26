@@ -7,39 +7,34 @@
     <includes refid="class__algorithm__base_8h" local="yes">class_algorithm_base.h</includes>
     <includes refid="class__hdf5__log__buffer_8h" local="no">io/class_hdf5_log_buffer.h</includes>
     <includes refid="nmspc__logger_8h" local="no">io/nmspc_logger.h</includes>
-    <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
-    <includes refid="class__environment_8h" local="no">state/class_environment.h</includes>
-    <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
-    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
-    <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
     <includes refid="nmspc__random__numbers_8h" local="no">general/nmspc_random_numbers.h</includes>
-    <includes refid="nmspc__quantum__mechanics_8h" local="no">general/nmspc_quantum_mechanics.h</includes>
     <includes refid="log__types_8h" local="no">io/log_types.h</includes>
     <includes local="no">h5pp/h5pp.h</includes>
     <incdepgraph>
       <node id="7">
         <label>list</label>
       </node>
-      <node id="47">
+      <node id="39">
         <label>general/nmspc_random_numbers.h</label>
         <link refid="nmspc__random__numbers_8h"/>
-        <childnode refid="48" relation="include">
+        <childnode refid="40" relation="include">
         </childnode>
         <childnode refid="9" relation="include">
         </childnode>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="28" relation="include">
+        <childnode refid="27" relation="include">
         </childnode>
       </node>
-      <node id="44">
+      <node id="36">
         <label>functional</label>
       </node>
-      <node id="32">
+      <node id="31">
         <label>iomanip</label>
       </node>
-      <node id="31">
+      <node id="30">
         <label>iterator</label>
       </node>
       <node id="21">
@@ -56,23 +51,23 @@
         <childnode refid="22" relation="include">
         </childnode>
       </node>
-      <node id="43">
+      <node id="35">
         <label>cmath</label>
       </node>
-      <node id="33">
+      <node id="32">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="34" relation="include">
+        <childnode refid="33" relation="include">
         </childnode>
-        <childnode refid="28" relation="include">
+        <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="30" relation="include">
+        <childnode refid="29" relation="include">
         </childnode>
       </node>
-      <node id="46">
+      <node id="38">
         <label>numeric</label>
       </node>
-      <node id="28">
+      <node id="27">
         <label>Eigen/Core</label>
       </node>
       <node id="16">
@@ -120,95 +115,67 @@
         <childnode refid="20" relation="include">
         </childnode>
       </node>
-      <node id="34">
+      <node id="33">
         <label>experimental/type_traits</label>
+      </node>
+      <node id="25">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
       </node>
       <node id="17">
         <label>unordered_set</label>
       </node>
-      <node id="30">
+      <node id="29">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
       <node id="1">
         <label>fstream</label>
       </node>
-      <node id="35">
-        <label>state/class_environment.h</label>
-        <link refid="class__environment_8h"/>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="27" relation="include">
-        </childnode>
-        <childnode refid="36" relation="include">
-        </childnode>
-      </node>
-      <node id="39">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="30" relation="include">
-        </childnode>
-        <childnode refid="23" relation="include">
-        </childnode>
-      </node>
       <node id="12">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="29">
+      <node id="28">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="48">
+      <node id="40">
         <label>random</label>
       </node>
-      <node id="37">
-        <label>state/class_finite_state.h</label>
-        <link refid="class__finite__state_8h"/>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="2" relation="include">
-        </childnode>
-        <childnode refid="26" relation="include">
-        </childnode>
-        <childnode refid="27" relation="include">
-        </childnode>
-        <childnode refid="35" relation="include">
-        </childnode>
-        <childnode refid="38" relation="include">
-        </childnode>
-        <childnode refid="39" relation="include">
-        </childnode>
-      </node>
-      <node id="42">
+      <node id="34">
         <label>math/nmspc_math.h</label>
         <link refid="nmspc__math_8h"/>
         <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="31" relation="include">
+        <childnode refid="30" relation="include">
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="43" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="44" relation="include">
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="45" relation="include">
+        <childnode refid="37" relation="include">
         </childnode>
-        <childnode refid="46" relation="include">
+        <childnode refid="38" relation="include">
         </childnode>
-        <childnode refid="28" relation="include">
+        <childnode refid="27" relation="include">
         </childnode>
-      </node>
-      <node id="26">
-        <label>optional</label>
       </node>
       <node id="6">
         <label>vector</label>
-      </node>
-      <node id="36">
-        <label>spdlog/fmt/fmt.h</label>
       </node>
       <node id="3">
         <label>class_algorithm_base.h</label>
@@ -235,7 +202,7 @@
       <node id="11">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="45">
+      <node id="37">
         <label>utility</label>
       </node>
       <node id="10">
@@ -255,18 +222,10 @@
         <childnode refid="18" relation="include">
         </childnode>
       </node>
-      <node id="41">
-        <label>state/class_mps_2site.h</label>
-        <link refid="class__mps__2site_8h"/>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="27" relation="include">
-        </childnode>
-      </node>
       <node id="19">
         <label>hdf5.h</label>
       </node>
-      <node id="50">
+      <node id="41">
         <label>h5pp/h5pp.h</label>
       </node>
       <node id="9">
@@ -308,57 +267,17 @@
         </childnode>
         <childnode refid="25" relation="include">
         </childnode>
-        <childnode refid="35" relation="include">
+        <childnode refid="34" relation="include">
         </childnode>
-        <childnode refid="37" relation="include">
-        </childnode>
-        <childnode refid="40" relation="include">
-        </childnode>
-        <childnode refid="41" relation="include">
-        </childnode>
-        <childnode refid="42" relation="include">
-        </childnode>
-        <childnode refid="47" relation="include">
-        </childnode>
-        <childnode refid="49" relation="include">
+        <childnode refid="39" relation="include">
         </childnode>
         <childnode refid="22" relation="include">
         </childnode>
-        <childnode refid="50" relation="include">
-        </childnode>
-      </node>
-      <node id="49">
-        <label>general/nmspc_quantum_mechanics.h</label>
-        <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="28" relation="include">
-        </childnode>
-        <childnode refid="30" relation="include">
-        </childnode>
-        <childnode refid="2" relation="include">
-        </childnode>
-        <childnode refid="6" relation="include">
+        <childnode refid="41" relation="include">
         </childnode>
       </node>
       <node id="2">
         <label>complex</label>
-      </node>
-      <node id="25">
-        <label>state/class_infinite_state.h</label>
-        <link refid="class__infinite__state_8h"/>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="26" relation="include">
-        </childnode>
-        <childnode refid="27" relation="include">
-        </childnode>
-        <childnode refid="13" relation="include">
-        </childnode>
-        <childnode refid="8" relation="include">
-        </childnode>
-        <childnode refid="15" relation="include">
-        </childnode>
-        <childnode refid="23" relation="include">
-        </childnode>
       </node>
       <node id="15">
         <label>simulation/nmspc_settings.h</label>
@@ -370,36 +289,22 @@
         <childnode refid="6" relation="include">
         </childnode>
       </node>
-      <node id="27">
+      <node id="26">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="27" relation="include">
+        </childnode>
         <childnode refid="28" relation="include">
         </childnode>
         <childnode refid="29" relation="include">
         </childnode>
         <childnode refid="30" relation="include">
         </childnode>
-        <childnode refid="31" relation="include">
-        </childnode>
         <childnode refid="9" relation="include">
         </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
         <childnode refid="32" relation="include">
-        </childnode>
-        <childnode refid="33" relation="include">
-        </childnode>
-      </node>
-      <node id="40">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="16" relation="include">
-        </childnode>
-        <childnode refid="27" relation="include">
-        </childnode>
-        <childnode refid="23" relation="include">
-        </childnode>
-        <childnode refid="13" relation="include">
         </childnode>
       </node>
       <node id="24">
@@ -408,14 +313,7 @@
       <node id="4">
         <label>memory</label>
       </node>
-      <node id="38">
-        <label>state/class_vidal_site.h</label>
-        <link refid="class__vidal__site_8h"/>
-        <childnode refid="27" relation="include">
-        </childnode>
-      </node>
     </incdepgraph>
-    <innernamespace refid="namespacestd">std</innernamespace>
       <sectiondef kind="typedef">
       <memberdef kind="typedef" id="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" prot="public" static="no">
         <type><ref refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" kindref="member">class_algorithm_base::Scalar</ref></type>
@@ -428,7 +326,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="26" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -445,227 +343,205 @@
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__algorithm__base_8h" kindref="compound">class_algorithm_base.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__hdf5__log__buffer_8h" kindref="compound">io/class_hdf5_log_buffer.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__logger_8h" kindref="compound">io/nmspc_logger.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__environment_8h" kindref="compound">state/class_environment.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__math_8h" kindref="compound">math/nmspc_math.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random__numbers_8h" kindref="compound">general/nmspc_random_numbers.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__quantum__mechanics_8h" kindref="compound">general/nmspc_quantum_mechanics.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="log__types_8h" kindref="compound">io/log_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="20"><highlight class="normal"></highlight></codeline>
-<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacesettings" kindref="compound">s</ref><sp/>=<sp/><ref refid="namespacesettings" kindref="compound">settings</ref>;</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//using<sp/>namespace<sp/>std::complex_literals;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//using<sp/>namespace<sp/>eigsolver_properties;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="26" refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" kindref="member">class_algorithm_base::Scalar</ref>;</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31" refid="classclass__algorithm__base_1a790233233d4352402e651a312e7ae76a" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" kindref="member">class_algorithm_base::class_algorithm_base</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>sim_name_,</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref><sp/>sim_type_)</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>h5pp_file<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move(h5ppFile_)),</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_name<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move(sim_name_)),</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_type<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(sim_type_)<sp/>{</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(<ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,<ref refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" kindref="member">settings::console::verbosity</ref>,<ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">settings::console::timestamp</ref>);</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(<ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,<ref refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" kindref="member">settings::console::verbosity</ref>,<ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">settings::console::timestamp</ref>);</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Constructing<sp/>class_algorithm_base&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" kindref="member">set_profiling_labels</ref>();</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1profile_1a03758f528f727a4b09a678e6b9cdcd8f" kindref="member">tools::finite::profile::init_profiling</ref>();</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a4ae9a05248866219f0df931d6160e3d7" kindref="member">log_profiling</ref><sp/><sp/>=<sp/>std::make_unique&lt;class_hdf5_log&lt;class_log_profiling&gt;&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/logs&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;profiling&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a8b718fe0f45ad5636ec2b432c11568e0" kindref="member">log_sim_status</ref><sp/>=<sp/>std::make_unique&lt;class_hdf5_log&lt;class_log_simulation_status&gt;&gt;(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/logs&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;status&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Writing<sp/>input<sp/>file&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>h5pp_file-&gt;writeDataset(<ref refid="namespacesettings_1_1input_1ab6ac8cfb0c1835dde36563f175f36bd7" kindref="member">settings::input::input_file</ref>,<sp/></highlight><highlight class="stringliteral">&quot;common/input_file&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>h5pp_file-&gt;writeDataset(<ref refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" kindref="member">settings::input::input_filename</ref>,<sp/></highlight><highlight class="stringliteral">&quot;common/input_filename&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="51"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__math_8h" kindref="compound">math/nmspc_math.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random__numbers_8h" kindref="compound">general/nmspc_random_numbers.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="log__types_8h" kindref="compound">io/log_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacesettings" kindref="compound">s</ref><sp/>=<sp/><ref refid="namespacesettings" kindref="compound">settings</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//using<sp/>namespace<sp/>std::complex_literals;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//using<sp/>namespace<sp/>eigsolver_properties;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" kindref="member">class_algorithm_base::Scalar</ref>;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="classclass__algorithm__base_1a790233233d4352402e651a312e7ae76a" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" kindref="member">class_algorithm_base::class_algorithm_base</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>sim_name_,</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref><sp/>sim_type_)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>h5pp_file<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move(h5ppFile_)),</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_name<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move(sim_name_)),</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_type<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(sim_type_)<sp/>{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(<ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,<ref refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" kindref="member">settings::console::verbosity</ref>,<ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">settings::console::timestamp</ref>);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(<ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,<ref refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" kindref="member">settings::console::verbosity</ref>,<ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">settings::console::timestamp</ref>);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Constructing<sp/>class_algorithm_base&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" kindref="member">set_profiling_labels</ref>();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a46720fc1d130729b6d90f91492d5c94d" kindref="member">tools::common::profile::init_profiling</ref>();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Constructing<sp/>log<sp/>buffers<sp/>in<sp/>base&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac2191f13b616212908a566262ace8df5" kindref="member">log_profiling</ref><sp/><sp/>=<sp/>std::make_unique&lt;class_hdf5_log&lt;class_log_profiling&gt;&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/logs&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;profiling&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a40cc086bc611a7284fed3d9a5b5c1bc6" kindref="member">log_sim_status</ref><sp/>=<sp/>std::make_unique&lt;class_hdf5_log&lt;class_log_simulation_status&gt;&gt;(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/logs&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;status&quot;</highlight><highlight class="normal"><sp/><sp/><sp/>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Writing<sp/>input<sp/>file&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>h5pp_file-&gt;writeDataset(<ref refid="namespacesettings_1_1input_1ab6ac8cfb0c1835dde36563f175f36bd7" kindref="member">settings::input::input_file</ref>,<sp/></highlight><highlight class="stringliteral">&quot;common/input_file&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>h5pp_file-&gt;writeDataset(<ref refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" kindref="member">settings::input::input_filename</ref>,<sp/></highlight><highlight class="stringliteral">&quot;common/input_filename&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
 <codeline lineno="52"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58" refid="classclass__algorithm__base_1a9d6b4c72b6f2e026a446ced69309e3ee" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a9d6b4c72b6f2e026a446ced69309e3ee" kindref="member">class_algorithm_base::check_saturation_using_slope</ref>(</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;bool&gt;<sp/><sp/>&amp;<sp/>B_vec,</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>&amp;Y_vec,</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;int&gt;<sp/>&amp;X_vec,</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_data,</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iter,</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rate,</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance,</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>&amp;slope)</highlight></codeline>
-<codeline lineno="74"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>last_measurement<sp/>=<sp/>X_vec.empty()<sp/>?<sp/>0<sp/>:<sp/>X_vec.back();</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(iter<sp/>-<sp/>last_measurement<sp/>&lt;<sp/>rate){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>It&apos;s<sp/>time<sp/>to<sp/>check.<sp/>Insert<sp/>current<sp/>numbers</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>B_vec.push_back(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>Y_vec.push_back(new_data);</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>X_vec.push_back(iter);</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>min_data_points<sp/>=<sp/>2;</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Y_vec.size()<sp/>&lt;<sp/>min_data_points){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>check_from<sp/>=<sp/><sp/>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/>long)(X_vec.size()*0.75);<sp/></highlight><highlight class="comment">//Check<sp/>the<sp/>last<sp/>quarter<sp/>of<sp/>the<sp/>measurements<sp/>in<sp/>Y_vec.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(X_vec.size()<sp/>-<sp/>check_from<sp/>&lt;<sp/>min_data_points<sp/>and<sp/>check_from<sp/>&gt;<sp/>0){</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>check_from<sp/>-=1;<sp/></highlight><highlight class="comment">//Decrease<sp/>check<sp/>from<sp/>if<sp/>out<sp/>of<sp/>bounds.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><ref refid="structclass__algorithm__base_1_1_saturation_report" kindref="compound">class_algorithm_base::SaturationReport</ref></highlight></codeline>
+<codeline lineno="54" refid="classclass__algorithm__base_1a68b331d15932f59b05a479d3bbb3a081" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__base_1a68b331d15932f59b05a479d3bbb3a081" kindref="member">class_algorithm_base::check_saturation_using_slope</ref>(</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;bool&gt;<sp/><sp/>&amp;<sp/>B_vec,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>&amp;Y_vec,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;int&gt;<sp/>&amp;X_vec,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_data,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iter,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rate,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structclass__algorithm__base_1_1_saturation_report" kindref="compound">SaturationReport</ref><sp/>report;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>last_measurement<sp/>=<sp/>X_vec.empty()<sp/>?<sp/>0<sp/>:<sp/>X_vec.back();</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(iter<sp/>-<sp/>last_measurement<sp/>&lt;<sp/>rate){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>report;}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>It&apos;s<sp/>time<sp/>to<sp/>check.<sp/>Insert<sp/>current<sp/>numbers</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>B_vec.push_back(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>Y_vec.push_back(new_data);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>X_vec.push_back(iter);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>min_data_points<sp/>=<sp/>4;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Y_vec.size()<sp/>&lt;<sp/>min_data_points){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>report;}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>[2019-09-04<sp/>09:41:16][xDMRG][<sp/><sp/>info<sp/><sp/>]<sp/>Entanglement<sp/>Entropies<sp/><sp/>=<sp/>{-0,<sp/>0.107435,<sp/>0.0755767,<sp/>0.689875,<sp/>0.692682,<sp/>0.709075,<sp/>0.936858,<sp/>0.771467,<sp/>0.609487,<sp/>0.637618,<sp/>0.708048,<sp/>0.703904,<sp/>0.716228,<sp/>0.131454<sp/>,<sp/>0.0982134,<sp/>0.165784,<sp/>-0}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>[2019-09-04<sp/>14:09:38][xDMRG][<sp/><sp/>info<sp/><sp/>]<sp/>Entanglement<sp/>Entropies<sp/><sp/>=<sp/>{-0,<sp/>0.107185,<sp/>0.0750735,<sp/>0.689648,<sp/>0.69319<sp/>,<sp/>0.705737,<sp/>0.764265,<sp/>0.71776<sp/>,<sp/>0.640145,<sp/>0.658814,<sp/>0.706533,<sp/>0.687854,<sp/>0.659679,<sp/>0.0969757,<sp/>0.0707726,<sp/>0.14884<sp/>,<sp/>-0}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>[2019-09-04<sp/>15:50:25][xDMRG][<sp/><sp/>info<sp/><sp/>]<sp/>Entanglement<sp/>Entropies<sp/><sp/>=<sp/>{-0,<sp/>0.109655,<sp/>0.0794533,<sp/>0.690183,<sp/>0.633393,<sp/>0.638498,<sp/>0.852765,<sp/>0.680258,<sp/>0.604823,<sp/>0.636992,<sp/>0.707849,<sp/>0.693525,<sp/>0.664779,<sp/>0.0980222,<sp/>0.191848<sp/>,<sp/>0.249013,<sp/>-0}<sp/>xDMRG<sp/>Iter:<sp/>7<sp/><sp/><sp/><sp/><sp/>E:<sp/>1.1380981061517343<sp/><sp/><sp/><sp/>ε:<sp/>0.5688<sp/><sp/>log₁₀<sp/>σ²(E):<sp/>-13.0853826559</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>[2019-09-04<sp/>16:12:27][xDMRG][<sp/><sp/>info<sp/><sp/>]<sp/>Entanglement<sp/>Entropies<sp/><sp/>=<sp/>{-0,<sp/>0.260162,<sp/>0.0767326,<sp/>0.691241,<sp/>0.693091,<sp/>0.704597,<sp/>0.744191,<sp/>0.683444,<sp/>0.603736,<sp/>0.63557<sp/>,<sp/>0.705953,<sp/>0.693286,<sp/>0.664763,<sp/>0.0973455,<sp/>0.0711479,<sp/>0.149059,<sp/>-0}<sp/>xDMRG<sp/>Iter:<sp/>20<sp/><sp/><sp/><sp/>E:<sp/>0.3989677607237975<sp/><sp/><sp/><sp/>ε:<sp/>0.5241<sp/><sp/>log₁₀<sp/>σ²(E):<sp/>-13.0536331913<sp/>(svd<sp/>1e-10)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>check_from<sp/>=<sp/><sp/>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/>long)(X_vec.size()*0.75);<sp/></highlight><highlight class="comment">//Check<sp/>from<sp/>last<sp/>part<sp/>of<sp/>the<sp/>measurements<sp/>in<sp/>Y_vec.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(X_vec.size()<sp/>-<sp/>check_from<sp/>&lt;<sp/>min_data_points<sp/>and<sp/>check_from<sp/>&gt;<sp/>0){</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>check_from<sp/>-=1;<sp/></highlight><highlight class="comment">//Decrease<sp/>check<sp/>from<sp/>if<sp/>out<sp/>of<sp/>bounds.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="90"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>X_vec.size()<sp/>-<sp/>check_from;</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>numerator<sp/>=<sp/>0.0;</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>denominator<sp/>=<sp/>0.0;</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>X_vec.size()<sp/>-<sp/>check_from;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>numerator<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>denominator<sp/>=<sp/>0.0;</highlight></codeline>
 <codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>x_it<sp/>=<sp/>X_vec.begin();</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>y_it<sp/>=<sp/>Y_vec.begin();</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>std::advance(x_it,<sp/>check_from);</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>std::advance(y_it,<sp/>check_from);</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>v_end<sp/>=<sp/>Y_vec.end();</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>avgX<sp/>=<sp/>accumulate(x_it,<sp/>X_vec.end(),<sp/>0.0)<sp/>/<sp/>n;</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>avgY<sp/>=<sp/>accumulate(y_it,<sp/>Y_vec.end(),<sp/>0.0)<sp/>/<sp/>n;</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"></highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal">(y_it<sp/>!=<sp/>v_end){</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>numerator<sp/><sp/><sp/>+=<sp/>(*x_it<sp/>-<sp/>avgX)<sp/>*<sp/>(*y_it<sp/>-<sp/>avgY);</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>denominator<sp/>+=<sp/>(*x_it<sp/>-<sp/>avgX)<sp/>*<sp/>(*x_it<sp/>-<sp/>avgX);</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>y_it++;</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_it++;</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"></highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>slope<sp/>=<sp/>std::abs(numerator<sp/>/<sp/>denominator)<sp/>/<sp/>avgY;</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>slope<sp/>=<sp/>std::isnan(slope)<sp/>?<sp/>0.0<sp/>:<sp/>slope;</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Scale<sp/>the<sp/>slope<sp/>so<sp/>that<sp/>it<sp/>can<sp/>be<sp/>interpreted<sp/>as<sp/>change<sp/>in<sp/>percent,<sp/>just<sp/>as<sp/>the<sp/>tolerance.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>has_saturated;</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(slope<sp/>&lt;<sp/>tolerance){</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>B_vec.back()<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>has_saturated<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>B_vec.clear();</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>has_saturated<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Slope<sp/>details:&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;<sp/>--<sp/>relative<sp/>slope<sp/><sp/>=<sp/>{}<sp/>%&quot;</highlight><highlight class="normal">,<sp/>slope);</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;<sp/>--<sp/>tolerance<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{}<sp/>&quot;</highlight><highlight class="normal">,<sp/>tolerance);</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;<sp/>--<sp/>avgY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{}<sp/>&quot;</highlight><highlight class="normal">,<sp/>avgY);</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;<sp/>--<sp/>has<sp/>saturated<sp/><sp/><sp/>=<sp/>{}<sp/>&quot;</highlight><highlight class="normal">,<sp/>has_saturated);</highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;<sp/>--<sp/>check<sp/>from<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{}<sp/>of<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>check_from,<sp/>X_vec.size());</highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>has_saturated;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>x_it<sp/>=<sp/>X_vec.begin();</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>y_it<sp/>=<sp/>Y_vec.begin();</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>std::advance(x_it,<sp/>check_from);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>std::advance(y_it,<sp/>check_from);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>v_end<sp/>=<sp/>Y_vec.end();</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>avgX<sp/>=<sp/>accumulate(x_it,<sp/>X_vec.end(),<sp/>0.0)<sp/>/<sp/>n;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>avgY<sp/>=<sp/>accumulate(y_it,<sp/>Y_vec.end(),<sp/>0.0)<sp/>/<sp/>n;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal">(y_it<sp/>!=<sp/>v_end){</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>numerator<sp/><sp/><sp/>+=<sp/>(*x_it<sp/>-<sp/>avgX)<sp/>*<sp/>(*y_it<sp/>-<sp/>avgY);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>denominator<sp/>+=<sp/>(*x_it<sp/>-<sp/>avgX)<sp/>*<sp/>(*x_it<sp/>-<sp/>avgX);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>y_it++;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_it++;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope<sp/>=<sp/>std::abs(numerator<sp/>/<sp/>denominator)<sp/>/<sp/>avgY<sp/>*<sp/>100;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::isnan(slope)<sp/>?<sp/>0.0<sp/>:<sp/>slope;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Scale<sp/>the<sp/>slope<sp/>so<sp/>that<sp/>it<sp/>can<sp/>be<sp/>interpreted<sp/>as<sp/>change<sp/>in<sp/>percent,<sp/>just<sp/>as<sp/>the<sp/>tolerance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>has_saturated;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(slope<sp/>&lt;<sp/>tolerance){</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>B_vec.back()<sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>has_saturated<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>B_vec.clear();</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>has_saturated<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" kindref="member">has_computed</ref><sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1ab8c2530a0f676fc48916e551b679273d" kindref="member">has_saturated</ref><sp/>=<sp/>has_saturated;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1afd0e69afe481ee46381ef8fb70c54790" kindref="member">slope</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>slope;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1a0754af6aec19aa9590b7a6cbc62d3c6e" kindref="member">avgY</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>avgY;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1a29483593d2e79a3bc51c9889616aecca" kindref="member">check_from</ref><sp/><sp/><sp/><sp/>=<sp/>check_from;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>report;</highlight></codeline>
 <codeline lineno="131"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="132"><highlight class="normal"></highlight></codeline>
-<codeline lineno="133" refid="classclass__algorithm__base_1a5bf9787e3825f33baafbd06c4946babc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a5bf9787e3825f33baafbd06c4946babc" kindref="member">class_algorithm_base::write_status</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force){</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>force){</highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>,<sp/><ref refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" kindref="member">write_freq</ref>())<sp/>!=<sp/>0)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" kindref="member">write_freq</ref>()<sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" kindref="member">settings::hdf5::storage_level</ref><sp/>&lt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693" kindref="member">StorageLevel::NONE</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Writing<sp/>simulation<sp/>status<sp/>to<sp/>file&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/simOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1a585ff2336f06f4cfa09cc0f9e514ece4" kindref="member">tools::common::io::write_simulation_status</ref>(<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>,<sp/>*<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>);</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/simOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="143"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"></highlight></codeline>
-<codeline lineno="145"><highlight class="normal"></highlight></codeline>
-<codeline lineno="146" refid="classclass__algorithm__base_1aa8e759aeb0f79b39ac5d8e4c4a3bb18f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1aa8e759aeb0f79b39ac5d8e4c4a3bb18f" kindref="member">class_algorithm_base::update_bond_dimension</ref>(){</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a394209e7e516250158bc78e854504288" kindref="member">chi_max</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>();</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6" kindref="member">chi_grow</ref>()<sp/>or<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>or<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>==<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>()<sp/>){</highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>();</highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" kindref="member">simulation_has_converged</ref></highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" kindref="member">simulation_has_saturated</ref></highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>&lt;<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>()){</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Updating<sp/>bond<sp/>dimension&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>=<sp/>std::min(<ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>(),<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>*<sp/>2);</highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;New<sp/>chi<sp/>=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref>);</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1adae1b7c6678d8c52304a3bcf64c1b521" kindref="member">clear_saturation_status</ref>();</highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>==<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>()){</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="163"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="164"><highlight class="normal"></highlight></codeline>
-<codeline lineno="165"><highlight class="normal"></highlight></codeline>
-<codeline lineno="166"><highlight class="normal"></highlight></codeline>
-<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134" refid="classclass__algorithm__base_1aa8e759aeb0f79b39ac5d8e4c4a3bb18f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1aa8e759aeb0f79b39ac5d8e4c4a3bb18f" kindref="member">class_algorithm_base::update_bond_dimension</ref>(){</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a394209e7e516250158bc78e854504288" kindref="member">chi_max</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>();</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6" kindref="member">chi_grow</ref>()<sp/>or<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>or<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>==<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>()<sp/>){</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>();</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" kindref="member">simulation_has_converged</ref></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" kindref="member">simulation_has_saturated</ref></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>&lt;<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>()){</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Updating<sp/>bond<sp/>dimension&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>=<sp/>std::min(<ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>(),<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>*<sp/>2);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;New<sp/>chi<sp/>=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref>);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1adae1b7c6678d8c52304a3bcf64c1b521" kindref="member">clear_saturation_status</ref>();</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/>==<sp/><ref refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" kindref="member">chi_max</ref>()){</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158" refid="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" kindref="member">class_algorithm_base::print_profiling</ref>(){</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Printing<sp/>profiling<sp/>information<sp/>(tot)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>();</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" kindref="member">t_run</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(<ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" kindref="member">t_prt</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(<ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" kindref="member">t_con</ref>.<ref refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" kindref="member">print_time_w_percent</ref>(<ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1d6b9c4356a502dd2eec25b27f80919c" kindref="member">tools::common::profile::print_profiling</ref>(<ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="168"><highlight class="normal"></highlight></codeline>
 <codeline lineno="169"><highlight class="normal"></highlight></codeline>
-<codeline lineno="170"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>class_algorithm_base::store_profiling_deltas(bool<sp/>force)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="171"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if(not<sp/>force){</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="172"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(math::mod(sim_status.iteration,<sp/>write_freq())<sp/>!=<sp/>0)<sp/>{return;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="173"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(not<sp/>settings::profiling::on<sp/>or<sp/>not<sp/>settings::hdf5::save_profiling){return;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(settings::hdf5::storage_level<sp/>&lt;<sp/>StorageLevel::NORMAL){return;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="177"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>log-&gt;trace(&quot;Storing<sp/>profiling<sp/>deltas&quot;);</highlight></codeline>
-<codeline lineno="185"><highlight class="comment"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="186"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="187"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>class_algorithm_base::store_profiling_totals(bool<sp/>force)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if(not<sp/>force){</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="189"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(math::mod(sim_status.iteration,<sp/>write_freq())<sp/>!=<sp/>0)<sp/>{return;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="190"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(not<sp/>settings::profiling::on<sp/>or<sp/>not<sp/>settings::hdf5::save_profiling){return;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="191"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>(settings::hdf5::storage_level<sp/>&lt;<sp/>StorageLevel::NORMAL){return;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="192"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="193"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="194"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>log-&gt;trace(&quot;Storing<sp/>profiling<sp/>totals&quot;);</highlight></codeline>
-<codeline lineno="202"><highlight class="comment"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="203"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" kindref="member">class_algorithm_base::process_memory_in_mb</ref>(std::string<sp/>name){</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>ifstream<sp/>filestream(</highlight><highlight class="stringliteral">&quot;/proc/self/status&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>line;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(std::getline(filestream,<sp/>line)){</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::istringstream<sp/>is_line(line);</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>key;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::getline(is_line,<sp/>key,<sp/></highlight><highlight class="charliteral">&apos;:&apos;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(key<sp/>==<sp/>name){</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>value_str;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::getline(is_line,<sp/>value_str))<sp/>{</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Extract<sp/>the<sp/>number</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string::size_type<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>alias<sp/>of<sp/>size_t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>value<sp/>=<sp/>std::stoi<sp/>(value_str,&amp;sz);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>we<sp/>have<sp/>the<sp/>value<sp/>in<sp/>kb</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>value/1024.0;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>pos<sp/>=<sp/>value.find_first_not_of(&quot;<sp/>\t&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>trimmed_value<sp/>=<sp/>value.substr(pos<sp/>!=<sp/>std::string::npos<sp/>?<sp/>pos<sp/>:<sp/>0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>trimmed_value;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1.0;</highlight></codeline>
+<codeline lineno="195"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197" refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" kindref="member">class_algorithm_base::set_profiling_labels</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacesettings_1_1profiling" kindref="compound">settings::profiling</ref>;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">precision</ref>,</highlight><highlight class="stringliteral">&quot;+Total<sp/>Time<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" kindref="member">t_prt</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kindref="member">on</ref>,<sp/><sp/><sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">precision</ref>,</highlight><highlight class="stringliteral">&quot;↳<sp/>Printing<sp/>to<sp/>console<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" kindref="member">t_con</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kindref="member">on</ref>,<sp/><sp/><sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">precision</ref>,</highlight><highlight class="stringliteral">&quot;↳<sp/>Convergence<sp/>checks<sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" kindref="member">t_run</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kindref="member">on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳+Simulation<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_obs.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Computing<sp/>observables<sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="204"><highlight class="normal"></highlight></codeline>
-<codeline lineno="205"><highlight class="normal"></highlight></codeline>
-<codeline lineno="206"><highlight class="normal"></highlight></codeline>
-<codeline lineno="207" refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" kindref="member">class_algorithm_base::process_memory_in_mb</ref>(std::string<sp/>name){</highlight></codeline>
-<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>ifstream<sp/>filestream(</highlight><highlight class="stringliteral">&quot;/proc/self/status&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>line;</highlight></codeline>
-<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(std::getline(filestream,<sp/>line)){</highlight></codeline>
-<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::istringstream<sp/>is_line(line);</highlight></codeline>
-<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>key;</highlight></codeline>
-<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::getline(is_line,<sp/>key,<sp/></highlight><highlight class="charliteral">&apos;:&apos;</highlight><highlight class="normal">)){</highlight></codeline>
-<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(key<sp/>==<sp/>name){</highlight></codeline>
-<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>value_str;</highlight></codeline>
-<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::getline(is_line,<sp/>value_str))<sp/>{</highlight></codeline>
-<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Extract<sp/>the<sp/>number</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string::size_type<sp/><ref refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" kindref="member">sz</ref>;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>alias<sp/>of<sp/>size_t</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>value<sp/>=<sp/>std::stoi<sp/>(value_str,&amp;sz);</highlight></codeline>
-<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>we<sp/>have<sp/>the<sp/>value<sp/>in<sp/>kb</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>value/1024.0;</highlight></codeline>
-<codeline lineno="222"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>pos<sp/>=<sp/>value.find_first_not_of(&quot;<sp/>\t&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="223"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>trimmed_value<sp/>=<sp/>value.substr(pos<sp/>!=<sp/>std::string::npos<sp/>?<sp/>pos<sp/>:<sp/>0);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="224"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>trimmed_value;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="229"><highlight class="normal"></highlight></codeline>
-<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1.0;</highlight></codeline>
-<codeline lineno="231"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="232"><highlight class="normal"></highlight></codeline>
-<codeline lineno="233" refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" kindref="member">class_algorithm_base::set_profiling_labels</ref>()<sp/>{</highlight></codeline>
-<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacesettings_1_1profiling" kindref="compound">settings::profiling</ref>;</highlight></codeline>
-<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">precision</ref>,</highlight><highlight class="stringliteral">&quot;+Total<sp/>Time<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" kindref="member">t_prt</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kindref="member">on</ref>,<sp/><sp/><sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">precision</ref>,</highlight><highlight class="stringliteral">&quot;↳<sp/>Printing<sp/>to<sp/>console<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" kindref="member">t_con</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kindref="member">on</ref>,<sp/><sp/><sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">precision</ref>,</highlight><highlight class="stringliteral">&quot;↳<sp/>Convergence<sp/>checks<sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" kindref="member">t_sim</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kindref="member">on</ref>,<sp/><sp/><sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">precision</ref>,</highlight><highlight class="stringliteral">&quot;↳+Simulation<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="239"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_obs.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Computing<sp/>observables<sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="240"><highlight class="normal"></highlight></codeline>
-<codeline lineno="241"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_sto.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Store<sp/>to<sp/>file<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="242"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_ste.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>finite<sp/>state<sp/>storage<sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="243"><highlight class="normal"></highlight></codeline>
-<codeline lineno="244"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_evo.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Time<sp/>Evolution<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="245"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_opt.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳+Optimize<sp/>MPS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="246"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_eig.set_properties(on,<sp/><sp/><sp/>precision,&quot;<sp/>↳<sp/>Eigenvalue<sp/>solver<sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="247"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_ham.set_properties(on,<sp/><sp/><sp/>precision,&quot;<sp/>↳<sp/>Build<sp/>Hamiltonian<sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="248"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_svd.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>SVD<sp/>Truncation<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="249"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_udt.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Update<sp/>Timestep<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="250"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_env.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Update<sp/>Environments<sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="251"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_sto.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Store<sp/>to<sp/>file<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_ste.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>finite<sp/>state<sp/>storage<sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_evo.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Time<sp/>Evolution<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_opt.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳+Optimize<sp/>MPS<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_eig.set_properties(on,<sp/><sp/><sp/>precision,&quot;<sp/>↳<sp/>Eigenvalue<sp/>solver<sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_ham.set_properties(on,<sp/><sp/><sp/>precision,&quot;<sp/>↳<sp/>Build<sp/>Hamiltonian<sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_svd.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>SVD<sp/>Truncation<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_udt.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Update<sp/>Timestep<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_env.set_properties(on,<sp/><sp/><sp/>precision,&quot;↳<sp/>Update<sp/>Environments<sp/><sp/><sp/><sp/>&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal">}</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp"/>
   </compounddef>

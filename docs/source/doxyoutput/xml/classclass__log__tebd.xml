@@ -17,7 +17,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="206" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="206" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="192" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="192" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__log__tebd_1a40f47f2459a30cd5f267858243da7b7d" prot="public" static="no" mutable="no">
         <type>std::vector&lt; <ref refid="structclass__log__tebd_1_1data__struct" kindref="compound">data_struct</ref> &gt;</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="207" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="207" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="193" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="193" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="205" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="191" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -53,19 +53,51 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="100">
-        <label>class_log_tebd::meta_struct</label>
-        <link refid="structclass__log__tebd_1_1meta__struct"/>
+      <node id="255">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
       </node>
-      <node id="99">
-        <label>class_log_tebd</label>
-        <link refid="classclass__log__tebd"/>
-        <childnode refid="100" relation="usage">
-          <edgelabel>meta</edgelabel>
+      <node id="257">
+        <label>std::vector&lt; class_log_tebd::data_struct &gt;</label>
+        <childnode refid="258" relation="usage">
+          <edgelabel>elements</edgelabel>
         </childnode>
       </node>
+      <node id="253">
+        <label>class_log_tebd::meta_struct</label>
+        <link refid="structclass__log__tebd_1_1meta__struct"/>
+        <childnode refid="254" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="255" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="256" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="256">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="252">
+        <label>class_log_tebd</label>
+        <link refid="classclass__log__tebd"/>
+        <childnode refid="253" relation="usage">
+          <edgelabel>meta</edgelabel>
+        </childnode>
+        <childnode refid="257" relation="usage">
+          <edgelabel>buffer</edgelabel>
+        </childnode>
+      </node>
+      <node id="258">
+        <label>class_log_tebd::data_struct</label>
+        <link refid="structclass__log__tebd_1_1data__struct"/>
+      </node>
+      <node id="254">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="117" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="117" bodyend="208"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="126" bodyend="194"/>
     <listofallmembers>
       <member refid="classclass__log__tebd_1a40f47f2459a30cd5f267858243da7b7d" prot="public" virt="non-virtual"><scope>class_log_tebd</scope><name>buffer</name></member>
       <member refid="classclass__log__tebd_1a0b8c3ff22f7fa0080f16769ed214ca40" prot="public" virt="non-virtual"><scope>class_log_tebd</scope><name>class_log_tebd</name></member>

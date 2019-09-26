@@ -3,8 +3,8 @@
   <compounddef id="namespaceqm" kind="namespace" language="C++">
     <compoundname>qm</compoundname>
     <innernamespace refid="namespaceqm_1_1mpo">qm::mpo</innernamespace>
-    <innernamespace refid="namespaceqm_1_1spin_one">qm::spinOne</innernamespace>
     <innernamespace refid="namespaceqm_1_1_spin_one">qm::SpinOne</innernamespace>
+    <innernamespace refid="namespaceqm_1_1spin_one">qm::spinOne</innernamespace>
     <innernamespace refid="namespaceqm_1_1spin_one_half">qm::spinOneHalf</innernamespace>
     <innernamespace refid="namespaceqm_1_1time_evolution">qm::timeEvolution</innernamespace>
       <sectiondef kind="func">
@@ -28,14 +28,12 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="17" bodyend="29"/>
-        <references refid="namespaceqm_1_1_spin_one_1a17e0039df14d4cf49c6d7a75d19a5912" compoundref="nmspc__quantum__mechanics_8cpp" startline="77">qm::SpinOne::Id</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="[generated]" line="1" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="12" column="1"/>
   </compounddef>
 </doxygen>

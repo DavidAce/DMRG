@@ -51,6 +51,8 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.h`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_dense.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_sparse.h`
@@ -64,8 +66,6 @@ Included By
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_recast.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_eigsolver.h`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`
 
 
 

@@ -13,6 +13,13 @@ Namespace tools::finite::mps
 
 
 
+Namespaces
+----------
+
+
+- :ref:`namespace_tools__finite__mps__internals`
+
+
 Functions
 ---------
 
@@ -21,10 +28,10 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a2a24aa54dee0ba344b2e182b748e2ffb`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a87270670ae7c150d7d115c9bf8327278`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1ae814b3957f593984e10669d57c42093c`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a58bc6d622772a04d5020807d1f963178`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a40adee8628ffa9fb257a4950b64dff9a`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1aa0a748883eb3fa52978c6303c18a4688`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a1f913e67d6c7adb5a637e74f6ac9104e`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1mps_1a39333dfe4f63e99d175302ff77155464`

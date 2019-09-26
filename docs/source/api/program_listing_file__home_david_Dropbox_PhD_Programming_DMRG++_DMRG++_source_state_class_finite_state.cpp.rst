@@ -16,8 +16,53 @@ Program Listing for File class_finite_state.cpp
    
    
    #include "class_finite_state.h"
-   #include <state/tools/nmspc_tools.h>
+   #include <tools/nmspc_tools.h>
    #include <general/nmspc_quantum_mechanics.h>
+   #include <spdlog/fmt/bundled/ranges.h>
+   
+   // We need to make a destructor manually for the enclosing class "class_finite_state"
+   // that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
+   // own default deleter.
+   // This allows us to forward declare the abstract base class "class_model_base"
+   // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
+   // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
+   class_finite_state::~class_finite_state()=default;
+   
+   class_finite_state::class_finite_state(const class_finite_state & other){
+       *this = other;
+   }
+   
+   class_finite_state& class_finite_state::operator= (const class_finite_state & other){
+       // check for self-assignment
+       if(&other == this) return *this;
+   
+       // Copy all data members
+       this->num_sweeps = other.num_sweeps;
+       this->num_moves  = other.num_moves;
+       this->direction  = other.direction;
+       this->chi_max    = other.chi_max;
+       this->MPS_L      = other.MPS_L;
+       this->MPS_R      = other.MPS_R;
+       this->MPS_C      = other.MPS_C;
+       this->ENV_L      = other.ENV_L;
+       this->ENV_R      = other.ENV_R;
+       this->ENV2_L     = other.ENV2_L;
+       this->ENV2_R     = other.ENV2_R;
+   
+       this->active_sites     = other.active_sites;
+       this->truncation_error = other.truncation_error;
+       this->measurements     = other.measurements;
+       this->site_update_tags = other.site_update_tags;
+       this->cache            = other.cache;
+   
+       // The MPO's are special and the whole point of doing this manually
+       this->MPO_L.clear();
+       this->MPO_R.clear();
+       for (auto & mpo: other.MPO_L) this->MPO_L.emplace_back(mpo->clone());
+       for (auto & mpo: other.MPO_R) this->MPO_R.emplace_back(mpo->clone());
+       return *this;
+   }
+   
    
    
    void class_finite_state::do_all_measurements(){
@@ -57,13 +102,36 @@ Program Listing for File class_finite_state.cpp
    size_t class_finite_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
    size_t class_finite_state::get_position()  const {return MPS_L.size() - 1u;}
    
-   int class_finite_state::get_sweeps()    const {return num_sweeps;}
-   int class_finite_state::reset_sweeps()  {num_sweeps = 0; return num_sweeps;}
+   int  class_finite_state::get_sweeps()    const       {return num_sweeps;}
+   int  class_finite_state::reset_sweeps()              {num_sweeps = 0; return num_sweeps;}
+   void class_finite_state::set_sweeps(int num_sweeps_) {num_sweeps = num_sweeps_;}
+   void class_finite_state::increment_sweeps()          {num_sweeps++;}
+   
+   int  class_finite_state::get_moves()    const       {return num_moves;}
+   int  class_finite_state::reset_moves()              { num_moves = 0; return num_moves;}
+   void class_finite_state::set_moves(int num_moves_)  { num_moves = num_moves_;}
+   void class_finite_state::increment_moves()          {num_moves++;}
+   
+   
    long class_finite_state::get_chi_max()  const {return chi_max;}
    void class_finite_state::set_chi_max(long chi_max_){ chi_max = chi_max_;}
    int  class_finite_state::get_direction() const {return direction;}
    void class_finite_state::flip_direction() {direction *= -1;}
    
+   
+   Eigen::DSizes<long,3>
+           class_finite_state::dimensions_2site()  const{
+       Eigen::DSizes<long,3> dimensions;
+       dimensions[1] = MPS_L.back().get_chiL();
+       dimensions[2] = MPS_R.front().get_chiR();
+       dimensions[0] = MPS_L.back().get_spin_dim() *  MPS_R.front().get_spin_dim();
+       return dimensions;
+   
+   }
+   size_t  class_finite_state::size_2site() const{
+       auto dims = dimensions_2site();
+       return dims[0]*dims[1]*dims[2];
+   }
    
    bool class_finite_state::position_is_the_middle() const {
        return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0) and direction == 1 ;
@@ -235,30 +303,55 @@ Program Listing for File class_finite_state.cpp
    }
    
    
-   std::list<size_t> class_finite_state::activate_sites(long threshold){
-       return active_sites = tools::finite::multisite::generate_site_list(*this,threshold);
+   
+   
+   // For reduced energy MPO's
+   
+   bool   class_finite_state::isReduced()                            const{
+       bool reduced = MPO_L.front()->isReduced();
+       for(auto &mpo : MPO_L) if(reduced != mpo->isReduced()){throw std::runtime_error(fmt::format("First MPO has isReduce: {}, but MPO at pos {} has isReduce: {}",reduced, mpo->get_position(), mpo->isReduced()));}
+       for(auto &mpo : MPO_R) if(reduced != mpo->isReduced()){throw std::runtime_error(fmt::format("First MPO has isReduce: {}, but MPO at pos {} has isReduce: {}",reduced, mpo->get_position(), mpo->isReduced()));}
+       return reduced;
+   }
+   
+   
+   double class_finite_state::get_energy_reduced()                   const{
+       //Check that all energies are the same
+       double e_reduced = MPO_L.front()->get_reduced_energy();
+       for(auto &mpo : MPO_L) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
+       for(auto &mpo : MPO_R) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
+   
+       return e_reduced*get_length();
+   }
+   
+   void class_finite_state::set_reduced_energy(double site_energy){
+       if(get_energy_reduced() == site_energy) return;
+       cache.multimpo = {};
+       for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
+       for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
+       tools::finite::mps::rebuild_environments(*this);
+   }
+   
+   
+   
+   
+   std::list<size_t> class_finite_state::activate_sites(const long threshold, const size_t max_sites){
+       clear_cache();
+       return active_sites = tools::finite::multisite::generate_site_list(*this,threshold, max_sites);
    }
    
    Eigen::DSizes<long,3> class_finite_state::active_dimensions() const{
-       Eigen::DSizes<long,3> dimensions;
-       dimensions[1] = get_G(active_sites.front()).dimension(1);
-       dimensions[2] = get_G(active_sites.back()).dimension(2);
-       dimensions[0] = 1;
-       for (auto & site : active_sites){
-           dimensions[0] *= get_G(site).dimension(0);
-       }
-       return dimensions;
+       return tools::finite::multisite::get_dimensions(*this,active_sites);
    }
    
-   size_t class_finite_state::active_size() const {
-       if (active_dimensions().empty()) return 0;
-       auto dims = active_dimensions();
-       return dims[0]*dims[1]*dims[2];
+   size_t class_finite_state::active_problem_size() const {
+       return tools::finite::multisite::get_problem_size(*this,active_sites);
    }
    
    
    Eigen::Tensor<class_finite_state::Scalar,3>   class_finite_state::get_multitheta()    const{
-       tools::log->trace("Generating multitheta");
+       if(cache.multitheta) return cache.multitheta.value();
+       tools::log->trace("Contracting multi theta...");
        if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multitheta");}
        Eigen::Tensor<Scalar,3> multitheta;
        Eigen::Tensor<Scalar,3> temp;
@@ -276,11 +369,15 @@ Program Listing for File class_finite_state.cpp
            multitheta = temp;
        }
        auto & L = get_L(active_sites.back()+1);
-       return multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
+       temp = multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
+       tools::log->trace("Contracting multi theta... OK");
+       cache.multitheta = temp;
+       return cache.multitheta.value();
    }
    
    Eigen::Tensor<class_finite_state::Scalar,4>   class_finite_state::get_multimpo()    const{
-       tools::log->trace("Generating multimpo");
+       if(cache.multimpo) return cache.multimpo.value();
+       tools::log->trace("Contracting multi mpo...");
        if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multimpo");}
        Eigen::Tensor<Scalar,4> multimpo;
        Eigen::Tensor<Scalar,4> temp;
@@ -298,8 +395,9 @@ Program Listing for File class_finite_state.cpp
                    .reshape(Textra::array4{dim0,dim1,dim2,dim3});
            multimpo = temp;
        }
-   //    tools::log->trace("Finished multimpo");
-       return multimpo;
+       tools::log->trace("Contracting multi mpo... OK");
+       cache.multimpo = multimpo;
+       return cache.multimpo.value();
    }
    
    
@@ -314,49 +412,148 @@ Program Listing for File class_finite_state.cpp
    }
    
    
-   Eigen::Tensor<class_finite_state::Scalar,6>   class_finite_state::get_multi_hamiltonian() const{
-       tools::log->trace("Generating multi hamiltonian");
-   
-   //    auto [envL,envR] = get_multienv();
+   class_finite_state::TType<6> class_finite_state::get_multi_hamiltonian() const{
+   //    if(cache.multiham) return cache.multiham.value();
+       auto mpo = get_multimpo();
+       tools::log->trace("Contracting multi hamiltonian...");
        auto & envL = get_ENVL(active_sites.front());
        auto & envR = get_ENVR(active_sites.back());
        if (envL.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", envL.get_position() , active_sites.front()));
        if (envR.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", envR.get_position() , active_sites.back()));
-       return envL.block
-              .contract(get_multimpo(), Textra::idx({2},{0}))
-              .contract(envR.block    , Textra::idx({2},{2}))
+   //    cache.multiham =
+       TType<6> multiham =
+               envL.block
+               .contract(mpo           , Textra::idx({2},{0}))
+               .contract(envR.block    , Textra::idx({2},{2}))
                .shuffle(Textra::array6{2,0,4,3,1,5});
+       tools::log->trace("Contracting multi hamiltonian... OK");
+   //    return cache.multiham.value();
+       return multiham;
    }
    
-   Eigen::Tensor<class_finite_state::Scalar,6>   class_finite_state::get_multi_hamiltonian2() const{
-       tools::log->trace("Generating multi hamiltonian squared");
-   //    auto [env2L,env2R] = get_multienv2();
+   class_finite_state::TType<6>   class_finite_state::get_multi_hamiltonian2() const{
+   //    if(cache.multiham_sq) return cache.multiham_sq.value();
+       auto mpo = get_multimpo();
+       tools::log->trace("Contracting multi hamiltonian squared...");
        auto & env2L = get_ENV2L(active_sites.front());
        auto & env2R = get_ENV2R(active_sites.back());
        if (env2L.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , active_sites.front()));
        if (env2R.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , active_sites.back()));
-       auto mpo = get_multimpo();
-       return env2L.block
+   
+   //    cache.multiham_sq =
+       TType<6> multiham_sq =
+               env2L.block
                .contract(mpo             , Textra::idx({2},{0}))
                .contract(mpo             , Textra::idx({5,2},{2,0}))
                .contract(env2R.block     , Textra::idx({2,4},{2,3}))
                .shuffle(Textra::array6{2,0,4,3,1,5});
+       tools::log->trace("Contracting multi hamiltonian squared... OK");
+       return multiham_sq;
+   //    return cache.multiham_sq.value();
    }
    
-   Eigen::Matrix<class_finite_state::Scalar,Eigen::Dynamic,Eigen::Dynamic> class_finite_state::get_multi_hamiltonian_matrix() const{
-       auto dims = active_dimensions();
-       long shape = dims[0] * dims[1] * dims[2];
-       return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian().data(),shape,shape).transpose();
+   class_finite_state::MType class_finite_state::get_multi_hamiltonian_matrix() const{
+   //    if(cache.multiham_mat) return cache.multiham_mat.value();
+       long size = active_problem_size();
+       auto ham_tensor = get_multi_hamiltonian();
+       auto cols       = ham_tensor.dimension(0)* ham_tensor.dimension(1)* ham_tensor.dimension(2);
+       auto rows       = ham_tensor.dimension(3)* ham_tensor.dimension(4)* ham_tensor.dimension(5);
+   
+       if(rows != size)
+           throw std::runtime_error (fmt::format("Mismatch hamiltonian dim0*dim1*dim2 and cols: {} != {}",cols, size));
+       if(cols != size)
+           throw std::runtime_error (fmt::format("Mismatch hamiltonian dim3*dim4*dim5 and rows: {} != {}",rows, size));
+       return Eigen::Map<MType> (ham_tensor.data(),size,size).transpose();
+   //    cache.multiham_mat =  Eigen::Map<MType> (ham_tensor.data(),size,size).transpose();
+   //    return cache.multiham_mat.value();
    }
-   Eigen::Matrix<class_finite_state::Scalar,Eigen::Dynamic,Eigen::Dynamic> class_finite_state::get_multi_hamiltonian2_matrix() const{
+   
+   
+   class_finite_state::MType class_finite_state::get_multi_hamiltonian2_matrix() const{
+   //    if(cache.multiham_sq_mat) return cache.multiham_sq_mat.value();
+       long size = active_problem_size();
+       auto ham_squared_tensor = get_multi_hamiltonian2();
+       auto cols       = ham_squared_tensor.dimension(0)* ham_squared_tensor.dimension(1)* ham_squared_tensor.dimension(2);
+       auto rows       = ham_squared_tensor.dimension(3)* ham_squared_tensor.dimension(4)* ham_squared_tensor.dimension(5);
+       if(rows != size)
+           throw std::runtime_error (fmt::format("Mismatch hamiltonian sq dim0*dim1*dim2 and cols: {} != {}",cols, size));
+       if(cols != size)
+           throw std::runtime_error (fmt::format("Mismatch hamiltonian sq dim3*dim4*dim5 and rows: {} != {}",rows, size));
+       return Eigen::Map<MType> (ham_squared_tensor.data(),size,size).transpose();
+   //    cache.multiham_sq_mat  = Eigen::Map<MType> (ham_squared_tensor.data(),size,size).transpose();
+   //    return cache.multiham_sq_mat.value();
+   }
+   
+   
+   
+   class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const{
+   //    if(cache.multiham_sq_sub) return cache.multiham_sq_sub.value();
+       auto mpo = get_multimpo();
+       tools::log->trace("Contracting hamiltonian squared matrix in subspace...");
        auto dims = active_dimensions();
-       long shape = dims[0] * dims[1] * dims[2];
-       return Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>>(get_multi_hamiltonian2().data(),shape,shape).transpose();
+       Eigen::DSizes<long,4> eigvecs_dims {dims[0],dims[1],dims[2],eigvecs.cols()};
+       auto eigvecs_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(eigvecs.data(), eigvecs_dims );
+       auto & env2L = get_ENV2L(active_sites.front());
+       auto & env2R = get_ENV2R(active_sites.back());
+       if (env2L.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , active_sites.front()));
+       if (env2R.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , active_sites.back()));
+   
+       size_t log2chiL  = std::log2(dims[1]);
+       size_t log2chiR  = std::log2(dims[2]);
+       size_t log2spin  = std::log2(dims[0]);
+       Eigen::Tensor<Scalar,2> H2;
+       if(log2spin > log2chiL + log2chiR){
+           if (log2chiL >= log2chiR){
+   //            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR ");
+               H2 =
+                       eigvecs_tensor
+                               .contract(env2L.block,                Textra::idx({1},{0}))
+                               .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
+                               .contract(env2R.block,                Textra::idx({0,4},{0,2}))
+                               .contract(mpo  ,                      Textra::idx({3,2,5},{2,0,1}))
+                               .contract(eigvecs_tensor.conjugate(), Textra::idx({3,1,2},{0,1,2}));
+           }
+           else{
+   //            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR ");
+               H2 =
+                       eigvecs_tensor
+                               .contract(env2R.block,                Textra::idx({2},{0}))
+                               .contract(mpo  ,                      Textra::idx({0,4},{2,1}))
+                               .contract(env2L.block,                Textra::idx({0,4},{0,2}))
+                               .contract(mpo  ,                      Textra::idx({3,2,5},{2,1,0}))
+                               .contract(eigvecs_tensor.conjugate(), Textra::idx({3,2,1},{0,1,2}));
+           }
+       }else{
+   //        tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
+   
+           H2 =
+                   eigvecs_tensor
+                           .contract(env2L.block,                Textra::idx({1},{0}))
+                           .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
+                           .contract(mpo  ,                      Textra::idx({5,3},{2,0}))
+                           .contract(eigvecs_tensor.conjugate(), Textra::idx({5,2},{0,1}))
+                           .contract(env2R.block,                Textra::idx({0,4,2,3},{0,1,2,3}));
+       }
+   //    H2 =
+   //            eigvecs_tensor
+   //                    .contract(env2L.block,                Textra::idx({1},{0}))
+   //                    .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
+   //                    .contract(mpo  ,                      Textra::idx({5,3},{2,0}))
+   //                    .contract(eigvecs_tensor.conjugate(), Textra::idx({5,2},{0,1}))
+   //                    .contract(env2R.block,                Textra::idx({0,4,2,3},{0,1,2,3}));
+       tools::log->trace("Contracting hamiltonian squared matrix in subspace... OK");
+       return Eigen::Map<MType>(H2.data(),H2.dimension(0),H2.dimension(1));
+   //    cache.multiham_sq_sub = Eigen::Map<MType>(H2.data(),H2.dimension(0),H2.dimension(1));
+   //    return cache.multiham_sq_sub.value();
    }
    
    
    void class_finite_state::unset_measurements()const {
        measurements = Measurements();
+   }
+   
+   void class_finite_state::clear_cache()const {
+       cache = Cache();
    }
    
    void class_finite_state::do_all_measurements()const {
@@ -373,5 +570,32 @@ Program Listing for File class_finite_state.cpp
        measurements.entanglement_entropy_current     = tools::finite::measure::entanglement_entropy_current  (*this);
        measurements.entanglement_entropy_midchain    = tools::finite::measure::entanglement_entropy_midchain (*this);
        measurements.entanglement_entropies           = tools::finite::measure::entanglement_entropies        (*this);
+   }
+   
+   
+   void class_finite_state::tag_active_sites_have_been_updated(bool tag)     const{
+       if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot tag active sites, size mismatch in site list");
+       for (auto & site: active_sites){
+           site_update_tags[site] = tag;
+       }
+   }
+   
+   void class_finite_state::tag_all_sites_have_been_updated(bool tag) const{
+       if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
+       site_update_tags = std::vector<bool>(get_length(),tag);
+   }
+   
+   bool class_finite_state::all_sites_updated() const {
+       if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
+       return  std::all_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
+   }
+   
+   bool class_finite_state::active_sites_updated() const {
+       if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
+       if (active_sites.empty()) return false;
+       auto first_site_ptr =  site_update_tags.begin() + active_sites.front();
+       auto last_site_ptr  =  first_site_ptr + active_sites.size()-1;
+       tools::log->trace("Checking update status on sites: {}", active_sites);
+       return  std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
    }
    

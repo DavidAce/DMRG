@@ -13,6 +13,7 @@ Nested Relationships
 Nested Types
 ************
 
+- :ref:`exhale_struct_structclass__finite__state_1_1_cache`
 - :ref:`exhale_struct_structclass__finite__state_1_1_measurements`
 
 

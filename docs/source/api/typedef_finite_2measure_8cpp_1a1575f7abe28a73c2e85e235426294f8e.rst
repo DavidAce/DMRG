@@ -3,7 +3,7 @@
 Typedef Scalar
 ==============
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_measure.cpp`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_measure.cpp`
 
 
 Typedef Documentation

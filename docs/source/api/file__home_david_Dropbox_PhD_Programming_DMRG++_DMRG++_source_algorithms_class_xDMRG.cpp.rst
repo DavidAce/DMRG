@@ -29,12 +29,6 @@ Includes
 --------
 
 
-- ``Eigen/Core``
-
-- ``Eigen/Dense``
-
-- ``Eigen/Sparse``
-
 - ``class_xDMRG.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_xDMRG.h`)
 
 - ``general/nmspc_quantum_mechanics.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.h`)
@@ -45,25 +39,23 @@ Includes
 
 - ``h5pp/h5pp.h``
 
-- ``io/class_hdf5_log_buffer.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_hdf5_log_buffer.h`)
-
 - ``iomanip``
 
 - ``math/nmspc_math.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_math.h`)
 
 - ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
 
+- ``spdlog/fmt/bundled/ranges.h``
+
 - ``spdlog/spdlog.h``
 
 - ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
 
-- ``state/class_infinite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`)
-
 - ``state/class_mps_2site.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.h`)
 
-- ``state/tools/finite/opt.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt.h`)
+- ``tools/finite/opt.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h`)
 
-- ``state/tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`)
+- ``tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`)
 
 
 

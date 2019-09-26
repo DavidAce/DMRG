@@ -13,12 +13,12 @@ namespace rn{
     //Random functions
     extern std::mt19937 rng;
     extern void seed(unsigned long n);
-    extern int __attribute__((hot)) uniform_integer_1();
-    extern int __attribute__((hot)) uniform_integer(const int min, const int max);
-    extern double __attribute__((hot)) uniform_double_1();
-    extern double __attribute__((hot)) uniform_double(const double min, const double max);
-    extern std::complex<double> __attribute__((hot)) uniform_complex_1();
-    extern double __attribute__((hot)) log_normal(const double mean, const double std);
+    extern int uniform_integer_1();
+    extern int uniform_integer(const int min, const int max);
+    extern double  uniform_double_1();
+    extern double  uniform_double(const double min, const double max);
+    extern std::complex<double>  uniform_complex_1();
+    extern double  log_normal(const double mean, const double std);
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata);
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata, const int num_choose);
     extern double gaussian_truncated(const double lowerLimit, const double upperLimit, const double mean, const double std) ;

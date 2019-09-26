@@ -5,9 +5,7 @@
     <includes refid="matrix__recast_8h" local="no">matrix_recast.h</includes>
     <templateparamlist>
       <param>
-        <type>typename</type>
-        <declname>Scalar</declname>
-        <defname>Scalar</defname>
+        <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
       </param>
     </templateparamlist>
       <sectiondef kind="private-attrib">
@@ -205,6 +203,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp" bodystart="22" bodyend="24"/>
+        <references refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" compoundref="matrix__recast_8h" startline="26">matrix_recast&lt; Scalar &gt;::matrix_ptr</references>
+        <references refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" compoundref="matrix__recast_8h" startline="29">matrix_recast&lt; Scalar &gt;::L</references>
         <references refid="classmatrix__recast_1acc579e758f933025e8d511d13563f762" compoundref="matrix__recast_8cpp" startline="38" endline="42">matrix_recast&lt; Scalar &gt;::recheck_all</references>
       </memberdef>
       <memberdef kind="function" id="classmatrix__recast_1aa7fb1c2b8e7c4c90c89d1253b69cbece" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -247,7 +247,6 @@
         <references refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" compoundref="matrix__recast_8h" startline="29">matrix_recast&lt; Scalar &gt;::L</references>
         <references refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" compoundref="matrix__recast_8h" startline="26">matrix_recast&lt; Scalar &gt;::matrix_ptr</references>
         <references refid="classmatrix__recast_1aa8078a5f7487342a9125a0723b3c0c37" compoundref="matrix__recast_8h" startline="21">matrix_recast&lt; Scalar &gt;::isReal</references>
-        <references refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" compoundref="matrix__recast_8cpp" startline="22" endline="24">matrix_recast&lt; Scalar &gt;::matrix_recast</references>
       </memberdef>
       <memberdef kind="function" id="classmatrix__recast_1ac3af362d62b9f9c968be7b7d5d7893d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct</ref>&lt; std::complex&lt; double &gt; &gt;</type>
@@ -261,7 +260,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp" bodystart="90" bodyend="100"/>
-        <references refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" compoundref="matrix__recast_8cpp" startline="22" endline="24">matrix_recast&lt; Scalar &gt;::matrix_recast</references>
         <references refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" compoundref="matrix__recast_8h" startline="29">matrix_recast&lt; Scalar &gt;::L</references>
         <references refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" compoundref="matrix__recast_8h" startline="28">matrix_recast&lt; Scalar &gt;::pruned</references>
         <references refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" compoundref="matrix__recast_8h" startline="27">matrix_recast&lt; Scalar &gt;::matrix_pruned</references>
@@ -284,7 +282,6 @@
         <references refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" compoundref="matrix__recast_8h" startline="29">matrix_recast&lt; Scalar &gt;::L</references>
         <references refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" compoundref="matrix__recast_8h" startline="26">matrix_recast&lt; Scalar &gt;::matrix_ptr</references>
         <references refid="classmatrix__recast_1aa8078a5f7487342a9125a0723b3c0c37" compoundref="matrix__recast_8h" startline="21">matrix_recast&lt; Scalar &gt;::isReal</references>
-        <references refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" compoundref="matrix__recast_8cpp" startline="22" endline="24">matrix_recast&lt; Scalar &gt;::matrix_recast</references>
       </memberdef>
       <memberdef kind="function" id="classmatrix__recast_1ab315dce9843630b5d03b97fa419a44af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct</ref>&lt; std::complex&lt; double &gt; &gt;</type>
@@ -298,7 +295,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp" bodystart="119" bodyend="130"/>
-        <references refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" compoundref="matrix__recast_8cpp" startline="22" endline="24">matrix_recast&lt; Scalar &gt;::matrix_recast</references>
         <references refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" compoundref="matrix__recast_8h" startline="29">matrix_recast&lt; Scalar &gt;::L</references>
         <references refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" compoundref="matrix__recast_8h" startline="28">matrix_recast&lt; Scalar &gt;::pruned</references>
         <references refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" compoundref="matrix__recast_8h" startline="27">matrix_recast&lt; Scalar &gt;::matrix_pruned</references>
@@ -351,6 +347,27 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
+    <collaborationgraph>
+      <node id="410">
+        <label>std::vector&lt; Scalar &gt;</label>
+        <childnode refid="409" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="409">
+        <label>std::complex</label>
+      </node>
+      <node id="408">
+        <label>matrix_recast&lt; Scalar &gt;</label>
+        <link refid="classmatrix__recast"/>
+        <childnode refid="409" relation="usage">
+          <edgelabel>matrix_ptr</edgelabel>
+        </childnode>
+        <childnode refid="410" relation="usage">
+          <edgelabel>matrix_pruned</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h" bodystart="16" bodyend="62"/>
     <listofallmembers>
       <member refid="classmatrix__recast_1af4aa3adfc0248562ce45aff1f9218869" prot="private" virt="non-virtual"><scope>matrix_recast</scope><name>check_if_hermitian</name></member>

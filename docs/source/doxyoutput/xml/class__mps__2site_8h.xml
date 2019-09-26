@@ -4,61 +4,120 @@
     <compoundname>class_mps_2site.h</compoundname>
     <includes local="no">memory</includes>
     <includes refid="nmspc__tensor__extra_8h" local="yes">general/nmspc_tensor_extra.h</includes>
-    <includedby refid="class__algorithm__base_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</includedby>
     <includedby refid="class__i_t_e_b_d_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</includedby>
     <includedby refid="class__x_d_m_r_g_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</includedby>
     <includedby refid="class__infinite__state_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</includedby>
     <includedby refid="class__mps__2site_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</includedby>
-    <includedby refid="views_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp</includedby>
-    <includedby refid="finite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/measure.cpp</includedby>
-    <includedby refid="finite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp</includedby>
-    <includedby refid="infinite_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp</includedby>
-    <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp</includedby>
-    <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/opt.cpp</includedby>
-    <includedby refid="infinite_2print_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/print.cpp</includedby>
+    <includedby refid="views_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</includedby>
+    <includedby refid="finite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</includedby>
+    <includedby refid="mps-internals_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</includedby>
+    <includedby refid="finite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</includedby>
+    <includedby refid="infinite_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp</includedby>
+    <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</includedby>
+    <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</includedby>
+    <includedby refid="infinite_2print_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</includedby>
     <incdepgraph>
-      <node id="2038">
+      <node id="2029">
         <label>iomanip</label>
       </node>
-      <node id="2036">
+      <node id="2027">
         <label>iterator</label>
       </node>
-      <node id="2039">
+      <node id="2030">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2040" relation="include">
-        </childnode>
-        <childnode refid="2033" relation="include">
-        </childnode>
-        <childnode refid="2035" relation="include">
-        </childnode>
-      </node>
-      <node id="2033">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="2040">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="2035">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="2034">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="2030">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h</label>
-        <link refid="class__mps__2site_8h"/>
         <childnode refid="2031" relation="include">
         </childnode>
-        <childnode refid="2032" relation="include">
+        <childnode refid="2024" relation="include">
+        </childnode>
+        <childnode refid="2026" relation="include">
         </childnode>
       </node>
-      <node id="2037">
+      <node id="2024">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2031">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2026">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2025">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2021">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h</label>
+        <link refid="class__mps__2site_8h"/>
+        <childnode refid="2022" relation="include">
+        </childnode>
+        <childnode refid="2023" relation="include">
+        </childnode>
+      </node>
+      <node id="2028">
         <label>iostream</label>
       </node>
-      <node id="2032">
+      <node id="2023">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2024" relation="include">
+        </childnode>
+        <childnode refid="2025" relation="include">
+        </childnode>
+        <childnode refid="2026" relation="include">
+        </childnode>
+        <childnode refid="2027" relation="include">
+        </childnode>
+        <childnode refid="2028" relation="include">
+        </childnode>
+        <childnode refid="2029" relation="include">
+        </childnode>
+        <childnode refid="2030" relation="include">
+        </childnode>
+      </node>
+      <node id="2022">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2039">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</label>
+        <link refid="mps-internals_8cpp"/>
+      </node>
+      <node id="2038">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
+        <link refid="finite_2measure_8cpp"/>
+      </node>
+      <node id="2036">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
+        <link refid="class__mps__2site_8cpp"/>
+      </node>
+      <node id="2042">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="2035">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
+        <link refid="class__infinite__state_8cpp"/>
+      </node>
+      <node id="2037">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="2033">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
+        <link refid="class__i_t_e_b_d_8cpp"/>
+      </node>
+      <node id="2041">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp</label>
+        <link refid="infinite_2h5pp_8cpp"/>
+      </node>
+      <node id="2034">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
+        <link refid="class__x_d_m_r_g_8cpp"/>
+      </node>
+      <node id="2032">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h</label>
+        <link refid="class__mps__2site_8h"/>
         <childnode refid="2033" relation="include">
         </childnode>
         <childnode refid="2034" relation="include">
@@ -73,87 +132,28 @@
         </childnode>
         <childnode refid="2039" relation="include">
         </childnode>
-      </node>
-      <node id="2031">
-        <label>memory</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="2046">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
-        <link refid="class__mps__2site_8cpp"/>
-      </node>
-      <node id="2045">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
-        <link refid="class__infinite__state_8cpp"/>
-      </node>
-      <node id="2043">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
-        <link refid="class__i_t_e_b_d_8cpp"/>
-      </node>
-      <node id="2050">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp</label>
-        <link refid="infinite_2h5pp_8cpp"/>
-      </node>
-      <node id="2048">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/measure.cpp</label>
-        <link refid="finite_2measure_8cpp"/>
-      </node>
-      <node id="2044">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
-        <link refid="class__x_d_m_r_g_8cpp"/>
-      </node>
-      <node id="2052">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/opt.cpp</label>
-        <link refid="infinite_2opt_8cpp"/>
-      </node>
-      <node id="2047">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp</label>
-        <link refid="views_8cpp"/>
-      </node>
-      <node id="2053">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/print.cpp</label>
-        <link refid="infinite_2print_8cpp"/>
-      </node>
-      <node id="2051">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp</label>
-        <link refid="infinite_2measure_8cpp"/>
-      </node>
-      <node id="2041">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.h</label>
-        <link refid="class__mps__2site_8h"/>
+        <childnode refid="2040" relation="include">
+        </childnode>
+        <childnode refid="2041" relation="include">
+        </childnode>
         <childnode refid="2042" relation="include">
         </childnode>
         <childnode refid="2043" relation="include">
         </childnode>
         <childnode refid="2044" relation="include">
         </childnode>
-        <childnode refid="2045" relation="include">
-        </childnode>
-        <childnode refid="2046" relation="include">
-        </childnode>
-        <childnode refid="2047" relation="include">
-        </childnode>
-        <childnode refid="2048" relation="include">
-        </childnode>
-        <childnode refid="2049" relation="include">
-        </childnode>
-        <childnode refid="2050" relation="include">
-        </childnode>
-        <childnode refid="2051" relation="include">
-        </childnode>
-        <childnode refid="2052" relation="include">
-        </childnode>
-        <childnode refid="2053" relation="include">
-        </childnode>
       </node>
-      <node id="2042">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
-        <link refid="class__algorithm__base_8cpp"/>
+      <node id="2044">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</label>
+        <link refid="infinite_2print_8cpp"/>
       </node>
-      <node id="2049">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp</label>
+      <node id="2040">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</label>
         <link refid="finite_2mps_8cpp"/>
+      </node>
+      <node id="2043">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classclass__mps__2site" prot="public">class_mps_2site</innerclass>

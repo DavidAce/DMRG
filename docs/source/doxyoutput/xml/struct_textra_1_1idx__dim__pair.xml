@@ -53,6 +53,20 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
+    <collaborationgraph>
+      <node id="366">
+        <label>T</label>
+      </node>
+      <node id="365">
+        <label>Textra::idx_dim_pair&lt; T &gt;</label>
+        <link refid="struct_textra_1_1idx__dim__pair"/>
+        <childnode refid="366" relation="usage">
+          <edgelabel>idxA</edgelabel>
+          <edgelabel>idxB</edgelabel>
+          <edgelabel>dimB</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="63" bodyend="67"/>
     <listofallmembers>
       <member refid="struct_textra_1_1idx__dim__pair_1ad9e7197a027ca16a3d1a1b067a843f68" prot="public" virt="non-virtual"><scope>Textra::idx_dim_pair</scope><name>dimB</name></member>

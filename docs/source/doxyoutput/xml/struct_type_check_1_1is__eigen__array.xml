@@ -14,24 +14,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="166">
+      <node id="368">
         <label>false_type</label>
       </node>
-      <node id="165">
+      <node id="367">
         <label>TypeCheck::is_eigen_array&lt; T &gt;</label>
         <link refid="struct_type_check_1_1is__eigen__array"/>
-        <childnode refid="166" relation="public-inheritance">
+        <childnode refid="368" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="168">
+      <node id="370">
         <label>false_type</label>
       </node>
-      <node id="167">
+      <node id="369">
         <label>TypeCheck::is_eigen_array&lt; T &gt;</label>
         <link refid="struct_type_check_1_1is__eigen__array"/>
-        <childnode refid="168" relation="public-inheritance">
+        <childnode refid="370" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

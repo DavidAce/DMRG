@@ -328,7 +328,7 @@ AUTOLINK_SUPPORT       = YES
 # diagrams that involve STL classes more complete and accurate.
 # The default value is: NO.
 
-BUILTIN_STL_SUPPORT    = NO
+BUILTIN_STL_SUPPORT    = YES
 
 # If you use Microsoft's C++/CLI language, you should set this option to YES to
 # enable parsing support.
@@ -1078,7 +1078,7 @@ VERBATIM_HEADERS       = YES
 # generated with the -Duse-libclang=ON option for CMake.
 # The default value is: NO.
 
-CLANG_ASSISTED_PARSING = NO
+CLANG_ASSISTED_PARSING = YES
 
 # If clang assisted parsing is enabled you can provide the compiler with command
 # line options that you would normally use when invoking the compiler. Note that
@@ -1086,11 +1086,9 @@ CLANG_ASSISTED_PARSING = NO
 # specified with INPUT and INCLUDE_PATH.
 # This tag requires that the tag CLANG_ASSISTED_PARSING is set to YES.
 
-CLANG_OPTIONS          = -std=c++11 \
-                         -I./eigen3 \
-                         -Wno-unknown-attributes \
-                         "-I/usr/lib/llvm-3.6/lib/clang/3.6.2/include" \
-                         -I./spectra/include
+# Copy the compile line from CMake! set(CMAKE_VERBOSE_MAKEFILE ON)
+
+CLANG_OPTIONS          = -DGFLAGS_IS_A_DLL=0 -DMKL_AVAILABLE -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-release/gitversion -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/arpack++/include -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/arpack-ng/include -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/LBFGS++/include -I/usr/include/hdf5/serial -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/ceres/include -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/glog/include -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/gflags/include -isystem /opt/intel/mkl/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/Eigen3/include/eigen3 -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/spdlog/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs/h5pp/include  -O3 -DNDEBUG   -g -Wall -march=native -mtune=native -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-unused-parameter -Wno-overloaded-virtual -Wno-uninitialized -Wno-unused-local-typedef -Wno-ignored-qualifiers -Wno-format-pedantic -Wno-unknown-pragmas -DNDEBUG -O3 -m64 -I/opt/intel/mkl/lib/intel64/lp64 -Wno-parentheses -DEIGEN_USE_MKL_ALL -DEIGEN_USE_LAPACKE_STRICT -std=c++17
 
 #---------------------------------------------------------------------------
 # Configuration options related to the alphabetical class index

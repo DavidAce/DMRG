@@ -29,11 +29,13 @@ Program Listing for File class_simulation_status.cpp
    
    std::ostream & operator << (std::ostream& os, const class_simulation_status & sim_status){
        return os
-               << std::string("iteration                      : ")  << sim_status.iteration                                         << '\n'
-               << std::string("step                           : ")  << sim_status.step                                              << '\n'
-               << std::string("position                       : ")  << sim_status.position                                          << '\n'
-               << std::string("chi_temp                       : ")  << sim_status.chi_temp                                          << '\n'
-               << std::string("chi_max                        : ")  << sim_status.chi_max                                           << '\n'
+               << std::string("iteration                      : ")  << sim_status.iteration << '\n'
+               << std::string("moves                          : ")  << sim_status.moves << '\n'
+               << std::string("step                           : ")  << sim_status.step << '\n'
+               << std::string("position                       : ")  << sim_status.position << '\n'
+               << std::string("num_resets                     : ")  << sim_status.num_resets << '\n'
+               << std::string("chi_temp                       : ")  << sim_status.chi_temp << '\n'
+               << std::string("chi_max                        : ")  << sim_status.chi_max << '\n'
                << std::string("min_sweeps                     : ")  << sim_status.min_sweeps                                        << '\n'
                << std::string("energy_min                     : ")  << sim_status.energy_min                                        << '\n'
                << std::string("energy_max                     : ")  << sim_status.energy_max                                        << '\n'
@@ -50,6 +52,7 @@ Program Listing for File class_simulation_status.cpp
                << std::string("time_step_has_converged        : ")  << std::boolalpha << sim_status.time_step_has_converged         << '\n'
                << std::string("simulation_has_converged       : ")  << std::boolalpha << sim_status.simulation_has_converged        << '\n'
                << std::string("simulation_has_saturated       : ")  << std::boolalpha << sim_status.simulation_has_saturated        << '\n'
+               << std::string("simulation_has_succeeded       : ")  << std::boolalpha << sim_status.simulation_has_succeeded        << '\n'
                << std::string("simulation_has_to_stop         : ")  << std::boolalpha << sim_status.simulation_has_to_stop          << '\n'
                << std::string("bond_dimension_has_reached_max : ")  << std::boolalpha << sim_status.bond_dimension_has_reached_max  << '\n'
                << std::string("entanglement_has_converged     : ")  << std::boolalpha << sim_status.entanglement_has_converged      << '\n'
@@ -60,6 +63,7 @@ Program Listing for File class_simulation_status.cpp
                << std::string("variance_ham_has_saturated     : ")  << std::boolalpha << sim_status.variance_ham_has_saturated      << '\n'
                << std::string("variance_mom_has_converged     : ")  << std::boolalpha << sim_status.variance_mom_has_converged      << '\n'
                << std::string("variance_mom_has_saturated     : ")  << std::boolalpha << sim_status.variance_mom_has_saturated      << '\n'
+               << std::string("entanglement_saturated_for     : ")  << sim_status.entanglement_saturated_for                        << '\n'
                << std::string("variance_mpo_saturated_for     : ")  << sim_status.variance_mpo_saturated_for                        << '\n'
                << std::string("variance_ham_saturated_for     : ")  << sim_status.variance_ham_saturated_for                        << '\n'
                << std::string("variance_mom_saturated_for     : ")  << sim_status.variance_mom_saturated_for                        << '\n';

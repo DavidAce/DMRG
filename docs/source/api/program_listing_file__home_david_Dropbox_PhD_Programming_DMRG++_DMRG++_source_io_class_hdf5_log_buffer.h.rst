@@ -65,7 +65,7 @@ Program Listing for File class_hdf5_log_buffer.h
    
        template<typename ...Args>
        void append_record(Args&& ...args){
-           log->trace("Appending record to hdf5 table: {}", log_name);
+           log->trace("Appending record to output table: {}", log_name);
            log_entries->buffer.emplace_back(std::forward<Args> (args)...);
            if (log_entries->buffer.size() >= log_entries->meta.chunk_size){
                write_buffer_to_file();

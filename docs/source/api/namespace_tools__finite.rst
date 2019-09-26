@@ -42,8 +42,6 @@ Namespaces
 
 - :ref:`namespace_tools__finite__print`
 
-- :ref:`namespace_tools__finite__profile`
-
 
 Typedefs
 --------

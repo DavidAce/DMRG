@@ -30,10 +30,10 @@ Typedefs
 --------
 
 
-- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a6c3dc715881aab0435e40a64fe0d2938`
+- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a16ef65b21697d81e6f5c9a5d0ad4cbef`
 
 - :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a1b1e34bbc7b531b1addad1633519ebe0`
 
 - :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a614f8e368679ab590e9951b6f46245f7`
 
-- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a5ef8d0b7c6de98ada5364493b19f5795`
+- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1ae405f2da810c88302cd144b50680f231`

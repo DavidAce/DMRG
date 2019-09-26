@@ -14,24 +14,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="198">
+      <node id="400">
         <label>false_type</label>
       </node>
-      <node id="197">
+      <node id="399">
         <label>TypeCheck::is_vector&lt; T &gt;</label>
         <link refid="struct_type_check_1_1is__vector"/>
-        <childnode refid="198" relation="public-inheritance">
+        <childnode refid="400" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="200">
+      <node id="402">
         <label>false_type</label>
       </node>
-      <node id="199">
+      <node id="401">
         <label>TypeCheck::is_vector&lt; T &gt;</label>
         <link refid="struct_type_check_1_1is__vector"/>
-        <childnode refid="200" relation="public-inheritance">
+        <childnode refid="402" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

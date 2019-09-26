@@ -6,353 +6,356 @@
     <includes local="no">iomanip</includes>
     <includes local="no">sstream</includes>
     <includes local="no">spdlog/spdlog.h</includes>
-    <includes refid="opt_8h" local="no">state/tools/finite/opt.h</includes>
+    <includes refid="opt_8h" local="no">tools/finite/opt.h</includes>
     <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
     <includes refid="class__environment_8h" local="no">state/class_environment.h</includes>
     <includes refid="class__model__base_8h" local="no">model/class_model_base.h</includes>
     <includes refid="class__eigsolver_8h" local="no">math/class_eigsolver.h</includes>
     <includes refid="matrix__product__hamiltonian_8h" local="no">math/arpack_extra/matrix_product_hamiltonian.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes local="no">glog/logging.h</includes>
     <incdepgraph>
-      <node id="3013">
+      <node id="2981">
         <label>Eigen/SparseLU</label>
       </node>
-      <node id="2973">
+      <node id="2941">
         <label>iomanip</label>
       </node>
-      <node id="3011">
+      <node id="2979">
         <label>Eigen/LU</label>
       </node>
-      <node id="2983">
+      <node id="2951">
         <label>iterator</label>
       </node>
-      <node id="2994">
+      <node id="2962">
         <label>glog/logging.h</label>
       </node>
-      <node id="2992">
+      <node id="2960">
         <label>LBFGS.h</label>
       </node>
-      <node id="2993">
+      <node id="2961">
         <label>ceres/ceres.h</label>
       </node>
-      <node id="2985">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2986" relation="include">
-        </childnode>
-        <childnode refid="2980" relation="include">
-        </childnode>
-        <childnode refid="2982" relation="include">
-        </childnode>
-      </node>
-      <node id="2980">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="2972">
-        <label>string</label>
-      </node>
-      <node id="2990">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="2991" relation="include">
-        </childnode>
-        <childnode refid="2984" relation="include">
-        </childnode>
-      </node>
-      <node id="2987">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="2975" relation="include">
-        </childnode>
-        <childnode refid="2988" relation="include">
-        </childnode>
-        <childnode refid="2989" relation="include">
-        </childnode>
-      </node>
-      <node id="3007">
-        <label>map</label>
-      </node>
-      <node id="2986">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="3016">
-        <label>unordered_set</label>
-      </node>
-      <node id="2982">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="3003">
-        <label>math/arpack_extra/arpackpp_solver.h</label>
-        <link refid="arpackpp__solver_8h"/>
-        <childnode refid="3004" relation="include">
-        </childnode>
-        <childnode refid="2990" relation="include">
-        </childnode>
-        <childnode refid="3005" relation="include">
-        </childnode>
-        <childnode refid="2996" relation="include">
-        </childnode>
-      </node>
-      <node id="3009">
-        <label>matrix_product_dense.h</label>
-        <link refid="matrix__product__dense_8h"/>
-        <childnode refid="3005" relation="include">
-        </childnode>
-        <childnode refid="2990" relation="include">
-        </childnode>
-        <childnode refid="2984" relation="include">
-        </childnode>
-        <childnode refid="2973" relation="include">
-        </childnode>
-        <childnode refid="2980" relation="include">
-        </childnode>
-        <childnode refid="3010" relation="include">
-        </childnode>
-        <childnode refid="3011" relation="include">
-        </childnode>
-      </node>
-      <node id="2998">
-        <label>state/class_environment.h</label>
-        <link refid="class__environment_8h"/>
-        <childnode refid="2978" relation="include">
-        </childnode>
-        <childnode refid="2979" relation="include">
-        </childnode>
-        <childnode refid="2999" relation="include">
-        </childnode>
-      </node>
-      <node id="3014">
-        <label>math/arpack_extra/matrix_product_hamiltonian.h</label>
-        <link refid="matrix__product__hamiltonian_8h"/>
-        <childnode refid="2990" relation="include">
-        </childnode>
-        <childnode refid="3006" relation="include">
-        </childnode>
-        <childnode refid="3004" relation="include">
-        </childnode>
-        <childnode refid="3005" relation="include">
-        </childnode>
-        <childnode refid="2979" relation="include">
-        </childnode>
-      </node>
-      <node id="3001">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="2978" relation="include">
-        </childnode>
-        <childnode refid="2982" relation="include">
-        </childnode>
-        <childnode refid="2987" relation="include">
-        </childnode>
-      </node>
-      <node id="2975">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="2981">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="2995">
-        <label>state/class_finite_state.h</label>
-        <link refid="class__finite__state_8h"/>
-        <childnode refid="2978" relation="include">
-        </childnode>
-        <childnode refid="2996" relation="include">
-        </childnode>
-        <childnode refid="2997" relation="include">
-        </childnode>
-        <childnode refid="2979" relation="include">
-        </childnode>
-        <childnode refid="2998" relation="include">
-        </childnode>
-        <childnode refid="3000" relation="include">
-        </childnode>
-        <childnode refid="3001" relation="include">
-        </childnode>
-      </node>
-      <node id="2971">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp</label>
+      <node id="2939">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
         <link refid="finite_2opt_8cpp"/>
-        <childnode refid="2972" relation="include">
+        <childnode refid="2940" relation="include">
         </childnode>
-        <childnode refid="2973" relation="include">
+        <childnode refid="2941" relation="include">
         </childnode>
-        <childnode refid="2974" relation="include">
+        <childnode refid="2942" relation="include">
         </childnode>
-        <childnode refid="2975" relation="include">
+        <childnode refid="2943" relation="include">
         </childnode>
-        <childnode refid="2976" relation="include">
+        <childnode refid="2944" relation="include">
         </childnode>
-        <childnode refid="2995" relation="include">
+        <childnode refid="2963" relation="include">
         </childnode>
-        <childnode refid="2998" relation="include">
+        <childnode refid="2966" relation="include">
         </childnode>
-        <childnode refid="3001" relation="include">
+        <childnode refid="2969" relation="include">
         </childnode>
-        <childnode refid="3002" relation="include">
-        </childnode>
-        <childnode refid="3014" relation="include">
-        </childnode>
-        <childnode refid="3015" relation="include">
-        </childnode>
-      </node>
-      <node id="2997">
-        <label>optional</label>
-      </node>
-      <node id="3004">
-        <label>vector</label>
-      </node>
-      <node id="2999">
-        <label>spdlog/fmt/fmt.h</label>
-      </node>
-      <node id="3010">
-        <label>complex.h</label>
-      </node>
-      <node id="2988">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="3006">
-        <label>array</label>
-      </node>
-      <node id="2974">
-        <label>sstream</label>
-      </node>
-      <node id="3012">
-        <label>matrix_product_sparse.h</label>
-        <link refid="matrix__product__sparse_8h"/>
-        <childnode refid="3005" relation="include">
-        </childnode>
-        <childnode refid="2990" relation="include">
-        </childnode>
-        <childnode refid="2984" relation="include">
-        </childnode>
-        <childnode refid="2973" relation="include">
-        </childnode>
-        <childnode refid="2980" relation="include">
-        </childnode>
-        <childnode refid="2981" relation="include">
-        </childnode>
-        <childnode refid="3013" relation="include">
-        </childnode>
-      </node>
-      <node id="3008">
-        <label>math/arpack_extra/matrix_recast.h</label>
-        <link refid="matrix__recast_8h"/>
-        <childnode refid="2996" relation="include">
-        </childnode>
-        <childnode refid="3004" relation="include">
-        </childnode>
-        <childnode refid="3005" relation="include">
-        </childnode>
-        <childnode refid="3009" relation="include">
-        </childnode>
-        <childnode refid="3012" relation="include">
-        </childnode>
-      </node>
-      <node id="2984">
-        <label>iostream</label>
-      </node>
-      <node id="3005">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="2984" relation="include">
-        </childnode>
-        <childnode refid="3006" relation="include">
-        </childnode>
-        <childnode refid="3007" relation="include">
-        </childnode>
-        <childnode refid="2996" relation="include">
-        </childnode>
-        <childnode refid="3004" relation="include">
-        </childnode>
-        <childnode refid="2988" relation="include">
-        </childnode>
-        <childnode refid="2975" relation="include">
-        </childnode>
-      </node>
-      <node id="2991">
-        <label>chrono</label>
-      </node>
-      <node id="3002">
-        <label>math/class_eigsolver.h</label>
-        <link refid="class__eigsolver_8h"/>
-        <childnode refid="3003" relation="include">
-        </childnode>
-        <childnode refid="3008" relation="include">
-        </childnode>
-        <childnode refid="3005" relation="include">
-        </childnode>
-      </node>
-      <node id="2976">
-        <label>state/tools/finite/opt.h</label>
-        <link refid="opt_8h"/>
-        <childnode refid="2977" relation="include">
-        </childnode>
-        <childnode refid="2990" relation="include">
-        </childnode>
-        <childnode refid="2973" relation="include">
-        </childnode>
-        <childnode refid="2992" relation="include">
-        </childnode>
-        <childnode refid="2993" relation="include">
-        </childnode>
-        <childnode refid="2994" relation="include">
-        </childnode>
-      </node>
-      <node id="2996">
-        <label>complex</label>
-      </node>
-      <node id="3015">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="2972" relation="include">
-        </childnode>
-        <childnode refid="3016" relation="include">
-        </childnode>
-        <childnode refid="3004" relation="include">
-        </childnode>
-      </node>
-      <node id="2979">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2980" relation="include">
-        </childnode>
-        <childnode refid="2981" relation="include">
+        <childnode refid="2970" relation="include">
         </childnode>
         <childnode refid="2982" relation="include">
         </childnode>
         <childnode refid="2983" relation="include">
         </childnode>
-        <childnode refid="2984" relation="include">
+        <childnode refid="2962" relation="include">
+        </childnode>
+      </node>
+      <node id="2953">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="2954" relation="include">
+        </childnode>
+        <childnode refid="2948" relation="include">
+        </childnode>
+        <childnode refid="2950" relation="include">
+        </childnode>
+      </node>
+      <node id="2948">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2940">
+        <label>string</label>
+      </node>
+      <node id="2958">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2959" relation="include">
+        </childnode>
+        <childnode refid="2952" relation="include">
+        </childnode>
+      </node>
+      <node id="2955">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2943" relation="include">
+        </childnode>
+        <childnode refid="2956" relation="include">
+        </childnode>
+        <childnode refid="2957" relation="include">
+        </childnode>
+      </node>
+      <node id="2975">
+        <label>map</label>
+      </node>
+      <node id="2954">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2945">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2946" relation="include">
+        </childnode>
+        <childnode refid="2940" relation="include">
+        </childnode>
+        <childnode refid="2947" relation="include">
+        </childnode>
+        <childnode refid="2955" relation="include">
+        </childnode>
+        <childnode refid="2958" relation="include">
+        </childnode>
+      </node>
+      <node id="2984">
+        <label>unordered_set</label>
+      </node>
+      <node id="2950">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2971">
+        <label>math/arpack_extra/arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
+        <childnode refid="2972" relation="include">
+        </childnode>
+        <childnode refid="2958" relation="include">
         </childnode>
         <childnode refid="2973" relation="include">
         </childnode>
-        <childnode refid="2985" relation="include">
+        <childnode refid="2964" relation="include">
         </childnode>
       </node>
       <node id="2977">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
+        <label>matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="2973" relation="include">
+        </childnode>
+        <childnode refid="2958" relation="include">
+        </childnode>
+        <childnode refid="2952" relation="include">
+        </childnode>
+        <childnode refid="2941" relation="include">
+        </childnode>
+        <childnode refid="2948" relation="include">
+        </childnode>
         <childnode refid="2978" relation="include">
+        </childnode>
+        <childnode refid="2979" relation="include">
+        </childnode>
+      </node>
+      <node id="2966">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="2946" relation="include">
+        </childnode>
+        <childnode refid="2947" relation="include">
+        </childnode>
+        <childnode refid="2967" relation="include">
+        </childnode>
+      </node>
+      <node id="2982">
+        <label>math/arpack_extra/matrix_product_hamiltonian.h</label>
+        <link refid="matrix__product__hamiltonian_8h"/>
+        <childnode refid="2958" relation="include">
+        </childnode>
+        <childnode refid="2974" relation="include">
         </childnode>
         <childnode refid="2972" relation="include">
         </childnode>
-        <childnode refid="2979" relation="include">
+        <childnode refid="2973" relation="include">
         </childnode>
-        <childnode refid="2987" relation="include">
-        </childnode>
-        <childnode refid="2990" relation="include">
+        <childnode refid="2947" relation="include">
         </childnode>
       </node>
-      <node id="2989">
-        <label>spdlog/sinks/stdout_sinks.h</label>
+      <node id="2969">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="2946" relation="include">
+        </childnode>
+        <childnode refid="2950" relation="include">
+        </childnode>
+        <childnode refid="2955" relation="include">
+        </childnode>
+      </node>
+      <node id="2943">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2949">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2963">
+        <label>state/class_finite_state.h</label>
+        <link refid="class__finite__state_8h"/>
+        <childnode refid="2946" relation="include">
+        </childnode>
+        <childnode refid="2964" relation="include">
+        </childnode>
+        <childnode refid="2965" relation="include">
+        </childnode>
+        <childnode refid="2947" relation="include">
+        </childnode>
+        <childnode refid="2966" relation="include">
+        </childnode>
+        <childnode refid="2968" relation="include">
+        </childnode>
+        <childnode refid="2969" relation="include">
+        </childnode>
+      </node>
+      <node id="2965">
+        <label>optional</label>
+      </node>
+      <node id="2972">
+        <label>vector</label>
+      </node>
+      <node id="2967">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="2944">
+        <label>tools/finite/opt.h</label>
+        <link refid="opt_8h"/>
+        <childnode refid="2945" relation="include">
+        </childnode>
+        <childnode refid="2958" relation="include">
+        </childnode>
+        <childnode refid="2941" relation="include">
+        </childnode>
+        <childnode refid="2960" relation="include">
+        </childnode>
+        <childnode refid="2961" relation="include">
+        </childnode>
+        <childnode refid="2962" relation="include">
+        </childnode>
       </node>
       <node id="2978">
+        <label>complex.h</label>
+      </node>
+      <node id="2956">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2974">
+        <label>array</label>
+      </node>
+      <node id="2942">
+        <label>sstream</label>
+      </node>
+      <node id="2980">
+        <label>matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="2973" relation="include">
+        </childnode>
+        <childnode refid="2958" relation="include">
+        </childnode>
+        <childnode refid="2952" relation="include">
+        </childnode>
+        <childnode refid="2941" relation="include">
+        </childnode>
+        <childnode refid="2948" relation="include">
+        </childnode>
+        <childnode refid="2949" relation="include">
+        </childnode>
+        <childnode refid="2981" relation="include">
+        </childnode>
+      </node>
+      <node id="2976">
+        <label>math/arpack_extra/matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="2964" relation="include">
+        </childnode>
+        <childnode refid="2972" relation="include">
+        </childnode>
+        <childnode refid="2973" relation="include">
+        </childnode>
+        <childnode refid="2977" relation="include">
+        </childnode>
+        <childnode refid="2980" relation="include">
+        </childnode>
+      </node>
+      <node id="2952">
+        <label>iostream</label>
+      </node>
+      <node id="2973">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="2952" relation="include">
+        </childnode>
+        <childnode refid="2974" relation="include">
+        </childnode>
+        <childnode refid="2975" relation="include">
+        </childnode>
+        <childnode refid="2964" relation="include">
+        </childnode>
+        <childnode refid="2972" relation="include">
+        </childnode>
+        <childnode refid="2956" relation="include">
+        </childnode>
+        <childnode refid="2943" relation="include">
+        </childnode>
+      </node>
+      <node id="2959">
+        <label>chrono</label>
+      </node>
+      <node id="2970">
+        <label>math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="2971" relation="include">
+        </childnode>
+        <childnode refid="2976" relation="include">
+        </childnode>
+        <childnode refid="2973" relation="include">
+        </childnode>
+      </node>
+      <node id="2964">
+        <label>complex</label>
+      </node>
+      <node id="2983">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2940" relation="include">
+        </childnode>
+        <childnode refid="2984" relation="include">
+        </childnode>
+        <childnode refid="2972" relation="include">
+        </childnode>
+      </node>
+      <node id="2947">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2948" relation="include">
+        </childnode>
+        <childnode refid="2949" relation="include">
+        </childnode>
+        <childnode refid="2950" relation="include">
+        </childnode>
+        <childnode refid="2951" relation="include">
+        </childnode>
+        <childnode refid="2952" relation="include">
+        </childnode>
+        <childnode refid="2941" relation="include">
+        </childnode>
+        <childnode refid="2953" relation="include">
+        </childnode>
+      </node>
+      <node id="2957">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="2946">
         <label>memory</label>
       </node>
-      <node id="3000">
+      <node id="2968">
         <label>state/class_vidal_site.h</label>
         <link refid="class__vidal__site_8h"/>
-        <childnode refid="2979" relation="include">
+        <childnode refid="2947" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -368,127 +371,151 @@
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sstream&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;spdlog/spdlog.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">state/tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__environment_8h" kindref="compound">state/class_environment.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__base_8h" kindref="compound">model/class_model_base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__eigsolver_8h" kindref="compound">math/class_eigsolver.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="matrix__product__hamiltonian_8h" kindref="compound">math/arpack_extra/matrix_product_hamiltonian.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal">Eigen::Tensor&lt;class_finite_state::Scalar,3&gt;</highlight></codeline>
-<codeline lineno="17" refid="namespacetools_1_1finite_1_1opt_1a2323c488f0d980d959f6ad8e335c03f7" refkind="member"><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1a2323c488f0d980d959f6ad8e335c03f7" kindref="member">tools::finite::opt::find_excited_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status,<sp/><ref refid="namespacetools_1_1finite_1_1opt_1afe78a5dc46145a3a7d8f51168226e0f6" kindref="member">OptMode</ref><sp/>optMode,<sp/><ref refid="namespacetools_1_1finite_1_1opt_1a04ca8f4b4cd4ea8fb0700927cbae11b6" kindref="member">OptSpace</ref><sp/>optSpace,<sp/><ref refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4e" kindref="member">OptType</ref><sp/>optType){</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Finding<sp/>optimal<sp/>excited<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">opt::internals;</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>problem_report;</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>dims<sp/>=<sp/>state.<ref refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" kindref="member">active_dimensions</ref>();</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>size<sp/>=<sp/>std::accumulate(dims.begin(),<sp/>dims.end(),<sp/>1,<sp/>std::multiplies&lt;size_t&gt;());</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>problem_report</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Starting<sp/>optimization&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>mode<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>optMode<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>space<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>optSpace<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>type<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>optType<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>position<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" kindref="member">get_position</ref>()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>shape<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;[<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>dims[0]<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>dims[1]&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>dims[2]<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]<sp/>=<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>size<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(problem_report.str());</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ad8dd1bea73386ce201be145dbeb0e57d" kindref="member">internals::ceres_optimization</ref>(state,sim_status,optType);</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(optSpace){</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>OptSpace::SUBSPACE:<sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a54d55d18dbbbf7f0258c049658e4858b" kindref="member">internals::subspace_optimization</ref>(state,<sp/>sim_status,<sp/>optType,<sp/>optMode);</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>OptSpace::DIRECT:<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc4f5fa072ebf99048b4e3b939700b31" kindref="member">internals::direct_optimization</ref><sp/><sp/>(state,<sp/>sim_status,<sp/>optType);</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="39"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;glog/logging.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal">Eigen::Tensor&lt;class_finite_state::Scalar,3&gt;</highlight></codeline>
+<codeline lineno="18" refid="namespacetools_1_1finite_1_1opt_1a2323c488f0d980d959f6ad8e335c03f7" refkind="member"><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1a2323c488f0d980d959f6ad8e335c03f7" kindref="member">tools::finite::opt::find_excited_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status,<sp/><ref refid="namespacetools_1_1finite_1_1opt_1afe78a5dc46145a3a7d8f51168226e0f6" kindref="member">OptMode</ref><sp/>optMode,<sp/><ref refid="namespacetools_1_1finite_1_1opt_1a04ca8f4b4cd4ea8fb0700927cbae11b6" kindref="member">OptSpace</ref><sp/>optSpace,<sp/><ref refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4e" kindref="member">OptType</ref><sp/>optType){</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Finding<sp/>optimal<sp/>excited<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">opt::internals;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>googleLogginghasInitialized<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>googleLogginghasInitialized){</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>google::InitGoogleLogging(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;name().c_str());</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>googleLogginghasInitialized<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>problem_report;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>dims<sp/>=<sp/>state.<ref refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" kindref="member">active_dimensions</ref>();</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>size<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a3ad3dcbfff6963012088e3c5f2ed5a06" kindref="member">active_problem_size</ref>();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>problem_report</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Starting<sp/>optimization&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>mode<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>optMode<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>space<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>optSpace<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>type<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>optType<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>position<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" kindref="member">get_position</ref>()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\t<sp/>shape<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;[<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>dims[0]<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>dims[1]&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>dims[2]<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]<sp/>=<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>size<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(problem_report.str());</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41" refid="namespacetools_1_1finite_1_1opt_1a6aea4ac2180f6024a1346897354861d5" refkind="member"><highlight class="normal">Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1finite_1_1opt_1a6aea4ac2180f6024a1346897354861d5" kindref="member">tools::finite::opt::find_ground_state</ref>(</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state,<sp/>std::string<sp/>ritz){</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a4c06ba68e3212f27854e1b739aa189f4" kindref="member">internals::ground_state_optimization</ref>(state,ritz);</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(optSpace){</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>OptSpace::SUBSPACE:<sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a3a07b29376c4353abadb1848f43f4a45" kindref="member">internals::ceres_subspace_optimization</ref>(state,<sp/>sim_status,<sp/>optType,<sp/>optMode);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>OptSpace::DIRECT:<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab9f6fa872c8f3136ce5e0d5961a55991" kindref="member">internals::ceres_direct_optimization</ref>(state,<sp/>sim_status,<sp/>optType);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="namespacetools_1_1finite_1_1opt_1a6aea4ac2180f6024a1346897354861d5" refkind="member"><highlight class="normal">Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1finite_1_1opt_1a6aea4ac2180f6024a1346897354861d5" kindref="member">tools::finite::opt::find_ground_state</ref>(</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state,<sp/>std::string<sp/>ritz){</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a4c06ba68e3212f27854e1b739aa189f4" kindref="member">internals::ground_state_optimization</ref>(state,ritz);</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51" refid="namespacetools_1_1finite_1_1opt_1_1internals_1a9e8c07dd960d644a8ca197fbbfb0a2bc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a9e8c07dd960d644a8ca197fbbfb0a2bc" kindref="member">tools::finite::opt::internals::reset_timers</ref>(){</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" kindref="member">t_opt</ref>-&gt;<sp/>reset();</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2" kindref="member">t_eig</ref>-&gt;<sp/>reset();</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aebe49a53524360884a88f314649cc474" kindref="member">t_ham</ref>-&gt;<sp/>reset();</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a0a0e265e8e5a3891eaee243d1fc1f940" kindref="member">t_tot</ref>-&gt;<sp/>reset();</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aefa36ad7a889fb02b1138b37f1c0eed5" kindref="member">t_vH2v</ref>-&gt;reset();</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aecfa1d57fa771ee1cb7839b9034d9522" kindref="member">t_vHv</ref><sp/>-&gt;reset();</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ac94e77e532b573936d9386995cc266f6" kindref="member">t_vH2</ref><sp/>-&gt;reset();</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc2d3bd1710a6b8f14a5022bc0d8b088" kindref="member">t_vH</ref><sp/><sp/>-&gt;reset();</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" kindref="member">t_op</ref><sp/><sp/>-&gt;reset();</highlight></codeline>
-<codeline lineno="61"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="64" refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1aa5e3ce93f921910366431e94215b1a03" refkind="member"><highlight class="normal"><ref refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1aa5e3ce93f921910366431e94215b1a03" kindref="member">tools::finite::opt::internals::MultiComponents&lt;Scalar&gt;::MultiComponents</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state){</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Generating<sp/>multi<sp/>components&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;Scalar,double&gt;::value){</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" kindref="member">get_multimpo</ref>().real();</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envL_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a7aedc2c9a2f2f33bf376431395a499d1" kindref="member">get_ENVL</ref>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.front());</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envR_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a4573393d6b6d20bd80ece83113f9c442" kindref="member">get_ENVR</ref>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.back());</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2L_cplx<sp/>=<sp/>state.<ref refid="classclass__finite__state_1accbbf1266e0015b4693aefa54a3614b9" kindref="member">get_ENV2L</ref>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.front());</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2R_cplx<sp/>=<sp/>state.<ref refid="classclass__finite__state_1aa221609ca29e4f80632b6d9b5fd078de" kindref="member">get_ENV2R</ref>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.back());</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>envL<sp/><sp/>=<sp/>envL_cplx.<ref refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" kindref="member">block</ref>.real();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>envR<sp/><sp/>=<sp/>envR_cplx.block.real();</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2L<sp/>=<sp/>env2L_cplx.block.real();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2R<sp/>=<sp/>env2R_cplx.block.real();</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a1e0d4d3cb509385ecd6acda4f4f5fcc0" kindref="member">get_multimpo</ref>();</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envL_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a7aedc2c9a2f2f33bf376431395a499d1" kindref="member">get_ENVL</ref>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.front());</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envR_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a4573393d6b6d20bd80ece83113f9c442" kindref="member">get_ENVR</ref>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.back());</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2L_cplx<sp/>=<sp/>state.<ref refid="classclass__finite__state_1accbbf1266e0015b4693aefa54a3614b9" kindref="member">get_ENV2L</ref>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.front());</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2R_cplx<sp/>=<sp/>state.<ref refid="classclass__finite__state_1aa221609ca29e4f80632b6d9b5fd078de" kindref="member">get_ENV2R</ref>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.back());</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>envL<sp/><sp/>=<sp/>envL_cplx.<ref refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" kindref="member">block</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>envR<sp/><sp/>=<sp/>envR_cplx.block;</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2L<sp/>=<sp/>env2L_cplx.block;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2R<sp/>=<sp/>env2R_cplx.block;</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>dsizes<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" kindref="member">active_dimensions</ref>();</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>num_parameters<sp/>=<sp/>dsizes[0]<sp/>*<sp/>dsizes[1]<sp/>*<sp/>dsizes[2];</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Finished<sp/>building<sp/>multicomponents&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="89"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" kindref="compound">tools::finite::opt::internals::MultiComponents&lt;double&gt;</ref>;</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" kindref="compound">tools::finite::opt::internals::MultiComponents&lt;std::complex&lt;double&gt;</ref>&gt;;</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"></highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="95" refid="namespacetools_1_1finite_1_1opt_1_1internals_1a92f862c7cdbda41609a5681d48bebcec" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a92f862c7cdbda41609a5681d48bebcec" kindref="member">tools::finite::opt::internals::windowed_func_abs</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::abs(x)-window;</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="101"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="102" refid="namespacetools_1_1finite_1_1opt_1_1internals_1a531552b5179c5067c04db8c51ede92a6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a531552b5179c5067c04db8c51ede92a6" kindref="member">tools::finite::opt::internals::windowed_grad_abs</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa374ce62e0b0ce5913af1a8459f689d5" kindref="member">sgn</ref>(x);</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="108"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"></highlight></codeline>
-<codeline lineno="110"><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"></highlight></codeline>
-<codeline lineno="112" refid="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" kindref="member">tools::finite::opt::internals::windowed_func_pow</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>x*x<sp/>-<sp/>window*window;</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="118"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="119" refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" kindref="member">tools::finite::opt::internals::windowed_grad_pow</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>2.0*x;</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="125"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"></highlight></codeline>
-<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="namespacetools_1_1finite_1_1opt_1_1internals_1a9e8c07dd960d644a8ca197fbbfb0a2bc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a9e8c07dd960d644a8ca197fbbfb0a2bc" kindref="member">tools::finite::opt::internals::reset_timers</ref>(){</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref>-&gt;<sp/>reset();</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" kindref="member">t_eig</ref>-&gt;<sp/>reset();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aebe49a53524360884a88f314649cc474" kindref="member">t_ham</ref>-&gt;<sp/>reset();</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a0a0e265e8e5a3891eaee243d1fc1f940" kindref="member">t_tot</ref>-&gt;<sp/>reset();</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aefa36ad7a889fb02b1138b37f1c0eed5" kindref="member">t_vH2v</ref>-&gt;reset();</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aecfa1d57fa771ee1cb7839b9034d9522" kindref="member">t_vHv</ref><sp/>-&gt;reset();</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ac94e77e532b573936d9386995cc266f6" kindref="member">t_vH2</ref><sp/>-&gt;reset();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc2d3bd1710a6b8f14a5022bc0d8b088" kindref="member">t_vH</ref><sp/><sp/>-&gt;reset();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" kindref="member">t_op</ref><sp/><sp/>-&gt;reset();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="comment">//tools::finite::opt::internals::MultiComponents&lt;Scalar&gt;::MultiComponents(const<sp/>class_finite_state<sp/>&amp;<sp/>state){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;Generating<sp/>multi<sp/>components&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>constexpr<sp/>(std::is_same&lt;Scalar,double&gt;::value){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.get_multimpo().real();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>&amp;<sp/>envL_cplx<sp/><sp/>=<sp/>state.get_ENVL(state.active_sites.front());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>&amp;<sp/>envR_cplx<sp/><sp/>=<sp/>state.get_ENVR(state.active_sites.back());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>&amp;<sp/>env2L_cplx<sp/>=<sp/>state.get_ENV2L(state.active_sites.front());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>&amp;<sp/>env2R_cplx<sp/>=<sp/>state.get_ENV2R(state.active_sites.back());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>envL<sp/><sp/>=<sp/>envL_cplx.block.real();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>envR<sp/><sp/>=<sp/>envR_cplx.block.real();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2L<sp/>=<sp/>env2L_cplx.block.real();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2R<sp/>=<sp/>env2R_cplx.block.real();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>constexpr<sp/>(std::is_same&lt;Scalar,std::complex&lt;double&gt;&gt;::value){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.get_multimpo();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>&amp;<sp/>envL_cplx<sp/><sp/>=<sp/>state.get_ENVL(state.active_sites.front());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>&amp;<sp/>envR_cplx<sp/><sp/>=<sp/>state.get_ENVR(state.active_sites.back());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>&amp;<sp/>env2L_cplx<sp/>=<sp/>state.get_ENV2L(state.active_sites.front());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>&amp;<sp/>env2R_cplx<sp/>=<sp/>state.get_ENV2R(state.active_sites.back());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>envL<sp/><sp/>=<sp/>envL_cplx.block;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>envR<sp/><sp/>=<sp/>envR_cplx.block;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2L<sp/>=<sp/>env2L_cplx.block;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>env2R<sp/>=<sp/>env2R_cplx.block;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>dsizes<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.active_dimensions();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;Finished<sp/>building<sp/>multicomponents&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">//template<sp/>struct<sp/>tools::finite::opt::internals::MultiComponents&lt;double&gt;;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="comment">//template<sp/>struct<sp/>tools::finite::opt::internals::MultiComponents&lt;std::complex&lt;double&gt;&gt;;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="namespacetools_1_1finite_1_1opt_1_1internals_1a92f862c7cdbda41609a5681d48bebcec" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a92f862c7cdbda41609a5681d48bebcec" kindref="member">tools::finite::opt::internals::windowed_func_abs</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::abs(x)-window;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="113" refid="namespacetools_1_1finite_1_1opt_1_1internals_1a531552b5179c5067c04db8c51ede92a6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a531552b5179c5067c04db8c51ede92a6" kindref="member">tools::finite::opt::internals::windowed_grad_abs</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa374ce62e0b0ce5913af1a8459f689d5" kindref="member">sgn</ref>(x);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="119"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123" refid="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" kindref="member">tools::finite::opt::internals::windowed_func_pow</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>x*x<sp/>-<sp/>window*window;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="130" refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" kindref="member">tools::finite::opt::internals::windowed_grad_pow</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>2.0*x;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>0.0;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="namespacetools_1_1finite_1_1opt_1_1internals_1a712a13efbabdce3004b25a616e0987a3" refkind="member"><highlight class="normal">std::pair&lt;double,double&gt;<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a712a13efbabdce3004b25a616e0987a3" kindref="member">tools::finite::opt::internals::windowed_func_grad</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>window){</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>func<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>grad<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(x)<sp/>&gt;=<sp/>window){</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>func<sp/>=<sp/>x*x<sp/>-<sp/>window*window;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>func<sp/>=<sp/>std::log10(func<sp/>+<sp/>1e-1<sp/>);<sp/>//<sp/>Add<sp/>a<sp/>small<sp/>epsilon<sp/>so<sp/>in<sp/>case<sp/>func<sp/>==<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>=<sp/>1.0/func/std::log(10);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>=<sp/>2*x;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_pair(func,grad);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp"/>
   </compounddef>
 </doxygen>

@@ -43,6 +43,8 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.h`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_launcher.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_fDMRG.cpp`
@@ -65,33 +67,27 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_common_prof.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_prof.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_h5pp.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_debug.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_mps.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_h5pp.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_multisite.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_mps.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_ceres.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_multisite.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_direct.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_ground_state.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_subspace.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ground_state.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_profile.cpp`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_svd.cpp`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_profile.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_svd.cpp`
 
 
 
@@ -108,8 +104,6 @@ Namespaces
 
 - :ref:`namespace_settings__fdmrg`
 
-- :ref:`namespace_settings__hdf5`
-
 - :ref:`namespace_settings__idmrg`
 
 - :ref:`namespace_settings__input`
@@ -124,9 +118,13 @@ Namespaces
 
 - :ref:`namespace_settings__model__tf_nn_ising`
 
+- :ref:`namespace_settings__output`
+
 - :ref:`namespace_settings__precision`
 
 - :ref:`namespace_settings__profiling`
+
+- :ref:`namespace_settings__threading`
 
 - :ref:`namespace_settings__xdmrg`
 
@@ -175,18 +173,6 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1fdmrg_1a4d5eed12a79f9d570135c218942c5401`
 
-- :ref:`exhale_variable_namespacesettings_1_1hdf5_1aa01b10679e0560f95c08147606f59d39`
-
-- :ref:`exhale_variable_namespacesettings_1_1hdf5_1ad8b122803098f54ae88dc287460c2639`
-
-- :ref:`exhale_variable_namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d`
-
-- :ref:`exhale_variable_namespacesettings_1_1hdf5_1adc37951d5f8052875716e1b1986c538f`
-
-- :ref:`exhale_variable_namespacesettings_1_1hdf5_1a28db4ee0193d7e6791affbc2e1ab1259`
-
-- :ref:`exhale_variable_namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537`
-
 - :ref:`exhale_variable_namespacesettings_1_1idmrg_1aa8fbed186f5dc10147472f92cb11cd6f`
 
 - :ref:`exhale_variable_namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6`
@@ -221,11 +207,15 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1itebd_1a93a0bfc65a4ca0a13df530b4d9c80d11`
 
-- :ref:`exhale_variable_namespacesettings_1_1model_1a42d6b88cb00f9824b3ee1a24eca7dbbc`
+- :ref:`exhale_variable_namespacesettings_1_1model_1a1f37947bd102cc62063b30630d798a42`
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b`
 
-- :ref:`exhale_variable_namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284`
+- :ref:`exhale_variable_namespacesettings_1_1model_1a3f07da5789dea3088c9f7efaeb8e6ee8`
+
+- :ref:`exhale_variable_namespacesettings_1_1model_1a5b1871176f010ad2de0dc28939d8fa82`
+
+- :ref:`exhale_variable_namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c`
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a6a8a8d6fa29d9d802a184390079d1668`
 
@@ -238,6 +228,8 @@ Variables
 - :ref:`exhale_variable_namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a585356bf92b2413b1cb430de265b0e8e`
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1af8e672e8d9eb0861b3c5419103906a9e`
+
+- :ref:`exhale_variable_namespacesettings_1_1model_1a8581d610af0717c14566033ed2ab9745`
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517`
 
@@ -257,6 +249,22 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1_1tf__nn__ising_1a1e1c647aee60057b23aa93aed6e0771c`
 
+- :ref:`exhale_variable_namespacesettings_1_1model_1a2b2ff3a327a7ba07f22ddbd0b5747631`
+
+- :ref:`exhale_variable_namespacesettings_1_1model_1abf7a65496d4c38b818f6b1e4e3c8a02f`
+
+- :ref:`exhale_variable_namespacesettings_1_1output_1a30a0550b22d0bcb105c317a549d7a004`
+
+- :ref:`exhale_variable_namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c`
+
+- :ref:`exhale_variable_namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939`
+
+- :ref:`exhale_variable_namespacesettings_1_1output_1a7db5bd70ef10536983073e97f81d65b3`
+
+- :ref:`exhale_variable_namespacesettings_1_1output_1a6c898153abc646a16c799b9183d485d9`
+
+- :ref:`exhale_variable_namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e`
+
 - :ref:`exhale_variable_namespacesettings_1_1precision_1a538b01f0a7fe27f48d7980bd7630bd0e`
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373`
@@ -265,9 +273,21 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1aefd3107716333590498c58a6ae754f5d`
 
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a750367d57c28bed6cbe50b368b822d84`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a78cccff43645d6cdb068d0e1d1fd9ab0`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a0b26d7fe007f5549a23443d5b6a36336`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a7d297b83e4dbd5b16f69c16fc7872ee8`
+
 - :ref:`exhale_variable_namespacesettings_1_1precision_1a8161050773e553d9b1e4e416a0289508`
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1a6d460e3e89da7786ddef877703a4ff54`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1abf702bad979405cc3acd9423af31e4e0`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1afad83713588045b35c92b4128b4333c7`
 
 - :ref:`exhale_variable_namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e`
 
@@ -278,6 +298,12 @@ Variables
 - :ref:`exhale_variable_namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7`
 
 - :ref:`exhale_variable_namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b`
+
+- :ref:`exhale_variable_namespacesettings_1_1threading_1a4a3a8d1a1ee2b03b0a305923d6d530f2`
+
+- :ref:`exhale_variable_namespacesettings_1_1threading_1ac01485bfd26c27921bfc55828e1e6dab`
+
+- :ref:`exhale_variable_namespacesettings_1_1threading_1a371a76d1d8c3d06b5f986772f63ae955`
 
 - :ref:`exhale_variable_namespacesettings_1_1xdmrg_1a3c996295abab807a1da990592432ed3f`
 

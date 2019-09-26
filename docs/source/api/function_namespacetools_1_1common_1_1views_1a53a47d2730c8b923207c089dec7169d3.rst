@@ -3,7 +3,7 @@
 Function tools::common::views::get_theta_evn(const class_mps_2site&, std::complex<double>)
 ==========================================================================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
 
 
 Function Documentation

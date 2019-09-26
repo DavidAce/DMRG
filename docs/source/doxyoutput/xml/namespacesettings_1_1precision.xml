@@ -15,7 +15,7 @@
 <para>Maximum number of steps for eigenvalue solver. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="70" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="90" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1precision_1a83177d10f491bd1482cdca3132e4dfde" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -29,7 +29,7 @@
 <para>Minimum threshold for halting eigenvalue solver. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="71" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="91" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -43,7 +43,7 @@
 <para>Parameter controlling the column space? of the Lanczos solver. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="72" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="92" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -57,7 +57,7 @@
 <para>Minimum threshold value for keeping singular values. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="73" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -71,7 +71,7 @@
 <para>Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="74" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="94" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1precision_1a2d9e7cad0354e0b3b98f9c7acb391d23" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -82,10 +82,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Variance saturation threshold. The variance has saturated when its (absolute) slope reaches below this value </para>        </detaileddescription>
+<para>Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="75" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="95" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1precision_1aefd3107716333590498c58a6ae754f5d" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -96,10 +96,52 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Entanglement Entropy saturation threshold. The entanglement entropy has saturated when its (absolute) slope reaches below this value </para>        </detaileddescription>
+<para>Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="76" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="96" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1afad83713588045b35c92b4128b4333c7" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::precision::SubspaceQualityFactor</definition>
+        <argsstring></argsstring>
+        <name>SubspaceQualityFactor</name>
+        <initializer>= 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the quality is too bad, direct optimization is done instead </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="97" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1abf702bad979405cc3acd9423af31e4e0" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::precision::MaxSubspaceQuality</definition>
+        <argsstring></argsstring>
+        <name>MaxSubspaceQuality</name>
+        <initializer>= 1e-4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>The maximum subspace quality to accept. Helps in the early stages to find good overlapping states </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="98" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a0b26d7fe007f5549a23443d5b6a36336" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::precision::MaxSitesMultiDmrg</definition>
+        <argsstring></argsstring>
+        <name>MaxSitesMultiDmrg</name>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of sites in multi-site dmrg. Too many sites (&gt;12 or so) makes the contractions slow. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="99" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="99" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1precision_1a8161050773e553d9b1e4e416a0289508" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -113,7 +155,7 @@
 <para>Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="77" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="100" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="100" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1precision_1a6d460e3e89da7786ddef877703a4ff54" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -127,13 +169,55 @@
 <para>Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="78" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="101" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a7d297b83e4dbd5b16f69c16fc7872ee8" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::precision::MaxSizeDirect</definition>
+        <argsstring></argsstring>
+        <name>MaxSizeDirect</name>
+        <initializer>= 131072</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="102" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a750367d57c28bed6cbe50b368b822d84" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double settings::precision::MaxNormError</definition>
+        <argsstring></argsstring>
+        <name>MaxNormError</name>
+        <initializer>= 1e-10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum norm deviation from unity during integrity checks </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1precision_1a78cccff43645d6cdb068d0e1d1fd9ab0" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::precision::MaxResets</definition>
+        <argsstring></argsstring>
+        <name>MaxResets</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Maximum number of resets to initial state </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="104" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="69" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="89" column="1"/>
   </compounddef>
 </doxygen>

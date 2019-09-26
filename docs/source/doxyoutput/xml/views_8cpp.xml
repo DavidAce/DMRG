@@ -2,360 +2,365 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="views_8cpp" kind="file" language="C++">
     <compoundname>views.cpp</compoundname>
-    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
     <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
     <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
     <includes refid="class__eigsolver_8h" local="no">math/class_eigsolver.h</includes>
     <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
     <incdepgraph>
-      <node id="2278">
+      <node id="2268">
+        <label>list</label>
+      </node>
+      <node id="2266">
         <label>Eigen/SparseLU</label>
       </node>
-      <node id="2281">
+      <node id="2270">
         <label>functional</label>
       </node>
-      <node id="2247">
+      <node id="2235">
         <label>iomanip</label>
       </node>
-      <node id="2276">
+      <node id="2264">
         <label>Eigen/LU</label>
       </node>
-      <node id="2245">
+      <node id="2233">
         <label>iterator</label>
       </node>
-      <node id="2280">
+      <node id="2269">
         <label>cmath</label>
       </node>
-      <node id="2248">
+      <node id="2236">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2249" relation="include">
+        <childnode refid="2237" relation="include">
         </childnode>
-        <childnode refid="2242" relation="include">
+        <childnode refid="2230" relation="include">
+        </childnode>
+        <childnode refid="2232" relation="include">
+        </childnode>
+      </node>
+      <node id="2272">
+        <label>numeric</label>
+      </node>
+      <node id="2230">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2228">
+        <label>string</label>
+      </node>
+      <node id="2242">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2243" relation="include">
+        </childnode>
+        <childnode refid="2234" relation="include">
+        </childnode>
+      </node>
+      <node id="2238">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2239" relation="include">
+        </childnode>
+        <childnode refid="2240" relation="include">
+        </childnode>
+        <childnode refid="2241" relation="include">
+        </childnode>
+      </node>
+      <node id="2248">
+        <label>map</label>
+      </node>
+      <node id="2225">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+        <childnode refid="2226" relation="include">
         </childnode>
         <childnode refid="2244" relation="include">
         </childnode>
-      </node>
-      <node id="2283">
-        <label>numeric</label>
-      </node>
-      <node id="2242">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="2240">
-        <label>string</label>
-      </node>
-      <node id="2254">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="2255" relation="include">
-        </childnode>
-        <childnode refid="2246" relation="include">
-        </childnode>
-      </node>
-      <node id="2250">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="2251" relation="include">
-        </childnode>
-        <childnode refid="2252" relation="include">
-        </childnode>
         <childnode refid="2253" relation="include">
         </childnode>
-      </node>
-      <node id="2260">
-        <label>map</label>
-      </node>
-      <node id="2249">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="2264">
-        <label>unordered_set</label>
-      </node>
-      <node id="2244">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="2272">
-        <label>math/arpack_extra/arpackpp_solver.h</label>
-        <link refid="arpackpp__solver_8h"/>
-        <childnode refid="2262" relation="include">
-        </childnode>
-        <childnode refid="2254" relation="include">
-        </childnode>
         <childnode refid="2258" relation="include">
         </childnode>
-        <childnode refid="2261" relation="include">
-        </childnode>
-      </node>
-      <node id="2274">
-        <label>matrix_product_dense.h</label>
-        <link refid="matrix__product__dense_8h"/>
-        <childnode refid="2258" relation="include">
-        </childnode>
-        <childnode refid="2254" relation="include">
-        </childnode>
-        <childnode refid="2246" relation="include">
-        </childnode>
-        <childnode refid="2247" relation="include">
-        </childnode>
-        <childnode refid="2242" relation="include">
-        </childnode>
-        <childnode refid="2275" relation="include">
-        </childnode>
-        <childnode refid="2276" relation="include">
-        </childnode>
-      </node>
-      <node id="2266">
-        <label>state/class_environment.h</label>
-        <link refid="class__environment_8h"/>
-        <childnode refid="2239" relation="include">
-        </childnode>
-        <childnode refid="2241" relation="include">
+        <childnode refid="2259" relation="include">
         </childnode>
         <childnode refid="2267" relation="include">
         </childnode>
       </node>
-      <node id="2269">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="2239" relation="include">
+      <node id="2237">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2226">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2227" relation="include">
         </childnode>
-        <childnode refid="2244" relation="include">
+        <childnode refid="2228" relation="include">
         </childnode>
+        <childnode refid="2229" relation="include">
+        </childnode>
+        <childnode refid="2238" relation="include">
+        </childnode>
+        <childnode refid="2242" relation="include">
+        </childnode>
+      </node>
+      <node id="2252">
+        <label>unordered_set</label>
+      </node>
+      <node id="2232">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2260">
+        <label>math/arpack_extra/arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
         <childnode refid="2250" relation="include">
         </childnode>
+        <childnode refid="2242" relation="include">
+        </childnode>
+        <childnode refid="2246" relation="include">
+        </childnode>
+        <childnode refid="2249" relation="include">
+        </childnode>
       </node>
-      <node id="2251">
+      <node id="2262">
+        <label>matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="2246" relation="include">
+        </childnode>
+        <childnode refid="2242" relation="include">
+        </childnode>
+        <childnode refid="2234" relation="include">
+        </childnode>
+        <childnode refid="2235" relation="include">
+        </childnode>
+        <childnode refid="2230" relation="include">
+        </childnode>
+        <childnode refid="2263" relation="include">
+        </childnode>
+        <childnode refid="2264" relation="include">
+        </childnode>
+      </node>
+      <node id="2254">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="2227" relation="include">
+        </childnode>
+        <childnode refid="2229" relation="include">
+        </childnode>
+        <childnode refid="2255" relation="include">
+        </childnode>
+      </node>
+      <node id="2257">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="2227" relation="include">
+        </childnode>
+        <childnode refid="2232" relation="include">
+        </childnode>
+        <childnode refid="2238" relation="include">
+        </childnode>
+      </node>
+      <node id="2239">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="2243">
+      <node id="2231">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="2237">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp</label>
-        <link refid="views_8cpp"/>
-        <childnode refid="2238" relation="include">
+      <node id="2253">
+        <label>state/class_finite_state.h</label>
+        <link refid="class__finite__state_8h"/>
+        <childnode refid="2227" relation="include">
+        </childnode>
+        <childnode refid="2249" relation="include">
+        </childnode>
+        <childnode refid="2245" relation="include">
+        </childnode>
+        <childnode refid="2229" relation="include">
+        </childnode>
+        <childnode refid="2254" relation="include">
         </childnode>
         <childnode refid="2256" relation="include">
         </childnode>
-        <childnode refid="2265" relation="include">
-        </childnode>
-        <childnode refid="2270" relation="include">
-        </childnode>
-        <childnode refid="2271" relation="include">
-        </childnode>
-        <childnode refid="2279" relation="include">
-        </childnode>
-      </node>
-      <node id="2265">
-        <label>state/class_finite_state.h</label>
-        <link refid="class__finite__state_8h"/>
-        <childnode refid="2239" relation="include">
-        </childnode>
-        <childnode refid="2261" relation="include">
-        </childnode>
         <childnode refid="2257" relation="include">
         </childnode>
-        <childnode refid="2241" relation="include">
+      </node>
+      <node id="2267">
+        <label>math/nmspc_math.h</label>
+        <link refid="nmspc__math_8h"/>
+        <childnode refid="2234" relation="include">
         </childnode>
-        <childnode refid="2266" relation="include">
+        <childnode refid="2233" relation="include">
+        </childnode>
+        <childnode refid="2250" relation="include">
         </childnode>
         <childnode refid="2268" relation="include">
         </childnode>
         <childnode refid="2269" relation="include">
         </childnode>
-      </node>
-      <node id="2279">
-        <label>math/nmspc_math.h</label>
-        <link refid="nmspc__math_8h"/>
-        <childnode refid="2246" relation="include">
+        <childnode refid="2270" relation="include">
         </childnode>
-        <childnode refid="2245" relation="include">
+        <childnode refid="2227" relation="include">
         </childnode>
-        <childnode refid="2262" relation="include">
+        <childnode refid="2271" relation="include">
         </childnode>
-        <childnode refid="2280" relation="include">
-        </childnode>
-        <childnode refid="2281" relation="include">
-        </childnode>
-        <childnode refid="2239" relation="include">
-        </childnode>
-        <childnode refid="2282" relation="include">
-        </childnode>
-        <childnode refid="2283" relation="include">
-        </childnode>
-        <childnode refid="2242" relation="include">
-        </childnode>
-      </node>
-      <node id="2257">
-        <label>optional</label>
-      </node>
-      <node id="2262">
-        <label>vector</label>
-      </node>
-      <node id="2267">
-        <label>spdlog/fmt/fmt.h</label>
-      </node>
-      <node id="2275">
-        <label>complex.h</label>
-      </node>
-      <node id="2252">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="2282">
-        <label>utility</label>
-      </node>
-      <node id="2259">
-        <label>array</label>
-      </node>
-      <node id="2277">
-        <label>matrix_product_sparse.h</label>
-        <link refid="matrix__product__sparse_8h"/>
-        <childnode refid="2258" relation="include">
-        </childnode>
-        <childnode refid="2254" relation="include">
-        </childnode>
-        <childnode refid="2246" relation="include">
-        </childnode>
-        <childnode refid="2247" relation="include">
-        </childnode>
-        <childnode refid="2242" relation="include">
-        </childnode>
-        <childnode refid="2243" relation="include">
-        </childnode>
-        <childnode refid="2278" relation="include">
-        </childnode>
-      </node>
-      <node id="2270">
-        <label>state/class_mps_2site.h</label>
-        <link refid="class__mps__2site_8h"/>
-        <childnode refid="2239" relation="include">
-        </childnode>
-        <childnode refid="2241" relation="include">
-        </childnode>
-      </node>
-      <node id="2273">
-        <label>math/arpack_extra/matrix_recast.h</label>
-        <link refid="matrix__recast_8h"/>
-        <childnode refid="2261" relation="include">
-        </childnode>
-        <childnode refid="2262" relation="include">
-        </childnode>
-        <childnode refid="2258" relation="include">
-        </childnode>
-        <childnode refid="2274" relation="include">
-        </childnode>
-        <childnode refid="2277" relation="include">
-        </childnode>
-      </node>
-      <node id="2246">
-        <label>iostream</label>
-      </node>
-      <node id="2258">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="2246" relation="include">
-        </childnode>
-        <childnode refid="2259" relation="include">
-        </childnode>
-        <childnode refid="2260" relation="include">
-        </childnode>
-        <childnode refid="2261" relation="include">
-        </childnode>
-        <childnode refid="2262" relation="include">
-        </childnode>
-        <childnode refid="2252" relation="include">
-        </childnode>
-        <childnode refid="2251" relation="include">
-        </childnode>
-      </node>
-      <node id="2255">
-        <label>chrono</label>
-      </node>
-      <node id="2271">
-        <label>math/class_eigsolver.h</label>
-        <link refid="class__eigsolver_8h"/>
         <childnode refid="2272" relation="include">
         </childnode>
-        <childnode refid="2273" relation="include">
+        <childnode refid="2230" relation="include">
         </childnode>
-        <childnode refid="2258" relation="include">
+      </node>
+      <node id="2245">
+        <label>optional</label>
+      </node>
+      <node id="2250">
+        <label>vector</label>
+      </node>
+      <node id="2255">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="2263">
+        <label>complex.h</label>
+      </node>
+      <node id="2240">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2271">
+        <label>utility</label>
+      </node>
+      <node id="2247">
+        <label>array</label>
+      </node>
+      <node id="2265">
+        <label>matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="2246" relation="include">
+        </childnode>
+        <childnode refid="2242" relation="include">
+        </childnode>
+        <childnode refid="2234" relation="include">
+        </childnode>
+        <childnode refid="2235" relation="include">
+        </childnode>
+        <childnode refid="2230" relation="include">
+        </childnode>
+        <childnode refid="2231" relation="include">
+        </childnode>
+        <childnode refid="2266" relation="include">
+        </childnode>
+      </node>
+      <node id="2258">
+        <label>state/class_mps_2site.h</label>
+        <link refid="class__mps__2site_8h"/>
+        <childnode refid="2227" relation="include">
+        </childnode>
+        <childnode refid="2229" relation="include">
         </childnode>
       </node>
       <node id="2261">
-        <label>complex</label>
-      </node>
-      <node id="2256">
-        <label>state/class_infinite_state.h</label>
-        <link refid="class__infinite__state_8h"/>
-        <childnode refid="2239" relation="include">
-        </childnode>
-        <childnode refid="2257" relation="include">
-        </childnode>
-        <childnode refid="2241" relation="include">
-        </childnode>
-        <childnode refid="2254" relation="include">
-        </childnode>
-        <childnode refid="2258" relation="include">
-        </childnode>
-        <childnode refid="2263" relation="include">
+        <label>math/arpack_extra/matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="2249" relation="include">
         </childnode>
         <childnode refid="2250" relation="include">
         </childnode>
-      </node>
-      <node id="2263">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="2240" relation="include">
-        </childnode>
-        <childnode refid="2264" relation="include">
+        <childnode refid="2246" relation="include">
         </childnode>
         <childnode refid="2262" relation="include">
         </childnode>
+        <childnode refid="2265" relation="include">
+        </childnode>
       </node>
-      <node id="2241">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2242" relation="include">
-        </childnode>
-        <childnode refid="2243" relation="include">
-        </childnode>
-        <childnode refid="2244" relation="include">
-        </childnode>
-        <childnode refid="2245" relation="include">
-        </childnode>
-        <childnode refid="2246" relation="include">
+      <node id="2234">
+        <label>iostream</label>
+      </node>
+      <node id="2246">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="2234" relation="include">
         </childnode>
         <childnode refid="2247" relation="include">
         </childnode>
         <childnode refid="2248" relation="include">
         </childnode>
-      </node>
-      <node id="2238">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="2239" relation="include">
-        </childnode>
-        <childnode refid="2240" relation="include">
-        </childnode>
-        <childnode refid="2241" relation="include">
+        <childnode refid="2249" relation="include">
         </childnode>
         <childnode refid="2250" relation="include">
         </childnode>
-        <childnode refid="2254" relation="include">
+        <childnode refid="2240" relation="include">
+        </childnode>
+        <childnode refid="2239" relation="include">
         </childnode>
       </node>
-      <node id="2253">
+      <node id="2243">
+        <label>chrono</label>
+      </node>
+      <node id="2259">
+        <label>math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="2260" relation="include">
+        </childnode>
+        <childnode refid="2261" relation="include">
+        </childnode>
+        <childnode refid="2246" relation="include">
+        </childnode>
+      </node>
+      <node id="2249">
+        <label>complex</label>
+      </node>
+      <node id="2244">
+        <label>state/class_infinite_state.h</label>
+        <link refid="class__infinite__state_8h"/>
+        <childnode refid="2227" relation="include">
+        </childnode>
+        <childnode refid="2245" relation="include">
+        </childnode>
+        <childnode refid="2229" relation="include">
+        </childnode>
+        <childnode refid="2242" relation="include">
+        </childnode>
+        <childnode refid="2246" relation="include">
+        </childnode>
+        <childnode refid="2251" relation="include">
+        </childnode>
+        <childnode refid="2238" relation="include">
+        </childnode>
+      </node>
+      <node id="2251">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2228" relation="include">
+        </childnode>
+        <childnode refid="2252" relation="include">
+        </childnode>
+        <childnode refid="2250" relation="include">
+        </childnode>
+      </node>
+      <node id="2229">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2230" relation="include">
+        </childnode>
+        <childnode refid="2231" relation="include">
+        </childnode>
+        <childnode refid="2232" relation="include">
+        </childnode>
+        <childnode refid="2233" relation="include">
+        </childnode>
+        <childnode refid="2234" relation="include">
+        </childnode>
+        <childnode refid="2235" relation="include">
+        </childnode>
+        <childnode refid="2236" relation="include">
+        </childnode>
+      </node>
+      <node id="2241">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
-      <node id="2239">
+      <node id="2227">
         <label>memory</label>
       </node>
-      <node id="2268">
+      <node id="2256">
         <label>state/class_vidal_site.h</label>
         <link refid="class__vidal__site_8h"/>
-        <childnode refid="2241" relation="include">
+        <childnode refid="2229" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -391,11 +396,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="40" bodyend="47"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="40" bodyend="47"/>
         <references refid="classclass__eigsolver_1a05d0c7c938a1c72636b4e6b01bf4d77f" compoundref="class__eigsolver_8h" startline="352" endline="382">class_eigsolver::eigs</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff">eigutils::eigSetting::DENSE</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::LM</references>
         <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">class_eigsolver::solution</references>
-        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
-        <references refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1">eigutils::eigSolution::meta</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
         <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
       </memberdef>
@@ -415,7 +422,7 @@
 <codeline lineno="8"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-07-06.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
@@ -425,21 +432,21 @@
 <codeline lineno="18"><highlight class="normal"></highlight></codeline>
 <codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
 <codeline lineno="20"><highlight class="normal"></highlight></codeline>
-<codeline lineno="21" refid="namespacetools_1_1common_1_1views" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1common_1_1views" kindref="compound">tools::common::views</ref>{</highlight></codeline>
-<codeline lineno="22" refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
-<codeline lineno="23" refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" kindref="member">theta_evn_normalized</ref><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
-<codeline lineno="24" refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" kindref="member">theta_odd_normalized</ref><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
-<codeline lineno="25" refid="namespacetools_1_1common_1_1views_1a05f70fcf569c1c1f7c4f6d573cd8e631" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a05f70fcf569c1c1f7c4f6d573cd8e631" kindref="member">theta_sw</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
-<codeline lineno="26" refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" kindref="member">LBGA</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>();</highlight></codeline>
-<codeline lineno="27" refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" kindref="member">LAGB</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>();</highlight></codeline>
-<codeline lineno="28" refid="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" kindref="member">l_evn</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>();</highlight></codeline>
-<codeline lineno="29" refid="namespacetools_1_1common_1_1views_1aa8e0a0a8e32576ecaf5441895638d323" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1aa8e0a0a8e32576ecaf5441895638d323" kindref="member">r_evn</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>();</highlight></codeline>
-<codeline lineno="30" refid="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" kindref="member">l_odd</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>();</highlight></codeline>
-<codeline lineno="31" refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" kindref="member">r_odd</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>();</highlight></codeline>
-<codeline lineno="32" refid="namespacetools_1_1common_1_1views_1a37826c75be840ac1b3e5cc9bcc96df4c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a37826c75be840ac1b3e5cc9bcc96df4c" kindref="member">transfer_matrix_LBGA</ref><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
-<codeline lineno="33" refid="namespacetools_1_1common_1_1views_1a4737ab9e1c7be58e16ef3ebf0c4dedbd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a4737ab9e1c7be58e16ef3ebf0c4dedbd" kindref="member">transfer_matrix_LAGB</ref><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
-<codeline lineno="34" refid="namespacetools_1_1common_1_1views_1a8ca6ab75ea4a9e71ef45a0a0e675f185" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a8ca6ab75ea4a9e71ef45a0a0e675f185" kindref="member">transfer_matrix_evn</ref><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
-<codeline lineno="35" refid="namespacetools_1_1common_1_1views_1a2ef7dec8a4db01e3667a71942c40feb5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a2ef7dec8a4db01e3667a71942c40feb5" kindref="member">transfer_matrix_odd</ref><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1common_1_1views" kindref="compound">tools::common::views</ref>{</highlight></codeline>
+<codeline lineno="22" refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
+<codeline lineno="23" refid="namespacetools_1_1common_1_1views_1a4770a1829f476c6daf830b712d0d57db" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a4770a1829f476c6daf830b712d0d57db" kindref="member">theta_evn_normalized</ref><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
+<codeline lineno="24" refid="namespacetools_1_1common_1_1views_1ab6ade4cf09a0141fb611c32c713e0e2b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1ab6ade4cf09a0141fb611c32c713e0e2b" kindref="member">theta_odd_normalized</ref><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
+<codeline lineno="25" refid="namespacetools_1_1common_1_1views_1ac2194a171cc86ee5c187c37fef7ae11b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1ac2194a171cc86ee5c187c37fef7ae11b" kindref="member">theta_sw</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
+<codeline lineno="26" refid="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" kindref="member">LBGA</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>();</highlight></codeline>
+<codeline lineno="27" refid="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" kindref="member">LAGB</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>();</highlight></codeline>
+<codeline lineno="28" refid="namespacetools_1_1common_1_1views_1a2b5b6f9460c87209076d19f7edc8bf92" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a2b5b6f9460c87209076d19f7edc8bf92" kindref="member">l_evn</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>();</highlight></codeline>
+<codeline lineno="29" refid="namespacetools_1_1common_1_1views_1aac00eb090b45f9a68587498eeea97370" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1aac00eb090b45f9a68587498eeea97370" kindref="member">r_evn</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>();</highlight></codeline>
+<codeline lineno="30" refid="namespacetools_1_1common_1_1views_1a4d84a62c356bd7b16e4b0d08b98ab160" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a4d84a62c356bd7b16e4b0d08b98ab160" kindref="member">l_odd</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>();</highlight></codeline>
+<codeline lineno="31" refid="namespacetools_1_1common_1_1views_1a6409a1374700c7fca7abc92f0c8d99f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a6409a1374700c7fca7abc92f0c8d99f6" kindref="member">r_odd</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>();</highlight></codeline>
+<codeline lineno="32" refid="namespacetools_1_1common_1_1views_1a156d8370ff34d00b5d9a12964d0a1044" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a156d8370ff34d00b5d9a12964d0a1044" kindref="member">transfer_matrix_LBGA</ref><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
+<codeline lineno="33" refid="namespacetools_1_1common_1_1views_1ad98f487f235c82b09e400a817b7e606d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1ad98f487f235c82b09e400a817b7e606d" kindref="member">transfer_matrix_LAGB</ref><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
+<codeline lineno="34" refid="namespacetools_1_1common_1_1views_1a28385061271c30051d0d8ac567d22ac5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a28385061271c30051d0d8ac567d22ac5" kindref="member">transfer_matrix_evn</ref><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
+<codeline lineno="35" refid="namespacetools_1_1common_1_1views_1a63f4e0353437c2a8061941bb71ed818d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a63f4e0353437c2a8061941bb71ed818d" kindref="member">transfer_matrix_odd</ref><sp/><sp/><sp/><sp/>=<sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>();</highlight></codeline>
 <codeline lineno="36" refid="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" kindref="member">components_computed</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
@@ -460,7 +467,7 @@
 <codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>chiB2<sp/>=<sp/>(int)(state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB()*state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB());</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>chiC2<sp/>=<sp/>(int)(state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC()*state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC());</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" kindref="member">get_theta</ref>(state);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" kindref="member">get_theta</ref>(state);</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>theta_evn_transfer_mat<sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e45621e3e7cf436074f66c9c7cbd833" kindref="member">get_transfer_matrix_theta_evn</ref>(state).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{chiB2,chiB2});</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt;<sp/>theta_odd_transfer_mat<sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a860f18b0a6b66dfdb3604b037dc802d3" kindref="member">get_transfer_matrix_theta_odd</ref>(state).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{chiC2,chiC2});</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
@@ -475,31 +482,31 @@
 <codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>std::complex&lt;double&gt;<sp/>normalization_evn<sp/>=<sp/>sqrt((eigvec_L_evn.transpose()<sp/>*<sp/>eigvec_R_evn).sum());</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>std::complex&lt;double&gt;<sp/>normalization_odd<sp/>=<sp/>sqrt((eigvec_L_odd.transpose()<sp/>*<sp/>eigvec_R_odd).sum());</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1aa8e0a0a8e32576ecaf5441895638d323" kindref="member">r_evn</ref><sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Matrix_to_Tensor2</ref>(eigvec_R_evn).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB(),state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB()})/normalization_evn;</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" kindref="member">l_evn</ref><sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Matrix_to_Tensor2</ref>(eigvec_L_evn).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB(),state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB()})/normalization_evn;</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" kindref="member">r_odd</ref><sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Matrix_to_Tensor2</ref>(eigvec_R_odd).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC(),state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC()})/normalization_odd;</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" kindref="member">l_odd</ref><sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Matrix_to_Tensor2</ref>(eigvec_L_odd).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC(),state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC()})/normalization_odd;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1aac00eb090b45f9a68587498eeea97370" kindref="member">r_evn</ref><sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Matrix_to_Tensor2</ref>(eigvec_R_evn).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB(),state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB()})/normalization_evn;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a2b5b6f9460c87209076d19f7edc8bf92" kindref="member">l_evn</ref><sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Matrix_to_Tensor2</ref>(eigvec_L_evn).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB(),state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiB()})/normalization_evn;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a6409a1374700c7fca7abc92f0c8d99f6" kindref="member">r_odd</ref><sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Matrix_to_Tensor2</ref>(eigvec_R_odd).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC(),state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC()})/normalization_odd;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a4d84a62c356bd7b16e4b0d08b98ab160" kindref="member">l_odd</ref><sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Matrix_to_Tensor2</ref>(eigvec_L_odd).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC(),state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;chiC()})/normalization_odd;</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" kindref="member">get_theta</ref>(state);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a05f70fcf569c1c1f7c4f6d573cd8e631" kindref="member">theta_sw</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1aff8b9eb9629f764155555246e4dc38af" kindref="member">get_theta_swapped</ref>(state);</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" kindref="member">theta_evn_normalized</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a717b43409a314727c05f96b506a86d37" kindref="member">get_theta_evn</ref>(state,<sp/>sqrt(eigval_R_evn));</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" kindref="member">theta_odd_normalized</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a522b2175b2226689e89d6c0162dcfae5" kindref="member">get_theta_odd</ref>(state,<sp/>sqrt(eigval_R_odd));</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" kindref="member">get_theta</ref>(state);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1ac2194a171cc86ee5c187c37fef7ae11b" kindref="member">theta_sw</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1aff8b9eb9629f764155555246e4dc38af" kindref="member">get_theta_swapped</ref>(state);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a4770a1829f476c6daf830b712d0d57db" kindref="member">theta_evn_normalized</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a717b43409a314727c05f96b506a86d37" kindref="member">get_theta_evn</ref>(state,<sp/>sqrt(eigval_R_evn));</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1ab6ade4cf09a0141fb611c32c713e0e2b" kindref="member">theta_odd_normalized</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a522b2175b2226689e89d6c0162dcfae5" kindref="member">get_theta_odd</ref>(state,<sp/>sqrt(eigval_R_odd));</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" kindref="member">LBGA</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;A();</highlight><highlight class="comment">//<sp/>/<sp/>(Scalar_)<sp/>sqrt(eigval_R_LBGA(0));</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" kindref="member">LAGB</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;C().contract(state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_B-&gt;get_G(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">array3</ref>{1,0,2});</highlight><highlight class="comment">//<sp/>/<sp/>(Scalar_)<sp/>sqrt(eigval_R_LAGB(0));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" kindref="member">LBGA</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;A();</highlight><highlight class="comment">//<sp/>/<sp/>(Scalar_)<sp/>sqrt(eigval_R_LBGA(0));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" kindref="member">LAGB</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;C().contract(state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_B-&gt;get_G(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">array3</ref>{1,0,2});</highlight><highlight class="comment">//<sp/>/<sp/>(Scalar_)<sp/>sqrt(eigval_R_LAGB(0));</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a8ca6ab75ea4a9e71ef45a0a0e675f185" kindref="member">transfer_matrix_evn</ref><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" kindref="member">theta_evn_normalized</ref>.contract(<ref refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" kindref="member">theta_evn_normalized</ref>.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,2},{0,2})).shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,2,1,3});</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a2ef7dec8a4db01e3667a71942c40feb5" kindref="member">transfer_matrix_odd</ref><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" kindref="member">theta_odd_normalized</ref>.contract(<ref refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" kindref="member">theta_odd_normalized</ref>.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,2},{0,2})).shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,2,1,3});</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>transfer_matrix_LAGB_unnormalized<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" kindref="member">LAGB</ref>.contract(<ref refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" kindref="member">LAGB</ref>.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{0})).shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,2,1,3});</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>transfer_matrix_LBGA_unnormalized<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" kindref="member">LBGA</ref>.contract(<ref refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" kindref="member">LBGA</ref>.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{0})).shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,2,1,3});</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a28385061271c30051d0d8ac567d22ac5" kindref="member">transfer_matrix_evn</ref><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a4770a1829f476c6daf830b712d0d57db" kindref="member">theta_evn_normalized</ref>.contract(<ref refid="namespacetools_1_1common_1_1views_1a4770a1829f476c6daf830b712d0d57db" kindref="member">theta_evn_normalized</ref>.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,2},{0,2})).shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,2,1,3});</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a63f4e0353437c2a8061941bb71ed818d" kindref="member">transfer_matrix_odd</ref><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1ab6ade4cf09a0141fb611c32c713e0e2b" kindref="member">theta_odd_normalized</ref>.contract(<ref refid="namespacetools_1_1common_1_1views_1ab6ade4cf09a0141fb611c32c713e0e2b" kindref="member">theta_odd_normalized</ref>.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,2},{0,2})).shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,2,1,3});</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>transfer_matrix_LAGB_unnormalized<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" kindref="member">LAGB</ref>.contract(<ref refid="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" kindref="member">LAGB</ref>.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{0})).shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,2,1,3});</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>transfer_matrix_LBGA_unnormalized<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" kindref="member">LBGA</ref>.contract(<ref refid="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" kindref="member">LBGA</ref>.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{0})).shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,2,1,3});</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,0&gt;<sp/>l_evn_LBGA_r_odd<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" kindref="member">l_evn</ref>.contract(transfer_matrix_LBGA_unnormalized,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1})).contract(<ref refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" kindref="member">r_odd</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1}));</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,0&gt;<sp/>l_odd_LAGB_r_evn<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" kindref="member">l_odd</ref>.contract(transfer_matrix_LAGB_unnormalized,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1})).contract(r_evn,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1}));</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,0&gt;<sp/>l_evn_LBGA_r_odd<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a2b5b6f9460c87209076d19f7edc8bf92" kindref="member">l_evn</ref>.contract(transfer_matrix_LBGA_unnormalized,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1})).contract(<ref refid="namespacetools_1_1common_1_1views_1a6409a1374700c7fca7abc92f0c8d99f6" kindref="member">r_odd</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1}));</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,0&gt;<sp/>l_odd_LAGB_r_evn<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a4d84a62c356bd7b16e4b0d08b98ab160" kindref="member">l_odd</ref>.contract(transfer_matrix_LAGB_unnormalized,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1})).contract(r_evn,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1}));</highlight></codeline>
 <codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a4737ab9e1c7be58e16ef3ebf0c4dedbd" kindref="member">transfer_matrix_LAGB</ref><sp/>=<sp/>transfer_matrix_LAGB_unnormalized<sp/>/l_odd_LAGB_r_evn(0);</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a37826c75be840ac1b3e5cc9bcc96df4c" kindref="member">transfer_matrix_LBGA</ref><sp/>=<sp/>transfer_matrix_LBGA_unnormalized<sp/>/l_evn_LBGA_r_odd(0);</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" kindref="member">LAGB</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" kindref="member">LAGB</ref><sp/>/<sp/>sqrt(l_odd_LAGB_r_evn(0));</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" kindref="member">LBGA</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" kindref="member">LBGA</ref><sp/>/<sp/>sqrt(l_evn_LBGA_r_odd(0));</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1ad98f487f235c82b09e400a817b7e606d" kindref="member">transfer_matrix_LAGB</ref><sp/>=<sp/>transfer_matrix_LAGB_unnormalized<sp/>/l_odd_LAGB_r_evn(0);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a156d8370ff34d00b5d9a12964d0a1044" kindref="member">transfer_matrix_LBGA</ref><sp/>=<sp/>transfer_matrix_LBGA_unnormalized<sp/>/l_evn_LBGA_r_odd(0);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" kindref="member">LAGB</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" kindref="member">LAGB</ref><sp/>/<sp/>sqrt(l_odd_LAGB_r_evn(0));</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" kindref="member">LBGA</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" kindref="member">LBGA</ref><sp/>/<sp/>sqrt(l_evn_LBGA_r_odd(0));</highlight></codeline>
 <codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" kindref="member">components_computed</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="97"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Check:&quot;<sp/>&lt;&lt;<sp/>std::setprecision(10)<sp/>&lt;&lt;<sp/><sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;<sp/>l_odd_LAGB_r_evn<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>&quot;<sp/>&lt;&lt;<sp/>l_odd_LAGB_r_evn(0)<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
@@ -521,7 +528,7 @@
 <codeline lineno="114" refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" refkind="member"><highlight class="normal"><ref refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" kindref="member">tools::common::views::get_theta</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/>std::complex&lt;double&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>)</highlight></codeline>
 <codeline lineno="123"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>.back().get_A().contract(<ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(state.<ref refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" kindref="member">MPS_C</ref>),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({2},{0}))</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>.back().get_A().contract(<ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(state.<ref refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" kindref="member">MPS_C</ref>),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({2},{0}))</highlight></codeline>
 <codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>.front().get_B(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({2},{1}))<sp/>/<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
 <codeline lineno="127"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
@@ -540,7 +547,7 @@
 <codeline lineno="149"><highlight class="normal">Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;</highlight></codeline>
 <codeline lineno="150" refid="namespacetools_1_1common_1_1views_1aff8b9eb9629f764155555246e4dc38af" refkind="member"><highlight class="normal"><ref refid="namespacetools_1_1common_1_1views_1aff8b9eb9629f764155555246e4dc38af" kindref="member">tools::common::views::get_theta_swapped</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/>&amp;<sp/>state,<sp/>std::complex&lt;double&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>)</highlight></codeline>
 <codeline lineno="159"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><sp/>state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;C()<sp/></highlight><highlight class="comment">//whatever<sp/>L_A<sp/>was<sp/>in<sp/>the<sp/>previous<sp/>step</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><sp/>state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;C()<sp/></highlight><highlight class="comment">//whatever<sp/>L_A<sp/>was<sp/>in<sp/>the<sp/>previous<sp/>moves</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;B(),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1},{1}))</highlight></codeline>
 <codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;MPS_A-&gt;get_G(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({2},{1}))</highlight></codeline>
 <codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" kindref="member">MPS</ref>-&gt;C(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({3},{0}))</highlight></codeline>
@@ -682,7 +689,7 @@
 <codeline lineno="324"><highlight class="normal">Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;</highlight></codeline>
 <codeline lineno="325" refid="namespacetools_1_1common_1_1views_1a980151161df1dabfaea5da9ae2d71775" refkind="member"><highlight class="normal"><ref refid="namespacetools_1_1common_1_1views_1aff8b9eb9629f764155555246e4dc38af" kindref="member">tools::common::views::get_theta_swapped</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref><sp/><sp/>&amp;MPS,<sp/>std::complex&lt;double&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>)</highlight></codeline>
 <codeline lineno="334"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><sp/>MPS.<ref refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" kindref="member">C</ref>()<sp/></highlight><highlight class="comment">//whatever<sp/>L_A<sp/>was<sp/>in<sp/>the<sp/>previous<sp/>step</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><sp/>MPS.<ref refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" kindref="member">C</ref>()<sp/></highlight><highlight class="comment">//whatever<sp/>L_A<sp/>was<sp/>in<sp/>the<sp/>previous<sp/>moves</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="336"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(MPS.<ref refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" kindref="member">B</ref>(),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1},{1}))</highlight></codeline>
 <codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(MPS.<ref refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" kindref="member">MPS_A</ref>-&gt;get_G(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({2},{1}))</highlight></codeline>
 <codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(MPS.<ref refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" kindref="member">C</ref>(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({3},{0}))</highlight></codeline>
@@ -796,6 +803,6 @@
 <codeline lineno="463"><highlight class="normal"></highlight></codeline>
 <codeline lineno="464"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp"/>
   </compounddef>
 </doxygen>

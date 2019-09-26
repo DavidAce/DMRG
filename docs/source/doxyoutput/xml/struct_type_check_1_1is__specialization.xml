@@ -19,24 +19,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="190">
+      <node id="392">
         <label>std::false_type</label>
       </node>
-      <node id="189">
+      <node id="391">
         <label>TypeCheck::is_specialization&lt; Test, Ref &gt;</label>
         <link refid="struct_type_check_1_1is__specialization"/>
-        <childnode refid="190" relation="public-inheritance">
+        <childnode refid="392" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="192">
+      <node id="394">
         <label>std::false_type</label>
       </node>
-      <node id="191">
+      <node id="393">
         <label>TypeCheck::is_specialization&lt; Test, Ref &gt;</label>
         <link refid="struct_type_check_1_1is__specialization"/>
-        <childnode refid="192" relation="public-inheritance">
+        <childnode refid="394" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

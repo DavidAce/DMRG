@@ -8,7 +8,6 @@
     <innernamespace refid="namespacetools_1_1infinite_1_1mps">tools::infinite::mps</innernamespace>
     <innernamespace refid="namespacetools_1_1infinite_1_1opt">tools::infinite::opt</innernamespace>
     <innernamespace refid="namespacetools_1_1infinite_1_1print">tools::infinite::print</innernamespace>
-    <innernamespace refid="namespacetools_1_1infinite_1_1profile">tools::infinite::profile</innernamespace>
       <sectiondef kind="typedef">
       <memberdef kind="typedef" id="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" prot="public" static="no">
         <type>std::complex&lt; double &gt;</type>
@@ -21,13 +20,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="177" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="177" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="228" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="228" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
 <para>Functions for infinite MPS algorithms like iDMRG and iTEBD. These functions do not require the class_finite_chain_state class, only the class_superblock containing the local 2-site MPS + ENV representation. </para>    </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="176" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="227" column="1"/>
   </compounddef>
 </doxygen>

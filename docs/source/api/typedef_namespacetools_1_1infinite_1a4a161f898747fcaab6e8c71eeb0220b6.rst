@@ -3,7 +3,7 @@
 Typedef tools::infinite::Scalar
 ===============================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
 
 
 Typedef Documentation

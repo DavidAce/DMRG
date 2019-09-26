@@ -7,6 +7,7 @@
     <includes local="no">complex</includes>
     <includes local="no">Eigen/Core</includes>
     <includedby refid="class__algorithm__base_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</includedby>
+    <includedby refid="class__algorithm__finite_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</includedby>
     <includedby refid="class__f_d_m_r_g_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</includedby>
     <includedby refid="class__x_d_m_r_g_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</includedby>
     <includedby refid="nmspc__random__numbers_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp</includedby>
@@ -15,15 +16,60 @@
     <includedby refid="class__selfdual__tf__rf__ising_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</includedby>
     <includedby refid="class__tf__ising_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</includedby>
     <includedby refid="class__mps__2site_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</includedby>
-    <includedby refid="finite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp</includedby>
-    <includedby refid="ops_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp</includedby>
-    <includedby refid="ceres_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ceres.cpp</includedby>
-    <includedby refid="direct_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/direct.cpp</includedby>
-    <includedby refid="subspace_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp</includedby>
+    <includedby refid="mpo_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</includedby>
+    <includedby refid="mps-internals_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</includedby>
+    <includedby refid="finite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</includedby>
+    <includedby refid="ops_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</includedby>
+    <includedby refid="ceres__direct_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp</includedby>
+    <includedby refid="ceres__subspace_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</includedby>
     <incdepgraph>
-      <node id="704">
+      <node id="692">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h</label>
         <link refid="nmspc__random__numbers_8h"/>
+        <childnode refid="693" relation="include">
+        </childnode>
+        <childnode refid="694" relation="include">
+        </childnode>
+        <childnode refid="695" relation="include">
+        </childnode>
+        <childnode refid="696" relation="include">
+        </childnode>
+      </node>
+      <node id="696">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="693">
+        <label>random</label>
+      </node>
+      <node id="694">
+        <label>iostream</label>
+      </node>
+      <node id="695">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="700">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
+        <link refid="class__f_d_m_r_g_8cpp"/>
+      </node>
+      <node id="697">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h</label>
+        <link refid="nmspc__random__numbers_8h"/>
+        <childnode refid="698" relation="include">
+        </childnode>
+        <childnode refid="699" relation="include">
+        </childnode>
+        <childnode refid="700" relation="include">
+        </childnode>
+        <childnode refid="701" relation="include">
+        </childnode>
+        <childnode refid="702" relation="include">
+        </childnode>
+        <childnode refid="703" relation="include">
+        </childnode>
+        <childnode refid="704" relation="include">
+        </childnode>
         <childnode refid="705" relation="include">
         </childnode>
         <childnode refid="706" relation="include">
@@ -32,28 +78,8 @@
         </childnode>
         <childnode refid="708" relation="include">
         </childnode>
-      </node>
-      <node id="708">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="705">
-        <label>random</label>
-      </node>
-      <node id="706">
-        <label>iostream</label>
-      </node>
-      <node id="707">
-        <label>complex</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="711">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
-        <link refid="class__f_d_m_r_g_8cpp"/>
-      </node>
-      <node id="709">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h</label>
-        <link refid="nmspc__random__numbers_8h"/>
+        <childnode refid="709" relation="include">
+        </childnode>
         <childnode refid="710" relation="include">
         </childnode>
         <childnode refid="711" relation="include">
@@ -62,76 +88,64 @@
         </childnode>
         <childnode refid="713" relation="include">
         </childnode>
-        <childnode refid="714" relation="include">
-        </childnode>
-        <childnode refid="715" relation="include">
-        </childnode>
-        <childnode refid="716" relation="include">
-        </childnode>
-        <childnode refid="717" relation="include">
-        </childnode>
-        <childnode refid="718" relation="include">
-        </childnode>
-        <childnode refid="719" relation="include">
-        </childnode>
-        <childnode refid="720" relation="include">
-        </childnode>
-        <childnode refid="721" relation="include">
-        </childnode>
-        <childnode refid="722" relation="include">
-        </childnode>
-        <childnode refid="723" relation="include">
-        </childnode>
       </node>
-      <node id="721">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ceres.cpp</label>
-        <link refid="ceres_8cpp"/>
+      <node id="709">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</label>
+        <link refid="mps-internals_8cpp"/>
       </node>
-      <node id="715">
+      <node id="711">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
+        <link refid="ops_8cpp"/>
+      </node>
+      <node id="704">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp</label>
         <link refid="class__model__base_8cpp"/>
       </node>
-      <node id="718">
+      <node id="707">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
         <link refid="class__mps__2site_8cpp"/>
       </node>
-      <node id="716">
+      <node id="705">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
         <link refid="class__selfdual__tf__rf__ising_8cpp"/>
       </node>
-      <node id="717">
+      <node id="706">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
         <link refid="class__tf__ising_8cpp"/>
       </node>
-      <node id="712">
+      <node id="699">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
+        <link refid="class__algorithm__finite_8cpp"/>
+      </node>
+      <node id="701">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
         <link refid="class__x_d_m_r_g_8cpp"/>
       </node>
-      <node id="714">
+      <node id="703">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/main.cpp</label>
         <link refid="main_8cpp"/>
       </node>
-      <node id="722">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/direct.cpp</label>
-        <link refid="direct_8cpp"/>
+      <node id="708">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</label>
+        <link refid="mpo_8cpp"/>
       </node>
-      <node id="720">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp</label>
-        <link refid="ops_8cpp"/>
+      <node id="712">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp</label>
+        <link refid="ceres__direct_8cpp"/>
       </node>
-      <node id="723">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp</label>
-        <link refid="subspace_8cpp"/>
+      <node id="713">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
       </node>
-      <node id="710">
+      <node id="698">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
         <link refid="class__algorithm__base_8cpp"/>
       </node>
-      <node id="719">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp</label>
+      <node id="710">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</label>
         <link refid="finite_2mps_8cpp"/>
       </node>
-      <node id="713">
+      <node id="702">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp</label>
         <link refid="nmspc__random__numbers_8cpp"/>
       </node>
@@ -153,19 +167,19 @@
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;complex&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Core&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacern" kindref="compound">rn</ref>{</highlight></codeline>
+<codeline lineno="12" refid="namespacern" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacern" kindref="compound">rn</ref>{</highlight></codeline>
 <codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Random<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::mt19937<sp/><ref refid="namespacern_1a3ef7cecaf695dc6bd5b521a805cceb98" kindref="member">rng</ref>;</highlight></codeline>
 <codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" kindref="member">seed</ref>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>n);</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacern_1ac79818cbb5bf3f344cbc4890a00b9340" kindref="member">__attribute__</ref>((hot))<sp/><ref refid="namespacern_1ae46f00b1b7922896c9e5c6599ee733e8" kindref="member">uniform_integer_1</ref>();</highlight></codeline>
-<codeline lineno="17" refid="namespacern_1a4f2745fb1b4e2243d0adccf9c324b447" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacern_1ac79818cbb5bf3f344cbc4890a00b9340" kindref="member">__attribute__</ref>((hot))<sp/><ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">uniform_integer</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>min,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a4f2745fb1b4e2243d0adccf9c324b447" kindref="member">max</ref>);</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1ac79818cbb5bf3f344cbc4890a00b9340" kindref="member">__attribute__</ref>((hot))<sp/><ref refid="namespacern_1a944d5c278348c264b602518396217e75" kindref="member">uniform_double_1</ref>();</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1ac79818cbb5bf3f344cbc4890a00b9340" kindref="member">__attribute__</ref>((hot))<sp/><ref refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" kindref="member">uniform_double</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>min,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a4f2745fb1b4e2243d0adccf9c324b447" kindref="member">max</ref>);</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;<sp/><ref refid="namespacern_1ac79818cbb5bf3f344cbc4890a00b9340" kindref="member">__attribute__</ref>((hot))<sp/><ref refid="namespacern_1a9282126ae8fda744c101fbaa96a35267" kindref="member">uniform_complex_1</ref>();</highlight></codeline>
-<codeline lineno="21" refid="namespacern_1a8acfa7910a59e292539148e81bf5cc12" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1ac79818cbb5bf3f344cbc4890a00b9340" kindref="member">__attribute__</ref>((hot))<sp/><ref refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" kindref="member">log_normal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mean,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacestd" kindref="compound">std</ref>);</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::ArrayXd<sp/><ref refid="namespacern_1a7ace7d5a4b63f8332f590564052ced0e" kindref="member">random_with_replacement</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::ArrayXd<sp/>&amp;<sp/>indata);</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::ArrayXd<sp/><ref refid="namespacern_1a7ace7d5a4b63f8332f590564052ced0e" kindref="member">random_with_replacement</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::ArrayXd<sp/>&amp;<sp/>indata,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num_choose);</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" kindref="member">gaussian_truncated</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lowerLimit,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>upperLimit,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mean,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacestd" kindref="compound">std</ref>)<sp/>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacern_1ae46f00b1b7922896c9e5c6599ee733e8" kindref="member">uniform_integer_1</ref>();</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">uniform_integer</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>min,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>max);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><ref refid="namespacern_1a944d5c278348c264b602518396217e75" kindref="member">uniform_double_1</ref>();</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><ref refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" kindref="member">uniform_double</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>min,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>max);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;<sp/><sp/><ref refid="namespacern_1afbf68e8422a48d791f0d7b4378868ab0" kindref="member">uniform_complex_1</ref>();</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><ref refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" kindref="member">log_normal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mean,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacestd" kindref="compound">std</ref>);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::ArrayXd<sp/><ref refid="namespacern_1a9c2f32006765f0cd276cf3296f868255" kindref="member">random_with_replacement</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::ArrayXd<sp/>&amp;<sp/>indata);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::ArrayXd<sp/><ref refid="namespacern_1a9c2f32006765f0cd276cf3296f868255" kindref="member">random_with_replacement</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::ArrayXd<sp/>&amp;<sp/>indata,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>num_choose);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" kindref="member">gaussian_truncated</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lowerLimit,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>upperLimit,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mean,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>std)<sp/>;</highlight></codeline>
 <codeline lineno="25"><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
 <codeline lineno="27" refid="namespacern_1afa9a8b7b6becd55be568fcf68b56e3dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::vector&lt;T&gt;<sp/><ref refid="namespacern_1afa9a8b7b6becd55be568fcf68b56e3dd" kindref="member">uniform_unit_n_sphere</ref>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n){</highlight></codeline>

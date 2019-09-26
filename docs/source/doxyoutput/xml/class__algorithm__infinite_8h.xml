@@ -7,171 +7,171 @@
     <includedby refid="class__i_d_m_r_g_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h</includedby>
     <includedby refid="class__i_t_e_b_d_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h</includedby>
     <incdepgraph>
-      <node id="210">
+      <node id="203">
         <label>list</label>
       </node>
-      <node id="219">
+      <node id="212">
         <label>string</label>
       </node>
-      <node id="223">
+      <node id="216">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="216">
+      <node id="209">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="217" relation="include">
+        <childnode refid="210" relation="include">
         </childnode>
-        <childnode refid="212" relation="include">
-        </childnode>
-      </node>
-      <node id="207">
-        <label>map</label>
-      </node>
-      <node id="221">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
-        <childnode refid="206" relation="include">
-        </childnode>
-        <childnode refid="219" relation="include">
-        </childnode>
-        <childnode refid="212" relation="include">
-        </childnode>
-        <childnode refid="208" relation="include">
-        </childnode>
-        <childnode refid="213" relation="include">
-        </childnode>
-        <childnode refid="222" relation="include">
-        </childnode>
-        <childnode refid="223" relation="include">
-        </childnode>
-      </node>
-      <node id="220">
-        <label>unordered_set</label>
-      </node>
-      <node id="215">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="204">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.h</label>
-        <link refid="class__algorithm__infinite_8h"/>
         <childnode refid="205" relation="include">
         </childnode>
       </node>
+      <node id="200">
+        <label>map</label>
+      </node>
+      <node id="214">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="199" relation="include">
+        </childnode>
+        <childnode refid="212" relation="include">
+        </childnode>
+        <childnode refid="205" relation="include">
+        </childnode>
+        <childnode refid="201" relation="include">
+        </childnode>
+        <childnode refid="206" relation="include">
+        </childnode>
+        <childnode refid="215" relation="include">
+        </childnode>
+        <childnode refid="216" relation="include">
+        </childnode>
+      </node>
+      <node id="213">
+        <label>unordered_set</label>
+      </node>
       <node id="208">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="197">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.h</label>
+        <link refid="class__algorithm__infinite_8h"/>
+        <childnode refid="198" relation="include">
+        </childnode>
+      </node>
+      <node id="201">
         <label>vector</label>
       </node>
-      <node id="205">
+      <node id="198">
         <label>algorithms/class_algorithm_base.h</label>
         <link refid="class__algorithm__base_8h"/>
+        <childnode refid="199" relation="include">
+        </childnode>
+        <childnode refid="200" relation="include">
+        </childnode>
+        <childnode refid="201" relation="include">
+        </childnode>
+        <childnode refid="202" relation="include">
+        </childnode>
+        <childnode refid="203" relation="include">
+        </childnode>
+        <childnode refid="204" relation="include">
+        </childnode>
+        <childnode refid="209" relation="include">
+        </childnode>
+        <childnode refid="211" relation="include">
+        </childnode>
+        <childnode refid="214" relation="include">
+        </childnode>
+      </node>
+      <node id="207">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="206">
+        <label>array</label>
+      </node>
+      <node id="215">
+        <label>hdf5.h</label>
+      </node>
+      <node id="205">
+        <label>iostream</label>
+      </node>
+      <node id="204">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="205" relation="include">
+        </childnode>
         <childnode refid="206" relation="include">
+        </childnode>
+        <childnode refid="200" relation="include">
+        </childnode>
+        <childnode refid="202" relation="include">
+        </childnode>
+        <childnode refid="201" relation="include">
         </childnode>
         <childnode refid="207" relation="include">
         </childnode>
         <childnode refid="208" relation="include">
         </childnode>
-        <childnode refid="209" relation="include">
-        </childnode>
-        <childnode refid="210" relation="include">
-        </childnode>
-        <childnode refid="211" relation="include">
-        </childnode>
-        <childnode refid="216" relation="include">
-        </childnode>
-        <childnode refid="218" relation="include">
-        </childnode>
-        <childnode refid="221" relation="include">
-        </childnode>
       </node>
-      <node id="214">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      <node id="210">
+        <label>chrono</label>
       </node>
-      <node id="213">
-        <label>array</label>
-      </node>
-      <node id="222">
-        <label>hdf5.h</label>
-      </node>
-      <node id="212">
-        <label>iostream</label>
+      <node id="202">
+        <label>complex</label>
       </node>
       <node id="211">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
         <childnode refid="212" relation="include">
         </childnode>
         <childnode refid="213" relation="include">
         </childnode>
-        <childnode refid="207" relation="include">
-        </childnode>
-        <childnode refid="209" relation="include">
-        </childnode>
-        <childnode refid="208" relation="include">
-        </childnode>
-        <childnode refid="214" relation="include">
-        </childnode>
-        <childnode refid="215" relation="include">
+        <childnode refid="201" relation="include">
         </childnode>
       </node>
-      <node id="217">
-        <label>chrono</label>
-      </node>
-      <node id="209">
-        <label>complex</label>
-      </node>
-      <node id="218">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="219" relation="include">
-        </childnode>
-        <childnode refid="220" relation="include">
-        </childnode>
-        <childnode refid="208" relation="include">
-        </childnode>
-      </node>
-      <node id="206">
+      <node id="199">
         <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="225">
+      <node id="218">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
         <link refid="class__algorithm__infinite_8cpp"/>
       </node>
-      <node id="226">
+      <node id="219">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h</label>
         <link refid="class__i_d_m_r_g_8h"/>
-        <childnode refid="227" relation="include">
+        <childnode refid="220" relation="include">
         </childnode>
-        <childnode refid="228" relation="include">
+        <childnode refid="221" relation="include">
         </childnode>
       </node>
-      <node id="230">
+      <node id="223">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
         <link refid="class__i_t_e_b_d_8cpp"/>
       </node>
-      <node id="224">
+      <node id="217">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.h</label>
         <link refid="class__algorithm__infinite_8h"/>
-        <childnode refid="225" relation="include">
+        <childnode refid="218" relation="include">
         </childnode>
-        <childnode refid="226" relation="include">
+        <childnode refid="219" relation="include">
         </childnode>
-        <childnode refid="229" relation="include">
+        <childnode refid="222" relation="include">
         </childnode>
       </node>
-      <node id="227">
+      <node id="220">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="229">
+      <node id="222">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h</label>
         <link refid="class__i_t_e_b_d_8h"/>
-        <childnode refid="227" relation="include">
+        <childnode refid="220" relation="include">
         </childnode>
-        <childnode refid="230" relation="include">
+        <childnode refid="223" relation="include">
         </childnode>
       </node>
-      <node id="228">
+      <node id="221">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
         <link refid="class__i_d_m_r_g_8cpp"/>
       </node>
@@ -190,69 +190,67 @@
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DMRG_CLASS_ALGORITHM_INFINITE_H</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__algorithm__base_8h" kindref="compound">algorithms/class_algorithm_base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__log__dmrg" kindref="compound">class_log_dmrg</ref>;</highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref>;</highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight></codeline>
-<codeline lineno="12" refid="classclass__algorithm__infinite" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__algorithm__infinite" kindref="compound">class_algorithm_infinite</ref>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base" kindref="compound">class_algorithm_base</ref><sp/>{</highlight></codeline>
-<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Inherit<sp/>the<sp/>constructor<sp/>of<sp/>class_algorithm_base</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" kindref="member">class_algorithm_base::class_algorithm_base</ref>;</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" kindref="member">class_algorithm_infinite</ref>(</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref><sp/><ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref></highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
-<codeline lineno="21" refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;class_infinite_state&gt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref>;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="classclass__algorithm__infinite" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__algorithm__infinite" kindref="compound">class_algorithm_infinite</ref>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base" kindref="compound">class_algorithm_base</ref><sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Inherit<sp/>the<sp/>constructor<sp/>of<sp/>class_algorithm_base</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" kindref="member">class_algorithm_base::class_algorithm_base</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" kindref="member">class_algorithm_infinite</ref>(</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref><sp/><ref refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" kindref="member">sim_type</ref></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="20" refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;class_infinite_state&gt;<sp/><ref refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" kindref="member">state</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
 <codeline lineno="22"><highlight class="normal"></highlight></codeline>
-<codeline lineno="23"><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1abdf68a4ae64f7302ad9e82a48d468e8a" kindref="member">run_simulation</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2cabf133e43683569ef43b9639476dab" kindref="member">run_preprocessing</ref>()<sp/>;</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aa7176e26e0dd793557a649fc6c0b75f1" kindref="member">run_postprocessing</ref>();</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1abdf68a4ae64f7302ad9e82a48d468e8a" kindref="member">run_simulation</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2cabf133e43683569ef43b9639476dab" kindref="member">run_preprocessing</ref>()<sp/>;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aa7176e26e0dd793557a649fc6c0b75f1" kindref="member">run_postprocessing</ref>();</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a677af8697d8ab608b039313309b38956" kindref="member">enlarge_environment</ref>();</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a3b3bd13802b17fe5cb9600e4dcaabded" kindref="member">swap</ref>();</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" kindref="member">run</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" kindref="member">compute_observables</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a7cfa931e8444f5aba7bfee278f4a6b58" kindref="member">clear_saturation_status</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>override;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ae1fa5306f4179791aad85be014532787" kindref="member">reset_to_random_state</ref>(const<sp/><ref refid="namespacestd" kindref="compound">std</ref>::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>parity)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a89dd9b352a0d683981bdbd3e8410225a" kindref="member">write_measurements</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2410f9a94f5e90c9124643dc32412dbf" kindref="member">write_state</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1af232e6d037549f0aae338b402aa9c722" kindref="member">print_status_update</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9" kindref="member">print_status_full</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2f87c10d5c9c76ba1cf13becd4a3e786" kindref="member">print_profiling</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a58411e4adb7dba48f3ba2c150e4ce392" kindref="member">print_profiling_sim</ref>(<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/>&amp;t_parent)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a677af8697d8ab608b039313309b38956" kindref="member">enlarge_environment</ref>();</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a3b3bd13802b17fe5cb9600e4dcaabded" kindref="member">swap</ref>();</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" kindref="member">run</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" kindref="member">compute_observables</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a7cfa931e8444f5aba7bfee278f4a6b58" kindref="member">clear_saturation_status</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>override;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a941f8aa17b53f73e3cba9fdd24109f7c" kindref="member">reset_to_random_state</ref>(const<sp/><ref refid="namespacestd" kindref="compound">std</ref>::</highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>parity_secto<sp/>=<sp/>&quot;random&quot;,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c" kindref="member">seed_state</ref><sp/>=<sp/>-1)<sp/><sp/>final;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a89dd9b352a0d683981bdbd3e8410225a" kindref="member">write_measurements</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2410f9a94f5e90c9124643dc32412dbf" kindref="member">write_state</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a744ceb5312144faad7754a3df2a9011c" kindref="member">write_status</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1af232e6d037549f0aae338b402aa9c722" kindref="member">print_status_update</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9" kindref="member">print_status_full</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ad35ded89a86cc7815ebae568eae20e2e" kindref="member">check_convergence_variance_mpo</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold<sp/>=<sp/><ref refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" kindref="member">quietNaN</ref>,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ac3374fa48c9c4c2f6b09b9e5b4fd1a8d" kindref="member">check_convergence_variance_ham</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold<sp/>=<sp/>quietNaN,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aa7c274874ad3e3d0258b2d7850f7867a" kindref="member">check_convergence_variance_mom</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold<sp/>=<sp/>quietNaN,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ad5ddf1d7d7b1184f4874e9db5fed23d9" kindref="member">check_convergence_entg_entropy</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49" refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" kindref="member">B_mpo_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="50" refid="classclass__algorithm__infinite_1a7bbb22b08660d9a233d2b9cd96cabd58" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__infinite_1a7bbb22b08660d9a233d2b9cd96cabd58" kindref="member">V_mpo_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>variances</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="51" refid="classclass__algorithm__infinite_1a8895c39f0050aecc51f56f0b3d650306" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8895c39f0050aecc51f56f0b3d650306" kindref="member">X_mpo_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>step<sp/>numbers</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="52" refid="classclass__algorithm__infinite_1a2b3decefbdbd9f2e4e7ab1871cbbdff3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2b3decefbdbd9f2e4e7ab1871cbbdff3" kindref="member">V_mpo_slope</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="54" refid="classclass__algorithm__infinite_1acc84655600d7e4028a28ae96bceb6f29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1acc84655600d7e4028a28ae96bceb6f29" kindref="member">B_ham_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="55" refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" kindref="member">V_ham_vec</ref>;</highlight></codeline>
-<codeline lineno="56" refid="classclass__algorithm__infinite_1a8c0ed712a983752bcecc2d645cfd8401" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8c0ed712a983752bcecc2d645cfd8401" kindref="member">X_ham_vec</ref>;</highlight></codeline>
-<codeline lineno="57" refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" kindref="member">V_ham_slope</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"></highlight></codeline>
-<codeline lineno="59" refid="classclass__algorithm__infinite_1a8ec9eca947b8dc09ac496535fc3a0909" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8ec9eca947b8dc09ac496535fc3a0909" kindref="member">B_mom_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="60" refid="classclass__algorithm__infinite_1a26fed56d782f59eb8fbcb4e35fd3a196" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__infinite_1a26fed56d782f59eb8fbcb4e35fd3a196" kindref="member">V_mom_vec</ref>;</highlight></codeline>
-<codeline lineno="61" refid="classclass__algorithm__infinite_1a17c4fcff55d7b01560a835ee91ac6d84" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a17c4fcff55d7b01560a835ee91ac6d84" kindref="member">X_mom_vec</ref>;</highlight></codeline>
-<codeline lineno="62" refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" kindref="member">V_mom_slope</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"></highlight></codeline>
-<codeline lineno="64" refid="classclass__algorithm__infinite_1a8dcfd195113c804ef7d91e68b9175e88" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8dcfd195113c804ef7d91e68b9175e88" kindref="member">BS_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65" refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" kindref="member">S_vec</ref>;</highlight></codeline>
-<codeline lineno="66" refid="classclass__algorithm__infinite_1a9c4ec6ab37bc9fd8b90cb9ad587a40bc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a9c4ec6ab37bc9fd8b90cb9ad587a40bc" kindref="member">XS_vec</ref>;</highlight></codeline>
-<codeline lineno="67" refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" kindref="member">S_slope</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="68"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70"><highlight class="normal"></highlight></codeline>
-<codeline lineno="71"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//DMRG_CLASS_ALGORITHM_INFINITE_H</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ad35ded89a86cc7815ebae568eae20e2e" kindref="member">check_convergence_variance_mpo</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold<sp/>=<sp/><ref refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" kindref="member">quietNaN</ref>,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ac3374fa48c9c4c2f6b09b9e5b4fd1a8d" kindref="member">check_convergence_variance_ham</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold<sp/>=<sp/>quietNaN,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1aa7c274874ad3e3d0258b2d7850f7867a" kindref="member">check_convergence_variance_mom</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold<sp/>=<sp/>quietNaN,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1ad5ddf1d7d7b1184f4874e9db5fed23d9" kindref="member">check_convergence_entg_entropy</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>slope_threshold<sp/>=<sp/>quietNaN);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" kindref="member">B_mpo_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="classclass__algorithm__infinite_1a7bbb22b08660d9a233d2b9cd96cabd58" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__infinite_1a7bbb22b08660d9a233d2b9cd96cabd58" kindref="member">V_mpo_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>variances</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49" refid="classclass__algorithm__infinite_1a8895c39f0050aecc51f56f0b3d650306" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8895c39f0050aecc51f56f0b3d650306" kindref="member">X_mpo_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>moves<sp/>numbers</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="classclass__algorithm__infinite_1a2b3decefbdbd9f2e4e7ab1871cbbdff3" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a2b3decefbdbd9f2e4e7ab1871cbbdff3" kindref="member">V_mpo_slope</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="classclass__algorithm__infinite_1acc84655600d7e4028a28ae96bceb6f29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1acc84655600d7e4028a28ae96bceb6f29" kindref="member">B_ham_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" kindref="member">V_ham_vec</ref>;</highlight></codeline>
+<codeline lineno="54" refid="classclass__algorithm__infinite_1a8c0ed712a983752bcecc2d645cfd8401" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8c0ed712a983752bcecc2d645cfd8401" kindref="member">X_ham_vec</ref>;</highlight></codeline>
+<codeline lineno="55" refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" kindref="member">V_ham_slope</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="classclass__algorithm__infinite_1a8ec9eca947b8dc09ac496535fc3a0909" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8ec9eca947b8dc09ac496535fc3a0909" kindref="member">B_mom_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="classclass__algorithm__infinite_1a26fed56d782f59eb8fbcb4e35fd3a196" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__infinite_1a26fed56d782f59eb8fbcb4e35fd3a196" kindref="member">V_mom_vec</ref>;</highlight></codeline>
+<codeline lineno="59" refid="classclass__algorithm__infinite_1a17c4fcff55d7b01560a835ee91ac6d84" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a17c4fcff55d7b01560a835ee91ac6d84" kindref="member">X_mom_vec</ref>;</highlight></codeline>
+<codeline lineno="60" refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" kindref="member">V_mom_slope</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classclass__algorithm__infinite_1a8dcfd195113c804ef7d91e68b9175e88" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a8dcfd195113c804ef7d91e68b9175e88" kindref="member">BS_vec</ref>;<sp/></highlight><highlight class="comment">//History<sp/>of<sp/>saturation<sp/>true/false</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">&gt;<sp/><ref refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" kindref="member">S_vec</ref>;</highlight></codeline>
+<codeline lineno="64" refid="classclass__algorithm__infinite_1a9c4ec6ab37bc9fd8b90cb9ad587a40bc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacestd" kindref="compound">std</ref>::list&lt;</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&gt;<sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a9c4ec6ab37bc9fd8b90cb9ad587a40bc" kindref="member">XS_vec</ref>;</highlight></codeline>
+<codeline lineno="65" refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" kindref="member">S_slope</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//DMRG_CLASS_ALGORITHM_INFINITE_H</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.h"/>
   </compounddef>

@@ -2,122 +2,71 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="common_2h5pp_8cpp" kind="file" language="C++">
     <compoundname>h5pp.cpp</compoundname>
-    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes refid="class__simulation__status_8h" local="no">simulation/class_simulation_status.h</includes>
     <includes local="no">h5pp/h5pp.h</includes>
     <incdepgraph>
-      <node id="2121">
-        <label>iomanip</label>
-      </node>
-      <node id="2119">
-        <label>iterator</label>
-      </node>
-      <node id="2122">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2123" relation="include">
-        </childnode>
-        <childnode refid="2116" relation="include">
+      <node id="2099">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/h5pp.cpp</label>
+        <link refid="common_2h5pp_8cpp"/>
+        <childnode refid="2100" relation="include">
         </childnode>
         <childnode refid="2118" relation="include">
         </childnode>
+        <childnode refid="2123" relation="include">
+        </childnode>
       </node>
-      <node id="2116">
+      <node id="2109">
+        <label>iomanip</label>
+      </node>
+      <node id="2107">
+        <label>iterator</label>
+      </node>
+      <node id="2110">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="2111" relation="include">
+        </childnode>
+        <childnode refid="2104" relation="include">
+        </childnode>
+        <childnode refid="2106" relation="include">
+        </childnode>
+      </node>
+      <node id="2104">
         <label>Eigen/Core</label>
       </node>
-      <node id="2114">
+      <node id="2102">
         <label>string</label>
       </node>
-      <node id="2134">
+      <node id="2122">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="2128">
+      <node id="2116">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2129" relation="include">
+        <childnode refid="2117" relation="include">
         </childnode>
-        <childnode refid="2120" relation="include">
+        <childnode refid="2108" relation="include">
         </childnode>
       </node>
-      <node id="2124">
+      <node id="2112">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2125" relation="include">
-        </childnode>
-        <childnode refid="2126" relation="include">
-        </childnode>
-        <childnode refid="2127" relation="include">
-        </childnode>
-      </node>
-      <node id="2130">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
         <childnode refid="2113" relation="include">
         </childnode>
         <childnode refid="2114" relation="include">
         </childnode>
-        <childnode refid="2120" relation="include">
+        <childnode refid="2115" relation="include">
         </childnode>
-        <childnode refid="2131" relation="include">
-        </childnode>
-        <childnode refid="2132" relation="include">
-        </childnode>
-        <childnode refid="2133" relation="include">
-        </childnode>
-        <childnode refid="2134" relation="include">
-        </childnode>
-      </node>
-      <node id="2123">
-        <label>experimental/type_traits</label>
       </node>
       <node id="2118">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="2125">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="2117">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="2131">
-        <label>vector</label>
-      </node>
-      <node id="2126">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="2132">
-        <label>array</label>
-      </node>
-      <node id="2133">
-        <label>hdf5.h</label>
-      </node>
-      <node id="2135">
-        <label>h5pp/h5pp.h</label>
-      </node>
-      <node id="2120">
-        <label>iostream</label>
-      </node>
-      <node id="2129">
-        <label>chrono</label>
-      </node>
-      <node id="2111">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/h5pp.cpp</label>
-        <link refid="common_2h5pp_8cpp"/>
-        <childnode refid="2112" relation="include">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="2101" relation="include">
         </childnode>
-        <childnode refid="2130" relation="include">
+        <childnode refid="2102" relation="include">
         </childnode>
-        <childnode refid="2135" relation="include">
-        </childnode>
-      </node>
-      <node id="2115">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2116" relation="include">
-        </childnode>
-        <childnode refid="2117" relation="include">
-        </childnode>
-        <childnode refid="2118" relation="include">
+        <childnode refid="2108" relation="include">
         </childnode>
         <childnode refid="2119" relation="include">
         </childnode>
@@ -128,24 +77,75 @@
         <childnode refid="2122" relation="include">
         </childnode>
       </node>
-      <node id="2112">
-        <label>state/tools/nmspc_tools.h</label>
+      <node id="2111">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2100">
+        <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="2113" relation="include">
+        <childnode refid="2101" relation="include">
         </childnode>
-        <childnode refid="2114" relation="include">
+        <childnode refid="2102" relation="include">
         </childnode>
-        <childnode refid="2115" relation="include">
+        <childnode refid="2103" relation="include">
         </childnode>
-        <childnode refid="2124" relation="include">
+        <childnode refid="2112" relation="include">
         </childnode>
-        <childnode refid="2128" relation="include">
+        <childnode refid="2116" relation="include">
         </childnode>
       </node>
-      <node id="2127">
-        <label>spdlog/sinks/stdout_sinks.h</label>
+      <node id="2106">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
       <node id="2113">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2105">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2119">
+        <label>vector</label>
+      </node>
+      <node id="2114">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2120">
+        <label>array</label>
+      </node>
+      <node id="2121">
+        <label>hdf5.h</label>
+      </node>
+      <node id="2123">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="2108">
+        <label>iostream</label>
+      </node>
+      <node id="2117">
+        <label>chrono</label>
+      </node>
+      <node id="2103">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2104" relation="include">
+        </childnode>
+        <childnode refid="2105" relation="include">
+        </childnode>
+        <childnode refid="2106" relation="include">
+        </childnode>
+        <childnode refid="2107" relation="include">
+        </childnode>
+        <childnode refid="2108" relation="include">
+        </childnode>
+        <childnode refid="2109" relation="include">
+        </childnode>
+        <childnode refid="2110" relation="include">
+        </childnode>
+      </node>
+      <node id="2115">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="2101">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -158,94 +158,104 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-03-09.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__simulation__status_8h" kindref="compound">simulation/class_simulation_status.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight></codeline>
 <codeline lineno="9" refid="namespacetools_1_1common_1_1io_1a585ff2336f06f4cfa09cc0f9e514ece4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1io_1a585ff2336f06f4cfa09cc0f9e514ece4" kindref="member">tools::common::io::write_simulation_status</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status,<sp/>h5pp::File<sp/>&amp;h5ppFile,</highlight></codeline>
 <codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>sim_name)<sp/>{</highlight></codeline>
 <codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/iteration&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" kindref="member">step</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/step&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" kindref="member">position</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/position&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/chi_temp&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a394209e7e516250158bc78e854504288" kindref="member">chi_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/chi_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a93ca2d10ef209ccd644ff5f5d9efabf5" kindref="member">min_sweeps</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/min_sweeps&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" kindref="member">energy_min</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_min&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" kindref="member">energy_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" kindref="member">energy_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_target&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" kindref="member">energy_ubound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_ubound&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" kindref="member">energy_lbound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_lbound&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a2642502c4df9c294eb3d70111e57f9b7" kindref="member">energy_dens</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" kindref="member">energy_dens_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens_target&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" kindref="member">energy_dens_window</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens_window&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" kindref="member">phys_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/phys_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" kindref="member">wall_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/wall_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" kindref="member">simu_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simu_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" kindref="member">delta_t</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/delta_t&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" kindref="member">time_step_has_converged</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/time_step_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" kindref="member">simulation_has_converged</ref><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" kindref="member">simulation_has_to_stop</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_to_stop&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/bond_dimension_has_reached_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" kindref="member">variance_mpo_saturated_for</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" kindref="member">variance_mpo_has_converged</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" kindref="member">variance_mpo_has_saturated</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1aca462206692cefd191733b5987b27887" kindref="member">variance_ham_saturated_for</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" kindref="member">variance_ham_has_converged</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" kindref="member">variance_ham_has_saturated</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1ab12472ca8a5c1819ae6edb5f21b5a9b9" kindref="member">variance_mom_saturated_for</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" kindref="member">variance_mom_has_converged</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" kindref="member">variance_mom_has_saturated</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="44"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48" refid="namespacetools_1_1common_1_1io_1aac4b3c1baaf7cd9aecf350384d5d1752" refkind="member"><highlight class="normal"><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/><ref refid="namespacetools_1_1common_1_1io_1aac4b3c1baaf7cd9aecf350384d5d1752" kindref="member">tools::common::io::load_sim_status_from_hdf5</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>sim_status;</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>common<sp/>variables</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/iteration&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" kindref="member">step</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/step&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" kindref="member">position</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/position&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/chi_temp&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a394209e7e516250158bc78e854504288" kindref="member">chi_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/chi_temp&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a93ca2d10ef209ccd644ff5f5d9efabf5" kindref="member">min_sweeps</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/min_sweeps&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" kindref="member">energy_min</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_min&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" kindref="member">energy_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" kindref="member">energy_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_target&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" kindref="member">energy_ubound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_ubound&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" kindref="member">energy_lbound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_lbound&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a2642502c4df9c294eb3d70111e57f9b7" kindref="member">energy_dens</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" kindref="member">energy_dens_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens_target&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" kindref="member">energy_dens_window</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens_window&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" kindref="member">phys_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/phys_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" kindref="member">wall_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/wall_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" kindref="member">simu_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simu_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" kindref="member">delta_t</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/delta_t&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" kindref="member">time_step_has_converged</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/time_step_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" kindref="member">simulation_has_converged</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" kindref="member">simulation_has_saturated</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" kindref="member">simulation_has_to_stop</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_to_stop&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/bond_dimension_has_reached_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" kindref="member">variance_mpo_has_converged</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" kindref="member">variance_mpo_has_saturated</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" kindref="member">variance_ham_has_converged</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" kindref="member">variance_ham_has_saturated</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" kindref="member">variance_mom_has_converged</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" kindref="member">variance_mom_has_saturated</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" kindref="member">variance_mpo_saturated_for</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1aca462206692cefd191733b5987b27887" kindref="member">variance_ham_saturated_for</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1ab12472ca8a5c1819ae6edb5f21b5a9b9" kindref="member">variance_mom_saturated_for</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Failed<sp/>to<sp/>load<sp/>sim_status<sp/>from<sp/>hdf5:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(ex.what()));</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sim_status;</highlight></codeline>
-<codeline lineno="90"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a16d2c55935f9a23c594bce56c1679b31" kindref="member">moves</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/moves&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" kindref="member">step</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/step&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" kindref="member">position</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/position&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1aa32e29bb9c8addcaf8f6591ae3030975" kindref="member">num_resets</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/num_resets&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/chi_temp&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a394209e7e516250158bc78e854504288" kindref="member">chi_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/chi_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a93ca2d10ef209ccd644ff5f5d9efabf5" kindref="member">min_sweeps</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/min_sweeps&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" kindref="member">energy_min</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_min&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" kindref="member">energy_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" kindref="member">energy_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_target&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" kindref="member">energy_ubound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_ubound&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" kindref="member">energy_lbound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_lbound&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a2642502c4df9c294eb3d70111e57f9b7" kindref="member">energy_dens</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" kindref="member">energy_dens_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens_target&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" kindref="member">energy_dens_window</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens_window&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" kindref="member">phys_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/phys_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" kindref="member">wall_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/wall_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" kindref="member">simu_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simu_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" kindref="member">delta_t</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/delta_t&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" kindref="member">time_step_has_converged</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/time_step_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" kindref="member">simulation_has_converged</ref><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" kindref="member">simulation_has_saturated</ref><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a682a441660e6bf83604320835ee6c20d" kindref="member">simulation_has_succeeded</ref><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_succeeded&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" kindref="member">simulation_has_to_stop</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_to_stop&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/bond_dimension_has_reached_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" kindref="member">variance_mpo_saturated_for</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" kindref="member">variance_mpo_has_converged</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" kindref="member">variance_mpo_has_saturated</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1aca462206692cefd191733b5987b27887" kindref="member">variance_ham_saturated_for</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" kindref="member">variance_ham_has_converged</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" kindref="member">variance_ham_has_saturated</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" kindref="member">entanglement_saturated_for</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1ab12472ca8a5c1819ae6edb5f21b5a9b9" kindref="member">variance_mom_saturated_for</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" kindref="member">variance_mom_has_converged</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(sim_status.<ref refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" kindref="member">variance_mom_has_saturated</ref><sp/><sp/><sp/><sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53" refid="namespacetools_1_1common_1_1io_1aac4b3c1baaf7cd9aecf350384d5d1752" refkind="member"><highlight class="normal"><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/><ref refid="namespacetools_1_1common_1_1io_1aac4b3c1baaf7cd9aecf350384d5d1752" kindref="member">tools::common::io::load_sim_status_from_hdf5</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>sim_status;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>common<sp/>variables</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" kindref="member">tools::common::profile::t_hdf</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/iteration&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a16d2c55935f9a23c594bce56c1679b31" kindref="member">moves</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/moves&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" kindref="member">step</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/step&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" kindref="member">position</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/position&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1aa32e29bb9c8addcaf8f6591ae3030975" kindref="member">num_resets</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/num_resets&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" kindref="member">chi_temp</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/chi_temp&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a394209e7e516250158bc78e854504288" kindref="member">chi_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/chi_temp&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a93ca2d10ef209ccd644ff5f5d9efabf5" kindref="member">min_sweeps</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/min_sweeps&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" kindref="member">energy_min</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_min&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" kindref="member">energy_max</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" kindref="member">energy_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_target&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" kindref="member">energy_ubound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_ubound&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" kindref="member">energy_lbound</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_lbound&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a2642502c4df9c294eb3d70111e57f9b7" kindref="member">energy_dens</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" kindref="member">energy_dens_target</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens_target&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" kindref="member">energy_dens_window</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/energy_dens_window&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" kindref="member">phys_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/phys_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" kindref="member">wall_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/wall_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" kindref="member">simu_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simu_time&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" kindref="member">delta_t</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/delta_t&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" kindref="member">time_step_has_converged</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/time_step_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" kindref="member">simulation_has_converged</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" kindref="member">simulation_has_saturated</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a682a441660e6bf83604320835ee6c20d" kindref="member">simulation_has_succeeded</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_succeeded&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" kindref="member">simulation_has_to_stop</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/simulation_has_to_stop&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" kindref="member">bond_dimension_has_reached_max</ref><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/bond_dimension_has_reached_max&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" kindref="member">entanglement_has_converged</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" kindref="member">entanglement_has_saturated</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" kindref="member">variance_mpo_has_converged</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" kindref="member">variance_mpo_has_saturated</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" kindref="member">variance_ham_has_converged</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" kindref="member">variance_ham_has_saturated</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" kindref="member">variance_mom_has_converged</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_has_converged&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" kindref="member">variance_mom_has_saturated</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_has_saturated&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" kindref="member">entanglement_saturated_for</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/entanglement_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" kindref="member">variance_mpo_saturated_for</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mpo_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1aca462206692cefd191733b5987b27887" kindref="member">variance_ham_saturated_for</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_ham_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.readDataset(sim_status.<ref refid="structstatus__data_1ab12472ca8a5c1819ae6edb5f21b5a9b9" kindref="member">variance_mom_saturated_for</ref><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/sim_status/variance_mom_saturated_for&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Failed<sp/>to<sp/>load<sp/>sim_status<sp/>from<sp/>output:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(ex.what()));</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>sim_status;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/h5pp.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/h5pp.cpp"/>
   </compounddef>
 </doxygen>

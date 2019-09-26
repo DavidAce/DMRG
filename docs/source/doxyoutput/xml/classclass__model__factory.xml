@@ -4,9 +4,9 @@
     <compoundname>class_model_factory</compoundname>
     <includes refid="class__model__factory_8h" local="no">class_model_factory.h</includes>
       <sectiondef kind="public-static-func">
-      <memberdef kind="function" id="classclass__model__factory_1abcf6ff6ee79d5ef9af4a219d2ade32d3" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::shared_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
-        <definition>std::shared_ptr&lt; class_model_base &gt; class_model_factory::create_mpo</definition>
+      <memberdef kind="function" id="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; class_model_base &gt; class_model_factory::create_mpo</definition>
         <argsstring>(size_t position, std::string model_type_str)</argsstring>
         <name>create_mpo</name>
         <param>
@@ -25,7 +25,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp" bodystart="14" bodyend="30"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__model__factory_1a81bfc4c1c7577deaafb6344e5f5d0c53" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classclass__model__factory_1a27e72c08a4f4bf9fedcbeb182248ad4e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
             <type>typename...</type>
@@ -33,8 +33,8 @@
             <defname>T</defname>
           </param>
         </templateparamlist>
-        <type>std::shared_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
-        <definition>static std::shared_ptr&lt;class_model_base&gt; class_model_factory::create_mpo</definition>
+        <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+        <definition>static std::unique_ptr&lt;class_model_base&gt; class_model_factory::create_mpo</definition>
         <argsstring>(size_t position, std::string model_type_str, T... args)</argsstring>
         <name>create_mpo</name>
         <param>
@@ -56,16 +56,15 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" bodystart="18" bodyend="22"/>
-        <references refid="classclass__model__factory_1abcf6ff6ee79d5ef9af4a219d2ade32d3" compoundref="class__model__factory_8cpp" startline="14" endline="30">create_mpo</references>
-        <references refid="classclass__model__factory_1a9715c828aa0ede548f52d530e11f4929" compoundref="class__model__factory_8cpp" startline="34" endline="36">clone</references>
+        <references refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" compoundref="class__model__factory_8cpp" startline="14" endline="30">create_mpo</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__model__factory_1a9715c828aa0ede548f52d530e11f4929" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>std::shared_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
-        <definition>std::shared_ptr&lt; class_model_base &gt; class_model_factory::clone</definition>
-        <argsstring>(std::shared_ptr&lt; class_model_base &gt; other)</argsstring>
+      <memberdef kind="function" id="classclass__model__factory_1a93f2fd7d6a3172c625cdd332151ace17" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; class_model_base &gt; class_model_factory::clone</definition>
+        <argsstring>(std::unique_ptr&lt; class_model_base &gt; other)</argsstring>
         <name>clone</name>
         <param>
-          <type>std::shared_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+          <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
           <declname>other</declname>
         </param>
         <briefdescription>
@@ -75,6 +74,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp" bodystart="34" bodyend="36"/>
+        <references refid="classclass__model__base_1aa63f907aa0ac70db3a9477ce73c1fdd6">class_model_base::clone</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -83,9 +83,9 @@
     </detaileddescription>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" bodystart="13" bodyend="25"/>
     <listofallmembers>
-      <member refid="classclass__model__factory_1a9715c828aa0ede548f52d530e11f4929" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>clone</name></member>
-      <member refid="classclass__model__factory_1abcf6ff6ee79d5ef9af4a219d2ade32d3" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>create_mpo</name></member>
-      <member refid="classclass__model__factory_1a81bfc4c1c7577deaafb6344e5f5d0c53" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>create_mpo</name></member>
+      <member refid="classclass__model__factory_1a93f2fd7d6a3172c625cdd332151ace17" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>clone</name></member>
+      <member refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>create_mpo</name></member>
+      <member refid="classclass__model__factory_1a27e72c08a4f4bf9fedcbeb182248ad4e" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>create_mpo</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

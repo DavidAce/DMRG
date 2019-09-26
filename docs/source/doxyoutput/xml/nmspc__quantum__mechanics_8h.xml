@@ -6,7 +6,6 @@
     <includes local="no">unsupported/Eigen/CXX11/Tensor</includes>
     <includes local="no">complex</includes>
     <includes local="no">vector</includes>
-    <includedby refid="class__algorithm__base_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</includedby>
     <includedby refid="class__f_d_m_r_g_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</includedby>
     <includedby refid="class__i_t_e_b_d_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</includedby>
     <includedby refid="class__x_d_m_r_g_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</includedby>
@@ -15,26 +14,114 @@
     <includedby refid="class__selfdual__tf__rf__ising_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</includedby>
     <includedby refid="class__tf__ising_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</includedby>
     <includedby refid="class__finite__state_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.cpp</includedby>
-    <includedby refid="finite_2debug_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/debug.cpp</includedby>
-    <includedby refid="finite_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/h5pp.cpp</includedby>
-    <includedby refid="finite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/measure.cpp</includedby>
-    <includedby refid="finite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp</includedby>
-    <includedby refid="ops_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp</includedby>
-    <includedby refid="infinite_2debug_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/debug.cpp</includedby>
-    <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp</includedby>
+    <includedby refid="finite_2debug_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/debug.cpp</includedby>
+    <includedby refid="finite_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp</includedby>
+    <includedby refid="finite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</includedby>
+    <includedby refid="mps-internals_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</includedby>
+    <includedby refid="finite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</includedby>
+    <includedby refid="ops_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</includedby>
+    <includedby refid="infinite_2debug_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</includedby>
+    <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</includedby>
     <incdepgraph>
-      <node id="676">
+      <node id="664">
         <label>Eigen/Core</label>
       </node>
-      <node id="677">
+      <node id="665">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="679">
+      <node id="667">
         <label>vector</label>
       </node>
-      <node id="675">
+      <node id="663">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h</label>
         <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="664" relation="include">
+        </childnode>
+        <childnode refid="665" relation="include">
+        </childnode>
+        <childnode refid="666" relation="include">
+        </childnode>
+        <childnode refid="667" relation="include">
+        </childnode>
+      </node>
+      <node id="666">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="669">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
+        <link refid="class__f_d_m_r_g_8cpp"/>
+      </node>
+      <node id="680">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</label>
+        <link refid="mps-internals_8cpp"/>
+      </node>
+      <node id="682">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
+        <link refid="ops_8cpp"/>
+      </node>
+      <node id="679">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
+        <link refid="finite_2measure_8cpp"/>
+      </node>
+      <node id="673">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp</label>
+        <link refid="class__model__base_8cpp"/>
+      </node>
+      <node id="678">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp</label>
+        <link refid="finite_2h5pp_8cpp"/>
+      </node>
+      <node id="684">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="674">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
+        <link refid="class__selfdual__tf__rf__ising_8cpp"/>
+      </node>
+      <node id="672">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp</label>
+        <link refid="nmspc__quantum__mechanics_8cpp"/>
+      </node>
+      <node id="683">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
+        <link refid="infinite_2debug_8cpp"/>
+      </node>
+      <node id="670">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
+        <link refid="class__i_t_e_b_d_8cpp"/>
+      </node>
+      <node id="676">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.cpp</label>
+        <link refid="class__finite__state_8cpp"/>
+      </node>
+      <node id="675">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
+        <link refid="class__tf__ising_8cpp"/>
+      </node>
+      <node id="671">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
+        <link refid="class__x_d_m_r_g_8cpp"/>
+      </node>
+      <node id="668">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h</label>
+        <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="669" relation="include">
+        </childnode>
+        <childnode refid="670" relation="include">
+        </childnode>
+        <childnode refid="671" relation="include">
+        </childnode>
+        <childnode refid="672" relation="include">
+        </childnode>
+        <childnode refid="673" relation="include">
+        </childnode>
+        <childnode refid="674" relation="include">
+        </childnode>
+        <childnode refid="675" relation="include">
+        </childnode>
         <childnode refid="676" relation="include">
         </childnode>
         <childnode refid="677" relation="include">
@@ -43,79 +130,8 @@
         </childnode>
         <childnode refid="679" relation="include">
         </childnode>
-      </node>
-      <node id="678">
-        <label>complex</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="682">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
-        <link refid="class__f_d_m_r_g_8cpp"/>
-      </node>
-      <node id="686">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp</label>
-        <link refid="class__model__base_8cpp"/>
-      </node>
-      <node id="687">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
-        <link refid="class__selfdual__tf__rf__ising_8cpp"/>
-      </node>
-      <node id="685">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp</label>
-        <link refid="nmspc__quantum__mechanics_8cpp"/>
-      </node>
-      <node id="683">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
-        <link refid="class__i_t_e_b_d_8cpp"/>
-      </node>
-      <node id="689">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.cpp</label>
-        <link refid="class__finite__state_8cpp"/>
-      </node>
-      <node id="688">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
-        <link refid="class__tf__ising_8cpp"/>
-      </node>
-      <node id="692">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/measure.cpp</label>
-        <link refid="finite_2measure_8cpp"/>
-      </node>
-      <node id="684">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
-        <link refid="class__x_d_m_r_g_8cpp"/>
-      </node>
-      <node id="691">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/h5pp.cpp</label>
-        <link refid="finite_2h5pp_8cpp"/>
-      </node>
-      <node id="690">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/debug.cpp</label>
-        <link refid="finite_2debug_8cpp"/>
-      </node>
-      <node id="695">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/debug.cpp</label>
-        <link refid="infinite_2debug_8cpp"/>
-      </node>
-      <node id="696">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp</label>
-        <link refid="infinite_2measure_8cpp"/>
-      </node>
-      <node id="694">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp</label>
-        <link refid="ops_8cpp"/>
-      </node>
-      <node id="681">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
-        <link refid="class__algorithm__base_8cpp"/>
-      </node>
-      <node id="693">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mps.cpp</label>
-        <link refid="finite_2mps_8cpp"/>
-      </node>
-      <node id="680">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h</label>
-        <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="680" relation="include">
+        </childnode>
         <childnode refid="681" relation="include">
         </childnode>
         <childnode refid="682" relation="include">
@@ -124,30 +140,14 @@
         </childnode>
         <childnode refid="684" relation="include">
         </childnode>
-        <childnode refid="685" relation="include">
-        </childnode>
-        <childnode refid="686" relation="include">
-        </childnode>
-        <childnode refid="687" relation="include">
-        </childnode>
-        <childnode refid="688" relation="include">
-        </childnode>
-        <childnode refid="689" relation="include">
-        </childnode>
-        <childnode refid="690" relation="include">
-        </childnode>
-        <childnode refid="691" relation="include">
-        </childnode>
-        <childnode refid="692" relation="include">
-        </childnode>
-        <childnode refid="693" relation="include">
-        </childnode>
-        <childnode refid="694" relation="include">
-        </childnode>
-        <childnode refid="695" relation="include">
-        </childnode>
-        <childnode refid="696" relation="include">
-        </childnode>
+      </node>
+      <node id="677">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/debug.cpp</label>
+        <link refid="finite_2debug_8cpp"/>
+      </node>
+      <node id="681">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</label>
+        <link refid="finite_2mps_8cpp"/>
       </node>
     </invincdepgraph>
     <innernamespace refid="namespaceqm">qm</innernamespace>
@@ -171,16 +171,16 @@
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;complex&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceqm" kindref="compound">qm</ref>{</highlight></codeline>
+<codeline lineno="12" refid="namespaceqm" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceqm" kindref="compound">qm</ref>{</highlight></codeline>
 <codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1aa34a66facd046cb861f0d3e8f242cf48" kindref="member">gen_manybody_spin</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;<ref refid="namespacesettings" kindref="compound">s</ref>,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sites);</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">spinOneHalf<sp/>{</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" kindref="member">sx</ref>;</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a777bca15b9c80a4c91d1cc8e49536559" kindref="member">sy</ref>;</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" kindref="member">sz</ref>;</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a09b3ac70f50c2cb92e9aa12baf229404" kindref="member">Id</ref>;</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::array&lt;Eigen::Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1af1cf3689c866e495c05a773e13e75aad" kindref="member">sx_eigvecs</ref>;</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::array&lt;Eigen::Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a291ae65d7edaaaf7dc6f42e5bf54b099" kindref="member">sy_eigvecs</ref>;</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::array&lt;Eigen::Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1ac0544219bcd024372d765b4e4ff96591" kindref="member">sz_eigvecs</ref>;</highlight></codeline>
+<codeline lineno="14" refid="namespaceqm_1_1spin_one_half" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">spinOneHalf<sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" kindref="member">sy</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::array&lt;Eigen::Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a108205fa9b3f65edcb8baca98edd5925" kindref="member">sx_eigvecs</ref>;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::array&lt;Eigen::Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1ac1296391083d31f641019131926507ad" kindref="member">sy_eigvecs</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::array&lt;Eigen::Vector2cd,2&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a6c647e6a015b60e161400c3fbe4072f5" kindref="member">sz_eigvecs</ref>;</highlight></codeline>
 <codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>;</highlight></codeline>
 <codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>;</highlight></codeline>
 <codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>;</highlight></codeline>
@@ -189,17 +189,17 @@
 <codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29" refid="namespaceqm_1_1spin_one" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">spinOne{</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix3cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" kindref="member">sx</ref>;</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix3cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a777bca15b9c80a4c91d1cc8e49536559" kindref="member">sy</ref>;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix3cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" kindref="member">sz</ref>;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix3cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a09b3ac70f50c2cb92e9aa12baf229404" kindref="member">Id</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix3cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix3cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" kindref="member">sy</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix3cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>Eigen::Matrix3cd<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1spin_one_half_1acfc44d248aa25773edc90c232a54f47f" kindref="member">II</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">timeEvolution{</highlight></codeline>
+<codeline lineno="40" refid="namespaceqm_1_1time_evolution" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">timeEvolution{</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1time_evolution_1a78103280aef02f54e28b7d670f5d6837" kindref="member">Suzuki_Trotter_1st_order</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;<sp/>t,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;h_evn,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;h_odd);</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1time_evolution_1a083310714a315dc80200b5c530789dde" kindref="member">Suzuki_Trotter_2nd_order</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;<sp/>t,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;h_evn,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;h_odd);</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/><ref refid="namespaceqm_1_1time_evolution_1a6f07f0c3a2181990bb149a1716a7bad5" kindref="member">Suzuki_Trotter_4th_order</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;<sp/>t,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;h_evn,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;h_odd);</highlight></codeline>

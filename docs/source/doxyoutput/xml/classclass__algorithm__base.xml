@@ -5,11 +5,12 @@
     <derivedcompoundref refid="classclass__algorithm__finite" prot="public" virt="non-virtual">class_algorithm_finite</derivedcompoundref>
     <derivedcompoundref refid="classclass__algorithm__infinite" prot="public" virt="non-virtual">class_algorithm_infinite</derivedcompoundref>
     <includes refid="class__algorithm__base_8h" local="no">class_algorithm_base.h</includes>
+    <innerclass refid="structclass__algorithm__base_1_1_saturation_report" prot="protected">class_algorithm_base::SaturationReport</innerclass>
       <sectiondef kind="public-type">
       <memberdef kind="enum" id="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" static="no">
         <name>StopReason</name>
-        <enumvalue id="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4ad0d58d957971f2445cffa419a01ce4a3" prot="public">
-          <name>CONVERGED</name>
+        <enumvalue id="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4afd9f6519d3f45276829fe74eb2c4bb85" prot="public">
+          <name>SUCCEEDED</name>
           <briefdescription>
           </briefdescription>
           <detaileddescription>
@@ -93,9 +94,9 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="38" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1a4ae9a05248866219f0df931d6160e3d7" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__hdf5__log" kindref="compound">class_hdf5_log</ref>&lt; <ref refid="classclass__log__profiling" kindref="compound">class_log_profiling</ref> &gt; &gt;</type>
-        <definition>std::unique_ptr&lt;class_hdf5_log&lt;class_log_profiling&gt; &gt; class_algorithm_base::log_profiling</definition>
+      <memberdef kind="variable" id="classclass__algorithm__base_1ac2191f13b616212908a566262ace8df5" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__log" kindref="compound">class_hdf5_log</ref>&lt; <ref refid="classclass__log__profiling" kindref="compound">class_log_profiling</ref> &gt; &gt;</type>
+        <definition>std::shared_ptr&lt;class_hdf5_log&lt;class_log_profiling&gt; &gt; class_algorithm_base::log_profiling</definition>
         <argsstring></argsstring>
         <name>log_profiling</name>
         <briefdescription>
@@ -106,9 +107,9 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="39" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1a8b718fe0f45ad5636ec2b432c11568e0" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__hdf5__log" kindref="compound">class_hdf5_log</ref>&lt; <ref refid="classclass__log__simulation__status" kindref="compound">class_log_simulation_status</ref> &gt; &gt;</type>
-        <definition>std::unique_ptr&lt;class_hdf5_log&lt;class_log_simulation_status&gt; &gt; class_algorithm_base::log_sim_status</definition>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a40cc086bc611a7284fed3d9a5b5c1bc6" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; <ref refid="classclass__hdf5__log" kindref="compound">class_hdf5_log</ref>&lt; <ref refid="classclass__log__simulation__status" kindref="compound">class_log_simulation_status</ref> &gt; &gt;</type>
+        <definition>std::shared_ptr&lt;class_hdf5_log&lt;class_log_simulation_status&gt; &gt; class_algorithm_base::log_sim_status</definition>
         <argsstring></argsstring>
         <name>log_sim_status</name>
         <briefdescription>
@@ -166,23 +167,49 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Total time </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="81" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="77" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
-        <definition>class_tic_toc class_algorithm_base::t_sim</definition>
+        <definition>class_tic_toc class_algorithm_base::t_pre</definition>
         <argsstring></argsstring>
-        <name>t_sim</name>
+        <name>t_pre</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Preprocessing time </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="82" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_run</definition>
+        <argsstring></argsstring>
+        <name>t_run</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Simulation run time </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc class_algorithm_base::t_pos</definition>
+        <argsstring></argsstring>
+        <name>t_pos</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Postprocessing time </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="80" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -192,10 +219,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Printing time </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="83" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -205,10 +232,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Convergence checks time </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="84" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="82" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-static-attrib">
@@ -264,20 +291,21 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="31" bodyend="51"/>
-        <references refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" compoundref="class__algorithm__base_8h" startline="28">log</references>
-        <references refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" compoundref="nmspc__logger_8h" startline="33" endline="44">Logger::setLogger</references>
-        <references refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" compoundref="class__algorithm__base_8h" startline="42">sim_name</references>
-        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="148">settings::console::verbosity</references>
-        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="149">settings::console::timestamp</references>
-        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" compoundref="class__algorithm__base_8cpp" startline="233" endline="251">set_profiling_labels</references>
-        <references refid="namespacetools_1_1finite_1_1profile_1a03758f528f727a4b09a678e6b9cdcd8f" compoundref="finite_2profile_8cpp" startline="21" endline="30">tools::finite::profile::init_profiling</references>
-        <references refid="classclass__algorithm__base_1a4ae9a05248866219f0df931d6160e3d7" compoundref="class__algorithm__base_8h" startline="39">log_profiling</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="26" bodyend="47"/>
         <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="38">h5pp_file</references>
-        <references refid="classclass__algorithm__base_1a8b718fe0f45ad5636ec2b432c11568e0" compoundref="class__algorithm__base_8h" startline="40">log_sim_status</references>
-        <references refid="namespacesettings_1_1input_1ab6ac8cfb0c1835dde36563f175f36bd7" compoundref="nmspc__settings_8h" startline="30">settings::input::input_file</references>
-        <references refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" compoundref="nmspc__settings_8h" startline="31">settings::input::input_filename</references>
+        <references refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" compoundref="class__algorithm__base_8h" startline="42">sim_name</references>
+        <references refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" compoundref="class__algorithm__base_8h" startline="43">sim_type</references>
+        <references refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" compoundref="class__algorithm__base_8h" startline="28">log</references>
+        <references refid="namespace_logger_1a540e0412286255a5eb899ee37171f39d" compoundref="nmspc__logger_8h" startline="51" endline="63">Logger::setLogger</references>
+        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="168">settings::console::verbosity</references>
+        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="169">settings::console::timestamp</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" compoundref="class__algorithm__base_8cpp" startline="197" endline="215">set_profiling_labels</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a46720fc1d130729b6d90f91492d5c94d" compoundref="prof_8cpp" startline="35" endline="51">tools::common::profile::init_profiling</references>
+        <references refid="classclass__algorithm__base_1ac2191f13b616212908a566262ace8df5" compoundref="class__algorithm__base_8h" startline="39">log_profiling</references>
+        <references refid="classclass__algorithm__base_1a40cc086bc611a7284fed3d9a5b5c1bc6" compoundref="class__algorithm__base_8h" startline="40">log_sim_status</references>
+        <references refid="namespacesettings_1_1input_1ab6ac8cfb0c1835dde36563f175f36bd7" compoundref="nmspc__settings_8h" startline="36">settings::input::input_file</references>
+        <references refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" compoundref="nmspc__settings_8h" startline="37">settings::input::input_filename</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -290,14 +318,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="233" bodyend="251"/>
-        <references refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" compoundref="class__algorithm__base_8h" startline="81">t_tot</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="197" bodyend="215"/>
+        <references refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" compoundref="class__algorithm__base_8h" startline="77">t_tot</references>
         <references refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" compoundref="class__tic__toc_8cpp" startline="22" endline="24">class_tic_toc::set_properties</references>
-        <references refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" compoundref="nmspc__settings_8h" startline="144">settings::profiling::precision</references>
-        <references refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" compoundref="class__algorithm__base_8h" startline="83">t_prt</references>
-        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="83">settings::idmrg::on</references>
-        <references refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" compoundref="class__algorithm__base_8h" startline="84">t_con</references>
-        <references refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" compoundref="class__algorithm__base_8h" startline="82">t_sim</references>
+        <references refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" compoundref="nmspc__settings_8h" startline="164">settings::profiling::precision</references>
+        <references refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" compoundref="class__algorithm__base_8h" startline="81">t_prt</references>
+        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="163">settings::profiling::on</references>
+        <references refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" compoundref="class__algorithm__base_8h" startline="82">t_con</references>
+        <references refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" compoundref="class__algorithm__base_8h" startline="79">t_run</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -386,15 +414,13 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="56" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__base_1a881cc8f8ece0220f988663834996a219" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classclass__algorithm__base_1ad8c54d3446246729c7a5d61e04ea9e49" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
-        <definition>virtual void class_algorithm_base::write_logs</definition>
+        <definition>virtual void class_algorithm_base::write_status</definition>
         <argsstring>(bool force=false)=0</argsstring>
-        <name>write_logs</name>
-        <reimplementedby refid="classclass__i_d_m_r_g_1aaf0ecf5569f9c2670d98871e7cbeec33">write_logs</reimplementedby>
-        <reimplementedby refid="classclass__f_d_m_r_g_1a4654f5d47acaecd8317f090899fb9afd">write_logs</reimplementedby>
-        <reimplementedby refid="classclass__i_t_e_b_d_1a60bd820616381dc37b7b2c8d09913eac">write_logs</reimplementedby>
-        <reimplementedby refid="classclass__x_d_m_r_g_1ae54acde0320ddbef4f0a8d497cf1fd9d">write_logs</reimplementedby>
+        <name>write_status</name>
+        <reimplementedby refid="classclass__algorithm__infinite_1a744ceb5312144faad7754a3df2a9011c">write_status</reimplementedby>
+        <reimplementedby refid="classclass__algorithm__finite_1ab67aeb5ec25a5e804ad8c84402b4958b">write_status</reimplementedby>
         <param>
           <type>bool</type>
           <declname>force</declname>
@@ -407,6 +433,27 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="57" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1a881cc8f8ece0220f988663834996a219" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_algorithm_base::write_logs</definition>
+        <argsstring>(bool force=false)=0</argsstring>
+        <name>write_logs</name>
+        <reimplementedby refid="classclass__i_d_m_r_g_1aaf0ecf5569f9c2670d98871e7cbeec33">write_logs</reimplementedby>
+        <reimplementedby refid="classclass__i_t_e_b_d_1a60bd820616381dc37b7b2c8d09913eac">write_logs</reimplementedby>
+        <reimplementedby refid="classclass__algorithm__finite_1a9a16ac48f5b2fc4b4e6772efce44b471">write_logs</reimplementedby>
+        <param>
+          <type>bool</type>
+          <declname>force</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="58" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1ae08aa4b8e9bbd286c9ec76f15553a037" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>bool</type>
@@ -423,7 +470,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="58" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="59" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>long</type>
@@ -440,7 +487,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="59" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="60" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a0f6c17cedfeb0baba3df055e87655ea8" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>size_t</type>
@@ -457,7 +504,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="60" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="61" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>size_t</type>
@@ -474,7 +521,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="61" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="62" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a5d6af987e476e9a93a2bab9261ac16bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>size_t</type>
@@ -491,7 +538,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="62" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="63" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>bool</type>
@@ -508,7 +555,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="63" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="64" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -523,7 +570,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="64" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="65" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a96f34d67e881abd4d1ec4dd2d89728ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -538,33 +585,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="65" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__base_1aeed6c86b2bb499b7b8977a9bca82e6ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_algorithm_base::print_profiling</definition>
-        <argsstring>()=0</argsstring>
-        <name>print_profiling</name>
-        <reimplementedby refid="classclass__algorithm__infinite_1a2f87c10d5c9c76ba1cf13becd4a3e786">print_profiling</reimplementedby>
-        <reimplementedby refid="classclass__algorithm__finite_1ab43ed4eaab089d3ae2347a919258b750">print_profiling</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="66" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__base_1a4155242b70bbe53a9b7e887dfa5c37d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+      <memberdef kind="function" id="classclass__algorithm__base_1a4db893602692d81b4cce5e197b5a5238" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
-        <definition>virtual void class_algorithm_base::print_profiling_sim</definition>
-        <argsstring>(class_tic_toc &amp;t_parent)=0</argsstring>
-        <name>print_profiling_sim</name>
-        <reimplementedby refid="classclass__algorithm__infinite_1a58411e4adb7dba48f3ba2c150e4ce392">print_profiling_sim</reimplementedby>
-        <reimplementedby refid="classclass__algorithm__finite_1acd7c76938078bcf659c54fa901665fd7">print_profiling_sim</reimplementedby>
+        <definition>virtual void class_algorithm_base::reset_to_random_state</definition>
+        <argsstring>(const std::string parity=&quot;random&quot;, int seed_state=-1)=0</argsstring>
+        <name>reset_to_random_state</name>
+        <reimplementedby refid="classclass__algorithm__infinite_1a941f8aa17b53f73e3cba9fdd24109f7c">reset_to_random_state</reimplementedby>
+        <reimplementedby refid="classclass__algorithm__finite_1a52ad711d5cc01fa67e7db4190d748ffb">reset_to_random_state</reimplementedby>
         <param>
-          <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &amp;</type>
-          <declname>t_parent</declname>
+          <type>const std::string</type>
+          <declname>parity</declname>
+          <defval>&quot;random&quot;</defval>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>seed_state</declname>
+          <defval>-1</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -573,25 +611,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="67" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__base_1afc54d558dbfc26bb8ae4f6607a2edbee" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_algorithm_base::reset_to_random_state</definition>
-        <argsstring>(const std::string parity)=0</argsstring>
-        <name>reset_to_random_state</name>
-        <reimplementedby refid="classclass__algorithm__infinite_1ae1fa5306f4179791aad85be014532787">reset_to_random_state</reimplementedby>
-        <reimplementedby refid="classclass__algorithm__finite_1aec4f51a884302a5ae4c09f0106d8d79e">reset_to_random_state</reimplementedby>
-        <param>
-          <type>const std::string</type>
-          <declname>parity</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="68" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1adae1b7c6678d8c52304a3bcf64c1b521" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -606,35 +625,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="69" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__base_1a5bf9787e3825f33baafbd06c4946babc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_algorithm_base::write_status</definition>
-        <argsstring>(bool force=false)</argsstring>
-        <name>write_status</name>
-        <param>
-          <type>bool</type>
-          <declname>force</declname>
-          <defval>false</defval>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="133" bodyend="143"/>
-        <references refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" compoundref="nmspc__math_8h" startline="33" endline="36">math::mod</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">sim_status</references>
-        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
-        <references refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7">write_freq</references>
-        <references refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" compoundref="nmspc__settings_8h" startline="139">settings::hdf5::storage_level</references>
-        <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" compoundref="class__algorithm__base_8h" startline="28">log</references>
-        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="38">h5pp_file</references>
-        <references refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" compoundref="class__algorithm__base_8h" startline="42">sim_name</references>
-        <references refid="namespacetools_1_1common_1_1io_1a585ff2336f06f4cfa09cc0f9e514ece4" compoundref="common_2h5pp_8cpp" startline="9" endline="44">tools::common::io::write_simulation_status</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="68" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1aa8e759aeb0f79b39ac5d8e4c4a3bb18f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -647,17 +638,38 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="146" bodyend="163"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="134" bodyend="151"/>
         <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">sim_status</references>
-        <references refid="structstatus__data_1a394209e7e516250158bc78e854504288" compoundref="class__simulation__status_8h" startline="22">status_data::chi_max</references>
+        <references refid="structstatus__data_1a394209e7e516250158bc78e854504288" compoundref="class__simulation__status_8h" startline="24">status_data::chi_max</references>
         <references refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b">chi_max</references>
         <references refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6">chi_grow</references>
-        <references refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" compoundref="class__simulation__status_8h" startline="40">status_data::bond_dimension_has_reached_max</references>
-        <references refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" compoundref="class__simulation__status_8h" startline="21">status_data::chi_temp</references>
-        <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="37">status_data::simulation_has_converged</references>
-        <references refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" compoundref="class__simulation__status_8h" startline="38">status_data::simulation_has_saturated</references>
+        <references refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" compoundref="class__simulation__status_8h" startline="43">status_data::bond_dimension_has_reached_max</references>
+        <references refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" compoundref="class__simulation__status_8h" startline="23">status_data::chi_temp</references>
+        <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="39">status_data::simulation_has_converged</references>
+        <references refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" compoundref="class__simulation__status_8h" startline="40">status_data::simulation_has_saturated</references>
         <references refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" compoundref="class__algorithm__base_8h" startline="28">log</references>
         <references refid="classclass__algorithm__base_1adae1b7c6678d8c52304a3bcf64c1b521">clear_saturation_status</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_algorithm_base::print_profiling</definition>
+        <argsstring>()</argsstring>
+        <name>print_profiling</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="158" bodyend="167"/>
+        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="163">settings::profiling::on</references>
+        <references refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" compoundref="class__algorithm__base_8h" startline="28">log</references>
+        <references refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" compoundref="class__algorithm__base_8h" startline="77">t_tot</references>
+        <references refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" compoundref="class__tic__toc_8cpp" startline="67" endline="75">class_tic_toc::print_time_w_percent</references>
+        <references refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" compoundref="class__algorithm__base_8h" startline="79">t_run</references>
+        <references refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" compoundref="class__algorithm__base_8h" startline="81">t_prt</references>
+        <references refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" compoundref="class__algorithm__base_8h" startline="82">t_con</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a1d6b9c4356a502dd2eec25b27f80919c" compoundref="prof_8cpp" startline="11" endline="32">tools::common::profile::print_profiling</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -674,15 +686,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="207" bodyend="231"/>
-        <references refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="171" bodyend="195"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-func">
-      <memberdef kind="function" id="classclass__algorithm__base_1a9d6b4c72b6f2e026a446ced69309e3ee" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>bool</type>
-        <definition>bool class_algorithm_base::check_saturation_using_slope</definition>
-        <argsstring>(std::list&lt; bool &gt; &amp;B_vec, std::list&lt; double &gt; &amp;Y_vec, std::list&lt; int &gt; &amp;X_vec, double new_data, int iter, int rate, double tolerance, double &amp;slope)</argsstring>
+      <memberdef kind="function" id="classclass__algorithm__base_1a68b331d15932f59b05a479d3bbb3a081" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structclass__algorithm__base_1_1_saturation_report" kindref="compound">SaturationReport</ref></type>
+        <definition>class_algorithm_base::SaturationReport class_algorithm_base::check_saturation_using_slope</definition>
+        <argsstring>(std::list&lt; bool &gt; &amp;B_vec, std::list&lt; double &gt; &amp;Y_vec, std::list&lt; int &gt; &amp;X_vec, double new_data, int iter, int rate, double tolerance)</argsstring>
         <name>check_saturation_using_slope</name>
         <param>
           <type>std::list&lt; bool &gt; &amp;</type>
@@ -712,18 +723,18 @@
           <type>double</type>
           <declname>tolerance</declname>
         </param>
-        <param>
-          <type>double &amp;</type>
-          <declname>slope</declname>
-        </param>
         <briefdescription>
 <para>Checks convergence based on slope. We want to check once every &quot;rate&quot; steps. First, check the sim_state.iteration number when you last measured. If the measurement happened less than rate iterations ago, return. Otherwise, compute the slope of the last 25% of the measurements that have been made. The slope here is defined as the relative slope, i.e. <formula id="0">$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} $</formula>. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="58" bodyend="131"/>
-        <references refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" compoundref="class__algorithm__base_8h" startline="28">log</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="54" bodyend="131"/>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" compoundref="class__algorithm__base_8h" startline="87">class_algorithm_base::SaturationReport::has_computed</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1ab8c2530a0f676fc48916e551b679273d" compoundref="class__algorithm__base_8h" startline="88">class_algorithm_base::SaturationReport::has_saturated</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1afd0e69afe481ee46381ef8fb70c54790" compoundref="class__algorithm__base_8h" startline="89">class_algorithm_base::SaturationReport::slope</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a0754af6aec19aa9590b7a6cbc62d3c6e" compoundref="class__algorithm__base_8h" startline="90">class_algorithm_base::SaturationReport::avgY</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a29483593d2e79a3bc51c9889616aecca" compoundref="class__algorithm__base_8h" startline="91">class_algorithm_base::SaturationReport::check_from</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -731,80 +742,96 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="16">
+      <node id="35">
         <label>class_fDMRG</label>
         <link refid="classclass__f_d_m_r_g"/>
-        <childnode refid="15" relation="public-inheritance">
+        <childnode refid="34" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="18">
+      <node id="37">
         <label>class_algorithm_infinite</label>
         <link refid="classclass__algorithm__infinite"/>
-        <childnode refid="14" relation="public-inheritance">
+        <childnode refid="33" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="17">
+      <node id="36">
         <label>class_xDMRG</label>
         <link refid="classclass__x_d_m_r_g"/>
-        <childnode refid="15" relation="public-inheritance">
+        <childnode refid="34" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="20">
+      <node id="39">
         <label>class_iTEBD</label>
         <link refid="classclass__i_t_e_b_d"/>
-        <childnode refid="18" relation="public-inheritance">
+        <childnode refid="37" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="15">
+      <node id="34">
         <label>class_algorithm_finite</label>
         <link refid="classclass__algorithm__finite"/>
-        <childnode refid="14" relation="public-inheritance">
+        <childnode refid="33" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="14">
+      <node id="33">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
-      <node id="19">
+      <node id="38">
         <label>class_iDMRG</label>
         <link refid="classclass__i_d_m_r_g"/>
-        <childnode refid="18" relation="public-inheritance">
+        <childnode refid="37" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="24">
+      <node id="42">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="45">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
+        <childnode refid="41" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
       </node>
-      <node id="23">
+      <node id="44">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="22">
+      <node id="43">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="23" relation="public-inheritance">
+        <childnode refid="44" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="21">
+      <node id="40">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="22" relation="usage">
+        <childnode refid="41" relation="usage">
+          <edgelabel>sim_name</edgelabel>
+        </childnode>
+        <childnode refid="43" relation="usage">
           <edgelabel>sim_status</edgelabel>
         </childnode>
-        <childnode refid="24" relation="usage">
+        <childnode refid="45" relation="usage">
           <edgelabel>t_con</edgelabel>
-          <edgelabel>t_sim</edgelabel>
+          <edgelabel>t_pos</edgelabel>
+          <edgelabel>t_pre</edgelabel>
           <edgelabel>t_tot</edgelabel>
+          <edgelabel>t_run</edgelabel>
           <edgelabel>t_prt</edgelabel>
         </childnode>
       </node>
+      <node id="41">
+        <label>std::string</label>
+        <childnode refid="42" relation="public-inheritance">
+        </childnode>
+      </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="26" bodyend="96"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="26" bodyend="103"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1a6d37e1472c3e74f8e50a11c71a8b03ee" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>check_convergence</name></member>
-      <member refid="classclass__algorithm__base_1a9d6b4c72b6f2e026a446ced69309e3ee" prot="protected" virt="non-virtual"><scope>class_algorithm_base</scope><name>check_saturation_using_slope</name></member>
+      <member refid="classclass__algorithm__base_1a68b331d15932f59b05a479d3bbb3a081" prot="protected" virt="non-virtual"><scope>class_algorithm_base</scope><name>check_saturation_using_slope</name></member>
       <member refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>chi_grow</name></member>
       <member refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>chi_max</name></member>
       <member refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>class_algorithm_base</name></member>
@@ -813,17 +840,16 @@
       <member refid="classclass__algorithm__base_1aaf615286a87f9d57401cbadc3c21b19a" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>compute_observables</name></member>
       <member refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>h5pp_file</name></member>
       <member refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" prot="protected" virt="non-virtual"><scope>class_algorithm_base</scope><name>log</name></member>
-      <member refid="classclass__algorithm__base_1a4ae9a05248866219f0df931d6160e3d7" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>log_profiling</name></member>
-      <member refid="classclass__algorithm__base_1a8b718fe0f45ad5636ec2b432c11568e0" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>log_sim_status</name></member>
+      <member refid="classclass__algorithm__base_1ac2191f13b616212908a566262ace8df5" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>log_profiling</name></member>
+      <member refid="classclass__algorithm__base_1a40cc086bc611a7284fed3d9a5b5c1bc6" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>log_sim_status</name></member>
       <member refid="classclass__algorithm__base_1a0f6c17cedfeb0baba3df055e87655ea8" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>num_sites</name></member>
       <member refid="classclass__algorithm__base_1a5d6af987e476e9a93a2bab9261ac16bb" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_freq</name></member>
-      <member refid="classclass__algorithm__base_1aeed6c86b2bb499b7b8977a9bca82e6ab" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_profiling</name></member>
-      <member refid="classclass__algorithm__base_1a4155242b70bbe53a9b7e887dfa5c37d9" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_profiling_sim</name></member>
+      <member refid="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>print_profiling</name></member>
       <member refid="classclass__algorithm__base_1a96f34d67e881abd4d1ec4dd2d89728ad" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_status_full</name></member>
       <member refid="classclass__algorithm__base_1a803b366e66ffaef47479278cbdb1a738" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>print_status_update</name></member>
       <member refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>process_memory_in_mb</name></member>
       <member refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>quietNaN</name></member>
-      <member refid="classclass__algorithm__base_1afc54d558dbfc26bb8ae4f6607a2edbee" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>reset_to_random_state</name></member>
+      <member refid="classclass__algorithm__base_1a4db893602692d81b4cce5e197b5a5238" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>reset_to_random_state</name></member>
       <member refid="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>run</name></member>
       <member refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>Scalar</name></member>
       <member refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>set_profiling_labels</name></member>
@@ -834,15 +860,17 @@
       <member refid="classclass__algorithm__base_1af36e30da0595f116629422821e1e4ced" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>stop_reason</name></member>
       <member refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>StopReason</name></member>
       <member refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_con</name></member>
+      <member refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_pos</name></member>
+      <member refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_pre</name></member>
       <member refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_prt</name></member>
-      <member refid="classclass__algorithm__base_1ac4665ca1f14f3b97154c961502c483c7" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_sim</name></member>
+      <member refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_run</name></member>
       <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_tot</name></member>
       <member refid="classclass__algorithm__base_1aa8e759aeb0f79b39ac5d8e4c4a3bb18f" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>update_bond_dimension</name></member>
       <member refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>write_freq</name></member>
       <member refid="classclass__algorithm__base_1a881cc8f8ece0220f988663834996a219" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>write_logs</name></member>
       <member refid="classclass__algorithm__base_1a6c823b9e21741e5aa47b75ef8c3be1a3" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>write_measurements</name></member>
       <member refid="classclass__algorithm__base_1ae0e00d00bc9a0d33cb709ca625bddbde" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>write_state</name></member>
-      <member refid="classclass__algorithm__base_1a5bf9787e3825f33baafbd06c4946babc" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>write_status</name></member>
+      <member refid="classclass__algorithm__base_1ad8c54d3446246729c7a5d61e04ea9e49" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>write_status</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

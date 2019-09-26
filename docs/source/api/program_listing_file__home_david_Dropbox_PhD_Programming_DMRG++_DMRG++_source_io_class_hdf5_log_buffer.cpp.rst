@@ -67,7 +67,7 @@ Program Listing for File class_hdf5_log_buffer.cpp
    template<typename log_type>
    void class_hdf5_log<log_type>::initialize_table(){
        if (log_entries->buffer.empty() and not log_is_ready) {
-           log->trace("Initializing hdf5 table: {}", log_name);
+           log->trace("Initializing output table: {}", log_name);
            hsize_t NRECORDS = log_entries->buffer.size();
            h5ppFile->create_group_link(group_name);
            if (not h5ppFile->linkExists(log_path)){
@@ -89,7 +89,7 @@ Program Listing for File class_hdf5_log_buffer.cpp
    template<typename log_type>
    void class_hdf5_log<log_type>:: write_buffer_to_file() {
        if (!log_entries->buffer.empty() and log_is_ready) {
-           log->trace("Writing buffer to hdf5 table: {}", log_name);
+           log->trace("Writing buffer to output table: {}", log_name);
            hsize_t NRECORDS = log_entries->buffer.size();
            h5ppFile->create_group_link(group_name);
            hid_t file = h5ppFile->openFileHandle();
@@ -108,7 +108,7 @@ Program Listing for File class_hdf5_log_buffer.cpp
    
    //Explicit instantiations
    
-   template class class_hdf5_log<class_log_dmrg>;
+   template class class_hdf5_log<class_log_finite_dmrg_measurements>;
    template class class_hdf5_log<class_log_tebd>;
    template class class_hdf5_log<class_log_profiling>;
    template class class_hdf5_log<class_log_simulation_status>;

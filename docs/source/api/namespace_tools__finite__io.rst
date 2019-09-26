@@ -13,28 +13,35 @@ Namespace tools::finite::io
 
 
 
+Namespaces
+----------
+
+
+- :ref:`namespace_tools__finite__io__internals`
+
+
 Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a4dbbf0353261250bcb74a394ca78a3c9`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1afb211e06dce1c2ddbd2a236aa27c5419`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a45281f878a720cd9d66e6cd17c851ab4`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a576ea47e947335d4e8a3617d1ca0bc96`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1adce7e1b64a6f8506341d927df05bd7e3`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a1840be8832f3ba09af99f34fa08eb20c`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1acdc713a846e83777d81ad198f32ab9ef`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a5c50ff668b5634e06c5a60f3950b7168`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a271379071bc831aa82387359c13aa361`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a028874bf95ce9fb9ebb89fd13dbb3ce5`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a39adb979856f2d742ec2cd369592b7bc`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a6adf0e49ba443aa9f545cbc42623805a`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1ad13ed6335eb5e57dc1d3fceb451d68a5`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a38e38fba948c40347fda0a17c65763d1`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1aa53d35b4d3e060795763644d4bd91351`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1aa77176fab4588b283c51e28e25d3906b`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a373f60a0cbc36580cb4aa2c44fb80805`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a5723f7ca65e31340eb7cd9de1c4aab29`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a143466d428874b3639a446a4c1f06be7`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a4f2b0c2fdea66b2fcf35fe8894e1d587`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a086dd348f818387215dd3f8faa4ab15d`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a0053cc870b91b93f1b84902ec62e6d7e`
