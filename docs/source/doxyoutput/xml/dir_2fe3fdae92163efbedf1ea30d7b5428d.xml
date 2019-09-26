@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_2fe3fdae92163efbedf1ea30d7b5428d" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite</compoundname>
+    <innerdir refid="dir_77510d0a53e1deaebbbb68f9864d99e2">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals</innerdir>
+    <innerfile refid="finite_2debug_8cpp">debug.cpp</innerfile>
+    <innerfile refid="finite_2h5pp_8cpp">h5pp.cpp</innerfile>
+    <innerfile refid="finite_2measure_8cpp">measure.cpp</innerfile>
+    <innerfile refid="mpo_8cpp">mpo.cpp</innerfile>
+    <innerfile refid="mps-internals_8cpp">mps-internals.cpp</innerfile>
+    <innerfile refid="finite_2mps_8cpp">mps.cpp</innerfile>
+    <innerfile refid="multisite_8cpp">multisite.cpp</innerfile>
+    <innerfile refid="ops_8cpp">ops.cpp</innerfile>
+    <innerfile refid="finite_2opt_8cpp">opt.cpp</innerfile>
+    <innerfile refid="opt_8h">opt.h</innerfile>
+    <innerfile refid="finite_2print_8cpp">print.cpp</innerfile>
+    <innerfile refid="svd_8cpp">svd.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacesettings_1_1threading" kind="namespace" language="C++">
+    <compoundname>settings::threading</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacesettings_1_1threading_1ac01485bfd26c27921bfc55828e1e6dab" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::threading::num_threads_eigen</definition>
+        <argsstring></argsstring>
+        <name>num_threads_eigen</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of threads for Eigen operations. num_threads &lt;= 0 will try to use as many as possible </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1threading_1a371a76d1d8c3d06b5f986772f63ae955" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::threading::num_threads_omp</definition>
+        <argsstring></argsstring>
+        <name>num_threads_omp</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of threads for OpenMP operations. num_threads &lt;= 0 will try to use as many as possible </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1threading_1a4a3a8d1a1ee2b03b0a305923d6d530f2" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int settings::threading::num_threads_blas</definition>
+        <argsstring></argsstring>
+        <name>num_threads_blas</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of threads for BLAS operations. num_threads &lt;= 0 will try to use as many as possible </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="29" column="1"/>
+  </compounddef>
+</doxygen>

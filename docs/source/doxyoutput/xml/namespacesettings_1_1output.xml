@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacesettings_1_1output" kind="namespace" language="C++">
+    <compoundname>settings::output</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacesettings_1_1output_1a7db5bd70ef10536983073e97f81d65b3" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::output::save_logs</definition>
+        <argsstring></argsstring>
+        <name>save_logs</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If true, saves the history of the simulation in log files, not just the end results (only enabled on storage level NORMAL and FULL.) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="41" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1output_1a6c898153abc646a16c799b9183d485d9" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::output::save_profiling</definition>
+        <argsstring></argsstring>
+        <name>save_profiling</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether to save profiling information to file. (only enabled on storage level NORMAL and FULL.) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1output_1a30a0550b22d0bcb105c317a549d7a004" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string settings::output::access_mode</definition>
+        <argsstring></argsstring>
+        <name>access_mode</name>
+        <initializer>= &quot;READWRITE&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Choose access mode to the file. Choose between READWRITE, READONLY </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string settings::output::create_mode</definition>
+        <argsstring></argsstring>
+        <name>create_mode</name>
+        <initializer>= &quot;RENAME&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string settings::output::output_filename</definition>
+        <argsstring></argsstring>
+        <name>output_filename</name>
+        <initializer>= &quot;output/default.h5&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Name of the output HDF5 file relative to the execution point </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" prot="public" static="no" mutable="no">
+        <type><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ad" kindref="member">StorageLevel</ref></type>
+        <definition>StorageLevel settings::output::storage_level</definition>
+        <argsstring></argsstring>
+        <name>storage_level</name>
+        <initializer>= <ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051" kindref="member">StorageLevel::NORMAL</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="40" column="1"/>
+  </compounddef>
+</doxygen>
