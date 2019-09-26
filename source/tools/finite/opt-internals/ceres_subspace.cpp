@@ -433,7 +433,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 auto [best_variance, best_variance_idx] = get_best_state_in_window(state, eigvecs, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
                 if (best_variance_idx < 0){
                     // Option A
-                    tools::log->trace("Went for option A");
+                    tools::log->info("Went for option A");
                     tools::log->debug("... No candidate in energy window, returning old theta");
                     state.tag_active_sites_have_been_updated(false);
                     return theta;
@@ -441,7 +441,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 tools::log->debug("... Candidate {} has lowest variance (log10): {}", best_variance_idx, std::log10(best_variance));
                 if(best_variance < prev_variance){
                     // Option B
-                    tools::log->trace("Went for option B");
+                    tools::log->info("Went for option B");
                     tools::log->debug("... Candidate {} has better variance (log10): {} < {}", best_variance_idx, std::log10(best_variance), std::log10(prev_variance));
                     state.tag_active_sites_have_been_updated(true);
                     state.unset_measurements();
@@ -454,7 +454,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 tools::log->debug("... Candidate {} has highest overlap: {} and variance(log10): {}", best_overlap_idx, best_overlap ,std::log10(best_overlap_variance));
                 if(best_overlap > 0.99 and best_overlap_variance < 100.0 * prev_variance ){
                     //Option C
-                    tools::log->trace("Went for option C");
+                    tools::log->info("Went for option C");
                     tools::log->debug("... Candidate {} has fair overlap {} and variance (log10): {}", best_variance_idx, best_overlap, std::log10(best_overlap_variance));
                     state.tag_active_sites_have_been_updated(true);
                     state.unset_measurements();
@@ -462,7 +462,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 }
 
                 // Option D
-                tools::log->trace("Went for option D");
+                tools::log->info("Went for option D");
                 tools::log->debug("... Switching to DIRECT mode");
                 return ceres_direct_optimization(state, sim_status, optType);
                 //////////////////////////////
