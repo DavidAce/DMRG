@@ -39,7 +39,7 @@ mkl="OFF"
 shared="OFF"
 compiler=""
 
-while getopts a:b:cg:hi:j:l:Lo:p:s:t: o; do
+while getopts a:b:cdg:hi:j:l:Lo:p:s:t: o; do
     case $o in
 	    (a) march=$OPTARG;;
         (b) build=$OPTARG;;
