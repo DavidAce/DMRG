@@ -2,7 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="infinite_2h5pp_8cpp" kind="file" language="C++">
     <compoundname>h5pp.cpp</compoundname>
-    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
     <includes refid="class__vidal__site_8h" local="no">state/class_vidal_site.h</includes>
     <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
@@ -10,225 +10,225 @@
     <includes refid="class__model__base_8h" local="no">model/class_model_base.h</includes>
     <includes local="no">h5pp/h5pp.h</includes>
     <incdepgraph>
-      <node id="2189">
+      <node id="2177">
         <label>iomanip</label>
       </node>
-      <node id="2187">
+      <node id="2175">
         <label>iterator</label>
       </node>
-      <node id="2190">
+      <node id="2178">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2191" relation="include">
+        <childnode refid="2179" relation="include">
+        </childnode>
+        <childnode refid="2172" relation="include">
+        </childnode>
+        <childnode refid="2174" relation="include">
+        </childnode>
+      </node>
+      <node id="2172">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2170">
+        <label>string</label>
+      </node>
+      <node id="2184">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2185" relation="include">
+        </childnode>
+        <childnode refid="2176" relation="include">
+        </childnode>
+      </node>
+      <node id="2180">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2181" relation="include">
+        </childnode>
+        <childnode refid="2182" relation="include">
+        </childnode>
+        <childnode refid="2183" relation="include">
+        </childnode>
+      </node>
+      <node id="2190">
+        <label>map</label>
+      </node>
+      <node id="2179">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2168">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2169" relation="include">
+        </childnode>
+        <childnode refid="2170" relation="include">
+        </childnode>
+        <childnode refid="2171" relation="include">
+        </childnode>
+        <childnode refid="2180" relation="include">
         </childnode>
         <childnode refid="2184" relation="include">
         </childnode>
+      </node>
+      <node id="2194">
+        <label>unordered_set</label>
+      </node>
+      <node id="2174">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2167">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp</label>
+        <link refid="infinite_2h5pp_8cpp"/>
+        <childnode refid="2168" relation="include">
+        </childnode>
         <childnode refid="2186" relation="include">
-        </childnode>
-      </node>
-      <node id="2184">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="2182">
-        <label>string</label>
-      </node>
-      <node id="2196">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="2197" relation="include">
-        </childnode>
-        <childnode refid="2188" relation="include">
-        </childnode>
-      </node>
-      <node id="2192">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="2193" relation="include">
-        </childnode>
-        <childnode refid="2194" relation="include">
         </childnode>
         <childnode refid="2195" relation="include">
         </childnode>
-      </node>
-      <node id="2202">
-        <label>map</label>
-      </node>
-      <node id="2191">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="2206">
-        <label>unordered_set</label>
-      </node>
-      <node id="2186">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="2179">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp</label>
-        <link refid="infinite_2h5pp_8cpp"/>
-        <childnode refid="2180" relation="include">
+        <childnode refid="2196" relation="include">
         </childnode>
-        <childnode refid="2198" relation="include">
-        </childnode>
-        <childnode refid="2207" relation="include">
-        </childnode>
-        <childnode refid="2208" relation="include">
-        </childnode>
-        <childnode refid="2209" relation="include">
-        </childnode>
-        <childnode refid="2211" relation="include">
-        </childnode>
-        <childnode refid="2212" relation="include">
-        </childnode>
-      </node>
-      <node id="2209">
-        <label>state/class_environment.h</label>
-        <link refid="class__environment_8h"/>
-        <childnode refid="2181" relation="include">
-        </childnode>
-        <childnode refid="2183" relation="include">
-        </childnode>
-        <childnode refid="2210" relation="include">
-        </childnode>
-      </node>
-      <node id="2211">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="2181" relation="include">
-        </childnode>
-        <childnode refid="2186" relation="include">
-        </childnode>
-        <childnode refid="2192" relation="include">
-        </childnode>
-      </node>
-      <node id="2193">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="2185">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="2199">
-        <label>optional</label>
-      </node>
-      <node id="2204">
-        <label>vector</label>
-      </node>
-      <node id="2210">
-        <label>spdlog/fmt/fmt.h</label>
-      </node>
-      <node id="2194">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="2201">
-        <label>array</label>
-      </node>
-      <node id="2208">
-        <label>state/class_mps_2site.h</label>
-        <link refid="class__mps__2site_8h"/>
-        <childnode refid="2181" relation="include">
-        </childnode>
-        <childnode refid="2183" relation="include">
-        </childnode>
-      </node>
-      <node id="2212">
-        <label>h5pp/h5pp.h</label>
-      </node>
-      <node id="2188">
-        <label>iostream</label>
-      </node>
-      <node id="2200">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="2188" relation="include">
-        </childnode>
-        <childnode refid="2201" relation="include">
-        </childnode>
-        <childnode refid="2202" relation="include">
-        </childnode>
-        <childnode refid="2203" relation="include">
-        </childnode>
-        <childnode refid="2204" relation="include">
-        </childnode>
-        <childnode refid="2194" relation="include">
-        </childnode>
-        <childnode refid="2193" relation="include">
-        </childnode>
-      </node>
-      <node id="2197">
-        <label>chrono</label>
-      </node>
-      <node id="2203">
-        <label>complex</label>
-      </node>
-      <node id="2198">
-        <label>state/class_infinite_state.h</label>
-        <link refid="class__infinite__state_8h"/>
-        <childnode refid="2181" relation="include">
+        <childnode refid="2197" relation="include">
         </childnode>
         <childnode refid="2199" relation="include">
         </childnode>
-        <childnode refid="2183" relation="include">
-        </childnode>
-        <childnode refid="2196" relation="include">
-        </childnode>
         <childnode refid="2200" relation="include">
         </childnode>
-        <childnode refid="2205" relation="include">
+      </node>
+      <node id="2197">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="2169" relation="include">
         </childnode>
-        <childnode refid="2192" relation="include">
+        <childnode refid="2171" relation="include">
+        </childnode>
+        <childnode refid="2198" relation="include">
         </childnode>
       </node>
-      <node id="2205">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="2182" relation="include">
+      <node id="2199">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="2169" relation="include">
         </childnode>
-        <childnode refid="2206" relation="include">
+        <childnode refid="2174" relation="include">
         </childnode>
-        <childnode refid="2204" relation="include">
+        <childnode refid="2180" relation="include">
         </childnode>
       </node>
-      <node id="2183">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2184" relation="include">
+      <node id="2181">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2173">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2187">
+        <label>optional</label>
+      </node>
+      <node id="2192">
+        <label>vector</label>
+      </node>
+      <node id="2198">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="2182">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2189">
+        <label>array</label>
+      </node>
+      <node id="2196">
+        <label>state/class_mps_2site.h</label>
+        <link refid="class__mps__2site_8h"/>
+        <childnode refid="2169" relation="include">
         </childnode>
-        <childnode refid="2185" relation="include">
+        <childnode refid="2171" relation="include">
         </childnode>
-        <childnode refid="2186" relation="include">
-        </childnode>
-        <childnode refid="2187" relation="include">
-        </childnode>
-        <childnode refid="2188" relation="include">
+      </node>
+      <node id="2200">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="2176">
+        <label>iostream</label>
+      </node>
+      <node id="2188">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="2176" relation="include">
         </childnode>
         <childnode refid="2189" relation="include">
         </childnode>
         <childnode refid="2190" relation="include">
         </childnode>
-      </node>
-      <node id="2180">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="2181" relation="include">
-        </childnode>
-        <childnode refid="2182" relation="include">
-        </childnode>
-        <childnode refid="2183" relation="include">
+        <childnode refid="2191" relation="include">
         </childnode>
         <childnode refid="2192" relation="include">
         </childnode>
-        <childnode refid="2196" relation="include">
+        <childnode refid="2182" relation="include">
+        </childnode>
+        <childnode refid="2181" relation="include">
         </childnode>
       </node>
-      <node id="2195">
+      <node id="2185">
+        <label>chrono</label>
+      </node>
+      <node id="2191">
+        <label>complex</label>
+      </node>
+      <node id="2186">
+        <label>state/class_infinite_state.h</label>
+        <link refid="class__infinite__state_8h"/>
+        <childnode refid="2169" relation="include">
+        </childnode>
+        <childnode refid="2187" relation="include">
+        </childnode>
+        <childnode refid="2171" relation="include">
+        </childnode>
+        <childnode refid="2184" relation="include">
+        </childnode>
+        <childnode refid="2188" relation="include">
+        </childnode>
+        <childnode refid="2193" relation="include">
+        </childnode>
+        <childnode refid="2180" relation="include">
+        </childnode>
+      </node>
+      <node id="2193">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2170" relation="include">
+        </childnode>
+        <childnode refid="2194" relation="include">
+        </childnode>
+        <childnode refid="2192" relation="include">
+        </childnode>
+      </node>
+      <node id="2171">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2172" relation="include">
+        </childnode>
+        <childnode refid="2173" relation="include">
+        </childnode>
+        <childnode refid="2174" relation="include">
+        </childnode>
+        <childnode refid="2175" relation="include">
+        </childnode>
+        <childnode refid="2176" relation="include">
+        </childnode>
+        <childnode refid="2177" relation="include">
+        </childnode>
+        <childnode refid="2178" relation="include">
+        </childnode>
+      </node>
+      <node id="2183">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
-      <node id="2181">
+      <node id="2169">
         <label>memory</label>
       </node>
-      <node id="2207">
+      <node id="2195">
         <label>state/class_vidal_site.h</label>
         <link refid="class__vidal__site_8h"/>
-        <childnode refid="2183" relation="include">
+        <childnode refid="2171" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -241,7 +241,7 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-03-09.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__vidal__site_8h" kindref="compound">state/class_vidal_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
@@ -254,21 +254,21 @@
 <codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(state.<ref refid="classclass__infinite__state_1aeb9a2f2e3aba8bee8ea921b4e41d8847" kindref="member">has_been_written</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
 <codeline lineno="16"><highlight class="normal"></highlight></codeline>
 <codeline lineno="17"><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" kindref="member">settings::hdf5::storage_level</ref><sp/>&gt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693" kindref="member">StorageLevel::NONE</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693" kindref="member">StorageLevel::NONE</ref>)<sp/>{</highlight></codeline>
 <codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="20"><highlight class="normal"></highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" kindref="member">settings::hdf5::storage_level</ref><sp/>&gt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f" kindref="member">StorageLevel::LIGHT</ref>)<sp/>{</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1io_1a086dd348f818387215dd3f8faa4ab15d" kindref="member">write_hamiltonian_params</ref>(state,h5ppFile,sim_name);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f" kindref="member">StorageLevel::LIGHT</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1a298290093b33d768f9a62fe4a3972eb2" kindref="member">write_hamiltonian_params</ref>(state,h5ppFile,sim_name);</highlight></codeline>
 <codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="24"><highlight class="normal"></highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" kindref="member">settings::hdf5::storage_level</ref><sp/>&gt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051" kindref="member">StorageLevel::NORMAL</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051" kindref="member">StorageLevel::NORMAL</ref>)<sp/>{</highlight></codeline>
 <codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1a64ca3d5800b61a960922154ce9297354" kindref="member">write_2site_mps</ref>(state,h5ppFile,sim_name);</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1a043151253c73c92e56d07ffc15060418" kindref="member">write_2site_mpo</ref>(state,h5ppFile,sim_name);</highlight></codeline>
 <codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1a5cecfd670830fe36b205434ac9319ab4" kindref="member">write_2site_env</ref>(state,h5ppFile,sim_name);</highlight></codeline>
 <codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1a9096919dbc3abe2caf1964c15e818615" kindref="member">write_2site_env2</ref>(state,h5ppFile,sim_name);</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" kindref="member">settings::hdf5::storage_level</ref><sp/>&gt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adaba7de5bc6888294e5884b024a4c894f1" kindref="member">StorageLevel::FULL</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adaba7de5bc6888294e5884b024a4c894f1" kindref="member">StorageLevel::FULL</ref>)<sp/>{</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__infinite__state_1aeb9a2f2e3aba8bee8ea921b4e41d8847" kindref="member">has_been_written</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
@@ -299,7 +299,7 @@
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
 <codeline lineno="61" refid="namespacetools_1_1infinite_1_1io_1a298290093b33d768f9a62fe4a3972eb2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1io_1a298290093b33d768f9a62fe4a3972eb2" kindref="member">tools::infinite::io::write_hamiltonian_params</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/>&amp;state,<sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Write<sp/>down<sp/>the<sp/>Hamiltonian<sp/>metadata<sp/>as<sp/>a<sp/>table</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Remember<sp/>to<sp/>write<sp/>tensors<sp/>in<sp/>row-major<sp/>state<sp/>order<sp/>because<sp/>that&apos;s<sp/>what<sp/>hdf5<sp/>uses.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Remember<sp/>to<sp/>write<sp/>tensors<sp/>in<sp/>row-major<sp/>state<sp/>order<sp/>because<sp/>that&apos;s<sp/>what<sp/>output<sp/>uses.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXd<sp/>hamiltonian_props;</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
 <codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>propsA<sp/>=<sp/>state.<ref refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" kindref="member">HA</ref>-&gt;get_parameter_values();</highlight></codeline>
@@ -336,6 +336,6 @@
 <codeline lineno="97"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp"/>
   </compounddef>
 </doxygen>

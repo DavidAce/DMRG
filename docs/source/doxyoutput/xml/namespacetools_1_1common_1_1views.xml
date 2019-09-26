@@ -3,9 +3,9 @@
   <compounddef id="namespacetools_1_1common_1_1views" kind="namespace" language="C++">
     <compoundname>tools::common::views</compoundname>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::common::views::theta</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::theta</definition>
         <argsstring></argsstring>
         <name>theta</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
@@ -15,11 +15,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="22" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="333" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::common::views::theta_evn_normalized</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a4770a1829f476c6daf830b712d0d57db" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::theta_evn_normalized</definition>
         <argsstring></argsstring>
         <name>theta_evn_normalized</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
@@ -29,11 +29,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="23" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="333" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="23" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::common::views::theta_odd_normalized</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1ab6ade4cf09a0141fb611c32c713e0e2b" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::theta_odd_normalized</definition>
         <argsstring></argsstring>
         <name>theta_odd_normalized</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
@@ -43,11 +43,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="24" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="333" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="24" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a05f70fcf569c1c1f7c4f6d573cd8e631" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::common::views::theta_sw</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1ac2194a171cc86ee5c187c37fef7ae11b" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::theta_sw</definition>
         <argsstring></argsstring>
         <name>theta_sw</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
@@ -57,11 +57,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="25" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="334" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="25" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; tools::common::views::LBGA</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; tools::common::views::LBGA</definition>
         <argsstring></argsstring>
         <name>LBGA</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; ()</initializer>
@@ -71,11 +71,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="26" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="335" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="26" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; tools::common::views::LAGB</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; tools::common::views::LAGB</definition>
         <argsstring></argsstring>
         <name>LAGB</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; ()</initializer>
@@ -85,11 +85,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="27" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="335" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="27" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 2 &gt; tools::common::views::l_evn</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a2b5b6f9460c87209076d19f7edc8bf92" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt; tools::common::views::l_evn</definition>
         <argsstring></argsstring>
         <name>l_evn</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt; ()</initializer>
@@ -99,11 +99,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="28" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="336" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="28" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1aa8e0a0a8e32576ecaf5441895638d323" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 2 &gt; tools::common::views::r_evn</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1aac00eb090b45f9a68587498eeea97370" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt; tools::common::views::r_evn</definition>
         <argsstring></argsstring>
         <name>r_evn</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt; ()</initializer>
@@ -113,11 +113,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="29" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="336" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="29" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 2 &gt; tools::common::views::l_odd</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a4d84a62c356bd7b16e4b0d08b98ab160" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt; tools::common::views::l_odd</definition>
         <argsstring></argsstring>
         <name>l_odd</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt; ()</initializer>
@@ -127,11 +127,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="30" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="337" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="30" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 2 &gt; tools::common::views::r_odd</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a6409a1374700c7fca7abc92f0c8d99f6" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt; tools::common::views::r_odd</definition>
         <argsstring></argsstring>
         <name>r_odd</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt; ()</initializer>
@@ -141,11 +141,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="31" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="337" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="31" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a37826c75be840ac1b3e5cc9bcc96df4c" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::common::views::transfer_matrix_LBGA</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a156d8370ff34d00b5d9a12964d0a1044" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::transfer_matrix_LBGA</definition>
         <argsstring></argsstring>
         <name>transfer_matrix_LBGA</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
@@ -155,11 +155,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="32" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="338" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="32" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a4737ab9e1c7be58e16ef3ebf0c4dedbd" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::common::views::transfer_matrix_LAGB</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1ad98f487f235c82b09e400a817b7e606d" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::transfer_matrix_LAGB</definition>
         <argsstring></argsstring>
         <name>transfer_matrix_LAGB</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
@@ -169,11 +169,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="33" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="339" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="33" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a8ca6ab75ea4a9e71ef45a0a0e675f185" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::common::views::transfer_matrix_evn</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a28385061271c30051d0d8ac567d22ac5" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::transfer_matrix_evn</definition>
         <argsstring></argsstring>
         <name>transfer_matrix_evn</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
@@ -183,11 +183,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="34" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="340" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="34" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a2ef7dec8a4db01e3667a71942c40feb5" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
-        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::common::views::transfer_matrix_odd</definition>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a63f4e0353437c2a8061941bb71ed818d" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::transfer_matrix_odd</definition>
         <argsstring></argsstring>
         <name>transfer_matrix_odd</name>
         <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
@@ -197,7 +197,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="35" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="341" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="35" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -211,7 +211,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="36" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="342" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="36" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -230,31 +230,40 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="280" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="49" bodyend="109"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="343" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="49" bodyend="109"/>
         <references refid="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" compoundref="views_8cpp" startline="36">components_computed</references>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">theta</references>
-        <references refid="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" compoundref="views_8cpp" startline="114" endline="127">get_theta</references>
+        <references refid="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" compoundref="class__mps__2site_8cpp" startline="33" endline="33">class_mps_2site::chiB</references>
+        <references refid="classclass__mps__2site_1a13f73f78154af08d937d0c21abbc50ac" compoundref="class__mps__2site_8cpp" startline="34" endline="34">class_mps_2site::chiC</references>
+        <references refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" compoundref="views_8cpp" startline="22">theta</references>
+        <references refid="namespacetools_1_1common_1_1views_1a2cacf4169cbfa730d77e1750b723e2a7" compoundref="views_8cpp" startline="132" endline="145">get_theta</references>
         <references refid="namespacetools_1_1common_1_1views_1a5e45621e3e7cf436074f66c9c7cbd833" compoundref="views_8cpp" startline="259" endline="262">get_transfer_matrix_theta_evn</references>
         <references refid="namespacetools_1_1common_1_1views_1a860f18b0a6b66dfdb3604b037dc802d3" compoundref="views_8cpp" startline="265" endline="267">get_transfer_matrix_theta_odd</references>
-        <references refid="namespacetools_1_1common_1_1views_1aa8e0a0a8e32576ecaf5441895638d323" compoundref="views_8cpp" startline="29">r_evn</references>
+        <references refid="views_8cpp_1aa5ed1d7f240d56de106c45d8c7d47c0a" compoundref="views_8cpp" startline="40" endline="47">dominant_eig</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="namespacetools_1_1common_1_1views_1aac00eb090b45f9a68587498eeea97370" compoundref="views_8cpp" startline="29">r_evn</references>
         <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
-        <references refid="namespacetools_1_1common_1_1views_1a4dced59ada339f64abc147a4105ffb48" compoundref="views_8cpp" startline="28">l_evn</references>
-        <references refid="namespacetools_1_1common_1_1views_1add7d5b1e2b83dae13a52db4e9484ed85" compoundref="views_8cpp" startline="31">r_odd</references>
-        <references refid="namespacetools_1_1common_1_1views_1a0ad3e4e5e90a1003fe66a27583066f3e" compoundref="views_8cpp" startline="30">l_odd</references>
-        <references refid="namespacetools_1_1common_1_1views_1a05f70fcf569c1c1f7c4f6d573cd8e631" compoundref="views_8cpp" startline="25">theta_sw</references>
+        <references refid="namespacetools_1_1common_1_1views_1a2b5b6f9460c87209076d19f7edc8bf92" compoundref="views_8cpp" startline="28">l_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1a6409a1374700c7fca7abc92f0c8d99f6" compoundref="views_8cpp" startline="31">r_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1a4d84a62c356bd7b16e4b0d08b98ab160" compoundref="views_8cpp" startline="30">l_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1ac2194a171cc86ee5c187c37fef7ae11b" compoundref="views_8cpp" startline="25">theta_sw</references>
         <references refid="namespacetools_1_1common_1_1views_1aff8b9eb9629f764155555246e4dc38af" compoundref="views_8cpp" startline="150" endline="166">get_theta_swapped</references>
-        <references refid="namespacetools_1_1common_1_1views_1aaa218965233de49476f1a1c3385ab221" compoundref="views_8cpp" startline="23">theta_evn_normalized</references>
+        <references refid="namespacetools_1_1common_1_1views_1a4770a1829f476c6daf830b712d0d57db" compoundref="views_8cpp" startline="23">theta_evn_normalized</references>
         <references refid="namespacetools_1_1common_1_1views_1a717b43409a314727c05f96b506a86d37" compoundref="views_8cpp" startline="173" endline="189">get_theta_evn</references>
-        <references refid="namespacetools_1_1common_1_1views_1a1b31321ec58943f91583ab72b4bb7add" compoundref="views_8cpp" startline="24">theta_odd_normalized</references>
+        <references refid="namespacetools_1_1common_1_1views_1ab6ade4cf09a0141fb611c32c713e0e2b" compoundref="views_8cpp" startline="24">theta_odd_normalized</references>
         <references refid="namespacetools_1_1common_1_1views_1a522b2175b2226689e89d6c0162dcfae5" compoundref="views_8cpp" startline="192" endline="207">get_theta_odd</references>
-        <references refid="namespacetools_1_1common_1_1views_1a9a9182bb578c2adf5a152015c35d0232" compoundref="views_8cpp" startline="26">LBGA</references>
-        <references refid="namespacetools_1_1common_1_1views_1ab94641d1eeeaca3ee2c0b62d40c67585" compoundref="views_8cpp" startline="27">LAGB</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="namespacetools_1_1common_1_1views_1a8ca6ab75ea4a9e71ef45a0a0e675f185" compoundref="views_8cpp" startline="34">transfer_matrix_evn</references>
-        <references refid="namespacetools_1_1common_1_1views_1a2ef7dec8a4db01e3667a71942c40feb5" compoundref="views_8cpp" startline="35">transfer_matrix_odd</references>
-        <references refid="namespacetools_1_1common_1_1views_1a4737ab9e1c7be58e16ef3ebf0c4dedbd" compoundref="views_8cpp" startline="33">transfer_matrix_LAGB</references>
-        <references refid="namespacetools_1_1common_1_1views_1a37826c75be840ac1b3e5cc9bcc96df4c" compoundref="views_8cpp" startline="32">transfer_matrix_LBGA</references>
+        <references refid="namespacetools_1_1common_1_1views_1ae54cfeeb80874ca1a9144304a7c6fa71" compoundref="views_8cpp" startline="26">LBGA</references>
+        <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
+        <references refid="namespacetools_1_1common_1_1views_1a81a947911a3aae20472d514d868e6d94" compoundref="views_8cpp" startline="27">LAGB</references>
+        <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="namespacetools_1_1common_1_1views_1a28385061271c30051d0d8ac567d22ac5" compoundref="views_8cpp" startline="34">transfer_matrix_evn</references>
+        <references refid="namespacetools_1_1common_1_1views_1a63f4e0353437c2a8061941bb71ed818d" compoundref="views_8cpp" startline="35">transfer_matrix_odd</references>
+        <references refid="namespacetools_1_1common_1_1views_1ad98f487f235c82b09e400a817b7e606d" compoundref="views_8cpp" startline="33">transfer_matrix_LAGB</references>
+        <references refid="namespacetools_1_1common_1_1views_1a156d8370ff34d00b5d9a12964d0a1044" compoundref="views_8cpp" startline="32">transfer_matrix_LBGA</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a60dea76b09d3d21e908e3fd3bbacd844" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -273,18 +282,19 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="282" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="114" bodyend="127"/>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="345" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="114" bodyend="127"/>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">class_vidal_site::get_B</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a2cacf4169cbfa730d77e1750b723e2a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -303,15 +313,17 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="284" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="132" bodyend="145"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="347" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="132" bodyend="145"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
+        <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
+        <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" compoundref="class__mps__2site_8cpp" startline="37" endline="37">class_mps_2site::B</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1aff8b9eb9629f764155555246e4dc38af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -330,14 +342,18 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LA ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LA ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="285" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="150" bodyend="166"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="348" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="150" bodyend="166"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
+        <references refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" compoundref="class__mps__2site_8cpp" startline="37" endline="37">class_mps_2site::B</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">class_mps_2site::MPS_A</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a717b43409a314727c05f96b506a86d37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -356,15 +372,18 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>.</para><para>Returns a right normalized two-site MPS <verbatim>     1--[ LB ]--[ GA ]-- [ LC ] -- [ GB ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a right normalized two-site MPS <verbatim>     1--[ LB ]--[ GA ]-- [ LC ] -- [ GB ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="286" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="173" bodyend="189"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="349" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="173" bodyend="189"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
+        <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
+        <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a522b2175b2226689e89d6c0162dcfae5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -383,14 +402,18 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="287" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="192" bodyend="207"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="350" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="192" bodyend="207"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a4664633e874ca86e7726a4527aa87bf2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -407,8 +430,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="288" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="211" bodyend="217"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="351" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="211" bodyend="217"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
+        <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">class_mps_2site::LC</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1acaeed868ea545d685eba6d66a907c62a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -431,9 +455,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="289" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="222" bodyend="226"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="352" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="222" bodyend="226"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a3cb8fda91cc03f801258377960ffe008" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -455,9 +480,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="290" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="230" bodyend="237"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="353" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="230" bodyend="237"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">class_mps_2site::MPS_A</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ae8da08d904d6866f2b22947da8c2ee3c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -479,9 +507,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="291" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="240" bodyend="244"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="354" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="240" bodyend="244"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" compoundref="class__mps__2site_8cpp" startline="37" endline="37">class_mps_2site::B</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ab21b6bd5aca956607e5cc4a3c7234d5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -503,9 +532,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="292" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="248" bodyend="255"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="355" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="248" bodyend="255"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a5e45621e3e7cf436074f66c9c7cbd833" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -527,9 +559,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="293" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="259" bodyend="262"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="356" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="259" bodyend="262"/>
         <references refid="namespacetools_1_1common_1_1views_1a717b43409a314727c05f96b506a86d37" compoundref="views_8cpp" startline="173" endline="189">get_theta_evn</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a860f18b0a6b66dfdb3604b037dc802d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -551,9 +583,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="294" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="265" bodyend="267"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="357" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="265" bodyend="267"/>
         <references refid="namespacetools_1_1common_1_1views_1a522b2175b2226689e89d6c0162dcfae5" compoundref="views_8cpp" startline="192" endline="207">get_theta_odd</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ad217cc9cb9cf14b515343298edfc4040" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -574,11 +606,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="295" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="271" bodyend="286"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="358" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="271" bodyend="286"/>
         <references refid="namespacetools_1_1common_1_1views_1a4664633e874ca86e7726a4527aa87bf2" compoundref="views_8cpp" startline="211" endline="217">get_transfer_matrix_zero</references>
-        <references refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" compoundref="nmspc__math_8h" startline="33" endline="36">math::mod</references>
+        <references refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" compoundref="nmspc__math_8h" startline="34" endline="37">math::mod</references>
         <references refid="namespacetools_1_1common_1_1views_1acaeed868ea545d685eba6d66a907c62a" compoundref="views_8cpp" startline="222" endline="226">get_transfer_matrix_LBGA</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
         <references refid="namespacetools_1_1common_1_1views_1ab21b6bd5aca956607e5cc4a3c7234d5b" compoundref="views_8cpp" startline="248" endline="255">get_transfer_matrix_LCGB</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a949c89e88406fed5fcf642d34e1edea0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -598,17 +630,16 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="297" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="307" bodyend="320"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="360" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="307" bodyend="320"/>
         <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
         <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
         <references refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" compoundref="class__mps__2site_8cpp" startline="37" endline="37">class_mps_2site::B</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a980151161df1dabfaea5da9ae2d71775" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -627,16 +658,17 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LA ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LA ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="298" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="325" bodyend="341"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="361" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="325" bodyend="341"/>
         <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
         <references refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" compoundref="class__mps__2site_8cpp" startline="37" endline="37">class_mps_2site::B</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
         <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">class_mps_2site::MPS_A</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a53a47d2730c8b923207c089dec7169d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -655,17 +687,17 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>.</para><para>Returns a right normalized two-site MPS <verbatim>     1--[ LB ]--[ GA ]-- [ LC ] -- [ GB ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a right normalized two-site MPS <verbatim>     1--[ LB ]--[ GA ]-- [ LC ] -- [ GB ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="299" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="348" bodyend="364"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="362" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="348" bodyend="364"/>
         <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
         <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
         <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ac7e9874ea10f09be64e5b08689714974" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -684,15 +716,16 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Returns rank 4 tensor <formula id="35">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LA ]--[ GB ]-- [ LB ] -- [ GA ]--3
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LA ]--[ GB ]-- [ LB ] -- [ GA ]--3
                   |                 |
                   0                 2</verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="300" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="367" bodyend="382"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="363" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="367" bodyend="382"/>
         <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
         <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
         <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a686b9c2b5b156a674a8b5cf821190e8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -710,7 +743,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="301" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="386" bodyend="392"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="364" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="386" bodyend="392"/>
         <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">class_mps_2site::LC</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
       </memberdef>
@@ -734,9 +767,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="302" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="397" bodyend="401"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="365" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="397" bodyend="401"/>
         <references refid="classclass__mps__2site_1a236a159e7c4145df81e3fe69bb5eb460" compoundref="class__mps__2site_8cpp" startline="36" endline="36">class_mps_2site::A</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1aea0bac36161f395733301a37dceaaff0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -758,10 +791,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="303" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="405" bodyend="412"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="366" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="405" bodyend="412"/>
         <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
         <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">class_mps_2site::MPS_A</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1aecbf8dcf0a09ffd63376a47983c48239" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -783,9 +817,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="304" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="415" bodyend="419"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="367" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="415" bodyend="419"/>
         <references refid="classclass__mps__2site_1a7157e32ca4d70f34425202eb1cef88b9" compoundref="class__mps__2site_8cpp" startline="37" endline="37">class_mps_2site::B</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1acbcc5f21e4c79ed662c4b97a79f96f7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -807,10 +841,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="305" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="423" bodyend="430"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="368" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="423" bodyend="430"/>
         <references refid="classclass__mps__2site_1a1b64ec5742bf3af2869296cde77c7b2c" compoundref="class__mps__2site_8cpp" startline="38" endline="38">class_mps_2site::C</references>
         <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ad5c40d98b38bb1d5a8fd190b66b83057" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -832,9 +867,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="306" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="434" bodyend="437"/>
-        <references refid="namespacetools_1_1common_1_1views_1a717b43409a314727c05f96b506a86d37" compoundref="views_8cpp" startline="173" endline="189">get_theta_evn</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="369" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="434" bodyend="437"/>
+        <references refid="namespacetools_1_1common_1_1views_1a53a47d2730c8b923207c089dec7169d3" compoundref="views_8cpp" startline="348" endline="364">get_theta_evn</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a8bbfc538041c8bc900ab3813cf6f7259" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -856,9 +891,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="307" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="440" bodyend="442"/>
-        <references refid="namespacetools_1_1common_1_1views_1a522b2175b2226689e89d6c0162dcfae5" compoundref="views_8cpp" startline="192" endline="207">get_theta_odd</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="370" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="440" bodyend="442"/>
+        <references refid="namespacetools_1_1common_1_1views_1ac7e9874ea10f09be64e5b08689714974" compoundref="views_8cpp" startline="367" endline="382">get_theta_odd</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ac864d0ae1481abb03065ac6d98cdeace" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -879,18 +914,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="308" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" bodystart="446" bodyend="461"/>
-        <references refid="namespacetools_1_1common_1_1views_1a4664633e874ca86e7726a4527aa87bf2" compoundref="views_8cpp" startline="211" endline="217">get_transfer_matrix_zero</references>
-        <references refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" compoundref="nmspc__math_8h" startline="33" endline="36">math::mod</references>
-        <references refid="namespacetools_1_1common_1_1views_1acaeed868ea545d685eba6d66a907c62a" compoundref="views_8cpp" startline="222" endline="226">get_transfer_matrix_LBGA</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="namespacetools_1_1common_1_1views_1ab21b6bd5aca956607e5cc4a3c7234d5b" compoundref="views_8cpp" startline="248" endline="255">get_transfer_matrix_LCGB</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="371" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="446" bodyend="461"/>
+        <references refid="namespacetools_1_1common_1_1views_1a686b9c2b5b156a674a8b5cf821190e8d" compoundref="views_8cpp" startline="386" endline="392">get_transfer_matrix_zero</references>
+        <references refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" compoundref="nmspc__math_8h" startline="34" endline="37">math::mod</references>
+        <references refid="namespacetools_1_1common_1_1views_1afa5f608610abfca5e155625b329e2280" compoundref="views_8cpp" startline="397" endline="401">get_transfer_matrix_LBGA</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="namespacetools_1_1common_1_1views_1acbcc5f21e4c79ed662c4b97a79f96f7d" compoundref="views_8cpp" startline="423" endline="430">get_transfer_matrix_LCGB</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp" line="21" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="332" column="1"/>
   </compounddef>
 </doxygen>

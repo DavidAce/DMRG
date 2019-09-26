@@ -17,9 +17,9 @@ Namespaces
 ----------
 
 
-- :ref:`namespace_tools__finite__measure__accurate`
-
 - :ref:`namespace_tools__finite__measure__multisite`
+
+- :ref:`namespace_tools__finite__measure__twosite`
 
 
 Functions
@@ -34,11 +34,21 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1ad0bf82691db6ea773183f4f38c245636`
 
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a7ef3a851c77b06e6a210cce958447ea1`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a52873a04d8760e045da8cf5419b2ab70`
+
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a81b06529556e68f882c591397b39ef2f`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aea4925ff2aecd24ce3a67cf8bc2dd651`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a5a593749b940023e4150387fb657fcd6`
 
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a4ada78ffa7a8934c0d6766459f0742c3`
+
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a0435b2ea12613bfa030adc9dab6c8e52`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1aaa1031a1ee8192ca3c85a349a04c2e62`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1measure_1a5fa07e0eb6987bcc1431afdfbced7016`
 

@@ -7,13 +7,16 @@ usage() {
 Usage            : $PROGNAME [-option <argument>]
 
 -a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | native | (default = sandybridge)
--b <build type>  : Build type | Release | RelWithDebInfo | Debug | Profile |  (default = Release)
+-b <build type>  : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
+                   (Use the same build type you used with build.sh)
 -c               : Clear CMake files before build (delete ./build)
+-d               : Dry run
 -g <compiler>    : Compiler        | GNU | Clang | (default = "")
 -h               : Help. Shows this text.
 -i <ON|OFF>      : Intel MKL use   | ON | OFF | (default = OFF)
 -j <num_threads> : Number of threads used by CMake
--l               : Clear downloaded libraries before build (i.e. delete ./libs and ./cmake-build-libs)
+-l <lib name>    : Clear library before build (i.e. delete ./libs/<lib name> and ./cmake-build-libs/<lib name>)
+-L               : Clear all downloaded libraries before build (i.e. delete ./libs and ./cmake-build-libs)
 -o <ON|OFF>      : OpenMP use      | ON | OFF | (default = OFF)
 -s <ON|OFF>      : Shared libs     | ON | OFF | (default = OFF)
 -t <target>      : DMRG++          | all | hdf5_test_target | arpack++_simple_test_target | arpack++_mps_test_target | (default = all)
@@ -36,15 +39,17 @@ mkl="OFF"
 shared="OFF"
 compiler=""
 
-while getopts a:b:cg:hi:j:lo:p:s:t: o; do
+while getopts a:b:cg:hi:j:l:Lo:p:s:t: o; do
     case $o in
 	    (a) march=$OPTARG;;
         (b) build=$OPTARG;;
         (c) clear_cmake="true";;
+        (d) dryrun="true";;
         (g) compiler=$OPTARG;;
         (h) usage ;;
         (j) make_threads=$OPTARG;;
-        (l) clear_libs="true";;
+        (l) clear_lib+=("$OPTARG");;
+        (L) clear_libs="true";;
         (o) omp=$OPTARG;;
         (p) gcc_toolchain=--gcc-toolchain=$OPTARG;;
         (i) mkl=$OPTARG;;
@@ -69,6 +74,10 @@ fi
 if [ "$clear_libs" = true ] ; then
     echo "Clearing downloaded libraries."
 	rm -rf ./libs ./cmake-build-libs
+else
+    for lib in "${clear_lib[@]}"; do
+        rm -r ./libs/$lib ./cmake-build-libs/$lib
+    done
 fi
 
 
@@ -83,26 +92,17 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Checking if gcc-7 compiler is available"
     if brew ls gcc@7 | grep -q 'g++-7'; then
         echo " gcc-7 was found!"
-        if [[ "${CC}" != *"gcc-7"* ]]; then
-            echo "Current CC is: ${CC}"
-            echo "Please export before running: "
-            echo "  export CC=gcc-7"
-            echo "  export CXX=g++-7"
-            echo "  export FC=gfortran-7"
-        fi
+        gccver=7
     elif brew ls gcc@8 | grep -q 'g++-8'; then
         echo " gcc-8 was found!"
-        if [[ "${CC}" != *"gcc-8"* ]]; then
-            echo "Current CC is: ${CC}"
-            echo "Please export before running: "
-            echo "  export CC=gcc-8"
-            echo "  export CXX=g++-8"
-            echo "  export FC=gfortran-8"
-        fi
+        gccver=8
     else
-        echo "Please install gcc (version 7 or higher) through brew."
+        echo "Please install gcc (version 7 or 8) through brew."
         echo "Command:   brew install gcc@7"
     fi
+    export CC=gcc-$gccver
+    export CXX=g++-$gccver
+    export FC=gfortran-$gccver
 fi
 
 
@@ -125,8 +125,6 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         export CC=clang
         export CXX=clang++
     fi
-
-
 
 elif [[ "$HOSTNAME" == *"anderson"* ]];then
     module load CMake
@@ -173,8 +171,21 @@ echo "gcc toolchain   :   $gcc_toolchain"
 echo "CMake version   :   $(cmake --version) at $(which cmake)"
 
 
+if [ -n "$dryrun" ]; then
+    echo "Dry run build sequence"
+else
+    echo "Running build sequence"
+fi
 
-cmake -E make_directory build/$build
-cd build/$build
-cmake -DCMAKE_BUILD_TYPE=$build -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
-cmake --build . --target $target -- -j $make_threads
+
+echo ">> cmake -E make_directory build/$build"
+echo ">> cd build/$build"
+echo ">> cmake -DCMAKE_BUILD_TYPE=$build -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../"
+echo ">> cmake --build . --target $target -- -j $make_threads"
+
+if [ -z "$dryrun" ] ;then
+    cmake -E make_directory build/$build
+    cd build/$build
+    cmake -DCMAKE_BUILD_TYPE=$build -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake --build . --target $target -- -j $make_threads
+fi

@@ -86,6 +86,20 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" bodystart="19" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" prot="protected" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_model_base::e_reduced</definition>
+        <argsstring></argsstring>
+        <name>e_reduced</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>&quot;Reduced&quot; energy offset for this mpo (to make &quot;reduced&quot; MPO views) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
       <memberdef kind="variable" id="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" prot="public" static="no" mutable="no">
@@ -93,18 +107,18 @@
         <definition>bool class_model_base::all_mpo_parameters_have_been_set</definition>
         <argsstring></argsstring>
         <name>all_mpo_parameters_have_been_set</name>
-        <initializer>= false</initializer>
+        <initializer>=   false</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" bodystart="51" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" bodystart="25" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classclass__model__base_1a6a2f96984fa4ce3efec11a5acd2c4fd0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__model__base_1a6a2f96984fa4ce3efec11a5acd2c4fd0" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
         <definition>class_model_base::class_model_base</definition>
         <argsstring>(size_t position_, std::string logName=&quot;MODEL&quot;)</argsstring>
@@ -124,37 +138,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="26" bodyend="29"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" compoundref="nmspc__logger_8h" startline="33" endline="44">Logger::setLogger</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1ac281b65a3ef25fe526e43eebec5d0051" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
-        <type></type>
-        <definition>virtual class_model_base::~class_model_base</definition>
-        <argsstring>()=default</argsstring>
-        <name>~class_model_base</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="23" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a82f3f6a04b59e10b8abbe1cbbafd88bc" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
-        <type>std::shared_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
-        <definition>virtual std::shared_ptr&lt;class_model_base&gt; class_model_base::clone</definition>
-        <argsstring>() const =0</argsstring>
-        <name>clone</name>
-        <reimplementedby refid="classclass__tf__ising_1a7c5bdafc37e211c8ff0bfc73de2fa8af">clone</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a8702c9531914daf6baafff126489bb42">clone</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="24" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="41" bodyend="44"/>
+        <references refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" compoundref="class__model__base_8h" startline="17">position</references>
+        <references refid="classclass__model__base_1a33433f14a50c45b0aa52873e01076b84" compoundref="class__model__base_8h" startline="18">log</references>
+        <references refid="namespace_logger_1a540e0412286255a5eb899ee37171f39d" compoundref="nmspc__logger_8h" startline="51" endline="63">Logger::setLogger</references>
       </memberdef>
       <memberdef kind="function" id="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>const Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
@@ -167,7 +154,147 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="14" bodyend="20"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="14" bodyend="20"/>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="25">all_mpo_parameters_have_been_set</references>
+        <references refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" compoundref="class__model__base_8h" startline="19">mpo_internal</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool class_model_base::isReal</definition>
+        <argsstring>() const</argsstring>
+        <name>isReal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="22" bodyend="24"/>
+        <references refid="namespace_textra_1ae7794bc6f089ffe1c7121692c28c7592" compoundref="nmspc__tensor__extra_8h" startline="299" endline="302">Textra::isReal</references>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">MPO</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1abcce2b2aa2f4680afcb8e92a72c1a992" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_model_base::set_position</definition>
+        <argsstring>(size_t new_pos)</argsstring>
+        <name>set_position</name>
+        <param>
+          <type>size_t</type>
+          <declname>new_pos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="46" bodyend="48"/>
+        <references refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" compoundref="class__model__base_8h" startline="17">position</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t class_model_base::get_position</definition>
+        <argsstring>() const</argsstring>
+        <name>get_position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="52" bodyend="55"/>
+        <references refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" compoundref="class__model__base_8h" startline="17">position</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a22d74bafe839007a10f75ac03585fd25" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::MatrixXcd</type>
+        <definition>Eigen::MatrixXcd class_model_base::MPO_matrix_view</definition>
+        <argsstring>()</argsstring>
+        <name>MPO_matrix_view</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Matrix representation of full 2-site Hamiltonian </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="57" bodyend="62"/>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">MPO</references>
+        <references refid="namespace_textra_1abec7b372b4239eac14573685fae5f2e7" compoundref="nmspc__tensor__extra_8h" startline="224" endline="226">Textra::Tensor_to_Matrix</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1afbd0c80af83c59b9af90d190ec8acaac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_model_base::set_reduced_energy</definition>
+        <argsstring>(double site_energy)</argsstring>
+        <name>set_reduced_energy</name>
+        <param>
+          <type>double</type>
+          <declname>site_energy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="34" bodyend="37"/>
+        <references refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" compoundref="class__model__base_8h" startline="20">e_reduced</references>
+        <references refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" compoundref="class__model__base_8h" startline="19">mpo_internal</references>
+        <references refid="classclass__model__base_1a230141d80f84b200729e74fa114bd3e8">MPO_reduced_view</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a6bfba5c3d319a16c0451509e98df9b0b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool class_model_base::isReduced</definition>
+        <argsstring>() const</argsstring>
+        <name>isReduced</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="26" bodyend="28"/>
+        <references refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" compoundref="class__model__base_8h" startline="20">e_reduced</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a1d6a8fc02b00f4ee83ebaa3d0332cfee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double class_model_base::get_reduced_energy</definition>
+        <argsstring>() const</argsstring>
+        <name>get_reduced_energy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="30" bodyend="32"/>
+        <references refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" compoundref="class__model__base_8h" startline="20">e_reduced</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1ac281b65a3ef25fe526e43eebec5d0051" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>virtual class_model_base::~class_model_base</definition>
+        <argsstring>()=default</argsstring>
+        <name>~class_model_base</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="37" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1aa63f907aa0ac70db3a9477ce73c1fdd6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+        <definition>virtual std::unique_ptr&lt;class_model_base&gt; class_model_base::clone</definition>
+        <argsstring>() const =0</argsstring>
+        <name>clone</name>
+        <reimplementedby refid="classclass__tf__ising_1af21048663f687817dfd8ff4977ac67d6">clone</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a318fd570727b3841c009a818dfcd2377">clone</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="38" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__model__base_1a230141d80f84b200729e74fa114bd3e8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -182,7 +309,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="26" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="39" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__model__base_1aa497c5b51ccea581b9caf8b7d9c1b7a5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -201,34 +328,220 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="27" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="40" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
-        <type>bool</type>
-        <definition>bool class_model_base::isReal</definition>
-        <argsstring>() const</argsstring>
-        <name>isReal</name>
+      <memberdef kind="function" id="classclass__model__base_1a97eac32ea2fdfc6095f6aecaeaa4728f" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::set_hamiltonian</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;MPO_, std::vector&lt; double &gt; &amp;parameters)=0</argsstring>
+        <name>set_hamiltonian</name>
+        <reimplementedby refid="classclass__tf__ising_1a76205d7af37d2f9d5a58d199cb5f8863">set_hamiltonian</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a05264c902ce58ce765713732f29f758c">set_hamiltonian</reimplementedby>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>MPO_</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <declname>parameters</declname>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="22" bodyend="24"/>
-        <references refid="namespace_textra_1a134cee5e3300feee66018395aa0ffa05" compoundref="nmspc__tensor__extra_8h" startline="280" endline="289">Textra::isReal</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="41" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a22d74bafe839007a10f75ac03585fd25" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::MatrixXcd</type>
-        <definition>Eigen::MatrixXcd class_model_base::MPO_matrix_view</definition>
-        <argsstring>()</argsstring>
-        <name>MPO_matrix_view</name>
+      <memberdef kind="function" id="classclass__model__base_1a8e096961694e182c62dd2f6d6cda563b" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::set_hamiltonian</definition>
+        <argsstring>(const std::vector&lt; double &gt; &amp;parameters)=0</argsstring>
+        <name>set_hamiltonian</name>
+        <reimplementedby refid="classclass__tf__ising_1a5f3edbf2018d80a7b6cc031ea5b0acf2">set_hamiltonian</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a1c7ef71d51166da15bc7548ea541bfe6">set_hamiltonian</reimplementedby>
+        <param>
+          <type>const std::vector&lt; double &gt; &amp;</type>
+          <declname>parameters</declname>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Matrix representation of full 2-site Hamiltonian </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="42" bodyend="47"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="42" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1aabc61325c660162b98951819168431e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::set_hamiltonian</definition>
+        <argsstring>(const Eigen::MatrixXd &amp;all_parameters, int position)=0</argsstring>
+        <name>set_hamiltonian</name>
+        <reimplementedby refid="classclass__tf__ising_1a438c3f145771679ed8e9debe325ef135">set_hamiltonian</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a9817b80df5a85adb25695443416f7be9">set_hamiltonian</reimplementedby>
+        <param>
+          <type>const Eigen::MatrixXd &amp;</type>
+          <declname>all_parameters</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>position</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="43" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a3ee3f369bbd00039866c40bcf6e23f28" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::set_hamiltonian</definition>
+        <argsstring>(const Eigen::VectorXd &amp;parameters)=0</argsstring>
+        <name>set_hamiltonian</name>
+        <reimplementedby refid="classclass__tf__ising_1a9574c456a4e394ef3a2fcb7cd99cedc8">set_hamiltonian</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a76a152857659953b01146b80da7baabd">set_hamiltonian</reimplementedby>
+        <param>
+          <type>const Eigen::VectorXd &amp;</type>
+          <declname>parameters</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="44" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a9aef4688065a93324826893011ef8c14" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::build_mpo</definition>
+        <argsstring>()=0</argsstring>
+        <name>build_mpo</name>
+        <reimplementedby refid="classclass__tf__ising_1a3914c0315a54ca57c352c89c7a91f266">build_mpo</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a">build_mpo</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="45" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1ad774bf318ecff3bf13f8e7821aacdf4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::randomize_hamiltonian</definition>
+        <argsstring>()=0</argsstring>
+        <name>randomize_hamiltonian</name>
+        <reimplementedby refid="classclass__tf__ising_1a8bc1158637b78a5a2fe28595b667888e">randomize_hamiltonian</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57">randomize_hamiltonian</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="46" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1ade62bca0b950914a94c72c72d6c2cc3c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::print_parameter_names</definition>
+        <argsstring>() const =0</argsstring>
+        <name>print_parameter_names</name>
+        <reimplementedby refid="classclass__tf__ising_1a70f96b2035dde9965338d31da3d0ce54">print_parameter_names</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229">print_parameter_names</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="47" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a8ed38e3cb48bacc3103be07284b20831" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::print_parameter_values</definition>
+        <argsstring>() const =0</argsstring>
+        <name>print_parameter_values</name>
+        <reimplementedby refid="classclass__tf__ising_1a47541969c35f18f44ae46bc476ba0807">print_parameter_values</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643">print_parameter_values</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="48" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a7c8050ed2641e8145fdf30860435986a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>size_t</type>
+        <definition>virtual size_t class_model_base::get_spin_dimension</definition>
+        <argsstring>() const =0</argsstring>
+        <name>get_spin_dimension</name>
+        <reimplementedby refid="classclass__tf__ising_1aac43f4b1d0a820dff54456bf0ab5462a">get_spin_dimension</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf">get_spin_dimension</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="49" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a2c8ca66dc1a83c1ddb5ea91aec7fe1ed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::vector&lt; std::string &gt;</type>
+        <definition>virtual std::vector&lt;std::string&gt; class_model_base::get_parameter_names</definition>
+        <argsstring>() const =0</argsstring>
+        <name>get_parameter_names</name>
+        <reimplementedby refid="classclass__tf__ising_1aadefa2a6540891e38dd2d449d2141056">get_parameter_names</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896">get_parameter_names</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="50" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>virtual std::vector&lt;double&gt; class_model_base::get_parameter_values</definition>
+        <argsstring>() const =0</argsstring>
+        <name>get_parameter_values</name>
+        <reimplementedby refid="classclass__tf__ising_1af71d009709fc2566715b5fa00138576d">get_parameter_values</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb">get_parameter_values</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="51" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__base_1a4803a9abc26a3282e512dc7a691dc837" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void class_model_base::set_full_lattice_parameters</definition>
+        <argsstring>(const std::vector&lt; std::vector&lt; double &gt;&gt; parameters, bool reverse=false)=0</argsstring>
+        <name>set_full_lattice_parameters</name>
+        <reimplementedby refid="classclass__tf__ising_1ad98bb3c2c80fd28a07260cde6e32ed26">set_full_lattice_parameters</reimplementedby>
+        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1aa3a77c6733ee4834834a4ee7ede75067">set_full_lattice_parameters</reimplementedby>
+        <param>
+          <type>const std::vector&lt; std::vector&lt; double &gt;&gt;</type>
+          <declname>parameters</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>reverse</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="53" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__model__base_1a6c6d9ef43a65fbdb4fba2d01676dd3b3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
         <type>Eigen::MatrixXcd</type>
@@ -263,264 +576,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="30" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a1b6b26cfcbefcd218cdeb1a3a0f705ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::set_hamiltonian</definition>
-        <argsstring>(const Eigen::Tensor&lt; Scalar, 4 &gt; MPO_, std::vector&lt; double &gt; parameters)=0</argsstring>
-        <name>set_hamiltonian</name>
-        <reimplementedby refid="classclass__tf__ising_1a6a3936bc973cf4c0b8747b3a68db77dd">set_hamiltonian</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d">set_hamiltonian</reimplementedby>
-        <param>
-          <type>const Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt;</type>
-          <declname>MPO_</declname>
-        </param>
-        <param>
-          <type>std::vector&lt; double &gt;</type>
-          <declname>parameters</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="31" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a9ac1de6c0bf3c3f5506de0a3ffa29252" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::set_hamiltonian</definition>
-        <argsstring>(const std::vector&lt; double &gt; parameters)=0</argsstring>
-        <name>set_hamiltonian</name>
-        <reimplementedby refid="classclass__tf__ising_1afbc0cf3c633f82056086b9d50b01df74">set_hamiltonian</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1ad294c10cf4e8fb9b8bc32a16f106d11d">set_hamiltonian</reimplementedby>
-        <param>
-          <type>const std::vector&lt; double &gt;</type>
-          <declname>parameters</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="32" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a421e080c5d133b32282237a42f4d2048" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::set_hamiltonian</definition>
-        <argsstring>(const Eigen::MatrixXd all_parameters, int position)=0</argsstring>
-        <name>set_hamiltonian</name>
-        <reimplementedby refid="classclass__tf__ising_1af794934a4fea5e55855e1288e6269d19">set_hamiltonian</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1aaf49d0f62bc6c16fc78f9fadae453bfe">set_hamiltonian</reimplementedby>
-        <param>
-          <type>const Eigen::MatrixXd</type>
-          <declname>all_parameters</declname>
-        </param>
-        <param>
-          <type>int</type>
-          <declname>position</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="33" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1adb18b27cd043452cafe7a4bafe217412" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::set_hamiltonian</definition>
-        <argsstring>(const Eigen::VectorXd parameters)=0</argsstring>
-        <name>set_hamiltonian</name>
-        <reimplementedby refid="classclass__tf__ising_1a329b4eaffc5ebcfa46f1e45d5bcde7a4">set_hamiltonian</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a020833d780211578f36e5f36edb7684f">set_hamiltonian</reimplementedby>
-        <param>
-          <type>const Eigen::VectorXd</type>
-          <declname>parameters</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="34" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a9aef4688065a93324826893011ef8c14" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::build_mpo</definition>
-        <argsstring>()=0</argsstring>
-        <name>build_mpo</name>
-        <reimplementedby refid="classclass__tf__ising_1a3914c0315a54ca57c352c89c7a91f266">build_mpo</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a">build_mpo</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="35" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1ad774bf318ecff3bf13f8e7821aacdf4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::randomize_hamiltonian</definition>
-        <argsstring>()=0</argsstring>
-        <name>randomize_hamiltonian</name>
-        <reimplementedby refid="classclass__tf__ising_1a8bc1158637b78a5a2fe28595b667888e">randomize_hamiltonian</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57">randomize_hamiltonian</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="36" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1ade62bca0b950914a94c72c72d6c2cc3c" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::print_parameter_names</definition>
-        <argsstring>() const =0</argsstring>
-        <name>print_parameter_names</name>
-        <reimplementedby refid="classclass__tf__ising_1a70f96b2035dde9965338d31da3d0ce54">print_parameter_names</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229">print_parameter_names</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="37" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a8ed38e3cb48bacc3103be07284b20831" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::print_parameter_values</definition>
-        <argsstring>() const =0</argsstring>
-        <name>print_parameter_values</name>
-        <reimplementedby refid="classclass__tf__ising_1a47541969c35f18f44ae46bc476ba0807">print_parameter_values</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643">print_parameter_values</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="38" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a1c967e4189131a7ae8f8566e51484ef2" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::set_reduced_energy</definition>
-        <argsstring>(double site_energy)=0</argsstring>
-        <name>set_reduced_energy</name>
-        <reimplementedby refid="classclass__tf__ising_1a9245b4cb0cc244c7ac2d0ced69d26543">set_reduced_energy</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a6868f04c65fe0c5da49b412a7418b7cc">set_reduced_energy</reimplementedby>
-        <param>
-          <type>double</type>
-          <declname>site_energy</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="39" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a7c8050ed2641e8145fdf30860435986a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
-        <type>size_t</type>
-        <definition>virtual size_t class_model_base::get_spin_dimension</definition>
-        <argsstring>() const =0</argsstring>
-        <name>get_spin_dimension</name>
-        <reimplementedby refid="classclass__tf__ising_1aac43f4b1d0a820dff54456bf0ab5462a">get_spin_dimension</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf">get_spin_dimension</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="40" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a2c8ca66dc1a83c1ddb5ea91aec7fe1ed" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
-        <type>std::vector&lt; std::string &gt;</type>
-        <definition>virtual std::vector&lt;std::string&gt; class_model_base::get_parameter_names</definition>
-        <argsstring>() const =0</argsstring>
-        <name>get_parameter_names</name>
-        <reimplementedby refid="classclass__tf__ising_1aadefa2a6540891e38dd2d449d2141056">get_parameter_names</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896">get_parameter_names</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="41" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
-        <type>std::vector&lt; double &gt;</type>
-        <definition>virtual std::vector&lt;double&gt; class_model_base::get_parameter_values</definition>
-        <argsstring>() const =0</argsstring>
-        <name>get_parameter_values</name>
-        <reimplementedby refid="classclass__tf__ising_1af71d009709fc2566715b5fa00138576d">get_parameter_values</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb">get_parameter_values</reimplementedby>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="42" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a204f973d0539307696fcd06762aba48d" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
-        <type>void</type>
-        <definition>virtual void class_model_base::set_full_lattice_parameters</definition>
-        <argsstring>(const std::vector&lt; std::vector&lt; double &gt;&gt; parameters)=0</argsstring>
-        <name>set_full_lattice_parameters</name>
-        <reimplementedby refid="classclass__tf__ising_1ae25804063ee008fd608bcf9387c49897">set_full_lattice_parameters</reimplementedby>
-        <reimplementedby refid="classclass__selfdual__tf__rf__ising_1a614f69a0c3584740cf06f90af0ac1d2c">set_full_lattice_parameters</reimplementedby>
-        <param>
-          <type>const std::vector&lt; std::vector&lt; double &gt;&gt;</type>
-          <declname>parameters</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="43" column="1"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1abcce2b2aa2f4680afcb8e92a72c1a992" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_model_base::set_position</definition>
-        <argsstring>(size_t new_pos)</argsstring>
-        <name>set_position</name>
-        <param>
-          <type>size_t</type>
-          <declname>new_pos</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="31" bodyend="33"/>
-      </memberdef>
-      <memberdef kind="function" id="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
-        <type>size_t</type>
-        <definition>size_t class_model_base::get_position</definition>
-        <argsstring>() const</argsstring>
-        <name>get_position</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="37" bodyend="40"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="54" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -528,36 +584,39 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="101">
+      <node id="259">
         <label>class_model_base</label>
         <link refid="classclass__model__base"/>
       </node>
-      <node id="102">
+      <node id="260">
         <label>class_selfdual_tf_rf_ising</label>
         <link refid="classclass__selfdual__tf__rf__ising"/>
-        <childnode refid="101" relation="public-inheritance">
+        <childnode refid="259" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="103">
+      <node id="261">
         <label>class_tf_ising</label>
         <link refid="classclass__tf__ising"/>
-        <childnode refid="101" relation="public-inheritance">
+        <childnode refid="259" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" bodystart="12" bodyend="52"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h" bodystart="12" bodyend="61"/>
     <listofallmembers>
       <member refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>all_mpo_parameters_have_been_set</name></member>
       <member refid="classclass__model__base_1a9aef4688065a93324826893011ef8c14" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>build_mpo</name></member>
       <member refid="classclass__model__base_1a6a2f96984fa4ce3efec11a5acd2c4fd0" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>class_model_base</name></member>
-      <member refid="classclass__model__base_1a82f3f6a04b59e10b8abbe1cbbafd88bc" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>clone</name></member>
+      <member refid="classclass__model__base_1aa63f907aa0ac70db3a9477ce73c1fdd6" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>clone</name></member>
+      <member refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" prot="protected" virt="non-virtual"><scope>class_model_base</scope><name>e_reduced</name></member>
       <member refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" prot="protected" virt="non-virtual"><scope>class_model_base</scope><name>extent2</name></member>
       <member refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" prot="protected" virt="non-virtual"><scope>class_model_base</scope><name>extent4</name></member>
       <member refid="classclass__model__base_1a2c8ca66dc1a83c1ddb5ea91aec7fe1ed" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>get_parameter_names</name></member>
       <member refid="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>get_parameter_values</name></member>
       <member refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>get_position</name></member>
+      <member refid="classclass__model__base_1a1d6a8fc02b00f4ee83ebaa3d0332cfee" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>get_reduced_energy</name></member>
       <member refid="classclass__model__base_1a7c8050ed2641e8145fdf30860435986a" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>get_spin_dimension</name></member>
       <member refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>isReal</name></member>
+      <member refid="classclass__model__base_1a6bfba5c3d319a16c0451509e98df9b0b" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>isReduced</name></member>
       <member refid="classclass__model__base_1a33433f14a50c45b0aa52873e01076b84" prot="protected" virt="non-virtual"><scope>class_model_base</scope><name>log</name></member>
       <member refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>MPO</name></member>
       <member refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" prot="protected" virt="non-virtual"><scope>class_model_base</scope><name>mpo_internal</name></member>
@@ -569,13 +628,13 @@
       <member refid="classclass__model__base_1a8ed38e3cb48bacc3103be07284b20831" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>print_parameter_values</name></member>
       <member refid="classclass__model__base_1ad774bf318ecff3bf13f8e7821aacdf4a" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>randomize_hamiltonian</name></member>
       <member refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" prot="private" virt="non-virtual"><scope>class_model_base</scope><name>Scalar</name></member>
-      <member refid="classclass__model__base_1a204f973d0539307696fcd06762aba48d" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_full_lattice_parameters</name></member>
-      <member refid="classclass__model__base_1a1b6b26cfcbefcd218cdeb1a3a0f705ca" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_hamiltonian</name></member>
-      <member refid="classclass__model__base_1a9ac1de6c0bf3c3f5506de0a3ffa29252" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_hamiltonian</name></member>
-      <member refid="classclass__model__base_1a421e080c5d133b32282237a42f4d2048" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_hamiltonian</name></member>
-      <member refid="classclass__model__base_1adb18b27cd043452cafe7a4bafe217412" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_hamiltonian</name></member>
+      <member refid="classclass__model__base_1a4803a9abc26a3282e512dc7a691dc837" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_full_lattice_parameters</name></member>
+      <member refid="classclass__model__base_1a97eac32ea2fdfc6095f6aecaeaa4728f" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_hamiltonian</name></member>
+      <member refid="classclass__model__base_1a8e096961694e182c62dd2f6d6cda563b" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_hamiltonian</name></member>
+      <member refid="classclass__model__base_1aabc61325c660162b98951819168431e6" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_hamiltonian</name></member>
+      <member refid="classclass__model__base_1a3ee3f369bbd00039866c40bcf6e23f28" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_hamiltonian</name></member>
       <member refid="classclass__model__base_1abcce2b2aa2f4680afcb8e92a72c1a992" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>set_position</name></member>
-      <member refid="classclass__model__base_1a1c967e4189131a7ae8f8566e51484ef2" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>set_reduced_energy</name></member>
+      <member refid="classclass__model__base_1afbd0c80af83c59b9af90d190ec8acaac" prot="public" virt="non-virtual"><scope>class_model_base</scope><name>set_reduced_energy</name></member>
       <member refid="classclass__model__base_1a6c6d9ef43a65fbdb4fba2d01676dd3b3" prot="public" virt="pure-virtual"><scope>class_model_base</scope><name>single_site_hamiltonian</name></member>
       <member refid="classclass__model__base_1ac281b65a3ef25fe526e43eebec5d0051" prot="public" virt="virtual"><scope>class_model_base</scope><name>~class_model_base</name></member>
     </listofallmembers>

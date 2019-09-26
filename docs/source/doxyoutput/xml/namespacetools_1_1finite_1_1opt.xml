@@ -26,7 +26,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="70" bodyend="70"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="79" bodyend="79"/>
       </memberdef>
       <memberdef kind="enum" id="namespacetools_1_1finite_1_1opt_1a04ca8f4b4cd4ea8fb0700927cbae11b6" prot="public" static="no">
         <name>OptSpace</name>
@@ -50,7 +50,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="71" bodyend="71"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="80" bodyend="80"/>
       </memberdef>
       <memberdef kind="enum" id="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4e" prot="public" static="no">
         <name>OptType</name>
@@ -74,7 +74,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="72" bodyend="72"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="81" bodyend="81"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -109,13 +109,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp" bodystart="17" bodyend="39"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="18" bodyend="45"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" compoundref="class__finite__state_8cpp" startline="230" endline="239">class_finite_state::active_dimensions</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="46" endline="46">class_finite_state::get_position</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ad8dd1bea73386ce201be145dbeb0e57d" compoundref="ceres_8cpp" startline="18" endline="109">tools::finite::opt::internals::ceres_optimization</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a54d55d18dbbbf7f0258c049658e4858b" compoundref="subspace_8cpp" startline="212" endline="329">tools::finite::opt::internals::subspace_optimization</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc4f5fa072ebf99048b4e3b939700b31" compoundref="direct_8cpp" startline="31" endline="107">tools::finite::opt::internals::direct_optimization</references>
+        <references refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" compoundref="class__finite__state_8cpp" startline="331" endline="333">class_finite_state::active_dimensions</references>
+        <references refid="classclass__finite__state_1a3ad3dcbfff6963012088e3c5f2ed5a06" compoundref="class__finite__state_8cpp" startline="335" endline="337">class_finite_state::active_problem_size</references>
+        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="91" endline="91">class_finite_state::get_position</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1a04ca8f4b4cd4ea8fb0700927cbae11b6a75420cb18c5b572ad779b8c95d797cf6">SUBSPACE</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a3a07b29376c4353abadb1848f43f4a45" compoundref="ceres__subspace_8cpp" startline="302" endline="613">tools::finite::opt::internals::ceres_subspace_optimization</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1a04ca8f4b4cd4ea8fb0700927cbae11b6a4c5d06b02c97731aaa976179c62dcf76">DIRECT</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab9f6fa872c8f3136ce5e0d5961a55991" compoundref="ceres__direct_8cpp" startline="17" endline="183">tools::finite::opt::internals::ceres_direct_optimization</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a6aea4ac2180f6024a1346897354861d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -137,7 +139,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp" bodystart="41" bodyend="45"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="47" bodyend="51"/>
         <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a4c06ba68e3212f27854e1b739aa189f4" compoundref="ground__state_8cpp" startline="11" endline="45">tools::finite::opt::internals::ground_state_optimization</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -167,13 +169,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/svd.cpp" bodystart="81" bodyend="98"/>
-        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
-        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="90" bodyend="117"/>
+        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="539" endline="541">class_finite_state::unset_measurements</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
         <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
-        <references refid="classclass__finite__state_1a304474ccfccd73c3371441ab4b1c2e0e" compoundref="class__finite__state_8cpp" startline="52" endline="52">class_finite_state::get_direction</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" compoundref="svd_8cpp" startline="102" endline="170">truncate_right</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" compoundref="svd_8cpp" startline="173" endline="240">truncate_left</references>
+        <references refid="namespacesettings_1_1precision_1a750367d57c28bed6cbe50b368b822d84" compoundref="nmspc__settings_8h" startline="103">settings::precision::MaxNormError</references>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="classclass__finite__state_1a304474ccfccd73c3371441ab4b1c2e0e" compoundref="class__finite__state_8cpp" startline="106" endline="106">class_finite_state::get_direction</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" compoundref="svd_8cpp" startline="121" endline="192">truncate_right</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" compoundref="svd_8cpp" startline="195" endline="264">truncate_left</references>
+        <references refid="classclass__finite__state_1aa826b1da2dc225002a215e8741fbcbfb" compoundref="class__finite__state_8cpp" startline="543" endline="545">class_finite_state::clear_cache</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1ae814b3957f593984e10669d57c42093c" compoundref="svd_8cpp" startline="9" endline="87">tools::finite::mps::normalize</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -202,25 +208,26 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/svd.cpp" bodystart="173" bodyend="240"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="85" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="195" bodyend="264"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="34" endline="36">class_SVD::setThreshold</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
-        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
-        <references refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" compoundref="class__finite__state_8cpp" startline="106" endline="118">class_finite_state::get_MPS</references>
+        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="37" endline="39">class_SVD::setThreshold</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" compoundref="nmspc__tools_8h" startline="312">tools::common::profile::t_svd</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__finite__state_1a5a2b9693adbb336ccd26213a2e0c6d18" compoundref="class__finite__state_8cpp" startline="188" endline="190">class_finite_state::get_MPS</references>
         <references refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" compoundref="class__vidal__site_8cpp" startline="20" endline="20">class_vidal_site::get_spin_dim</references>
-        <references refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" compoundref="class__svd__wrapper_8h" startline="184" endline="191">class_SVD::schmidt_with_norm</references>
-        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="119">class_finite_state::truncation_error</references>
-        <references refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" compoundref="class__svd__wrapper_8cpp" startline="30" endline="32">class_SVD::get_truncation_error</references>
+        <references refid="classclass___s_v_d_1a25ca2c3061b5eca7e5adf5113de78f01" compoundref="class__svd__wrapper_8h" startline="203" endline="223">class_SVD::schmidt_with_norm</references>
+        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="146">class_finite_state::truncation_error</references>
+        <references refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" compoundref="class__svd__wrapper_8cpp" startline="33" endline="35">class_SVD::get_truncation_error</references>
         <references refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" compoundref="nmspc__tensor__extra_8h" startline="131" endline="133">Textra::asDiagonalInversed</references>
-        <references refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" compoundref="class__finite__state_8cpp" startline="154" endline="159">class_finite_state::get_L</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" compoundref="class__finite__state_8cpp" startline="146" endline="148">class_finite_state::get_G</references>
+        <references refid="classclass__finite__state_1adf065531466ca5f0860771b0cd7c3e18" compoundref="class__finite__state_8cpp" startline="229" endline="231">class_finite_state::get_L</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__finite__state_1ae7248f79413fc3c76df6e92db866f983" compoundref="class__finite__state_8cpp" startline="218" endline="220">class_finite_state::get_G</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
-        <references refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" compoundref="class__finite__state_8cpp" startline="95" endline="97">class_finite_state::get_B</references>
+        <references refid="classclass__finite__state_1a5c6bd5c2fc63f3aa4d6a9e09ede8020b" compoundref="class__finite__state_8cpp" startline="240" endline="242">class_finite_state::get_B</references>
         <references refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" compoundref="nmspc__tensor__extra_8h" startline="214" endline="216">Textra::Tensor2_to_Matrix</references>
         <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -249,25 +256,26 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/svd.cpp" bodystart="102" bodyend="170"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="86" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="121" bodyend="192"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="34" endline="36">class_SVD::setThreshold</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
-        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="103">class_finite_state::active_sites</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
-        <references refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" compoundref="class__finite__state_8cpp" startline="106" endline="118">class_finite_state::get_MPS</references>
+        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="37" endline="39">class_SVD::setThreshold</references>
+        <references refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" compoundref="class__finite__state_8h" startline="129">class_finite_state::active_sites</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" compoundref="nmspc__tools_8h" startline="312">tools::common::profile::t_svd</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__finite__state_1a5a2b9693adbb336ccd26213a2e0c6d18" compoundref="class__finite__state_8cpp" startline="188" endline="190">class_finite_state::get_MPS</references>
         <references refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" compoundref="class__vidal__site_8cpp" startline="20" endline="20">class_vidal_site::get_spin_dim</references>
-        <references refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" compoundref="class__svd__wrapper_8h" startline="184" endline="191">class_SVD::schmidt_with_norm</references>
-        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="119">class_finite_state::truncation_error</references>
-        <references refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" compoundref="class__svd__wrapper_8cpp" startline="30" endline="32">class_SVD::get_truncation_error</references>
+        <references refid="classclass___s_v_d_1a25ca2c3061b5eca7e5adf5113de78f01" compoundref="class__svd__wrapper_8h" startline="203" endline="223">class_SVD::schmidt_with_norm</references>
+        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="146">class_finite_state::truncation_error</references>
+        <references refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" compoundref="class__svd__wrapper_8cpp" startline="33" endline="35">class_SVD::get_truncation_error</references>
         <references refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" compoundref="nmspc__tensor__extra_8h" startline="131" endline="133">Textra::asDiagonalInversed</references>
-        <references refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" compoundref="class__finite__state_8cpp" startline="154" endline="159">class_finite_state::get_L</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" compoundref="class__finite__state_8cpp" startline="146" endline="148">class_finite_state::get_G</references>
+        <references refid="classclass__finite__state_1adf065531466ca5f0860771b0cd7c3e18" compoundref="class__finite__state_8cpp" startline="229" endline="231">class_finite_state::get_L</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__finite__state_1ae7248f79413fc3c76df6e92db866f983" compoundref="class__finite__state_8cpp" startline="218" endline="220">class_finite_state::get_G</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
-        <references refid="classclass__finite__state_1a96207fcc3378d0bcc7c884055d9862b0" compoundref="class__finite__state_8cpp" startline="91" endline="93">class_finite_state::get_A</references>
+        <references refid="classclass__finite__state_1a2bab98a347afda673594adf709f55413" compoundref="class__finite__state_8cpp" startline="236" endline="238">class_finite_state::get_A</references>
         <references refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" compoundref="nmspc__tensor__extra_8h" startline="214" endline="216">Textra::Tensor2_to_Matrix</references>
-        <references refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" compoundref="class__finite__state_8cpp" startline="95" endline="97">class_finite_state::get_B</references>
+        <references refid="classclass__finite__state_1a5c6bd5c2fc63f3aa4d6a9e09ede8020b" compoundref="class__finite__state_8cpp" startline="240" endline="242">class_finite_state::get_B</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1aa1f7f648d761d5f59f0c782ccea498bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -296,25 +304,28 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/svd.cpp" bodystart="243" bodyend="254"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="267" bodyend="280"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="34" endline="36">class_SVD::setThreshold</references>
-        <references refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" compoundref="class__svd__wrapper_8h" startline="145" endline="153">class_SVD::schmidt</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
-        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="119">class_finite_state::truncation_error</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="46" endline="46">class_finite_state::get_position</references>
-        <references refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" compoundref="class__svd__wrapper_8cpp" startline="30" endline="32">class_SVD::get_truncation_error</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" compoundref="nmspc__tools_8h" startline="312">tools::common::profile::t_svd</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="37" endline="39">class_SVD::setThreshold</references>
+        <references refid="classclass___s_v_d_1ae0c7c86a804b2376fb71427298cb651b" compoundref="class__svd__wrapper_8h" startline="181" endline="187">class_SVD::schmidt</references>
+        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="146">class_finite_state::truncation_error</references>
+        <references refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" compoundref="class__svd__wrapper_8cpp" startline="33" endline="35">class_SVD::get_truncation_error</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
         <references refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" compoundref="nmspc__tensor__extra_8h" startline="131" endline="133">Textra::asDiagonalInversed</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__vidal__site_1af6f034b58f24cd6ede70f37e3a4ab974" compoundref="class__vidal__site_8cpp" startline="12" endline="12">class_vidal_site::get_L</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__vidal__site_1aa0aa4328e28b6c4cdc335fbd044d7537" compoundref="class__vidal__site_8cpp" startline="36" endline="36">class_vidal_site::set_G</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="17" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="78" column="1"/>
   </compounddef>
 </doxygen>

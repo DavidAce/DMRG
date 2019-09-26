@@ -171,10 +171,14 @@
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="135" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="135" bodyend="147"/>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
+        <references refid="classeigutils_1_1eig_solution_1a6d099c5baae5bc9d51244bf049fe1b2c" compoundref="nmspc__eigutils_8h" startline="120">eigvecs_real</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
+        <references refid="classeigutils_1_1eig_solution_1ab53558fe6e1a8ff7bad5456e92de4140" compoundref="nmspc__eigutils_8h" startline="121">eigvecs_cplx</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="classeigutils_1_1eig_solution_1a130947a440577c7505c14f44aebaeecf" compoundref="nmspc__eigutils_8h" startline="127">eigvecsR_cplx</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="classeigutils_1_1eig_solution_1ab470fa2160017aa562fea2b09e85363c" compoundref="nmspc__eigutils_8h" startline="128">eigvecsL_cplx</references>
       </memberdef>
       <memberdef kind="function" id="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -204,6 +208,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="152" bodyend="159"/>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
       </memberdef>
       <memberdef kind="function" id="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -225,7 +231,9 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="163" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="163" bodyend="167"/>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
+        <references refid="classeigutils_1_1eig_solution_1a8d0a548b90fc7ba5da69535050cd67f5" compoundref="nmspc__eigutils_8h" startline="122">eigvals_real</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
+        <references refid="classeigutils_1_1eig_solution_1a4ea1f60ab4ae1e2c28fcee57e04ea280" compoundref="nmspc__eigutils_8h" startline="129">eigvals_cplx</references>
       </memberdef>
       <memberdef kind="function" id="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -239,6 +247,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="188" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="188" bodyend="198"/>
+        <references refid="classeigutils_1_1eig_solution_1a8d0a548b90fc7ba5da69535050cd67f5" compoundref="nmspc__eigutils_8h" startline="122">eigvals_real</references>
+        <references refid="classeigutils_1_1eig_solution_1a4ea1f60ab4ae1e2c28fcee57e04ea280" compoundref="nmspc__eigutils_8h" startline="129">eigvals_cplx</references>
+        <references refid="classeigutils_1_1eig_solution_1a6d099c5baae5bc9d51244bf049fe1b2c" compoundref="nmspc__eigutils_8h" startline="120">eigvecs_real</references>
+        <references refid="classeigutils_1_1eig_solution_1ab53558fe6e1a8ff7bad5456e92de4140" compoundref="nmspc__eigutils_8h" startline="121">eigvecs_cplx</references>
+        <references refid="classeigutils_1_1eig_solution_1a5420a7afa8e2f5106712282137b69e4f" compoundref="nmspc__eigutils_8h" startline="125">eigvecsR_real</references>
+        <references refid="classeigutils_1_1eig_solution_1acfc2a9cd081aebf3c904c8bd99f6ac2e" compoundref="nmspc__eigutils_8h" startline="126">eigvecsL_real</references>
+        <references refid="classeigutils_1_1eig_solution_1a130947a440577c7505c14f44aebaeecf" compoundref="nmspc__eigutils_8h" startline="127">eigvecsR_cplx</references>
+        <references refid="classeigutils_1_1eig_solution_1ab470fa2160017aa562fea2b09e85363c" compoundref="nmspc__eigutils_8h" startline="128">eigvecsL_cplx</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -246,14 +262,38 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="161">
-        <label>eigutils::eigSolution</label>
-        <link refid="classeigutils_1_1eig_solution"/>
-        <childnode refid="162" relation="usage">
-          <edgelabel>meta</edgelabel>
+      <node id="363">
+        <label>std::vector&lt; double &gt;</label>
+      </node>
+      <node id="361">
+        <label>std::vector&lt; Scalar &gt;</label>
+        <childnode refid="362" relation="usage">
+          <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="162">
+      <node id="362">
+        <label>std::complex</label>
+      </node>
+      <node id="359">
+        <label>eigutils::eigSolution</label>
+        <link refid="classeigutils_1_1eig_solution"/>
+        <childnode refid="360" relation="usage">
+          <edgelabel>meta</edgelabel>
+        </childnode>
+        <childnode refid="361" relation="usage">
+          <edgelabel>eigvecsR_cplx</edgelabel>
+          <edgelabel>eigvecs_cplx</edgelabel>
+          <edgelabel>eigvecsL_cplx</edgelabel>
+          <edgelabel>eigvals_cplx</edgelabel>
+        </childnode>
+        <childnode refid="363" relation="usage">
+          <edgelabel>eigvecs_real</edgelabel>
+          <edgelabel>eigvecsL_real</edgelabel>
+          <edgelabel>eigvals_real</edgelabel>
+          <edgelabel>eigvecsR_real</edgelabel>
+        </childnode>
+      </node>
+      <node id="360">
         <label>eigutils::eigSolution::Meta</label>
         <link refid="structeigutils_1_1eig_solution_1_1_meta"/>
       </node>

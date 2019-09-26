@@ -3,16 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DMRG++'s documentation!
-==================================
+Welcome to DMRG++'s documentation! (in construction)
+====================================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    README.md
-   test
-   about
    api/library_root
 
 Indices and tables

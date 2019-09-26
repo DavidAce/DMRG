@@ -11,11 +11,6 @@ Directory state
 
 *Directory path:* ``/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state``
 
-Subdirectories
---------------
-
-- :ref:`dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools`
-
 
 Files
 -----

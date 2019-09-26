@@ -44,15 +44,15 @@ Program Listing for File class_algorithm_base.h
        class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_,
                             std::string sim_name_,
                             SimulationType sim_type_);
-       enum class StopReason {CONVERGED, SATURATED, MAX_STEPS} stop_reason;
+       enum class StopReason {SUCCEEDED, SATURATED, MAX_STEPS} stop_reason;
        void set_profiling_labels ();
    
-       std::shared_ptr<h5pp::File>                                  h5pp_file;
-       std::unique_ptr<class_hdf5_log<class_log_profiling>>          log_profiling;
-       std::unique_ptr<class_hdf5_log<class_log_simulation_status>>  log_sim_status;
+       std::shared_ptr<h5pp::File>                                   h5pp_file;
+       std::shared_ptr<class_hdf5_log<class_log_profiling>>          log_profiling;
+       std::shared_ptr<class_hdf5_log<class_log_simulation_status>>  log_sim_status;
    
-       std::string             sim_name;
-       SimulationType          sim_type;
+       std::string              sim_name;
+       SimulationType           sim_type;
        class_simulation_status  sim_status;
    
    
@@ -66,6 +66,7 @@ Program Listing for File class_algorithm_base.h
        virtual void   check_convergence()                                                                        = 0;
        virtual void   write_measurements(bool force = false)                                                     = 0;
        virtual void   write_state       (bool force = false)                                                     = 0;
+       virtual void   write_status      (bool force = false)                                                     = 0;
        virtual void   write_logs        (bool force = false)                                                     = 0;
        virtual bool   sim_on()                                                                                   = 0;
        virtual long   chi_max()                                                                                  = 0;
@@ -75,35 +76,40 @@ Program Listing for File class_algorithm_base.h
        virtual bool   chi_grow()                                                                                 = 0;
        virtual void   print_status_update()                                                                      = 0;
        virtual void   print_status_full()                                                                        = 0;
-       virtual void   print_profiling()                                                                          = 0;
-       virtual void   print_profiling_sim(class_tic_toc &t_parent)                                               = 0;
-       virtual void   reset_to_random_state(const std::string parity)                                            = 0;
+       virtual void   reset_to_random_state(const std::string parity = "random", int seed_state = -1)            = 0;
        virtual void   clear_saturation_status()                                                                  = 0;
    
    
        //common functions
-       void write_status(bool force = false);
        void update_bond_dimension();
+       void print_profiling();
        double process_memory_in_mb(std::string name);
    
        // Profiling
-   //    void store_profiling_deltas(bool force = false);
-   //    void store_profiling_totals(bool force = false);
-   
-       class_tic_toc t_tot;
-       class_tic_toc t_sim;
-       class_tic_toc t_prt;
-       class_tic_toc t_con;
-   
+       class_tic_toc t_tot;    
+       class_tic_toc t_pre;    
+       class_tic_toc t_run;    
+       class_tic_toc t_pos;    
+       class_tic_toc t_prt;    
+       class_tic_toc t_con;    
    protected:
-       bool check_saturation_using_slope(std::list<bool> &B_vec,
-                                         std::list<double> &Y_vec,
-                                         std::list<int> &X_vec,
-                                         double new_data,
-                                         int iter,
-                                         int rate,
-                                         double tolerance,
-                                         double &slope);
+   //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from
+       struct SaturationReport {
+           bool   has_computed  = false;
+           bool   has_saturated = false;
+           double slope         = quietNaN;
+           double avgY          = quietNaN;
+           int    check_from    = -1;
+       };
+   
+       SaturationReport
+       check_saturation_using_slope(std::list<bool> &B_vec,
+                                    std::list<double> &Y_vec,
+                                    std::list<int> &X_vec,
+                                    double new_data,
+                                    int iter,
+                                    int rate,
+                                    double tolerance);
    
    };
    

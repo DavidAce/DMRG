@@ -75,6 +75,8 @@ Classes
 -------
 
 
+- :ref:`exhale_struct_structclass__algorithm__base_1_1_saturation_report`
+
 - :ref:`exhale_class_classclass__algorithm__base`
 
 - :ref:`exhale_class_classclass__hdf5__log`

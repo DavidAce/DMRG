@@ -3,17 +3,17 @@
   <compounddef id="namespacetools_1_1finite_1_1ops" kind="namespace" language="C++">
     <compoundname>tools::finite::ops</compoundname>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1ab102c808dc3ddeb104196b95ca3e8f80" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a6d8dab3f6e8c90533c7ee5b9cf5f02f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::list&lt; Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt; &gt;</type>
         <definition>std::list&lt; Eigen::Tensor&lt; Scalar, 4 &gt; &gt; tools::finite::ops::make_mpo_list</definition>
-        <argsstring>(const std::list&lt; std::shared_ptr&lt; class_model_base &gt;&gt; &amp;mpos_L, const std::list&lt; std::shared_ptr&lt; class_model_base &gt;&gt; &amp;mpos_R)</argsstring>
+        <argsstring>(const std::list&lt; std::unique_ptr&lt; class_model_base &gt;&gt; &amp;mpos_L, const std::list&lt; std::unique_ptr&lt; class_model_base &gt;&gt; &amp;mpos_R)</argsstring>
         <name>make_mpo_list</name>
         <param>
-          <type>const std::list&lt; std::shared_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;&gt; &amp;</type>
+          <type>const std::list&lt; std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;&gt; &amp;</type>
           <declname>mpos_L</declname>
         </param>
         <param>
-          <type>const std::list&lt; std::shared_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;&gt; &amp;</type>
+          <type>const std::list&lt; std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;&gt; &amp;</type>
           <declname>mpos_R</declname>
         </param>
         <briefdescription>
@@ -22,7 +22,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="20" bodyend="29"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="20" bodyend="29"/>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1ad8aed06310e3d183e78b4a198a6dc259" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -51,8 +52,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="32" bodyend="35"/>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="32" bodyend="35"/>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
         <references refid="namespacetools_1_1finite_1_1ops_1af56c79ae1daf4237e672debdb3de29c4" compoundref="ops_8cpp" startline="39" endline="124">apply_mpos</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1af56c79ae1daf4237e672debdb3de29c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -82,21 +83,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="39" bodyend="124"/>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="39" bodyend="124"/>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" compoundref="nmspc__settings_8h" startline="45">settings::model::tf_ising::d</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
-        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__vidal__site_1a48abc701113c51653c2e4b910d815643" compoundref="class__vidal__site_8cpp" startline="19" endline="19">class_vidal_site::get_dims</references>
+        <references refid="classclass__vidal__site_1a37321efff0b86f6b14c1068bd4f569f6" compoundref="class__vidal__site_8cpp" startline="11" endline="11">class_vidal_site::get_G</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__vidal__site_1af6f034b58f24cd6ede70f37e3a4ab974" compoundref="class__vidal__site_8cpp" startline="12" endline="12">class_vidal_site::get_L</references>
+        <references refid="classclass__vidal__site_1aa0aa4328e28b6c4cdc335fbd044d7537" compoundref="class__vidal__site_8cpp" startline="36" endline="36">class_vidal_site::set_G</references>
+        <references refid="classclass__vidal__site_1affb415878e90fd8d7b91e896951d53f5" compoundref="class__vidal__site_8cpp" startline="35" endline="35">class_vidal_site::set_L</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
+        <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">class_vidal_site::get_B</references>
+        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="539" endline="541">class_finite_state::unset_measurements</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a8a5fb61cbbd0baf326ee68450ced4710" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a0589625ffec110ac682ba275a4375f77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref></type>
-        <definition>class_finite_state tools::finite::ops::get_parity_projected_state</definition>
-        <argsstring>(const class_finite_state &amp;state, const Eigen::MatrixXcd &amp;paulimatrix, int sign)</argsstring>
-        <name>get_parity_projected_state</name>
+        <definition>class_finite_state tools::finite::ops::get_projection_to_parity_sector</definition>
+        <argsstring>(const class_finite_state &amp;state, const Eigen::MatrixXcd &amp;paulimatrix, int sign, bool keep_bond_dimensions=false)</argsstring>
+        <name>get_projection_to_parity_sector</name>
         <param>
           <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
           <declname>state</declname>
@@ -109,27 +116,38 @@
           <type>int</type>
           <declname>sign</declname>
         </param>
+        <param>
+          <type>bool</type>
+          <declname>keep_bond_dimensions</declname>
+          <defval>false</defval>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="127" bodyend="139"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="67" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="127" bodyend="145"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" compoundref="nmspc__tools_8h" startline="317">tools::common::profile::t_prj</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="539" endline="541">class_finite_state::unset_measurements</references>
+        <references refid="classclass__finite__state_1aa826b1da2dc225002a215e8741fbcbfb" compoundref="class__finite__state_8cpp" startline="543" endline="545">class_finite_state::clear_cache</references>
+        <references refid="classclass__finite__state_1ab83150d3afacac40f97dd1501c95be57" compoundref="class__finite__state_8cpp" startline="571" endline="574">class_finite_state::tag_all_sites_have_been_updated</references>
         <references refid="namespaceqm_1_1mpo_1ae9dfc0e5c530087196a667e5203bf400" compoundref="nmspc__quantum__mechanics_8cpp" startline="269" endline="306">qm::mpo::parity_projector_mpos</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
         <references refid="namespacetools_1_1finite_1_1ops_1af56c79ae1daf4237e672debdb3de29c4" compoundref="ops_8cpp" startline="39" endline="124">apply_mpos</references>
-        <references refid="namespacetools_1_1finite_1_1mps_1a87270670ae7c150d7d115c9bf8327278" compoundref="svd_8cpp" startline="9" endline="78">tools::finite::mps::normalize</references>
-        <references refid="namespacetools_1_1finite_1_1mps_1a39333dfe4f63e99d175302ff77155464" compoundref="finite_2mps_8cpp" startline="56" endline="118">tools::finite::mps::rebuild_environments</references>
-        <references refid="namespacetools_1_1finite_1_1debug_1ac04a2c7103eb4e428175e373c3b0100c" compoundref="finite_2debug_8cpp" startline="32" endline="232">tools::finite::debug::check_integrity_of_mps</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1ae814b3957f593984e10669d57c42093c" compoundref="svd_8cpp" startline="9" endline="87">tools::finite::mps::normalize</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1a39333dfe4f63e99d175302ff77155464" compoundref="finite_2mps_8cpp" startline="80" endline="141">tools::finite::mps::rebuild_environments</references>
+        <references refid="namespacetools_1_1finite_1_1debug_1ac04a2c7103eb4e428175e373c3b0100c" compoundref="finite_2debug_8cpp" startline="33" endline="237">tools::finite::debug::check_integrity_of_mps</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a3a7fe5ba4c6d23320386871a3ba2b912" compoundref="finite_2measure_8cpp" startline="263" endline="320">tools::finite::measure::spin_component</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a92dc2122fa719b004025f43bec82e154" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a89b30988a083057d361a7f75a5f1f195" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref></type>
-        <definition>class_finite_state tools::finite::ops::get_closest_parity_state</definition>
-        <argsstring>(const class_finite_state &amp;state, const Eigen::MatrixXcd &amp;paulimatrix)</argsstring>
-        <name>get_closest_parity_state</name>
+        <definition>class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector</definition>
+        <argsstring>(const class_finite_state &amp;state, const Eigen::MatrixXcd &amp;paulimatrix, bool keep_bond_dimensions=false)</argsstring>
+        <name>get_projection_to_closest_parity_sector</name>
         <param>
           <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
           <declname>state</declname>
@@ -138,29 +156,39 @@
           <type>const Eigen::MatrixXcd &amp;</type>
           <declname>paulimatrix</declname>
         </param>
+        <param>
+          <type>bool</type>
+          <declname>keep_bond_dimensions</declname>
+          <defval>false</defval>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="141" bodyend="149"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="69" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="147" bodyend="156"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1a3a7fe5ba4c6d23320386871a3ba2b912" compoundref="finite_2measure_8cpp" startline="257" endline="314">tools::finite::measure::spin_component</references>
-        <references refid="namespacetools_1_1finite_1_1ops_1a8a5fb61cbbd0baf326ee68450ced4710" compoundref="ops_8cpp" startline="127" endline="139">get_parity_projected_state</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a3a7fe5ba4c6d23320386871a3ba2b912" compoundref="finite_2measure_8cpp" startline="263" endline="320">tools::finite::measure::spin_component</references>
+        <references refid="namespacetools_1_1finite_1_1ops_1a0589625ffec110ac682ba275a4375f77" compoundref="ops_8cpp" startline="127" endline="145">get_projection_to_parity_sector</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a1cf5d695615ffca9ab05f0a2b1d78e5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a51c9c8a97ae2a7775928e6fcb4c805c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref></type>
-        <definition>class_finite_state tools::finite::ops::get_closest_parity_state</definition>
-        <argsstring>(const class_finite_state &amp;state, std::string paulistring)</argsstring>
-        <name>get_closest_parity_state</name>
+        <definition>class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector</definition>
+        <argsstring>(const class_finite_state &amp;state, std::string parity_sector, bool keep_bond_dimensions=false)</argsstring>
+        <name>get_projection_to_closest_parity_sector</name>
         <param>
           <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
           <type>std::string</type>
-          <declname>paulistring</declname>
+          <declname>parity_sector</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>keep_bond_dimensions</declname>
+          <defval>false</defval>
         </param>
         <briefdescription>
         </briefdescription>
@@ -168,13 +196,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="151" bodyend="165"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="158" bodyend="194"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="namespacetools_1_1finite_1_1ops_1a92dc2122fa719b004025f43bec82e154" compoundref="ops_8cpp" startline="141" endline="149">get_closest_parity_state</references>
-        <references refid="namespaceqm_1_1spin_one_half_1ae795b267734a773efcfbc6b238078299" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a777bca15b9c80a4c91d1cc8e49536559" compoundref="nmspc__quantum__mechanics_8cpp" startline="39">qm::spinOneHalf::sy</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a6f58116f2a00a0ee5e00f64e66813b74" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1a273e4dc80361488ebb574bf6a3caf69d" compoundref="finite_2measure_8cpp" startline="245" endline="254">tools::finite::measure::spin_components</references>
+        <references refid="namespacetools_1_1finite_1_1ops_1a89b30988a083057d361a7f75a5f1f195" compoundref="ops_8cpp" startline="147" endline="156">get_projection_to_closest_parity_sector</references>
+        <references refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" compoundref="nmspc__quantum__mechanics_8cpp" startline="39">qm::spinOneHalf::sy</references>
+        <references refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
+        <references refid="namespacetools_1_1finite_1_1ops_1a0589625ffec110ac682ba275a4375f77" compoundref="ops_8cpp" startline="127" endline="145">get_projection_to_parity_sector</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a273e4dc80361488ebb574bf6a3caf69d" compoundref="finite_2measure_8cpp" startline="251" endline="260">tools::finite::measure::spin_components</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1ab0cdc843131076ca538724438171b6a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -195,14 +224,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="168" bodyend="210"/>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="46" endline="46">class_finite_state::get_position</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="197" bodyend="239"/>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">class_vidal_site::get_B</references>
         <references refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" compoundref="nmspc__tensor__extra_8h" startline="214" endline="216">Textra::Tensor2_to_Matrix</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1ab4ae45f1dcc5a9203e95c2dab1c18c31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -236,14 +265,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="212" bodyend="267"/>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="46" endline="46">class_finite_state::get_position</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="241" bodyend="296"/>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">class_vidal_site::get_B</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a231b60c5ff0209660e976aae1bbe0352" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -276,20 +305,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp" bodystart="269" bodyend="324"/>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="46" endline="46">class_finite_state::get_position</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="298" bodyend="353"/>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">class_vidal_site::get_B</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="52" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="61" column="1"/>
   </compounddef>
 </doxygen>

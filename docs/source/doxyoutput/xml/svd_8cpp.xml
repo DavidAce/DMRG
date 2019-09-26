@@ -2,227 +2,222 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="svd_8cpp" kind="file" language="C++">
     <compoundname>svd.cpp</compoundname>
-    <includes refid="opt_8h" local="no">state/tools/finite/opt.h</includes>
+    <includes refid="opt_8h" local="no">tools/finite/opt.h</includes>
     <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
     <includes refid="class__svd__wrapper_8h" local="no">math/class_svd_wrapper.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <incdepgraph>
-      <node id="3232">
+      <node id="3153">
         <label>math/class_svd_wrapper.h</label>
         <link refid="class__svd__wrapper_8h"/>
-        <childnode refid="3207" relation="include">
+        <childnode refid="3128" relation="include">
         </childnode>
-        <childnode refid="3213" relation="include">
-        </childnode>
-        <childnode refid="3233" relation="include">
+        <childnode refid="3134" relation="include">
         </childnode>
       </node>
-      <node id="3213">
+      <node id="3134">
         <label>iomanip</label>
       </node>
-      <node id="3211">
+      <node id="3132">
         <label>iterator</label>
       </node>
-      <node id="3233">
-        <label>Eigen/QR</label>
-      </node>
-      <node id="3224">
+      <node id="3145">
         <label>glog/logging.h</label>
       </node>
-      <node id="3222">
+      <node id="3143">
         <label>LBFGS.h</label>
       </node>
-      <node id="3223">
+      <node id="3144">
         <label>ceres/ceres.h</label>
       </node>
-      <node id="3214">
+      <node id="3135">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="3215" relation="include">
+        <childnode refid="3136" relation="include">
         </childnode>
-        <childnode refid="3208" relation="include">
+        <childnode refid="3129" relation="include">
         </childnode>
-        <childnode refid="3210" relation="include">
+        <childnode refid="3131" relation="include">
         </childnode>
       </node>
-      <node id="3208">
+      <node id="3129">
         <label>Eigen/Core</label>
       </node>
-      <node id="3206">
+      <node id="3127">
         <label>string</label>
       </node>
-      <node id="3220">
+      <node id="3141">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="3221" relation="include">
+        <childnode refid="3142" relation="include">
         </childnode>
-        <childnode refid="3212" relation="include">
+        <childnode refid="3133" relation="include">
         </childnode>
       </node>
-      <node id="3216">
+      <node id="3137">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="3217" relation="include">
+        <childnode refid="3138" relation="include">
         </childnode>
-        <childnode refid="3218" relation="include">
+        <childnode refid="3139" relation="include">
         </childnode>
-        <childnode refid="3219" relation="include">
+        <childnode refid="3140" relation="include">
         </childnode>
       </node>
-      <node id="3215">
+      <node id="3136">
         <label>experimental/type_traits</label>
       </node>
-      <node id="3235">
+      <node id="3125">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="3126" relation="include">
+        </childnode>
+        <childnode refid="3127" relation="include">
+        </childnode>
+        <childnode refid="3128" relation="include">
+        </childnode>
+        <childnode refid="3137" relation="include">
+        </childnode>
+        <childnode refid="3141" relation="include">
+        </childnode>
+      </node>
+      <node id="3155">
         <label>unordered_set</label>
       </node>
-      <node id="3210">
+      <node id="3131">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="3228">
+      <node id="3149">
         <label>state/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="3205" relation="include">
+        <childnode refid="3126" relation="include">
         </childnode>
-        <childnode refid="3207" relation="include">
+        <childnode refid="3128" relation="include">
         </childnode>
-        <childnode refid="3229" relation="include">
+        <childnode refid="3150" relation="include">
         </childnode>
       </node>
-      <node id="3231">
+      <node id="3152">
         <label>model/class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="3205" relation="include">
+        <childnode refid="3126" relation="include">
         </childnode>
-        <childnode refid="3210" relation="include">
+        <childnode refid="3131" relation="include">
         </childnode>
-        <childnode refid="3216" relation="include">
+        <childnode refid="3137" relation="include">
         </childnode>
       </node>
-      <node id="3217">
+      <node id="3138">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="3209">
+      <node id="3130">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="3225">
+      <node id="3146">
         <label>state/class_finite_state.h</label>
         <link refid="class__finite__state_8h"/>
-        <childnode refid="3205" relation="include">
+        <childnode refid="3126" relation="include">
         </childnode>
-        <childnode refid="3226" relation="include">
+        <childnode refid="3147" relation="include">
         </childnode>
-        <childnode refid="3227" relation="include">
+        <childnode refid="3148" relation="include">
         </childnode>
-        <childnode refid="3207" relation="include">
+        <childnode refid="3128" relation="include">
         </childnode>
-        <childnode refid="3228" relation="include">
+        <childnode refid="3149" relation="include">
         </childnode>
-        <childnode refid="3230" relation="include">
+        <childnode refid="3151" relation="include">
         </childnode>
-        <childnode refid="3231" relation="include">
+        <childnode refid="3152" relation="include">
         </childnode>
       </node>
-      <node id="3227">
+      <node id="3148">
         <label>optional</label>
       </node>
-      <node id="3236">
+      <node id="3156">
         <label>vector</label>
       </node>
-      <node id="3229">
+      <node id="3150">
         <label>spdlog/fmt/fmt.h</label>
       </node>
-      <node id="3218">
+      <node id="3124">
+        <label>tools/finite/opt.h</label>
+        <link refid="opt_8h"/>
+        <childnode refid="3125" relation="include">
+        </childnode>
+        <childnode refid="3141" relation="include">
+        </childnode>
+        <childnode refid="3134" relation="include">
+        </childnode>
+        <childnode refid="3143" relation="include">
+        </childnode>
+        <childnode refid="3144" relation="include">
+        </childnode>
+        <childnode refid="3145" relation="include">
+        </childnode>
+      </node>
+      <node id="3139">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="3202">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/svd.cpp</label>
-        <link refid="svd_8cpp"/>
-        <childnode refid="3203" relation="include">
-        </childnode>
-        <childnode refid="3225" relation="include">
-        </childnode>
-        <childnode refid="3232" relation="include">
-        </childnode>
-        <childnode refid="3234" relation="include">
-        </childnode>
-      </node>
-      <node id="3212">
+      <node id="3133">
         <label>iostream</label>
       </node>
-      <node id="3221">
+      <node id="3142">
         <label>chrono</label>
       </node>
-      <node id="3203">
-        <label>state/tools/finite/opt.h</label>
-        <link refid="opt_8h"/>
-        <childnode refid="3204" relation="include">
+      <node id="3123">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp</label>
+        <link refid="svd_8cpp"/>
+        <childnode refid="3124" relation="include">
         </childnode>
-        <childnode refid="3220" relation="include">
+        <childnode refid="3146" relation="include">
         </childnode>
-        <childnode refid="3213" relation="include">
+        <childnode refid="3153" relation="include">
         </childnode>
-        <childnode refid="3222" relation="include">
-        </childnode>
-        <childnode refid="3223" relation="include">
-        </childnode>
-        <childnode refid="3224" relation="include">
+        <childnode refid="3154" relation="include">
         </childnode>
       </node>
-      <node id="3226">
+      <node id="3147">
         <label>complex</label>
       </node>
-      <node id="3234">
+      <node id="3154">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="3206" relation="include">
+        <childnode refid="3127" relation="include">
         </childnode>
-        <childnode refid="3235" relation="include">
+        <childnode refid="3155" relation="include">
         </childnode>
-        <childnode refid="3236" relation="include">
+        <childnode refid="3156" relation="include">
         </childnode>
       </node>
-      <node id="3207">
+      <node id="3128">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="3208" relation="include">
+        <childnode refid="3129" relation="include">
         </childnode>
-        <childnode refid="3209" relation="include">
+        <childnode refid="3130" relation="include">
         </childnode>
-        <childnode refid="3210" relation="include">
+        <childnode refid="3131" relation="include">
         </childnode>
-        <childnode refid="3211" relation="include">
+        <childnode refid="3132" relation="include">
         </childnode>
-        <childnode refid="3212" relation="include">
+        <childnode refid="3133" relation="include">
         </childnode>
-        <childnode refid="3213" relation="include">
+        <childnode refid="3134" relation="include">
         </childnode>
-        <childnode refid="3214" relation="include">
-        </childnode>
-      </node>
-      <node id="3204">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="3205" relation="include">
-        </childnode>
-        <childnode refid="3206" relation="include">
-        </childnode>
-        <childnode refid="3207" relation="include">
-        </childnode>
-        <childnode refid="3216" relation="include">
-        </childnode>
-        <childnode refid="3220" relation="include">
+        <childnode refid="3135" relation="include">
         </childnode>
       </node>
-      <node id="3219">
+      <node id="3140">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
-      <node id="3205">
+      <node id="3126">
         <label>memory</label>
       </node>
-      <node id="3230">
+      <node id="3151">
         <label>state/class_vidal_site.h</label>
         <link refid="class__vidal__site_8h"/>
-        <childnode refid="3207" relation="include">
+        <childnode refid="3128" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -234,259 +229,285 @@
 <codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-06-29.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">state/tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__svd__wrapper_8h" kindref="compound">math/class_svd_wrapper.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight></codeline>
-<codeline lineno="9" refid="namespacetools_1_1finite_1_1mps_1a87270670ae7c150d7d115c9bf8327278" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mps_1a87270670ae7c150d7d115c9bf8327278" kindref="member">tools::finite::mps::normalize</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="9" refid="namespacetools_1_1finite_1_1mps_1ae814b3957f593984e10669d57c42093c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mps_1ae814b3957f593984e10669d57c42093c" kindref="member">tools::finite::mps::normalize</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>keep_bond_dimensions){</highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Normalizing<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
 <codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__finite__state_1a49d4b1815a40a9fdfacd105696ab56e4" kindref="member">class_finite_state::Scalar</ref>;</highlight></codeline>
 <codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" kindref="member">unset_measurements</ref>();</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Norm<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(before<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::norm(state)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sx<sp/>(before<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sx)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sy<sp/>(before<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sy)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sz<sp/>(before<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sz)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sweep<sp/>back<sp/>and<sp/>forth<sp/>once<sp/>on<sp/>the<sp/>state</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="20"><highlight class="normal"></highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>svd;</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>svd.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(<ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">settings::precision::SVDThreshold</ref>);</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_LA<sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>Lambda<sp/>left<sp/>of<sp/>GA</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_LC<sp/>=<sp/>1;<sp/></highlight><highlight class="comment">//Center<sp/>Lambda</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_LB<sp/>=<sp/>2;<sp/></highlight><highlight class="comment">//<sp/>Lambda<sp/>right<sp/>of<sp/>GB</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_A<sp/><sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>Lambda<sp/>*<sp/>G</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_B<sp/><sp/>=<sp/>1;<sp/></highlight><highlight class="comment">//<sp/>G<sp/>*<sp/>Lambda</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>bool<sp/>finished<sp/>=<sp/>false;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>num_traversals<sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>step<sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>direction<sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>U;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>S;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal">(num_traversals<sp/>&lt;=<sp/>1){</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a9b5d49eca3ca64dae7bbd8e1d2b1d03d" kindref="member">get_theta</ref>(pos_A);</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{std::tie(U,S,V,norm)<sp/>=<sp/>svd.<ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref>(theta,state.<ref refid="classclass__finite__state_1af48976dedeb43c8d4b62526ef275c239" kindref="member">get_chi_max</ref>());}</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Normalization<sp/>failed<sp/>at<sp/>positions<sp/>A:{}<sp/>C:{}<sp/>B:{}<sp/>,<sp/>step<sp/>{}:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>pos_A,<sp/>pos_LC,<sp/>pos_B,<sp/>step,<sp/>ex.what()));</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>LA_U<sp/>=<sp/><ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(pos_LA)).contract(U,<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">array3</ref>{1,0,2});</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V_LB<sp/>=<sp/>V.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(pos_LB)),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({2},{0}));</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>norm<sp/>=<sp/>pos_B<sp/>==<sp/>state.<ref refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" kindref="member">get_length</ref>()-1<sp/>or<sp/>pos_A<sp/>==<sp/>0<sp/>?<sp/>1.0<sp/>:<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/>1){</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(pos_A)<sp/><sp/>=<sp/>LA_U;</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(pos_LC)<sp/>=<sp/>S;</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(pos_B)<sp/><sp/>=<sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>(norm)*V_LB;</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Norm<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(before<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::norm(state)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sx<sp/>(before<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sx)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sy<sp/>(before<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sy)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sz<sp/>(before<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sz)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sweep<sp/>back<sp/>and<sp/>forth<sp/>once<sp/>on<sp/>the<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a24ce7e82c8d286c098cd67e3b9339d68" kindref="member">bond_dimensions</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a24ce7e82c8d286c098cd67e3b9339d68" kindref="member">tools::finite::measure::bond_dimensions</ref>(state);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>svd;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>svd.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(<ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">settings::precision::SVDThreshold</ref>);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_LA<sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>Lambda<sp/>left<sp/>of<sp/>GA</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_LC<sp/>=<sp/>1;<sp/></highlight><highlight class="comment">//Center<sp/>Lambda</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_LB<sp/>=<sp/>2;<sp/></highlight><highlight class="comment">//<sp/>Lambda<sp/>right<sp/>of<sp/>GB</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_A<sp/><sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>Lambda<sp/>*<sp/>G</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos_B<sp/><sp/>=<sp/>1;<sp/></highlight><highlight class="comment">//<sp/>G<sp/>*<sp/>Lambda</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>bool<sp/>finished<sp/>=<sp/>false;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>num_traversals<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>end_traversals<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>max_traversals<sp/>=<sp/>10;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>step<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>direction<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>U;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>S;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>svd_success<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal">(num_traversals<sp/>&lt;=<sp/>end_traversals){</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a9b5d49eca3ca64dae7bbd8e1d2b1d03d" kindref="member">get_theta</ref>(pos_A);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a9d35818149671013c1b706c60ca9eaf5" kindref="member">bond_dimension</ref><sp/>=<sp/>keep_bond_dimensions<sp/>?<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a24ce7e82c8d286c098cd67e3b9339d68" kindref="member">bond_dimensions</ref>[pos_LC]<sp/>:<sp/>state.<ref refid="classclass__finite__state_1af48976dedeb43c8d4b62526ef275c239" kindref="member">get_chi_max</ref>()<sp/>*<sp/>2;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{std::tie(U,S,V,norm)<sp/>=<sp/>svd.<ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref>(theta,bond_dimension);<sp/>svd_success<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;error(</highlight><highlight class="stringliteral">&quot;Skipping<sp/>normalization<sp/>moves.\n\t<sp/>SVD<sp/>failed<sp/>at<sp/>positions<sp/>A:{}<sp/>C:{}<sp/>B:{}<sp/>,<sp/>moves<sp/>{}:\n\t{}&quot;</highlight><highlight class="normal">,<sp/>pos_A,<sp/>pos_LC,<sp/>pos_B,<sp/>step,<sp/>ex.what());</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>svd_success<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>end_traversals<sp/>=<sp/>std::min(end_traversals+1,<sp/>max_traversals);</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/>-1){</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(pos_A)<sp/><sp/>=<sp/>LA_U<sp/>*<sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>(norm);</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(pos_LC)<sp/>=<sp/>S;</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(pos_B)<sp/><sp/>=<sp/>V_LB;</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"></highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/><sp/>1<sp/>and<sp/>pos_B<sp/>==<sp/>state.<ref refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" kindref="member">get_length</ref>()-1)<sp/><sp/>{num_traversals++;<sp/>direction<sp/>*=<sp/>-1;}</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/>-1<sp/>and<sp/>pos_A<sp/>==<sp/>0)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{num_traversals++;<sp/>direction<sp/>*=<sp/>-1;}</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"></highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_LA<sp/>+=<sp/>direction;</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_LC<sp/>+=<sp/>direction;</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_LB<sp/>+=<sp/>direction;</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_A<sp/><sp/>+=<sp/>direction;</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_B<sp/><sp/>+=<sp/>direction;</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>step<sp/><sp/><sp/>++;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(svd_success){</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>LA_U<sp/>=<sp/><ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(pos_LA)).contract(U,<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">array3</ref>{1,0,2});</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V_LB<sp/>=<sp/>V.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(pos_LB)),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({2},{0}));</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>norm<sp/>=<sp/>pos_B<sp/>==<sp/>state.<ref refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" kindref="member">get_length</ref>()-1<sp/>or<sp/>pos_A<sp/>==<sp/>0<sp/>?<sp/>1.0<sp/>:<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/>1){</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(pos_A)<sp/><sp/>=<sp/>LA_U;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(pos_LC)<sp/>=<sp/>S;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(pos_B)<sp/><sp/>=<sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>(norm)*V_LB;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/>-1){</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(pos_A)<sp/><sp/>=<sp/>LA_U<sp/>*<sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>(norm);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(pos_LC)<sp/>=<sp/>S;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(pos_B)<sp/><sp/>=<sp/>V_LB;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" kindref="member">unset_measurements</ref>();</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Norm<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(after<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::norm(state)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sx<sp/>(after<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sx)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="74"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sy<sp/>(after<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sy)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sz<sp/>(after<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sz)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="81" refid="namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd" kindref="member">tools::finite::opt::truncate_theta</ref>(Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref>,<sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">SVDThreshold</ref>){</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" kindref="member">unset_measurements</ref>();</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.empty())</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;truncate_theta:<sp/>No<sp/>active<sp/>sites<sp/>to<sp/>truncate&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(theta.size()<sp/>==<sp/>0)</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;truncate_theta:<sp/>Theta<sp/>is<sp/>empty&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>fullnorm<sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">tools::finite::measure::norm</ref>(state);</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>thetanorm<sp/>=<sp/>std::abs(Eigen::Map&lt;Eigen::VectorXcd&gt;(theta.data(),theta.size()).<ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>());</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(fullnorm<sp/><sp/>-<sp/>1.0)<sp/>&gt;<sp/>1e-12)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Norm<sp/>before<sp/>truncation<sp/>too<sp/>far<sp/>from<sp/>unity:<sp/>{:.16f}&quot;</highlight><highlight class="normal">,fullnorm));</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(thetanorm<sp/>-<sp/>1.0)<sp/>&gt;<sp/>1e-12)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Norm<sp/>of<sp/>theta<sp/>too<sp/>far<sp/>from<sp/>unity:<sp/>{:.16f}&quot;</highlight><highlight class="normal">,thetanorm));</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/><sp/>1<sp/>and<sp/>pos_B<sp/>==<sp/>state.<ref refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" kindref="member">get_length</ref>()-1)<sp/><sp/>{num_traversals++;<sp/>direction<sp/>*=<sp/>-1;}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(direction<sp/>==<sp/>-1<sp/>and<sp/>pos_A<sp/>==<sp/>0)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{num_traversals++;<sp/>direction<sp/>*=<sp/>-1;}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_LA<sp/>+=<sp/>direction;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_LC<sp/>+=<sp/>direction;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_LB<sp/>+=<sp/>direction;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_A<sp/><sp/>+=<sp/>direction;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>pos_B<sp/><sp/>+=<sp/>direction;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>step<sp/><sp/><sp/>++;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" kindref="member">unset_measurements</ref>();</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Norm<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(after<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::norm(state)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sx<sp/>(after<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sx)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sy<sp/>(after<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sy)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sz<sp/>(after<sp/>normalization):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sz)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__finite__state_1a304474ccfccd73c3371441ab4b1c2e0e" kindref="member">get_direction</ref>()<sp/>==<sp/>1){</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" kindref="member">tools::finite::opt::truncate_right</ref>(theta,state,chi_,SVDThreshold);</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" kindref="member">tools::finite::opt::truncate_left</ref>(theta,state,chi_,SVDThreshold);</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" kindref="member">unset_measurements</ref>();</highlight></codeline>
-<codeline lineno="98"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="90" refid="namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd" kindref="member">tools::finite::opt::truncate_theta</ref>(Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>,<sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">SVDThreshold</ref>){</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" kindref="member">unset_measurements</ref>();</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>.empty())<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;truncate_theta:<sp/>No<sp/>active<sp/>sites<sp/>to<sp/>truncate&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(theta.size()<sp/>==<sp/>0)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;truncate_theta:<sp/>Theta<sp/>is<sp/>empty&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>theta_map<sp/>=<sp/>Eigen::Map&lt;Eigen::VectorXcd&gt;(theta.data(),theta.size());</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>fullnorm<sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">tools::finite::measure::norm</ref>(state);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>thetanorm<sp/>=<sp/>theta_map.norm();</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(fullnorm<sp/><sp/>-<sp/>1.0)<sp/>&gt;<sp/><ref refid="namespacesettings_1_1precision_1a750367d57c28bed6cbe50b368b822d84" kindref="member">settings::precision::MaxNormError</ref>){<sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;error(</highlight><highlight class="stringliteral">&quot;Norm<sp/>before<sp/>truncation<sp/>too<sp/>far<sp/>from<sp/>unity:<sp/>{:.16f}&quot;</highlight><highlight class="normal">,fullnorm);}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(thetanorm<sp/>-<sp/>1.0)<sp/>&gt;<sp/><ref refid="namespacesettings_1_1precision_1a750367d57c28bed6cbe50b368b822d84" kindref="member">settings::precision::MaxNormError</ref>){<sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;error(</highlight><highlight class="stringliteral">&quot;Norm<sp/>of<sp/>theta<sp/>too<sp/>far<sp/>from<sp/>unity:<sp/>{:.16f}&quot;</highlight><highlight class="normal">,thetanorm);<sp/>theta_map.normalize();}</highlight></codeline>
 <codeline lineno="99"><highlight class="normal"></highlight></codeline>
 <codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"></highlight></codeline>
-<codeline lineno="102" refid="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" kindref="member">tools::finite::opt::truncate_right</ref>(Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref>,<sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">SVDThreshold</ref>){</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Truncating<sp/>multitheta<sp/>from<sp/>left<sp/>to<sp/>right&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>SVD;</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(SVDThreshold);</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__finite__state_1a49d4b1815a40a9fdfacd105696ab56e4" kindref="member">class_finite_state::Scalar</ref>;</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a358a270e8b355388963a513bd6617131" kindref="member">VectorType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>theta4;</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>U;</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref>;</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>S;</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>active_sites<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>;</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"></highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(active_sites.size()<sp/>&gt;<sp/>1){</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>site<sp/>=<sp/>active_sites.front();</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim0<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" kindref="member">get_spin_dim</ref>();</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim1<sp/>=<sp/>V.dimension(0)<sp/>/<sp/><sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" kindref="member">get_spin_dim</ref>();</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim2<sp/>=<sp/>V.dimension(1);</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim3<sp/>=<sp/>V.dimension(2);</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta4<sp/>=<sp/>V</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.reshape(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{dim0,dim1,dim2,dim3})</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{0,2,1,3});</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::tie(U,<sp/>S,<sp/>V,norm)<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref>(theta4,chi_);</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" kindref="member">truncation_error</ref>[site+1]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>();</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>L_U<sp/>=<sp/><ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site)).contract(U,<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"></highlight></codeline>
-<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(site)<sp/><sp/><sp/>=<sp/>L_U;</highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site+1)<sp/>=<sp/>S;</highlight></codeline>
-<codeline lineno="130"><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(active_sites.size()<sp/>&gt;<sp/>2){</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>temp<sp/>=<sp/><ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(S).contract(V,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>V<sp/>=<sp/>temp;</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>active_sites.pop_front();</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>Eigen::Map&lt;VectorType&gt;(L_U.data(),L_U.size()).allFinite()<sp/>)</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;L_U<sp/>has<sp/>nan&apos;s<sp/>or<sp/>inf&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"></highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>leftID<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a96207fcc3378d0bcc7c884055d9862b0" kindref="member">get_A</ref>(site)</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1a96207fcc3378d0bcc7c884055d9862b0" kindref="member">get_A</ref>(site).conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,1},{0,1})<sp/>);</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>leftIDmap<sp/>=<sp/><ref refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" kindref="member">Textra::Tensor2_to_Matrix</ref>(leftID);</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>leftIDmap.isIdentity(1e-14))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Not<sp/>left<sp/>normalized<sp/>at<sp/>site<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>site));</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"></highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__finite__state_1a304474ccfccd73c3371441ab4b1c2e0e" kindref="member">get_direction</ref>()<sp/>==<sp/>1){</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" kindref="member">tools::finite::opt::truncate_right</ref>(theta,state,chi_,SVDThreshold);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" kindref="member">tools::finite::opt::truncate_left</ref>(theta,state,chi_,SVDThreshold);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" kindref="member">unset_measurements</ref>();</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1aa826b1da2dc225002a215e8741fbcbfb" kindref="member">clear_cache</ref>();</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>fullnorm<sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">tools::finite::measure::norm</ref>(state);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(fullnorm<sp/><sp/>-<sp/>1.0)<sp/>&gt;<sp/>1e-10){</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Norm<sp/>after<sp/>truncation<sp/>too<sp/>far<sp/>from<sp/>unity:<sp/>{:.16f}<sp/>--<sp/>Normalizing&quot;</highlight><highlight class="normal">,fullnorm);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1ae814b3957f593984e10669d57c42093c" kindref="member">tools::finite::mps::normalize</ref>(state);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fullnorm<sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">tools::finite::measure::norm</ref>(state);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;New<sp/>norm:<sp/>{:.16f}&quot;</highlight><highlight class="normal">,fullnorm);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121" refid="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54" kindref="member">tools::finite::opt::truncate_right</ref>(Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>,<sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">SVDThreshold</ref>){</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Truncating<sp/>multitheta<sp/>from<sp/>left<sp/>to<sp/>right&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>SVD;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(SVDThreshold);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__finite__state_1a49d4b1815a40a9fdfacd105696ab56e4" kindref="member">class_finite_state::Scalar</ref>;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a358a270e8b355388963a513bd6617131" kindref="member">VectorType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>theta4;</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>U;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>S;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>active_sites<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(active_sites.size()<sp/>&gt;<sp/>1){</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>site<sp/>=<sp/>active_sites.front();</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim0<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" kindref="member">get_spin_dim</ref>();</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim1<sp/>=<sp/>V.dimension(0)<sp/>/<sp/><sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" kindref="member">get_spin_dim</ref>();</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim2<sp/>=<sp/>V.dimension(1);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim3<sp/>=<sp/>V.dimension(2);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta4<sp/>=<sp/>V</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.reshape(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{dim0,dim1,dim2,dim3})</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{0,2,1,3});</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::tie(U,<sp/>S,<sp/>V,norm)<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref>(theta4,chi_);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" kindref="member">truncation_error</ref>[site+1]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>();</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Truncation<sp/>error<sp/>site<sp/>{}<sp/>=<sp/>{},<sp/>chi<sp/>=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>site,SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>(),S.dimension(0));</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>L_U<sp/>=<sp/><ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site)).contract(U,<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
 <codeline lineno="148"><highlight class="normal"></highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>site<sp/>=<sp/>active_sites.front();</highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V_L<sp/>=<sp/>V.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site+1)),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(site)<sp/>=<sp/>V_L;</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"></highlight></codeline>
-<codeline lineno="153"><highlight class="normal"></highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>Eigen::Map&lt;Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1<sp/>&gt;&gt;(V_L.data(),V_L.size()).allFinite()<sp/>)</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;V_L<sp/>has<sp/>nan&apos;s<sp/>or<sp/>inf&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(site)<sp/><sp/><sp/>=<sp/>L_U;</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site+1)<sp/>=<sp/>S;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(active_sites.size()<sp/>&gt;<sp/>2){</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>temp<sp/>=<sp/><ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(S).contract(V,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>V<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>active_sites.pop_front();</highlight></codeline>
 <codeline lineno="157"><highlight class="normal"></highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>rightID<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" kindref="member">get_B</ref>(site)</highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" kindref="member">get_B</ref>(site).conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2},{0,2})<sp/>);</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rightIDmap<sp/>=<sp/><ref refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" kindref="member">Textra::Tensor2_to_Matrix</ref>(rightID);</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>rightIDmap.isIdentity(1e-14))<sp/>{</highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;L<sp/>site<sp/><sp/><sp/>:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;L<sp/>site+1<sp/>:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site+1)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="164"><highlight class="normal"></highlight></codeline>
-<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;rightID:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>rightID<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Not<sp/>right<sp/>normalized<sp/>at<sp/>site<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>site));</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>Eigen::Map&lt;VectorType&gt;(L_U.data(),L_U.size()).allFinite()<sp/>)</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;L_U<sp/>has<sp/>nan&apos;s<sp/>or<sp/>inf&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>leftID<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a96207fcc3378d0bcc7c884055d9862b0" kindref="member">get_A</ref>(site)</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1a96207fcc3378d0bcc7c884055d9862b0" kindref="member">get_A</ref>(site).conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,1},{0,1})<sp/>);</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>leftIDmap<sp/>=<sp/><ref refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" kindref="member">Textra::Tensor2_to_Matrix</ref>(leftID);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>leftIDmap.isIdentity(1e-12))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Not<sp/>left<sp/>normalized<sp/>at<sp/>site<sp/>{}<sp/>with<sp/>threshold<sp/>1e-12.&quot;</highlight><highlight class="normal">,<sp/>site));</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
 <codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="168"><highlight class="normal"></highlight></codeline>
 <codeline lineno="169"><highlight class="normal"></highlight></codeline>
-<codeline lineno="170"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="171"><highlight class="normal"></highlight></codeline>
-<codeline lineno="172"><highlight class="normal"></highlight></codeline>
-<codeline lineno="173" refid="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" kindref="member">tools::finite::opt::truncate_left</ref>(Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref>,<sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">SVDThreshold</ref>){</highlight></codeline>
-<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Truncating<sp/>multitheta<sp/>from<sp/>right<sp/>to<sp/>left&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>SVD;</highlight></codeline>
-<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(SVDThreshold);</highlight></codeline>
-<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__finite__state_1a49d4b1815a40a9fdfacd105696ab56e4" kindref="member">class_finite_state::Scalar</ref>;</highlight></codeline>
-<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a358a270e8b355388963a513bd6617131" kindref="member">VectorType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
-<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>theta4;</highlight></codeline>
-<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>U<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref>;</highlight></codeline>
-<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V;</highlight></codeline>
-<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>S;</highlight></codeline>
-<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>reverse_active_sites<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>;</highlight></codeline>
-<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/>std::reverse(reverse_active_sites.begin(),reverse_active_sites.end());</highlight></codeline>
-<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
-<codeline lineno="186"><highlight class="normal"></highlight></codeline>
-<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(reverse_active_sites.size()<sp/>&gt;<sp/>1){</highlight></codeline>
-<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>site<sp/>=<sp/>reverse_active_sites.front();</highlight></codeline>
-<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim0<sp/>=<sp/>U.dimension(0)<sp/>/<sp/><sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" kindref="member">get_spin_dim</ref>();</highlight></codeline>
-<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim1<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" kindref="member">get_spin_dim</ref>();</highlight></codeline>
-<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim2<sp/>=<sp/>U.dimension(1);</highlight></codeline>
-<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim3<sp/>=<sp/>U.dimension(2);</highlight></codeline>
-<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta4<sp/>=<sp/>U</highlight></codeline>
-<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.reshape(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{dim0,dim1,dim2,dim3})</highlight></codeline>
-<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{0,2,1,3});</highlight></codeline>
-<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{std::tie(U,S,V,norm)<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref>(theta4,<sp/>chi_);}</highlight></codeline>
-<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
-<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;U<sp/>:\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>U<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;S<sp/>:\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>S<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;V<sp/>:\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>V<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;theta4:\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>theta4<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Truncation<sp/>failed<sp/>at<sp/>site<sp/>{}:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>site,<sp/>ex.what()));</highlight></codeline>
-<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="204"><highlight class="normal"></highlight></codeline>
-<codeline lineno="205"><highlight class="normal"></highlight></codeline>
-<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" kindref="member">truncation_error</ref>[site-1]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>();</highlight></codeline>
-<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V_L<sp/>=<sp/>V.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site+1)),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
-<codeline lineno="208"><highlight class="normal"></highlight></codeline>
-<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(site)<sp/>=<sp/>V_L;</highlight></codeline>
-<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site)<sp/>=<sp/>S;</highlight></codeline>
-<codeline lineno="211"><highlight class="normal"></highlight></codeline>
-<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(reverse_active_sites.size()<sp/>&gt;<sp/>2){</highlight></codeline>
-<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>temp<sp/>=<sp/><sp/>U.contract(<ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(S),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
-<codeline lineno="214"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>U<sp/>=<sp/>Scalar(norm)<sp/>*<sp/>temp;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>U<sp/>=<sp/>temp;</highlight></codeline>
-<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>reverse_active_sites.pop_front();</highlight></codeline>
-<codeline lineno="218"><highlight class="normal"></highlight></codeline>
-<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>Eigen::Map&lt;VectorType&gt;(V_L.data(),V_L.size()).allFinite()<sp/>)</highlight></codeline>
-<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;V_L<sp/>has<sp/>nan&apos;s<sp/>or<sp/>inf&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="221"><highlight class="normal"></highlight></codeline>
-<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>rightID<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" kindref="member">get_B</ref>(site)</highlight></codeline>
-<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" kindref="member">get_B</ref>(site).conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2},{0,2})<sp/>);</highlight></codeline>
-<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rightIDmap<sp/>=<sp/><ref refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" kindref="member">Textra::Tensor2_to_Matrix</ref>(rightID);</highlight></codeline>
-<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>rightIDmap.isIdentity(1e-14))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Not<sp/>right<sp/>normalized<sp/>at<sp/>site<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>site));</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>site<sp/>=<sp/>active_sites.front();</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V_L<sp/>=<sp/>V.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site+1)),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(site)<sp/>=<sp/>V_L;</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>Eigen::Map&lt;Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1<sp/>&gt;&gt;(V_L.data(),V_L.size()).allFinite()<sp/>)</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;V_L<sp/>has<sp/>nan&apos;s<sp/>or<sp/>inf&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>rightID<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" kindref="member">get_B</ref>(site)</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" kindref="member">get_B</ref>(site).conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2},{0,2})<sp/>);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rightIDmap<sp/>=<sp/><ref refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" kindref="member">Textra::Tensor2_to_Matrix</ref>(rightID);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>rightIDmap.isIdentity(1e-12))<sp/>{</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;L<sp/>site<sp/><sp/><sp/>:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;L<sp/>site+1<sp/>:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site+1)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;rightID:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>rightID<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Not<sp/>right<sp/>normalized<sp/>at<sp/>site<sp/>{}<sp/>with<sp/>threshold<sp/>1e-12&quot;</highlight><highlight class="normal">,<sp/>site));</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195" refid="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1aac1f95698474f5d162e983fb6958cd7f" kindref="member">tools::finite::opt::truncate_left</ref>(Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>,<sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">SVDThreshold</ref>){</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Truncating<sp/>multitheta<sp/>from<sp/>right<sp/>to<sp/>left&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>SVD;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(SVDThreshold);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__finite__state_1a49d4b1815a40a9fdfacd105696ab56e4" kindref="member">class_finite_state::Scalar</ref>;</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a358a270e8b355388963a513bd6617131" kindref="member">VectorType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>theta4;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>U<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>S;</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>reverse_active_sites<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a4dec10a30b4294f02ae3e40a7fd8de26" kindref="member">active_sites</ref>;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>std::reverse(reverse_active_sites.begin(),reverse_active_sites.end());</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" kindref="member">norm</ref>;</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(reverse_active_sites.size()<sp/>&gt;<sp/>1){</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>site<sp/>=<sp/>reverse_active_sites.front();</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim0<sp/>=<sp/>U.dimension(0)<sp/>/<sp/><sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" kindref="member">get_spin_dim</ref>();</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim1<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" kindref="member">get_spin_dim</ref>();</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim2<sp/>=<sp/>U.dimension(1);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim3<sp/>=<sp/>U.dimension(2);</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta4<sp/>=<sp/>U</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.reshape(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{dim0,dim1,dim2,dim3})</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{0,2,1,3});</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{std::tie(U,S,V,norm)<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref>(theta4,<sp/>chi_);}</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;U<sp/>:\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>U<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;S<sp/>:\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>S<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;V<sp/>:\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>V<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;theta4:\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>theta4<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Truncation<sp/>failed<sp/>at<sp/>site<sp/>{}:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>site,<sp/>ex.what()));</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="226"><highlight class="normal"></highlight></codeline>
-<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>site<sp/>=<sp/>reverse_active_sites.front();</highlight></codeline>
-<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>L_U<sp/>=<sp/><ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site)).contract(U,<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
-<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(site)<sp/>=<sp/>L_U;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" kindref="member">truncation_error</ref>[site-1]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>();</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Truncation<sp/>error<sp/>site<sp/>{}<sp/>=<sp/>{},<sp/>chi<sp/>=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>site,SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>(),S.dimension(0));</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>V_L<sp/>=<sp/>V.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site+1)),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
 <codeline lineno="231"><highlight class="normal"></highlight></codeline>
-<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>Eigen::Map&lt;Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1<sp/>&gt;&gt;(L_U.data(),L_U.size()).allFinite()<sp/>)</highlight></codeline>
-<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;L_U<sp/>has<sp/>nan&apos;s<sp/>or<sp/>inf&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(site)<sp/>=<sp/>V_L;</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site)<sp/>=<sp/>S;</highlight></codeline>
 <codeline lineno="234"><highlight class="normal"></highlight></codeline>
-<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>leftID<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" kindref="member">get_A</ref>()</highlight></codeline>
-<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" kindref="member">get_A</ref>().conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,1},{0,1})<sp/>);</highlight></codeline>
-<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>leftIDmap<sp/>=<sp/><ref refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" kindref="member">Textra::Tensor2_to_Matrix</ref>(leftID);</highlight></codeline>
-<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>leftIDmap.isIdentity(1e-14))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Not<sp/>left<sp/>normalized<sp/>at<sp/>site<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>site));</highlight></codeline>
-<codeline lineno="239"><highlight class="normal"></highlight></codeline>
-<codeline lineno="240"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(reverse_active_sites.size()<sp/>&gt;<sp/>2){</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>temp<sp/>=<sp/><sp/>U.contract(<ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(S),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>U<sp/>=<sp/>Scalar(norm)<sp/>*<sp/>temp;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>U<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>reverse_active_sites.pop_front();</highlight></codeline>
 <codeline lineno="241"><highlight class="normal"></highlight></codeline>
-<codeline lineno="242"><highlight class="normal"></highlight></codeline>
-<codeline lineno="243" refid="namespacetools_1_1finite_1_1opt_1aa1f7f648d761d5f59f0c782ccea498bf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd" kindref="member">tools::finite::opt::truncate_theta</ref>(Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref>,<sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">SVDThreshold</ref>)<sp/>{</highlight></codeline>
-<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Truncating<sp/>theta&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>SVD;</highlight></codeline>
-<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(SVDThreshold);</highlight></codeline>
-<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">[U,<sp/>S,<sp/>V]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref>(<ref refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" kindref="member">theta</ref>,<sp/>chi_);</highlight></codeline>
-<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" kindref="member">truncation_error</ref>[state.<ref refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" kindref="member">get_position</ref>()+1]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>();</highlight></codeline>
-<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" kindref="member">MPS_C</ref><sp/><sp/>=<sp/>S;</highlight></codeline>
-<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>L_U<sp/>=<sp/><ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>.back().get_L()).contract(U,<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
-<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>V_L<sp/>=<sp/>V.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>.front().get_L()),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
-<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>.back().set_G(L_U);</highlight></codeline>
-<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>.front().set_G(V_L);</highlight></codeline>
-<codeline lineno="254"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="255"><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>Eigen::Map&lt;VectorType&gt;(V_L.data(),V_L.size()).allFinite()<sp/>)</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;V_L<sp/>has<sp/>nan&apos;s<sp/>or<sp/>inf&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>rightID<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" kindref="member">get_B</ref>(site)</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1a329621889f03d2af14130fda0b834457" kindref="member">get_B</ref>(site).conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2},{0,2})<sp/>);</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rightIDmap<sp/>=<sp/><ref refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" kindref="member">Textra::Tensor2_to_Matrix</ref>(rightID);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>rightIDmap.isIdentity(1e-12))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Not<sp/>right<sp/>normalized<sp/>at<sp/>site<sp/>{}<sp/>with<sp/>threshold<sp/>1e-12&quot;</highlight><highlight class="normal">,<sp/>site));</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>site<sp/>=<sp/>reverse_active_sites.front();</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>L_U<sp/>=<sp/><ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" kindref="member">get_L</ref>(site)).contract(U,<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" kindref="member">get_G</ref>(site)<sp/>=<sp/>L_U;</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>Eigen::Map&lt;Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1<sp/>&gt;&gt;(L_U.data(),L_U.size()).allFinite()<sp/>)</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;L_U<sp/>has<sp/>nan&apos;s<sp/>or<sp/>inf&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>leftID<sp/>=<sp/>state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" kindref="member">get_A</ref>()</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__finite__state_1a78659c1d9014d5b5e795e0829167ebe3" kindref="member">get_MPS</ref>(site).<ref refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" kindref="member">get_A</ref>().conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,1},{0,1})<sp/>);</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>leftIDmap<sp/>=<sp/><ref refid="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" kindref="member">Textra::Tensor2_to_Matrix</ref>(leftID);</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>leftIDmap.isIdentity(1e-12))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Not<sp/>left<sp/>normalized<sp/>at<sp/>site<sp/>{}<sp/>with<sp/>threshold<sp/>1e-12&quot;</highlight><highlight class="normal">,<sp/>site));</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight></codeline>
+<codeline lineno="267" refid="namespacetools_1_1finite_1_1opt_1aa1f7f648d761d5f59f0c782ccea498bf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd" kindref="member">tools::finite::opt::truncate_theta</ref>(Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>,<sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chi_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" kindref="member">SVDThreshold</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Truncating<sp/>theta&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref><sp/>SVD;</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.<ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(SVDThreshold);</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">[U,<sp/>S,<sp/>V]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref>(<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>,<sp/>chi_);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" kindref="member">truncation_error</ref>[state.<ref refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" kindref="member">get_position</ref>()+1]<sp/>=<sp/>SVD.<ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>();</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" kindref="member">MPS_C</ref><sp/><sp/>=<sp/>S;</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>L_U<sp/>=<sp/><ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>.back().get_L()).contract(U,<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1})).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>V_L<sp/>=<sp/>V.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>.front().get_L()),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>.back().set_G(L_U);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>.front().set_G(V_L);</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="280"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/svd.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp"/>
   </compounddef>
 </doxygen>

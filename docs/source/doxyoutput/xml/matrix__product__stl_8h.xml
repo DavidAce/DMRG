@@ -9,96 +9,96 @@
     <includes local="no">vector</includes>
     <includedby refid="arpackpp__solver_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</includedby>
     <includedby refid="matrix__product__stl_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp</includedby>
-    <includedby refid="subspace_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp</includedby>
+    <includedby refid="ceres__subspace_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</includedby>
     <incdepgraph>
-      <node id="1206">
+      <node id="1193">
         <label>iomanip</label>
       </node>
-      <node id="1204">
+      <node id="1191">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="1205" relation="include">
+        <childnode refid="1192" relation="include">
         </childnode>
-        <childnode refid="1197" relation="include">
+        <childnode refid="1184" relation="include">
         </childnode>
       </node>
-      <node id="1199">
+      <node id="1186">
         <label>map</label>
       </node>
-      <node id="1203">
+      <node id="1190">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="1195">
+      <node id="1182">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</label>
         <link refid="matrix__product__stl_8h"/>
-        <childnode refid="1196" relation="include">
+        <childnode refid="1183" relation="include">
         </childnode>
-        <childnode refid="1204" relation="include">
+        <childnode refid="1191" relation="include">
         </childnode>
-        <childnode refid="1197" relation="include">
+        <childnode refid="1184" relation="include">
         </childnode>
-        <childnode refid="1206" relation="include">
+        <childnode refid="1193" relation="include">
         </childnode>
-        <childnode refid="1201" relation="include">
+        <childnode refid="1188" relation="include">
         </childnode>
       </node>
-      <node id="1201">
+      <node id="1188">
         <label>vector</label>
       </node>
-      <node id="1202">
+      <node id="1189">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="1198">
+      <node id="1185">
         <label>array</label>
       </node>
-      <node id="1197">
+      <node id="1184">
         <label>iostream</label>
       </node>
-      <node id="1196">
+      <node id="1183">
         <label>math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1197" relation="include">
+        <childnode refid="1184" relation="include">
         </childnode>
-        <childnode refid="1198" relation="include">
+        <childnode refid="1185" relation="include">
         </childnode>
-        <childnode refid="1199" relation="include">
+        <childnode refid="1186" relation="include">
         </childnode>
-        <childnode refid="1200" relation="include">
+        <childnode refid="1187" relation="include">
         </childnode>
-        <childnode refid="1201" relation="include">
+        <childnode refid="1188" relation="include">
         </childnode>
-        <childnode refid="1202" relation="include">
+        <childnode refid="1189" relation="include">
         </childnode>
-        <childnode refid="1203" relation="include">
+        <childnode refid="1190" relation="include">
         </childnode>
       </node>
-      <node id="1205">
+      <node id="1192">
         <label>chrono</label>
       </node>
-      <node id="1200">
+      <node id="1187">
         <label>complex</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="1208">
+      <node id="1195">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
         <link refid="arpackpp__solver_8cpp"/>
       </node>
-      <node id="1207">
+      <node id="1194">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</label>
         <link refid="matrix__product__stl_8h"/>
-        <childnode refid="1208" relation="include">
+        <childnode refid="1195" relation="include">
         </childnode>
-        <childnode refid="1209" relation="include">
+        <childnode refid="1196" relation="include">
         </childnode>
-        <childnode refid="1210" relation="include">
+        <childnode refid="1197" relation="include">
         </childnode>
       </node>
-      <node id="1210">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp</label>
-        <link refid="subspace_8cpp"/>
+      <node id="1197">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
       </node>
-      <node id="1209">
+      <node id="1196">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp</label>
         <link refid="matrix__product__stl_8cpp"/>
       </node>

@@ -11,7 +11,6 @@
     <innernamespace refid="namespacetools_1_1finite_1_1ops">tools::finite::ops</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1opt">tools::finite::opt</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1print">tools::finite::print</innernamespace>
-    <innernamespace refid="namespacetools_1_1finite_1_1profile">tools::finite::profile</innernamespace>
       <sectiondef kind="typedef">
       <memberdef kind="typedef" id="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" prot="public" static="no">
         <type>std::complex&lt; double &gt;</type>
@@ -24,13 +23,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="37" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="37" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
 <para>Functions for finite MPS algorithms like fDMRG and xDMRG These functions require the class_finite_chain_state containing the MPS and environments for all sites of the lattice. </para>    </detaileddescription>
-    <location file="[generated]" line="1" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="36" column="1"/>
   </compounddef>
 </doxygen>

@@ -2,28 +2,39 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="namespacetools_1_1finite_1_1opt_1_1internals" kind="namespace" language="C++">
     <compoundname>tools::finite::opt::internals</compoundname>
-    <innerclass refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor" prot="public">tools::finite::opt::internals::base_functor</innerclass>
-    <innerclass refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__functor" prot="public">tools::finite::opt::internals::ceres_functor</innerclass>
-    <innerclass refid="classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor" prot="public">tools::finite::opt::internals::direct_functor</innerclass>
-    <innerclass refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" prot="public">tools::finite::opt::internals::MultiComponents</innerclass>
-    <innerclass refid="classtools_1_1finite_1_1opt_1_1internals_1_1subspace__functor" prot="public">tools::finite::opt::internals::subspace_functor</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor" prot="public">tools::finite::opt::internals::ceres_base_functor</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__direct__functor" prot="public">tools::finite::opt::internals::ceres_direct_functor</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__subspace__functor" prot="public">tools::finite::opt::internals::ceres_subspace_functor</innerclass>
     <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports">tools::finite::opt::internals::reports</innernamespace>
-      <sectiondef kind="typedef">
-      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internals_1ad66627a992ba69e6c014c6850e2c08fd" prot="public" static="no">
-        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
-        <definition>using tools::finite::opt::internals::VectorType = typedef Eigen::Matrix&lt;Scalar,Eigen::Dynamic, 1&gt;</definition>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1aba87cf812f7a597539e2d3732d780472" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool tools::finite::opt::internals::no_state_in_window</definition>
         <argsstring></argsstring>
-        <name>VectorType</name>
+        <name>no_state_in_window</name>
+        <initializer>= false</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="222" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="222" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="32" bodyend="-1"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1ac4a810933ed04160f1126492b1fa28b1" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double tools::finite::opt::internals::subspace_quality_threshold</definition>
+        <argsstring></argsstring>
+        <name>subspace_quality_threshold</name>
+        <initializer>= 1e-4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
         <definition>std::unique_ptr&lt;class_tic_toc&gt; tools::finite::opt::internals::t_opt</definition>
@@ -36,7 +47,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="73" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="83" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -50,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="74" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="84" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1aebe49a53524360884a88f314649cc474" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -64,7 +75,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="75" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="85" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="85" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1a0a0e265e8e5a3891eaee243d1fc1f940" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -78,7 +89,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="76" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="86" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="86" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1aefa36ad7a889fb02b1138b37f1c0eed5" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -92,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="77" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="87" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1aecfa1d57fa771ee1cb7839b9034d9522" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -106,7 +117,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="78" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="88" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="88" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1ac94e77e532b573936d9386995cc266f6" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -120,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="79" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="89" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1afc2d3bd1710a6b8f14a5022bc0d8b088" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -134,7 +145,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="80" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="90" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -148,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="81" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="91" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" prot="public" static="no" mutable="no">
         <type>auto</type>
@@ -162,15 +173,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="103" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="113" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="113" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a54d55d18dbbbf7f0258c049658e4858b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a549885cf1b279a10f29e57018a665b81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt; class_finite_state::Scalar, 3 &gt; tools::finite::opt::internals::subspace_optimization</definition>
+        <definition>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; tools::finite::opt::internals::old_subspace_optimization</definition>
         <argsstring>(const class_finite_state &amp;state, const class_simulation_status &amp;sim_status, OptType optType, OptMode optMode)</argsstring>
-        <name>subspace_optimization</name>
+        <name>old_subspace_optimization</name>
         <param>
           <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
           <declname>state</declname>
@@ -193,112 +204,149 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp" bodystart="212" bodyend="329"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="19" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a155cb27332a5aaa6703b52f44bbf69e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; tools::finite::opt::internals::old_direct_optimization</definition>
+        <argsstring>(const class_finite_state &amp;state, const class_simulation_status &amp;sim_status, OptType optType)</argsstring>
+        <name>old_direct_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="22" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1ab9f6fa872c8f3136ce5e0d5961a55991" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; tools::finite::opt::internals::ceres_direct_optimization</definition>
+        <argsstring>(const class_finite_state &amp;state, const class_simulation_status &amp;sim_status, OptType optType)</argsstring>
+        <name>ceres_direct_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp" bodystart="17" bodyend="183"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
-        <references refid="classclass__finite__state_1a8f37806611e917bcf0ba5322044c5949" compoundref="class__finite__state_8cpp" startline="248" endline="268">class_finite_state::get_multitheta</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" compoundref="nmspc__tools_8h" startline="318">tools::common::profile::t_opt</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" compoundref="opt_8h" startline="83">t_opt</references>
+        <references refid="classclass__finite__state_1a8f37806611e917bcf0ba5322044c5949" compoundref="class__finite__state_8cpp" startline="340" endline="364">class_finite_state::get_multitheta</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a3ca2e5084269a08210015d32d3846407" compoundref="multisite_8cpp" startline="144" endline="146">tools::finite::measure::multisite::energy_per_site</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a04c5c28b2a39351e57ef347780876bec" compoundref="multisite_8cpp" startline="231" endline="233">tools::finite::measure::multisite::energy_variance_per_site</references>
+        <references refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" compoundref="class__tic__toc_8cpp" startline="107" endline="109">class_tic_toc::get_last_time_interval</references>
         <references refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4ea958448d4909b92010c81d52d3e6ad8f1">tools::finite::opt::CPLX</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__direct__functor_1a07aac983a3dacfeb75e3796b2151acdc" compoundref="ceres__direct__functor_8cpp" startline="24" endline="65">tools::finite::opt::internals::ceres_direct_functor&lt; Scalar &gt;::ceres_direct_functor</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" compoundref="ceres__base_8cpp" startline="35" endline="35">tools::finite::opt::internals::ceres_base_functor::get_count</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" compoundref="ceres__base_8cpp" startline="34" endline="34">tools::finite::opt::internals::ceres_base_functor::get_energy</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" compoundref="ceres__base_8cpp" startline="33" endline="33">tools::finite::opt::internals::ceres_base_functor::get_variance</references>
         <references refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4ea8cf125b0e31559ba75a9d9b4f818a554">tools::finite::opt::REAL</references>
+        <references refid="namespace_textra_1a1a713f14010c8216f87e9f33dcf9ca64" compoundref="nmspc__tensor__extra_8h" startline="185" endline="189">Textra::Matrix_to_Tensor</references>
+        <references refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" compoundref="class__finite__state_8cpp" startline="331" endline="333">class_finite_state::active_dimensions</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" compoundref="report_8cpp" startline="7" endline="38">tools::finite::opt::internals::reports::print_report</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aefa36ad7a889fb02b1138b37f1c0eed5" compoundref="opt_8h" startline="87">t_vH2v</references>
+        <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aecfa1d57fa771ee1cb7839b9034d9522" compoundref="opt_8h" startline="88">t_vHv</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ac94e77e532b573936d9386995cc266f6" compoundref="opt_8h" startline="89">t_vH2</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc2d3bd1710a6b8f14a5022bc0d8b088" compoundref="opt_8h" startline="90">t_vH</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" compoundref="opt_8h" startline="91">t_op</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a0435b2ea12613bfa030adc9dab6c8e52" compoundref="finite_2measure_8cpp" startline="195" endline="201">tools::finite::measure::energy_variance_per_site</references>
+        <references refid="classclass__finite__state_1afcb0a1028025e0eed6a16af39e185753" compoundref="class__finite__state_8cpp" startline="564" endline="569">class_finite_state::tag_active_sites_have_been_updated</references>
+        <references refid="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" compoundref="nmspc__settings_8h" startline="94">settings::precision::VarConvergenceThreshold</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a3a07b29376c4353abadb1848f43f4a45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; class_finite_state::Scalar, 3 &gt; tools::finite::opt::internals::ceres_subspace_optimization</definition>
+        <argsstring>(const class_finite_state &amp;state, const class_simulation_status &amp;sim_status, OptType optType, OptMode optMode)</argsstring>
+        <name>ceres_subspace_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4e" kindref="member">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacetools_1_1finite_1_1opt_1afe78a5dc46145a3a7d8f51168226e0f6" kindref="member">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp" bodystart="302" bodyend="613"/>
+        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" compoundref="nmspc__tools_8h" startline="318">tools::common::profile::t_opt</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ac4a810933ed04160f1126492b1fa28b1" compoundref="opt_8h" startline="33">subspace_quality_threshold</references>
+        <references refid="namespacesettings_1_1precision_1afad83713588045b35c92b4128b4333c7" compoundref="nmspc__settings_8h" startline="97">settings::precision::SubspaceQualityFactor</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a0435b2ea12613bfa030adc9dab6c8e52" compoundref="finite_2measure_8cpp" startline="195" endline="201">tools::finite::measure::energy_variance_per_site</references>
+        <references refid="namespacesettings_1_1precision_1abf702bad979405cc3acd9423af31e4e0" compoundref="nmspc__settings_8h" startline="98">settings::precision::MaxSubspaceQuality</references>
+        <references refid="classclass__finite__state_1a8f37806611e917bcf0ba5322044c5949" compoundref="class__finite__state_8cpp" startline="340" endline="364">class_finite_state::get_multitheta</references>
+        <references refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" compoundref="class__finite__state_8cpp" startline="331" endline="333">class_finite_state::active_dimensions</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4ea958448d4909b92010c81d52d3e6ad8f1">tools::finite::opt::CPLX</references>
+        <references refid="ceres__subspace_8cpp_1ae08f7be68a32274a415a3f1387df45fe" compoundref="ceres__subspace_8cpp" startline="237" endline="295">find_subspace</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4ea8cf125b0e31559ba75a9d9b4f818a554">tools::finite::opt::REAL</references>
+        <references refid="classclass__finite__state_1a9836c470ac6318f415b1df4034d6530e" compoundref="class__finite__state_8cpp" startline="306" endline="313">class_finite_state::get_energy_reduced</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
+        <references refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" compoundref="class__simulation__status_8h" startline="30">status_data::energy_lbound</references>
+        <references refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" compoundref="class__simulation__status_8h" startline="29">status_data::energy_ubound</references>
         <references refid="namespacetools_1_1finite_1_1opt_1afe78a5dc46145a3a7d8f51168226e0f6a8c009c8dd4d4f9dde7515c00d5cd4661">tools::finite::opt::OVERLAP</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="subspace_8cpp_1aaf5a344ce5946e00196d6e086f10e126" compoundref="subspace_8cpp" startline="44" endline="57">idx_best_overlap_in_window</references>
-        <references refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" compoundref="class__simulation__status_8h" startline="28">status_data::energy_lbound</references>
-        <references refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" compoundref="class__simulation__status_8h" startline="27">status_data::energy_ubound</references>
-        <references refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" compoundref="nmspc__tensor__extra_8h" startline="166" endline="176">Textra::Matrix_to_Tensor</references>
-        <references refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" compoundref="class__finite__state_8cpp" startline="230" endline="239">class_finite_state::active_dimensions</references>
+        <references refid="ceres__subspace_8cpp_1a033c2cd4ff249b3ce57bcf4f9bebf8b9" compoundref="ceres__subspace_8cpp" startline="114" endline="131">get_best_overlap_in_window</references>
+        <references refid="classclass__finite__state_1afcb0a1028025e0eed6a16af39e185753" compoundref="class__finite__state_8cpp" startline="564" endline="569">class_finite_state::tag_active_sites_have_been_updated</references>
+        <references refid="ceres__subspace_8cpp_1ae33f169391344d6f5e1421bb3468f1c0" compoundref="ceres__subspace_8cpp" startline="92" endline="112">get_best_state_in_window</references>
+        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="539" endline="541">class_finite_state::unset_measurements</references>
+        <references refid="namespace_textra_1a1a713f14010c8216f87e9f33dcf9ca64" compoundref="nmspc__tensor__extra_8h" startline="185" endline="189">Textra::Matrix_to_Tensor</references>
+        <references refid="ceres__subspace_8cpp_1a6a2bfd25450cd30f4a16b1f164161a1c" compoundref="ceres__subspace_8cpp" startline="47" endline="88">filter_states</references>
         <references refid="namespacetools_1_1finite_1_1opt_1afe78a5dc46145a3a7d8f51168226e0f6ace18bb9a2b22515d0cd36bca6b998bde">tools::finite::opt::VARIANCE</references>
-        <references refid="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" compoundref="nmspc__settings_8h" startline="74">settings::precision::VarConvergenceThreshold</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc4f5fa072ebf99048b4e3b939700b31" compoundref="direct_8cpp" startline="31" endline="107">direct_optimization</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1af8a40ef6c20e8ca83cdc5e8c238f9340" compoundref="finite_2measure_8cpp" startline="35" endline="59">tools::finite::measure::norm</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" compoundref="opt_8h" startline="73">t_opt</references>
-        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1a81b06529556e68f882c591397b39ef2f" compoundref="finite_2measure_8cpp" startline="160" endline="166">tools::finite::measure::energy_per_site</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1a0435b2ea12613bfa030adc9dab6c8e52" compoundref="finite_2measure_8cpp" startline="189" endline="195">tools::finite::measure::energy_variance_per_site</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" compoundref="opt_8h" startline="103">params</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1ad43c5e4b4bcebfc3a54342698303b59c" compoundref="base__functor_8cpp" startline="34" endline="34">tools::finite::opt::internals::base_functor::get_count</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1adfa14c82de8ef8b7df58442f5ab1bd6d" compoundref="base__functor_8cpp" startline="35" endline="35">tools::finite::opt::internals::base_functor::get_norm</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1aa311753c4b3fb64be9ad3a87cff3fca4" compoundref="base__functor_8cpp" startline="33" endline="33">tools::finite::opt::internals::base_functor::get_energy</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1ae3e9e38c9e198f2d6fd47f3458c4445b" compoundref="base__functor_8cpp" startline="32" endline="32">tools::finite::opt::internals::base_functor::get_variance</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" compoundref="report_8cpp" startline="7" endline="35">tools::finite::opt::internals::reports::print_report</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1afc4f5fa072ebf99048b4e3b939700b31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; tools::finite::opt::internals::direct_optimization</definition>
-        <argsstring>(const class_finite_state &amp;state, const class_simulation_status &amp;sim_status, OptType optType)</argsstring>
-        <name>direct_optimization</name>
-        <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
-        </param>
-        <param>
-          <type><ref refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4e" kindref="member">OptType</ref></type>
-          <declname>optType</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/direct.cpp" bodystart="31" bodyend="107"/>
-        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" compoundref="opt_8h" startline="73">t_opt</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
-        <references refid="classclass__finite__state_1a8f37806611e917bcf0ba5322044c5949" compoundref="class__finite__state_8cpp" startline="248" endline="268">class_finite_state::get_multitheta</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a3ca2e5084269a08210015d32d3846407" compoundref="multisite_8cpp" startline="79" endline="81">tools::finite::measure::multisite::energy_per_site</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a04c5c28b2a39351e57ef347780876bec" compoundref="multisite_8cpp" startline="100" endline="102">tools::finite::measure::multisite::energy_variance_per_site</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" compoundref="opt_8h" startline="103">params</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1ad43c5e4b4bcebfc3a54342698303b59c" compoundref="base__functor_8cpp" startline="34" endline="34">tools::finite::opt::internals::base_functor::get_count</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1aa311753c4b3fb64be9ad3a87cff3fca4" compoundref="base__functor_8cpp" startline="33" endline="33">tools::finite::opt::internals::base_functor::get_energy</references>
-        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1base__functor_1ae3e9e38c9e198f2d6fd47f3458c4445b" compoundref="base__functor_8cpp" startline="32" endline="32">tools::finite::opt::internals::base_functor::get_variance</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" compoundref="report_8cpp" startline="7" endline="35">tools::finite::opt::internals::reports::print_report</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aefa36ad7a889fb02b1138b37f1c0eed5" compoundref="opt_8h" startline="77">t_vH2v</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aecfa1d57fa771ee1cb7839b9034d9522" compoundref="opt_8h" startline="78">t_vHv</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ac94e77e532b573936d9386995cc266f6" compoundref="opt_8h" startline="79">t_vH2</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc2d3bd1710a6b8f14a5022bc0d8b088" compoundref="opt_8h" startline="80">t_vH</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" compoundref="opt_8h" startline="81">t_op</references>
-        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
-        <references refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" compoundref="nmspc__tensor__extra_8h" startline="166" endline="176">Textra::Matrix_to_Tensor</references>
-        <references refid="classclass__finite__state_1af815d761506be3a8e1aa9845cc41d1b5" compoundref="class__finite__state_8cpp" startline="230" endline="239">class_finite_state::active_dimensions</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1ad8dd1bea73386ce201be145dbeb0e57d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
-        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; tools::finite::opt::internals::ceres_optimization</definition>
-        <argsstring>(const class_finite_state &amp;state, const class_simulation_status &amp;sim_status, OptType optType)</argsstring>
-        <name>ceres_optimization</name>
-        <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
-          <declname>state</declname>
-        </param>
-        <param>
-          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
-          <declname>sim_status</declname>
-        </param>
-        <param>
-          <type><ref refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4e" kindref="member">OptType</ref></type>
-          <declname>optType</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ceres.cpp" bodystart="18" bodyend="109"/>
-        <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" compoundref="opt_8h" startline="73">t_opt</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
-        <references refid="classclass__finite__state_1a8f37806611e917bcf0ba5322044c5949" compoundref="class__finite__state_8cpp" startline="248" endline="268">class_finite_state::get_multitheta</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a3ca2e5084269a08210015d32d3846407" compoundref="multisite_8cpp" startline="79" endline="81">tools::finite::measure::multisite::energy_per_site</references>
-        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a04c5c28b2a39351e57ef347780876bec" compoundref="multisite_8cpp" startline="100" endline="102">tools::finite::measure::multisite::energy_variance_per_site</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="346" endline="348">class_finite_state::unset_measurements</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab9f6fa872c8f3136ce5e0d5961a55991" compoundref="ceres__direct_8cpp" startline="17" endline="183">ceres_direct_optimization</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" compoundref="opt_8h" startline="83">t_opt</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1aea4925ff2aecd24ce3a67cf8bc2dd651" compoundref="nmspc__tools_8h" startline="158" endline="163">tools::finite::measure::energy_per_site</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" compoundref="class__tic__toc_8cpp" startline="107" endline="109">class_tic_toc::get_last_time_interval</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__subspace__functor_1a03cca59ea3598eaaf57ad555593ff299" compoundref="ceres__subspace__functor_8cpp" startline="11" endline="35">tools::finite::opt::internals::ceres_subspace_functor&lt; Scalar &gt;::ceres_subspace_functor</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" compoundref="ceres__base_8cpp" startline="35" endline="35">tools::finite::opt::internals::ceres_base_functor::get_count</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" compoundref="ceres__base_8cpp" startline="36" endline="36">tools::finite::opt::internals::ceres_base_functor::get_norm</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" compoundref="ceres__base_8cpp" startline="34" endline="34">tools::finite::opt::internals::ceres_base_functor::get_energy</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" compoundref="ceres__base_8cpp" startline="33" endline="33">tools::finite::opt::internals::ceres_base_functor::get_variance</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a620c5c854aaf3f75ea58fee57da509e6" compoundref="report_8cpp" startline="41" endline="72">tools::finite::opt::internals::reports::print_report</references>
+        <references refid="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" compoundref="nmspc__settings_8h" startline="94">settings::precision::VarConvergenceThreshold</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a02896ebab9e1bc1796bef72046654e05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
@@ -319,7 +367,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="22" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="29" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a4c06ba68e3212f27854e1b739aa189f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
@@ -341,19 +389,32 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ground_state.cpp" bodystart="11" bodyend="45"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp" bodystart="11" bodyend="45"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a4958e75ebe95c52b7432f57a058acf2c" compoundref="nmspc__eigutils_8h" startline="26" endline="37">eigutils::eigSetting::stringToRitz</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
-        <references refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPO_L</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2" compoundref="opt_8h" startline="74">t_eig</references>
-        <references refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" compoundref="class__finite__state_8h" startline="52">class_finite_state::ENV_L</references>
-        <references refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" compoundref="class__finite__state_8h" startline="53">class_finite_state::ENV_R</references>
-        <references refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPO_R</references>
-        <references refid="namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373" compoundref="nmspc__settings_8h" startline="72">settings::precision::eigMaxNcv</references>
-        <references refid="class_dense_hamiltonian_product_1a871b7edb9d3c0ddec8df8be12fb6dc9f" compoundref="matrix__product__hamiltonian_8h" startline="59" endline="59">DenseHamiltonianProduct&lt; Scalar_ &gt;::cols</references>
-        <references refid="class_dense_hamiltonian_product_1aecec01d77a30db2fd058a8b505ab1d42" compoundref="matrix__product__hamiltonian_8h" startline="58" endline="58">DenseHamiltonianProduct&lt; Scalar_ &gt;::rows</references>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__vidal__site_1a647bc3bef44cc54c935c55c31e7a51f9" compoundref="class__vidal__site_8cpp" startline="9" endline="9">class_vidal_site::get_G</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" compoundref="class__finite__state_8h" startline="63">class_finite_state::MPO_L</references>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2" compoundref="opt_8h" startline="84">t_eig</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="class_dense_hamiltonian_product_1abf8b47352edf585031603816c47dceab" compoundref="matrix__product__hamiltonian_8h" startline="36" endline="55">DenseHamiltonianProduct&lt; Scalar_ &gt;::DenseHamiltonianProduct</references>
+        <references refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" compoundref="class__finite__state_8h" startline="59">class_finite_state::ENV_L</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">class_environment::block</references>
+        <references refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" compoundref="class__finite__state_8h" startline="60">class_finite_state::ENV_R</references>
+        <references refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" compoundref="class__finite__state_8h" startline="64">class_finite_state::MPO_R</references>
+        <references refid="classclass__eigsolver_1ac5612e0c1b83a9dd761c697b88a98fd1" compoundref="class__eigsolver_8h" startline="433" endline="452">class_eigsolver::eigs_dense</references>
+        <references refid="namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373" compoundref="nmspc__settings_8h" startline="92">settings::precision::eigMaxNcv</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">class_eigsolver::solution</references>
+        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" compoundref="nmspc__eigutils_8h" startline="172">eigutils::eigSolution::Meta::cols</references>
+        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
+        <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a4d15c2b7a280aba9221f4c4d006872c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; int &gt;</type>
@@ -370,7 +431,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/subspace.cpp" bodystart="24" bodyend="42"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp" bodystart="26" bodyend="44"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a1cc46ef0e5c0a5741c9dc7ebcdcbe8cc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>std::ostream &amp;</type>
@@ -391,7 +452,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="29" bodyend="35"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="38" bodyend="44"/>
         <references refid="namespacetools_1_1finite_1_1opt_1afe78a5dc46145a3a7d8f51168226e0f6a8c009c8dd4d4f9dde7515c00d5cd4661">tools::finite::opt::OVERLAP</references>
         <references refid="namespacetools_1_1finite_1_1opt_1afe78a5dc46145a3a7d8f51168226e0f6ace18bb9a2b22515d0cd36bca6b998bde">tools::finite::opt::VARIANCE</references>
       </memberdef>
@@ -414,7 +475,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="37" bodyend="43"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="46" bodyend="52"/>
         <references refid="namespacetools_1_1finite_1_1opt_1a04ca8f4b4cd4ea8fb0700927cbae11b6a75420cb18c5b572ad779b8c95d797cf6">tools::finite::opt::SUBSPACE</references>
         <references refid="namespacetools_1_1finite_1_1opt_1a04ca8f4b4cd4ea8fb0700927cbae11b6a4c5d06b02c97731aaa976179c62dcf76">tools::finite::opt::DIRECT</references>
       </memberdef>
@@ -437,7 +498,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="44" bodyend="50"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="53" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="53" bodyend="59"/>
         <references refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4ea8cf125b0e31559ba75a9d9b4f818a554">tools::finite::opt::REAL</references>
         <references refid="namespacetools_1_1finite_1_1opt_1ad30f78663f0e38d32ba7964276f33d4ea958448d4909b92010c81d52d3e6ad8f1">tools::finite::opt::CPLX</references>
       </memberdef>
@@ -461,11 +522,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="52" bodyend="52"/>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a92f862c7cdbda41609a5681d48bebcec" compoundref="finite_2opt_8cpp" startline="95" endline="101">windowed_func_abs</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a531552b5179c5067c04db8c51ede92a6" compoundref="finite_2opt_8cpp" startline="102" endline="108">windowed_grad_abs</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" compoundref="finite_2opt_8cpp" startline="112" endline="118">windowed_func_pow</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" compoundref="finite_2opt_8cpp" startline="119" endline="125">windowed_grad_pow</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="61" bodyend="61"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a92f862c7cdbda41609a5681d48bebcec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -486,7 +543,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="53" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp" bodystart="95" bodyend="101"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="106" bodyend="112"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a531552b5179c5067c04db8c51ede92a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -507,8 +564,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp" bodystart="102" bodyend="108"/>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa374ce62e0b0ce5913af1a8459f689d5" compoundref="opt_8h" startline="52" endline="52">sgn</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="113" bodyend="119"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa374ce62e0b0ce5913af1a8459f689d5" compoundref="opt_8h" startline="61" endline="61">sgn</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -529,7 +586,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp" bodystart="112" bodyend="118"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="123" bodyend="129"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -550,7 +607,28 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp" bodystart="119" bodyend="125"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="130" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a712a13efbabdce3004b25a616e0987a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::pair&lt; double, double &gt;</type>
+        <definition>std::pair&lt; double, double &gt; tools::finite::opt::internals::windowed_func_grad</definition>
+        <argsstring>(double x, double window)</argsstring>
+        <name>windowed_func_grad</name>
+        <param>
+          <type>double</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>window</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="66" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="140" bodyend="150"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a9e8c07dd960d644a8ca197fbbfb0a2bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -563,16 +641,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp" bodystart="51" bodyend="61"/>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" compoundref="opt_8h" startline="73">t_opt</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2" compoundref="opt_8h" startline="74">t_eig</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aebe49a53524360884a88f314649cc474" compoundref="opt_8h" startline="75">t_ham</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a0a0e265e8e5a3891eaee243d1fc1f940" compoundref="opt_8h" startline="76">t_tot</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aefa36ad7a889fb02b1138b37f1c0eed5" compoundref="opt_8h" startline="77">t_vH2v</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aecfa1d57fa771ee1cb7839b9034d9522" compoundref="opt_8h" startline="78">t_vHv</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ac94e77e532b573936d9386995cc266f6" compoundref="opt_8h" startline="79">t_vH2</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc2d3bd1710a6b8f14a5022bc0d8b088" compoundref="opt_8h" startline="80">t_vH</references>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" compoundref="opt_8h" startline="81">t_op</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="57" bodyend="67"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e" compoundref="opt_8h" startline="83">t_opt</references>
+        <references refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" compoundref="class__tic__toc_8cpp" startline="111" endline="117">class_tic_toc::reset</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2" compoundref="opt_8h" startline="84">t_eig</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aebe49a53524360884a88f314649cc474" compoundref="opt_8h" startline="85">t_ham</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a0a0e265e8e5a3891eaee243d1fc1f940" compoundref="opt_8h" startline="86">t_tot</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aefa36ad7a889fb02b1138b37f1c0eed5" compoundref="opt_8h" startline="87">t_vH2v</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aecfa1d57fa771ee1cb7839b9034d9522" compoundref="opt_8h" startline="88">t_vHv</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ac94e77e532b573936d9386995cc266f6" compoundref="opt_8h" startline="89">t_vH2</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1afc2d3bd1710a6b8f14a5022bc0d8b088" compoundref="opt_8h" startline="90">t_vH</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077" compoundref="opt_8h" startline="91">t_op</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a72d2d2f8f1c279a2898ec6bb624c5c28" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>LBFGSpp::LBFGSParam&lt; double &gt;</type>
@@ -585,132 +664,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="84" bodyend="101"/>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" compoundref="opt_8h" startline="103">params</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a5eb33e8b616c0bf8688c0d49c9b2c75c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename Derived</type>
-          </param>
-        </templateparamlist>
-        <type><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ad66627a992ba69e6c014c6850e2c08fd" kindref="member">VectorType</ref>&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt;</type>
-        <definition>VectorType&lt;typename Derived::Scalar&gt; tools::finite::opt::internals::get_vH2</definition>
-        <argsstring>(const Eigen::MatrixBase&lt; Derived &gt; &amp;v, const MultiComponents&lt; typename Derived::Scalar &gt; &amp;multiComponents)</argsstring>
-        <name>get_vH2</name>
-        <param>
-          <type>const Eigen::MatrixBase&lt; Derived &gt; &amp;</type>
-          <declname>v</declname>
-        </param>
-        <param>
-          <type>const <ref refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" kindref="compound">MultiComponents</ref>&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt; &amp;</type>
-          <declname>multiComponents</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="225" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="225" bodyend="267"/>
-        <references refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a4a1112f2186abd1ea9518afead98bbb1" compoundref="opt_8h" startline="111">tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::dsizes</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
-        <references refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1ac1e96d0596b19a21ddbe883836b624ea" compoundref="opt_8h" startline="108">tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::env2L</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a7f436abe186210b65d24d4755b6f4a33" compoundref="opt_8h" startline="109">tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::mpo</references>
-        <references refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a2857d2be439ec426b2ed4e34be94777c" compoundref="opt_8h" startline="108">tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::env2R</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1aa1db6babfc380d6c6a511918c8db623a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename Derived</type>
-          </param>
-        </templateparamlist>
-        <type><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ad66627a992ba69e6c014c6850e2c08fd" kindref="member">VectorType</ref>&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt;</type>
-        <definition>VectorType&lt;typename Derived::Scalar&gt; tools::finite::opt::internals::get_vH</definition>
-        <argsstring>(const Eigen::MatrixBase&lt; Derived &gt; &amp;v, const MultiComponents&lt; typename Derived::Scalar &gt; &amp;multiComponents)</argsstring>
-        <name>get_vH</name>
-        <param>
-          <type>const Eigen::MatrixBase&lt; Derived &gt; &amp;</type>
-          <declname>v</declname>
-        </param>
-        <param>
-          <type>const <ref refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" kindref="compound">MultiComponents</ref>&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt; &amp;</type>
-          <declname>multiComponents</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="269" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="269" bodyend="297"/>
-        <references refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a4a1112f2186abd1ea9518afead98bbb1" compoundref="opt_8h" startline="111">tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::dsizes</references>
-        <references refid="namespacetools_1_1common_1_1views_1a456b60de2e6a0cdc1197ac9b30a18a09" compoundref="views_8cpp" startline="22">tools::common::views::theta</references>
-        <references refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a390c2a3a18f3194642e1a203e27455b0" compoundref="opt_8h" startline="107">tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::envL</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
-        <references refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1a7f436abe186210b65d24d4755b6f4a33" compoundref="opt_8h" startline="109">tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::mpo</references>
-        <references refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components_1ab1fb6e8deffe8b6ba5f4d592fb20e239" compoundref="opt_8h" startline="107">tools::finite::opt::internals::MultiComponents&lt; Scalar &gt;::envR</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a60312ffa8738bc2d1f9da4a2aafb2172" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename Derived</type>
-          </param>
-        </templateparamlist>
-        <type>std::pair&lt; <ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ad66627a992ba69e6c014c6850e2c08fd" kindref="member">VectorType</ref>&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt;, typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt;</type>
-        <definition>std::pair&lt;VectorType&lt;typename Derived::Scalar&gt;,typename Derived::Scalar&gt; tools::finite::opt::internals::get_Hv_vHv</definition>
-        <argsstring>(const Eigen::MatrixBase&lt; Derived &gt; &amp;v, const MultiComponents&lt; typename Derived::Scalar &gt; &amp;multiComponents)</argsstring>
-        <name>get_Hv_vHv</name>
-        <param>
-          <type>const Eigen::MatrixBase&lt; Derived &gt; &amp;</type>
-          <declname>v</declname>
-        </param>
-        <param>
-          <type>const <ref refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" kindref="compound">MultiComponents</ref>&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt; &amp;</type>
-          <declname>multiComponents</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="301" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="301" bodyend="308"/>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1aa1db6babfc380d6c6a511918c8db623a" compoundref="opt_8h" startline="269" endline="297">get_vH</references>
-      </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internals_1a89cc203be6152c9aaca3a5fc5f1a2a8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename Derived</type>
-          </param>
-        </templateparamlist>
-        <type>std::pair&lt; <ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1ad66627a992ba69e6c014c6850e2c08fd" kindref="member">VectorType</ref>&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt;, typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt;</type>
-        <definition>std::pair&lt;VectorType&lt;typename Derived::Scalar&gt;,typename Derived::Scalar&gt; tools::finite::opt::internals::get_H2v_vH2v</definition>
-        <argsstring>(const Eigen::MatrixBase&lt; Derived &gt; &amp;v, const MultiComponents&lt; typename Derived::Scalar &gt; &amp;multiComponents)</argsstring>
-        <name>get_H2v_vH2v</name>
-        <param>
-          <type>const Eigen::MatrixBase&lt; Derived &gt; &amp;</type>
-          <declname>v</declname>
-        </param>
-        <param>
-          <type>const <ref refid="structtools_1_1finite_1_1opt_1_1internals_1_1_multi_components" kindref="compound">MultiComponents</ref>&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref> &gt; &amp;</type>
-          <declname>multiComponents</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="313" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" bodystart="313" bodyend="320"/>
-        <references refid="namespacetools_1_1finite_1_1opt_1_1internals_1a5eb33e8b616c0bf8688c0d49c9b2c75c" compoundref="opt_8h" startline="225" endline="267">get_vH2</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="94" bodyend="111"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.h" line="18" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="18" column="1"/>
   </compounddef>
 </doxygen>

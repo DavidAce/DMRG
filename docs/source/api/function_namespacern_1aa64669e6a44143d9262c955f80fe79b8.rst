@@ -3,7 +3,7 @@
 Function rn::log_normal
 =======================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.cpp`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`
 
 
 Function Documentation

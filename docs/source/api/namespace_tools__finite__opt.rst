@@ -43,6 +43,6 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1a3bc38a43130ecfed5634e7d177f7af54`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd`
-
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1aa1f7f648d761d5f59f0c782ccea498bf`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1a50821e31a47ff88e9bf4db457e9da5dd`

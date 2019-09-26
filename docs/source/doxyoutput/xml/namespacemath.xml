@@ -46,7 +46,80 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="33" bodyend="36"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="34" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemath_1a3389e677b639402cc6eaf924f713b398" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T1</type>
+          </param>
+          <param>
+            <type>typename T2</type>
+          </param>
+          <param>
+            <type>typename T3</type>
+          </param>
+        </templateparamlist>
+        <type>std::vector&lt; T3 &gt;</type>
+        <definition>std::vector&lt;T3&gt; math::range</definition>
+        <argsstring>(T1 first, T2 last, T3 step)</argsstring>
+        <name>range</name>
+        <param>
+          <type>T1</type>
+          <declname>first</declname>
+        </param>
+        <param>
+          <type>T2</type>
+          <declname>last</declname>
+        </param>
+        <param>
+          <type>T3</type>
+          <declname>step</declname>
+        </param>
+        <briefdescription>
+<para>Python-style range generator, including edges. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Range of T&apos;s. Example, <computeroutput> range(0,8,2) </computeroutput> gives a std::vector&lt;int&gt;: <computeroutput> [0,2,4,6,8] </computeroutput> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="43" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemath_1abdf8a2bf14cace5e0424feb58ad2e5b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T1</type>
+          </param>
+          <param>
+            <type>typename T2</type>
+          </param>
+          <param>
+            <type>typename T3</type>
+          </param>
+        </templateparamlist>
+        <type>std::list&lt; T3 &gt;</type>
+        <definition>std::list&lt;T3&gt; math::range_list</definition>
+        <argsstring>(T1 first, T2 last, T3 step)</argsstring>
+        <name>range_list</name>
+        <param>
+          <type>T1</type>
+          <declname>first</declname>
+        </param>
+        <param>
+          <type>T2</type>
+          <declname>last</declname>
+        </param>
+        <param>
+          <type>T3</type>
+          <declname>step</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="60" bodyend="64"/>
       </memberdef>
       <memberdef kind="function" id="namespacemath_1aadb857d9d1370dae374e670f1832ca8f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -102,7 +175,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="46" bodyend="52"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="73" bodyend="79"/>
       </memberdef>
       <memberdef kind="function" id="namespacemath_1a3ce95fbd77bede9bc5f50374c6d0f58e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -161,13 +234,13 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="62" bodyend="65"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="89" bodyend="92"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="26" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="27" column="1"/>
   </compounddef>
 </doxygen>

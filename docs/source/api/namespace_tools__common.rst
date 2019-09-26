@@ -19,6 +19,8 @@ Namespaces
 
 - :ref:`namespace_tools__common__io`
 
+- :ref:`namespace_tools__common__profile`
+
 - :ref:`namespace_tools__common__views`
 
 

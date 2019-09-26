@@ -7,6 +7,7 @@
     <innerfile refid="class__eigsolver_8h">class_eigsolver.h</innerfile>
     <innerfile refid="class__svd__wrapper_8cpp">class_svd_wrapper.cpp</innerfile>
     <innerfile refid="class__svd__wrapper_8h">class_svd_wrapper.h</innerfile>
+    <innerfile refid="class__svd__wrapper__lapacke_8cpp">class_svd_wrapper_lapacke.cpp</innerfile>
     <innerfile refid="nmspc__eigutils_8h">nmspc_eigutils.h</innerfile>
     <innerfile refid="nmspc__math_8h">nmspc_math.h</innerfile>
     <briefdescription>

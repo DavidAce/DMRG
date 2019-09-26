@@ -56,36 +56,31 @@ Directories
 .. toctree::
    :maxdepth: 5
 
-   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools.rst
+   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools.rst
 
 .. toctree::
    :maxdepth: 5
 
-   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_common.rst
+   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common.rst
 
 .. toctree::
    :maxdepth: 5
 
-   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite.rst
+   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite.rst
 
 .. toctree::
    :maxdepth: 5
 
-   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals.rst
+   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals.rst
 
 .. toctree::
    :maxdepth: 5
 
-   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite.rst
+   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite.rst
 
 Files
 *****
 
-
-.. toctree::
-   :maxdepth: 5
-
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_accurate.cpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -100,17 +95,37 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_base_functor.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_base.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_ceres.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_ceres_functor.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct_functor.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct_functor.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_functor.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_functor.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -310,6 +325,11 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_svd_wrapper_lapacke.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.cpp.rst
 
 .. toctree::
@@ -350,42 +370,32 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_debug.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_debug.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_debug.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_debug.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_direct.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ground_state.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_direct_functor.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_h5pp.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_ground_state.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_h5pp.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_common_h5pp.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_h5pp.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_h5pp.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_h5pp.cpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -440,32 +450,37 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_measure.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_measure.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_measure.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_measure.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_mpo.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_mpo.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_mps.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_mps-internals.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_mps.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_mps.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_multisite.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_mps.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_multisite.cpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -520,7 +535,7 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -530,69 +545,49 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_ops.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_ops.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_opt.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_opt.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt.h.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_print.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_print.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_print.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_print.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_common_prof.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_prof.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_profile.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_report.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_profile.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_svd.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_report.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_subspace.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_subspace_functor.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_svd.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_common_views.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_views.cpp.rst

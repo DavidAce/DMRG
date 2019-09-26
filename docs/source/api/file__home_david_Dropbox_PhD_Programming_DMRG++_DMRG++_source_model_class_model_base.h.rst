@@ -41,6 +41,8 @@ Included By
 -----------
 
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_iTEBD.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_model_base.cpp`
@@ -53,25 +55,19 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.h`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_mpo.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_mpo.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_ops.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_ops.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_direct_functor.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_h5pp.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt-internals_subspace_functor.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_measure.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_opt.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_opt.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_h5pp.cpp`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_measure.cpp`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_opt.cpp`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_print.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_print.cpp`
 
 
 

@@ -39,8 +39,6 @@ Included By
 -----------
 
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.cpp`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_iTEBD.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_xDMRG.cpp`
@@ -49,19 +47,19 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_common_views.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_views.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_measure.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_measure.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_finite_mps.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_mps.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_h5pp.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_h5pp.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_measure.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_measure.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_opt.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_opt.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_infinite_print.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_print.cpp`
 
 
 

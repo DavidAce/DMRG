@@ -8,14 +8,14 @@
         <definition>constexpr hsize_t class_log_simulation_status::meta_struct::NFIELDS</definition>
         <argsstring></argsstring>
         <name>NFIELDS</name>
-        <initializer>= 34</initializer>
+        <initializer>= 38</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="294" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="294" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="350" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="350" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="295" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="295" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="351" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="351" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a3abaa4fcc93d1b50ec3b636b18babeaa" prot="public" static="no" mutable="no">
         <type>std::array&lt; size_t, <ref refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" kindref="member">NFIELDS</ref> &gt;</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="296" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="296" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="352" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="352" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1aa03c9a7c4426acf89becf9530baf3e49" prot="public" static="no" mutable="no">
         <type>std::array&lt; size_t, <ref refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" kindref="member">NFIELDS</ref> &gt;</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="333" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="333" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="395" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="395" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1ab213d62143cc24744c64ba335dbaff23" prot="public" static="no" mutable="no">
         <type>std::array&lt; const char *, <ref refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" kindref="member">NFIELDS</ref> &gt;</type>
@@ -70,7 +70,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="370" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="370" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="436" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="436" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a67d573a61864e1a0375b466440a53ea2" prot="public" static="no" mutable="no">
         <type>std::array&lt; hid_t, <ref refid="structclass__log__simulation__status_1_1meta__struct_1aa6fa9f21149be0558c646c8fd6313636" kindref="member">NFIELDS</ref> &gt;</type>
@@ -83,21 +83,21 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="408" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="408" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="478" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="478" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a4602cdfd4451d4f7ae7b9604a3af23b1" prot="public" static="no" mutable="no">
         <type>hsize_t</type>
         <definition>hsize_t class_log_simulation_status::meta_struct::chunk_size</definition>
         <argsstring></argsstring>
         <name>chunk_size</name>
-        <initializer>= 1</initializer>
+        <initializer>= 32</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="446" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="446" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="520" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="520" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1a8be7b527c6953cb0fa1ba7b8292e08c3" prot="public" static="no" mutable="no">
         <type>void *</type>
@@ -111,7 +111,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="447" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="447" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="521" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="521" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__log__simulation__status_1_1meta__struct_1afc097efda8b7ce9833624402202525ec" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -125,14 +125,39 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="448" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="448" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="522" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="522" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="293" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="293" bodyend="449"/>
+    <collaborationgraph>
+      <node id="435">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="433">
+        <label>class_log_simulation_status::meta_struct</label>
+        <link refid="structclass__log__simulation__status_1_1meta__struct"/>
+        <childnode refid="434" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="435" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="436" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="436">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="434">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="349" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="349" bodyend="523"/>
     <listofallmembers>
       <member refid="structclass__log__simulation__status_1_1meta__struct_1a4602cdfd4451d4f7ae7b9604a3af23b1" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>chunk_size</name></member>
       <member refid="structclass__log__simulation__status_1_1meta__struct_1afc097efda8b7ce9833624402202525ec" prot="public" virt="non-virtual"><scope>class_log_simulation_status::meta_struct</scope><name>compress</name></member>

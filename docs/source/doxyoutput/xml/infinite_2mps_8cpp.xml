@@ -2,7 +2,7 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="infinite_2mps_8cpp" kind="file" language="C++">
     <compoundname>mps.cpp</compoundname>
-    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
     <incdepgraph>
       <node id="2536">
@@ -51,6 +51,20 @@
       <node id="2538">
         <label>experimental/type_traits</label>
       </node>
+      <node id="2527">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2528" relation="include">
+        </childnode>
+        <childnode refid="2529" relation="include">
+        </childnode>
+        <childnode refid="2530" relation="include">
+        </childnode>
+        <childnode refid="2539" relation="include">
+        </childnode>
+        <childnode refid="2543" relation="include">
+        </childnode>
+      </node>
       <node id="2553">
         <label>unordered_set</label>
       </node>
@@ -76,7 +90,7 @@
         <label>array</label>
       </node>
       <node id="2526">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/mps.cpp</label>
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
         <link refid="infinite_2mps_8cpp"/>
         <childnode refid="2527" relation="include">
         </childnode>
@@ -156,20 +170,6 @@
         <childnode refid="2537" relation="include">
         </childnode>
       </node>
-      <node id="2527">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="2528" relation="include">
-        </childnode>
-        <childnode refid="2529" relation="include">
-        </childnode>
-        <childnode refid="2530" relation="include">
-        </childnode>
-        <childnode refid="2539" relation="include">
-        </childnode>
-        <childnode refid="2543" relation="include">
-        </childnode>
-      </node>
       <node id="2542">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
@@ -186,15 +186,15 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-06-25.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight></codeline>
-<codeline lineno="9" refid="namespacetools_1_1infinite_1_1mps_1aa96458ac5225cf6b0213e433355cc928" refkind="member"><highlight class="normal"><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/><ref refid="namespacetools_1_1infinite_1_1mps_1aa96458ac5225cf6b0213e433355cc928" kindref="member">tools::infinite::mps::set_random_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/>&amp;<sp/>state,<sp/>std::string<sp/>parity){</highlight></codeline>
+<codeline lineno="9" refid="namespacetools_1_1infinite_1_1mps_1a399c3f5d307b0c3644001993edab8290" refkind="member"><highlight class="normal"><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/><ref refid="namespacetools_1_1infinite_1_1mps_1a399c3f5d307b0c3644001993edab8290" kindref="member">tools::infinite::mps::set_random_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref><sp/>&amp;<sp/>state,<sp/>std::string<sp/>parity,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c" kindref="member">seed_state</ref>){</highlight></codeline>
 <codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;You<sp/>need<sp/>to<sp/>implement<sp/>set<sp/>random<sp/>state<sp/>for<sp/>infinite<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state;</highlight></codeline>
 <codeline lineno="12"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/mps.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp"/>
   </compounddef>
 </doxygen>

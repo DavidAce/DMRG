@@ -18,7 +18,6 @@ Program Listing for File class_algorithm_infinite.h
    #define DMRG_CLASS_ALGORITHM_INFINITE_H
    #include <algorithms/class_algorithm_base.h>
    
-   class class_log_dmrg;
    class class_infinite_state;
    
    class class_algorithm_infinite: public class_algorithm_base {
@@ -40,16 +39,15 @@ Program Listing for File class_algorithm_infinite.h
    
        void enlarge_environment();
        void swap();
-       void run()                                                          override;
-       void compute_observables()                                          final;
-       void clear_saturation_status()                                      override;
-       void reset_to_random_state(const std::string parity)                final;
-       void write_measurements(bool force = false)                        final;
-       void write_state(bool force = false)                        final;
-       void print_status_update()                                          final;
-       void print_status_full()                                            final;
-       void print_profiling()                                              final;
-       void print_profiling_sim(class_tic_toc &t_parent)                   final;
+       void run()                                                                                  override;
+       void compute_observables()                                                                  final;
+       void clear_saturation_status()                                                              override;
+       void reset_to_random_state(const std::string parity_secto = "random", int seed_state = -1)  final;
+       void write_measurements(bool force = false)                                                 final;
+       void write_state(bool force = false)                                                        final;
+       void write_status(bool force = false)                                                       final;
+       void print_status_update()                                                                  final;
+       void print_status_full()                                                                    final;
    
    
    
@@ -60,7 +58,7 @@ Program Listing for File class_algorithm_infinite.h
    
        std::list<bool>   B_mpo_vec; //History of saturation true/false
        std::list<double> V_mpo_vec; //History of variances
-       std::list<int>    X_mpo_vec; //History of step numbers
+       std::list<int>    X_mpo_vec; //History of moves numbers
        double V_mpo_slope = 0;
    
        std::list<bool>   B_ham_vec; //History of saturation true/false

@@ -5,9 +5,7 @@
     <includes refid="matrix__product__stl_8h" local="no">matrix_product_stl.h</includes>
     <templateparamlist>
       <param>
-        <type>typename</type>
-        <declname>Scalar_</declname>
-        <defname>Scalar_</defname>
+        <type>typename Scalar_</type>
       </param>
     </templateparamlist>
       <sectiondef kind="public-type">
@@ -255,8 +253,12 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="40" bodyend="55"/>
+        <references refid="class_stl_matrix_product_1a42e15800d20b2f825a24c4404ee51bf6" compoundref="matrix__product__stl_8h" startline="27">StlMatrixProduct&lt; Scalar_ &gt;::A_ptr</references>
+        <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
+        <references refid="class_stl_matrix_product_1a22eeead3b123a946a2c298b1afe31260" compoundref="matrix__product__stl_8h" startline="29">StlMatrixProduct&lt; Scalar_ &gt;::form</references>
+        <references refid="class_stl_matrix_product_1add7f8456eb6a5f560f8c492860c427ae" compoundref="matrix__product__stl_8h" startline="30">StlMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <references refid="class_stl_matrix_product_1a5e33d520e1c62efd4c36af977776d712" compoundref="matrix__product__stl_8h" startline="26">StlMatrixProduct&lt; Scalar_ &gt;::A_stl</references>
         <references refid="class_stl_matrix_product_1a0107c3412a6714e441b4d71b36116598" compoundref="matrix__product__stl_8h" startline="80" endline="84">StlMatrixProduct&lt; Scalar_ &gt;::init_profiling</references>
-        <references refid="class_stl_matrix_product_1a3d12eaf4c87fa24c74ed65e86b0b860e" compoundref="matrix__product__stl_8cpp" startline="27" endline="31">StlMatrixProduct&lt; Scalar_ &gt;::~StlMatrixProduct</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a3d12eaf4c87fa24c74ed65e86b0b860e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -298,9 +300,6 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="62" bodyend="62"/>
         <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
-        <references refid="class_stl_matrix_product_1a9c648b3a4c73d93511dd3d7a8bec2630" compoundref="matrix__product__stl_8cpp" startline="43" endline="69">StlMatrixProduct&lt; Scalar_ &gt;::FactorOP</references>
-        <references refid="class_stl_matrix_product_1a44e185122b14fe0603ae8c1a00a9886c" compoundref="matrix__product__stl_8cpp" startline="75" endline="101">StlMatrixProduct&lt; Scalar_ &gt;::MultOPv</references>
-        <references refid="class_stl_matrix_product_1a5e01ae791681e6383cad617a87d2e9e8" compoundref="matrix__product__stl_8cpp" startline="107" endline="135">StlMatrixProduct&lt; Scalar_ &gt;::MultAx</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a9c648b3a4c73d93511dd3d7a8bec2630" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -314,6 +313,14 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="43" bodyend="69"/>
+        <references refid="class_stl_matrix_product_1a77fb74248a56296a3f6fbe592029a061" compoundref="matrix__product__stl_8h" startline="35">StlMatrixProduct&lt; Scalar_ &gt;::readyFactorOp</references>
+        <references refid="class_stl_matrix_product_1a42e15800d20b2f825a24c4404ee51bf6" compoundref="matrix__product__stl_8h" startline="27">StlMatrixProduct&lt; Scalar_ &gt;::A_ptr</references>
+        <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
+        <references refid="class_stl_matrix_product_1a6219be75e20d74386189487579c4b6c7" compoundref="matrix__product__stl_8h" startline="85">StlMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="class_stl_matrix_product_1a355cc77be4cb62ef5895b7fcdd219e8c" compoundref="matrix__product__stl_8h" startline="33">StlMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_stl_matrix_product_1a877daca2fe32ba08d4e5bdbf19f60e6e" compoundref="matrix__product__stl_8h" startline="34">StlMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a44e185122b14fe0603ae8c1a00a9886c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -335,8 +342,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="75" bodyend="101"/>
+        <references refid="class_stl_matrix_product_1add7f8456eb6a5f560f8c492860c427ae" compoundref="matrix__product__stl_8h" startline="30">StlMatrixProduct&lt; Scalar_ &gt;::side</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="class_stl_matrix_product_1a8c6bddeab36cbdf2df7ffd7d39bf034a" compoundref="matrix__product__stl_8h" startline="68">StlMatrixProduct&lt; Scalar_ &gt;::counter</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a5e01ae791681e6383cad617a87d2e9e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -358,10 +368,15 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="107" bodyend="135"/>
-        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="class_stl_matrix_product_1a42e15800d20b2f825a24c4404ee51bf6" compoundref="matrix__product__stl_8h" startline="27">StlMatrixProduct&lt; Scalar_ &gt;::A_ptr</references>
+        <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
+        <references refid="class_stl_matrix_product_1a22eeead3b123a946a2c298b1afe31260" compoundref="matrix__product__stl_8h" startline="29">StlMatrixProduct&lt; Scalar_ &gt;::form</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
+        <references refid="class_stl_matrix_product_1add7f8456eb6a5f560f8c492860c427ae" compoundref="matrix__product__stl_8h" startline="30">StlMatrixProduct&lt; Scalar_ &gt;::side</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
+        <references refid="class_stl_matrix_product_1a8c6bddeab36cbdf2df7ffd7d39bf034a" compoundref="matrix__product__stl_8h" startline="68">StlMatrixProduct&lt; Scalar_ &gt;::counter</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1af9f79876cd02cafe4e2badecfa1de022" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -375,6 +390,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="69" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="36" bodyend="39"/>
+        <references refid="class_stl_matrix_product_1a42e15800d20b2f825a24c4404ee51bf6" compoundref="matrix__product__stl_8h" startline="27">StlMatrixProduct&lt; Scalar_ &gt;::A_ptr</references>
+        <references refid="class_stl_matrix_product_1aaa88495509aa660cd6ca840a8bbf22fa" compoundref="matrix__product__stl_8h" startline="28">StlMatrixProduct&lt; Scalar_ &gt;::L</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a9e4bb7514f7e50cef962ce232cf3728d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -392,6 +409,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="70" bodyend="70"/>
+        <references refid="class_stl_matrix_product_1ac028d93fec8df6157d25dc9753441876" compoundref="matrix__product__stl_8h" startline="36">StlMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+        <references refid="class_stl_matrix_product_1a355cc77be4cb62ef5895b7fcdd219e8c" compoundref="matrix__product__stl_8h" startline="33">StlMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_stl_matrix_product_1a877daca2fe32ba08d4e5bdbf19f60e6e" compoundref="matrix__product__stl_8h" startline="34">StlMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1abd57f95f23f637833fe0b640f847e19b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -409,6 +429,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="71" bodyend="71"/>
+        <references refid="class_stl_matrix_product_1ac028d93fec8df6157d25dc9753441876" compoundref="matrix__product__stl_8h" startline="36">StlMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+        <references refid="class_stl_matrix_product_1a355cc77be4cb62ef5895b7fcdd219e8c" compoundref="matrix__product__stl_8h" startline="33">StlMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_stl_matrix_product_1a877daca2fe32ba08d4e5bdbf19f60e6e" compoundref="matrix__product__stl_8h" startline="34">StlMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a04718b5133a8823a3768225ed06b6410" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -430,6 +453,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="72" bodyend="72"/>
+        <references refid="class_stl_matrix_product_1ac028d93fec8df6157d25dc9753441876" compoundref="matrix__product__stl_8h" startline="36">StlMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+        <references refid="class_stl_matrix_product_1a355cc77be4cb62ef5895b7fcdd219e8c" compoundref="matrix__product__stl_8h" startline="33">StlMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_stl_matrix_product_1a877daca2fe32ba08d4e5bdbf19f60e6e" compoundref="matrix__product__stl_8h" startline="34">StlMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a551193db01e23ecb2a3e89c69f186534" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -447,6 +473,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="73" bodyend="73"/>
+        <references refid="class_stl_matrix_product_1a22eeead3b123a946a2c298b1afe31260" compoundref="matrix__product__stl_8h" startline="29">StlMatrixProduct&lt; Scalar_ &gt;::form</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a921d8d3238fc8967c5030dd5a2282f9c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -464,6 +491,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="74" bodyend="74"/>
+        <references refid="class_stl_matrix_product_1add7f8456eb6a5f560f8c492860c427ae" compoundref="matrix__product__stl_8h" startline="30">StlMatrixProduct&lt; Scalar_ &gt;::side</references>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a36df1fcd4ceb2fe4a15d341f680043b1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const std::vector&lt; <ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref> &gt;</type>
@@ -522,7 +550,6 @@
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" bodystart="80" bodyend="84"/>
         <references refid="class_stl_matrix_product_1a6219be75e20d74386189487579c4b6c7" compoundref="matrix__product__stl_8h" startline="85">StlMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
         <references refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" compoundref="class__tic__toc_8cpp" startline="22" endline="24">class_tic_toc::set_properties</references>
-        <references refid="matrix__product__stl_8h_1afb69439b6c29dc85f40f2df36cf15d68" compoundref="matrix__product__stl_8h" startline="16">profile_matrix_product_dense</references>
         <references refid="class_stl_matrix_product_1af370a6db867ce36ca09b2953239b013b" compoundref="matrix__product__stl_8h" startline="86">StlMatrixProduct&lt; Scalar_ &gt;::t_multOpv</references>
         <references refid="class_stl_matrix_product_1afd02aa86cc9ec8e94cffff6e33c659aa" compoundref="matrix__product__stl_8h" startline="87">StlMatrixProduct&lt; Scalar_ &gt;::t_multax</references>
       </memberdef>
@@ -532,17 +559,40 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="235">
+      <node id="459">
+        <label>std::vector&lt; Scalar &gt;</label>
+        <childnode refid="460" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="458">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="456">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
+        <childnode refid="457" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
       </node>
-      <node id="234">
+      <node id="460">
+        <label>std::complex</label>
+      </node>
+      <node id="455">
         <label>StlMatrixProduct&lt; Scalar_ &gt;</label>
         <link refid="class_stl_matrix_product"/>
-        <childnode refid="235" relation="usage">
+        <childnode refid="456" relation="usage">
           <edgelabel>t_factorOp</edgelabel>
           <edgelabel>t_multax</edgelabel>
           <edgelabel>t_multOpv</edgelabel>
+        </childnode>
+        <childnode refid="459" relation="usage">
+          <edgelabel>A_stl</edgelabel>
+        </childnode>
+      </node>
+      <node id="457">
+        <label>std::string</label>
+        <childnode refid="458" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

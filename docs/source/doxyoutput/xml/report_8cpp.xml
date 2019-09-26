@@ -2,136 +2,136 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="report_8cpp" kind="file" language="C++">
     <compoundname>report.cpp</compoundname>
-    <includes refid="opt_8h" local="no">state/tools/finite/opt.h</includes>
+    <includes refid="opt_8h" local="no">tools/finite/opt.h</includes>
     <incdepgraph>
-      <node id="2870">
+      <node id="2926">
         <label>iomanip</label>
       </node>
-      <node id="2868">
+      <node id="2924">
         <label>iterator</label>
       </node>
-      <node id="2881">
+      <node id="2937">
         <label>glog/logging.h</label>
       </node>
-      <node id="2879">
+      <node id="2935">
         <label>LBFGS.h</label>
       </node>
-      <node id="2880">
+      <node id="2936">
         <label>ceres/ceres.h</label>
       </node>
-      <node id="2871">
+      <node id="2927">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2872" relation="include">
+        <childnode refid="2928" relation="include">
         </childnode>
-        <childnode refid="2865" relation="include">
+        <childnode refid="2921" relation="include">
         </childnode>
-        <childnode refid="2867" relation="include">
+        <childnode refid="2923" relation="include">
         </childnode>
       </node>
-      <node id="2865">
+      <node id="2921">
         <label>Eigen/Core</label>
       </node>
-      <node id="2863">
+      <node id="2919">
         <label>string</label>
       </node>
-      <node id="2877">
+      <node id="2933">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2878" relation="include">
+        <childnode refid="2934" relation="include">
         </childnode>
-        <childnode refid="2869" relation="include">
+        <childnode refid="2925" relation="include">
         </childnode>
       </node>
-      <node id="2873">
+      <node id="2915">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp</label>
+        <link refid="report_8cpp"/>
+        <childnode refid="2916" relation="include">
+        </childnode>
+      </node>
+      <node id="2929">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2874" relation="include">
+        <childnode refid="2930" relation="include">
         </childnode>
-        <childnode refid="2875" relation="include">
+        <childnode refid="2931" relation="include">
         </childnode>
-        <childnode refid="2876" relation="include">
+        <childnode refid="2932" relation="include">
         </childnode>
       </node>
-      <node id="2872">
+      <node id="2928">
         <label>experimental/type_traits</label>
       </node>
-      <node id="2867">
+      <node id="2917">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2918" relation="include">
+        </childnode>
+        <childnode refid="2919" relation="include">
+        </childnode>
+        <childnode refid="2920" relation="include">
+        </childnode>
+        <childnode refid="2929" relation="include">
+        </childnode>
+        <childnode refid="2933" relation="include">
+        </childnode>
+      </node>
+      <node id="2923">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2874">
+      <node id="2930">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="2866">
+      <node id="2922">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="2875">
+      <node id="2916">
+        <label>tools/finite/opt.h</label>
+        <link refid="opt_8h"/>
+        <childnode refid="2917" relation="include">
+        </childnode>
+        <childnode refid="2933" relation="include">
+        </childnode>
+        <childnode refid="2926" relation="include">
+        </childnode>
+        <childnode refid="2935" relation="include">
+        </childnode>
+        <childnode refid="2936" relation="include">
+        </childnode>
+        <childnode refid="2937" relation="include">
+        </childnode>
+      </node>
+      <node id="2931">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="2869">
+      <node id="2925">
         <label>iostream</label>
       </node>
-      <node id="2859">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/report.cpp</label>
-        <link refid="report_8cpp"/>
-        <childnode refid="2860" relation="include">
-        </childnode>
-      </node>
-      <node id="2878">
+      <node id="2934">
         <label>chrono</label>
       </node>
-      <node id="2860">
-        <label>state/tools/finite/opt.h</label>
-        <link refid="opt_8h"/>
-        <childnode refid="2861" relation="include">
-        </childnode>
-        <childnode refid="2877" relation="include">
-        </childnode>
-        <childnode refid="2870" relation="include">
-        </childnode>
-        <childnode refid="2879" relation="include">
-        </childnode>
-        <childnode refid="2880" relation="include">
-        </childnode>
-        <childnode refid="2881" relation="include">
-        </childnode>
-      </node>
-      <node id="2864">
+      <node id="2920">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2865" relation="include">
+        <childnode refid="2921" relation="include">
         </childnode>
-        <childnode refid="2866" relation="include">
+        <childnode refid="2922" relation="include">
         </childnode>
-        <childnode refid="2867" relation="include">
+        <childnode refid="2923" relation="include">
         </childnode>
-        <childnode refid="2868" relation="include">
+        <childnode refid="2924" relation="include">
         </childnode>
-        <childnode refid="2869" relation="include">
+        <childnode refid="2925" relation="include">
         </childnode>
-        <childnode refid="2870" relation="include">
+        <childnode refid="2926" relation="include">
         </childnode>
-        <childnode refid="2871" relation="include">
-        </childnode>
-      </node>
-      <node id="2861">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="2862" relation="include">
-        </childnode>
-        <childnode refid="2863" relation="include">
-        </childnode>
-        <childnode refid="2864" relation="include">
-        </childnode>
-        <childnode refid="2873" relation="include">
-        </childnode>
-        <childnode refid="2877" relation="include">
+        <childnode refid="2927" relation="include">
         </childnode>
       </node>
-      <node id="2876">
+      <node id="2932">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
-      <node id="2862">
+      <node id="2918">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -144,135 +144,143 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-05-31.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">state/tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight></codeline>
 <codeline lineno="7" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;direct_opt_tuple&gt;<sp/>&amp;opt_log){</highlight></codeline>
-<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
-<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Algorithm&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;size&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;energy&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(44)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;variance&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;overlap&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;iter&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;counter&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Elapsed<sp/>time<sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>per<sp/>count<sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;item<sp/>:<sp/>opt_log){</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>std::fixed</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;0&gt;(item)</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;1&gt;(item)</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;2&gt;(item)</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(44)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;3&gt;(item)</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;4&gt;(item)</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;5&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;6&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;7&gt;(item)<sp/>*<sp/>1000</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;7&gt;(item)<sp/>*<sp/>1000<sp/>/<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)std::get&lt;6&gt;(item)</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
-<codeline lineno="35"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a620c5c854aaf3f75ea58fee57da509e6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;subspc_opt_tuple&gt;<sp/>&amp;opt_log){</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Algorithm&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;size&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;energy&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(44)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;variance&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;overlap&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;iter&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;counter&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Elapsed<sp/>time<sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>per<sp/>count<sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;item<sp/>:<sp/>opt_log){</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>std::fixed</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;0&gt;(item)</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;1&gt;(item)</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;2&gt;(item)</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(44)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;3&gt;(item)</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;4&gt;(item)</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;5&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;6&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;7&gt;(item)<sp/>*<sp/>1000</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;7&gt;(item)<sp/>*<sp/>1000<sp/>/<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)std::get&lt;6&gt;(item)</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a1ea3179701e726a6a5d58b553f2a2a4f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;eig_tuple&gt;<sp/>&amp;eig_log){</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>solver_report;</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>solver_report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;n<sp/>eigvecs&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;max<sp/>overlap&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;min<sp/>overlap&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(34)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;eps<sp/>=<sp/>Σ_i<sp/>|&lt;state_i|old&gt;|^2&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(32)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;quality<sp/>=<sp/>log10(1<sp/>-<sp/>eps)&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Eig<sp/>Time[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;LU<sp/><sp/>Time[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;item<sp/>:<sp/>eig_log){</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solver_report</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>std::fixed</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;0&gt;(item)</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;1&gt;(item)</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;2&gt;(item)</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(34)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;3&gt;(item)</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(32)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;4&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;5&gt;(item)<sp/>*<sp/>1000</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;6&gt;(item)<sp/>*<sp/>1000</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>solver_report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(solver_report.str());</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="96"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"></highlight></codeline>
-<codeline lineno="98"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1abb21a7520ac89b965ed57e5424154836" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a614f8e368679ab590e9951b6f46245f7" kindref="member">lbfgs_tuple</ref><sp/>lbfgs_log){</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>report</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(3)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;LBFGS<sp/>Time<sp/>report&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;vH2v<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;vHv<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;vH2<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;vH<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;tot<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;op<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>report</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;0&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;1&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;2&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;3&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><sp/><sp/><sp/>std::get&lt;0&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>std::get&lt;1&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>std::get&lt;2&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>std::get&lt;3&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;4&gt;(lbfgs_log)</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"></highlight></codeline>
-<codeline lineno="132"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Algorithm&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;size&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;energy&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(44)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;variance&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;overlap&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;norm&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;iter&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;counter&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Elapsed<sp/>time<sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>per<sp/>count<sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;item<sp/>:<sp/>opt_log){</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>std::fixed</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;0&gt;(item)</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;1&gt;(item)</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;2&gt;(item)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(44)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;3&gt;(item)</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;4&gt;(item)</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;5&gt;(item)</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;6&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;7&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;8&gt;(item)<sp/>*<sp/>1000</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;8&gt;(item)<sp/>*<sp/>1000<sp/>/<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)std::get&lt;7&gt;(item)</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a620c5c854aaf3f75ea58fee57da509e6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;subspc_opt_tuple&gt;<sp/>&amp;opt_log){</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Algorithm&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;size&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;energy&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(44)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;variance&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;overlap&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;norm&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;iter&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;counter&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Elapsed<sp/>time<sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>per<sp/>count<sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;item<sp/>:<sp/>opt_log){</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>std::fixed</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;0&gt;(item)</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;1&gt;(item)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;2&gt;(item)</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(44)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;3&gt;(item)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;4&gt;(item)</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;5&gt;(item)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;6&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(8)<sp/><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;7&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;8&gt;(item)<sp/>*<sp/>1000</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;8&gt;(item)<sp/>*<sp/>1000<sp/>/<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)std::get&lt;7&gt;(item)</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a1ea3179701e726a6a5d58b553f2a2a4f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;eig_tuple&gt;<sp/>&amp;eig_log){</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>solver_report;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>solver_report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;n<sp/>eigvecs&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;max<sp/>overlap&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;min<sp/>overlap&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(34)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;eps<sp/>=<sp/>Σ_i<sp/>|&lt;state_i|old&gt;|^2&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(32)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;quality<sp/>=<sp/>log10(1<sp/>-<sp/>eps)&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Eig<sp/>Time[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;LU<sp/><sp/>Time[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;item<sp/>:<sp/>eig_log){</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solver_report</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>std::fixed</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;0&gt;(item)</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;1&gt;(item)</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;2&gt;(item)</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(34)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;3&gt;(item)</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(32)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;4&gt;(item)<sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;5&gt;(item)<sp/>*<sp/>1000</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(18)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/>std::get&lt;6&gt;(item)<sp/>*<sp/>1000</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>solver_report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(solver_report.str());</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1abb21a7520ac89b965ed57e5424154836" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a614f8e368679ab590e9951b6f46245f7" kindref="member">lbfgs_tuple</ref><sp/>lbfgs_log){</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>report</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(3)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;LBFGS<sp/>Time<sp/>report&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;vH2v<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;vHv<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;vH2<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;vH<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;tot<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;op<sp/><sp/>[ms]&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>report</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(3)</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;0&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;1&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;2&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;3&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<sp/><sp/><sp/><sp/>std::get&lt;0&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>std::get&lt;1&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>std::get&lt;2&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>std::get&lt;3&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>1000<sp/>*<sp/>std::get&lt;4&gt;(lbfgs_log)</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/report.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp"/>
   </compounddef>
 </doxygen>

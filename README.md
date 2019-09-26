@@ -102,7 +102,7 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
  - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5.
  - [**HDF5**](https://support.hdfgroup.org/HDF5/) for output binary output file support (tested with version >= 1.10).
  - [**ceres**](http://ceres-solver.org/) Optimization library. Here we use the L-BFGS routines. 
- - [**spdlog**](https://github.com/gabime/spdlog) logger).
+ - [**spdlog**](https://github.com/gabime/spdlog) A fast logger.
 
 ---
 

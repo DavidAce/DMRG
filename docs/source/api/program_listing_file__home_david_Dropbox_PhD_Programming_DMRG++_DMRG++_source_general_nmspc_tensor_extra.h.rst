@@ -227,6 +227,12 @@ Program Listing for File nmspc_tensor_extra.h
            return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), rows,cols);
        }
    
+       template<typename Derived, typename sizeType>
+       auto Tensor_to_Matrix_Map(const Eigen::TensorBase<Derived,Eigen::WriteAccessors> &tensor,const sizeType rows,const sizeType cols){
+           Derived& temp = static_cast<Derived&>(tensor);
+           return Eigen::Map<const MatrixType<typename Derived::Scalar>> (temp.data(), rows,cols);
+       }
+   
        template <typename Scalar>
        constexpr SparseMatrixType<Scalar> Tensor2_to_SparseMatrix(const Eigen::Tensor<Scalar,2> &tensor, double prune_threshold = 1e-15) {
            return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1)).sparseView().pruned(prune_threshold);

@@ -59,8 +59,6 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_iTEBD.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_xDMRG.cpp`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_hdf5_log_buffer.cpp`
 
 

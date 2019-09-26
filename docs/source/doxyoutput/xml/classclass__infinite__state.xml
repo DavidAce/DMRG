@@ -54,7 +54,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>A matrix product state for two sites , A and B, and a center bond. In Vidal Canonical Form <formula id="31">$\Lambda^A\Gamma^A \Lambda^C \Gamma^B\Lambda^B$</formula>. </para>        </detaileddescription>
+<para>A matrix product state for two sites , A and B, and a center bond. In Vidal Canonical Form <formula id="10">$\Lambda^A\Gamma^A \Lambda^C \Gamma^B\Lambda^B$</formula>. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" bodystart="48" bodyend="-1"/>
@@ -201,12 +201,22 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="22" bodyend="36"/>
-        <references refid="classclass__infinite__state_1abacb807a6f6c997dac4bb45654ba8223" compoundref="class__infinite__state_8h" startline="32">log</references>
-        <references refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" compoundref="nmspc__logger_8h" startline="33" endline="44">Logger::setLogger</references>
+        <references refid="classclass__infinite__state_1ac6e7b8a73cc94d67562d8c06e5762e0b" compoundref="class__infinite__state_8h" startline="29">sim_type</references>
         <references refid="classclass__infinite__state_1abdff0f034bc7eba1b566665e5673d251" compoundref="class__infinite__state_8h" startline="30">sim_name</references>
-        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="148">settings::console::verbosity</references>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
         <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">HA</references>
+        <references refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" compoundref="class__model__factory_8cpp" startline="14" endline="30">class_model_factory::create_mpo</references>
+        <references refid="namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b" compoundref="nmspc__settings_8h" startline="51">settings::model::model_type</references>
+        <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">HB</references>
+        <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">Lblock</references>
+        <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">Rblock</references>
+        <references refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" compoundref="class__infinite__state_8h" startline="53">Lblock2</references>
+        <references refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" compoundref="class__infinite__state_8h" startline="54">Rblock2</references>
+        <references refid="classclass__infinite__state_1abacb807a6f6c997dac4bb45654ba8223" compoundref="class__infinite__state_8h" startline="32">log</references>
+        <references refid="namespace_logger_1a540e0412286255a5eb899ee37171f39d" compoundref="nmspc__logger_8h" startline="51" endline="63">Logger::setLogger</references>
+        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="168">settings::console::verbosity</references>
+        <references refid="classclass__mps__2site_1a383049daa4c1ce54abe3da82c174d30e" compoundref="class__mps__2site_8cpp" startline="54" endline="75">class_mps_2site::initialize</references>
+        <references refid="classclass__model__base_1a7c8050ed2641e8145fdf30860435986a">class_model_base::get_spin_dimension</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1a927dbf6b1591913677199e2e7ee63164" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -237,8 +247,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="68" bodyend="71"/>
-        <references refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" compoundref="finite_2measure_8cpp" startline="30" endline="32">tools::finite::measure::length</references>
         <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">Lblock</references>
+        <references refid="classclass__environment_1a07a78fc055d953768e686ef522bb6d0c" compoundref="class__environment_8h" startline="45">class_environment::sites</references>
         <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">Rblock</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1a499daac3b087b07993f32077adc175e0" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
@@ -254,6 +264,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="73" bodyend="73"/>
         <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">Lblock</references>
+        <references refid="classclass__environment_1a07a78fc055d953768e686ef522bb6d0c" compoundref="class__environment_8h" startline="45">class_environment::sites</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1a1c5495f2fe53fc618aa00ddd8e9d054f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>size_t</type>
@@ -268,6 +279,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="59" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="75" bodyend="75"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1a13f73f78154af08d937d0c21abbc50ac" compoundref="class__mps__2site_8cpp" startline="34" endline="34">class_mps_2site::chiC</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1a9191239e8e3f068c113645c78a449c10" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__infinite__state_1a3c02b3e1b7b2653ca2ab5117eb7d09c2" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -282,6 +294,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="79" bodyend="79"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1a246ef4d1f0d577fee574e76cbd4a4ce8" compoundref="class__mps__2site_8cpp" startline="93" endline="106">class_mps_2site::get_theta</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1a2304b5989f160b8600a1344c1b7900fe" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::DSizes&lt; long, 4 &gt;</type>
@@ -296,6 +309,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="77" bodyend="77"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1aeb415f0e981cb5707f48627585b2eff5" compoundref="class__mps__2site_8cpp" startline="50" endline="50">class_mps_2site::dimensions</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1ae7ee8d12104ad16db454939af2c51d8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -310,16 +324,24 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Contract the MPS of current position <formula id="10">$n$</formula> into the left and right environments <formula id="32">$L$</formula> and <formula id="33">$R$</formula>, i.e. <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>. <formula id="21">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> <formula id="23">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> </para>        </detaileddescription>
+<para>Contract the MPS of current position <formula id="11">$n$</formula> into the left and right environments <formula id="12">$L$</formula> and <formula id="13">$R$</formula>, i.e. <computeroutput>Lblock</computeroutput> and <computeroutput>Rblock</computeroutput>. <formula id="14">\[ L \leftarrow L \Lambda^B_{n-1} \Gamma^A_n W \Lambda^B_{n-1} (\Gamma^A_n)^* \]</formula> <formula id="15">\[ R \leftarrow R \Gamma^B_{n+1} \Lambda^B_{n+1} W (\Gamma^B_{n+1})^* \Lambda^B_{n+1} \]</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="88" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="271" bodyend="298"/>
         <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">Lblock</references>
-        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">HA</references>
-        <references refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" compoundref="class__infinite__state_8h" startline="53">Lblock2</references>
+        <references refid="classclass__environment_1acef2c531bcfe796f126dd712aca57ef0" compoundref="class__environment_8cpp" startline="23" endline="31">class_environment::enlarge</references>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">class_mps_2site::MPS_A</references>
+        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">HA</references>
+        <references refid="classclass__model__base_1a230141d80f84b200729e74fa114bd3e8">class_model_base::MPO_reduced_view</references>
+        <references refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" compoundref="class__infinite__state_8h" startline="53">Lblock2</references>
+        <references refid="classclass__environment__var_1af89a2e8b30958855bb30418f66211a84" compoundref="class__environment_8cpp" startline="133" endline="141">class_environment_var::enlarge</references>
+        <references refid="classclass__environment_1ae3f06ae154ab3d2919c6d8bab92048c0" compoundref="class__environment_8h" startline="61" endline="61">class_environment::set_position</references>
         <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">HB</references>
+        <references refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" compoundref="class__model__base_8cpp" startline="52" endline="55">class_model_base::get_position</references>
+        <references refid="classclass__environment__var_1ab1d4b49b27cade1459eb40c1d4c92fe2" compoundref="class__environment_8h" startline="96" endline="96">class_environment_var::set_position</references>
         <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">Rblock</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
         <references refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" compoundref="class__infinite__state_8h" startline="54">Rblock2</references>
         <references refid="classclass__infinite__state_1a476ee3b752731ebb1ce99126a230a0fa" compoundref="class__infinite__state_8cpp" startline="313" endline="316">unset_measurements</references>
       </memberdef>
@@ -354,11 +376,15 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="187" bodyend="204"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1a507f41fbcfe8f005618099c14994d551" compoundref="class__mps__2site_8cpp" startline="31" endline="31">class_mps_2site::isReal</references>
         <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">HA</references>
+        <references refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" compoundref="class__model__base_8cpp" startline="22" endline="24">class_model_base::isReal</references>
         <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">HB</references>
         <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">Lblock</references>
+        <references refid="classclass__environment_1a43b3c6f5b47361dc747252a84ab9a0fb" compoundref="class__environment_8cpp" startline="13" endline="15">class_environment::isReal</references>
         <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">Rblock</references>
         <references refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" compoundref="class__infinite__state_8h" startline="53">Lblock2</references>
+        <references refid="classclass__environment__var_1a8addc8d3aa43f15d738c59d6ca63554b" compoundref="class__environment_8cpp" startline="16" endline="18">class_environment_var::isReal</references>
         <references refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" compoundref="class__infinite__state_8h" startline="54">Rblock2</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1ab880bb4ab8733d5d04df4e87a4ada980" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
@@ -379,11 +405,18 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="207" bodyend="224"/>
         <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">Lblock</references>
+        <references refid="classclass__environment_1a43b3c6f5b47361dc747252a84ab9a0fb" compoundref="class__environment_8cpp" startline="13" endline="15">class_environment::isReal</references>
         <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">Rblock</references>
         <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">HA</references>
+        <references refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" compoundref="class__model__base_8cpp" startline="22" endline="24">class_model_base::isReal</references>
         <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">HB</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">class_environment::block</references>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1a9d1733cd39da713d91468733108f5ffa" compoundref="class__mps__2site_8cpp" startline="32" endline="32">class_mps_2site::chiA</references>
+        <references refid="classclass__mps__2site_1a29e06366c2edc97ea5ac4aed0fc9ce4e" compoundref="class__mps__2site_8cpp" startline="35" endline="35">class_mps_2site::spindim</references>
+        <references refid="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" compoundref="class__mps__2site_8cpp" startline="33" endline="33">class_mps_2site::chiB</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1aecd6c5063e3329774fee0291b4c8925b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -403,11 +436,18 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="231" bodyend="263"/>
         <references refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" compoundref="class__infinite__state_8h" startline="53">Lblock2</references>
+        <references refid="classclass__environment__var_1a8addc8d3aa43f15d738c59d6ca63554b" compoundref="class__environment_8cpp" startline="16" endline="18">class_environment_var::isReal</references>
         <references refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" compoundref="class__infinite__state_8h" startline="54">Rblock2</references>
         <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">HA</references>
+        <references refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" compoundref="class__model__base_8cpp" startline="22" endline="24">class_model_base::isReal</references>
         <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">HB</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" compoundref="class__environment_8h" startline="81">class_environment_var::block</references>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1a9d1733cd39da713d91468733108f5ffa" compoundref="class__mps__2site_8cpp" startline="32" endline="32">class_mps_2site::chiA</references>
+        <references refid="classclass__mps__2site_1a29e06366c2edc97ea5ac4aed0fc9ce4e" compoundref="class__mps__2site_8cpp" startline="35" endline="35">class_mps_2site::spindim</references>
+        <references refid="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" compoundref="class__mps__2site_8cpp" startline="33" endline="33">class_mps_2site::chiB</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1ac35b7836813efa9ad31d19273eec45fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -483,11 +523,17 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="112" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="301" bodyend="310"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">class_mps_2site::MPS_A</references>
+        <references refid="classclass__vidal__site_1a1e1a15ae047688c153f9122137f1207a" compoundref="class__vidal__site_8cpp" startline="26" endline="26">class_vidal_site::set_position</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
         <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">Lblock</references>
+        <references refid="classclass__environment_1ae3f06ae154ab3d2919c6d8bab92048c0" compoundref="class__environment_8h" startline="61" endline="61">class_environment::set_position</references>
         <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">Rblock</references>
         <references refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" compoundref="class__infinite__state_8h" startline="53">Lblock2</references>
+        <references refid="classclass__environment__var_1ab1d4b49b27cade1459eb40c1d4c92fe2" compoundref="class__environment_8h" startline="96" endline="96">class_environment_var::set_position</references>
         <references refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" compoundref="class__infinite__state_8h" startline="54">Rblock2</references>
         <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">HA</references>
+        <references refid="classclass__model__base_1abcce2b2aa2f4680afcb8e92a72c1a992" compoundref="class__model__base_8cpp" startline="46" endline="48">class_model_base::set_position</references>
         <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">HB</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1a5f401d9832c9520bcd532eee3f198b97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -503,6 +549,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h" line="115" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp" bodystart="336" bodyend="338"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">MPS</references>
+        <references refid="classclass__mps__2site_1a14265c98c54e12037449786ac6941e94" compoundref="class__mps__2site_8cpp" startline="78" endline="91">class_mps_2site::swap_AB</references>
       </memberdef>
       <memberdef kind="function" id="classclass__infinite__state_1ac1018d37be59d6b612a47f91407d2ad1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -526,21 +573,21 @@
         <references refid="structclass__infinite__state_1_1_measurements_1a70605a3fe5dd1102a8b61f689427036f" compoundref="class__infinite__state_8h" startline="122">class_infinite_state::Measurements::truncation_error</references>
         <references refid="namespacetools_1_1infinite_1_1measure_1a8de1894431d9e237fb6e43f059c3613a" compoundref="infinite_2measure_8cpp" startline="420" endline="423">tools::infinite::measure::truncation_error</references>
         <references refid="structclass__infinite__state_1_1_measurements_1ad6fab97094657246644246250a1a9e65" compoundref="class__infinite__state_8h" startline="123">class_infinite_state::Measurements::energy_mpo</references>
-        <references refid="namespacetools_1_1infinite_1_1measure_1ac736ff68fedd12b059b6a0a1140a1ae3" compoundref="infinite_2measure_8cpp" startline="458" endline="464">tools::infinite::measure::energy_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1ac736ff68fedd12b059b6a0a1140a1ae3" compoundref="infinite_2measure_8cpp" startline="459" endline="465">tools::infinite::measure::energy_mpo</references>
         <references refid="structclass__infinite__state_1_1_measurements_1a48a75dcab59e3c28ab0a54b10933c013" compoundref="class__infinite__state_8h" startline="124">class_infinite_state::Measurements::energy_per_site_mpo</references>
-        <references refid="namespacetools_1_1infinite_1_1measure_1a83e5c7230844049762ad79a2a0844925" compoundref="infinite_2measure_8cpp" startline="467" endline="471">tools::infinite::measure::energy_per_site_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a83e5c7230844049762ad79a2a0844925" compoundref="infinite_2measure_8cpp" startline="468" endline="472">tools::infinite::measure::energy_per_site_mpo</references>
         <references refid="structclass__infinite__state_1_1_measurements_1ab4ad82ec660b0ab01209d569db40394a" compoundref="class__infinite__state_8h" startline="126">class_infinite_state::Measurements::energy_per_site_ham</references>
-        <references refid="namespacetools_1_1infinite_1_1measure_1a0517648c6c38dd3333a7098d6d64748d" compoundref="infinite_2measure_8cpp" startline="474" endline="506">tools::infinite::measure::energy_per_site_ham</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a0517648c6c38dd3333a7098d6d64748d" compoundref="infinite_2measure_8cpp" startline="475" endline="507">tools::infinite::measure::energy_per_site_ham</references>
         <references refid="structclass__infinite__state_1_1_measurements_1a8411689069de4f6ef17a847258c40622" compoundref="class__infinite__state_8h" startline="127">class_infinite_state::Measurements::energy_per_site_mom</references>
-        <references refid="namespacetools_1_1infinite_1_1measure_1a6f97590e1445ec3c3a0408e80fc45ae4" compoundref="infinite_2measure_8cpp" startline="509" endline="536">tools::infinite::measure::energy_per_site_mom</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a6f97590e1445ec3c3a0408e80fc45ae4" compoundref="infinite_2measure_8cpp" startline="510" endline="537">tools::infinite::measure::energy_per_site_mom</references>
         <references refid="structclass__infinite__state_1_1_measurements_1a0e76d76f02b3b21bd6723eb0ee40aa8d" compoundref="class__infinite__state_8h" startline="125">class_infinite_state::Measurements::energy_variance_mpo</references>
-        <references refid="namespacetools_1_1infinite_1_1measure_1a52cc87e7a9b5a69e875a33e480733ecd" compoundref="infinite_2measure_8cpp" startline="539" endline="557">tools::infinite::measure::energy_variance_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a6e0aca8766d46be42b6b95bd5f22ff66" compoundref="infinite_2measure_8cpp" startline="569" endline="575">tools::infinite::measure::energy_variance_mpo</references>
         <references refid="structclass__infinite__state_1_1_measurements_1abaa4f94d2c3acb3baf0e6fee1a11dcf2" compoundref="class__infinite__state_8h" startline="128">class_infinite_state::Measurements::energy_variance_per_site_mpo</references>
-        <references refid="namespacetools_1_1infinite_1_1measure_1a56c0ea2d4d6d328e02508c7435ce3c8c" compoundref="infinite_2measure_8cpp" startline="577" endline="581">tools::infinite::measure::energy_variance_per_site_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a56c0ea2d4d6d328e02508c7435ce3c8c" compoundref="infinite_2measure_8cpp" startline="578" endline="582">tools::infinite::measure::energy_variance_per_site_mpo</references>
         <references refid="structclass__infinite__state_1_1_measurements_1a82cfde3912dd27c1a41ef389d4d614a2" compoundref="class__infinite__state_8h" startline="129">class_infinite_state::Measurements::energy_variance_per_site_ham</references>
-        <references refid="namespacetools_1_1infinite_1_1measure_1a9217c1dad663b6343ca3b103a31ce49a" compoundref="infinite_2measure_8cpp" startline="586" endline="735">tools::infinite::measure::energy_variance_per_site_ham</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a9217c1dad663b6343ca3b103a31ce49a" compoundref="infinite_2measure_8cpp" startline="587" endline="736">tools::infinite::measure::energy_variance_per_site_ham</references>
         <references refid="structclass__infinite__state_1_1_measurements_1af8e29c502ecb558e707a2872cd3a147c" compoundref="class__infinite__state_8h" startline="130">class_infinite_state::Measurements::energy_variance_per_site_mom</references>
-        <references refid="namespacetools_1_1infinite_1_1measure_1aeafca3091f2799190b63d2439a3f918e" compoundref="infinite_2measure_8cpp" startline="738" endline="744">tools::infinite::measure::energy_variance_per_site_mom</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1aeafca3091f2799190b63d2439a3f918e" compoundref="infinite_2measure_8cpp" startline="739" endline="745">tools::infinite::measure::energy_variance_per_site_mom</references>
         <references refid="structclass__infinite__state_1_1_measurements_1ae5c987b0312d34266f3fe3bafad9d203" compoundref="class__infinite__state_8h" startline="131">class_infinite_state::Measurements::current_entanglement_entropy</references>
         <references refid="namespacetools_1_1infinite_1_1measure_1afe31f99ecec4043193ac621906b30925" compoundref="infinite_2measure_8cpp" startline="427" endline="436">tools::infinite::measure::current_entanglement_entropy</references>
       </memberdef>
@@ -565,15 +612,26 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="79">
+      <node id="199">
         <label>class_infinite_state::Measurements</label>
         <link refid="structclass__infinite__state_1_1_measurements"/>
       </node>
-      <node id="78">
+      <node id="198">
         <label>class_infinite_state</label>
         <link refid="classclass__infinite__state"/>
-        <childnode refid="79" relation="usage">
+        <childnode refid="199" relation="usage">
           <edgelabel>measurements</edgelabel>
+        </childnode>
+        <childnode refid="200" relation="usage">
+          <edgelabel>sim_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="201">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="200">
+        <label>std::string</label>
+        <childnode refid="201" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

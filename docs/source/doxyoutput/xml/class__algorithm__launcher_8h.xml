@@ -7,35 +7,35 @@
     <includedby refid="class__algorithm__launcher_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="main_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/main.cpp</includedby>
     <incdepgraph>
-      <node id="280">
+      <node id="273">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h</label>
         <link refid="class__algorithm__launcher_8h"/>
-        <childnode refid="281" relation="include">
+        <childnode refid="274" relation="include">
         </childnode>
-        <childnode refid="282" relation="include">
+        <childnode refid="275" relation="include">
         </childnode>
       </node>
-      <node id="282">
+      <node id="275">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="281">
+      <node id="274">
         <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="283">
+      <node id="276">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h</label>
         <link refid="class__algorithm__launcher_8h"/>
-        <childnode refid="284" relation="include">
+        <childnode refid="277" relation="include">
         </childnode>
-        <childnode refid="285" relation="include">
+        <childnode refid="278" relation="include">
         </childnode>
       </node>
-      <node id="285">
+      <node id="278">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/main.cpp</label>
         <link refid="main_8cpp"/>
       </node>
-      <node id="284">
+      <node id="277">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
@@ -61,10 +61,10 @@
 <codeline lineno="12" refid="classclass__algorithm__launcher" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__algorithm__launcher" kindref="compound">class_algorithm_launcher</ref><sp/><sp/>{</highlight></codeline>
 <codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="14" refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;spdlog::logger&gt;<sp/><ref refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" kindref="member">log</ref>;</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">setLogger</ref>(std::string<sp/>name);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_logger_1a82c0e82fa7b658057257b2f08ba028f5" kindref="member">setLogger</ref>(std::string<sp/>name);</highlight></codeline>
 <codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="17"><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::shared_ptr<sp/>&lt;class_hdf5_file&gt;<sp/>hdf5;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::shared_ptr<sp/>&lt;class_hdf5_file&gt;<sp/>output;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="19" refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;h5pp::File&gt;<sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>;</highlight></codeline>
 <codeline lineno="20" refid="classclass__algorithm__launcher_1ac61f1ac1f2836bdd3bdcef6901d7fbba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/><ref refid="classclass__algorithm__launcher_1ac61f1ac1f2836bdd3bdcef6901d7fbba" kindref="member">hdf5_path</ref>;</highlight></codeline>
 <codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher" kindref="compound">class_algorithm_launcher</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_);</highlight></codeline>

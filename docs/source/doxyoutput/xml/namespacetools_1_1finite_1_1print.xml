@@ -18,10 +18,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="122" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/print.cpp" bodystart="16" bodyend="29"/>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="183" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp" bodystart="16" bodyend="29"/>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__vidal__site_1a84dea9ec6b9cf8d8dee09dc8e5168014" compoundref="class__vidal__site_8cpp" startline="27" endline="30">class_vidal_site::get_position</references>
+        <references refid="classclass__vidal__site_1afe3069cfa9af24394840fd6d08cb154d" compoundref="class__vidal__site_8cpp" startline="10" endline="10">class_vidal_site::get_L</references>
+        <references refid="classclass__vidal__site_1a647bc3bef44cc54c935c55c31e7a51f9" compoundref="class__vidal__site_8cpp" startline="9" endline="9">class_vidal_site::get_G</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1ac44b254c32c87bad349477836b2b10f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -35,17 +38,24 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print the tensor dimensions for all <formula id="44">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
+<para>Print the tensor dimensions for all <formula id="1">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/print.cpp" bodystart="33" bodyend="73"/>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" compoundref="class__finite__state_8h" startline="52">class_finite_state::ENV_L</references>
-        <references refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" compoundref="class__finite__state_8h" startline="53">class_finite_state::ENV_R</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="46" endline="46">class_finite_state::get_position</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="184" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp" bodystart="33" bodyend="73"/>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
+        <references refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" compoundref="class__finite__state_8h" startline="59">class_finite_state::ENV_L</references>
+        <references refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" compoundref="class__finite__state_8h" startline="60">class_finite_state::ENV_R</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
+        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="91" endline="91">class_finite_state::get_position</references>
+        <references refid="classclass__vidal__site_1afe3069cfa9af24394840fd6d08cb154d" compoundref="class__vidal__site_8cpp" startline="10" endline="10">class_vidal_site::get_L</references>
+        <references refid="classclass__vidal__site_1a647bc3bef44cc54c935c55c31e7a51f9" compoundref="class__vidal__site_8cpp" startline="9" endline="9">class_vidal_site::get_G</references>
+        <references refid="classclass__vidal__site_1a84dea9ec6b9cf8d8dee09dc8e5168014" compoundref="class__vidal__site_8cpp" startline="27" endline="30">class_vidal_site::get_position</references>
+        <references refid="classclass__environment_1aa04ac64fd8b1983b7dd1216befbfbece" compoundref="class__environment_8h" startline="44">class_environment::side</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">class_environment::block</references>
+        <references refid="classclass__environment_1a03977a3c06d86183f55b26af2c05509b" compoundref="class__environment_8h" startline="62" endline="65">class_environment::get_position</references>
+        <references refid="classclass__environment_1a07a78fc055d953768e686ef522bb6d0c" compoundref="class__environment_8h" startline="45">class_environment::sites</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1a5fa332b8e49c0001fcb827d8d8c23001" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -59,17 +69,20 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Print the tensor dimensions for all <formula id="44">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
+<para>Print the tensor dimensions for all <formula id="1">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/print.cpp" bodystart="76" bodyend="95"/>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="49">class_finite_state::MPS_L</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="50">class_finite_state::MPS_R</references>
-        <references refid="classclass__finite__state_1a781bc0bab32617bf299a11124ab136f6" compoundref="class__finite__state_8h" startline="51">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" compoundref="class__finite__state_8h" startline="52">class_finite_state::ENV_L</references>
-        <references refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" compoundref="class__finite__state_8h" startline="53">class_finite_state::ENV_R</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="45" endline="45">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="46" endline="46">class_finite_state::get_position</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="185" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp" bodystart="76" bodyend="95"/>
+        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
+        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
+        <references refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" compoundref="class__finite__state_8h" startline="59">class_finite_state::ENV_L</references>
+        <references refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" compoundref="class__finite__state_8h" startline="60">class_finite_state::ENV_R</references>
+        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
+        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="91" endline="91">class_finite_state::get_position</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">class_environment::block</references>
+        <references refid="classclass__environment_1a07a78fc055d953768e686ef522bb6d0c" compoundref="class__environment_8h" startline="45">class_environment::sites</references>
+        <references refid="classclass__vidal__site_1a647bc3bef44cc54c935c55c31e7a51f9" compoundref="class__vidal__site_8cpp" startline="9" endline="9">class_vidal_site::get_G</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1print_1ad0354a382bc0df6493ad41649d496ae2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -86,15 +99,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/print.cpp" bodystart="100" bodyend="113"/>
-        <references refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPO_L</references>
-        <references refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPO_R</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="186" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp" bodystart="100" bodyend="113"/>
+        <references refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" compoundref="class__finite__state_8h" startline="63">class_finite_state::MPO_L</references>
+        <references refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" compoundref="class__finite__state_8h" startline="64">class_finite_state::MPO_R</references>
+        <references refid="classclass__model__base_1ade62bca0b950914a94c72c72d6c2cc3c">class_model_base::print_parameter_names</references>
+        <references refid="classclass__model__base_1a8ed38e3cb48bacc3103be07284b20831">class_model_base::print_parameter_values</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="121" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="182" column="1"/>
   </compounddef>
 </doxygen>

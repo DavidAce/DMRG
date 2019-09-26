@@ -15,7 +15,7 @@
 <para>Average ferromagnetic coupling strength. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="59" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="59" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="79" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1ac0a60a6a1426c1401c63438ce971aeb7" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -29,7 +29,7 @@
 <para>Average transverse magnetic field strength </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="60" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="80" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a585356bf92b2413b1cb430de265b0e8e" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -43,7 +43,7 @@
 <para>Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="61" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a7fbb5db78fbde435ede8a26d946ad2c8" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -57,7 +57,7 @@
 <para>Standard deviation for the lognormal distribution, i.e. = std(log(h)) for the transverse magnetic field </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="62" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="82" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1af8e672e8d9eb0861b3c5419103906a9e" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -71,7 +71,7 @@
 <para>Lambda parameter </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="63" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="83" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a6a8a8d6fa29d9d802a184390079d1668" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -85,13 +85,13 @@
 <para>Local dimension </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="64" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="84" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="58" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="78" column="1"/>
   </compounddef>
 </doxygen>

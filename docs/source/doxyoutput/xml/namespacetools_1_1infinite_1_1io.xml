@@ -26,12 +26,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="216" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp" bodystart="13" bodyend="36"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="267" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp" bodystart="13" bodyend="36"/>
         <references refid="classclass__infinite__state_1aeb9a2f2e3aba8bee8ea921b4e41d8847" compoundref="class__infinite__state_8h" startline="134">class_infinite_state::has_been_written</references>
-        <references refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" compoundref="nmspc__settings_8h" startline="139">settings::hdf5::storage_level</references>
+        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
         <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
         <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f">LIGHT</references>
-        <references refid="namespacetools_1_1finite_1_1io_1a086dd348f818387215dd3f8faa4ab15d" compoundref="finite_2h5pp_8cpp" startline="101" endline="120">tools::finite::io::write_hamiltonian_params</references>
+        <references refid="namespacetools_1_1infinite_1_1io_1a298290093b33d768f9a62fe4a3972eb2" compoundref="infinite_2h5pp_8cpp" startline="61" endline="81">write_hamiltonian_params</references>
         <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
         <references refid="namespacetools_1_1infinite_1_1io_1a64ca3d5800b61a960922154ce9297354" compoundref="infinite_2h5pp_8cpp" startline="39" endline="43">write_2site_mps</references>
         <references refid="namespacetools_1_1infinite_1_1io_1a043151253c73c92e56d07ffc15060418" compoundref="infinite_2h5pp_8cpp" startline="45" endline="49">write_2site_mpo</references>
@@ -62,8 +62,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="217" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp" bodystart="39" bodyend="43"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="268" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp" bodystart="39" bodyend="43"/>
         <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
+        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">class_mps_2site::MPS_A</references>
+        <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
+        <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">class_mps_2site::LC</references>
+        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
+        <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">class_vidal_site::get_B</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1a043151253c73c92e56d07ffc15060418" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -88,8 +93,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="218" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp" bodystart="45" bodyend="49"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="269" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp" bodystart="45" bodyend="49"/>
         <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
+        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
         <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1a5cecfd670830fe36b205434ac9319ab4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -115,8 +121,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="219" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp" bodystart="51" bodyend="54"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="270" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp" bodystart="51" bodyend="54"/>
         <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">class_infinite_state::Lblock</references>
+        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">class_environment::block</references>
         <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">class_infinite_state::Rblock</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1a9096919dbc3abe2caf1964c15e818615" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -142,8 +149,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="220" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp" bodystart="56" bodyend="59"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="271" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp" bodystart="56" bodyend="59"/>
         <references refid="classclass__infinite__state_1aadcc96d1fc0b1f52ced09c4c199dc379" compoundref="class__infinite__state_8h" startline="53">class_infinite_state::Lblock2</references>
+        <references refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" compoundref="class__environment_8h" startline="81">class_environment_var::block</references>
         <references refid="classclass__infinite__state_1a9256afa0993599f7f0bc52da777bf808" compoundref="class__infinite__state_8h" startline="54">class_infinite_state::Rblock2</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1a298290093b33d768f9a62fe4a3972eb2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -169,9 +177,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="221" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp" bodystart="61" bodyend="81"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="272" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp" bodystart="61" bodyend="81"/>
         <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
+        <references refid="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b">class_model_base::get_parameter_values</references>
         <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
+        <references refid="classclass__model__base_1a2c8ca66dc1a83c1ddb5ea91aec7fe1ed">class_model_base::get_parameter_names</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1aff574a3ae4b577ed7cc5bd65f492a342" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -196,7 +206,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="222" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp" bodystart="83" bodyend="97"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="273" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp" bodystart="83" bodyend="97"/>
         <references refid="classclass__infinite__state_1ac1018d37be59d6b612a47f91407d2ad1" compoundref="class__infinite__state_8cpp" startline="318" endline="332">class_infinite_state::do_all_measurements</references>
         <references refid="classclass__infinite__state_1a311832b3374d5b0badc9780d8252126b" compoundref="class__infinite__state_8h" startline="133">class_infinite_state::measurements</references>
         <references refid="structclass__infinite__state_1_1_measurements_1ab33a8b3053700998a3f86b792dda397f" compoundref="class__infinite__state_8h" startline="119">class_infinite_state::Measurements::length</references>
@@ -239,7 +249,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="223" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="274" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1a1fc9e927375072c37a6a14467fb347c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -264,7 +274,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="224" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="275" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1a857a29dddd9c1ef6f45b5f9181d7644a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -289,13 +299,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="225" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="276" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="215" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="266" column="1"/>
   </compounddef>
 </doxygen>

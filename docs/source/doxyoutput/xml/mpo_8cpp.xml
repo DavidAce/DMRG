@@ -3,208 +3,226 @@
   <compounddef id="mpo_8cpp" kind="file" language="C++">
     <compoundname>mpo.cpp</compoundname>
     <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
-    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes refid="class__model__base_8h" local="no">model/class_model_base.h</includes>
     <includes refid="class__model__factory_8h" local="no">model/class_model_factory.h</includes>
+    <includes refid="nmspc__random__numbers_8h" local="no">general/nmspc_random_numbers.h</includes>
     <incdepgraph>
-      <node id="2470">
+      <node id="2454">
+        <label>general/nmspc_random_numbers.h</label>
+        <link refid="nmspc__random__numbers_8h"/>
+        <childnode refid="2455" relation="include">
+        </childnode>
+        <childnode refid="2432" relation="include">
+        </childnode>
+        <childnode refid="2425" relation="include">
+        </childnode>
+        <childnode refid="2428" relation="include">
+        </childnode>
+      </node>
+      <node id="2433">
         <label>iomanip</label>
       </node>
-      <node id="2468">
+      <node id="2431">
         <label>iterator</label>
       </node>
-      <node id="2471">
+      <node id="2434">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2472" relation="include">
+        <childnode refid="2435" relation="include">
         </childnode>
-        <childnode refid="2465" relation="include">
+        <childnode refid="2428" relation="include">
         </childnode>
-        <childnode refid="2467" relation="include">
+        <childnode refid="2430" relation="include">
         </childnode>
       </node>
-      <node id="2465">
+      <node id="2428">
         <label>Eigen/Core</label>
       </node>
-      <node id="2482">
+      <node id="2445">
         <label>string</label>
       </node>
-      <node id="2490">
+      <node id="2453">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="2483">
+      <node id="2446">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2484" relation="include">
+        <childnode refid="2447" relation="include">
         </childnode>
-        <childnode refid="2469" relation="include">
+        <childnode refid="2432" relation="include">
         </childnode>
       </node>
-      <node id="2486">
+      <node id="2449">
         <label>class_hamiltonian_h5tables.h</label>
         <link refid="class__hamiltonian__h5tables_8h"/>
-        <childnode refid="2487" relation="include">
+        <childnode refid="2450" relation="include">
         </childnode>
-        <childnode refid="2488" relation="include">
+        <childnode refid="2451" relation="include">
         </childnode>
-        <childnode refid="2489" relation="include">
+        <childnode refid="2452" relation="include">
         </childnode>
-        <childnode refid="2490" relation="include">
+        <childnode refid="2453" relation="include">
         </childnode>
       </node>
-      <node id="2477">
+      <node id="2440">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2478" relation="include">
+        <childnode refid="2441" relation="include">
         </childnode>
-        <childnode refid="2479" relation="include">
+        <childnode refid="2442" relation="include">
         </childnode>
-        <childnode refid="2480" relation="include">
+        <childnode refid="2443" relation="include">
         </childnode>
       </node>
-      <node id="2472">
+      <node id="2435">
         <label>experimental/type_traits</label>
       </node>
-      <node id="2467">
+      <node id="2444">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2424" relation="include">
+        </childnode>
+        <childnode refid="2445" relation="include">
+        </childnode>
+        <childnode refid="2427" relation="include">
+        </childnode>
+        <childnode refid="2440" relation="include">
+        </childnode>
+        <childnode refid="2446" relation="include">
+        </childnode>
+      </node>
+      <node id="2430">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2485">
+      <node id="2448">
         <label>model/class_model_factory.h</label>
         <link refid="class__model__factory_8h"/>
-        <childnode refid="2469" relation="include">
+        <childnode refid="2432" relation="include">
         </childnode>
-        <childnode refid="2461" relation="include">
+        <childnode refid="2424" relation="include">
         </childnode>
-        <childnode refid="2476" relation="include">
+        <childnode refid="2439" relation="include">
         </childnode>
-        <childnode refid="2486" relation="include">
+        <childnode refid="2449" relation="include">
         </childnode>
       </node>
-      <node id="2473">
+      <node id="2436">
         <label>state/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="2461" relation="include">
+        <childnode refid="2424" relation="include">
         </childnode>
-        <childnode refid="2464" relation="include">
+        <childnode refid="2427" relation="include">
         </childnode>
-        <childnode refid="2474" relation="include">
+        <childnode refid="2437" relation="include">
         </childnode>
       </node>
-      <node id="2476">
+      <node id="2439">
         <label>model/class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="2461" relation="include">
+        <childnode refid="2424" relation="include">
         </childnode>
-        <childnode refid="2467" relation="include">
+        <childnode refid="2430" relation="include">
         </childnode>
-        <childnode refid="2477" relation="include">
+        <childnode refid="2440" relation="include">
         </childnode>
       </node>
-      <node id="2478">
+      <node id="2441">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="2459">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mpo.cpp</label>
-        <link refid="mpo_8cpp"/>
-        <childnode refid="2460" relation="include">
-        </childnode>
-        <childnode refid="2481" relation="include">
-        </childnode>
-        <childnode refid="2476" relation="include">
-        </childnode>
-        <childnode refid="2485" relation="include">
-        </childnode>
-      </node>
-      <node id="2466">
+      <node id="2429">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="2460">
+      <node id="2455">
+        <label>random</label>
+      </node>
+      <node id="2423">
         <label>state/class_finite_state.h</label>
         <link refid="class__finite__state_8h"/>
-        <childnode refid="2461" relation="include">
+        <childnode refid="2424" relation="include">
         </childnode>
-        <childnode refid="2462" relation="include">
+        <childnode refid="2425" relation="include">
         </childnode>
-        <childnode refid="2463" relation="include">
+        <childnode refid="2426" relation="include">
         </childnode>
-        <childnode refid="2464" relation="include">
+        <childnode refid="2427" relation="include">
         </childnode>
-        <childnode refid="2473" relation="include">
+        <childnode refid="2436" relation="include">
         </childnode>
-        <childnode refid="2475" relation="include">
+        <childnode refid="2438" relation="include">
         </childnode>
-        <childnode refid="2476" relation="include">
+        <childnode refid="2439" relation="include">
         </childnode>
       </node>
-      <node id="2463">
+      <node id="2426">
         <label>optional</label>
       </node>
-      <node id="2487">
+      <node id="2450">
         <label>vector</label>
       </node>
-      <node id="2474">
+      <node id="2437">
         <label>spdlog/fmt/fmt.h</label>
       </node>
-      <node id="2479">
+      <node id="2422">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</label>
+        <link refid="mpo_8cpp"/>
+        <childnode refid="2423" relation="include">
+        </childnode>
+        <childnode refid="2444" relation="include">
+        </childnode>
+        <childnode refid="2439" relation="include">
+        </childnode>
+        <childnode refid="2448" relation="include">
+        </childnode>
+        <childnode refid="2454" relation="include">
+        </childnode>
+      </node>
+      <node id="2442">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="2488">
+      <node id="2451">
         <label>array</label>
       </node>
-      <node id="2489">
+      <node id="2452">
         <label>hdf5.h</label>
       </node>
-      <node id="2469">
+      <node id="2432">
         <label>iostream</label>
       </node>
-      <node id="2484">
+      <node id="2447">
         <label>chrono</label>
       </node>
-      <node id="2462">
+      <node id="2425">
         <label>complex</label>
       </node>
-      <node id="2464">
+      <node id="2427">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2465" relation="include">
+        <childnode refid="2428" relation="include">
         </childnode>
-        <childnode refid="2466" relation="include">
+        <childnode refid="2429" relation="include">
         </childnode>
-        <childnode refid="2467" relation="include">
+        <childnode refid="2430" relation="include">
         </childnode>
-        <childnode refid="2468" relation="include">
+        <childnode refid="2431" relation="include">
         </childnode>
-        <childnode refid="2469" relation="include">
+        <childnode refid="2432" relation="include">
         </childnode>
-        <childnode refid="2470" relation="include">
+        <childnode refid="2433" relation="include">
         </childnode>
-        <childnode refid="2471" relation="include">
-        </childnode>
-      </node>
-      <node id="2481">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="2461" relation="include">
-        </childnode>
-        <childnode refid="2482" relation="include">
-        </childnode>
-        <childnode refid="2464" relation="include">
-        </childnode>
-        <childnode refid="2477" relation="include">
-        </childnode>
-        <childnode refid="2483" relation="include">
+        <childnode refid="2434" relation="include">
         </childnode>
       </node>
-      <node id="2480">
+      <node id="2443">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
-      <node id="2461">
+      <node id="2424">
         <label>memory</label>
       </node>
-      <node id="2475">
+      <node id="2438">
         <label>state/class_vidal_site.h</label>
         <link refid="class__vidal__site_8h"/>
-        <childnode refid="2464" relation="include">
+        <childnode refid="2427" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -217,43 +235,61 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-06-25.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__base_8h" kindref="compound">model/class_model_base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__factory_8h" kindref="compound">model/class_model_factory.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random__numbers_8h" kindref="compound">general/nmspc_random_numbers.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight></codeline>
 <codeline lineno="10" refid="namespacetools_1_1finite_1_1mpo_1a288600f459e4219ff627980887a3d4e7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mpo_1a288600f459e4219ff627980887a3d4e7" kindref="member">tools::finite::mpo::initialize</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" kindref="member">length</ref>,<sp/>std::string<sp/><ref refid="namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b" kindref="member">model_type</ref>){</highlight></codeline>
 <codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Initializing<sp/>mpo&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Generate<sp/>MPO</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" kindref="member">MPO_L</ref>.emplace_back(<ref refid="classclass__model__factory_1abcf6ff6ee79d5ef9af4a219d2ade32d3" kindref="member">class_model_factory::create_mpo</ref>(pos++,model_type));</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" kindref="member">MPO_L</ref>.emplace_back(<ref refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" kindref="member">class_model_factory::create_mpo</ref>(pos++,model_type));</highlight></codeline>
 <codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal">(</highlight><highlight class="keyword">true</highlight><highlight class="normal">){</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" kindref="member">MPO_R</ref>.emplace_back(<ref refid="classclass__model__factory_1abcf6ff6ee79d5ef9af4a219d2ade32d3" kindref="member">class_model_factory::create_mpo</ref>(pos++,model_type));</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(state.<ref refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" kindref="member">MPO_L</ref>.size()<sp/>+<sp/>state.<ref refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" kindref="member">MPO_R</ref>.size()<sp/>&gt;=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" kindref="member">length</ref>){</highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" kindref="member">MPO_R</ref>.emplace_back(<ref refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" kindref="member">class_model_factory::create_mpo</ref>(pos++,model_type));</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(state.<ref refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" kindref="member">MPO_L</ref>.size()<sp/>+<sp/>state.<ref refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" kindref="member">MPO_R</ref>.size()<sp/>&gt;=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a7ea586a94abc0dc2941e01d1c6ceebc5" kindref="member">length</ref>){</highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;}</highlight></codeline>
 <codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="19"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="20"><highlight class="normal"></highlight></codeline>
 <codeline lineno="21"><highlight class="normal"></highlight></codeline>
-<codeline lineno="22" refid="namespacetools_1_1finite_1_1mpo_1a9790abf794f1914ac585a6ec1a87cfcf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mpo_1a9790abf794f1914ac585a6ec1a87cfcf" kindref="member">tools::finite::mpo::randomize</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state)<sp/>{</highlight></codeline>
+<codeline lineno="22" refid="namespacetools_1_1finite_1_1mpo_1aa0628180a4357210b942e7807368f7cb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mpo_1aa0628180a4357210b942e7807368f7cb" kindref="member">tools::finite::mpo::randomize</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1model_1a5b1871176f010ad2de0dc28939d8fa82" kindref="member">seed_model</ref>)<sp/>{</highlight></codeline>
 <codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Setting<sp/>random<sp/>fields<sp/>in<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>all_params;</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/>:<sp/>state.<ref refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" kindref="member">MPO_L</ref>){</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo-&gt;randomize_hamiltonian();</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>all_params.push_back(mpo-&gt;get_parameter_values());</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" kindref="member">MPO_R</ref>){</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo-&gt;randomize_hamiltonian();</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>all_params.push_back(mpo-&gt;get_parameter_values());</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/>:<sp/>state.<ref refid="classclass__finite__state_1ad41b34016714e6b3d3aa67368aacbe64" kindref="member">MPO_L</ref>){</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo-&gt;set_full_lattice_parameters(all_params);</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a0610c0cf4d336c15374c37c646138ab2" kindref="member">MPO_R</ref>){</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo-&gt;set_full_lattice_parameters(all_params);</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(seed_model<sp/>&gt;=<sp/>0){</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" kindref="member">rn::seed</ref>(seed_model);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>all_params;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" kindref="member">MPO_L</ref>){</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo-&gt;randomize_hamiltonian();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>all_params.push_back(mpo-&gt;get_parameter_values());</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" kindref="member">MPO_R</ref>){</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo-&gt;randomize_hamiltonian();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>all_params.push_back(mpo-&gt;get_parameter_values());</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" kindref="member">MPO_L</ref>){</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo-&gt;set_full_lattice_parameters(all_params,</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" kindref="member">MPO_R</ref>){</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo-&gt;set_full_lattice_parameters(all_params,</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="namespacetools_1_1finite_1_1mpo_1a1965229e7240a7c5c4b4e581d617006c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mpo_1a1965229e7240a7c5c4b4e581d617006c" kindref="member">tools::finite::mpo::reduce_mpo_energy</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" kindref="member">unset_measurements</ref>();</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1aa826b1da2dc225002a215e8741fbcbfb" kindref="member">clear_cache</ref>();</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a81b06529556e68f882c591397b39ef2f" kindref="member">energy_per_site</ref><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a81b06529556e68f882c591397b39ef2f" kindref="member">tools::finite::measure::energy_per_site</ref>(state);</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Reducing<sp/>MPO<sp/>energy<sp/>by:<sp/>{}&quot;</highlight><highlight class="normal">,energy_per_site);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1a676679d2e78d031b43016baca197da13" kindref="member">set_reduced_energy</ref>(energy_per_site);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/mpo.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp"/>
   </compounddef>
 </doxygen>

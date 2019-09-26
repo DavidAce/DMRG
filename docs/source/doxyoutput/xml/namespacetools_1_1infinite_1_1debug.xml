@@ -22,9 +22,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="243" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/debug.cpp" bodystart="12" bodyend="32"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="283" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp" bodystart="12" bodyend="32"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
-        <references refid="namespacetools_1_1finite_1_1debug_1ac04a2c7103eb4e428175e373c3b0100c" compoundref="finite_2debug_8cpp" startline="32" endline="232">tools::finite::debug::check_integrity_of_mps</references>
+        <references refid="namespacetools_1_1infinite_1_1debug_1a9e95eb2e81af56102b05c1995c972b8a" compoundref="infinite_2debug_8cpp" startline="37" endline="161">check_integrity_of_mps</references>
         <references refid="namespacetools_1_1infinite_1_1print_1aa1baae33590d40df78cccb68d0f19ddb" compoundref="infinite_2print_8cpp" startline="17" endline="22">tools::infinite::print::print_state</references>
         <references refid="namespacetools_1_1infinite_1_1measure_1a601facbe89d868ffadaafdb9a1a7d6f5" compoundref="infinite_2measure_8cpp" startline="406" endline="412">tools::infinite::measure::norm</references>
       </memberdef>
@@ -47,7 +47,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="244" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="284" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1debug_1a9e95eb2e81af56102b05c1995c972b8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="245" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/debug.cpp" bodystart="37" bodyend="161"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="285" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp" bodystart="37" bodyend="161"/>
         <references refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" compoundref="nmspc__tools_8h" startline="29">tools::log</references>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1infinite_1_1debug_1a551d3124a2f096b563cfbc8833772f50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -82,13 +82,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="246" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="286" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="242" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="282" column="1"/>
   </compounddef>
 </doxygen>

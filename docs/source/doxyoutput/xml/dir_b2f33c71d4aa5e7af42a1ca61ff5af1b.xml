@@ -9,6 +9,7 @@
     <innerdir refid="dir_2d034bb03cdc7f5c767be5bbfd923bcf">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model</innerdir>
     <innerdir refid="dir_28ecf1530334b765a757f23ed73063e6">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation</innerdir>
     <innerdir refid="dir_a32acfe4a752551b45646f1c64efe790">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state</innerdir>
+    <innerdir refid="dir_d4997a96f2e948238c4ace8570226aa1">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools</innerdir>
     <innerfile refid="main_8cpp">main.cpp</innerfile>
     <innerfile refid="main_8h">main.h</innerfile>
     <briefdescription>

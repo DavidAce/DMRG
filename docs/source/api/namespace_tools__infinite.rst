@@ -36,8 +36,6 @@ Namespaces
 
 - :ref:`namespace_tools__infinite__print`
 
-- :ref:`namespace_tools__infinite__profile`
-
 
 Typedefs
 --------

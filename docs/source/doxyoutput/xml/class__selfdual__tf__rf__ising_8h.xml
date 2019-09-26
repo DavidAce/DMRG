@@ -10,135 +10,135 @@
     <includedby refid="class__model__factory_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</includedby>
     <includedby refid="class__selfdual__tf__rf__ising_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</includedby>
     <incdepgraph>
-      <node id="1592">
+      <node id="1593">
         <label>iomanip</label>
       </node>
-      <node id="1591">
+      <node id="1592">
         <label>iterator</label>
       </node>
-      <node id="1593">
+      <node id="1594">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1594" relation="include">
+        <childnode refid="1595" relation="include">
         </childnode>
-        <childnode refid="1588" relation="include">
+        <childnode refid="1589" relation="include">
         </childnode>
-        <childnode refid="1590" relation="include">
+        <childnode refid="1591" relation="include">
         </childnode>
       </node>
-      <node id="1588">
+      <node id="1589">
         <label>Eigen/Core</label>
       </node>
-      <node id="1596">
+      <node id="1597">
         <label>string</label>
       </node>
-      <node id="1601">
+      <node id="1602">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="1602" relation="include">
-        </childnode>
         <childnode refid="1603" relation="include">
         </childnode>
         <childnode refid="1604" relation="include">
         </childnode>
-      </node>
-      <node id="1594">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="1597">
-        <label>unordered_set</label>
-      </node>
-      <node id="1590">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="1585">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</label>
-        <link refid="class__selfdual__tf__rf__ising_8h"/>
-        <childnode refid="1586" relation="include">
+        <childnode refid="1605" relation="include">
         </childnode>
-        <childnode refid="1587" relation="include">
-        </childnode>
-        <childnode refid="1595" relation="include">
-        </childnode>
-        <childnode refid="1592" relation="include">
-        </childnode>
-        <childnode refid="1599" relation="include">
-        </childnode>
-      </node>
-      <node id="1599">
-        <label>class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="1600" relation="include">
-        </childnode>
-        <childnode refid="1590" relation="include">
-        </childnode>
-        <childnode refid="1601" relation="include">
-        </childnode>
-      </node>
-      <node id="1602">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="1589">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="1598">
-        <label>vector</label>
-      </node>
-      <node id="1603">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="1586">
-        <label>iostream</label>
       </node>
       <node id="1595">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1598">
+        <label>unordered_set</label>
+      </node>
+      <node id="1591">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1586">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</label>
+        <link refid="class__selfdual__tf__rf__ising_8h"/>
+        <childnode refid="1587" relation="include">
+        </childnode>
+        <childnode refid="1588" relation="include">
+        </childnode>
         <childnode refid="1596" relation="include">
         </childnode>
+        <childnode refid="1593" relation="include">
+        </childnode>
+        <childnode refid="1600" relation="include">
+        </childnode>
+      </node>
+      <node id="1600">
+        <label>class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="1601" relation="include">
+        </childnode>
+        <childnode refid="1591" relation="include">
+        </childnode>
+        <childnode refid="1602" relation="include">
+        </childnode>
+      </node>
+      <node id="1603">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1590">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1599">
+        <label>vector</label>
+      </node>
+      <node id="1604">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1587">
+        <label>iostream</label>
+      </node>
+      <node id="1596">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
         <childnode refid="1597" relation="include">
         </childnode>
         <childnode refid="1598" relation="include">
         </childnode>
+        <childnode refid="1599" relation="include">
+        </childnode>
       </node>
-      <node id="1587">
+      <node id="1588">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1588" relation="include">
-        </childnode>
         <childnode refid="1589" relation="include">
         </childnode>
         <childnode refid="1590" relation="include">
         </childnode>
         <childnode refid="1591" relation="include">
         </childnode>
-        <childnode refid="1586" relation="include">
-        </childnode>
         <childnode refid="1592" relation="include">
+        </childnode>
+        <childnode refid="1587" relation="include">
         </childnode>
         <childnode refid="1593" relation="include">
         </childnode>
+        <childnode refid="1594" relation="include">
+        </childnode>
       </node>
-      <node id="1604">
+      <node id="1605">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
-      <node id="1600">
+      <node id="1601">
         <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="1607">
+      <node id="1608">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
         <link refid="class__selfdual__tf__rf__ising_8cpp"/>
       </node>
-      <node id="1605">
+      <node id="1606">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</label>
         <link refid="class__selfdual__tf__rf__ising_8h"/>
-        <childnode refid="1606" relation="include">
-        </childnode>
         <childnode refid="1607" relation="include">
         </childnode>
+        <childnode refid="1608" relation="include">
+        </childnode>
       </node>
-      <node id="1606">
+      <node id="1607">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</label>
         <link refid="class__model__factory_8cpp"/>
       </node>
@@ -180,60 +180,53 @@
 <codeline lineno="28" refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" kindref="member">h_sigma</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="29" refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="30" refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" kindref="member">delta</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="31" refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a83fba52f1f02bd39af1cb47635b67eb9" kindref="member">e_reduced</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="33" refid="classclass__selfdual__tf__rf__ising_1ad23f715526278459b655f6fc0cfe3011" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1ad23f715526278459b655f6fc0cfe3011" kindref="member">num_params</ref><sp/>=<sp/>13;<sp/><sp/></highlight><highlight class="comment">//Number<sp/>of<sp/>parameters<sp/>for<sp/>this<sp/>model<sp/>excluding<sp/>this<sp/>one.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31" refid="classclass__selfdual__tf__rf__ising_1ad23f715526278459b655f6fc0cfe3011" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1ad23f715526278459b655f6fc0cfe3011" kindref="member">num_params</ref><sp/>=<sp/>13;<sp/><sp/></highlight><highlight class="comment">//Number<sp/>of<sp/>parameters<sp/>for<sp/>this<sp/>model<sp/>excluding<sp/>this<sp/>one.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a370e7550390a594f09fa6ac79a9dc7fa" kindref="member">class_selfdual_tf_rf_ising</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position_,std::string<sp/>logName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;SDUAL-ISING&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a370e7550390a594f09fa6ac79a9dc7fa" kindref="member">class_selfdual_tf_rf_ising</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position_,std::string<sp/>logName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;SDUAL-ISING&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Functions<sp/>that<sp/>extend<sp/>the<sp/>base<sp/>(no<sp/>override)</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a1332645c8b209715ebafa132515d54d1" kindref="member">set_realization_averages</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>J_avg_,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>h_avg_);</highlight></codeline>
-<codeline lineno="42" refid="classclass__selfdual__tf__rf__ising_1a8274d69b61f5313fa7165520fa870d41" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8274d69b61f5313fa7165520fa870d41" kindref="member">get_J_rnd</ref>(){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref>;};</highlight></codeline>
-<codeline lineno="43" refid="classclass__selfdual__tf__rf__ising_1a814a6f9eb80922a6b45f69c93d2c5c2f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a814a6f9eb80922a6b45f69c93d2c5c2f" kindref="member">get_h_rnd</ref>(){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref>;};</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Functions<sp/>that<sp/>override<sp/>the<sp/>base</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>MPO_,<sp/>std::vector&lt;double&gt;<sp/>parameters)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;double&gt;<sp/>parameters)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXd<sp/>all_parameters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" kindref="member">position</ref>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8595f437222481ad8e4933dbae3e3b7d" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::VectorXd<sp/>parameters)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a" kindref="member">build_mpo</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57" kindref="member">randomize_hamiltonian</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">MPO_reduced_view</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">MPO_reduced_view</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" kindref="member">single_site_hamiltonian</ref>(</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position,</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sites,</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>,</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>,</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8702c9531914daf6baafff126489bb42" kindref="member">clone</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a6868f04c65fe0c5da49b412a7418b7cc" kindref="member">set_reduced_energy</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" kindref="member">get_spin_dimension</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>double<sp/>get_energy_reduced()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>override;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>double<sp/>get_random_field()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>override;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>double<sp/>get_randomness_strength()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>override;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" kindref="member">print_parameter_names</ref><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" kindref="member">print_parameter_values</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" kindref="member">get_parameter_names</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" kindref="member">get_parameter_values</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Functions<sp/>that<sp/>extend<sp/>the<sp/>base<sp/>(no<sp/>override)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a1332645c8b209715ebafa132515d54d1" kindref="member">set_realization_averages</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>J_avg_,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>h_avg_);</highlight></codeline>
+<codeline lineno="40" refid="classclass__selfdual__tf__rf__ising_1a8274d69b61f5313fa7165520fa870d41" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8274d69b61f5313fa7165520fa870d41" kindref="member">get_J_rnd</ref>(){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref>;};</highlight></codeline>
+<codeline lineno="41" refid="classclass__selfdual__tf__rf__ising_1a814a6f9eb80922a6b45f69c93d2c5c2f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a814a6f9eb80922a6b45f69c93d2c5c2f" kindref="member">get_h_rnd</ref>(){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref>;};</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Functions<sp/>that<sp/>override<sp/>the<sp/>base</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a05264c902ce58ce765713732f29f758c" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;MPO_,<sp/>std::vector&lt;double&gt;<sp/>&amp;parameters)<sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a05264c902ce58ce765713732f29f758c" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;double&gt;<sp/>&amp;<sp/>parameters)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a05264c902ce58ce765713732f29f758c" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXd<sp/>&amp;<sp/>all_parameters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" kindref="member">position</ref>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a05264c902ce58ce765713732f29f758c" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::VectorXd<sp/>&amp;<sp/>parameters)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1ae6383e554e3b872bce0543999732223a" kindref="member">build_mpo</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57" kindref="member">randomize_hamiltonian</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">MPO_reduced_view</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">MPO_reduced_view</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a318fd570727b3841c009a818dfcd2377" kindref="member">clone</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" kindref="member">get_spin_dimension</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" kindref="member">print_parameter_names</ref><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" kindref="member">print_parameter_values</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" kindref="member">get_parameter_names</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" kindref="member">get_parameter_values</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa3a77c6733ee4834834a4ee7ede75067" kindref="member">set_full_lattice_parameters</ref>(</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>chain_parameters,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>reverse<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" kindref="member">single_site_hamiltonian</ref>(</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position,</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sites,</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>void<sp/><sp/><sp/>write_to_hdf5_table()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>override;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
 <codeline lineno="74"><highlight class="normal"></highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a614f69a0c3584740cf06f90af0ac1d2c" kindref="member">set_full_lattice_parameters</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>chain_parameters)<sp/><sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="76"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>void<sp/><sp/><sp/>write_to_hdf5_table()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>override;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal"></highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//DMRG_CLASS_SELFDUAL_TF_ISING_H</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//DMRG_CLASS_SELFDUAL_TF_ISING_H</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h"/>
   </compounddef>

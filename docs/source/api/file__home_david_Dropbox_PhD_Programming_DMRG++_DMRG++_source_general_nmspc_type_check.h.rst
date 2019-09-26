@@ -45,6 +45,8 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_arpackpp_solver.cpp`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct_functor.h`
+
 
 
 
@@ -85,6 +87,8 @@ Classes
 Functions
 ---------
 
+
+- :ref:`exhale_function_namespace_type_check_1a64c1255e6eb16f0f11aa34653745a4b7`
 
 - :ref:`exhale_function_namespace_type_check_1a9db1936a588f77f1f13e313da75f9529`
 

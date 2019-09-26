@@ -18,11 +18,20 @@ Program Listing for File arpackpp_solver.cpp
    #include "matrix_product_sparse.h"
    #include "matrix_product_stl.h"
    #include "matrix_product_hamiltonian.h"
+   
+   #include <general/nmspc_type_check.h>
+   #include <algorithm>
+   
+   #ifdef ARPACKPP_ALTDIR
+   #include <arpackpp/arssym.h>
+   #include <arpackpp/arsnsym.h>
+   #include <arpackpp/arscomp.h>
+   #else
    #include <arpack++/arssym.h>
    #include <arpack++/arsnsym.h>
    #include <arpack++/arscomp.h>
-   #include <general/nmspc_type_check.h>
-   #include <algorithm>
+   #endif
+   
    #include "arpackpp_solver.h"
    
    namespace tc = TypeCheck;

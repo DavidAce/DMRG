@@ -8,97 +8,97 @@
     <includes local="no">memory</includes>
     <includes refid="matrix__product__stl_8h" local="yes">matrix_product_stl.h</includes>
     <incdepgraph>
-      <node id="1193">
+      <node id="1180">
         <label>iomanip</label>
       </node>
-      <node id="1180">
+      <node id="1167">
         <label>Eigen/LU</label>
       </node>
-      <node id="1178">
+      <node id="1165">
         <label>Eigen/Core</label>
       </node>
-      <node id="1191">
+      <node id="1178">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="1192" relation="include">
+        <childnode refid="1179" relation="include">
         </childnode>
-        <childnode refid="1184" relation="include">
+        <childnode refid="1171" relation="include">
         </childnode>
       </node>
-      <node id="1186">
+      <node id="1173">
         <label>map</label>
       </node>
-      <node id="1190">
+      <node id="1177">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="1179">
+      <node id="1166">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="1182">
+      <node id="1169">
         <label>matrix_product_stl.h</label>
         <link refid="matrix__product__stl_8h"/>
-        <childnode refid="1183" relation="include">
+        <childnode refid="1170" relation="include">
         </childnode>
-        <childnode refid="1191" relation="include">
-        </childnode>
-        <childnode refid="1184" relation="include">
-        </childnode>
-        <childnode refid="1193" relation="include">
-        </childnode>
-        <childnode refid="1188" relation="include">
-        </childnode>
-      </node>
-      <node id="1188">
-        <label>vector</label>
-      </node>
-      <node id="1189">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="1185">
-        <label>array</label>
-      </node>
-      <node id="1184">
-        <label>iostream</label>
-      </node>
-      <node id="1183">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1184" relation="include">
-        </childnode>
-        <childnode refid="1185" relation="include">
-        </childnode>
-        <childnode refid="1186" relation="include">
-        </childnode>
-        <childnode refid="1187" relation="include">
-        </childnode>
-        <childnode refid="1188" relation="include">
-        </childnode>
-        <childnode refid="1189" relation="include">
-        </childnode>
-        <childnode refid="1190" relation="include">
-        </childnode>
-      </node>
-      <node id="1192">
-        <label>chrono</label>
-      </node>
-      <node id="1187">
-        <label>complex</label>
-      </node>
-      <node id="1177">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp</label>
-        <link refid="matrix__product__stl_8cpp"/>
         <childnode refid="1178" relation="include">
         </childnode>
-        <childnode refid="1179" relation="include">
+        <childnode refid="1171" relation="include">
         </childnode>
         <childnode refid="1180" relation="include">
         </childnode>
-        <childnode refid="1181" relation="include">
-        </childnode>
-        <childnode refid="1182" relation="include">
+        <childnode refid="1175" relation="include">
         </childnode>
       </node>
-      <node id="1181">
+      <node id="1175">
+        <label>vector</label>
+      </node>
+      <node id="1176">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1172">
+        <label>array</label>
+      </node>
+      <node id="1171">
+        <label>iostream</label>
+      </node>
+      <node id="1170">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1171" relation="include">
+        </childnode>
+        <childnode refid="1172" relation="include">
+        </childnode>
+        <childnode refid="1173" relation="include">
+        </childnode>
+        <childnode refid="1174" relation="include">
+        </childnode>
+        <childnode refid="1175" relation="include">
+        </childnode>
+        <childnode refid="1176" relation="include">
+        </childnode>
+        <childnode refid="1177" relation="include">
+        </childnode>
+      </node>
+      <node id="1179">
+        <label>chrono</label>
+      </node>
+      <node id="1174">
+        <label>complex</label>
+      </node>
+      <node id="1164">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp</label>
+        <link refid="matrix__product__stl_8cpp"/>
+        <childnode refid="1165" relation="include">
+        </childnode>
+        <childnode refid="1166" relation="include">
+        </childnode>
+        <childnode refid="1167" relation="include">
+        </childnode>
+        <childnode refid="1168" relation="include">
+        </childnode>
+        <childnode refid="1169" relation="include">
+        </childnode>
+      </node>
+      <node id="1168">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -212,7 +212,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
 <codeline lineno="36" refid="class_stl_matrix_product_1af9f79876cd02cafe4e2badecfa1de022" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_stl_matrix_product_1af9f79876cd02cafe4e2badecfa1de022" kindref="member">StlMatrixProduct&lt;Scalar&gt;::print</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>A_matrix<sp/>(A_ptr,<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>A_matrix<sp/>(A_ptr,L,L);</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;A_matrix:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>A_matrix<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
@@ -226,19 +226,19 @@
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyFactorOp){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>lu_real_ptr<sp/>=<sp/>std::make_shared&lt;LU_REAL&gt;(<sp/>LU_REAL()<sp/>);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>A_matrix<sp/>(A_ptr,<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>A_matrix<sp/>(A_ptr,L,L);</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>t_factorOp.tic();</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(readyShift<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Shift<sp/>value<sp/>sigma<sp/>has<sp/>not<sp/>been<sp/>set.&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_stl_matrix_product_1a76ab9cc7da91d13ffa17e3e4bf0d5f34" kindref="member">Scalar</ref><sp/>sigma;</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,double&gt;::value)</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma<sp/>=<sp/>sigmaR;</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lu_real.compute(A_matrix<sp/>-<sp/>sigmaR<sp/>*<sp/>Eigen::MatrixXd::Identity(<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>));</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lu_real.compute(A_matrix<sp/>-<sp/>sigmaR<sp/>*<sp/>Eigen::MatrixXd::Identity(L,L));</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma<sp/>=<sp/>std::complex&lt;double&gt;(sigmaR,sigmaI);</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lu_cplx.compute(A_matrix<sp/>-<sp/>sigma<sp/>*<sp/>Eigen::MatrixXd::Identity(<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>));</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lu_cplx.compute(A_matrix<sp/>-<sp/>sigma<sp/>*<sp/>Eigen::MatrixXd::Identity(L,L));</highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
 <codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>readyFactorOp<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>

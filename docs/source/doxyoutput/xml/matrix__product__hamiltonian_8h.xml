@@ -9,155 +9,155 @@
     <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
     <includedby refid="arpackpp__solver_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</includedby>
     <includedby refid="class__infinite__state_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</includedby>
-    <includedby refid="ground__state_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ground_state.cpp</includedby>
-    <includedby refid="finite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp</includedby>
-    <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/opt.cpp</includedby>
+    <includedby refid="ground__state_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</includedby>
+    <includedby refid="finite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</includedby>
+    <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</includedby>
     <incdepgraph>
-      <node id="1140">
+      <node id="1127">
         <label>iomanip</label>
       </node>
-      <node id="1139">
+      <node id="1126">
         <label>iterator</label>
       </node>
-      <node id="1141">
+      <node id="1128">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1142" relation="include">
-        </childnode>
-        <childnode refid="1136" relation="include">
-        </childnode>
-        <childnode refid="1138" relation="include">
-        </childnode>
-      </node>
-      <node id="1136">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="1125">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="1126" relation="include">
-        </childnode>
-        <childnode refid="1127" relation="include">
-        </childnode>
-      </node>
-      <node id="1131">
-        <label>map</label>
-      </node>
-      <node id="1142">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="1138">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="1124">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</label>
-        <link refid="matrix__product__hamiltonian_8h"/>
-        <childnode refid="1125" relation="include">
-        </childnode>
-        <childnode refid="1128" relation="include">
-        </childnode>
         <childnode refid="1129" relation="include">
         </childnode>
-        <childnode refid="1130" relation="include">
+        <childnode refid="1123" relation="include">
         </childnode>
-        <childnode refid="1135" relation="include">
+        <childnode refid="1125" relation="include">
         </childnode>
       </node>
-      <node id="1134">
-        <label>spdlog/spdlog.h</label>
+      <node id="1123">
+        <label>Eigen/Core</label>
       </node>
-      <node id="1137">
-        <label>Eigen/Sparse</label>
+      <node id="1112">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="1113" relation="include">
+        </childnode>
+        <childnode refid="1114" relation="include">
+        </childnode>
+      </node>
+      <node id="1118">
+        <label>map</label>
       </node>
       <node id="1129">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1125">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1111">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</label>
+        <link refid="matrix__product__hamiltonian_8h"/>
+        <childnode refid="1112" relation="include">
+        </childnode>
+        <childnode refid="1115" relation="include">
+        </childnode>
+        <childnode refid="1116" relation="include">
+        </childnode>
+        <childnode refid="1117" relation="include">
+        </childnode>
+        <childnode refid="1122" relation="include">
+        </childnode>
+      </node>
+      <node id="1121">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1124">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1116">
         <label>vector</label>
       </node>
-      <node id="1133">
+      <node id="1120">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="1128">
+      <node id="1115">
         <label>array</label>
       </node>
-      <node id="1127">
+      <node id="1114">
         <label>iostream</label>
       </node>
-      <node id="1130">
+      <node id="1117">
         <label>math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1114" relation="include">
+        </childnode>
+        <childnode refid="1115" relation="include">
+        </childnode>
+        <childnode refid="1118" relation="include">
+        </childnode>
+        <childnode refid="1119" relation="include">
+        </childnode>
+        <childnode refid="1116" relation="include">
+        </childnode>
+        <childnode refid="1120" relation="include">
+        </childnode>
+        <childnode refid="1121" relation="include">
+        </childnode>
+      </node>
+      <node id="1113">
+        <label>chrono</label>
+      </node>
+      <node id="1119">
+        <label>complex</label>
+      </node>
+      <node id="1122">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="1123" relation="include">
+        </childnode>
+        <childnode refid="1124" relation="include">
+        </childnode>
+        <childnode refid="1125" relation="include">
+        </childnode>
+        <childnode refid="1126" relation="include">
+        </childnode>
+        <childnode refid="1114" relation="include">
+        </childnode>
         <childnode refid="1127" relation="include">
         </childnode>
         <childnode refid="1128" relation="include">
         </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1134">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
+        <link refid="finite_2opt_8cpp"/>
+      </node>
+      <node id="1132">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
+        <link refid="class__infinite__state_8cpp"/>
+      </node>
+      <node id="1130">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</label>
+        <link refid="matrix__product__hamiltonian_8h"/>
         <childnode refid="1131" relation="include">
         </childnode>
         <childnode refid="1132" relation="include">
-        </childnode>
-        <childnode refid="1129" relation="include">
         </childnode>
         <childnode refid="1133" relation="include">
         </childnode>
         <childnode refid="1134" relation="include">
         </childnode>
-      </node>
-      <node id="1126">
-        <label>chrono</label>
-      </node>
-      <node id="1132">
-        <label>complex</label>
-      </node>
-      <node id="1135">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1136" relation="include">
-        </childnode>
-        <childnode refid="1137" relation="include">
-        </childnode>
-        <childnode refid="1138" relation="include">
-        </childnode>
-        <childnode refid="1139" relation="include">
-        </childnode>
-        <childnode refid="1127" relation="include">
-        </childnode>
-        <childnode refid="1140" relation="include">
-        </childnode>
-        <childnode refid="1141" relation="include">
+        <childnode refid="1135" relation="include">
         </childnode>
       </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="1146">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt-internals/ground_state.cpp</label>
-        <link refid="ground__state_8cpp"/>
-      </node>
-      <node id="1145">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
-        <link refid="class__infinite__state_8cpp"/>
-      </node>
-      <node id="1143">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</label>
-        <link refid="matrix__product__hamiltonian_8h"/>
-        <childnode refid="1144" relation="include">
-        </childnode>
-        <childnode refid="1145" relation="include">
-        </childnode>
-        <childnode refid="1146" relation="include">
-        </childnode>
-        <childnode refid="1147" relation="include">
-        </childnode>
-        <childnode refid="1148" relation="include">
-        </childnode>
-      </node>
-      <node id="1144">
+      <node id="1131">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
         <link refid="arpackpp__solver_8cpp"/>
       </node>
-      <node id="1148">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/opt.cpp</label>
-        <link refid="infinite_2opt_8cpp"/>
+      <node id="1133">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
+        <link refid="ground__state_8cpp"/>
       </node>
-      <node id="1147">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/opt.cpp</label>
-        <link refid="finite_2opt_8cpp"/>
+      <node id="1135">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
       </node>
     </invincdepgraph>
     <innerclass refid="class_dense_hamiltonian_product" prot="public">DenseHamiltonianProduct</innerclass>

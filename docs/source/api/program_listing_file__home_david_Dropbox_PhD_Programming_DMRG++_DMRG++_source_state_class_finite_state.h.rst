@@ -29,33 +29,49 @@ Program Listing for File class_finite_state.h
    
    class class_finite_state
    {
+   public:
+       using Scalar = std::complex<double>;
    private:
-   
-   
+       using MType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
+       using VType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
+       template<auto rank> using TType = Eigen::Tensor<Scalar,rank>;
        int num_sweeps   = 0;
+       int num_moves    = 0;
        int direction    = 1;
        long chi_max     = 0;
    public:
-       using Scalar = std::complex<double>;
        class_finite_state()=default;
+       ~class_finite_state();
+       class_finite_state(const class_finite_state & other);
+       class_finite_state& operator= (const class_finite_state & other);
+   
+   
    
        std::list<class_vidal_site>                        MPS_L;   
        std::list<class_vidal_site>                        MPS_R;   
-       Eigen::Tensor<Scalar,1>                            MPS_C;   
+       TType<1>                                           MPS_C;   
        std::list<class_environment>                       ENV_L;
        std::list<class_environment>                       ENV_R;
        std::list<class_environment_var>                   ENV2_L;
        std::list<class_environment_var>                   ENV2_R;
-       std::list<std::shared_ptr<class_model_base>>       MPO_L;     
-       std::list<std::shared_ptr<class_model_base>>       MPO_R;     
+       std::list<std::unique_ptr<class_model_base>>       MPO_L;     
+       std::list<std::unique_ptr<class_model_base>>       MPO_R;     
        void do_all_measurements();
    
    
    
-       int    get_sweeps()                         const ;
-       void   set_sweeps(int num_sweeps_) {num_sweeps = num_sweeps_;}
-       void   increment_sweeps() {num_sweeps++;}
+       int    get_sweeps() const ;
        int    reset_sweeps();
+       void   set_sweeps(int num_sweeps_);
+       void   increment_sweeps();
+   
+       int    get_moves() const ;
+       int    reset_moves();
+       void   set_moves(int num_moves_);
+       void   increment_moves();
+   
+   
+   
        long   get_chi_max()                        const;
        void   set_chi_max(long chi_max_);
        void set_positions();
@@ -63,6 +79,10 @@ Program Listing for File class_finite_state.h
        size_t get_position()                       const;
        void flip_direction();
        int  get_direction()                        const;
+       Eigen::DSizes<long,3>  dimensions_2site()   const;
+       size_t size_2site()                         const;
+   
+   
        bool position_is_the_middle()               const;
        bool position_is_the_middle_any_direction() const;
        bool position_is_the_left_edge()            const;
@@ -82,34 +102,41 @@ Program Listing for File class_finite_state.h
        const class_environment_var  & get_ENV2R(size_t pos)                const;
        const Eigen::Tensor<Scalar,3> & get_G(size_t pos)                   const;
        const Eigen::Tensor<Scalar,1> & get_L(size_t pos)                   const;
-       Eigen::Tensor<Scalar,3> & get_G(size_t pos);
-       Eigen::Tensor<Scalar,1> & get_L(size_t pos);
-       Eigen::Tensor<Scalar,3>   get_A()                                   const;
-       Eigen::Tensor<Scalar,3>   get_B()                                   const;
-       Eigen::Tensor<Scalar,3>   get_A(size_t pos)                         const;
-       Eigen::Tensor<Scalar,3>   get_B(size_t pos)                         const;
-       Eigen::Tensor<Scalar,4>   get_theta()                               const;
-       Eigen::Tensor<Scalar,4>   get_theta(size_t pos)                     const;
+       TType<3> & get_G(size_t pos);
+       TType<1> & get_L(size_t pos);
+       TType<3>   get_A()                                   const;
+       TType<3>   get_B()                                   const;
+       TType<3>   get_A(size_t pos)                         const;
+       TType<3>   get_B(size_t pos)                         const;
+       TType<4>   get_theta()                               const;
+       TType<4>   get_theta(size_t pos)                     const;
+   
+       // For reduced energy MPO's
+       bool   isReduced()                            const;
+       double get_energy_reduced()                   const;
+       void   set_reduced_energy(double site_energy);
+   
+   
    
        //For multisite
        std::list<size_t>      active_sites;
-       std::list<size_t>      activate_sites(long threshold);
+       std::list<size_t>      activate_sites(const long threshold, const size_t max_sites);
        Eigen::DSizes<long,3>  active_dimensions() const;
-       size_t                 active_size() const;
+       size_t                 active_problem_size() const;
    
-       Eigen::Tensor<Scalar,3>   get_multitheta()    const;
-       Eigen::Tensor<Scalar,4>   get_multimpo  ()    const;
+       TType<3>   get_multitheta()    const;
+       TType<4>   get_multimpo  ()    const;
        std::pair<std::reference_wrapper<const class_environment>     , std::reference_wrapper<const class_environment>>      get_multienv ()     const;
        std::pair<std::reference_wrapper<const class_environment_var> , std::reference_wrapper<const class_environment_var>>  get_multienv2()     const;
    
-       Eigen::Tensor<Scalar,6>   get_multi_hamiltonian() const;
-       Eigen::Tensor<Scalar,6>   get_multi_hamiltonian2() const;
-       Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_matrix() const;
-       Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian2_matrix() const;
+       TType<6>   get_multi_hamiltonian() const;
+       TType<6>   get_multi_hamiltonian2() const;
+       MType get_multi_hamiltonian_matrix() const;
+       MType get_multi_hamiltonian2_matrix() const;
+       MType get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const;
    
    
        std::vector<double>  truncation_error;
-   
        struct Measurements {
            std::optional<size_t>               length                                  = {};
            std::optional<size_t>               bond_dimension_midchain                 = {};
@@ -131,6 +158,24 @@ Program Listing for File class_finite_state.h
        mutable Measurements measurements;
        void unset_measurements() const;
        void do_all_measurements()const;
+       void clear_cache() const;
+   
+       void tag_active_sites_have_been_updated(bool tag)   const;
+       void tag_all_sites_have_been_updated(bool tag)      const;
+       bool all_sites_updated() const;
+       bool active_sites_updated() const;
+       mutable std::vector<bool> site_update_tags;
+   private:
+       struct Cache{
+           std::optional<TType<4>> multimpo        = {};
+           std::optional<TType<3>> multitheta      = {};
+   //        std::optional<TType<6>> multiham        = {};
+   //        std::optional<TType<6>> multiham_sq     = {};
+   //        std::optional<MType>    multiham_mat    = {};
+   //        std::optional<MType>    multiham_sq_mat = {};
+   //        std::optional<MType>    multiham_sq_sub = {};
+       };
+       mutable Cache cache;
    };
    
    

@@ -29,6 +29,8 @@ Includes
 --------
 
 
+- ``Eigen/QR``
+
 - ``Eigen/SVD``
 
 - ``complex.h``

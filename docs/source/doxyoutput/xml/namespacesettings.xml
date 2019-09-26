@@ -4,13 +4,14 @@
     <compoundname>settings</compoundname>
     <innernamespace refid="namespacesettings_1_1console">settings::console</innernamespace>
     <innernamespace refid="namespacesettings_1_1fdmrg">settings::fdmrg</innernamespace>
-    <innernamespace refid="namespacesettings_1_1hdf5">settings::hdf5</innernamespace>
     <innernamespace refid="namespacesettings_1_1idmrg">settings::idmrg</innernamespace>
     <innernamespace refid="namespacesettings_1_1input">settings::input</innernamespace>
     <innernamespace refid="namespacesettings_1_1itebd">settings::itebd</innernamespace>
     <innernamespace refid="namespacesettings_1_1model">settings::model</innernamespace>
+    <innernamespace refid="namespacesettings_1_1output">settings::output</innernamespace>
     <innernamespace refid="namespacesettings_1_1precision">settings::precision</innernamespace>
     <innernamespace refid="namespacesettings_1_1profiling">settings::profiling</innernamespace>
+    <innernamespace refid="namespacesettings_1_1threading">settings::threading</innernamespace>
     <innernamespace refid="namespacesettings_1_1xdmrg">settings::xdmrg</innernamespace>
       <sectiondef kind="func">
       <memberdef kind="function" id="namespacesettings_1a3226e7390ab51155684058cf52f17736" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -28,59 +29,95 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="16" bodyend="115"/>
-        <references refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" compoundref="nmspc__settings_8h" startline="31">settings::input::input_filename</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="16" bodyend="126"/>
+        <references refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" compoundref="nmspc__settings_8h" startline="37">settings::input::input_filename</references>
         <references refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" compoundref="class__settings__reader_8cpp" startline="36" endline="38">class_settings_reader::get_input_filename</references>
-        <references refid="namespacesettings_1_1input_1ab6ac8cfb0c1835dde36563f175f36bd7" compoundref="nmspc__settings_8h" startline="30">settings::input::input_file</references>
+        <references refid="namespacesettings_1_1input_1ab6ac8cfb0c1835dde36563f175f36bd7" compoundref="nmspc__settings_8h" startline="36">settings::input::input_file</references>
         <references refid="classclass__settings__reader_1a9f9e7f86bac3c84348aa9fbbbfb310dd" compoundref="class__settings__reader_8cpp" startline="23" endline="34">class_settings_reader::get_input_file</references>
-        <references refid="namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b" compoundref="nmspc__settings_8h" startline="35">settings::model::model_type</references>
-        <references refid="classclass__settings__reader_1aff67a9d9badf368600351b5790fa66cc" compoundref="class__settings__reader_8h" startline="42" endline="49">class_settings_reader::find_parameter</references>
-        <references refid="namespacesettings_1_1model_1ac7afc4aa61cd2be6625e10af42716284" compoundref="nmspc__settings_8h" startline="36">settings::model::seed_init</references>
-        <references refid="namespacesettings_1_1model_1a42d6b88cb00f9824b3ee1a24eca7dbbc" compoundref="nmspc__settings_8h" startline="37">settings::model::initial_sector</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a2016f014ef7dd7d70acc301cafab62ca" compoundref="nmspc__settings_8h" startline="42">settings::model::tf_ising::J</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a7477c13d9b0d7dbace98d21314700688" compoundref="nmspc__settings_8h" startline="43">settings::model::tf_ising::g</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a515c4000b86ee03c42022e29c304dba4" compoundref="nmspc__settings_8h" startline="44">settings::model::tf_ising::w</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" compoundref="nmspc__settings_8h" startline="45">settings::model::tf_ising::d</references>
-        <references refid="namespacesettings_1_1model_1_1tf__nn__ising_1aa22fade433acf84dacf4e4c05d2d82f8" compoundref="nmspc__settings_8h" startline="50">settings::model::tf_nn_ising::J1</references>
-        <references refid="namespacesettings_1_1model_1_1tf__nn__ising_1a083720bd3a61091855d80ed54238afb1" compoundref="nmspc__settings_8h" startline="51">settings::model::tf_nn_ising::J2</references>
-        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1aac7c5c9f33d713f561f47e74c033ad34" compoundref="nmspc__settings_8h" startline="59">settings::model::selfdual_tf_rf_ising::J_log_mean</references>
-        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1ac0a60a6a1426c1401c63438ce971aeb7" compoundref="nmspc__settings_8h" startline="60">settings::model::selfdual_tf_rf_ising::h_log_mean</references>
-        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a585356bf92b2413b1cb430de265b0e8e" compoundref="nmspc__settings_8h" startline="61">settings::model::selfdual_tf_rf_ising::J_sigma</references>
-        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a7fbb5db78fbde435ede8a26d946ad2c8" compoundref="nmspc__settings_8h" startline="62">settings::model::selfdual_tf_rf_ising::h_sigma</references>
-        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1af8e672e8d9eb0861b3c5419103906a9e" compoundref="nmspc__settings_8h" startline="63">settings::model::selfdual_tf_rf_ising::lambda</references>
-        <references refid="namespacesettings_1_1precision_1a538b01f0a7fe27f48d7980bd7630bd0e" compoundref="nmspc__settings_8h" startline="70">settings::precision::eigMaxIter</references>
-        <references refid="namespacesettings_1_1precision_1a83177d10f491bd1482cdca3132e4dfde" compoundref="nmspc__settings_8h" startline="71">settings::precision::eigThreshold</references>
-        <references refid="namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373" compoundref="nmspc__settings_8h" startline="72">settings::precision::eigMaxNcv</references>
-        <references refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" compoundref="nmspc__settings_8h" startline="73">settings::precision::SVDThreshold</references>
-        <references refid="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" compoundref="nmspc__settings_8h" startline="74">settings::precision::VarConvergenceThreshold</references>
-        <references refid="namespacesettings_1_1precision_1a2d9e7cad0354e0b3b98f9c7acb391d23" compoundref="nmspc__settings_8h" startline="75">settings::precision::VarSaturationThreshold</references>
-        <references refid="namespacesettings_1_1precision_1aefd3107716333590498c58a6ae754f5d" compoundref="nmspc__settings_8h" startline="76">settings::precision::EntEntrSaturationThreshold</references>
-        <references refid="namespacesettings_1_1precision_1a8161050773e553d9b1e4e416a0289508" compoundref="nmspc__settings_8h" startline="77">settings::precision::MaxSizeFullDiag</references>
-        <references refid="namespacesettings_1_1precision_1a6d460e3e89da7786ddef877703a4ff54" compoundref="nmspc__settings_8h" startline="78">settings::precision::MaxSizePartDiag</references>
-        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="83">settings::idmrg::on</references>
-        <references refid="namespacesettings_1_1idmrg_1a0b0d73c9584cf669c3b6ef2c148698cd" compoundref="nmspc__settings_8h" startline="84">settings::idmrg::max_steps</references>
-        <references refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" compoundref="nmspc__settings_8h" startline="85">settings::idmrg::chi_max</references>
-        <references refid="namespacesettings_1_1idmrg_1aa8fbed186f5dc10147472f92cb11cd6f" compoundref="nmspc__settings_8h" startline="86">settings::idmrg::chi_grow</references>
-        <references refid="namespacesettings_1_1idmrg_1af8fb290c6eac82f9e33a94e71d26a29d" compoundref="nmspc__settings_8h" startline="87">settings::idmrg::print_freq</references>
-        <references refid="namespacesettings_1_1idmrg_1a045e93c114bea3cce9b57146f2a7f176" compoundref="nmspc__settings_8h" startline="88">settings::idmrg::write_freq</references>
-        <references refid="namespacesettings_1_1fdmrg_1a11e487d6f9af65a1d479a6631578ef6c" compoundref="nmspc__settings_8h" startline="94">settings::fdmrg::num_sites</references>
-        <references refid="namespacesettings_1_1fdmrg_1a06f9b3649e0f8f8a5b76b5f315f9d4ec" compoundref="nmspc__settings_8h" startline="95">settings::fdmrg::max_sweeps</references>
-        <references refid="namespacesettings_1_1fdmrg_1ae628b1a6ea887a9f04c1e27acfe3868b" compoundref="nmspc__settings_8h" startline="96">settings::fdmrg::min_sweeps</references>
-        <references refid="namespacesettings_1_1fdmrg_1a2c6ec0c3892141068a29cc36c34b9398" compoundref="nmspc__settings_8h" startline="101">settings::fdmrg::store_wavefn</references>
-        <references refid="namespacesettings_1_1xdmrg_1ae6f1e98a3448c4a0da6eb856107ddb52" compoundref="nmspc__settings_8h" startline="115">settings::xdmrg::energy_density_target</references>
-        <references refid="namespacesettings_1_1xdmrg_1a772c7b0f7ceb2760c10f1cee5646666a" compoundref="nmspc__settings_8h" startline="116">settings::xdmrg::energy_density_window</references>
-        <references refid="namespacesettings_1_1itebd_1afcba9beada5551c3da4c25a8376cd67f" compoundref="nmspc__settings_8h" startline="123">settings::itebd::delta_t0</references>
-        <references refid="namespacesettings_1_1itebd_1a6b6afcf2968c3cb071bc050b4e805085" compoundref="nmspc__settings_8h" startline="124">settings::itebd::delta_tmin</references>
-        <references refid="namespacesettings_1_1itebd_1a41cb019340a16c4d308ec3ae6cd473e4" compoundref="nmspc__settings_8h" startline="125">settings::itebd::suzuki_order</references>
-        <references refid="namespacesettings_1_1hdf5_1adc37951d5f8052875716e1b1986c538f" compoundref="nmspc__settings_8h" startline="134">settings::hdf5::save_logs</references>
-        <references refid="namespacesettings_1_1hdf5_1a28db4ee0193d7e6791affbc2e1ab1259" compoundref="nmspc__settings_8h" startline="135">settings::hdf5::save_profiling</references>
-        <references refid="namespacesettings_1_1hdf5_1af00daf6da416145f2f995b66bbdc078d" compoundref="nmspc__settings_8h" startline="138">settings::hdf5::output_filename</references>
-        <references refid="namespacesettings_1_1hdf5_1aa01b10679e0560f95c08147606f59d39" compoundref="nmspc__settings_8h" startline="136">settings::hdf5::access_mode</references>
-        <references refid="namespacesettings_1_1hdf5_1ad8b122803098f54ae88dc287460c2639" compoundref="nmspc__settings_8h" startline="137">settings::hdf5::create_mode</references>
-        <references refid="namespacesettings_1_1hdf5_1ad844524c5a813073cc1cd8aed6e07537" compoundref="nmspc__settings_8h" startline="139">settings::hdf5::storage_level</references>
-        <references refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" compoundref="nmspc__settings_8h" startline="144">settings::profiling::precision</references>
-        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="148">settings::console::verbosity</references>
-        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="149">settings::console::timestamp</references>
+        <references refid="classclass__settings__reader_1a8f5b1fc2161627bec71bcc86e2555c66" compoundref="class__settings__reader_8h" startline="42" endline="53">class_settings_reader::find_parameter</references>
+        <references refid="namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b" compoundref="nmspc__settings_8h" startline="51">settings::model::model_type</references>
+        <references refid="namespacesettings_1_1model_1a5b1871176f010ad2de0dc28939d8fa82" compoundref="nmspc__settings_8h" startline="52">settings::model::seed_model</references>
+        <references refid="namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c" compoundref="nmspc__settings_8h" startline="53">settings::model::seed_state</references>
+        <references refid="namespacesettings_1_1model_1abf7a65496d4c38b818f6b1e4e3c8a02f" compoundref="nmspc__settings_8h" startline="54">settings::model::use_seed_state_as_enumeration</references>
+        <references refid="namespacesettings_1_1model_1a3f07da5789dea3088c9f7efaeb8e6ee8" compoundref="nmspc__settings_8h" startline="55">settings::model::project_when_saturated</references>
+        <references refid="namespacesettings_1_1model_1a2b2ff3a327a7ba07f22ddbd0b5747631" compoundref="nmspc__settings_8h" startline="56">settings::model::use_pauli_eigvecs</references>
+        <references refid="namespacesettings_1_1model_1a1f37947bd102cc62063b30630d798a42" compoundref="nmspc__settings_8h" startline="57">settings::model::initial_parity_sector</references>
+        <references refid="namespacesettings_1_1model_1a8581d610af0717c14566033ed2ab9745" compoundref="nmspc__settings_8h" startline="58">settings::model::target_parity_sector</references>
+        <references refid="namespacesettings_1_1model_1_1tf__ising_1a2016f014ef7dd7d70acc301cafab62ca" compoundref="nmspc__settings_8h" startline="62">settings::model::tf_ising::J</references>
+        <references refid="namespacesettings_1_1model_1_1tf__ising_1a7477c13d9b0d7dbace98d21314700688" compoundref="nmspc__settings_8h" startline="63">settings::model::tf_ising::g</references>
+        <references refid="namespacesettings_1_1model_1_1tf__ising_1a515c4000b86ee03c42022e29c304dba4" compoundref="nmspc__settings_8h" startline="64">settings::model::tf_ising::w</references>
+        <references refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" compoundref="nmspc__settings_8h" startline="65">settings::model::tf_ising::d</references>
+        <references refid="namespacesettings_1_1model_1_1tf__nn__ising_1aa22fade433acf84dacf4e4c05d2d82f8" compoundref="nmspc__settings_8h" startline="70">settings::model::tf_nn_ising::J1</references>
+        <references refid="namespacesettings_1_1model_1_1tf__nn__ising_1a083720bd3a61091855d80ed54238afb1" compoundref="nmspc__settings_8h" startline="71">settings::model::tf_nn_ising::J2</references>
+        <references refid="namespacesettings_1_1model_1_1tf__nn__ising_1a1f6c20945fd63bd938148c3dc0e2e7ee" compoundref="nmspc__settings_8h" startline="72">settings::model::tf_nn_ising::g</references>
+        <references refid="namespacesettings_1_1model_1_1tf__nn__ising_1aef377c5a84d412aae7c9f588f5723501" compoundref="nmspc__settings_8h" startline="74">settings::model::tf_nn_ising::d</references>
+        <references refid="namespacesettings_1_1model_1_1tf__nn__ising_1a1e1c647aee60057b23aa93aed6e0771c" compoundref="nmspc__settings_8h" startline="73">settings::model::tf_nn_ising::w</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1aac7c5c9f33d713f561f47e74c033ad34" compoundref="nmspc__settings_8h" startline="79">settings::model::selfdual_tf_rf_ising::J_log_mean</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1ac0a60a6a1426c1401c63438ce971aeb7" compoundref="nmspc__settings_8h" startline="80">settings::model::selfdual_tf_rf_ising::h_log_mean</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a585356bf92b2413b1cb430de265b0e8e" compoundref="nmspc__settings_8h" startline="81">settings::model::selfdual_tf_rf_ising::J_sigma</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a7fbb5db78fbde435ede8a26d946ad2c8" compoundref="nmspc__settings_8h" startline="82">settings::model::selfdual_tf_rf_ising::h_sigma</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1af8e672e8d9eb0861b3c5419103906a9e" compoundref="nmspc__settings_8h" startline="83">settings::model::selfdual_tf_rf_ising::lambda</references>
+        <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1a6a8a8d6fa29d9d802a184390079d1668" compoundref="nmspc__settings_8h" startline="84">settings::model::selfdual_tf_rf_ising::d</references>
+        <references refid="namespacesettings_1_1precision_1a538b01f0a7fe27f48d7980bd7630bd0e" compoundref="nmspc__settings_8h" startline="90">settings::precision::eigMaxIter</references>
+        <references refid="namespacesettings_1_1precision_1a83177d10f491bd1482cdca3132e4dfde" compoundref="nmspc__settings_8h" startline="91">settings::precision::eigThreshold</references>
+        <references refid="namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373" compoundref="nmspc__settings_8h" startline="92">settings::precision::eigMaxNcv</references>
+        <references refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" compoundref="nmspc__settings_8h" startline="93">settings::precision::SVDThreshold</references>
+        <references refid="namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493" compoundref="nmspc__settings_8h" startline="94">settings::precision::VarConvergenceThreshold</references>
+        <references refid="namespacesettings_1_1precision_1a2d9e7cad0354e0b3b98f9c7acb391d23" compoundref="nmspc__settings_8h" startline="95">settings::precision::VarSaturationThreshold</references>
+        <references refid="namespacesettings_1_1precision_1aefd3107716333590498c58a6ae754f5d" compoundref="nmspc__settings_8h" startline="96">settings::precision::EntEntrSaturationThreshold</references>
+        <references refid="namespacesettings_1_1precision_1afad83713588045b35c92b4128b4333c7" compoundref="nmspc__settings_8h" startline="97">settings::precision::SubspaceQualityFactor</references>
+        <references refid="namespacesettings_1_1precision_1abf702bad979405cc3acd9423af31e4e0" compoundref="nmspc__settings_8h" startline="98">settings::precision::MaxSubspaceQuality</references>
+        <references refid="namespacesettings_1_1precision_1a0b26d7fe007f5549a23443d5b6a36336" compoundref="nmspc__settings_8h" startline="99">settings::precision::MaxSitesMultiDmrg</references>
+        <references refid="namespacesettings_1_1precision_1a8161050773e553d9b1e4e416a0289508" compoundref="nmspc__settings_8h" startline="100">settings::precision::MaxSizeFullDiag</references>
+        <references refid="namespacesettings_1_1precision_1a6d460e3e89da7786ddef877703a4ff54" compoundref="nmspc__settings_8h" startline="101">settings::precision::MaxSizePartDiag</references>
+        <references refid="namespacesettings_1_1precision_1a7d297b83e4dbd5b16f69c16fc7872ee8" compoundref="nmspc__settings_8h" startline="102">settings::precision::MaxSizeDirect</references>
+        <references refid="namespacesettings_1_1precision_1a750367d57c28bed6cbe50b368b822d84" compoundref="nmspc__settings_8h" startline="103">settings::precision::MaxNormError</references>
+        <references refid="namespacesettings_1_1precision_1a78cccff43645d6cdb068d0e1d1fd9ab0" compoundref="nmspc__settings_8h" startline="104">settings::precision::MaxResets</references>
+        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="110">settings::idmrg::on</references>
+        <references refid="namespacesettings_1_1idmrg_1a0b0d73c9584cf669c3b6ef2c148698cd" compoundref="nmspc__settings_8h" startline="111">settings::idmrg::max_steps</references>
+        <references refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" compoundref="nmspc__settings_8h" startline="112">settings::idmrg::chi_max</references>
+        <references refid="namespacesettings_1_1idmrg_1aa8fbed186f5dc10147472f92cb11cd6f" compoundref="nmspc__settings_8h" startline="113">settings::idmrg::chi_grow</references>
+        <references refid="namespacesettings_1_1idmrg_1af8fb290c6eac82f9e33a94e71d26a29d" compoundref="nmspc__settings_8h" startline="114">settings::idmrg::print_freq</references>
+        <references refid="namespacesettings_1_1idmrg_1a045e93c114bea3cce9b57146f2a7f176" compoundref="nmspc__settings_8h" startline="115">settings::idmrg::write_freq</references>
+        <references refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" compoundref="nmspc__settings_8h" startline="120">settings::fdmrg::on</references>
+        <references refid="namespacesettings_1_1fdmrg_1a11e487d6f9af65a1d479a6631578ef6c" compoundref="nmspc__settings_8h" startline="121">settings::fdmrg::num_sites</references>
+        <references refid="namespacesettings_1_1fdmrg_1a06f9b3649e0f8f8a5b76b5f315f9d4ec" compoundref="nmspc__settings_8h" startline="122">settings::fdmrg::max_sweeps</references>
+        <references refid="namespacesettings_1_1fdmrg_1ae628b1a6ea887a9f04c1e27acfe3868b" compoundref="nmspc__settings_8h" startline="123">settings::fdmrg::min_sweeps</references>
+        <references refid="namespacesettings_1_1fdmrg_1a591fd10b121c47245c0ededecc4fa238" compoundref="nmspc__settings_8h" startline="124">settings::fdmrg::chi_max</references>
+        <references refid="namespacesettings_1_1fdmrg_1a1ec29f5e29fb084816e19eb3200232af" compoundref="nmspc__settings_8h" startline="125">settings::fdmrg::chi_grow</references>
+        <references refid="namespacesettings_1_1fdmrg_1aa13535832cc406268ce9d8cb84cf49ab" compoundref="nmspc__settings_8h" startline="126">settings::fdmrg::print_freq</references>
+        <references refid="namespacesettings_1_1fdmrg_1a4d5eed12a79f9d570135c218942c5401" compoundref="nmspc__settings_8h" startline="127">settings::fdmrg::write_freq</references>
+        <references refid="namespacesettings_1_1fdmrg_1a2c6ec0c3892141068a29cc36c34b9398" compoundref="nmspc__settings_8h" startline="128">settings::fdmrg::store_wavefn</references>
+        <references refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" compoundref="nmspc__settings_8h" startline="133">settings::xdmrg::on</references>
+        <references refid="namespacesettings_1_1xdmrg_1ab264e1e2a4cefcd1a486cba52e5a6a07" compoundref="nmspc__settings_8h" startline="134">settings::xdmrg::num_sites</references>
+        <references refid="namespacesettings_1_1xdmrg_1a583c82585f19f30d183fc7fb8835e7e1" compoundref="nmspc__settings_8h" startline="135">settings::xdmrg::max_sweeps</references>
+        <references refid="namespacesettings_1_1xdmrg_1aa6f5aea351bbc22f083b05a98a32787b" compoundref="nmspc__settings_8h" startline="136">settings::xdmrg::min_sweeps</references>
+        <references refid="namespacesettings_1_1xdmrg_1a7cdc55d1f30671a4ac31f4b4fa70a5e9" compoundref="nmspc__settings_8h" startline="137">settings::xdmrg::chi_max</references>
+        <references refid="namespacesettings_1_1xdmrg_1a3c996295abab807a1da990592432ed3f" compoundref="nmspc__settings_8h" startline="138">settings::xdmrg::chi_grow</references>
+        <references refid="namespacesettings_1_1xdmrg_1a7f48ff44ec8237ab7251d06c2238ac9b" compoundref="nmspc__settings_8h" startline="139">settings::xdmrg::print_freq</references>
+        <references refid="namespacesettings_1_1xdmrg_1adbc3af3ab57bbb74f38adf939c9f2ec5" compoundref="nmspc__settings_8h" startline="140">settings::xdmrg::write_freq</references>
+        <references refid="namespacesettings_1_1xdmrg_1af20c38da736809f42070e9be8875cfb3" compoundref="nmspc__settings_8h" startline="141">settings::xdmrg::store_wavefn</references>
+        <references refid="namespacesettings_1_1xdmrg_1ae6f1e98a3448c4a0da6eb856107ddb52" compoundref="nmspc__settings_8h" startline="142">settings::xdmrg::energy_density_target</references>
+        <references refid="namespacesettings_1_1xdmrg_1a772c7b0f7ceb2760c10f1cee5646666a" compoundref="nmspc__settings_8h" startline="143">settings::xdmrg::energy_density_window</references>
+        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="148">settings::itebd::on</references>
+        <references refid="namespacesettings_1_1itebd_1aba276a9861752d56699fc7de2602908b" compoundref="nmspc__settings_8h" startline="149">settings::itebd::max_steps</references>
+        <references refid="namespacesettings_1_1itebd_1afcba9beada5551c3da4c25a8376cd67f" compoundref="nmspc__settings_8h" startline="150">settings::itebd::delta_t0</references>
+        <references refid="namespacesettings_1_1itebd_1a6b6afcf2968c3cb071bc050b4e805085" compoundref="nmspc__settings_8h" startline="151">settings::itebd::delta_tmin</references>
+        <references refid="namespacesettings_1_1itebd_1a41cb019340a16c4d308ec3ae6cd473e4" compoundref="nmspc__settings_8h" startline="152">settings::itebd::suzuki_order</references>
+        <references refid="namespacesettings_1_1itebd_1aaca4efb978bd41af4ae870824351b5c6" compoundref="nmspc__settings_8h" startline="153">settings::itebd::chi_max</references>
+        <references refid="namespacesettings_1_1itebd_1aeeb215c2f571cde123ac0298d61c9941" compoundref="nmspc__settings_8h" startline="154">settings::itebd::chi_grow</references>
+        <references refid="namespacesettings_1_1itebd_1a50559d40426598a6c4b3545a4d551d36" compoundref="nmspc__settings_8h" startline="155">settings::itebd::print_freq</references>
+        <references refid="namespacesettings_1_1itebd_1a93a0bfc65a4ca0a13df530b4d9c80d11" compoundref="nmspc__settings_8h" startline="156">settings::itebd::write_freq</references>
+        <references refid="namespacesettings_1_1output_1a7db5bd70ef10536983073e97f81d65b3" compoundref="nmspc__settings_8h" startline="41">settings::output::save_logs</references>
+        <references refid="namespacesettings_1_1output_1a6c898153abc646a16c799b9183d485d9" compoundref="nmspc__settings_8h" startline="42">settings::output::save_profiling</references>
+        <references refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" compoundref="nmspc__settings_8h" startline="45">settings::output::output_filename</references>
+        <references refid="namespacesettings_1_1output_1a30a0550b22d0bcb105c317a549d7a004" compoundref="nmspc__settings_8h" startline="43">settings::output::access_mode</references>
+        <references refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" compoundref="nmspc__settings_8h" startline="44">settings::output::create_mode</references>
+        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
+        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="163">settings::profiling::on</references>
+        <references refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" compoundref="nmspc__settings_8h" startline="164">settings::profiling::precision</references>
+        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="168">settings::console::verbosity</references>
+        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="169">settings::console::timestamp</references>
       </memberdef>
       <memberdef kind="function" id="namespacesettings_1ae10b3dbe65fa73db62a97a8c06c153b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -97,8 +134,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="117" bodyend="129"/>
-        <references refid="namespacesettings_1a3226e7390ab51155684058cf52f17736" compoundref="nmspc__settings_8cpp" startline="16" endline="115">load_from_file</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="128" bodyend="140"/>
+        <references refid="classclass__settings__reader_1a65edc64ccde3751915c265a4735b4afd" compoundref="class__settings__reader_8cpp" startline="9" endline="21">class_settings_reader::class_settings_reader</references>
+        <references refid="namespacesettings_1a3226e7390ab51155684058cf52f17736" compoundref="nmspc__settings_8cpp" startline="16" endline="126">load_from_file</references>
       </memberdef>
       </sectiondef>
     <briefdescription>

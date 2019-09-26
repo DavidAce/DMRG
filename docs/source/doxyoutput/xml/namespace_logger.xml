@@ -58,6 +58,23 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="23" bodyend="31"/>
       </memberdef>
+      <memberdef kind="function" id="namespace_logger_1a28a08ace407590591117c1ce9eb1536d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t Logger::getLogLevel</definition>
+        <argsstring>(std::shared_ptr&lt; spdlog::logger &gt; &amp;log)</argsstring>
+        <name>getLogLevel</name>
+        <param>
+          <type>std::shared_ptr&lt; spdlog::logger &gt; &amp;</type>
+          <declname>log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="34" bodyend="36"/>
+      </memberdef>
       <memberdef kind="function" id="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
         <definition>void Logger::setLogger</definition>
@@ -87,8 +104,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="33" bodyend="44"/>
-        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="149">settings::console::timestamp</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="38" bodyend="49"/>
         <references refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" compoundref="nmspc__logger_8h" startline="12" endline="16">enableTimeStamp</references>
         <references refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" compoundref="nmspc__logger_8h" startline="17" endline="21">disableTimeStamp</references>
         <references refid="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" compoundref="nmspc__logger_8h" startline="23" endline="31">setLogLevel</references>
@@ -118,9 +134,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="46" bodyend="58"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="149">settings::console::timestamp</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" bodystart="51" bodyend="63"/>
         <references refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" compoundref="nmspc__logger_8h" startline="12" endline="16">enableTimeStamp</references>
         <references refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" compoundref="nmspc__logger_8h" startline="17" endline="21">disableTimeStamp</references>
         <references refid="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" compoundref="nmspc__logger_8h" startline="23" endline="31">setLogLevel</references>

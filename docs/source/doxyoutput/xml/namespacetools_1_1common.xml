@@ -3,6 +3,7 @@
   <compounddef id="namespacetools_1_1common" kind="namespace" language="C++">
     <compoundname>tools::common</compoundname>
     <innernamespace refid="namespacetools_1_1common_1_1io">tools::common::io</innernamespace>
+    <innernamespace refid="namespacetools_1_1common_1_1profile">tools::common::profile</innernamespace>
     <innernamespace refid="namespacetools_1_1common_1_1views">tools::common::views</innernamespace>
       <sectiondef kind="typedef">
       <memberdef kind="typedef" id="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" prot="public" static="no">
@@ -16,13 +17,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" line="258" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/nmspc_tools.h" bodystart="258" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="298" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="298" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="[generated]" line="1" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="297" column="1"/>
   </compounddef>
 </doxygen>

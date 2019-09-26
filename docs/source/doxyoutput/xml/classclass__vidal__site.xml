@@ -40,7 +40,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="25">$\Gamma $</formula> </para>        </detaileddescription>
+<para><formula id="4">$\Gamma $</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_vidal_site.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_vidal_site.h" bodystart="18" bodyend="-1"/>
@@ -53,7 +53,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para><formula id="43">$\Lambda$</formula> </para>        </detaileddescription>
+<para><formula id="17">$\Lambda$</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_vidal_site.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_vidal_site.h" bodystart="19" bodyend="-1"/>
@@ -97,20 +97,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_vidal_site.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_vidal_site.h" bodystart="23" bodyend="27"/>
-        <references refid="classclass__vidal__site_1a721d0ddfa1faa550d1f5ba6d64949a04" compoundref="class__vidal__site_8cpp" startline="8" endline="8">isReal</references>
-        <references refid="classclass__vidal__site_1a647bc3bef44cc54c935c55c31e7a51f9" compoundref="class__vidal__site_8cpp" startline="9" endline="9">get_G</references>
-        <references refid="classclass__vidal__site_1afe3069cfa9af24394840fd6d08cb154d" compoundref="class__vidal__site_8cpp" startline="10" endline="10">get_L</references>
-        <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">get_A</references>
-        <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">get_B</references>
-        <references refid="classclass__vidal__site_1a48abc701113c51653c2e4b910d815643" compoundref="class__vidal__site_8cpp" startline="19" endline="19">get_dims</references>
-        <references refid="classclass__vidal__site_1a4e630c363c4ce0619593ba7c21f3a0e1" compoundref="class__vidal__site_8cpp" startline="20" endline="20">get_spin_dim</references>
-        <references refid="classclass__vidal__site_1a874b7bbe0e666637647e5772deaeaa37" compoundref="class__vidal__site_8cpp" startline="21" endline="21">get_chiL</references>
-        <references refid="classclass__vidal__site_1a5508860d2e60dcc634d89fb0fc86fa53" compoundref="class__vidal__site_8cpp" startline="22" endline="22">get_chiR</references>
-        <references refid="classclass__vidal__site_1a1e1a15ae047688c153f9122137f1207a" compoundref="class__vidal__site_8cpp" startline="26" endline="26">set_position</references>
-        <references refid="classclass__vidal__site_1a84dea9ec6b9cf8d8dee09dc8e5168014" compoundref="class__vidal__site_8cpp" startline="27" endline="30">get_position</references>
-        <references refid="classclass__vidal__site_1a1aa23eb9649c1d2297d61d5f9a6863d4" compoundref="class__vidal__site_8cpp" startline="34" endline="34">set_mps</references>
-        <references refid="classclass__vidal__site_1affb415878e90fd8d7b91e896951d53f5" compoundref="class__vidal__site_8cpp" startline="35" endline="35">set_L</references>
-        <references refid="classclass__vidal__site_1aa0aa4328e28b6c4cdc335fbd044d7537" compoundref="class__vidal__site_8cpp" startline="36" endline="36">set_G</references>
+        <references refid="classclass__vidal__site_1aba2f8b6e1ae1dabadf621679711aca8b" compoundref="class__vidal__site_8h" startline="17">position</references>
+        <references refid="classclass__vidal__site_1adad53548863e85a5a0fc2d564beeb09e" compoundref="class__vidal__site_8h" startline="18">G</references>
+        <references refid="classclass__vidal__site_1a1309d736ba2a999a1e34da874c5f3620" compoundref="class__vidal__site_8h" startline="19">L</references>
       </memberdef>
       <memberdef kind="function" id="classclass__vidal__site_1a721d0ddfa1faa550d1f5ba6d64949a04" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -124,7 +113,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_vidal_site.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_vidal_site.cpp" bodystart="8" bodyend="8"/>
-        <references refid="namespace_textra_1a134cee5e3300feee66018395aa0ffa05" compoundref="nmspc__tensor__extra_8h" startline="280" endline="289">Textra::isReal</references>
+        <references refid="namespace_textra_1ae7794bc6f089ffe1c7121692c28c7592" compoundref="nmspc__tensor__extra_8h" startline="299" endline="302">Textra::isReal</references>
         <references refid="classclass__vidal__site_1adad53548863e85a5a0fc2d564beeb09e" compoundref="class__vidal__site_8h" startline="18">G</references>
       </memberdef>
       <memberdef kind="function" id="classclass__vidal__site_1a647bc3bef44cc54c935c55c31e7a51f9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
@@ -198,7 +187,7 @@
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
         <references refid="classclass__vidal__site_1a1309d736ba2a999a1e34da874c5f3620" compoundref="class__vidal__site_8h" startline="19">L</references>
         <references refid="classclass__vidal__site_1adad53548863e85a5a0fc2d564beeb09e" compoundref="class__vidal__site_8h" startline="18">G</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__vidal__site_1a1f22ee8faea82fd05862efdc1530e27e" kindref="member">Scalar</ref>, 3 &gt;</type>
@@ -215,7 +204,7 @@
         <references refid="classclass__vidal__site_1adad53548863e85a5a0fc2d564beeb09e" compoundref="class__vidal__site_8h" startline="18">G</references>
         <references refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" compoundref="nmspc__tensor__extra_8h" startline="121" endline="123">Textra::asDiagonal</references>
         <references refid="classclass__vidal__site_1a1309d736ba2a999a1e34da874c5f3620" compoundref="class__vidal__site_8h" startline="19">L</references>
-        <references refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" compoundref="nmspc__tensor__extra_8h" startline="40" endline="43">Textra::idx</references>
+        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
       </memberdef>
       <memberdef kind="function" id="classclass__vidal__site_1a48abc701113c51653c2e4b910d815643" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>std::tuple&lt; long, long, long &gt;</type>

@@ -95,7 +95,7 @@ namespace settings {
         inline double   VarSaturationThreshold       = 1e-4  ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
         inline double   EntEntrSaturationThreshold   = 1e-4  ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/
         inline double   SubspaceQualityFactor        = 1     ;   /*!< The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the quality is too bad, direct optimization is done instead */
-        inline double   MaxSubspaceQuality           = 1e-4  ;   /*!< The maximum subspace quality to accept. Helps in the early stages to find good overlapping states */
+        inline double   MaxSubspaceError             = 1e-4  ;   /*!< The maximum subspace quality to accept. Helps in the early stages to find good overlapping states */
         inline size_t   MaxSitesMultiDmrg            = 2     ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>12 or so) makes the contractions slow. */
         inline size_t   MaxSizeFullDiag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
         inline size_t   MaxSizePartDiag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */

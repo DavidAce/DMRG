@@ -3,7 +3,7 @@
 Function tools::infinite::measure::energy_variance_mpo(const class_infinite_state&, const Eigen::Tensor<Scalar, 4>&, double&)
 =============================================================================================================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
 
 
 Function Documentation

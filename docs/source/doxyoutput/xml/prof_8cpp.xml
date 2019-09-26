@@ -2,130 +2,130 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="prof_8cpp" kind="file" language="C++">
     <compoundname>prof.cpp</compoundname>
-    <includes refid="nmspc__tools_8h" local="no">state/tools/nmspc_tools.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <incdepgraph>
-      <node id="2224">
+      <node id="2212">
         <label>iomanip</label>
       </node>
-      <node id="2222">
+      <node id="2210">
         <label>iterator</label>
       </node>
-      <node id="2225">
+      <node id="2213">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2226" relation="include">
+        <childnode refid="2214" relation="include">
         </childnode>
-        <childnode refid="2219" relation="include">
+        <childnode refid="2207" relation="include">
         </childnode>
-        <childnode refid="2221" relation="include">
+        <childnode refid="2209" relation="include">
         </childnode>
       </node>
-      <node id="2219">
+      <node id="2207">
         <label>Eigen/Core</label>
       </node>
-      <node id="2214">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/prof.cpp</label>
-        <link refid="prof_8cpp"/>
-        <childnode refid="2215" relation="include">
-        </childnode>
-        <childnode refid="2233" relation="include">
-        </childnode>
-      </node>
-      <node id="2217">
+      <node id="2205">
         <label>string</label>
       </node>
-      <node id="2231">
+      <node id="2219">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2232" relation="include">
-        </childnode>
-        <childnode refid="2223" relation="include">
-        </childnode>
-      </node>
-      <node id="2227">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="2228" relation="include">
-        </childnode>
-        <childnode refid="2229" relation="include">
-        </childnode>
-        <childnode refid="2230" relation="include">
-        </childnode>
-      </node>
-      <node id="2226">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="2234">
-        <label>unordered_set</label>
-      </node>
-      <node id="2221">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="2228">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="2220">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="2235">
-        <label>vector</label>
-      </node>
-      <node id="2229">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="2223">
-        <label>iostream</label>
-      </node>
-      <node id="2232">
-        <label>chrono</label>
-      </node>
-      <node id="2233">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="2217" relation="include">
-        </childnode>
-        <childnode refid="2234" relation="include">
-        </childnode>
-        <childnode refid="2235" relation="include">
-        </childnode>
-      </node>
-      <node id="2218">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2219" relation="include">
-        </childnode>
         <childnode refid="2220" relation="include">
         </childnode>
-        <childnode refid="2221" relation="include">
-        </childnode>
-        <childnode refid="2222" relation="include">
-        </childnode>
-        <childnode refid="2223" relation="include">
-        </childnode>
-        <childnode refid="2224" relation="include">
-        </childnode>
-        <childnode refid="2225" relation="include">
+        <childnode refid="2211" relation="include">
         </childnode>
       </node>
       <node id="2215">
-        <label>state/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
         <childnode refid="2216" relation="include">
         </childnode>
         <childnode refid="2217" relation="include">
         </childnode>
         <childnode refid="2218" relation="include">
         </childnode>
-        <childnode refid="2227" relation="include">
+      </node>
+      <node id="2202">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/prof.cpp</label>
+        <link refid="prof_8cpp"/>
+        <childnode refid="2203" relation="include">
         </childnode>
-        <childnode refid="2231" relation="include">
+        <childnode refid="2221" relation="include">
         </childnode>
       </node>
-      <node id="2230">
-        <label>spdlog/sinks/stdout_sinks.h</label>
+      <node id="2214">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2203">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2204" relation="include">
+        </childnode>
+        <childnode refid="2205" relation="include">
+        </childnode>
+        <childnode refid="2206" relation="include">
+        </childnode>
+        <childnode refid="2215" relation="include">
+        </childnode>
+        <childnode refid="2219" relation="include">
+        </childnode>
+      </node>
+      <node id="2222">
+        <label>unordered_set</label>
+      </node>
+      <node id="2209">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
       <node id="2216">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2208">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2223">
+        <label>vector</label>
+      </node>
+      <node id="2217">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2211">
+        <label>iostream</label>
+      </node>
+      <node id="2220">
+        <label>chrono</label>
+      </node>
+      <node id="2221">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2205" relation="include">
+        </childnode>
+        <childnode refid="2222" relation="include">
+        </childnode>
+        <childnode refid="2223" relation="include">
+        </childnode>
+      </node>
+      <node id="2206">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2207" relation="include">
+        </childnode>
+        <childnode refid="2208" relation="include">
+        </childnode>
+        <childnode refid="2209" relation="include">
+        </childnode>
+        <childnode refid="2210" relation="include">
+        </childnode>
+        <childnode refid="2211" relation="include">
+        </childnode>
+        <childnode refid="2212" relation="include">
+        </childnode>
+        <childnode refid="2213" relation="include">
+        </childnode>
+      </node>
+      <node id="2218">
+        <label>spdlog/sinks/stdout_sinks.h</label>
+      </node>
+      <node id="2204">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -138,10 +138,54 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-06-08.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">state/tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="namespacetools_1_1common_1_1profile_1a1d6b9c4356a502dd2eec25b27f80919c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1d6b9c4356a502dd2eec25b27f80919c" kindref="member">tools::common::profile::print_profiling</ref>(<ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/>&amp;t_parent){</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n<sp/>Breakdown:&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;+Total<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>t_parent.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>s&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" kindref="member">t_eig</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">t_opt</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">t_svd</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">t_ent</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" kindref="member">t_prj</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" kindref="member">t_chk</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">t_ene</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a3efd01089ce7b4d9ba9d61270d55fb71" kindref="member">t_ene_mpo</ref>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1abd24d6ad20dc8f1a79c9fe670e839028" kindref="member">t_ene_ham</ref>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a543972c1667fe8fa09979f5e5b66106f" kindref="member">t_ene_mom</ref>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">t_var</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a92761da2df9560368517c1572bd86abf" kindref="member">t_var_mpo</ref>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a5202d5bd6e0d7c97cd09b43b47a9729f" kindref="member">t_var_ham</ref>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a35332911ee3232209960797403bf52bb" kindref="member">t_var_mom</ref>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" kindref="member">t_hdf</ref><sp/><sp/><sp/><sp/>.<ref refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" kindref="member">print_time_w_percent_if_nonzero</ref>(t_parent);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35" refid="namespacetools_1_1common_1_1profile_1a46720fc1d130729b6d90f91492d5c94d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1profile_1a46720fc1d130729b6d90f91492d5c94d" kindref="member">tools::common::profile::init_profiling</ref>(){</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" kindref="member">t_eig</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Eig.<sp/>decomp.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">t_svd</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Svd.<sp/>decomp.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">t_ene</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Energy<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">t_var</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Variance<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">t_ent</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Ent.<sp/>Entr.<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" kindref="member">t_hdf</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>h5pp<sp/>storage<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" kindref="member">t_prj</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Projections<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" kindref="member">t_chk</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref><sp/><sp/><sp/><sp/>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Checks<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a3efd01089ce7b4d9ba9d61270d55fb71" kindref="member">t_ene_mpo</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Energy<sp/>(MPO)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1abd24d6ad20dc8f1a79c9fe670e839028" kindref="member">t_ene_ham</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Energy<sp/>(HAM)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a543972c1667fe8fa09979f5e5b66106f" kindref="member">t_ene_mom</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Energy<sp/>(MOM)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a92761da2df9560368517c1572bd86abf" kindref="member">t_var_mpo</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Variance<sp/>(MPO)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a5202d5bd6e0d7c97cd09b43b47a9729f" kindref="member">t_var_ham</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Variance<sp/>(HAM)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a35332911ee3232209960797403bf52bb" kindref="member">t_var_mom</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" kindref="member">settings::profiling::on</ref>,<sp/><ref refid="namespacesettings_1_1profiling_1ad748212c3c0325ea3821a62a0299bf3b" kindref="member">settings::profiling::precision</ref>,<sp/></highlight><highlight class="stringliteral">&quot;↳<sp/>Variance<sp/>(MOM)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/prof.cpp"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/prof.cpp"/>
   </compounddef>
 </doxygen>

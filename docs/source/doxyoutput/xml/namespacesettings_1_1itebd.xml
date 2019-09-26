@@ -15,7 +15,7 @@
 <para>Turns iTEBD simulation on/off. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="121" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="121" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="148" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="148" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1itebd_1aba276a9861752d56699fc7de2602908b" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -29,7 +29,7 @@
 <para>Number of iTEBD iterations, after which the simulation terminates regardless of convergence. Set high. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="122" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="122" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="149" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="149" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1itebd_1afcba9beada5551c3da4c25a8376cd67f" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -43,7 +43,7 @@
 <para>Initial time step for iTEBD time evolution. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="123" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="150" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="150" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1itebd_1a6b6afcf2968c3cb071bc050b4e805085" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -57,7 +57,7 @@
 <para>Final time step for iTEBD time evolution. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="124" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="151" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="151" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1itebd_1a41cb019340a16c4d308ec3ae6cd473e4" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -71,7 +71,7 @@
 <para>Order of the suzuki trotter decomposition (1,2 or 4) </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="125" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="152" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1itebd_1aaca4efb978bd41af4ae870824351b5c6" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -85,7 +85,7 @@
 <para>Bond dimension of the current position (maximum number of singular values to keep in SVD). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="126" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="153" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="153" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1itebd_1aeeb215c2f571cde123ac0298d61c9941" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -99,7 +99,7 @@
 <para>Whether to increase chi slowly up to chi_max or go up to chi_max directly. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="127" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="127" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="154" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="154" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1itebd_1a50559d40426598a6c4b3545a4d551d36" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -113,7 +113,7 @@
 <para>Print frequency for console output. (0 = off). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="128" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="128" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="155" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="155" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1itebd_1a93a0bfc65a4ca0a13df530b4d9c80d11" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -127,13 +127,13 @@
 <para>Write frequency,for output file buffer. (0 = off). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="129" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="129" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="156" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="156" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="120" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="147" column="1"/>
   </compounddef>
 </doxygen>

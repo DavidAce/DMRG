@@ -51,7 +51,7 @@ Includes
 
 - ``state/class_mps_2site.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.h`)
 
-- ``state/tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`)
+- ``tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`)
 
 
 

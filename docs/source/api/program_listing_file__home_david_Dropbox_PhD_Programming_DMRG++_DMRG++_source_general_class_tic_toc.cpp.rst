@@ -96,6 +96,12 @@ Program Listing for File class_tic_toc.cpp
        }
    }
    
+   void class_tic_toc::print_time_w_percent_if_nonzero(class_tic_toc &parent){
+       if (measured_time.count() > 0.0){
+           print_time_w_percent(parent);
+       }
+   }
+   
    
    void class_tic_toc::print_total_reset(){
        if (profiling) {

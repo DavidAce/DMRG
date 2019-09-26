@@ -50,6 +50,7 @@ Program Listing for File class_tic_toc.h
    //    void print_time(high_resolution_clock::duration total_runtime);
        void print_time_w_percent();
        void print_time_w_percent(class_tic_toc &parent);
+       void print_time_w_percent_if_nonzero(class_tic_toc &parent);
        void print_delta();
        void print_total_reset();
        void reset();

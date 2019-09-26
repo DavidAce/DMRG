@@ -28,8 +28,6 @@ Namespaces
 
 - :ref:`namespace_settings__fdmrg`
 
-- :ref:`namespace_settings__hdf5`
-
 - :ref:`namespace_settings__idmrg`
 
 - :ref:`namespace_settings__input`
@@ -38,9 +36,13 @@ Namespaces
 
 - :ref:`namespace_settings__model`
 
+- :ref:`namespace_settings__output`
+
 - :ref:`namespace_settings__precision`
 
 - :ref:`namespace_settings__profiling`
+
+- :ref:`namespace_settings__threading`
 
 - :ref:`namespace_settings__xdmrg`
 

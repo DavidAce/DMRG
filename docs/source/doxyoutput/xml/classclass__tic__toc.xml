@@ -141,8 +141,9 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="9" bodyend="20"/>
         <references refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" compoundref="class__tic__toc_8h" startline="17">profiling</references>
+        <references refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" compoundref="class__tic__toc_8h" startline="18">print_precision</references>
         <references refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" compoundref="class__tic__toc_8h" startline="19">name</references>
-        <references refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" compoundref="class__tic__toc_8cpp" startline="105" endline="111">reset</references>
+        <references refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" compoundref="class__tic__toc_8cpp" startline="111" endline="117">reset</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tic__toc_1a79d394742c80ab84ede1710c235476d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -181,7 +182,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="22" bodyend="24"/>
-        <references refid="classclass__tic__toc_1a79d394742c80ab84ede1710c235476d9">class_tic_toc</references>
+        <references refid="classclass__tic__toc_1a5ebe2ca2214ed4f8953f9e484dc475bb" compoundref="class__tic__toc_8cpp" startline="9" endline="20">class_tic_toc</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tic__toc_1abde6b7bfb08a9534a4a7d3d215232e14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -199,7 +200,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="26" bodyend="28"/>
-        <references refid="classclass__tic__toc_1a79d394742c80ab84ede1710c235476d9">class_tic_toc</references>
+        <references refid="classclass__tic__toc_1a5ebe2ca2214ed4f8953f9e484dc475bb" compoundref="class__tic__toc_8cpp" startline="9" endline="20">class_tic_toc</references>
         <references refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" compoundref="class__tic__toc_8h" startline="17">profiling</references>
         <references refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" compoundref="class__tic__toc_8h" startline="18">print_precision</references>
       </memberdef>
@@ -292,7 +293,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="97" bodyend="99"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="103" bodyend="105"/>
         <references refid="classclass__tic__toc_1ad66c8af4798c5763cd5db868c78eb452" compoundref="class__tic__toc_8h" startline="16">start_timepoint</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -306,7 +307,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="101" bodyend="103"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="107" bodyend="109"/>
         <references refid="classclass__tic__toc_1aa7910bc2adf5c1a03542d3b880a104b2" compoundref="class__tic__toc_8h" startline="25">delta_time</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -349,6 +350,25 @@
         <references refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" compoundref="class__tic__toc_8h" startline="20">padding</references>
         <references refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" compoundref="class__tic__toc_8h" startline="26">measured_time</references>
       </memberdef>
+      <memberdef kind="function" id="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_tic_toc::print_time_w_percent_if_nonzero</definition>
+        <argsstring>(class_tic_toc &amp;parent)</argsstring>
+        <name>print_time_w_percent_if_nonzero</name>
+        <param>
+          <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &amp;</type>
+          <declname>parent</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="87" bodyend="91"/>
+        <references refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" compoundref="class__tic__toc_8h" startline="26">measured_time</references>
+        <references refid="classclass__tic__toc_1a7353573b5c8c5ba4888892eb26b47859" compoundref="class__tic__toc_8cpp" startline="77" endline="85">print_time_w_percent</references>
+      </memberdef>
       <memberdef kind="function" id="classclass__tic__toc_1a47731fce833ea5e35097f50ce0b84b21" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void class_tic_toc::print_delta</definition>
@@ -360,7 +380,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="50" bodyend="56"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="50" bodyend="56"/>
         <references refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" compoundref="class__tic__toc_8h" startline="17">profiling</references>
         <references refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" compoundref="class__tic__toc_8h" startline="18">print_precision</references>
         <references refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" compoundref="class__tic__toc_8h" startline="20">padding</references>
@@ -378,13 +398,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="88" bodyend="95"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="94" bodyend="101"/>
         <references refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" compoundref="class__tic__toc_8h" startline="17">profiling</references>
         <references refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" compoundref="class__tic__toc_8h" startline="18">print_precision</references>
         <references refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" compoundref="class__tic__toc_8h" startline="20">padding</references>
         <references refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" compoundref="class__tic__toc_8h" startline="19">name</references>
         <references refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" compoundref="class__tic__toc_8h" startline="26">measured_time</references>
-        <references refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" compoundref="class__tic__toc_8cpp" startline="105" endline="111">reset</references>
+        <references refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" compoundref="class__tic__toc_8cpp" startline="111" endline="117">reset</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -397,7 +417,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="105" bodyend="111"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="111" bodyend="117"/>
         <references refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" compoundref="class__tic__toc_8h" startline="17">profiling</references>
         <references refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" compoundref="class__tic__toc_8h" startline="26">measured_time</references>
         <references refid="classclass__tic__toc_1aa7910bc2adf5c1a03542d3b880a104b2" compoundref="class__tic__toc_8h" startline="25">delta_time</references>
@@ -424,14 +444,31 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="114" bodyend="121"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="120" bodyend="127"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" bodystart="13" bodyend="45"/>
+    <collaborationgraph>
+      <node id="295">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="293">
+        <label>class_tic_toc</label>
+        <link refid="classclass__tic__toc"/>
+        <childnode refid="294" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+      </node>
+      <node id="294">
+        <label>std::string</label>
+        <childnode refid="295" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.h" bodystart="13" bodyend="46"/>
     <listofallmembers>
       <member refid="classclass__tic__toc_1a5ebe2ca2214ed4f8953f9e484dc475bb" prot="public" virt="non-virtual"><scope>class_tic_toc</scope><name>class_tic_toc</name></member>
       <member refid="classclass__tic__toc_1a79d394742c80ab84ede1710c235476d9" prot="public" virt="non-virtual"><scope>class_tic_toc</scope><name>class_tic_toc</name></member>
@@ -449,6 +486,7 @@
       <member refid="classclass__tic__toc_1a4168168075a8e2998ce1138ceb06e59b" prot="public" virt="non-virtual"><scope>class_tic_toc</scope><name>print_time</name></member>
       <member refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" prot="public" virt="non-virtual"><scope>class_tic_toc</scope><name>print_time_w_percent</name></member>
       <member refid="classclass__tic__toc_1a7353573b5c8c5ba4888892eb26b47859" prot="public" virt="non-virtual"><scope>class_tic_toc</scope><name>print_time_w_percent</name></member>
+      <member refid="classclass__tic__toc_1a41b559fe6f5abc62fa5d08401ada701c" prot="public" virt="non-virtual"><scope>class_tic_toc</scope><name>print_time_w_percent_if_nonzero</name></member>
       <member refid="classclass__tic__toc_1af3ccb4e4f286036249748458fa653703" prot="public" virt="non-virtual"><scope>class_tic_toc</scope><name>print_total_reset</name></member>
       <member refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" prot="private" virt="non-virtual"><scope>class_tic_toc</scope><name>profiling</name></member>
       <member refid="classclass__tic__toc_1a39004b41f3748228508857edfd6fe656" prot="public" virt="non-virtual"><scope>class_tic_toc</scope><name>reset</name></member>

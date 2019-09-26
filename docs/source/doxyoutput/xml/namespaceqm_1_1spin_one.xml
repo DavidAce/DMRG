@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="36" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="68" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1spin_one_1a47d668cb08219573f14c3272fe91d590" prot="public" static="no" mutable="no">
         <type>Eigen::Matrix3cd</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="39" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="71" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1spin_one_1a7597e8930d8789c711c7329705f41546" prot="public" static="no" mutable="no">
         <type>Eigen::Matrix3cd</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="42" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="74" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1spin_one_1a5c431fd9b35ce1b76fe9aa1ae6988df2" prot="public" static="no" mutable="no">
         <type>Eigen::Matrix3cd</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="45" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="77" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1spin_one_1a76e83986f3dd3f21f66745e74b0d1efb" prot="public" static="no" mutable="no">
         <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="57" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1spin_one_1a7c6642ecb1e387631b5f828a95abb948" prot="public" static="no" mutable="no">
         <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="58" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="82" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1spin_one_1a3c7ab9ab64201bb7e9913202acbf234e" prot="public" static="no" mutable="no">
         <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="59" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="83" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespaceqm_1_1spin_one_1a526b15cbef6524e5d7f496992aa4124e" prot="public" static="no" mutable="no">
         <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
@@ -105,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="60" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="84" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

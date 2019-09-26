@@ -44,7 +44,7 @@ std::vector<int> tools::finite::opt::internals::generate_size_list(size_t shape)
 }
 
 
-std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,double> filter_states(const Eigen::MatrixXcd &eigvecs, const Eigen::VectorXd& eigvals, Eigen::VectorXd &overlaps, double quality_threshold, size_t max_accept){
+std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,double> filter_states(const Eigen::MatrixXcd &eigvecs, const Eigen::VectorXd& eigvals, Eigen::VectorXd &overlaps, double maximum_subspace_error, size_t max_accept){
 
     size_t min_accept = std::min(8ul,(size_t)eigvals.size());
     max_accept        = std::min(max_accept,(size_t)eigvals.size());
@@ -52,10 +52,10 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,double> filter_states(const Eigen::M
     Eigen::VectorXd     overlaps_filtered = overlaps;
     std::vector<int>    overlaps_accepted_idx;
     std::vector<double> overlaps_accepted;
-    double epsilon          = std::numeric_limits<double>::epsilon();
-    double subspace_quality = 1.0 - overlaps.cwiseAbs2().sum();
-    quality_threshold       = epsilon + std::min(subspace_quality, quality_threshold); //Make sure you don't actually lessen the subspace quality
-    tools::log->debug("Filtering states keeping between {} to {}, log10 quality threshold {}", min_accept,max_accept, std::log10(quality_threshold));
+    double epsilon           = std::numeric_limits<double>::epsilon();
+    double subspace_error    = 1.0 - overlaps.cwiseAbs2().sum();
+    maximum_subspace_error   = epsilon + std::min(subspace_error, maximum_subspace_error); //Make sure you don't actually lessen the subspace quality
+    tools::log->debug("Filtering states keeping between {} to {}, log10 quality threshold {}", min_accept,max_accept, std::log10(maximum_subspace_error));
 
 
     while(true){
@@ -64,9 +64,9 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,double> filter_states(const Eigen::M
         overlaps_accepted_idx.push_back(idx);
         overlaps_accepted    .push_back(overlap);
         Eigen::Map<Eigen::VectorXd> overlaps_map(overlaps_accepted.data(),overlaps_accepted.size());
-        subspace_quality  = 1.0 - overlaps_map.cwiseAbs2().sum();
+        subspace_error  = 1.0 - overlaps_map.cwiseAbs2().sum();
         if(overlaps_accepted.size() >= min_accept){
-            if(subspace_quality < quality_threshold) break;
+            if(subspace_error < maximum_subspace_error) break;
             if(overlaps_accepted.size() >= max_accept) break;
         }
         overlaps_filtered(idx) = 0;
@@ -83,8 +83,8 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,double> filter_states(const Eigen::M
         col_num++;
     }
     tools::log->debug("Filtered from {} down to {} states", eigvals.size(), eigvals_filtered.size());
-    tools::log->debug("Filtered quality: log10(1-eps) = {}", std::log10(epsilon + subspace_quality));
-    return std::make_tuple(eigvecs_filtered,eigvals_filtered, subspace_quality);
+    tools::log->debug("Subspace error after filter log10(1-eps) = {}", std::log10(epsilon + subspace_error));
+    return std::make_tuple(eigvecs_filtered, eigvals_filtered, subspace_error);
 }
 
 
@@ -166,9 +166,9 @@ find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     double max_overlap       = overlaps.maxCoeff(&idx);
     double min_overlap       = overlaps.minCoeff();
     double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
-    double subspace_quality  = 1.0 - sq_sum_overlap;
+    double subspace_error    = 1.0 - sq_sum_overlap;
     int nev = eigvecs.cols();
-    eig_log.emplace_back(nev, max_overlap, min_overlap, sq_sum_overlap, std::log10(subspace_quality), t_eig->get_last_time_interval(), 0);
+    eig_log.emplace_back(nev, max_overlap, min_overlap, sq_sum_overlap, std::log10(subspace_error), t_eig->get_last_time_interval(), 0);
 
     return std::make_tuple(eigvecs,eigvals);
 }
@@ -214,14 +214,14 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
         double max_overlap       = overlaps.maxCoeff();
         double min_overlap       = overlaps.minCoeff();
         double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
-        double subspace_quality  = 1.0 - sq_sum_overlap;
-        eig_log.emplace_back(nev, max_overlap, min_overlap, sq_sum_overlap, std::log10(subspace_quality), t_eig->get_last_time_interval(), t_lu);
+        double subspace_error    = 1.0 - sq_sum_overlap;
+        eig_log.emplace_back(nev, max_overlap, min_overlap, sq_sum_overlap, std::log10(subspace_error), t_eig->get_last_time_interval(), t_lu);
         t_lu = 0;
         if(max_overlap            > 1.0 + 1e-6)                  throw std::runtime_error("max_overlap larger than one : "  + std::to_string(max_overlap));
         if(sq_sum_overlap         > 1.0 + 1e-6)                  throw std::runtime_error("eps larger than one : "          + std::to_string(sq_sum_overlap));
         if(min_overlap            < 0.0)                         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
         if(max_overlap            >= max_overlap_threshold )    {reason = "overlap is good enough"; break;}
-        if(subspace_quality       < subspace_quality_threshold) {reason = "subspace quality is good enough"; break;}
+        if(subspace_error < subspace_error_threshold) { reason = "subspace error is low enough"; break;}
     }
     tools::log->debug("Finished partial eigensolver -- reason: {}",reason);
     tools::common::profile::t_eig.toc();
@@ -306,9 +306,9 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     tools::common::profile::t_opt.tic();
     using Scalar = class_finite_state::Scalar;
     using namespace eigutils::eigSetting;
-    subspace_quality_threshold = settings::precision::SubspaceQualityFactor * tools::finite::measure::energy_variance_per_site(state);
-    subspace_quality_threshold = std::min(subspace_quality_threshold, settings::precision::MaxSubspaceQuality);
-    subspace_quality_threshold = std::max(subspace_quality_threshold, 1e-12);
+    subspace_error_threshold = settings::precision::SubspaceQualityFactor * tools::finite::measure::energy_variance_per_site(state);
+    subspace_error_threshold = std::min(subspace_error_threshold, settings::precision::MaxSubspaceError);
+    subspace_error_threshold = std::max(subspace_error_threshold, 1e-12);
     auto theta                 = state.get_multitheta();
     auto theta_old             = Eigen::Map<const Eigen::VectorXcd>  (theta.data(),theta.size());
     auto theta_old_map         = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta.data(), state.active_dimensions());
@@ -384,7 +384,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                     tools::log->debug("The candidate theta has worse variance than before [ idx = {} | overlap = {} | variance = {} ]...", best_overlap_idx, best_overlap, std::log10(new_variance));
                     tools::log->debug("Looking for a candidate with lower variance...");
                     double subspace_quality;
-                    std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,subspace_quality_threshold, 64);
+                    std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
                     eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
                     auto [best_variance, best_variance_idx] = get_best_state_in_window(state, eigvecs, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
                     if(best_variance < old_variance){
@@ -410,8 +410,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         {
             double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
             double subspace_quality  = 1.0 - sq_sum_overlap;
-            if(subspace_quality > subspace_quality_threshold) {
-                tools::log->debug("Log subspace quality is poor: {} > {}. Deciding what to do...", std::log10(subspace_quality), std::log10(subspace_quality_threshold));
+            if(subspace_quality > subspace_error_threshold) {
+                tools::log->debug("Log subspace quality is poor: {} > {}. Deciding what to do...", std::log10(subspace_quality), std::log10(subspace_error_threshold));
                 double prev_variance = tools::finite::measure::energy_variance_per_site(state);
                 auto [best_variance, idx_variance] = get_best_state_in_window(state,eigvecs,eigvals_per_site_unreduced,sim_status.energy_lbound,sim_status.energy_ubound);
                 if (idx_variance < 0){
@@ -430,7 +430,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
                 }
             }else{
-                std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs,eigvals,overlaps,subspace_quality_threshold, 64);
+                std::tie(eigvecs,eigvals,subspace_quality) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
                 eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
             }
         }

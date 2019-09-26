@@ -3,7 +3,7 @@
 Function tools::common::views::get_transfer_matrix_GBLB(const class_mps_2site&, std::complex<double>)
 =====================================================================================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_nmspc_tools.h`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
 
 
 Function Documentation

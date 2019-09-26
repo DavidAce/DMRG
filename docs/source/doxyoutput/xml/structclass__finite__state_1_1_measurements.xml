@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="122" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="122" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="148" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="148" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a729ef146fb2e5c81b355e60cb9522ec0" prot="public" static="no" mutable="no">
         <type>std::optional&lt; size_t &gt;</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="123" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="149" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="149" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1af042370ea31d47fdc261e6827e86ac57" prot="public" static="no" mutable="no">
         <type>std::optional&lt; size_t &gt;</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="124" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="150" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="150" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1aa65086fe9e146d381d987e1fd2941dc8" prot="public" static="no" mutable="no">
         <type>std::optional&lt; std::vector&lt; size_t &gt; &gt;</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="125" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="151" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="151" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1afa6883ebbbbe1bff5f922d499a19aab4" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="126" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="152" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a7cfa40e6d2c88d78e6418094f603603d" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -86,7 +86,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="127" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="127" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="153" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="153" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a7d515b15cfdd205b7ca1bf6e51ebbd15" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="128" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="128" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="154" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="154" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a8b47be757b3751ca9ee49c07a6102324" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -114,7 +114,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="129" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="129" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="155" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="155" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a5d9b8e22eb2c5fbb1532ac82658e7157" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="130" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="130" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="156" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="156" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1ae75dc052623898022331f61e69471206" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -142,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="131" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="157" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="157" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a65c4716cd1cdc1a8e755c45fd4e57ced" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -156,7 +156,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="132" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="132" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="158" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="158" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1abcb5fb3c2166b630c67f43e038f69ce0" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -170,7 +170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="133" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="159" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="159" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a8b1e7873a5a64430a1adba5dd7e5d3c3" prot="public" static="no" mutable="no">
         <type>std::optional&lt; std::vector&lt; double &gt; &gt;</type>
@@ -184,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="134" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="160" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="160" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1ae474957f0142cb20d39632a9797087de" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -198,7 +198,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="135" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="135" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="161" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="161" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a5f91cc77cb6af61ae6abd97d311b8da8" prot="public" static="no" mutable="no">
         <type>std::optional&lt; double &gt;</type>
@@ -212,7 +212,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="136" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="136" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="162" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="162" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__finite__state_1_1_measurements_1a581133f1d7650f3045392243e6b9537c" prot="public" static="no" mutable="no">
         <type>std::optional&lt; std::vector&lt; double &gt; &gt;</type>
@@ -226,14 +226,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="137" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="137" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="163" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="163" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="121" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="121" bodyend="138"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" line="147" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_finite_state.h" bodystart="147" bodyend="164"/>
     <listofallmembers>
       <member refid="structclass__finite__state_1_1_measurements_1af042370ea31d47fdc261e6827e86ac57" prot="public" virt="non-virtual"><scope>class_finite_state::Measurements</scope><name>bond_dimension_current</name></member>
       <member refid="structclass__finite__state_1_1_measurements_1a729ef146fb2e5c81b355e60cb9522ec0" prot="public" virt="non-virtual"><scope>class_finite_state::Measurements</scope><name>bond_dimension_midchain</name></member>

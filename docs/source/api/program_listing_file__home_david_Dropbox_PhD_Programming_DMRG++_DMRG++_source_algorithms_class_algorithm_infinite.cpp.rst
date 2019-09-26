@@ -16,7 +16,7 @@ Program Listing for File class_algorithm_infinite.cpp
    
    #include "class_algorithm_infinite.h"
    #include <state/class_infinite_state.h>
-   #include <state/tools/nmspc_tools.h>
+   #include <tools/nmspc_tools.h>
    #include <io/class_hdf5_log_buffer.h>
    #include <math/nmspc_math.h>
    #include <h5pp/h5pp.h>
@@ -37,51 +37,50 @@ Program Listing for File class_algorithm_infinite.cpp
    
    void class_algorithm_infinite::run() {
        if (not sim_on()) { return; }
+       t_tot.tic();
        run_preprocessing();
        run_simulation();
        run_postprocessing();
+       t_tot.toc();
    }
    
    void class_algorithm_infinite::run_preprocessing() {
-   
+       t_pre.tic();
+       t_pre.toc();
    }
    
    void class_algorithm_infinite::run_postprocessing(){
+       t_pos.tic();
        print_status_full();
        print_profiling();
        h5pp_file->writeDataset(true, sim_name + "/simOK");
+       t_pos.toc();
    }
    
    void class_algorithm_infinite::compute_observables(){
        log->trace("Starting all measurements on current state");
-       t_sim.tic();
        state->do_all_measurements();
-       t_sim.toc();
    }
    
    
-   void class_algorithm_infinite::reset_to_random_state(const std::string parity) {
+   void class_algorithm_infinite::reset_to_random_state(const std::string parity, int seed_state) {
        log->trace("Resetting MPS to random product state");
        sim_status.iteration = 0;
    
        // Randomize state
-       *state = tools::infinite::mps::set_random_state(*state,parity);
+       *state = tools::infinite::mps::set_random_state(*state,parity, seed_state);
        clear_saturation_status();
    }
    
    
    void class_algorithm_infinite::enlarge_environment(){
        log->trace("Enlarging environment" );
-       t_sim.tic();
        state->enlarge_environment(0);
-       t_sim.toc();
    }
    
    void class_algorithm_infinite::swap(){
        log->trace("Swap AB sites on state");
-       t_sim.tic();
        state->swap_AB();
-       t_sim.toc();
    }
    
    void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,double slope_threshold){
@@ -92,16 +91,16 @@ Program Listing for File class_algorithm_infinite.cpp
        slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
        compute_observables();
    
-       sim_status.variance_mpo_has_saturated =
-               check_saturation_using_slope(
+       auto report = check_saturation_using_slope(
                        B_mpo_vec,
                        V_mpo_vec,
                        X_mpo_vec,
                        tools::infinite::measure::energy_variance_per_site_mpo(*state),
                        sim_status.iteration,
                        1,
-                       slope_threshold,
-                       V_mpo_slope);
+                       slope_threshold);
+       if(report.has_computed) V_mpo_slope  = report.slope;
+       sim_status.variance_mpo_has_saturated = report.has_saturated;
        sim_status.variance_mpo_saturated_for = (int) count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
        sim_status.variance_mpo_has_converged =  state->measurements.energy_variance_per_site_mpo.value() < threshold;
    
@@ -114,15 +113,16 @@ Program Listing for File class_algorithm_infinite.cpp
    
        threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
        slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-       sim_status.variance_ham_has_saturated = check_saturation_using_slope(
+       auto report  = check_saturation_using_slope(
                B_ham_vec,
                V_ham_vec,
                X_ham_vec,
                tools::infinite::measure::energy_variance_per_site_ham(*state),
                sim_status.iteration,
                1,
-               slope_threshold,
-               V_ham_slope);
+               slope_threshold);
+       if(report.has_computed) V_ham_slope  = report.slope;
+       sim_status.variance_ham_has_saturated = report.has_saturated;
        sim_status.variance_ham_has_converged = tools::infinite::measure::energy_variance_per_site_ham(*state) < threshold;
    }
    
@@ -133,14 +133,15 @@ Program Listing for File class_algorithm_infinite.cpp
    
        threshold       = std::isnan(threshold)       ? settings::precision::VarConvergenceThreshold : threshold;
        slope_threshold = std::isnan(slope_threshold) ? settings::precision::VarSaturationThreshold  : slope_threshold;
-       sim_status.variance_mom_has_saturated = check_saturation_using_slope(B_mom_vec,
+       auto report = check_saturation_using_slope(B_mom_vec,
                V_mom_vec,
                X_mom_vec,
                tools::infinite::measure::energy_variance_per_site_mom(*state),
                sim_status.iteration,
                1,
-               slope_threshold,
-               V_mom_slope);
+               slope_threshold);
+       if(report.has_computed) V_mom_slope  = report.slope;
+       sim_status.variance_mom_has_saturated = report.has_saturated;
        sim_status.variance_mom_has_converged = tools::infinite::measure::energy_variance_per_site_mom(*state) < threshold;
    }
    
@@ -150,15 +151,16 @@ Program Listing for File class_algorithm_infinite.cpp
        log->debug("Checking convergence of entanglement");
    
        slope_threshold = std::isnan(slope_threshold) ? settings::precision::EntEntrSaturationThreshold  : slope_threshold;
-       sim_status.entanglement_has_saturated  = check_saturation_using_slope(
+       auto report = check_saturation_using_slope(
                BS_vec,
                S_vec,
                XS_vec,
                tools::infinite::measure::current_entanglement_entropy(*state),
                sim_status.iteration,
                1,
-               slope_threshold,
-               S_slope);
+               slope_threshold);
+       if(report.has_computed) S_slope       = report.slope;
+       sim_status.entanglement_has_saturated = report.has_saturated;
        sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
    }
    
@@ -179,7 +181,7 @@ Program Listing for File class_algorithm_infinite.cpp
        if(not force){
            if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
            if (write_freq() == 0){return;}
-           if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
+           if (settings::output::storage_level <= StorageLevel::NONE){return;}
        }
        log->trace("Writing state to file");
        h5pp_file->writeDataset(false, sim_name + "/simOK");
@@ -187,6 +189,18 @@ Program Listing for File class_algorithm_infinite.cpp
        h5pp_file->writeDataset(true, sim_name + "/simOK");
    }
    
+   
+   void class_algorithm_infinite::write_status(bool force){
+       if (not force){
+           if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+           if (write_freq() == 0){return;}
+           if (settings::output::storage_level <= StorageLevel::NONE){return;}
+       }
+       log->trace("Writing simulation status to file");
+       h5pp_file->writeDataset(false, sim_name + "/simOK");
+       tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
+       h5pp_file->writeDataset(true, sim_name + "/simOK");
+   }
    
    
    //void class_algorithm_infinite::store_log_entry_progress(bool force){
@@ -257,22 +271,6 @@ Program Listing for File class_algorithm_infinite.cpp
        sim_status.simulation_has_to_stop         = false;
    }
    
-   void class_algorithm_infinite::print_profiling(){
-       if (settings::profiling::on) {
-           t_tot.print_time_w_percent();
-           t_prt.print_time_w_percent(t_tot);
-           t_sim.print_time_w_percent(t_tot);
-           print_profiling_sim(t_sim);
-      }
-   }
-   
-   void class_algorithm_infinite::print_profiling_sim(class_tic_toc &t_parent){
-       if (settings::profiling::on) {
-           std::cout << "\n Simulation breakdown:" << std::endl;
-           std::cout <<   "+Total                   " << t_parent.get_measured_time() << "    s" << std::endl;
-           t_con.print_time_w_percent(t_parent);
-       }
-   }
    
    void class_algorithm_infinite::print_status_update() {
        if (math::mod(sim_status.iteration, print_freq()) != 0) {return;}
@@ -406,8 +404,9 @@ Program Listing for File class_algorithm_infinite.cpp
            default: throw std::runtime_error("Wrong simulation type");
        }
    
+       log->info("Simulation saturated  = {:<}"    , sim_status.simulation_has_saturated);
        log->info("Simulation converged  = {:<}"    , sim_status.simulation_has_converged);
-   
+       log->info("Simulation succeeded  = {:<}"    , sim_status.simulation_has_succeeded);
        switch(sim_type){
            case SimulationType::iDMRG:
                log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);

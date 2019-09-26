@@ -35,6 +35,10 @@ Includes
 
 - ``general/nmspc_random_numbers.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`)
 
+- ``getopt.h``
+
+- ``gitversion.h``
+
 - ``h5pp/h5pp.h``
 
 - ``io/class_settings_reader.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_settings_reader.h`)
@@ -44,6 +48,8 @@ Includes
 - ``iostream``
 
 - ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
+
+- ``thread``
 
 
 
@@ -55,4 +61,6 @@ Functions
 
 
 - :ref:`exhale_function_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97`
+
+- :ref:`exhale_function_main_8cpp_1ae5ad5cbeccaedc03a48d3c7eaa803e79`
 

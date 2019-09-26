@@ -47,9 +47,9 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_hdf5_log_buffer.cpp`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_hdf5_log_buffer.h`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_hdf5_log_buffer.cpp`
 
 
 
@@ -58,9 +58,9 @@ Classes
 -------
 
 
-- :ref:`exhale_struct_structclass__log__dmrg_1_1data__struct`
+- :ref:`exhale_struct_structclass__log__finite__dmrg__measurements_1_1data__struct`
 
-- :ref:`exhale_struct_structclass__log__dmrg_1_1meta__struct`
+- :ref:`exhale_struct_structclass__log__finite__dmrg__measurements_1_1meta__struct`
 
 - :ref:`exhale_struct_structclass__log__profiling_1_1data__struct`
 
@@ -72,7 +72,7 @@ Classes
 
 - :ref:`exhale_struct_structclass__log__tebd_1_1meta__struct`
 
-- :ref:`exhale_class_classclass__log__dmrg`
+- :ref:`exhale_class_classclass__log__finite__dmrg__measurements`
 
 - :ref:`exhale_class_classclass__log__profiling`
 

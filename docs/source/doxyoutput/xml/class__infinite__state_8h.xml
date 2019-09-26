@@ -9,158 +9,100 @@
     <includes refid="nmspc__eigutils_8h" local="no">math/nmspc_eigutils.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <includes refid="nmspc__logger_8h" local="no">io/nmspc_logger.h</includes>
-    <includedby refid="class__algorithm__base_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</includedby>
     <includedby refid="class__algorithm__infinite_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</includedby>
     <includedby refid="class__algorithm__launcher_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__f_d_m_r_g_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</includedby>
     <includedby refid="class__i_d_m_r_g_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</includedby>
     <includedby refid="class__i_t_e_b_d_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</includedby>
-    <includedby refid="class__x_d_m_r_g_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</includedby>
     <includedby refid="class__infinite__state_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</includedby>
-    <includedby refid="views_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp</includedby>
-    <includedby refid="finite_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/h5pp.cpp</includedby>
-    <includedby refid="finite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/measure.cpp</includedby>
-    <includedby refid="ops_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp</includedby>
-    <includedby refid="infinite_2debug_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/debug.cpp</includedby>
-    <includedby refid="infinite_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp</includedby>
-    <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp</includedby>
-    <includedby refid="infinite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/mps.cpp</includedby>
-    <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/opt.cpp</includedby>
-    <includedby refid="infinite_2print_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/print.cpp</includedby>
+    <includedby refid="views_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</includedby>
+    <includedby refid="finite_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp</includedby>
+    <includedby refid="finite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</includedby>
+    <includedby refid="ops_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</includedby>
+    <includedby refid="infinite_2debug_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</includedby>
+    <includedby refid="infinite_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp</includedby>
+    <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</includedby>
+    <includedby refid="infinite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</includedby>
+    <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</includedby>
+    <includedby refid="infinite_2print_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</includedby>
     <incdepgraph>
-      <node id="1968">
+      <node id="1960">
         <label>iomanip</label>
       </node>
-      <node id="1966">
+      <node id="1958">
         <label>iterator</label>
       </node>
-      <node id="1969">
+      <node id="1961">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1970" relation="include">
+        <childnode refid="1962" relation="include">
         </childnode>
-        <childnode refid="1963" relation="include">
+        <childnode refid="1955" relation="include">
         </childnode>
-        <childnode refid="1965" relation="include">
+        <childnode refid="1957" relation="include">
         </childnode>
       </node>
-      <node id="1963">
+      <node id="1955">
         <label>Eigen/Core</label>
       </node>
-      <node id="1981">
+      <node id="1973">
         <label>string</label>
       </node>
-      <node id="1971">
+      <node id="1963">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="1972" relation="include">
+        <childnode refid="1964" relation="include">
         </childnode>
-        <childnode refid="1967" relation="include">
-        </childnode>
-      </node>
-      <node id="1983">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="1979" relation="include">
-        </childnode>
-        <childnode refid="1978" relation="include">
-        </childnode>
-        <childnode refid="1984" relation="include">
+        <childnode refid="1959" relation="include">
         </childnode>
       </node>
       <node id="1975">
-        <label>map</label>
-      </node>
-      <node id="1970">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="1982">
-        <label>unordered_set</label>
-      </node>
-      <node id="1965">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="1979">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="1964">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="1961">
-        <label>optional</label>
-      </node>
-      <node id="1977">
-        <label>vector</label>
-      </node>
-      <node id="1978">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="1974">
-        <label>array</label>
-      </node>
-      <node id="1967">
-        <label>iostream</label>
-      </node>
-      <node id="1973">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1967" relation="include">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="1971" relation="include">
         </childnode>
-        <childnode refid="1974" relation="include">
-        </childnode>
-        <childnode refid="1975" relation="include">
+        <childnode refid="1970" relation="include">
         </childnode>
         <childnode refid="1976" relation="include">
         </childnode>
-        <childnode refid="1977" relation="include">
-        </childnode>
-        <childnode refid="1978" relation="include">
-        </childnode>
-        <childnode refid="1979" relation="include">
-        </childnode>
       </node>
-      <node id="1972">
-        <label>chrono</label>
-      </node>
-      <node id="1976">
-        <label>complex</label>
-      </node>
-      <node id="1959">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h</label>
-        <link refid="class__infinite__state_8h"/>
-        <childnode refid="1960" relation="include">
-        </childnode>
-        <childnode refid="1961" relation="include">
-        </childnode>
-        <childnode refid="1962" relation="include">
-        </childnode>
-        <childnode refid="1971" relation="include">
-        </childnode>
-        <childnode refid="1973" relation="include">
-        </childnode>
-        <childnode refid="1980" relation="include">
-        </childnode>
-        <childnode refid="1983" relation="include">
-        </childnode>
-      </node>
-      <node id="1980">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="1981" relation="include">
-        </childnode>
-        <childnode refid="1982" relation="include">
-        </childnode>
-        <childnode refid="1977" relation="include">
-        </childnode>
+      <node id="1967">
+        <label>map</label>
       </node>
       <node id="1962">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1963" relation="include">
-        </childnode>
-        <childnode refid="1964" relation="include">
-        </childnode>
-        <childnode refid="1965" relation="include">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1974">
+        <label>unordered_set</label>
+      </node>
+      <node id="1957">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1971">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1956">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1953">
+        <label>optional</label>
+      </node>
+      <node id="1969">
+        <label>vector</label>
+      </node>
+      <node id="1970">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1966">
+        <label>array</label>
+      </node>
+      <node id="1959">
+        <label>iostream</label>
+      </node>
+      <node id="1965">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1959" relation="include">
         </childnode>
         <childnode refid="1966" relation="include">
         </childnode>
@@ -170,90 +112,150 @@
         </childnode>
         <childnode refid="1969" relation="include">
         </childnode>
+        <childnode refid="1970" relation="include">
+        </childnode>
+        <childnode refid="1971" relation="include">
+        </childnode>
       </node>
-      <node id="1984">
+      <node id="1964">
+        <label>chrono</label>
+      </node>
+      <node id="1968">
+        <label>complex</label>
+      </node>
+      <node id="1951">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h</label>
+        <link refid="class__infinite__state_8h"/>
+        <childnode refid="1952" relation="include">
+        </childnode>
+        <childnode refid="1953" relation="include">
+        </childnode>
+        <childnode refid="1954" relation="include">
+        </childnode>
+        <childnode refid="1963" relation="include">
+        </childnode>
+        <childnode refid="1965" relation="include">
+        </childnode>
+        <childnode refid="1972" relation="include">
+        </childnode>
+        <childnode refid="1975" relation="include">
+        </childnode>
+      </node>
+      <node id="1972">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="1973" relation="include">
+        </childnode>
+        <childnode refid="1974" relation="include">
+        </childnode>
+        <childnode refid="1969" relation="include">
+        </childnode>
+      </node>
+      <node id="1954">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="1955" relation="include">
+        </childnode>
+        <childnode refid="1956" relation="include">
+        </childnode>
+        <childnode refid="1957" relation="include">
+        </childnode>
+        <childnode refid="1958" relation="include">
+        </childnode>
+        <childnode refid="1959" relation="include">
+        </childnode>
+        <childnode refid="1960" relation="include">
+        </childnode>
+        <childnode refid="1961" relation="include">
+        </childnode>
+      </node>
+      <node id="1976">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
-      <node id="1960">
+      <node id="1952">
         <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="1989">
+      <node id="1980">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
         <link refid="class__f_d_m_r_g_8cpp"/>
       </node>
-      <node id="1987">
+      <node id="1978">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
         <link refid="class__algorithm__infinite_8cpp"/>
       </node>
-      <node id="1993">
+      <node id="1987">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
+        <link refid="ops_8cpp"/>
+      </node>
+      <node id="1986">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
+        <link refid="finite_2measure_8cpp"/>
+      </node>
+      <node id="1985">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp</label>
+        <link refid="finite_2h5pp_8cpp"/>
+      </node>
+      <node id="1990">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1988">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
+        <link refid="infinite_2debug_8cpp"/>
+      </node>
+      <node id="1983">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
         <link refid="class__infinite__state_8cpp"/>
       </node>
-      <node id="1991">
+      <node id="1984">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1982">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
         <link refid="class__i_t_e_b_d_8cpp"/>
       </node>
-      <node id="1999">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/h5pp.cpp</label>
+      <node id="1989">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp</label>
         <link refid="infinite_2h5pp_8cpp"/>
       </node>
-      <node id="1996">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/measure.cpp</label>
-        <link refid="finite_2measure_8cpp"/>
-      </node>
-      <node id="1992">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
-        <link refid="class__x_d_m_r_g_8cpp"/>
-      </node>
-      <node id="1995">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/h5pp.cpp</label>
-        <link refid="finite_2h5pp_8cpp"/>
-      </node>
-      <node id="2002">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/opt.cpp</label>
-        <link refid="infinite_2opt_8cpp"/>
-      </node>
-      <node id="1994">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/common/views.cpp</label>
-        <link refid="views_8cpp"/>
-      </node>
-      <node id="1998">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/debug.cpp</label>
-        <link refid="infinite_2debug_8cpp"/>
-      </node>
-      <node id="2003">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/print.cpp</label>
-        <link refid="infinite_2print_8cpp"/>
-      </node>
-      <node id="1988">
+      <node id="1979">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="2000">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/measure.cpp</label>
-        <link refid="infinite_2measure_8cpp"/>
-      </node>
-      <node id="2001">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/infinite/mps.cpp</label>
+      <node id="1991">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
         <link refid="infinite_2mps_8cpp"/>
       </node>
-      <node id="1997">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/tools/finite/ops.cpp</label>
-        <link refid="ops_8cpp"/>
-      </node>
-      <node id="1990">
+      <node id="1981">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
         <link refid="class__i_d_m_r_g_8cpp"/>
       </node>
-      <node id="1986">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
-        <link refid="class__algorithm__base_8cpp"/>
+      <node id="1993">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</label>
+        <link refid="infinite_2print_8cpp"/>
       </node>
-      <node id="1985">
+      <node id="1977">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h</label>
         <link refid="class__infinite__state_8h"/>
+        <childnode refid="1978" relation="include">
+        </childnode>
+        <childnode refid="1979" relation="include">
+        </childnode>
+        <childnode refid="1980" relation="include">
+        </childnode>
+        <childnode refid="1981" relation="include">
+        </childnode>
+        <childnode refid="1982" relation="include">
+        </childnode>
+        <childnode refid="1983" relation="include">
+        </childnode>
+        <childnode refid="1984" relation="include">
+        </childnode>
+        <childnode refid="1985" relation="include">
+        </childnode>
         <childnode refid="1986" relation="include">
         </childnode>
         <childnode refid="1987" relation="include">
@@ -270,26 +272,10 @@
         </childnode>
         <childnode refid="1993" relation="include">
         </childnode>
-        <childnode refid="1994" relation="include">
-        </childnode>
-        <childnode refid="1995" relation="include">
-        </childnode>
-        <childnode refid="1996" relation="include">
-        </childnode>
-        <childnode refid="1997" relation="include">
-        </childnode>
-        <childnode refid="1998" relation="include">
-        </childnode>
-        <childnode refid="1999" relation="include">
-        </childnode>
-        <childnode refid="2000" relation="include">
-        </childnode>
-        <childnode refid="2001" relation="include">
-        </childnode>
-        <childnode refid="2002" relation="include">
-        </childnode>
-        <childnode refid="2003" relation="include">
-        </childnode>
+      </node>
+      <node id="1992">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classclass__infinite__state" prot="public">class_infinite_state</innerclass>

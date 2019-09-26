@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp" bodystart="8" bodyend="8"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp" bodystart="8" bodyend="8"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="friend">
@@ -39,7 +39,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="59" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp" bodystart="18" bodyend="55"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp" bodystart="18" bodyend="59"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -47,30 +47,30 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="118">
+      <node id="283">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="117">
+      <node id="282">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="118" relation="public-inheritance">
+        <childnode refid="283" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="120">
+      <node id="285">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="119">
+      <node id="284">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="120" relation="public-inheritance">
+        <childnode refid="285" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="54" bodyend="61"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="58" bodyend="65"/>
     <listofallmembers>
       <member refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>bond_dimension_has_reached_max</name></member>
       <member refid="structstatus__data_1a394209e7e516250158bc78e854504288" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>chi_max</name></member>
@@ -87,14 +87,18 @@
       <member refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_ubound</name></member>
       <member refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>entanglement_has_converged</name></member>
       <member refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>entanglement_has_saturated</name></member>
+      <member refid="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>entanglement_saturated_for</name></member>
       <member refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>iteration</name></member>
       <member refid="structstatus__data_1a93ca2d10ef209ccd644ff5f5d9efabf5" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>min_sweeps</name></member>
+      <member refid="structstatus__data_1a16d2c55935f9a23c594bce56c1679b31" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>moves</name></member>
+      <member refid="structstatus__data_1aa32e29bb9c8addcaf8f6591ae3030975" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>num_resets</name></member>
       <member refid="classclass__simulation__status_1aa73819621bd2d8b1507a664e50d22e01" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>operator&lt;&lt;</name></member>
       <member refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>phys_time</name></member>
       <member refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>position</name></member>
       <member refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simu_time</name></member>
       <member refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_converged</name></member>
       <member refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_saturated</name></member>
+      <member refid="structstatus__data_1a682a441660e6bf83604320835ee6c20d" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_succeeded</name></member>
       <member refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_to_stop</name></member>
       <member refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>step</name></member>
       <member refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>time_step_has_converged</name></member>

@@ -25,12 +25,12 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1ab4ae45f1dcc5a9203e95c2dab1c18c31`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a92dc2122fa719b004025f43bec82e154`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a89b30988a083057d361a7f75a5f1f195`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a1cf5d695615ffca9ab05f0a2b1d78e5f`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a51c9c8a97ae2a7775928e6fcb4c805c3`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a8a5fb61cbbd0baf326ee68450ced4710`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a0589625ffec110ac682ba275a4375f77`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1ab102c808dc3ddeb104196b95ca3e8f80`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a6d8dab3f6e8c90533c7ee5b9cf5f02f4`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1ab0cdc843131076ca538724438171b6a1`

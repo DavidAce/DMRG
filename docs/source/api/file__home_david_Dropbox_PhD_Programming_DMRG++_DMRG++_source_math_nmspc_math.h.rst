@@ -39,6 +39,8 @@ Includes
 
 - ``iterator``
 
+- ``list``
+
 - ``memory``
 
 - ``numeric``
@@ -75,7 +77,7 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_tools_common_views.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_views.cpp`
 
 
 
@@ -98,4 +100,8 @@ Functions
 - :ref:`exhale_function_namespacemath_1a950ba2c26eab3a176711e689337ad0e9`
 
 - :ref:`exhale_function_namespacemath_1a3ce95fbd77bede9bc5f50374c6d0f58e`
+
+- :ref:`exhale_function_namespacemath_1a3389e677b639402cc6eaf924f713b398`
+
+- :ref:`exhale_function_namespacemath_1abdf8a2bf14cace5e0424feb58ad2e5b4`
 
