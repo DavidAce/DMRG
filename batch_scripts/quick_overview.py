@@ -4,13 +4,28 @@ import warnings
 import re
 import numpy as np
 from datetime import datetime
-h5directory = 'output'
+import argparse
+
+parser = argparse.ArgumentParser(description='Quick overview of batch simulation')
+parser.add_argument('-S','--summary', action='store_true', help='Summary only')
+parser.add_argument('-s','--save', action='store_true', help='Save to file')
+parser.add_argument('-f','--filename', type=str, help='Save to file with filename',default='overview')
+parser.add_argument('-t','--timestamp', action='store_true', help='Add timestamp to filename')
+parser.add_argument('-d','--directory', type=str, help='Search for hdf5 files in directory', default='output')
+args = parser.parse_args()
+
+if args.timestamp:
+    args.filename = args.filename + '-' + datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
+
+if args.filename != 'overview':
+    args.save = True
+
 regex = re.compile(r'\d+')
 
-timestamp = datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
-file = open('overview-' + str(timestamp) + '.log', 'w')
+if args.save:
+    file = open(args.filename, 'w')
 
-for dirName, subdirList, fileList in os.walk(h5directory):
+for dirName, subdirList, fileList in os.walk(args.directory):
     if not fileList:
         continue
     subdirList.sort()
@@ -23,9 +38,11 @@ for dirName, subdirList, fileList in os.walk(h5directory):
     saturated        = []
     succeeded        = []
 
-    header = "{:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Realization", "Variance","Time", "Resets", "Converged", "Saturated", "Succeeded")
-    print(header)
-    file.write(header)
+    if not args.summary:
+        header = "{:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Realization", "Variance","Time", "Resets", "Converged", "Saturated", "Succeeded")
+        print(header)
+        if args.save:
+            file.write(header)
     for h5path in fileList:
         # print("Filepath: ", h5path)
         try:
@@ -55,7 +72,8 @@ for dirName, subdirList, fileList in os.walk(h5directory):
                 succeeded[-1])
 
             print(entry)
-            file.write(entry)
+            if args.save:
+                file.write(entry)
 
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
@@ -72,6 +90,8 @@ for dirName, subdirList, fileList in os.walk(h5directory):
 
     print(header)
     print(entry)
-    file.write(header)
-    file.write(entry)
-file.close()
+    if args.save:
+        file.write(header)
+        file.write(entry)
+if args.save:
+    file.close()
