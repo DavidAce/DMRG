@@ -37,9 +37,10 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     converged        = []
     saturated        = []
     succeeded        = []
+    finished         = []
 
     if not args.summary:
-        header = "{:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Realization", "Variance","Time", "Resets", "Converged", "Saturated", "Succeeded")
+        header = "{:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Realization", "Variance","Time", "Resets", "Converged", "Saturated", "Succeeded", "Finished")
         print(header)
         if args.save:
             file.write(header)
@@ -62,16 +63,18 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             converged.append(h5file['xDMRG/sim_status/simulation_has_converged'][-1])
             saturated.append(h5file['xDMRG/sim_status/simulation_has_saturated'][-1])
             succeeded.append(h5file['xDMRG/sim_status/simulation_has_succeeded'][-1])
+            finished .append(h5file['common/finOK'][-1])
 
             if not args.summary:
-                entry = "{:<15} {:<12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12}".format(
+                entry = "{:<15} {:<12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
                     realization_num[-1],
                     np.log10(variance[-1]),
                     walltime[-1]/60,
                     resets[-1],
                     converged[-1],
                     saturated[-1],
-                    succeeded[-1])
+                    succeeded[-1],
+                    finished[-1])
                 print(entry)
                 if args.save:
                     file.write(entry)
@@ -79,15 +82,16 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
             continue
-    header="{:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Total sims", "Avg Var","Avg Time", "Avg Resets", "Sum Con", "Sum Sat", "Sum Suc")
-    entry="{:<15} {:<12.4f} {:>12.4f} {:>12.3f} {:>12} {:>12} {:>12}".format(
+    header="{:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Total sims", "Avg Var","Avg Time", "Avg Resets", "Sum Con", "Sum Sat", "Sum Suc", "Sum Fin")
+    entry="{:<15} {:<12.4f} {:>12.4f} {:>12.3f} {:>12} {:>12} {:>12} {:>12}".format(
         len(realization_num),
         np.log10(np.nanmean(variance)),
         np.mean(walltime) / 60,
         np.mean(resets),
         np.sum(converged),
         np.sum(saturated),
-        np.sum(succeeded))
+        np.sum(succeeded),
+        np.sum(finished))
 
     print(header)
     print(entry)
