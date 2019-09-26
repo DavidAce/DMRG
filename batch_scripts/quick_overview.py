@@ -63,7 +63,10 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             converged.append(h5file['xDMRG/sim_status/simulation_has_converged'][-1])
             saturated.append(h5file['xDMRG/sim_status/simulation_has_saturated'][-1])
             succeeded.append(h5file['xDMRG/sim_status/simulation_has_succeeded'][-1])
-            finished .append(h5file['common/finOK'][-1])
+            try:
+                finished .append(h5file['common/finOK'][-1])
+            except:
+                finished.append(0)
 
             if not args.summary:
                 entry = "{:<15} {:<12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
