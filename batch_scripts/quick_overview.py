@@ -62,18 +62,19 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             converged.append(h5file['xDMRG/sim_status/simulation_has_converged'][-1])
             saturated.append(h5file['xDMRG/sim_status/simulation_has_saturated'][-1])
             succeeded.append(h5file['xDMRG/sim_status/simulation_has_succeeded'][-1])
-            entry = "{:<15} {:<12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12}".format(
-                realization_num[-1],
-                np.log10(variance[-1]),
-                walltime[-1]/60,
-                resets[-1],
-                converged[-1],
-                saturated[-1],
-                succeeded[-1])
 
-            print(entry)
-            if args.save:
-                file.write(entry)
+            if not args.summary:
+                entry = "{:<15} {:<12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12}".format(
+                    realization_num[-1],
+                    np.log10(variance[-1]),
+                    walltime[-1]/60,
+                    resets[-1],
+                    converged[-1],
+                    saturated[-1],
+                    succeeded[-1])
+                print(entry)
+                if args.save:
+                    file.write(entry)
 
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
