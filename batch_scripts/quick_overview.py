@@ -25,7 +25,7 @@ if args.filename != 'experiment' or args.outdir != 'experiments'  :
     args.save = True
 
 try:
-    git_rev = "Git revision: " + str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).strip())
+    git_rev = "GIT INFO:\n" + str(subprocess.check_output(['git', 'log', '-1']))
     print(git_rev)
 except:
     git_rev=''
