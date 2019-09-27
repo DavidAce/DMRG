@@ -90,17 +90,17 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
             style = ''
             if finished[-1] == 1 and succeeded[-1] == 1:
-                style = colored.bg("green")
+                style = colored.bg("green_4")
             elif finished[-1] == 1 and converged[-1] == 1 and saturated[-1] == 0:
-                style = colored.bg("yellow")
+                style = colored.bg("dark_orange")
             elif finished[-1] == 1 and converged[-1] == 0 and saturated[-1] == 1:
-                style = colored.bg("red")
+                style = colored.bg("red_3b")
             elif finished[-1] == 0 and converged[-1] == 0 and saturated[-1] == 0:
                 style = ''
             elif finished[-1] == 0 and converged[-1] == 1 and saturated[-1] == 0:
-                style = colored.fg("green")
+                style = colored.fg("green_4")
             elif finished[-1] == 0 and converged[-1] == 0 and saturated[-1] == 1:
-                style = colored.fg("red")
+                style = colored.fg("red_3b")
 
 
             if not args.summary:
