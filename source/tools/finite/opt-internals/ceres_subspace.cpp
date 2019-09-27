@@ -461,7 +461,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                     return best_overlap_theta;
                 }
                 if(best_overlap > 0.6 and subspace_error < 100*subspace_error_threshold ){
-                    //Option C
+                    //Option C2
                     tools::log->info("Went for option C2");
                     tools::log->debug("... We can try subspace anyway then", best_variance_idx, best_overlap, std::log10(best_overlap_variance));
                     std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
