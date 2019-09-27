@@ -5,6 +5,7 @@ import re
 import numpy as np
 from datetime import datetime
 import argparse
+import subprocess
 
 parser = argparse.ArgumentParser(description='Quick overview of batch simulation')
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
@@ -23,12 +24,16 @@ if args.timestamp:
 if args.filename != 'experiment' or args.outdir != 'experiments'  :
     args.save = True
 
+git_rev = "Git revision: " + subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'])
+print(git_rev)
+
 regex = re.compile(r'\d+')
 
 if args.save:
     if not os.path.exists(args.outdir):
         os.makedirs(args.outdir)
     file = open(args.outdir + '/'+ args.filename + args.suffix, 'w')
+    file.write(git_rev + '\n')
 
 for dirName, subdirList, fileList in os.walk(args.directory):
     if not fileList:
@@ -44,6 +49,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     saturated = []
     succeeded = []
     finished  = []
+
+
 
     if not args.summary:
         header = "{:8} {:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length", "Realization", "Variance", "Time",
