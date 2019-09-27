@@ -452,7 +452,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 auto best_overlap_theta = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
                 double best_overlap_variance = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
                 tools::log->debug("... Candidate {} has highest overlap: {} and variance(log10): {}", best_overlap_idx, best_overlap ,std::log10(best_overlap_variance));
-                if(best_overlap > 0.99 and best_overlap_variance < 100.0 * prev_variance ){
+                if(best_overlap > 0.95 and best_overlap_variance < 100.0 * prev_variance ){
                     //Option C
                     tools::log->info("Went for option C");
                     tools::log->debug("... Candidate {} has fair overlap {} and variance (log10): {}", best_variance_idx, best_overlap, std::log10(best_overlap_variance));
@@ -460,6 +460,15 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                     state.unset_measurements();
                     return best_overlap_theta;
                 }
+                if(best_overlap > 0.6 and subspace_error < 100*subspace_error_threshold ){
+                    //Option C
+                    tools::log->info("Went for option C2");
+                    tools::log->debug("... We can try subspace anyway then", best_variance_idx, best_overlap, std::log10(best_overlap_variance));
+                    std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
+                    eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
+                    break;
+                }
+
 
                 // Option D
                 tools::log->info("Went for option D");

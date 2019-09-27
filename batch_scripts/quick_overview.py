@@ -9,21 +9,26 @@ import argparse
 parser = argparse.ArgumentParser(description='Quick overview of batch simulation')
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
-parser.add_argument('-f', '--filename', type=str, help='Save to file with filename', default='overview')
+parser.add_argument('-f', '--filename', type=str, help='Save to file with filename', default='experiment')
 parser.add_argument('-t', '--timestamp', action='store_true', help='Add timestamp to filename')
 parser.add_argument('-d', '--directory', type=str, help='Search for hdf5 files in directory', default='output')
+parser.add_argument('-o', '--outdir', type=str, help='Save output to directory', default='experiments')
+parser.add_argument('-x', '--suffix', type=str, help='Append suffix', default='.log')
 args = parser.parse_args()
+
 
 if args.timestamp:
     args.filename = args.filename + '-' + datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
 
-if args.filename != 'overview':
+if args.filename != 'experiment' or args.outdir != 'experiments'  :
     args.save = True
 
 regex = re.compile(r'\d+')
 
 if args.save:
-    file = open(args.filename, 'w')
+    if not os.path.exists(args.outdir):
+        os.makedirs(args.outdir)
+    file = open(args.outdir + '/'+ args.filename + args.suffix, 'w')
 
 for dirName, subdirList, fileList in os.walk(args.directory):
     if not fileList:
