@@ -24,8 +24,11 @@ if args.timestamp:
 if args.filename != 'experiment' or args.outdir != 'experiments'  :
     args.save = True
 
-git_rev = "Git revision: " + subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'])
-print(git_rev)
+try:
+    git_rev = "Git revision: " + str(subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']))
+    print(git_rev)
+except:
+    git_rev=''
 
 regex = re.compile(r'\d+')
 
