@@ -6,7 +6,8 @@ import numpy as np
 from datetime import datetime
 import argparse
 import subprocess
-
+import colored
+from colored import stylize
 parser = argparse.ArgumentParser(description='Quick overview of batch simulation')
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
@@ -87,6 +88,21 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             except:
                 finished.append(0)
 
+            style = ''
+            if finished[-1] == 1 and succeeded[-1] == 1:
+                style = colored.bg("green")
+            elif finished[-1] == 1 and converged[-1] == 1 and saturated[-1] == 0:
+                style = colored.bg("yellow")
+            elif finished[-1] == 1 and converged[-1] == 0 and saturated[-1] == 1:
+                style = colored.bg("red")
+            elif finished[-1] == 0 and converged[-1] == 0 and saturated[-1] == 0:
+                style = ''
+            elif finished[-1] == 0 and converged[-1] == 1 and saturated[-1] == 0:
+                style = colored.fg("green")
+            elif finished[-1] == 0 and converged[-1] == 0 and saturated[-1] == 1:
+                style = colored.fg("red")
+
+
             if not args.summary:
                 entry = "{:<8} {:<15} {:<12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
                     chainlen[-1],
@@ -98,7 +114,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                     saturated[-1],
                     succeeded[-1],
                     finished[-1])
-                print(entry)
+                print(stylize(entry, style))
+
                 if args.save:
                     file.write(entry + '\n')
 
