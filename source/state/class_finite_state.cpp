@@ -337,7 +337,7 @@ size_t class_finite_state::active_problem_size() const {
 }
 
 
-Eigen::Tensor<class_finite_state::Scalar,3>   class_finite_state::get_multitheta()    const{
+const Eigen::Tensor<class_finite_state::Scalar,3> &  class_finite_state::get_multitheta()    const{
     if(cache.multitheta) return cache.multitheta.value();
     tools::log->trace("Contracting multi theta...");
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multitheta");}
@@ -363,7 +363,7 @@ Eigen::Tensor<class_finite_state::Scalar,3>   class_finite_state::get_multitheta
     return cache.multitheta.value();
 }
 
-Eigen::Tensor<class_finite_state::Scalar,4>   class_finite_state::get_multimpo()    const{
+const Eigen::Tensor<class_finite_state::Scalar,4> &   class_finite_state::get_multimpo()    const{
     if(cache.multimpo) return cache.multimpo.value();
     tools::log->trace("Contracting multi mpo...");
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multimpo");}

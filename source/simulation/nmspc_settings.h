@@ -103,7 +103,10 @@ namespace settings {
         inline size_t   maxSizeDirect                = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
         inline double   maxNormError                 = 1e-10 ;   /*!< Maximum norm deviation from unity during integrity checks */
         inline size_t   maxResets                    = 4     ;   /*!< Maximum number of resets to an initial product state */
-
+        inline double   overlap_high                 = 1 - 1e-6;
+        inline double   overlap_good                 = 1 - 1e-2;
+        inline double   overlap_ok                   = 0.9;
+        inline double   overlap_low                  = 0.7072;
     }
 
     //Parameters controlling iDMRG
