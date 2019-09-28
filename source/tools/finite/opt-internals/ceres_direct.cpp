@@ -13,28 +13,41 @@
 #include <ceres/ceres.h>
 
 
-Eigen::Tensor<std::complex<double>,3>
+
+Eigen::Tensor<class_finite_state::Scalar,3>
 tools::finite::opt::internals::ceres_direct_optimization(const class_finite_state &state,
+                                                         const class_simulation_status &sim_status,
+                                                         OptType optType){
+    return ceres_direct_optimization(state,state.get_multitheta(),sim_status,optType);
+}
+
+
+Eigen::Tensor<class_finite_state::Scalar,3>
+tools::finite::opt::internals::ceres_direct_optimization(const class_finite_state &state,
+                                                         const Eigen::Tensor<class_finite_state::Scalar,3> & theta_initial,
                                                          const class_simulation_status &sim_status, OptType optType){
 //    opt::internals::old_direct_optimization(state,sim_status,optType);
 
     tools::log->trace("Optimizing in DIRECT mode");
     tools::common::profile::t_opt.tic();
     using Scalar = std::complex<double>;
-    t_opt->tic();
-    auto theta = state.get_multitheta();
-    Eigen::VectorXcd theta_start  = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
+    auto & theta_old          = state.get_multitheta();
+    auto   theta_old_vec      = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta_old.data(),theta_old.size());
+    auto   theta_initial_vec  = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta_initial.data(), theta_initial.size());
     std::vector<reports::direct_opt_tuple> opt_log;
-    t_opt->toc();
+
     if (tools::log->level() <= spdlog::level::debug){
-        double energy_0   = tools::finite::measure::multisite::energy_per_site(state,theta);
-        double variance_0 = tools::finite::measure::multisite::energy_variance_per_site(state,theta);
-        //double variance_r = tools::finite::measure::reduced::energy_variance_per_site(state,theta);
+        t_opt->tic();
+        double energy_old   = tools::finite::measure::energy_per_site(state);
+        double variance_old = tools::finite::measure::energy_variance_per_site(state);
         t_opt->toc();
-        opt_log.emplace_back("Initial"          ,theta_start.size(), energy_0, std::log10(variance_0), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
-        //opt_log.emplace_back("Initial (reduced)",theta_start.size(), energy_0, std::log10(variance_r), 1.0, theta_start.norm(), 0 ,0,t_opt->get_last_time_interval());
-    }else{
+        opt_log.emplace_back("Current state" ,theta_old.size(), energy_old, std::log10(variance_old), 1.0, theta_old_vec.norm(), 0 ,0,t_opt->get_last_time_interval());
+
+        t_opt->tic();
+        double energy_initial   = tools::finite::measure::multisite::energy_per_site(state,theta_initial);
+        double variance_initial = tools::finite::measure::multisite::energy_variance_per_site(state,theta_initial);
         t_opt->toc();
+        opt_log.emplace_back("Initial guess" , theta_initial.size(), energy_initial, std::log10(variance_initial), 1.0, theta_initial_vec.norm(), 0 , 0, t_opt->get_last_time_interval());
     }
     double energy_new,variance_new,overlap_new;
 
@@ -88,9 +101,10 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     ceres::GradientProblemSolver::Summary summary;
     int counter,iter;
     t_opt->tic();
+    Eigen::VectorXcd theta_new;
     switch (optType){
         case OptType::CPLX:{
-            Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
+            Eigen::VectorXd  theta_start_cast = Eigen::Map<const Eigen::VectorXd>(reinterpret_cast<const double*> (theta_initial_vec.data()), 2 * theta_initial_vec.size());
             auto * functor = new ceres_direct_functor<std::complex<double>>(state, sim_status);
             ceres::GradientProblem problem(functor);
             tools::log->trace("Running L-BFGS");
@@ -100,12 +114,11 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
             counter      = functor->get_count();
             energy_new   = functor->get_energy() ;
             variance_new = functor->get_variance();
-            theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
-//            delete functor;
+            theta_new    = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size() / 2).normalized();
             break;
         }
         case OptType::REAL:{
-            Eigen::VectorXd  theta_start_cast = theta_start.real();
+            Eigen::VectorXd  theta_start_cast = theta_initial_vec.real();
             auto * functor = new ceres_direct_functor<double>(state, sim_status);
             ceres::GradientProblem problem(functor);
             tools::log->trace("Running L-BFGS");
@@ -114,8 +127,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
             counter      = functor->get_count();
             energy_new   = functor->get_energy();
             variance_new = functor->get_variance();
-            theta_start  = theta_start_cast.normalized().cast<Scalar>();
-//            delete functor;
+            theta_new    = theta_start_cast.normalized().cast<Scalar>();
             break;
         }
     }
@@ -123,20 +135,20 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
 
     if (tools::log->level() <= spdlog::level::debug){
 
-        auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
-        overlap_new  = std::abs(theta_old.dot(theta_start));
-        opt_log.emplace_back("Ceres L-BFGS",theta.size(), energy_new, std::log10(variance_new), overlap_new, theta_start.norm(), iter,counter, t_opt->get_last_time_interval());
+//        auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
+        overlap_new  = std::abs(theta_old_vec.dot(theta_new));
+        opt_log.emplace_back("Ceres L-BFGS", theta_new.size(), energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), iter, counter, t_opt->get_last_time_interval());
 
         // Sanity check
         t_opt->tic();
-        auto theta_san      = Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
+        auto theta_san      = Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
         double energy_san   = tools::finite::measure::multisite::energy_per_site(state,theta_san);
         double variance_san = tools::finite::measure::multisite::energy_variance_per_site(state,theta_san);
         t_opt->toc();
-        opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new, theta_start.norm(), 0,0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Sanity check", theta_san.size(), energy_san, std::log10(variance_san), overlap_new, theta_new.norm(), 0, 0, t_opt->get_last_time_interval());
 
         //double variance_acc = tools::finite::measure::reduced::energy_variance_per_site(state,theta_san);
-        //opt_log.emplace_back("Sanity check (reduced)",theta_san.size(), energy_san, std::log10(variance_acc), overlap_new, theta_start.norm(), 0,0, t_opt->get_last_time_interval());
+        //opt_log.emplace_back("Sanity check (reduced)",theta_san.size(), energy_san, std::log10(variance_acc), overlap_new, theta_initial_vec.norm(), 0,0, t_opt->get_last_time_interval());
 
 
     }
@@ -157,26 +169,24 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
 
 
 
-    if (variance_new < 0.99 * tools::finite::measure::energy_variance_per_site(state)){
+    if (variance_new < 1.0 * tools::finite::measure::energy_variance_per_site(state)){
         // Only an improvement of 1% is considered to be an actual improvement
         tools::log->debug("Returning new (better) theta");
         state.tag_active_sites_have_been_updated(true);
-        return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
+        return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
 
     }
     else if (variance_new < 10.0 * tools::finite::measure::energy_variance_per_site(state)) {
         // Allow for variance to increase a bit to come out of local minima
         tools::log->debug("Returning new (worse) theta");
         state.tag_active_sites_have_been_updated(false);
-        return  Textra::Matrix_to_Tensor(theta_start, state.active_dimensions());
+        return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
     }
     else{
         tools::log->debug("Direct optimization didn't improve variance.");
         tools::log->debug("Returning old theta");
-        if (variance_new <= settings::precision::varianceConvergenceThreshold)
-              state.tag_active_sites_have_been_updated(true);
-        else  state.tag_active_sites_have_been_updated(false);
-        return  theta;
+        state.tag_active_sites_have_been_updated(variance_new <= settings::precision::varianceConvergenceThreshold);
+        return  theta_old;
 
     }
 

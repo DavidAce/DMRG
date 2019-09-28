@@ -131,8 +131,8 @@ public:
     Eigen::DSizes<long,3>  active_dimensions() const;
     size_t                 active_problem_size() const;
 
-    TType<3>   get_multitheta()    const;
-    TType<4>   get_multimpo  ()    const;
+    const TType<3> & get_multitheta()  const;
+    const TType<4> & get_multimpo  ()  const;
     std::pair<std::reference_wrapper<const class_environment>     , std::reference_wrapper<const class_environment>>      get_multienv ()     const;
     std::pair<std::reference_wrapper<const class_environment_var> , std::reference_wrapper<const class_environment_var>>  get_multienv2()     const;
 

@@ -39,8 +39,8 @@ tools::finite::opt::find_excited_state(const class_finite_state &state, const cl
     tools::log->debug(problem_report.str());
 
     switch (optSpace){
-        case OptSpace::SUBSPACE:    return internals::ceres_subspace_optimization(state, sim_status, optType, optMode);
-        case OptSpace::DIRECT:      return internals::ceres_direct_optimization(state, sim_status, optType);
+        case OptSpace::SUBSPACE:    return internals::ceres_subspace_optimization(state,sim_status, optType, optMode);
+        case OptSpace::DIRECT:      return internals::ceres_direct_optimization(state,sim_status, optType);
     }
 }
 
