@@ -148,6 +148,8 @@ void class_xDMRG::single_DMRG_step()
         if(state->active_sites_updated()){
             log->debug("Sites successfully updated");
             break;
+        }else{
+            log->debug("Sites failed to update");
         }
         if (optSpace == opt::OptSpace::SUBSPACE){
             //Switch to DIRECT
