@@ -115,8 +115,8 @@ void class_xDMRG::single_DMRG_step()
     debug::check_integrity(*state);
     Eigen::Tensor<Scalar,3> theta;
 //    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::maxSitesMultiDmrg,2ul);
-//    std::list<size_t> max_num_sites_list = {2,4,settings::precision::maxSitesMultiDmrg};
-    std::list<size_t> max_num_sites_list = {2};
+    std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
+//    std::list<size_t> max_num_sites_list = {2};
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
     while(true){
         auto old_num_sites = state->active_sites.size();
@@ -148,19 +148,26 @@ void class_xDMRG::single_DMRG_step()
             log->debug("Sites successfully updated");
             break;
         }
+        if (optSpace == opt::OptSpace::SUBSPACE){
+            //Switch to DIRECT
+            optSpace  = opt::OptSpace::DIRECT;
+            threshold = settings::precision::maxSizeDirect;
+        }
+
+
         if(max_num_sites_list.empty()){
             log->debug("Keeping last theta: failed to find better theta and maxSitesMultiDmrg reached");
             if(theta.size() == 0) throw std::logic_error("Theta is empty!");
             break;
         }
-        if(state->get_direction() == 1  and state->get_position() - 1 + max_num_sites_list.front() >= state->get_length()){
-            log->debug("Keeping last theta: can't activate more sites, reached the right edge");
-            break;
-        }
-        if(state->get_direction() == -1 and state->get_position() + 2 - max_num_sites_list.front() < 0){
-            log->debug("Keeping last theta: can't activate more sites, reached the left edge");
-            break;
-        }
+//        if(state->get_direction() == 1  and state->get_position() - 1 + max_num_sites_list.front() >= state->get_length()){
+//            log->debug("Keeping last theta: can't activate more sites, reached the right edge");
+//            break;
+//        }
+//        if(state->get_direction() == -1 and state->get_position() + 2 - max_num_sites_list.front() < 0){
+//            log->debug("Keeping last theta: can't activate more sites, reached the left edge");
+//            break;
+//        }
 
     }
 
