@@ -80,7 +80,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 300;
+    options.max_num_iterations = 2000;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
     options.max_line_search_step_expansion = 100;// 100.0;
@@ -92,7 +92,8 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_sufficient_function_decrease  = 1e-2;// 1e-2;
     options.line_search_sufficient_curvature_decrease = 0.5; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-4;
+    options.function_tolerance = 1e-6;
+//    options.function_tolerance = 1e-4;
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-14;//1e-12;
 

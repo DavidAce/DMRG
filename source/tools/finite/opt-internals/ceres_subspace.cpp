@@ -453,11 +453,13 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     if(best_overlap > settings::precision::overlap_high){
         //Option B
+        theta_initial = best_overlap_theta;
+
         tools::log->trace("Went for option B");
-        if (best_overlap_variance < theta_old_variance){
-            tools::log->trace("Initial guess: candidate {} -- it has lower variance than the current state", best_overlap_idx);
-            theta_initial = best_overlap_theta;
-        }
+//        if (best_overlap_variance < theta_old_variance){
+//            tools::log->trace("Initial guess: candidate {} -- it has lower variance than the current state", best_overlap_idx);
+//            theta_initial = best_overlap_theta;
+//        }
     }
 
     if(settings::precision::overlap_cat <= best_overlap and best_overlap < settings::precision::overlap_high ){
@@ -474,13 +476,10 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     }
 
 
-    OptSpace optspace;
     if (subspace_error_filtered < subspace_error_threshold){
         tools::log->trace("Selected SUBSPACE optimization");
-        optspace = OptSpace::SUBSPACE;
     }else{
         tools::log->trace("Selected DIRECT optimization");
-        optspace = OptSpace::DIRECT;
         return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
     }
 
@@ -540,7 +539,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 300;
+    options.max_num_iterations = 2000;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;
     options.max_line_search_step_expansion = 100;// 100.0;
@@ -552,7 +551,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.line_search_sufficient_function_decrease  = 1e-2;// 1e-2;
     options.line_search_sufficient_curvature_decrease = 0.5; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-4;
+    options.function_tolerance = 1e-6;
+//    options.function_tolerance = 1e-4;
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-16;//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
