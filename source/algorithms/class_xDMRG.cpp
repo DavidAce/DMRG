@@ -102,6 +102,7 @@ void class_xDMRG::single_DMRG_step()
     auto optSpace = opt::OptSpace::SUBSPACE;
 //    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::varianceConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
     optSpace      = state->size_2site()  > settings::precision::maxSizePartDiag ? opt::OptSpace::DIRECT : optSpace;
+    optSpace      = sim_status.variance_mpo_has_converged ? opt::OptSpace::DIRECT : optSpace;
 //    optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps                                              ?  opt::OptSpace::DIRECT  : optSpace;
     auto optType  = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
 
