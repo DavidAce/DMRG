@@ -419,8 +419,16 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
     eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
+    bool force_accept = false;
+    OptSpace optSpace = OptSpace::SUBSPACE;
 
-
+    if (subspace_error_filtered < subspace_error_threshold){
+        tools::log->trace("Selected SUBSPACE optimization");
+        optSpace = OptSpace::SUBSPACE;
+    }else{
+        tools::log->trace("Selected DIRECT optimization");
+        optSpace = OptSpace::DIRECT;
+    }
 
     tools::log->trace("Current energy  : {:.16f}", tools::finite::measure::energy_per_site(state));
     tools::log->trace("Current variance: {:.16f}", std::log10(theta_old_variance) );
@@ -444,10 +452,9 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     // We set theta_initial to best overlapping theta, but this can change
     tools::log->trace("Initial guess   : best overlap candidate {}",best_overlap_idx);
     auto theta_initial = best_overlap_theta;
-
     if(sim_status.variance_mpo_has_saturated and not sim_status.variance_mpo_has_converged){
-        double next_best_variance = 100;
-        double next_best_variance_idx = 1;
+        double next_best_variance     = 100;
+        long   next_best_variance_idx = 1;
         for (long idx = 1; idx < overlaps.size(); idx++){
             auto   cand_overlap_theta              = Textra::Matrix_to_Tensor(eigvecs.col(idx), state.active_dimensions());
             double cand_overlap_energy             = eigvals_per_site_unreduced(idx);
@@ -461,43 +468,28 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         if (best_overlap_variance > 2 * theta_old_variance and next_best_variance < 1e4 * theta_old_variance){
             tools::log->trace("Initial guess   : next best variance candidate {} -- changed due to saturation",next_best_variance_idx);
             theta_initial = Textra::Matrix_to_Tensor(eigvecs.col(next_best_variance_idx), state.active_dimensions());
+            force_accept  = true;
+
         }
-    }
-
-    if(best_overlap > settings::precision::overlap_high){
-        //Option B
-        tools::log->trace("Went for option B");
-//        if(sim_status.variance_mpo_has_saturated){
-//            auto [best_variance, best_variance_idx] = get_best_variance_in_window(state, eigvecs, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
-//            auto   best_variance_theta              = Textra::Matrix_to_Tensor(eigvecs.col(best_variance_idx), state.active_dimensions());
-//            double best_variance_energy             = eigvals_per_site_unreduced(best_variance_idx);
-//            tools::log->trace("Candidate {:2} has lowest variance: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_variance_idx ,overlaps(best_variance_idx) ,best_variance_energy  ,std::log10(best_variance) );
-//            if(best_variance < best_overlap_variance){
-//                tools::log->trace("Initial guess   : best variance candidate {} -- changed due to saturation",best_variance_idx);
-//                theta_initial = best_variance_theta;
-//            }
-//        }
-    }
-
-    if(settings::precision::overlap_cat <= best_overlap and best_overlap < settings::precision::overlap_high ){
-        //Option C
-        tools::log->trace("Went for option C");
     }
 
     if(best_overlap < settings::precision::overlap_cat ) {
         //Option D
         tools::log->trace("Went for option D");
         tools::log->trace("Selected DIRECT optimization");
-        return ceres_direct_optimization(state, best_overlap_theta, sim_status, optType);
+        optSpace = OptSpace::DIRECT;
+        theta_initial = best_overlap_theta;
+//        return ceres_direct_optimization(state, best_overlap_theta, sim_status, optType);
     }
 
 
-    if (subspace_error_filtered < subspace_error_threshold){
+    if (optSpace == OptSpace::SUBSPACE){
         tools::log->trace("Selected SUBSPACE optimization");
     }else{
         tools::log->trace("Selected DIRECT optimization");
         return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
     }
+
 
     tools::log->debug("Optimizing");
     // Make sure you use theta_initial from now on, not theta_old
@@ -557,17 +549,17 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
     options.max_num_iterations = 2000;
     options.max_lbfgs_rank     = 250;
-    options.use_approximate_eigenvalue_bfgs_scaling = true;
-    options.max_line_search_step_expansion = 100;// 100.0;
+    options.use_approximate_eigenvalue_bfgs_scaling = false;
+    options.max_line_search_step_expansion = 10.0;// 100.0;
     options.min_line_search_step_size = 1e-12;
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
     options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-2;// 1e-2;
+    options.line_search_sufficient_function_decrease  = 1e-6;// 1e-2; //A small value forces a larger step length
     options.line_search_sufficient_curvature_decrease = 0.5; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-6;
+    options.function_tolerance = 1e-4;
 //    options.function_tolerance = 1e-4;
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-16;//1e-12;
@@ -637,14 +629,13 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     reports::print_report(opt_log);
 
     tools::common::profile::t_opt.toc();
-    if (variance_new < 1.0 * tools::finite::measure::energy_variance_per_site(state)){
+    if (variance_new < 1.0 * tools::finite::measure::energy_variance_per_site(state) or force_accept){
         tools::log->debug("Returning new (better) theta");
-
+        state.tag_active_sites_have_been_updated(true);
     }else{
         tools::log->debug("Returning new (worse) theta");
-
+        state.tag_active_sites_have_been_updated(false);
     }
-    state.tag_active_sites_have_been_updated(true);
     return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
 //
 //    if (variance_new < 1.0 * tools::finite::measure::energy_variance_per_site(state)){
