@@ -26,7 +26,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(
         const class_simulation_status & sim_status)
         : ceres_base_functor(state,sim_status)
 {
-    tools::log->trace("Constructing subspace functor");
+    tools::log->trace("Constructing direct functor");
 
     #ifdef _OPENMP
         tools::log->trace("Parallelizing with {} threads", omp_get_max_threads());
