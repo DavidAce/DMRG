@@ -95,8 +95,8 @@ namespace settings {
         inline double   varianceSlopeThreshold       = 5     ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
         inline double   entropySlopeThreshold        = 0.1   ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/
         inline double   subspaceErrorFactor          = 1     ;   /*!< The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the subspace error is too high, direct optimization is done instead */
-        inline double   maxSubspaceError             = 1e-4  ;   /*!< The maximum subspace error. Never do subspace variance optimization with subspace error greater than this. */
-        inline double   minSubspaceError             = 1e-8  ;   /*!< The minimum subspace error. Always do subspace variance optimization with subspace error less than this  */
+        inline double   maxSubspaceError             = 1e-8  ;   /*!< The maximum subspace error. Never do subspace variance optimization with subspace error greater than this. */
+        inline double   minSubspaceError             = 1e-12 ;   /*!< The minimum subspace error. Always do subspace variance optimization with subspace error less than this  */
         inline size_t   maxSitesMultiDmrg            = 8     ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>12 or so) makes the contractions slow. */
         inline size_t   maxSizeFullDiag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
         inline size_t   maxSizePartDiag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
