@@ -320,14 +320,14 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     // Trying much higher values (1e-4 and 1e-8, resp.) helped tremendously to get troublesome realizations to converge.
     // It seems that allowing a subspace optimization with slightly worse subspace can let the algorithm escape local minimas.
     // What about maxVarianceincrease? It's set to 10 but I don't know yet what it does
-    double theta_variance    = tools::finite::measure::energy_variance_per_site(state);
-    subspace_error_threshold = settings::precision::subspaceErrorFactor * theta_variance;
-    subspace_error_threshold = std::min(subspace_error_threshold, settings::precision::maxSubspaceError);
-    subspace_error_threshold = std::max(subspace_error_threshold, settings::precision::minSubspaceError);
+    double theta_old_variance    = tools::finite::measure::energy_variance_per_site(state);
+    subspace_error_threshold     = settings::precision::subspaceErrorFactor * theta_old_variance;
+    subspace_error_threshold     = std::min(subspace_error_threshold, settings::precision::maxSubspaceError);
+    subspace_error_threshold     = std::max(subspace_error_threshold, settings::precision::minSubspaceError);
 
 
-    auto & theta                 = state.get_multitheta();
-    auto theta_old             = Eigen::Map<const Eigen::VectorXcd>  (theta.data(),theta.size());
+    auto & theta_old               = state.get_multitheta();
+    auto theta_old_vec             = Eigen::Map<const Eigen::VectorXcd>  (theta_old.data(), theta_old.size());
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
@@ -338,7 +338,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     Eigen::VectorXd eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
 
     tools::log->trace("Subspace found with {} eigenvectors", eigvecs.cols());
-    Eigen::VectorXd overlaps = (theta_old.adjoint() * eigvecs).cwiseAbs().real();
+    Eigen::VectorXd overlaps = (theta_old_vec.adjoint() * eigvecs).cwiseAbs().real();
 
     {
         int     idx;
@@ -352,14 +352,14 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     // Explanation:
     // theta_initial: The starting point , or initial guess, for the gradient descent (L-BFGS) optimization routine.
-    //                By default theta_initial = theta, the i.e. the old theta.
+    //                By default theta_initial = theta_old, i.e. the current state.
     // candidate    : One of the eigenvectors obtained from either full or partial diagonalization, i.e. lapack or arpack.
-    // relevant candidate : Eigenvectors inside of the energy window with high enough overlap with the old theta.
-    // subspace_error = 1 - Σ_i |<theta_new_i|theta>|^2
-    //      If == 0, it means that the set of candidate theta's span the old theta, i.e. the set can describe the current state.
+    // relevant candidate : Eigenvectors inside of the energy window with high enough overlap with the old theta_old.
+    // subspace_error = 1 - Σ_i |<theta_new_i|theta_old>|^2
+    //      If == 0, it means that the set of candidate theta_old's span the old theta_old, i.e. the set can describe the current state.
     //      The subspace error is "low enough" when subspace_error < subspace_error_threshold
     //
-    // best_overlap : The highest overlap to the old theta achieved by any candidate inside of the energy window, i.e. |<candidate_i | theta>|_max
+    // best_overlap : The highest overlap to the old theta_old achieved by any candidate inside of the energy window, i.e. |<candidate_i | theta_old>|_max
     // best_overlap_idx: The index of the best overlapping candidate in the energy window. If -1, it means that no state is in the window.
     // best_variance:
 
@@ -368,57 +368,61 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     // overlap_ok   = 0.9
     // overlap_low  = 1/sqrt(2) = 0.707.. (cat state or worse)
 
-    // We can now make decisions based on overlaps.
 
-    // A) If best_overlap_idx == -1
-    //      No state is in energy window -> discard! Return old theta.
-    // B) If best_overlap >= overlap_high: keep it.
-    //      This happens when the environments haven't changed and we basically just found the old theta among the new eigenvectors,
-    //      and other eigenvectors just contribute to negligible noise.
-    //      TODO: What is overlap_high? When variance is low we need to be more careful. A good estimate may be overlap_high = 1 - variance.
+    // Decision tree:
+    // Step 1)  Start by filtering eigenvectors down to a  smaller set of "relevant" candidates for
+    //          doing subspace optimization. Allowing a maximum of 64 candidates keeps ram below 2GB
+    //          when theta_old.size() == 4096. This means that we filter out
+    //              * candidates outside of the energy window,
+    //              * candidates with little or no overlap to the current state.
+    //              * TODO: Filter states which have high variance?
+    //          Compute subspace_error_filtered = 1 - Σ_i |<candidate_i|theta_old>|^2
+    // Step 2)  Find the best overlapping state among the relevant candidates.
+    // Step 3)  We can now make decisions A-F based on the overlaps.
+    //          A)  If best_overlap_idx == -1
+    //              No state is in energy window -> discard! Return old theta_old.
+    //          B)  If best_overlap >= overlap_high.
+    //              NOTE: When variance is low we need to be more careful about defining overlap_high.
+    //              A good estimate may be overlap_high = 1 - variance.
+    //              This happens when the environments haven't changed and we basically just found the old theta_old among the new eigenvectors,
+    //              and other eigenvectors just contribute to negligible noise. We could essentially just go ahead and keep it, but sometimes
+    //              when variance is low we don't want to ruin those last decimals.
+    //                  B1) If  best_overlap_variance <= theta_old_variance: keep
     //
-    // In the options that follow, we may need a smaller set of "relevant" candidates for doing subspace optimization.
-    // Allowing a maximum of 64 candidates keeps ram below 2GB when theta.size() == 4096.
-    // This means that we filter out
-    //     1) candidates outside of the energy window,
-    //     2) candidates with little or no overlap to the current state.
-    //     3) TODO: Filter states which have high variance?
-    // Compute subspace_error = 1 - Σ_i |<candidate_i|theta>|^2
-    //
-    // C) If overlap_good <= best_overlap < overlap_high, do variance optimization.
-    //      This can happen if the environments have been modified slightly since the last time we visited this site,
-    //      but the signal is still clear -- we are still targeting the same state. However we can't be sure that
-    //      the contributions from nearby states is just noise anymore.
-    //      First, set theta_initial = theta_best_overlap_candidate
-    //      //////First, check the variance ONLY of the best overlapping relevant candidate.
-    //      //////If the candidate has lower variance than the current one, set theta_initial = theta_best_overlap_candidate.
-    //      TODO: Which makes the most sense in the two options above?
-    //      The best course of action now is to:
-    //          C1) If the subspace error is low enough, do subspace optimization, with initial guess theta_initial.
-    //          C2) Else, send theta_initial as a starting guess for DIRECT optimization.
-    //          TODO) Think about what theta_initial is supposed to be. Either it can be the eigenvector with best overlap, or just the old theta.
-    // D) If overlap_ok < best_overlap < overlap_good
-    //      This happens if the environments have changed some more since the last time we visited this site,
-    //      for instance when some other site got optimized a lot.
-    //      The signal is less clear, but we are probably still targeting the same state.
-    //      This time we need to be more careful though.
-    //      First, check the variance of ALL relevant candidates.
-    //      If a candidate theta_j has lower variance than the current one, set theta_initial = theta_j.
-    //      Now:
-    //          D1) If the subspace quality is good enough, do subspace optimization with initial guess theta_initial
-    //          D2) Else, send theta_initial as a starting guess for DIRECT optimization
-    // E) If overlap_low < best_overlap < overlap_ok
-    //      This happens if the environments have changed a lot since the last time we visited this site,
-    //      which is usually the case early in the simulation.
-    //      The signal is not clear anymore, in fact there are many candidates with significant overlap to the old theta.
-    //      The subspace_error is probably not a good measure anymore, since we're not trying to find a new theta which
-    //      is a fine tuning away from of the old one: we would just get stuck in a local minima far away.
-    //      First, check the variance of ALL relevant candidates.
-    //          E1) If any candidate state has better variance than the current one, send it as a starting guess for DIRECT optimization.
-    //          E2) Else, send the best overlapping state as a starting guess for DIRECT optimization.
-    // F) If best_overlap < overlap_low
-    //      Mayday! We are lost in Hilbert space!
-    //      Send the old theta as a starting guess for DIRECT optimization, and brace for impact.
+    //          C) If overlap_good <= best_overlap < overlap_high, do variance optimization.
+    //               This can happen if the environments have been modified slightly since the last time we visited this site,
+    //               but the signal is still clear -- we are still targeting the same state. However we can't be sure that
+    //               the contributions from nearby states is just noise anymore.
+    //               First, set theta_initial = theta_best_overlap_candidate
+    //               //////First, check the variance ONLY of the best overlapping relevant candidate.
+    //               //////If the candidate has lower variance than the current one, set theta_initial = theta_best_overlap_candidate.
+    //               TODO: Which makes the most sense in the two options above?
+    //               The best course of action now is to:
+    //                   C1) If the subspace error is low enough, do subspace optimization, with initial guess theta_initial.
+    //                   C2) Else, send theta_initial as a starting guess for DIRECT optimization.
+    //                   TODO) Think about what theta_initial is supposed to be. Either it can be the eigenvector with best overlap, or just the old theta_old.
+    //          D) If overlap_ok < best_overlap < overlap_good
+    //               This happens if the environments have changed some more since the last time we visited this site,
+    //               for instance when some other site got optimized a lot.
+    //               The signal is less clear, but we are probably still targeting the same state.
+    //               This time we need to be more careful though.
+    //               First, check the variance of ALL relevant candidates.
+    //               If a candidate theta_j has lower variance than the current one, set theta_initial = theta_j.
+    //               Now:
+    //                   D1) If the subspace quality is good enough, do subspace optimization with initial guess theta_initial
+    //                   D2) Else, send theta_initial as a starting guess for DIRECT optimization
+    //          E) If overlap_low < best_overlap < overlap_ok
+    //               This happens if the environments have changed a lot since the last time we visited this site,
+    //               which is usually the case early in the simulation.
+    //               The signal is not clear anymore, in fact there are many candidates with significant overlap to the old theta_old.
+    //               The subspace_error is probably not a good measure anymore, since we're not trying to find a new theta which
+    //               is only a fine tuning away from of the old one: we would just get stuck in a local minima far away.
+    //               First, check the variance of ALL relevant candidates.
+    //                   E1) If any candidate state has better variance than the current one, send it as a starting guess for DIRECT optimization.
+    //                   E2) Else, send the best overlapping state as a starting guess for DIRECT optimization.
+    //          F) If best_overlap < overlap_low
+    //               Mayday! We are lost in Hilbert space!
+    //               Send the old theta as a starting guess for DIRECT optimization, and brace for impact.
 
 
 
@@ -428,69 +432,86 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
     eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
 
+    tools::log->trace("Current energy  : {:.16f}", tools::finite::measure::energy_per_site(state));
+    tools::log->trace("Current variance: {:.16f}", std::log10(theta_old_variance) );
 
     double overlap_high_precise  = std::max(settings::precision::overlap_high, 1-tools::finite::measure::energy_variance_per_site(state));
     auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
-    auto best_overlap_theta              = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
-    double best_overlap_energy           = eigvals_per_site_unreduced(best_overlap_idx);
-    double best_overlap_variance         = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
-    tools::log->debug("Current variance: {}", std::log10(theta_variance) );
-    tools::log->debug("Candidate {} has highest overlap: {:.16f}. Energy: {} and variance: {}",best_overlap_idx,best_overlap, best_overlap_energy, std::log10(best_overlap_variance) );
-
 
     if (best_overlap_idx < 0){
         //Option A
-        tools::log->info("Went for option A");
-        tools::log->debug("No overlapping states in energy range. Returning old theta");
+        tools::log->trace("Went for option A -- No overlapping states in energy range. Returning old theta");
         state.tag_active_sites_have_been_updated(false);
-        return theta;
+        return theta_old;
     }
 
     // We set theta_initial to old theta, but this can change
-    tools::log->debug("Current state {} is now the initial guess");
-    auto theta_initial = theta;
+    tools::log->trace("Initial guess   : current state");
+    auto theta_initial = theta_old;
+
+
+    auto   best_overlap_theta            = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
+    double best_overlap_energy           = eigvals_per_site_unreduced(best_overlap_idx);
+    double best_overlap_variance         = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
+    tools::log->trace("Candidate {} has highest overlap: Overlap: {:.16f} Energy: {:18.16f} Variance: {:18.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
 
     if(best_overlap > overlap_high_precise){
         //Option B
-        if (best_overlap_variance <= theta_variance){
-            tools::log->info("Went for option B1");
-            tools::log->debug("Candidate {} has great overlap: {:.16f} and variance: {}. Keeping it.", best_overlap_idx, best_overlap,std::log10(best_overlap_variance));
-            state.tag_active_sites_have_been_updated(true);
-            state.unset_measurements();
-            return best_overlap_theta;
-        }else{
-            tools::log->info("Went for option B2");
-            tools::log->debug("Candidate {} has great overlap: {:.16f} but variance is worse: {}. Optimizing it.", best_overlap_idx, best_overlap,std::log10(best_overlap_variance));
-            if(subspace_error_filtered < subspace_error_threshold){
-                //Option B21
-                tools::log->info("Went for option B21");
-                tools::log->debug("Running SUBSPACE optimization with the current state as initial guess");
-            }else{
-                //Option B22
-                tools::log->info("Went for option B22");
-                tools::log->debug("Running DIRECT optimization with the current state as initial guess");
-                return ceres_direct_optimization(state, theta ,sim_status, optType);
-            }
+        if (best_overlap_variance < theta_old_variance){
+            tools::log->trace("Initial guess: candidate {} -- it has lower variance than the current state", best_overlap_idx);
+            theta_initial = best_overlap_theta;
         }
+
+        if(subspace_error_filtered < subspace_error_threshold){
+            //Option B1
+            tools::log->trace("Went for option B1 -- Running SUBSPACE optimization with current initial guess");
+        }else{
+            //Option B2
+            tools::log->trace("Went for option B2 -- Running DIRECT optimization with current initial guess");
+            return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
+        }
+
+
+
+//        if (best_overlap_variance <= theta_old_variance){
+//            tools::log->info("Went for option B1");
+//            tools::log->debug("Candidate {} has great overlap: {:.16f} and variance: {:.16f}. Optimizing it.", best_overlap_idx, best_overlap,std::log10(best_overlap_variance));
+////            state.tag_active_sites_have_been_updated(true);
+////            state.unset_measurements();
+////            return best_overlap_theta;
+//            tools::log->debug("Running DIRECT optimization with the best overlap candidate as initial guess");
+//            return ceres_direct_optimization(state, best_overlap_theta , sim_status, optType);
+//        }else{
+//            tools::log->info("Went for option B2");
+//            tools::log->debug("Candidate {} has great overlap: {:.16f} but variance is worse: {:.16f}. Optimizing it.", best_overlap_idx, best_overlap,std::log10(best_overlap_variance));
+//            if(subspace_error_filtered < subspace_error_threshold){
+//                //Option B21
+//                tools::log->info("Went for option B21");
+//                tools::log->debug("Running SUBSPACE optimization with the current state as initial guess");
+//            }else{
+//                //Option B22
+//                tools::log->info("Went for option B22");
+//                tools::log->debug("Running DIRECT optimization with the current state as initial guess");
+//                return ceres_direct_optimization(state, theta_old , sim_status, optType);
+//            }
+//        }
     }
 
 
 
     if(settings::precision::overlap_good <= best_overlap and best_overlap < overlap_high_precise ){
         //Option C
-        if (best_overlap_variance < theta_variance){
-            tools::log->debug("Candidate {} is now the initial guess because it has lower variance than the current state", best_overlap_idx);
+        if (best_overlap_variance < theta_old_variance){
+            tools::log->trace("Initial guess: candidate {} -- it has lower variance than the current state", best_overlap_idx);
             theta_initial = best_overlap_theta;
         }
 
         if(subspace_error_filtered < subspace_error_threshold){
             //Option C1
-            tools::log->info("Went for option C1");
-            tools::log->debug("Running SUBSPACE optimization with current initial guess");
+            tools::log->trace("Went for option C1 -- Running SUBSPACE optimization with current initial guess");
         }else{
             //Option C2
-            tools::log->info("Went for option C2");
-            tools::log->debug("Running DIRECT optimization with current initial guess");
+            tools::log->trace("Went for option C2 -- Running DIRECT optimization with current initial guess");
             return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
         }
     }
@@ -504,22 +525,18 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                                                                               sim_status.energy_ubound);
         auto   best_variance_theta    = Textra::Matrix_to_Tensor(eigvecs.col(best_variance_idx), state.active_dimensions());
         double best_variance_energy   = eigvals_per_site_unreduced(best_variance_idx);
+        tools::log->trace("Candidate {} has lowest variance: Overlap: {:.16f} Energy: {:18.16f} Variance: {:18.16f}",best_variance_idx,overlaps(best_variance_idx),best_variance_energy ,std::log10(best_variance));
+//        if(best_variance < theta_old_variance){
+//            tools::log->trace("Initial guess: candidate {} -- it has lower variance than the current state", best_overlap_idx);
+//            theta_initial = best_variance_theta;
+//        }
 
-        tools::log->debug("Candidate {} has lowest variance: {}. Energy: {} and overlap : {}",best_variance_idx,std::log10(best_variance), best_variance_energy, overlaps(best_variance_idx));
-        if(best_variance < theta_variance){
-            tools::log->debug("Candidate {} is now the initial guess because it has lower variance than the current state", best_variance_idx );
-            theta_initial = best_variance_theta;
-        }else{
-            tools::log->debug("Keeping old theta as initial guess" );
-        }
         if(subspace_error_filtered < subspace_error_threshold){
             //Option D1
-            tools::log->info("Went for option D1");
-            tools::log->debug("Running SUBSPACE optimization with current initial guess");
+            tools::log->trace("Went for option D1 -- Running SUBSPACE optimization with current initial guess");
         }else{
             //Option D2
-            tools::log->info("Went for option D2");
-            tools::log->debug("Running DIRECT optimization with current initial guess");
+            tools::log->trace("Went for option D2 -- Running DIRECT optimization with current initial guess");
             return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
         }
     }
@@ -531,29 +548,35 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                                                                               eigvals_per_site_unreduced,
                                                                               sim_status.energy_lbound,
                                                                               sim_status.energy_ubound);
-        if(best_variance < theta_variance){
-            tools::log->info("Went for option E1");
-            tools::log->debug("Running DIRECT optimization with the lowest variance candidate as initial guess");
-            theta_initial = Textra::Matrix_to_Tensor(eigvecs.col(best_variance_idx), state.active_dimensions());
+        double best_variance_energy   = eigvals_per_site_unreduced(best_variance_idx);
+        tools::log->trace("Candidate {} has lowest variance: Overlap: {:.16f} Energy: {:18.16f} Variance: {:18.16f}",best_variance_idx,overlaps(best_variance_idx),best_variance_energy ,std::log10(best_variance));
+        if(best_variance < theta_old_variance){
+            tools::log->trace("Went for option E1 -- Running DIRECT optimization with the lowest variance candidate as initial guess");
+//            theta_initial = Textra::Matrix_to_Tensor(eigvecs.col(best_variance_idx), state.active_dimensions());
         }else{
-            tools::log->info("Went for option E2");
-            tools::log->debug("Running DIRECT optimization with the highest overlap candidate as initial guess");
-            theta_initial = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
+            tools::log->trace("Went for option E2 -- Running DIRECT optimization with the highest overlap candidate as initial guess");
+//            theta_initial = best_overlap_theta;
         }
-        return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
+        return ceres_direct_optimization(state, best_overlap_theta ,sim_status, optType);
+//        return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
     }
 
     if(best_overlap < settings::precision::overlap_low) {
-        tools::log->info("Went for option F");
-        tools::log->debug("Running DIRECT optimization with the old theta as initial guess");
-        return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
+        if(subspace_error_filtered < subspace_error_threshold){
+            //Option F1
+            tools::log->trace("Went for option F1 -- Running SUBSPACE optimization with current state as initial guess");
+        }else{
+            //Option F2
+            tools::log->trace("Went for option F2 -- Running DIRECT optimization with current state as initial guess");
+            return ceres_direct_optimization(state, theta_old ,sim_status, optType);
+        }
     }
 
 
 
 
-    tools::log->info("Optimizing");
-    // Make sure you use theta_initial from now on, not theta
+    tools::log->debug("Optimizing");
+    // Make sure you use theta_initial from now on, not theta_old
     auto theta_initial_map             = Eigen::Map<const Eigen::VectorXcd>  (theta_initial.data(),theta_initial.size());
 
 
@@ -573,7 +596,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         double energy_old        = tools::finite::measure::energy_per_site(state);
         double variance_old      = tools::finite::measure::energy_variance_per_site(state);
         t_opt->toc();
-        opt_log.emplace_back("Current state",theta.size(), energy_old, std::log10(variance_old), 1.0 ,theta_old.norm(), iter_0,0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Current state", theta_old.size(), energy_old, std::log10(variance_old), 1.0 , theta_old_vec.norm(), iter_0, 0, t_opt->get_last_time_interval());
 
         // Initial sanity check
         t_opt->tic();
@@ -581,9 +604,9 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         auto theta_0_tensor      = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta_0.data(),state.active_dimensions());
         double energy_0          = tools::finite::measure::energy_per_site(state,theta_0_tensor);
         double variance_0        = tools::finite::measure::energy_variance_per_site(state,theta_0_tensor);
-        double overlap_0         = std::abs(theta_old.dot(theta_0));
+        double overlap_0         = std::abs(theta_old_vec.dot(theta_0));
         t_opt->toc();
-        opt_log.emplace_back("Initial guess",theta.size(), energy_0, std::log10(variance_0), overlap_0,theta_0.norm(), iter_0,0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Initial guess", theta_old.size(), energy_0, std::log10(variance_0), overlap_0, theta_0.norm(), iter_0, 0, t_opt->get_last_time_interval());
 
 
         // Initial sanity check 2
@@ -669,8 +692,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     if (tools::log->level() <= spdlog::level::debug){
         // Print results of Ceres LBFGS
-        overlap_new = (theta_old.adjoint() * theta_new).cwiseAbs().sum();
-        opt_log.emplace_back("Ceres L-BFGS",theta.size(), energy_new, std::log10(variance_new), overlap_new,theta_new.norm(), iter,counter, t_opt->get_last_time_interval());
+        overlap_new = (theta_old_vec.adjoint() * theta_new).cwiseAbs().sum();
+        opt_log.emplace_back("Ceres L-BFGS", theta_old.size(), energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), iter, counter, t_opt->get_last_time_interval());
 
         // Sanity check
         t_opt->tic();
@@ -711,7 +734,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         if (variance_new <= settings::precision::varianceConvergenceThreshold)
               state.tag_active_sites_have_been_updated(true);
         else  state.tag_active_sites_have_been_updated(false);
-        return  theta;
+        return  theta_old;
 
     }
 

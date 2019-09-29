@@ -116,7 +116,7 @@ void class_xDMRG::single_DMRG_step()
     Eigen::Tensor<Scalar,3> theta;
 //    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::maxSitesMultiDmrg,2ul);
     std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
-    if (max_num_sites_list.back() == settings::precision::maxSitesMultiDmrg) max_num_sites_list.pop_back();
+    while (max_num_sites_list.front() >=  max_num_sites_list.back()) max_num_sites_list.pop_back();
     while(true){
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
