@@ -117,7 +117,6 @@ void class_xDMRG::single_DMRG_step()
     Eigen::Tensor<Scalar,3> theta;
 //    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::maxSitesMultiDmrg,2ul);
     std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
-//    std::list<size_t> max_num_sites_list = {2};
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
     while(true){
         auto old_num_sites = state->active_sites.size();
@@ -127,35 +126,19 @@ void class_xDMRG::single_DMRG_step()
 
         if( state->active_sites.size()   == old_num_sites and
             state->active_problem_size() == old_prob_size){
-            //Reached threshold
-            if( optSpace == opt::OptSpace::SUBSPACE and
-                old_prob_size > settings::precision::maxSizeFullDiag){
-                //Switch to DIRECT
-                optSpace  = opt::OptSpace::DIRECT;
-                threshold = settings::precision::maxSizeDirect;
-                log->debug("SUBSPACE threshold reached, switching to DIRECT mode");
-                state->activate_sites(threshold, max_num_sites_list.front());
-            }
-            else{
-                log->debug("Keeping last theta: Reached DIRECT threshold or already did Full Diag.");
-                if(theta.size() == 0) throw std::logic_error("Theta is empty!");
-                break;
-            }
+            log->debug("Keeping last theta: Reached DIRECT threshold or already did Full Diag.");
+            if(theta.size() == 0) throw std::logic_error("Theta is empty!");
+            break;
         }
 
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
-        max_num_sites_list.pop_front();
         if(state->active_sites_updated()){
             log->debug("Sites successfully updated");
             break;
         }else{
             log->debug("Sites failed to update");
         }
-        if (optSpace == opt::OptSpace::SUBSPACE){
-            //Switch to DIRECT
-            optSpace  = opt::OptSpace::DIRECT;
-            threshold = settings::precision::maxSizeDirect;
-        }
+        max_num_sites_list.pop_front();
 
 
         if(max_num_sites_list.empty()){
@@ -163,15 +146,6 @@ void class_xDMRG::single_DMRG_step()
             if(theta.size() == 0) throw std::logic_error("Theta is empty!");
             break;
         }
-//        if(state->get_direction() == 1  and state->get_position() - 1 + max_num_sites_list.front() >= state->get_length()){
-//            log->debug("Keeping last theta: can't activate more sites, reached the right edge");
-//            break;
-//        }
-//        if(state->get_direction() == -1 and state->get_position() + 2 - max_num_sites_list.front() < 0){
-//            log->debug("Keeping last theta: can't activate more sites, reached the left edge");
-//            break;
-//        }
-
     }
 
 
