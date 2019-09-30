@@ -214,16 +214,14 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
                     1,
                     slope_threshold);
 
-
-    sim_status.variance_mpo_has_converged =  V_mpo_vec.back() < threshold;
-    auto last_nonconverged_ptr = std::find_if(V_mpo_vec.begin(),V_mpo_vec.end(), [threshold](auto const& val){ return val > threshold; });
-    int converged_count = (int)  std::count_if(last_nonconverged_ptr, V_mpo_vec.end(),[threshold](auto const& val){ return val <= threshold; });
-    int saturated_count = (int)  std::count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
-    sim_status.variance_mpo_has_saturated = report.has_saturated or converged_count >= min_saturation_iters;
-    sim_status.variance_mpo_saturated_for = std::max(converged_count, saturated_count) ;
-
-
     if (report.has_computed){
+        sim_status.variance_mpo_has_converged =  V_mpo_vec.back() < threshold;
+        auto last_nonconverged_ptr = std::find_if(V_mpo_vec.begin(),V_mpo_vec.end(), [threshold](auto const& val){ return val > threshold; });
+        size_t converged_count = (size_t)  std::count_if(last_nonconverged_ptr, V_mpo_vec.end(),[threshold](auto const& val){ return val <= threshold; });
+        size_t saturated_count = (size_t)  std::count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
+        sim_status.variance_mpo_has_saturated = report.has_saturated or converged_count >= min_saturation_iters;
+        sim_status.variance_mpo_saturated_for = std::max(converged_count, saturated_count) ;
+
         V_mpo_slope  = report.slope;
         log->debug("Variance slope details:");
         log->debug(" -- relative slope    = {} %", report.slope);
