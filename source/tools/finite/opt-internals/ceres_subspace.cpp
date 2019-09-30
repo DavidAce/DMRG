@@ -563,9 +563,14 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
     options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-    options.gradient_tolerance = 1e-8;
+    options.gradient_tolerance = 1e-10;
     options.parameter_tolerance = 1e-16;//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
+
+    if(sim_status.variance_ham_has_saturated and not sim_status.variance_ham_has_converged){
+        options.function_tolerance = 1e-8; //Operations are cheap in subspace, so you can afford low tolerance
+    }
+
 //    In the progress log we'll see:
 //    f is the value of the objective function.
 //    d is the change in the value of the objective function if the step computed in this iteration is accepted.
