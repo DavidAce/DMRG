@@ -93,10 +93,8 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_sufficient_curvature_decrease = 0.5; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
     options.function_tolerance = 1e-6;
-//    options.function_tolerance = 1e-4;
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-16;//1e-12;
-
     options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
 
     ceres::GradientProblemSolver::Summary summary;
