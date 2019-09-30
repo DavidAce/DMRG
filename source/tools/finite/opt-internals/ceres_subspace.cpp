@@ -420,15 +420,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
     eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
 //    bool force_accept = false;
-//    OptSpace optSpace = OptSpace::SUBSPACE;
 
-//    if (subspace_error_filtered < subspace_error_threshold){
-//        tools::log->trace("Selected SUBSPACE optimization");
-//        optSpace = OptSpace::SUBSPACE;
-//    }else{
-//        tools::log->trace("Selected DIRECT optimization");
-//        optSpace = OptSpace::DIRECT;
-//    }
 
     tools::log->trace("Current energy  : {:.16f}", tools::finite::measure::energy_per_site(state));
     tools::log->trace("Current variance: {:.16f}", std::log10(theta_old_variance) );
@@ -489,7 +481,12 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 //        tools::log->trace("Selected DIRECT optimization");
 //        return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
 //    }
+//    OptSpace optSpace = OptSpace::SUBSPACE;
 
+    if (subspace_error_filtered > subspace_error_threshold){
+        tools::log->trace("Subspace error is large, switching to DIRECT optimization");
+        return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
+    }
 
     tools::log->debug("Optimizing");
     // Make sure you use theta_initial from now on, not theta_old
@@ -551,16 +548,15 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = false;
     options.max_line_search_step_expansion = 10.0;// 100.0;
-    options.min_line_search_step_size = 1e-30;
+    options.min_line_search_step_size = 1e-16;
     options.max_line_search_step_contraction = 1e-3;
-    options.min_line_search_step_contraction = 0.6;
+    options.min_line_search_step_contraction = 0.9;
     options.max_num_line_search_step_size_iterations  = 30;//20;
     options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-4;// 1e-2; //A small value forces a larger step length
+    options.line_search_sufficient_function_decrease  = 1e-6;// 1e-2; //A small value forces a larger step length?
     options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-6;
-//    options.function_tolerance = 1e-4;
+    options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-16;//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
@@ -627,7 +623,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
     //    std::cout << summary.FullReport() << "\n";
     reports::print_report(opt_log);
-        tools::log->debug("Fine tuning new theta theta");
+        tools::log->debug("Fine tuning new theta");
 
     tools::common::profile::t_opt.toc();
     return ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
