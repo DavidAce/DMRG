@@ -84,7 +84,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = false;
     options.max_line_search_step_expansion = 100;// 100.0;
-    options.min_line_search_step_size = 1e-2;
+    options.min_line_search_step_size = 1e-30;
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
