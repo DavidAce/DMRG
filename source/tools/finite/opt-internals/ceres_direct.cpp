@@ -86,11 +86,11 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.max_line_search_step_expansion = 100;// 100.0;
     options.min_line_search_step_size = 1e-16;
     options.max_line_search_step_contraction = 1e-3;
-    options.min_line_search_step_contraction = 0.9;
+    options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
     options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-6;// 1e-2; //A small value forces a larger step length
-    options.line_search_sufficient_curvature_decrease = 0.5; //0.5;
+    options.line_search_sufficient_function_decrease  = 1e-4;
+    options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
     options.function_tolerance = 1e-6;
     options.gradient_tolerance = 1e-8;

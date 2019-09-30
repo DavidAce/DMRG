@@ -338,14 +338,13 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     tools::log->trace("Subspace found with {} eigenvectors", eigvecs.cols());
     Eigen::VectorXd overlaps = (theta_old_vec.adjoint() * eigvecs).cwiseAbs().real();
 
-    {
-        int     idx;
-        double max_overlap          = overlaps.maxCoeff(&idx);
-        double max_overlap_energy   = eigvals_per_site_unreduced(idx);
-        tools::log->trace("Max overlap: {} -- Energy per site: {} -- Idx: {} -- outside of window: {}", max_overlap, max_overlap_energy, idx,
-                          max_overlap_energy <  sim_status.energy_lbound or max_overlap_energy > sim_status.energy_ubound  );
 
-    }
+    int     idx;
+    double max_overlap          = overlaps.maxCoeff(&idx);
+    double max_overlap_energy   = eigvals_per_site_unreduced(idx);
+    bool   max_overlap_inwindow = sim_status.energy_lbound < max_overlap_energy and max_overlap_energy < sim_status.energy_ubound;
+    tools::log->trace("Max overlap: {} -- Energy per site: {} -- Idx: {} -- inside of window: {}", max_overlap, max_overlap_energy, idx,max_overlap_inwindow );
+
 
 
     // Explanation:
@@ -439,6 +438,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     auto   best_overlap_theta              = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
     double best_overlap_energy             = eigvals_per_site_unreduced(best_overlap_idx);
     double best_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
+
     tools::log->trace("Candidate {:2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
 
     // We set theta_initial to best overlapping theta, but this can change
@@ -485,7 +485,13 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     if (subspace_error_filtered > subspace_error_threshold){
         tools::log->trace("Subspace error is large, switching to DIRECT optimization");
-        return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
+        if (best_overlap > settings::precision::overlap_cat or not max_overlap_inwindow ){
+            tools::log->trace("Using best overlap as initial guess");
+            return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
+        }else{
+            tools::log->trace("Using current state as initial guess");
+            return ceres_direct_optimization(state, theta_old,sim_status, optType);
+        }
     }
 
     tools::log->debug("Optimizing");
@@ -541,7 +547,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     ceres::GradientProblemSolver::Options options;
     options.line_search_type = ceres::LineSearchType::WOLFE;
-    options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
+    options.line_search_interpolation_type = ceres::LineSearchInterpolationType::QUADRATIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
     options.max_num_iterations = 2000;
@@ -550,16 +556,25 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.max_line_search_step_expansion = 10.0;// 100.0;
     options.min_line_search_step_size = 1e-16;
     options.max_line_search_step_contraction = 1e-3;
-    options.min_line_search_step_contraction = 0.9;
+    options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
     options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-6;// 1e-2; //A small value forces a larger step length?
+    options.line_search_sufficient_function_decrease  = 1e-4;
     options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
     options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
     options.gradient_tolerance = 1e-8;
     options.parameter_tolerance = 1e-16;//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
+//    In the progress log we'll see:
+//    f is the value of the objective function.
+//    d is the change in the value of the objective function if the step computed in this iteration is accepted.
+//    g is the max norm of the gradient.
+//    h is the change in the parameter vector.
+//    s is the optimal step length computed by the line search.
+//    it is the time take by the current iteration.
+//    tt is the total time taken by the minimizer.
+
 
     ceres::GradientProblemSolver::Summary summary;
     t_opt->tic();

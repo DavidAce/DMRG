@@ -97,14 +97,13 @@ void class_xDMRG::single_DMRG_step()
 
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-    auto optMode    = measure::energy_variance_per_site(*state) > 1e-2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-
+//    auto optMode    = measure::energy_variance_per_site(*state) > 1e-2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
+    auto optMode  = opt::OptMode::VARIANCE;
     auto optSpace = opt::OptSpace::SUBSPACE;
-//    optSpace      = measure::energy_variance_per_site(*state) < settings::precision::varianceConvergenceThreshold         ?  opt::OptSpace::DIRECT  : optSpace;
+    auto optType  = opt::OptType::CPLX;
     optSpace      = state->size_2site()  > settings::precision::maxSizePartDiag ? opt::OptSpace::DIRECT : optSpace;
-    optSpace      = sim_status.variance_mpo_has_converged ? opt::OptSpace::DIRECT : optSpace;
-//    optSpace      = sim_status.iteration >= settings::xdmrg::min_sweeps                                              ?  opt::OptSpace::DIRECT  : optSpace;
-    auto optType  = state->isReal() ?  opt::OptType::REAL :  opt::OptType::CPLX;
+    optSpace      = sim_status.variance_mpo_has_converged                       ? opt::OptSpace::DIRECT : optSpace;
+    optType       = state->isReal()                                             ? opt::OptType::REAL    : optType;
 
 
     long threshold = 0;
@@ -115,21 +114,34 @@ void class_xDMRG::single_DMRG_step()
 
     debug::check_integrity(*state);
     Eigen::Tensor<Scalar,3> theta;
-//    std::list<size_t> max_num_sites_list = math::range_list(2ul,settings::precision::maxSitesMultiDmrg,2ul);
-    std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
+
+    std::list<size_t> max_num_sites_list = {2,4,settings::precision::maxSitesMultiDmrg};
+    if(sim_status.iteration <= 1) max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
+
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
-    while(true){
+    for (auto & max_num_sites : max_num_sites_list){
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
-        state->activate_sites(threshold, max_num_sites_list.front());
 
+
+        state->activate_sites(threshold, max_num_sites);
 
         if( state->active_sites.size()   == old_num_sites and
             state->active_problem_size() == old_prob_size){
-            log->debug("Keeping last theta: Reached DIRECT threshold or already did Full Diag.");
-            if(theta.size() == 0) throw std::logic_error("Theta is empty!");
-            break;
+            if(optSpace == opt::OptSpace::SUBSPACE){
+                log->debug("Changing to DIRECT optimization to activate more sites");
+                optSpace = opt::OptSpace::DIRECT;
+                threshold = settings::precision::maxSizeDirect;
+                state->activate_sites(threshold, max_num_sites);
+            }else{
+                log->debug("Keeping old theta: Can't activate more sites");
+                theta = state->get_multitheta();
+                break;
+            }
+
         }
+
+
 
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         if(state->active_sites_updated()){
@@ -138,12 +150,9 @@ void class_xDMRG::single_DMRG_step()
         }else{
             log->debug("Sites failed to update");
         }
-        max_num_sites_list.pop_front();
-
-
-        if(max_num_sites_list.empty()){
-            log->debug("Keeping last theta: failed to find better theta and maxSitesMultiDmrg reached");
-            if(theta.size() == 0) throw std::logic_error("Theta is empty!");
+        if(& max_num_sites == &max_num_sites_list.back()){
+            log->debug("Keeping old theta: Failed to find better theta and reached max number of sites");
+            theta = state->get_multitheta();
             break;
         }
     }
@@ -156,7 +165,6 @@ void class_xDMRG::single_DMRG_step()
 
 
     log->debug("Variance check before truncate       : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
-
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
     tools::finite::mps::rebuild_environments(*state);
