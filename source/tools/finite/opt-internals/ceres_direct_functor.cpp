@@ -87,7 +87,6 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     Eigen::Map<const VectorType> v (reinterpret_cast<const Scalar*>(v_double_double)   , vecSize);
     vv    = v.squaredNorm();
     norm  = std::sqrt(vv);
-
     get_H2v(v);
     get_Hv(v);
 
@@ -115,31 +114,35 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)/length;
     norm_offset    = std::abs(vv) - 1.0 ;
-    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
+    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.2);
     log10var       = std::log10(variance);
 
     if(fx != nullptr){
         fx[0] = log10var + norm_func;
     }
 
+    Eigen::Map<VectorType>  grad (reinterpret_cast<      Scalar*>(grad_double_double), vecSize);
     if (grad_double_double != nullptr){
         auto vv_1  = std::pow(vv,-1);
         auto var_1 = 1.0/var/std::log(10);
-        Eigen::Map<VectorType>  grad (reinterpret_cast<      Scalar*>(grad_double_double), vecSize);
-        grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))
-                +  norm_grad * v;
+        grad = var_1 * vv_1 * (H2v - 2.0*ene*Hv - (ene2 - 2.0*ene*ene)*v);
+        if constexpr (std::is_same<Scalar,double>::value){
+            grad *= 2.0;
+        }
+        grad += norm_grad * v;
     }
 
-//        tools::log->trace("log10 var: {:<24.18f} log10 ene2/L: {:<24.18f} ene/L: {:<24.18f} ene*ene/L/L: {:<24.18f} Energy: {:<24.18f}  SqNorm: {:<24.18f} Norm: {:<24.18f} fx: {:<24.18f}",
+//    tools::log->trace("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad_facit|: {:<24.18f} dot: {:<24.18f} SqNorm: {:<24.18f} Norm: {:<24.18f} Norm_func: {:<24.18f} |Norm_grad *v|: {:<24.18f} fx: {:<24.18f}",
 //                      std::log10(std::abs(var)/length),
-//                      std::log10(std::abs(ene2)/length),
-//                      std::real(ene)/length,
-//                      std::real(ene*ene)/length/length,
 //                      std::real(ene + energy_reduced) / length,
+//                      grad.norm(),
+//                      grad_facit.norm(),
+//                      std::abs(grad.normalized().dot(grad_facit.normalized())),
 //                      vv,
 //                      norm,
+//                      norm_func,
+//                      (norm_grad * v).norm(),
 //                      fx[0]);
-
 
 
     if(std::isnan(log10var) or std::isinf(log10var)){

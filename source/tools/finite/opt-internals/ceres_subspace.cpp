@@ -416,7 +416,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     double subspace_error_unfiltered = 1.0 - overlaps.cwiseAbs2().sum();
     double subspace_error_filtered;
 
-    std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
+    std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 32);
     eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
 //    bool force_accept = false;
 
@@ -441,58 +441,16 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     tools::log->trace("Candidate {:2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
 
+    if (sim_status.iteration <= 1 or
+    sim_status.simulation_has_got_stuck){
+        return best_overlap_theta;
+    }
+
+
     // We set theta_initial to best overlapping theta, but this can change
     tools::log->trace("Initial guess   : best overlap candidate {}",best_overlap_idx);
     auto theta_initial = best_overlap_theta;
-//    if(sim_status.variance_mpo_has_saturated and not sim_status.variance_mpo_has_converged){
-//        double next_best_variance     = 100;
-//        long   next_best_variance_idx = 1;
-//        for (long idx = 1; idx < overlaps.size(); idx++){
-//            auto   cand_overlap_theta              = Textra::Matrix_to_Tensor(eigvecs.col(idx), state.active_dimensions());
-//            double cand_overlap_energy             = eigvals_per_site_unreduced(idx);
-//            double cand_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, cand_overlap_theta);
-//            tools::log->trace("Candidate {:2} has reached overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",idx ,overlaps(idx) ,cand_overlap_energy  ,std::log10(cand_overlap_variance) );
-//            if(cand_overlap_variance < next_best_variance ){
-//                next_best_variance     = cand_overlap_variance;
-//                next_best_variance_idx = idx;
-//            }
-//        }
-//        if (best_overlap_variance > 2 * theta_old_variance and next_best_variance < 1e4 * theta_old_variance){
-//            tools::log->trace("Initial guess   : next best variance candidate {} -- changed due to saturation",next_best_variance_idx);
-//            theta_initial = Textra::Matrix_to_Tensor(eigvecs.col(next_best_variance_idx), state.active_dimensions());
-//            force_accept  = true;
-//
-//        }
-//    }
 
-//    if(best_overlap < settings::precision::overlap_cat ) {
-//        //Option D
-//        tools::log->trace("Went for option D");
-//        tools::log->trace("Selected DIRECT optimization");
-//        optSpace = OptSpace::DIRECT;
-//        theta_initial = best_overlap_theta;
-////        return ceres_direct_optimization(state, best_overlap_theta, sim_status, optType);
-//    }
-
-
-//    if (optSpace == OptSpace::SUBSPACE){
-//        tools::log->trace("Selected SUBSPACE optimization");
-//    }else{
-//        tools::log->trace("Selected DIRECT optimization");
-//        return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
-//    }
-//    OptSpace optSpace = OptSpace::SUBSPACE;
-
-    if (subspace_error_filtered > subspace_error_threshold){
-        tools::log->trace("Subspace error is large, switching to DIRECT optimization");
-        if (best_overlap > settings::precision::overlap_cat or not max_overlap_inwindow ){
-            tools::log->trace("Using best overlap as initial guess");
-            return ceres_direct_optimization(state, theta_initial ,sim_status, optType);
-        }else{
-            tools::log->trace("Using current state as initial guess");
-            return ceres_direct_optimization(state, theta_old,sim_status, optType);
-        }
-    }
 
     tools::log->debug("Optimizing");
     // Make sure you use theta_initial from now on, not theta_old
@@ -550,28 +508,30 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::QUADRATIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 2000;
+    options.max_num_iterations = 1000;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = false;
-    options.max_line_search_step_expansion = 10.0;// 100.0;
-    options.min_line_search_step_size = 1e-16;
+    options.max_line_search_step_expansion = 100.0;// 100.0;
+    options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
     options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-4;
+    options.line_search_sufficient_function_decrease  = 1e-2;
     options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-    options.gradient_tolerance = 1e-10;
-    options.parameter_tolerance = 1e-16;//1e-12;
+    options.function_tolerance = 1e-4; //Operations are cheap in subspace, so you can afford low tolerance
+    options.gradient_tolerance = 1e-4;
+    options.parameter_tolerance = std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
 
-    if(sim_status.variance_ham_has_saturated and not sim_status.variance_ham_has_converged){
-        options.function_tolerance = 1e-8; //Operations are cheap in subspace, so you can afford low tolerance
+    if(sim_status.variance_mpo_has_saturated and not sim_status.variance_mpo_has_converged){
+        options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
+        options.max_num_iterations = 5000;
+        options.gradient_tolerance = 1e-10;
     }
 
-//    In the progress log we'll see:
+//    Progress log definitions:
 //    f is the value of the objective function.
 //    d is the change in the value of the objective function if the step computed in this iteration is accepted.
 //    g is the max norm of the gradient.
@@ -643,10 +603,33 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
     //    std::cout << summary.FullReport() << "\n";
     reports::print_report(opt_log);
-        tools::log->debug("Fine tuning new theta");
+    tools::log->debug("Fine tuning new theta after SUBSPACE optimization");
 
     tools::common::profile::t_opt.toc();
     return ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
+
+
+//    auto theta_direct_fine_tuned    =  ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
+//    auto theta_direct_best_overlap  =  ceres_direct_optimization(state, best_overlap_theta ,sim_status, optType);
+//    auto theta_direct_current_theta =  ceres_direct_optimization(state, theta_old ,sim_status, optType);
+//
+//    double variance_direct_fine_tuned       =  tools::finite::measure::energy_variance_per_site(state,theta_direct_fine_tuned   );
+//    double variance_direct_best_overlap     =  tools::finite::measure::energy_variance_per_site(state,theta_direct_best_overlap );
+//    double variance_direct_current_theta    =  tools::finite::measure::energy_variance_per_site(state,theta_direct_current_theta);
+//    auto spin_components = tools::finite::measure::spin_components(state);
+//    tools::log->debug("spin component x              = {:.16f}", spin_components[0] );
+//    tools::log->debug("spin component y              = {:.16f}", spin_components[1] );
+//    tools::log->debug("spin component z              = {:.16f}", spin_components[2] );
+//    tools::log->debug("suspace_error                 = {:.16f}", std::log10(std::numeric_limits<double>::epsilon() + subspace_error_filtered) );
+//    tools::log->debug("best_overlap                  = {:.16f}", best_overlap);
+//    tools::log->debug("variance_original             = {:.16f}", std::log10(theta_old_variance           ));
+//    tools::log->debug("variance_subspace_optimized   = {:.16f}", std::log10(variance_new                 ));
+//    tools::log->debug("variance_direct_fine_tuned    = {:.16f}", std::log10(variance_direct_fine_tuned   ));
+//    tools::log->debug("variance_direct_best_overlap  = {:.16f}", std::log10(variance_direct_best_overlap ));
+//    tools::log->debug("variance_direct_current_theta = {:.16f}", std::log10(variance_direct_current_theta));
+
+
+
 
 //
 //

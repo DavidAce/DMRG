@@ -142,8 +142,6 @@ std::pair<double,double> tools::finite::opt::internals::windowed_func_grad(doubl
     double grad = 0;
     if (std::abs(x) >= window){
         func = x*x - window*window;
-//        func = std::log10(func + 1e-1 ); // Add a small epsilon so in case func == 0
-//        grad = 1.0/func/std::log(10);
         grad = 2*x;
     }
     return std::make_pair(func,grad);

@@ -64,7 +64,7 @@ void class_xDMRG::run_simulation()    {
         // That last state would not get optimized
         if (state->position_is_any_edge())
         {
-            if (sim_status.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
+            if (sim_status.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_ITERS; break;}
             if (sim_status.simulation_has_succeeded)                 {stop_reason = StopReason::SUCCEEDED; break;}
             if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
@@ -77,8 +77,8 @@ void class_xDMRG::run_simulation()    {
         sim_status.step++;
     }
     switch(stop_reason){
-        case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_ITERS",sim_name) ;break;
-        case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED", sim_name) ;break;
+        case StopReason::MAX_ITERS : log->info("Finished {} simulation -- reason: MAX ITERS",sim_name) ;break;
+        case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED",sim_name) ;break;
         case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
         default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
@@ -112,11 +112,17 @@ void class_xDMRG::single_DMRG_step()
         case  opt::OptSpace::DIRECT   : threshold = settings::precision::maxSizeDirect  ; break;
     }
 
+    if (optSpace == opt::OptSpace::SUBSPACE and
+        sim_status.simulation_has_got_stuck)
+    {
+        threshold *= 2;
+    }
+
     debug::check_integrity(*state);
     Eigen::Tensor<Scalar,3> theta;
 
-    std::list<size_t> max_num_sites_list = {2,4,settings::precision::maxSitesMultiDmrg};
-    if(sim_status.iteration <= 1) max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
+    std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
+    if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
 
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
     for (auto & max_num_sites : max_num_sites_list){
@@ -138,21 +144,56 @@ void class_xDMRG::single_DMRG_step()
                 theta = state->get_multitheta();
                 break;
             }
-
         }
 
 
 
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
+        if(optSpace ==  opt::OptSpace::DIRECT){
+            state->tag_active_sites_have_been_updated(true);
+        }
+
+        if(optSpace == opt::OptSpace::SUBSPACE){
+            // Check if you ended up with a better state
+            double variance_new   = measure::energy_variance_per_site(*state,theta);
+            double variance_old   = measure::energy_variance_per_site(*state);
+            if (variance_old < variance_new){
+                // State got worse.
+                log->debug("State got worse during SUBSPACE optimization");
+                if (sim_status.iteration <= 1 or
+                    sim_status.simulation_has_got_stuck){
+                    //  Keep the bad state anyway (jump out of local minima
+                    log->debug("Keeping state anyway due to saturation");
+                    state->tag_active_sites_have_been_updated(true);
+                }else{
+                    // Check what DIRECT optimization has to offer
+                    log->debug("Checking what DIRECT optimization can achieve");
+                    auto theta_direct        = opt::find_excited_state(*state, sim_status, optMode, opt::OptSpace::DIRECT,optType);
+                    double variance_direct   = measure::energy_variance_per_site(*state);
+                    if (variance_direct < variance_new){
+                        log->debug("Keeping DIRECT optimized state");
+                        // Keep the better state
+                        theta = theta_direct;
+                        state->tag_active_sites_have_been_updated(true);
+                    }
+                }
+            }else{
+                log->debug("State got better during SUBSPACE optimization");
+                state->tag_active_sites_have_been_updated(true);
+            }
+
+        }
+
+
+
         if(state->active_sites_updated()){
             log->debug("Sites successfully updated");
             break;
         }else{
-            log->debug("Sites failed to update");
+            log->debug("Sites failed to update.");
         }
         if(& max_num_sites == &max_num_sites_list.back()){
-            log->debug("Keeping old theta: Failed to find better theta and reached max number of sites");
-            theta = state->get_multitheta();
+            log->debug("Keeping last theta: Failed to find better theta and reached max number of sites");
             break;
         }
     }
@@ -233,14 +274,19 @@ void class_xDMRG::check_convergence(){
     sim_status.simulation_has_saturated = sim_status.variance_mpo_saturated_for >= min_saturation_iters and
                                           sim_status.entanglement_saturated_for >= min_saturation_iters;
 
+
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
                                           sim_status.simulation_has_saturated;
 
+    sim_status.simulation_has_got_stuck = sim_status.variance_mpo_has_saturated and
+                                          sim_status.entanglement_has_saturated and not
+                                          sim_status.variance_mpo_has_converged;
 
 
     log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);
     log->debug("Simulation has saturated: {}", sim_status.simulation_has_saturated);
     log->debug("Simulation has succeeded: {}", sim_status.simulation_has_succeeded);
+    log->debug("Simulation has got stuck: {}", sim_status.simulation_has_got_stuck);
 
     if(        sim_status.bond_dimension_has_reached_max
        and     sim_status.simulation_has_saturated
