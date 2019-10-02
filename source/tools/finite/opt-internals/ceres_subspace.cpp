@@ -441,11 +441,13 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     tools::log->trace("Candidate {:2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
 
-    if (sim_status.iteration <= 1 or
-    sim_status.simulation_has_got_stuck){
+//    if (sim_status.iteration <= 1 or
+//    sim_status.simulation_has_got_stuck){
+//        return best_overlap_theta;
+//    }
+    if (optMode == OptMode::OVERLAP){
         return best_overlap_theta;
     }
-
 
     // We set theta_initial to best overlapping theta, but this can change
     tools::log->trace("Initial guess   : best overlap candidate {}",best_overlap_idx);
@@ -606,6 +608,10 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     tools::log->debug("Fine tuning new theta after SUBSPACE optimization");
 
     tools::common::profile::t_opt.toc();
+    if (sim_status.simulation_has_got_stuck){
+        return Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
+    }
+
     return ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
 
 
