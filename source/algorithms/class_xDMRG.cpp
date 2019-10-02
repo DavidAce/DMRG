@@ -97,8 +97,10 @@ void class_xDMRG::single_DMRG_step()
 
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-//    auto optMode    = measure::energy_variance_per_site(*state) > 1e-2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-    auto optMode  = opt::OptMode::VARIANCE;
+
+    auto optMode    = measure::energy_variance_per_site(*state) > 1e-2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
+    optMode         = sim_status.iteration  < 2                         ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
+
     auto optSpace = opt::OptSpace::SUBSPACE;
     auto optType  = opt::OptType::CPLX;
     optSpace      = state->size_2site()  > settings::precision::maxSizePartDiag ? opt::OptSpace::DIRECT : optSpace;
@@ -110,12 +112,6 @@ void class_xDMRG::single_DMRG_step()
     switch(optSpace){
         case  opt::OptSpace::SUBSPACE : threshold = settings::precision::maxSizePartDiag; break;
         case  opt::OptSpace::DIRECT   : threshold = settings::precision::maxSizeDirect  ; break;
-    }
-
-    if (optSpace == opt::OptSpace::SUBSPACE and
-        sim_status.simulation_has_got_stuck)
-    {
-        threshold *= 2;
     }
 
     debug::check_integrity(*state);
@@ -150,37 +146,45 @@ void class_xDMRG::single_DMRG_step()
 
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         if(optSpace ==  opt::OptSpace::DIRECT){
+            log->debug("Keeping state from DIRECT optimization");
             state->tag_active_sites_have_been_updated(true);
         }
 
         if(optSpace == opt::OptSpace::SUBSPACE){
-            // Check if you ended up with a better state
-            double variance_new   = measure::energy_variance_per_site(*state,theta);
-            double variance_old   = measure::energy_variance_per_site(*state);
-            if (variance_old < variance_new){
-                // State got worse.
-                log->debug("State got worse during SUBSPACE optimization");
-                if (sim_status.iteration <= 1 or
-                    sim_status.simulation_has_got_stuck){
-                    //  Keep the bad state anyway (jump out of local minima
-                    log->debug("Keeping state anyway due to saturation");
-                    state->tag_active_sites_have_been_updated(true);
-                }else{
-                    // Check what DIRECT optimization has to offer
-                    log->debug("Checking what DIRECT optimization can achieve");
-                    auto theta_direct        = opt::find_excited_state(*state, sim_status, optMode, opt::OptSpace::DIRECT,optType);
-                    double variance_direct   = measure::energy_variance_per_site(*state);
-                    if (variance_direct < variance_new){
-                        log->debug("Keeping DIRECT optimized state");
-                        // Keep the better state
-                        theta = theta_direct;
-                        state->tag_active_sites_have_been_updated(true);
-                    }
-                }
-            }else{
-                log->debug("State got better during SUBSPACE optimization");
+            if(optMode == opt::OptMode::OVERLAP){
+                log->debug("Keeping state with best overlap");
                 state->tag_active_sites_have_been_updated(true);
+            }else{
+                // Check if you ended up with a better state
+                double variance_new   = measure::energy_variance_per_site(*state,theta);
+                double variance_old   = measure::energy_variance_per_site(*state);
+                if (variance_old < variance_new){
+                    // State got worse.
+                    log->debug("State got worse during SUBSPACE optimization");
+                    if (sim_status.iteration <= 1 or
+                        sim_status.simulation_has_got_stuck){
+                        //  Keep the bad state anyway (jump out of local minima
+                        log->debug("Keeping state anyway due to saturation");
+                        state->tag_active_sites_have_been_updated(true);
+                    }else{
+                        // Check what DIRECT optimization has to offer
+                        log->debug("Checking what DIRECT optimization can achieve");
+                        auto theta_direct        = opt::find_excited_state(*state, sim_status, optMode, opt::OptSpace::DIRECT,optType);
+                        double variance_direct   = measure::energy_variance_per_site(*state);
+                        if (variance_direct < variance_new){
+                            log->debug("Keeping DIRECT optimized state");
+                            // Keep the better state
+                            theta = theta_direct;
+                            state->tag_active_sites_have_been_updated(true);
+                        }
+                    }
+                }else{
+                    log->debug("State got better during SUBSPACE optimization");
+                    state->tag_active_sites_have_been_updated(true);
+                }
             }
+
+
 
         }
 
