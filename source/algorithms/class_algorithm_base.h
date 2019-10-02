@@ -32,7 +32,7 @@ public:
     class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_,
                          std::string sim_name_,
                          SimulationType sim_type_);
-    enum class StopReason {SUCCEEDED, SATURATED, MAX_STEPS} stop_reason;
+    enum class StopReason {SUCCEEDED, SATURATED, MAX_ITERS} stop_reason;
     void set_profiling_labels ();
 
     std::shared_ptr<h5pp::File>                                   h5pp_file;

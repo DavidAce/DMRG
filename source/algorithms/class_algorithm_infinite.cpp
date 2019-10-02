@@ -395,6 +395,7 @@ void class_algorithm_infinite::print_status_full(){
     log->info("Simulation saturated  = {:<}"    , sim_status.simulation_has_saturated);
     log->info("Simulation converged  = {:<}"    , sim_status.simulation_has_converged);
     log->info("Simulation succeeded  = {:<}"    , sim_status.simulation_has_succeeded);
+    log->info("Simulation got stuck  = {:<}"    , sim_status.simulation_has_got_stuck);
     switch(sim_type){
         case SimulationType::iDMRG:
             log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);

@@ -41,6 +41,7 @@ std::ostream & operator << (std::ostream& os, const class_simulation_status & si
             << std::string("simulation_has_converged       : ")  << std::boolalpha << sim_status.simulation_has_converged        << '\n'
             << std::string("simulation_has_saturated       : ")  << std::boolalpha << sim_status.simulation_has_saturated        << '\n'
             << std::string("simulation_has_succeeded       : ")  << std::boolalpha << sim_status.simulation_has_succeeded        << '\n'
+            << std::string("simulation_has_got_stuck       : ")  << std::boolalpha << sim_status.simulation_has_got_stuck        << '\n'
             << std::string("simulation_has_to_stop         : ")  << std::boolalpha << sim_status.simulation_has_to_stop          << '\n'
             << std::string("bond_dimension_has_reached_max : ")  << std::boolalpha << sim_status.bond_dimension_has_reached_max  << '\n'
             << std::string("entanglement_has_converged     : ")  << std::boolalpha << sim_status.entanglement_has_converged      << '\n'

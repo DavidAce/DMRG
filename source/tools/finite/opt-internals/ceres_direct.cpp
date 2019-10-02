@@ -26,8 +26,6 @@ Eigen::Tensor<class_finite_state::Scalar,3>
 tools::finite::opt::internals::ceres_direct_optimization(const class_finite_state &state,
                                                          const Eigen::Tensor<class_finite_state::Scalar,3> & theta_initial,
                                                          const class_simulation_status &sim_status, OptType optType){
-//    opt::internals::old_direct_optimization(state,sim_status,optType);
-
     tools::log->trace("Optimizing in DIRECT mode");
     tools::common::profile::t_opt.tic();
     using Scalar = std::complex<double>;
@@ -80,24 +78,26 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 2000;
+    options.max_num_iterations = 1000;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = false;
     options.max_line_search_step_expansion = 100;// 100.0;
-    options.min_line_search_step_size = 1e-16;
+    options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 30;//20;
     options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-4;
+    options.line_search_sufficient_function_decrease  = 1e-2;
     options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-6;
-    options.gradient_tolerance = 1e-10;
-    options.parameter_tolerance = 1e-16;//1e-12;
+    options.function_tolerance = 1e-4;
+    options.gradient_tolerance = 1e-4;
+    options.parameter_tolerance = std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
-    if(sim_status.variance_ham_has_saturated and not sim_status.variance_ham_has_converged){
-        options.function_tolerance = 1e-8; //Operations are cheap in subspace, so you can afford low tolerance
+    if(sim_status.variance_mpo_has_saturated and not sim_status.variance_mpo_has_converged){
+        options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
+        options.max_num_iterations = 5000;
+        options.gradient_tolerance = 1e-10;
     }
     ceres::GradientProblemSolver::Summary summary;
     int counter,iter;
@@ -168,33 +168,30 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
 
     tools::common::profile::t_opt.toc();
 
-//    tools::log->debug("Returning new theta");
-//    state.tag_active_sites_have_been_updated(true);
-//    return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
-////
+    tools::log->debug("Returning new theta from DIRECT optimization");
+    return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
 
 
 
-    if (variance_new < 1.0 * tools::finite::measure::energy_variance_per_site(state)){
-        // Only an improvement of 1% is considered to be an actual improvement
-        tools::log->debug("Returning new (better) theta");
-        state.tag_active_sites_have_been_updated(true);
-        return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
-
-    }
-    else if (variance_new < 10.0 * tools::finite::measure::energy_variance_per_site(state)) {
-        // Allow for variance to increase a bit to come out of local minima
-        tools::log->debug("Returning new (worse) theta");
-        state.tag_active_sites_have_been_updated(false);
-        return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
-    }
-    else{
-        tools::log->debug("Direct optimization didn't improve variance.");
-        tools::log->debug("Returning old theta");
-        state.tag_active_sites_have_been_updated(variance_new <= settings::precision::varianceConvergenceThreshold);
-        return  theta_old;
-
-    }
+//    if (variance_new < 1.0 * tools::finite::measure::energy_variance_per_site(state)){
+//        // Only an improvement of 1% is considered to be an actual improvement
+//        tools::log->debug("Returning new (better) theta");
+//        state.tag_active_sites_have_been_updated(true);
+//        return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
+//
+//    }
+//    else if (variance_new < 100.0 * tools::finite::measure::energy_variance_per_site(state)) {
+//        // Allow for variance to increase a bit to come out of local minima
+//        tools::log->debug("Returning new (worse) theta");
+//        state.tag_active_sites_have_been_updated(false);
+//        return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
+//    }
+//    else{
+//        tools::log->debug("Direct optimization didn't improve variance.");
+//        tools::log->debug("Returning old theta");
+//        state.tag_active_sites_have_been_updated(variance_new <= settings::precision::varianceConvergenceThreshold);
+//        return  theta_old;
+//    }
 
 }
 

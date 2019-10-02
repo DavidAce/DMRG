@@ -39,6 +39,7 @@ struct status_data{
     bool   simulation_has_converged       = false;
     bool   simulation_has_saturated       = false;
     bool   simulation_has_succeeded       = false;
+    bool   simulation_has_got_stuck       = false;
     bool   simulation_has_to_stop         = false;
     bool   bond_dimension_has_reached_max = false;
     bool   entanglement_has_converged     = false;
