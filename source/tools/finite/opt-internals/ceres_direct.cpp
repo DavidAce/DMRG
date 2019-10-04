@@ -103,8 +103,8 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     int counter,iter;
     t_opt->tic();
     Eigen::VectorXcd theta_new;
-    switch (optType){
-        case OptType::CPLX:{
+    switch (optType.option){
+        case opt::TYPE::CPLX:{
             Eigen::VectorXd  theta_start_cast = Eigen::Map<const Eigen::VectorXd>(reinterpret_cast<const double*> (theta_initial_vec.data()), 2 * theta_initial_vec.size());
             auto * functor = new ceres_direct_functor<std::complex<double>>(state, sim_status);
             ceres::GradientProblem problem(functor);
@@ -118,7 +118,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
             theta_new    = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size() / 2).normalized();
             break;
         }
-        case OptType::REAL:{
+        case opt::TYPE::REAL:{
             Eigen::VectorXd  theta_start_cast = theta_initial_vec.real();
             auto * functor = new ceres_direct_functor<double>(state, sim_status);
             ceres::GradientProblem problem(functor);

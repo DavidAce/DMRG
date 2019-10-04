@@ -6,7 +6,8 @@
 #include <math/class_svd_wrapper.h>
 #include <simulation/nmspc_settings.h>
 
-void tools::finite::mps::normalize(class_finite_state & state, bool keep_bond_dimensions){
+
+void tools::finite::mps::normalize(class_finite_state & state, const std::vector<size_t> & bond_dimensions ){
 
     tools::log->trace("Normalizing state");
     using namespace Textra;
@@ -19,7 +20,7 @@ void tools::finite::mps::normalize(class_finite_state & state, bool keep_bond_di
 //    std::cout << "Spin component sy (before normalization): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
 //    std::cout << "Spin component sz (before normalization): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
     // Sweep back and forth once on the state
-    auto bond_dimensions = tools::finite::measure::bond_dimensions(state);
+//    auto bond_dimensions = tools::finite::measure::bond_dimensions(state);
     class_SVD svd;
     svd.setThreshold(settings::precision::SVDThreshold);
 
@@ -37,12 +38,12 @@ void tools::finite::mps::normalize(class_finite_state & state, bool keep_bond_di
     Eigen::Tensor<Scalar,3> U;
     Eigen::Tensor<Scalar,1> S;
     Eigen::Tensor<Scalar,3> V;
-    double norm;
+    double norm = 1.0;
     bool svd_success = true;
 
     while(num_traversals <= end_traversals){
         Eigen::Tensor<Scalar,4> theta = state.get_theta(pos_A);
-        long bond_dimension = keep_bond_dimensions ? bond_dimensions[pos_LC] : state.get_chi_max() * 2;
+        size_t bond_dimension = bond_dimensions.empty() ? state.get_chi_max() : bond_dimensions[pos_LC];
         try {std::tie(U,S,V,norm) = svd.schmidt_with_norm(theta,bond_dimension); svd_success = true;}
         catch(std::exception &ex){
             tools::log->error("Skipping normalization moves.\n\t SVD failed at positions A:{} C:{} B:{} , moves {}:\n\t{}", pos_A, pos_LC, pos_B, step, ex.what());

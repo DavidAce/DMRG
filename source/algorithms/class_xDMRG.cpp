@@ -59,6 +59,7 @@ void class_xDMRG::run_simulation()    {
         write_status();
         write_logs();
         check_convergence();
+        backup_best_state(*state);
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
@@ -98,20 +99,19 @@ void class_xDMRG::single_DMRG_step()
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 
-    auto optMode    = measure::energy_variance_per_site(*state) > 1e-2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-    optMode         = sim_status.iteration  < 2                         ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-
-    auto optSpace = opt::OptSpace::SUBSPACE;
-    auto optType  = opt::OptType::CPLX;
-    optSpace      = state->size_2site()  > settings::precision::maxSizePartDiag ? opt::OptSpace::DIRECT : optSpace;
-    optSpace      = sim_status.variance_mpo_has_converged                       ? opt::OptSpace::DIRECT : optSpace;
-    optType       = state->isReal()                                             ? opt::OptType::REAL    : optType;
-
+    auto optMode    = opt::OptMode(opt::MODE::OVERLAP);
+    auto optSpace   = opt::OptSpace(opt::SPACE::SUBSPACE);
+    auto optType    = opt::OptType(opt::TYPE::CPLX);
+    optMode         = sim_status.iteration  >= 2 and measure::energy_variance_per_site(*state) < 1e-2 ? opt::MODE::VARIANCE : optMode.option;
+    optMode         = sim_status.iteration  >= 5 or  measure::energy_variance_per_site(*state) < 1e-2 ? opt::MODE::VARIANCE : optMode.option;
+    optSpace        = state->size_2site()  > settings::precision::maxSizePartDiag                     ? opt::SPACE::DIRECT  : optSpace.option;
+    optSpace        = sim_status.variance_mpo_has_converged                                           ? opt::SPACE::DIRECT  : optSpace.option;
+    optType         = state->isReal()                                                                 ? opt::TYPE::REAL     : optType.option;
 
     long threshold = 0;
-    switch(optSpace){
-        case  opt::OptSpace::SUBSPACE : threshold = settings::precision::maxSizePartDiag; break;
-        case  opt::OptSpace::DIRECT   : threshold = settings::precision::maxSizeDirect  ; break;
+    switch(optSpace.option){
+        case  opt::SPACE::SUBSPACE : threshold = settings::precision::maxSizePartDiag; break;
+        case  opt::SPACE::DIRECT   : threshold = settings::precision::maxSizeDirect  ; break;
     }
 
     debug::check_integrity(*state);
@@ -142,8 +142,6 @@ void class_xDMRG::single_DMRG_step()
             }
         }
 
-
-
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         if(optSpace ==  opt::OptSpace::DIRECT){
             log->debug("Keeping state from DIRECT optimization");
@@ -161,21 +159,22 @@ void class_xDMRG::single_DMRG_step()
                 if (variance_old < variance_new){
                     // State got worse.
                     log->debug("State got worse during SUBSPACE optimization");
-                    if (sim_status.iteration <= 1 or
-                        sim_status.simulation_has_got_stuck){
-                        //  Keep the bad state anyway (jump out of local minima
+                    if (sim_status.simulation_has_got_stuck){
+                        //  Keep the bad state anyway (use this state as a perturbation to jump out of local minima)
                         log->debug("Keeping state anyway due to saturation");
                         state->tag_active_sites_have_been_updated(true);
                     }else{
                         // Check what DIRECT optimization has to offer
                         log->debug("Checking what DIRECT optimization can achieve");
-                        auto theta_direct        = opt::find_excited_state(*state, sim_status, optMode, opt::OptSpace::DIRECT,optType);
-                        double variance_direct   = measure::energy_variance_per_site(*state);
-                        if (variance_direct < variance_new){
+
+                        theta                    = opt::find_excited_state(*state, sim_status, optMode, opt::OptSpace(opt::SPACE::DIRECT),optType);
+                        double variance_direct   = measure::energy_variance_per_site(*state,theta);
+                        if (variance_direct < (1.0-1e-3) * variance_old ){
                             log->debug("Keeping DIRECT optimized state");
-                            // Keep the better state
-                            theta = theta_direct;
                             state->tag_active_sites_have_been_updated(true);
+                        }else{
+                            log->debug("DIRECT optimization did not improve enough. Keep trying.");
+                            state->tag_active_sites_have_been_updated(false);
                         }
                     }
                 }else{
@@ -183,18 +182,11 @@ void class_xDMRG::single_DMRG_step()
                     state->tag_active_sites_have_been_updated(true);
                 }
             }
-
-
-
         }
 
 
-
         if(state->active_sites_updated()){
-            log->debug("Sites successfully updated");
             break;
-        }else{
-            log->debug("Sites failed to update.");
         }
         if(& max_num_sites == &max_num_sites_list.back()){
             log->debug("Keeping last theta: Failed to find better theta and reached max number of sites");
@@ -227,9 +219,6 @@ void class_xDMRG::single_DMRG_step()
     debug::check_integrity(*state);
 
     sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
-
-//    mps::rebuild_environments(*state);
-
 
     t_run.toc();
     sim_status.wall_time = t_tot.get_age();
@@ -318,14 +307,15 @@ void class_xDMRG::check_convergence(){
 
     if (        settings::model::project_when_saturated
         and     state->position_is_any_edge()
-        and     sim_status.variance_mpo_has_saturated
-        and not sim_status.simulation_has_converged
+        and     sim_status.simulation_has_got_stuck
         and not outside_of_window
         and not has_projected)
     {
         log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
+        log->info("Bond dimensions before: {}", tools::finite::measure::bond_dimensions(*state));
         bool keep_bond_dimensions = true;
         *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector,keep_bond_dimensions);
+        log->info("Bond dimensions after: {}", tools::finite::measure::bond_dimensions(*state));
         has_projected = true;
     }
 
@@ -355,7 +345,7 @@ void class_xDMRG::inflate_initial_state(){
 
 
 void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason ){
-    log->warn("Resetting to product state -- Reason: {}", reason);
+    log->info("Resetting to product state -- Reason: {}", reason);
 //    sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
 
     int counter = 0;

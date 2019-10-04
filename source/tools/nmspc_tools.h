@@ -9,6 +9,7 @@
 #include <general/nmspc_tensor_extra.h>
 #include <io/nmspc_logger.h>
 #include <general/class_tic_toc.h>
+#include <tools/finite/opt-internals/enum_classes.h>
 
 class class_infinite_state;
 class class_mps_2site;
@@ -38,7 +39,7 @@ namespace tools{
         namespace mps {
             extern void initialize                          (class_finite_state & state, size_t length);
             extern void randomize                           (class_finite_state &state, const std::string &parity_sector = "random", int seed_state = -1, bool use_pauli_eigenstates = false, bool enumeration =  false);
-            extern void normalize                           (class_finite_state & state, bool keep_bond_dimensions = false);
+            extern void normalize                           (class_finite_state & state, const std::vector<size_t> & bond_dimensions = {});
             extern void rebuild_environments                (class_finite_state & state);
             extern int  move_center_point                   (class_finite_state & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
             extern void project_to_closest_parity_sector    (class_finite_state & state, std::string paulistring,bool keep_bond_dimensions = false);
@@ -76,9 +77,11 @@ namespace tools{
 
 
         namespace opt{
-            enum class OptMode  {OVERLAP, VARIANCE};
-            enum class OptSpace {SUBSPACE,DIRECT};
-            enum class OptType  {REAL, CPLX};
+//            enum class OptMode  {OVERLAP, VARIANCE};
+//            enum class OptSpace {SUBSPACE,DIRECT};
+//            enum class OptType  {REAL, CPLX};
+
+
             extern Eigen::Tensor<Scalar,3> find_excited_state(const class_finite_state & state, const class_simulation_status & sim_status, OptMode optMode, OptSpace optSpace, OptType optType);
             extern Eigen::Tensor<Scalar,4> find_ground_state (const class_finite_state & state, std::string ritz = "SR");
             extern void truncate_theta(Eigen::Tensor<Scalar,3> & theta, class_finite_state & state, long chi_, double SVDThreshold);

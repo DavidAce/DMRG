@@ -17,7 +17,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
 {
     log->trace("Constructing class_algorithm_finite");
-    state = std::make_unique<class_finite_state>();
+    state        = std::make_unique<class_finite_state>();
+    state_backup = std::make_unique<class_finite_state>();
     log->trace("Constructing log buffers in finite base");
     log_measurements       = std::make_shared<class_hdf5_log<class_log_finite_dmrg_measurements>> (h5pp_file, sim_name + "/logs", "measurements", sim_name);
 
@@ -37,6 +38,10 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tools::finite::print::print_hamiltonians(*state);
     tools::finite::print::print_state(*state);
     tools::finite::io::write_model(*state, *h5pp_file, sim_name);
+
+    // Do a backup
+    *state_backup = *state;
+
 }
 
 
@@ -150,7 +155,19 @@ void class_algorithm_finite::run_postprocessing(){
     tools::finite::debug::check_integrity(*state);
     state->unset_measurements();
     state->do_all_measurements();
+    state_backup->unset_measurements();
+    state_backup->do_all_measurements();
     print_status_update();
+
+    double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
+    double variance_champion  = tools::finite::measure::energy_variance_per_site(*state_backup);
+    if (variance_champion < variance_candidate){
+        log->trace("Replacing the current state with the champion");
+        *state_backup = *state;
+    }else{
+        log->trace("The current state is better than the champion");
+    }
+
     write_measurements(true);
     write_state(true);
     write_status(true);
@@ -197,6 +214,20 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
     sim_status.iteration = state->reset_sweeps();
 }
 
+void class_algorithm_finite::backup_best_state(const class_finite_state &state) {
+    log->trace("Checking if given state can beat the backup");
+    double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
+    double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
+    if (variance_candidate <  variance_champion){
+        log->debug("We have a new champion!");
+        *state_backup = state;
+    }else{
+        log->trace("Champion defended his title");
+    }
+}
+
+
+
 
 void class_algorithm_finite::check_convergence_variance(double threshold,double slope_threshold){
     //Based on the the slope of the variance
@@ -217,11 +248,11 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
     if (report.has_computed){
         sim_status.variance_mpo_has_converged =  V_mpo_vec.back() < threshold;
         auto last_nonconverged_ptr = std::find_if(V_mpo_vec.begin(),V_mpo_vec.end(), [threshold](auto const& val){ return val > threshold; });
+        if (last_nonconverged_ptr  == V_mpo_vec.end()) last_nonconverged_ptr =  V_mpo_vec.begin();
         size_t converged_count = (size_t)  std::count_if(last_nonconverged_ptr, V_mpo_vec.end(),[threshold](auto const& val){ return val <= threshold; });
         size_t saturated_count = (size_t)  std::count(B_mpo_vec.begin(), B_mpo_vec.end(), true);
         sim_status.variance_mpo_has_saturated = report.has_saturated or converged_count >= min_saturation_iters;
         sim_status.variance_mpo_saturated_for = std::max(converged_count, saturated_count) ;
-
         V_mpo_slope  = report.slope;
         log->debug("Variance slope details:");
         log->debug(" -- relative slope    = {} %", report.slope);
@@ -231,6 +262,10 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
         log->debug(" -- has saturated     = {} " , sim_status.variance_mpo_has_saturated);
         log->debug(" -- has saturated for = {} " , sim_status.variance_mpo_saturated_for);
         log->debug(" -- checked from      = {} to {}", report.check_from, X_mpo_vec.size());
+        log->debug(" -- converged count   = {}", converged_count);
+        log->debug(" -- saturated count   = {}", saturated_count);
+        if (V_mpo_vec.back() < threshold and sim_status.variance_mpo_saturated_for == 0) throw std::logic_error("Variance should have saturated");
+        if (V_mpo_vec.back() < threshold and not sim_status.variance_mpo_has_converged ) throw std::logic_error("Variance should have converged");
     }
 
 
@@ -494,129 +529,57 @@ void class_algorithm_finite::print_status_update() {
     compute_observables();
     t_prt.tic();
     std::stringstream report;
-    report << setprecision(16) << fixed << left;
-    report << left  << sim_name << " ";
-    report << left  << "Iter: "                       << setw(6) << sim_status.iteration;
-    report << left  << "E: ";
-
-    switch(sim_type) {
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            report << setw(21) << setprecision(16)    << fixed   << energy_per_site(*state);
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-    }
-
+    report << fmt::format("{:<} "                                             ,sim_name);
+    report << fmt::format("iter: {:<4} "                                      ,sim_status.iteration);
+    report << fmt::format("step: {:<5} "                                      ,sim_status.step);
+    report << fmt::format("L: {} l: {:<2} "                                   ,state->get_length(), state->get_position());
+    report << fmt::format("E/L: {:<20.16f} "                                  ,tools::finite::measure::energy_per_site(*state));
     if (sim_type == SimulationType::xDMRG){
-        report << left  << " ε: "<< setw(8) << setprecision(4) << fixed << sim_status.energy_dens;
+        report << fmt::format("ε: {:<6.4f} " ,sim_status.energy_dens);
     }
-
-    report << left  << "log₁₀ σ²(E): ";
-    switch(sim_type) {
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            report << setw(18) << setprecision(10)    << fixed   << std::log10(energy_variance_per_site(*state));
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-
-    }
-
-
-    report << left  << "S: "                          << setw(21) << setprecision(16)    << fixed   << entanglement_entropy_current(*state);
-    report << left  << "χmax: "                       << setw(4)  << setprecision(3)     << fixed   << chi_max();
-    report << left  << "χ: "                          << setw(4)  << setprecision(3)     << fixed   << bond_dimension_current(*state);
-    report << left  << "log₁₀ trunc: "                << setw(10) << setprecision(4)     << fixed   << std::log10(state->truncation_error[state->get_position()]);
-    report << left  << "Sites: "                      << setw(6)  << setprecision(1)     << fixed   << state->get_length();
-    switch(sim_type){
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            report << left  << "@ site: "                    << setw(5)  << state->get_position();
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-
-    }
-
-    report << left  << " Convergence [";
-    switch(sim_type){
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            report << left  << " σ²-"  << std::boolalpha << setw(6) << sim_status.variance_mpo_has_converged;
-            report << left  << " S-"   << std::boolalpha << setw(6) << sim_status.entanglement_has_converged;
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-
-    }
-    report << left  << "]";
-    report << left  << " Saturation [";
-    switch(sim_type){
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            report << left  << "σ²:" << setw(2) << sim_status.variance_mpo_saturated_for;
-            report << left  << " S:" << setw(2) << sim_status.entanglement_saturated_for;
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-
-    }
-    report << left  << "]";
-    report << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
-    report << left << " Memory [";
-    report << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
-    report << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
-    report << left << "VmPeak: "  << process_memory_in_mb("VmPeak")<< " MB";
-    report << left << "]";
+    report << fmt::format("Sₑ(l): {:<10.8f} "                                 ,tools::finite::measure::entanglement_entropy_current(*state));
+    report << fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] "             ,std::log10(tools::finite::measure::energy_variance_per_site(*state)), std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
+    report << fmt::format("χmax: {:<3} χ: {:<3} "                             ,chi_max(), tools::finite::measure::bond_dimension_current(*state));
+    report << fmt::format("log₁₀ trunc: {:<6.4f} "                            ,std::log10(state->truncation_error[state->get_position()]));
+    report << fmt::format("con: [σ² {:<5} Sₑ {:<5}] "                         ,sim_status.variance_mpo_has_converged,sim_status.entanglement_has_converged);
+    report << fmt::format("sat: [σ² {:<2} Sₑ {:<2}] "                         ,sim_status.variance_mpo_saturated_for,sim_status.entanglement_saturated_for);
+    report << fmt::format("time: {:<8.2f}s "                                  ,t_tot.get_age());
+    report << fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] "    ,process_memory_in_mb("VmRSS"), process_memory_in_mb("VmHWM") ,process_memory_in_mb("VmPeak"));
     log->info(report.str());
     t_prt.toc();
 }
 
+
+
 void class_algorithm_finite::print_status_full(){
-    compute_observables();
     t_prt.tic();
+    log->info("{:=^60}","");
+    log->info("= {: ^56} =","Final results [" + sim_name + "]");
+    log->info("{:=^60}","");
+
     log->info("--- Final results  --- {} ---", sim_name);
-    log->info("Iterations            = {:<16d}"    , sim_status.iteration);
-    switch(sim_type){
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            log->info("Energy MPO            = {:<16.16f}" , state->measurements.energy_per_site.value());
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
+    log->info("Sites                              = {}"    , state->get_length());
+    log->info("Iterations                         = {}"    , sim_status.iteration);
+    log->info("Sweeps                             = {}"    , state->get_sweeps());
+    log->info("Simulation time                    = {:<.1f} s = {:<.2f} min" , t_tot.get_age(), t_tot.get_age()/60);
+    log->info("Energy per site E/L                = {:<.16f}"   , tools::finite::measure::energy_per_site(*state));
+    if (sim_type == SimulationType::xDMRG){
+    log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}" ,sim_status.energy_dens);
     }
-    switch(sim_type){
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            log->info("log₁₀ σ²(E) MPO       = {:<16.16f}" , log10(state->measurements.energy_variance_per_site.value()));
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-
-    }
-    log->info("χmax                    = {:<16d}"    , chi_max());
-    log->info("χ                       = {}"         , state->measurements.bond_dimensions.value());
-    log->info("Entanglement Entropies  = {}"         , state->measurements.entanglement_entropies.value());
-    log->info("Truncation Errors       = {}"         , state->truncation_error);
-
-    switch(sim_type){
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            log->info("state length          = {:<16d}"    , state->measurements.length.value());
-            log->info("Sweep                 = {:<16d}"    , state->get_sweeps());
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-
-    }
-
-    log->info("Simulation saturated  = {:<}"    , sim_status.simulation_has_saturated);
-    log->info("Simulation converged  = {:<}"    , sim_status.simulation_has_converged);
-    log->info("Simulation succeeded  = {:<}"    , sim_status.simulation_has_succeeded);
-
-    switch(sim_type){
-        case SimulationType::fDMRG:
-        case SimulationType::xDMRG:
-            log->info("σ² MPO slope          = {:<16.16f} | Converged : {} \t\t Saturated: {}" , V_mpo_slope ,sim_status.variance_mpo_has_converged, sim_status.variance_mpo_has_saturated);
-            break;
-        default: throw std::runtime_error("Wrong simulation type");
-    }
-    log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
-    log->info("Time                  = {:<16.16f}" , t_tot.get_age());
-    log->info("Peak memory           = {:<6.1f} MB" , process_memory_in_mb("VmPeak"));
+    log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}"   , std::log10(tools::finite::measure::energy_variance_per_site(*state)));
+    log->info("Bond dimension maximum χmax        = {}"         , chi_max());
+    log->info("Bond dimensions χ                  = {}"         , tools::finite::measure::bond_dimensions(*state));
+    log->info("Entanglement entropies Sₑ          = {}"         , tools::finite::measure::entanglement_entropies(*state));
+    log->info("Truncation Errors                  = {}"         , state->truncation_error);
+    log->info("Simulation converged               = {:<}"       , sim_status.simulation_has_converged);
+    log->info("Simulation saturated               = {:<}"       , sim_status.simulation_has_saturated);
+    log->info("Simulation succeeded               = {:<}"       , sim_status.simulation_has_succeeded);
+    log->info("Simulation got stuck               = {:<}"       , sim_status.simulation_has_got_stuck);
+    log->info("σ² slope                           = {:<8.4f} %   Converged : {}  Saturated: {}" , V_mpo_slope ,sim_status.variance_mpo_has_converged, sim_status.variance_mpo_has_saturated);
+    log->info("Sₑ slope                           = {:<8.4f} %   Converged : {}  Saturated: {}" , S_slope     ,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
+    log->info("Memory RSS                         = {:<.1f} MB" , process_memory_in_mb("VmRSS"));
+    log->info("Memory Peak                        = {:<.1f} MB" , process_memory_in_mb("VmHWM"));
+    log->info("Memory Vm                          = {:<.1f} MB" , process_memory_in_mb("VmPeak"));
     t_prt.toc();
 }
 

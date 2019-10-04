@@ -136,7 +136,11 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
     tools::common::profile::t_prj.toc();
-    tools::finite::mps::normalize(state_projected,keep_bond_dimensions);
+    if(keep_bond_dimensions){
+        tools::finite::mps::normalize(state_projected,tools::finite::measure::bond_dimensions(state));
+    }else{
+        tools::finite::mps::normalize(state_projected);
+    }
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);
     double measured_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
