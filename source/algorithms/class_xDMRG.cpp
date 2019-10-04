@@ -59,7 +59,7 @@ void class_xDMRG::run_simulation()    {
         write_status();
         write_logs();
         check_convergence();
-        backup_best_state(*state);
+        backup_best_state(*state); //Should come after check_convergence
         print_status_update();
         // It's important not to perform the last step.
         // That last state would not get optimized
@@ -220,6 +220,8 @@ void class_xDMRG::single_DMRG_step()
 
     sim_status.energy_dens        = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
 
+
+
     t_run.toc();
     sim_status.wall_time = t_tot.get_age();
     sim_status.simu_time = t_run.get_measured_time();
@@ -232,6 +234,17 @@ void class_xDMRG::check_convergence(){
     if(state->position_is_any_edge()){
         check_convergence_variance();
         check_convergence_entg_entropy();
+    }
+
+    double variance_new  = tools::finite::measure::energy_variance_per_site(*state);
+    double variance_best = tools::finite::measure::energy_variance_per_site(*state_backup);
+    if(variance_new < 0.1 * variance_best and sim_status.simulation_has_got_stuck){
+        log->debug("Simulation got unstuck!");
+        sim_status.simulation_has_got_stuck = false;
+        if(variance_new > settings::precision::varianceConvergenceThreshold){
+            sim_status.variance_mpo_has_saturated = false;
+            sim_status.variance_mpo_saturated_for = 0;
+        }
     }
 
 

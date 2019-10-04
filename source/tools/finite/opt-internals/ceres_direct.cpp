@@ -94,9 +94,9 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.gradient_tolerance = 1e-4;
     options.parameter_tolerance = std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
-    if(sim_status.variance_mpo_has_saturated and not sim_status.variance_mpo_has_converged){
+    if(sim_status.simulation_has_got_stuck){
         options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-        options.max_num_iterations = 5000;
+        options.max_num_iterations = 2000;
         options.gradient_tolerance = 1e-10;
     }
     ceres::GradientProblemSolver::Summary summary;
