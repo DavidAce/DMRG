@@ -75,7 +75,7 @@ class_algorithm_base::check_saturation_using_slope(
     B_vec.push_back(false);
     Y_vec.push_back(new_data);
     X_vec.push_back(iter);
-    unsigned long min_data_points = 4;
+    unsigned long min_data_points = 2;
     if (Y_vec.size() < min_data_points){return report;}
 //    [2019-09-04 09:41:16][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.107435, 0.0755767, 0.689875, 0.692682, 0.709075, 0.936858, 0.771467, 0.609487, 0.637618, 0.708048, 0.703904, 0.716228, 0.131454 , 0.0982134, 0.165784, -0}
 //    [2019-09-04 14:09:38][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.107185, 0.0750735, 0.689648, 0.69319 , 0.705737, 0.764265, 0.71776 , 0.640145, 0.658814, 0.706533, 0.687854, 0.659679, 0.0969757, 0.0707726, 0.14884 , -0}

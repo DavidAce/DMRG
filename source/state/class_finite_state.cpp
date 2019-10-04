@@ -583,7 +583,9 @@ bool class_finite_state::active_sites_updated() const {
     if (active_sites.empty()) return false;
     auto first_site_ptr =  site_update_tags.begin() + active_sites.front();
     auto last_site_ptr  =  first_site_ptr + active_sites.size()-1;
-    tools::log->trace("Checking update status on sites: {}", active_sites);
-    return  std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
+    tools::log->trace("Checking update status on active sites: {}", active_sites);
+    bool updated = std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
+    tools::log->trace("Active sites updated: {}", updated);
+    return updated;
 }
 

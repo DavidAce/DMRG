@@ -16,7 +16,7 @@
 
 Eigen::Tensor<class_finite_state::Scalar,3>
 tools::finite::opt::find_excited_state(const class_finite_state &state, const class_simulation_status &sim_status, OptMode optMode, OptSpace optSpace, OptType optType){
-    tools::log->trace("Finding optimal excited state");
+    tools::log->trace("Optimizing excited state");
     using namespace opt::internals;
     using namespace Textra;
     static bool googleLogginghasInitialized = false;
@@ -27,20 +27,17 @@ tools::finite::opt::find_excited_state(const class_finite_state &state, const cl
 
     std::stringstream problem_report;
     auto dims = state.active_dimensions();
-    auto size = state.active_problem_size();
-    problem_report
-            << "Starting optimization"
-            << std::setprecision(10)
-            << "\t mode [ "     << optMode << " ]"
-            << "\t space [ "    << optSpace << " ]"
-            << "\t type [ "     << optType << " ]"
-            << "\t position [ " << state.get_position() << " ]"
-            << "\t shape "      << "[ " << dims[0] << " " << dims[1]<< " " << dims[2] << " ] = [ " << size << " ]" << std::flush;
+    problem_report << fmt::format("Starting optimization: ")
+                   << fmt::format("mode [ {} ] "             , optMode.str())
+                   << fmt::format("space [ {} ] "            , optSpace.str())
+                   << fmt::format("type [ {} ] "             , optType.str())
+                   << fmt::format("position [ {} ] "         , state.get_position())
+                   << fmt::format("shape [ {} {} {} ] = {} " , dims[0],dims[1],dims[2], state.active_problem_size());
     tools::log->debug(problem_report.str());
 
-    switch (optSpace){
-        case OptSpace::SUBSPACE:    return internals::ceres_subspace_optimization(state,sim_status, optType, optMode);
-        case OptSpace::DIRECT:      return internals::ceres_direct_optimization(state,sim_status, optType);
+    switch (optSpace.option){
+        case opt::SPACE::SUBSPACE:    return internals::ceres_subspace_optimization(state,sim_status, optType, optMode);
+        case opt::SPACE::DIRECT:      return internals::ceres_direct_optimization(state,sim_status, optType);
     }
 }
 

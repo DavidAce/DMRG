@@ -329,9 +329,9 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
-    switch(optType){
-        case OptType::CPLX:     std::tie (eigvecs,eigvals)  = find_subspace<Scalar>(state,optMode); break;
-        case OptType::REAL:     std::tie (eigvecs,eigvals)  = find_subspace<double>(state,optMode); break;
+    switch(optType.option){
+        case opt::TYPE::CPLX:     std::tie (eigvecs,eigvals)  = find_subspace<Scalar>(state,optMode); break;
+        case opt::TYPE::REAL:     std::tie (eigvecs,eigvals)  = find_subspace<double>(state,optMode); break;
     }
     Eigen::VectorXd eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
 
@@ -547,8 +547,8 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     t_opt->tic();
     using namespace tools::finite::opt::internals;
     int counter,iter;
-    switch (optType){
-        case OptType::CPLX:{
+    switch (optType.option){
+        case opt::TYPE::CPLX:{
             Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
             auto * functor = new ceres_subspace_functor<std::complex<double>>(state, sim_status,eigvecs,eigvals);
             ceres::GradientProblem problem(functor);
@@ -564,7 +564,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 //            delete functor;
             break;
         }
-        case OptType::REAL:{
+        case opt::TYPE::REAL:{
             Eigen::VectorXd  theta_start_cast = theta_start.real();
             auto * functor = new ceres_subspace_functor<double>(state, sim_status,eigvecs.real(),eigvals);
             ceres::GradientProblem problem(functor);

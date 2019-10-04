@@ -25,7 +25,7 @@ public:
 
 
     //MPS
-    std::unique_ptr<class_finite_state>    state;
+    std::unique_ptr<class_finite_state>    state,state_backup;
 
 
     size_t min_saturation_iters          = 2;
@@ -46,6 +46,10 @@ public:
     void compute_observables()                                                                  final;
     void clear_saturation_status()                                                              override;
     void reset_to_random_state(const std::string parity_sector = "random", int seed_state = -1) final;
+    void backup_best_state(const class_finite_state &state);
+    void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
+    void check_convergence_entg_entropy(double slope_threshold = quietNaN);
+
     void write_measurements(bool force = false)                                                 final;
     void write_state(bool force = false)                                                        final;
     void write_status(bool force = false)                                                       final;
@@ -53,8 +57,7 @@ public:
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
 
-    void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
-    void check_convergence_entg_entropy(double slope_threshold = quietNaN);
+
     std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances
     std::list<int>    X_mpo_vec; //History of moves numbers

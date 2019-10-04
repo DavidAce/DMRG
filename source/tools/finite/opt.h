@@ -40,29 +40,6 @@ namespace tools::finite::opt{
         extern std::vector<int> generate_size_list(size_t shape);
 
 
-        inline std::ostream& operator<<(std::ostream& str, OptMode const& mode) {
-            switch (mode){
-                case OptMode::OVERLAP   : str << "OVERLAP";  break;
-                case OptMode::VARIANCE  : str << "VARIANCE"; break;
-            }
-            return str;
-        }
-
-        inline std::ostream& operator<<(std::ostream& str, OptSpace const& space) {
-            switch (space){
-                case OptSpace::SUBSPACE    : str << "SUBSPACE";      break;
-                case OptSpace::DIRECT      : str << "DIRECT";       break;
-            }
-            return str;
-        }
-        inline std::ostream& operator<<(std::ostream& str, OptType const& type) {
-            switch (type){
-                case OptType::REAL        : str << "REAL";         break;
-                case OptType::CPLX        : str << "CPLX";         break;
-            }
-            return str;
-        }
-
         template <typename T>  int sgn(const T val) {return (T(0) < val) - (val < T(0)); }
         double windowed_func_abs(double x,double window);
         double windowed_grad_abs(double x,double window);
