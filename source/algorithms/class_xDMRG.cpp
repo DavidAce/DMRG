@@ -53,7 +53,7 @@ void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
         log->trace("Starting step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
-        single_DMRG_step();
+        single_xDMRG_step();
         write_measurements();
         write_state();
         write_status();
@@ -88,7 +88,7 @@ void class_xDMRG::run_simulation()    {
 
 
 
-void class_xDMRG::single_DMRG_step()
+void class_xDMRG::single_xDMRG_step()
 {
     using namespace tools::finite;
 

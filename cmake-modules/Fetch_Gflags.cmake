@@ -17,7 +17,7 @@ if(GFLAGS_LIBRARIES AND GFLAGS_INCLUDE_DIR)
     add_library(gflags INTERFACE)
     get_filename_component(GFLAGS_LIBRARY_DIR ${GFLAGS_LIBRARIES} DIRECTORY)
     target_link_libraries(gflags INTERFACE ${GFLAGS_LIBRARIES})
-    target_include_directories(gflags INTERFACE ${GFLAGS_INCLUDE_DIR})
+    target_include_directories(gflags SYSTEM INTERFACE ${GFLAGS_INCLUDE_DIR})
     target_compile_definitions(gflags  INTERFACE "GFLAGS_IS_A_DLL=0")
     message(STATUS "Searching for gflags - Success: LIB: ${GFLAGS_LIBRARIES}")
     message(STATUS "Searching for gflags - Success: INC: ${GFLAGS_INCLUDE_DIR}")
@@ -45,6 +45,7 @@ else()
             -DGFLAGS_BUILD_SHARED_LIBS:BOOL=ON
             -DGFLAGS_BUILD_STATIC_LIBS:BOOL=ON
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             )
 
     ExternalProject_Get_Property(external_GFLAGS INSTALL_DIR)
@@ -55,7 +56,7 @@ else()
     set(gflags_DIR ${INSTALL_DIR}/lib/cmake/gflags)
     add_dependencies(gflags external_GFLAGS)
     target_link_libraries(gflags INTERFACE ${GFLAGS_LIBRARIES})
-    target_include_directories(gflags  INTERFACE ${GFLAGS_INCLUDE_DIR})
+    target_include_directories(gflags  SYSTEM INTERFACE ${GFLAGS_INCLUDE_DIR})
     target_compile_definitions(gflags  INTERFACE "GFLAGS_IS_A_DLL=0")
 endif()
 

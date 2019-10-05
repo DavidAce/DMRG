@@ -60,7 +60,6 @@ void tools::finite::mps::randomize(class_finite_state &state,const std::string &
 */
 {
     tools::log->trace("Randomizing mps");
-    using Scalar = class_finite_state::Scalar;
     state.unset_measurements();
     state.clear_cache();
     state.tag_all_sites_have_been_updated(false);

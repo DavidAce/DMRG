@@ -95,11 +95,11 @@ if(MARCH)
 endif()
 
 message("Using microarchitechture: ${CXX_MARCH}")
-set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
-set(DEBUG_OPTIONS            -Wpedantic -Wextra -O0 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
-set(RELWITHDEBINFO_OPTIONS   -Wpedantic -Wextra -O1 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
-set(RELEASE_OPTIONS          -DNDEBUG -O3 )
-set(PROFILE_OPTIONS          -DNDEBUG -O3 -fopt-info -fopt-info-missed -lprofiler -g  -ftime-report)
+set(COMMON_OPTIONS -g -Wall -Wpedantic -Wextra  -march=${CXX_MARCH} -mtune=${CXX_MARCH})
+set(DEBUG_OPTIONS             -O0 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
+set(RELWITHDEBINFO_OPTIONS    -O1 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
+set(RELEASE_OPTIONS           -O3 -DNDEBUG )
+set(PROFILE_OPTIONS           -O3 -DNDEBUG  -lprofiler -g  -ftime-report)
 
 
 if(ENABLE_CCACHE)
@@ -137,13 +137,20 @@ endif()
 ### Compiler-dependent flags ###
 ################################
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes
-            -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare -Wno-unused-local-typedefs)
+    list(APPEND RELEASE_OPTIONS -fopt-info -fopt-info-missed)
+    list(APPEND PROFILE_OPTIONS -fopt-info -fopt-info-missed)
+#    list(APPEND COMMON_OPTIONS)
+#            -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes
+#            -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare -Wno-unused-local-typedefs
+
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     list(APPEND COMMON_OPTIONS ${GCC_TOOLCHAIN})
-    list(APPEND COMMON_OPTIONS -stdlib=libstdc++
-            -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-unused-parameter
-            -Wno-overloaded-virtual -Wno-uninitialized -Wno-unused-local-typedef -Wno-unused-parameter -Wno-ignored-qualifiers -Wno-format-pedantic)
+    list(APPEND COMMON_OPTIONS -stdlib=libstdc++)
+    list(APPEND PROFILE_OPTIONS  -Rpass-missed="loop|vect" )# -Rpass="loop|vect" -Rpass-analysis="loop|vect")
+#            -Rpass="loop|vect" -Rpass-missed="loop|vect" -Rpass-analysis="loop|vect"
+#            -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-unused-parameter
+#            -Wno-overloaded-virtual -Wno-uninitialized -Wno-unused-local-typedef -Wno-unused-parameter -Wno-ignored-qualifiers -Wno-format-pedantic
+
 endif()
 
 
@@ -253,9 +260,9 @@ endif()
 ###  for shared linking.                   ###
 ##############################################
 include(cmake-modules/CheckOMPCompiles.cmake)
-if(USE_OpenMP)
-        target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
-        target_compile_options(${PROJECT_NAME} PRIVATE ${OpenMP_FLAGS})
+if(USE_OpenMP AND TARGET OpenMP)
+    message(STATUS "Enabling OpenMP")
+    target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP)
 else()
     list(APPEND COMMON_OPTIONS -Wno-unknown-pragmas)
 endif()
@@ -306,6 +313,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ceres)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
+if(TARGET OpenMP)
+    get_target_property(OMP_INFO_LIB   OpenMP            INTERFACE_LINK_LIBRARIES)
+    get_target_property(OMP_INFO_INC   OpenMP            INTERFACE_INCLUDE_DIRECTORIES)
+endif()
+
 get_target_property(BLAS_INFO_LIB       blas             INTERFACE_LINK_LIBRARIES)
 get_target_property(BLAS_INFO_INC       blas             INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(LAPACK_INFO_LIB     lapack           INTERFACE_LINK_LIBRARIES)
@@ -332,10 +344,12 @@ get_target_property(CERES_INFO_INC      ceres            INTERFACE_INCLUDE_DIREC
 
 
 
-
 message("=============================================================================")
 message("=== SUMMARY OF CMAKE CONFIGURATION:  THE FOLLOWING LIBRARIES WILL BE USED ===")
 message("=============================================================================")
+message("    OPENMP         LIB:  ${OMP_INFO_LIB}")
+message("                   INC:  ${OMP_INFO_INC}")
+message("-----------------------------------------------------------------------------")
 message("    BLAS           LIB:  ${BLAS_INFO_LIB}")
 message("                   INC:  ${BLAS_INFO_INC}")
 message("-----------------------------------------------------------------------------")

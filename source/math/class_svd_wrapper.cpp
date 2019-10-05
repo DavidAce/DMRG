@@ -71,8 +71,15 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-    long rank = std::min(SVD.rank(),rank_max);
-    truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
+
+    long max_size =  std::min(SVD.singularValues().size(),rank_max);
+    long rank     = (SVD.singularValues().head(max_size).array() >= SVDThreshold).count();
+    if(rank == SVD.singularValues().size()){
+        truncation_error = 0;
+    }else{
+        truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).squaredNorm();
+    }
+//    truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
 
     if (SVD.rank() <= 0
     or not SVD.matrixU().leftCols(rank).allFinite()

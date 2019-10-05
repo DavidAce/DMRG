@@ -18,5 +18,5 @@ add_dependencies(SZIP external_SZIP)
 set(SZIP_LIBRARY        ${INSTALL_DIR}/lib/libszip-static.a)
 set(SZIP_INCLUDE_DIRS   ${INSTALL_DIR}/include)
 target_link_libraries(SZIP INTERFACE ${INSTALL_DIR}/lib/libszip-static.a)
-target_include_directories(SZIP INTERFACE ${SZIP_INCLUDE_DIRS})
+target_include_directories(SZIP SYSTEM INTERFACE ${SZIP_INCLUDE_DIRS})
 
