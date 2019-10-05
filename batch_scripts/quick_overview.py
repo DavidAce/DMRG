@@ -40,10 +40,12 @@ if args.save:
     file.write(git_rev + '\n')
 
 for dirName, subdirList, fileList in os.walk(args.directory):
+    if subdirList:
+        subdirList.sort()
     if not fileList:
         continue
-    subdirList.sort()
     fileList.sort()
+
     chainlen  = []
     realization_num = []
     variance  = []
@@ -104,14 +106,15 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 style = colored.bg("green_4")
             elif finished[-1] == 1 and converged[-1] == 1 and saturated[-1] == 0:
                 style = colored.bg("dark_orange")
-            elif finished[-1] == 1 and converged[-1] == 0 and saturated[-1] == 1:
+            elif finished[-1] == 1 and got_stuck[-1] == 1:
                 style = colored.bg("red_3b")
-            elif finished[-1] == 0 and converged[-1] == 0 and saturated[-1] == 0:
-                style = ''
-            elif finished[-1] == 0 and converged[-1] == 1 and saturated[-1] == 0:
-                style = colored.fg("green_4")
-            elif finished[-1] == 0 and converged[-1] == 0 and saturated[-1] == 1:
+            elif finished[-1] == 0 and got_stuck[-1] == 1:
                 style = colored.fg("red_3b")
+            elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 0:
+                style = ''
+            elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 1:
+                style = colored.fg("green_4")
+
 
 
             if not args.summary:
