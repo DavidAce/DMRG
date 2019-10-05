@@ -1,8 +1,8 @@
 cmake-build*/
 .idea/
+.vscode/
 output/
 build/
-.vscode/
 tmp/
 libs/
 doxygen_log.txt
