@@ -98,7 +98,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 else:
                     got_stuck.append(0)
 
-
+            h5file.close()
 
             style = ''
             if finished[-1] == 1 and succeeded[-1] == 1:
