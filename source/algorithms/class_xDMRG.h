@@ -28,7 +28,7 @@ public:
     void find_energy_range();
     void inflate_initial_state();
     void reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason );
-    void single_DMRG_step();
+    void single_xDMRG_step();
     void run_preprocessing()                final;
     void run_simulation()                   final;
     void check_convergence()                final;

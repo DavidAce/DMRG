@@ -63,7 +63,7 @@ else()
     set(glog_DIR ${GLOG_LIBRARY_DIR}/cmake/glog)
     add_dependencies(glog external_GLOG gflags)
     target_link_libraries(glog INTERFACE ${GLOG_LIBRARIES} gflags Threads::Threads)
-    target_include_directories(glog INTERFACE ${GLOG_INCLUDE_DIR})
+    target_include_directories(glog SYSTEM INTERFACE ${GLOG_INCLUDE_DIR})
 endif()
 
 

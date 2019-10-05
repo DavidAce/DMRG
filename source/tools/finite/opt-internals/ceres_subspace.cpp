@@ -92,7 +92,6 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,Eigen::VectorXd,double> filter_state
 std::pair<double,int>
 get_best_variance_in_window(const class_finite_state &state, const Eigen::MatrixXcd &eigvecs, const Eigen::VectorXd & energies_per_site, double lbound, double ubound){
     Eigen::VectorXd variances(eigvecs.cols());
-    using Scalar = class_finite_state::Scalar;
     for(long idx = 0; idx < eigvecs.cols(); idx++){
         if (energies_per_site(idx) <=  ubound and energies_per_site(idx) >= lbound ) {
             auto multitheta = Textra::Matrix_to_Tensor(eigvecs.col(idx), state.active_dimensions());
@@ -192,6 +191,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     double t_lu = hamiltonian.t_factorOp.get_last_time_interval();
     t_eig->toc();
 
+    double max_overlap_threshold = optMode.option == OptMode::OVERLAP ? 1.0/std::sqrt(2.0) : 1.0;
     class_eigsolver solver;
     std::string reason = "exhausted";
     Eigen::VectorXd  eigvals;
@@ -219,8 +219,8 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
         if(max_overlap            > 1.0 + 1e-6)                  throw std::runtime_error("max_overlap larger than one : "  + std::to_string(max_overlap));
         if(sq_sum_overlap         > 1.0 + 1e-6)                  throw std::runtime_error("eps larger than one : "          + std::to_string(sq_sum_overlap));
         if(min_overlap            < 0.0)                         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
-//        if(max_overlap            >= max_overlap_threshold )    {reason = "overlap is good enough"; break;}
-        if(subspace_error < subspace_error_threshold)           { reason = "subspace error is low enough"; break;}
+        if(max_overlap            >= max_overlap_threshold )    {reason = "overlap is good enough"; break;}
+        if(subspace_error < subspace_error_threshold)           {reason = "subspace error is low enough"; break;}
     }
     tools::log->debug("Finished partial eigensolver -- reason: {}",reason);
     tools::common::profile::t_eig.toc();
@@ -413,7 +413,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
 
     // For options C - E we need to filter down the set of states in case we do subspace optimization, otherwise we can easily run out of memory. 64 candidates should do it.
-    double subspace_error_unfiltered = 1.0 - overlaps.cwiseAbs2().sum();
+//    double subspace_error_unfiltered = 1.0 - overlaps.cwiseAbs2().sum();
     double subspace_error_filtered;
 
     std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 32);

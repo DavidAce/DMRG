@@ -20,6 +20,6 @@ ExternalProject_Add(external_LBFGSpp
 ExternalProject_Get_Property(external_LBFGSpp INSTALL_DIR)
 add_library(LBFGSpp INTERFACE)
 add_dependencies(LBFGSpp external_LBFGSpp)
-target_include_directories(LBFGSpp INTERFACE ${INSTALL_DIR}/include)
+target_include_directories(LBFGSpp SYSTEM INTERFACE ${INSTALL_DIR}/include)
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)

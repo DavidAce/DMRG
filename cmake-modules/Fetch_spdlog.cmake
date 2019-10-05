@@ -27,13 +27,12 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             )
 
-
     ExternalProject_Get_Property(external_SPDLOG INSTALL_DIR)
     add_library(spdlog INTERFACE)
     add_library(spdlog::spdlog ALIAS spdlog)
     set(spdlog_DIR ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/cmake/spdlog)
     add_dependencies(spdlog external_SPDLOG)
-    target_include_directories(spdlog INTERFACE ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
+    target_include_directories(spdlog SYSTEM INTERFACE ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
 else()
     message("WARNING: Dependency spdlog not found and DOWNLOAD_SPDLOG is OFF. Build will fail.")
 

@@ -49,17 +49,18 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     variance  = []
     walltime  = []
     resets    = []
-    converged = []
+    got_stuck = []
     saturated = []
+    converged = []
     succeeded = []
     finished  = []
 
 
 
     if not args.summary:
-        header = "{:8} {:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length", "Realization", "Variance", "Time",
-                                                                                     "Resets", "Converged", "Saturated",
-                                                                                     "Succeeded", "Finished")
+        header = "{:8} {:15} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length", "Realization", "Variance", "Time",
+                                                                                             "Resets", "Got Stuck", "Saturated" ,"Converged",
+                                                                                             "Succeeded", "Finished")
         print(header)
         if args.save:
             file.write(header + '\n')
@@ -80,13 +81,23 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             variance.append(h5file['xDMRG/measurements/energy_variance_per_site'][-1])
             walltime.append(h5file['xDMRG/sim_status/wall_time'][-1])
             resets.append(h5file['xDMRG/sim_status/num_resets'][-1])
-            converged.append(h5file['xDMRG/sim_status/simulation_has_converged'][-1])
             saturated.append(h5file['xDMRG/sim_status/simulation_has_saturated'][-1])
+            converged.append(h5file['xDMRG/sim_status/simulation_has_converged'][-1])
             succeeded.append(h5file['xDMRG/sim_status/simulation_has_succeeded'][-1])
             try:
                 finished.append(h5file['common/finOK'][-1])
             except:
                 finished.append(0)
+
+            try:
+                got_stuck.append(h5file['xDMRG/sim_status/simulation_has_got_stuck'][-1])
+            except:
+                if finished[-1] == 0 and converged[-1] == 0 and saturated[-1] == 1:
+                    got_stuck.append(1)
+                else:
+                    got_stuck.append(0)
+
+
 
             style = ''
             if finished[-1] == 1 and succeeded[-1] == 1:
@@ -104,14 +115,15 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
             if not args.summary:
-                entry = "{:<8} {:<15} {:<12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
+                entry = "{:<8} {:<15} {:>12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
                     chainlen[-1],
                     realization_num[-1],
                     np.log10(variance[-1]),
                     walltime[-1] / 60,
                     resets[-1],
-                    converged[-1],
+                    got_stuck[-1],
                     saturated[-1],
+                    converged[-1],
                     succeeded[-1],
                     finished[-1])
                 print(stylize(entry, style))
@@ -122,17 +134,19 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
             continue
-    header = "{:8} {:15} {:12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length","Total sims", "Avg Var", "Avg Time",
-                                                                                 "Avg Resets", "Sum Con", "Sum Sat",
-                                                                                 "Sum Suc", "Sum Fin")
-    entry = "{:<8} {:<15} {:<12.4f} {:>12.4f} {:>12.3f} {:>12} {:>12} {:>12} {:>12}".format(
+    header = "{:8} {:6} {:>12} {:<12} {:>8} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length","Sims", "log10 <Var>", "<log10 Var>", "Avg Time",
+                                                                                       "Avg Resets","Sum Stk", "Sum Sat", "Sum Con",
+                                                                                       "Sum Suc", "Sum Fin")
+    entry = "{:<8} {:<6} {:>12.4f} {:<12.4f} {:>8.4f} {:>12.3f} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
         np.int(np.mean(chainlen)),
         len(realization_num),
         np.log10(np.nanmean(variance)),
+        np.nanmean(np.log10(variance)),
         np.mean(walltime) / 60,
         np.mean(resets),
-        np.sum(converged),
+        np.sum(got_stuck),
         np.sum(saturated),
+        np.sum(converged),
         np.sum(succeeded),
         np.sum(finished))
 

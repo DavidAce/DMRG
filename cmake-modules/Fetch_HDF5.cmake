@@ -53,6 +53,7 @@ elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
             )
     target_include_directories(
             hdf5
+            SYSTEM
             INTERFACE
             "$<BUILD_INTERFACE:${INSTALL_DIR}/include>"
     )

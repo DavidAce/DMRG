@@ -76,7 +76,7 @@ if (MKL_FOUND)
     add_library(mkl INTERFACE)
     list(APPEND MKL_LIBRARIES Threads::Threads)
     target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -ldl -lm gfortran)
-    target_include_directories(mkl INTERFACE ${MKL_INCLUDE_DIR})
+    target_include_directories(mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
     target_compile_options(mkl INTERFACE ${MKL_FLAGS})
     set_target_properties(mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
     # BLAS and LAPACK are included in the MKL.

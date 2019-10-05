@@ -153,7 +153,7 @@ if(HDF5_FOUND)
             $<LINK_ONLY:-ldl -lm -lz>
             Threads::Threads
             )
-    target_include_directories(hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
+    target_include_directories(hdf5 SYSTEM INTERFACE  ${HDF5_INCLUDE_DIR})
     if(HDF5_C_LIBRARY_sz)
         target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lsz>)
         if (NOT BUILD_SHARED_LIBS)

@@ -74,7 +74,7 @@ else()
 endif()
 
 target_link_libraries(GSL INTERFACE ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
-target_include_directories(GSL INTERFACE ${GSL_INCLUDE_DIRS})
+target_include_directories(GSL SYSTEM INTERFACE ${GSL_INCLUDE_DIRS})
 
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE GSL)

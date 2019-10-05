@@ -231,7 +231,7 @@ namespace tools{
         using Scalar = std::complex<double>;
 
         namespace mps{
-            extern class_infinite_state set_random_state(const class_infinite_state & state, std::string parity, int seed_state);
+            extern class_infinite_state set_random_state(const class_infinite_state & state, [[maybe_unused]]  std::string parity,  [[maybe_unused]] int seed_state);
         }
 
         namespace opt{
@@ -283,8 +283,7 @@ namespace tools{
 
 
         namespace debug {
-            extern void check_integrity             (const class_infinite_state & state, const class_simulation_status & sim_status);
-            extern void check_integrity_of_sim      (const class_infinite_state & state, const class_simulation_status & sim_status);
+            extern void check_integrity             (const class_infinite_state & state);
             extern void check_integrity_of_mps      (const class_infinite_state & state);
             extern void check_normalization_routine (const class_infinite_state & state);
 
