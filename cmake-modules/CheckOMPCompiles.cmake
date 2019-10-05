@@ -28,7 +28,7 @@ function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES REQUIRED_INCLUDES)
             int main() {
                 omp_set_num_threads(4);
                 std::cout << \"OMP Threads \" << omp_get_max_threads() << std::endl;
-                int counter;
+                int counter = 0;
                 #pragma omp parallel for shared(counter)
                 for(int i = 0; i < 16; i++){
                     #pragma omp atomic
@@ -70,7 +70,7 @@ function(find_package_omp omp_paths omp_names BUILD_SHARED_LIBS )
         message("OpenMP_LIBRARIES    : ${OpenMP_LIBRARIES} ")
         message("OpenMP_INCLUDE_DIR  : ${OpenMP_INCLUDE_DIR} ")
 
-        list(APPEND OpenMP_LIBRARIES  Threads::Threads)
+        list(APPEND OpenMP_LIBRARIES  Threads::Threads -ldl)
         message(STATUS "OpenMP libraries found: ${OpenMP_LIBRARIES}" )
         if(BUILD_SHARED_LIBS)
             check_omp_compiles("${OpenMP_FLAGS}" "${OpenMP_LIBRARIES}" "${OpenMP_INCLUDE_DIR}")
@@ -97,7 +97,7 @@ function(find_package_omp omp_paths omp_names BUILD_SHARED_LIBS )
 
         if(OpenMP_LIBRARIES AND OpenMP_INCLUDE_DIR)
             list(APPEND OpenMP_LIBRARIES Threads::Threads -ldl)
-            set(OpenMP_FLAGS "")
+            set(OpenMP_FLAGS "-D_OPENMP")
             if(${BUILD_SHARED_LIBS})
                 check_omp_compiles("${OpenMP_FLAGS}" "${OpenMP_LIBRARIES}" "${OpenMP_INCLUDE_DIR}")
             else()
@@ -152,7 +152,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND NOT BUILD_SHARED_LIBS)
     list(APPEND OMP_LIBRARY_PATHS
             ${MKLROOT}/../intel/lib/intel64  ${MKL_ROOT}/../intel/lib/intel64
             $ENV{MKLROOT}/../intel/lib/intel64 $ENV{MKL_ROOT}/../intel/lib/intel64
-            $ENV{EBROOTIMKL}/intel/lib/intel64
+            $ENV{EBROOTIMKL}/../intel/lib/intel64
             /opt/intel/lib/intel64
             )
     foreach(omp_name ${OMP_LIBRARY_NAMES})
