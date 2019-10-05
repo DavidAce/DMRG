@@ -45,7 +45,6 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     if not fileList:
         continue
     fileList.sort()
-
     chainlen  = []
     realization_num = []
     variance  = []
@@ -137,9 +136,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
             continue
-    header = "{:8} {:6} {:>12} {:<12} {:>8} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length","Sims", "log10 <Var>", "<log10 Var>", "Avg Time",
-                                                                                       "Avg Resets","Sum Stk", "Sum Sat", "Sum Con",
-                                                                                       "Sum Suc", "Sum Fin")
+    header = "{:8} {:6} {:>12} {:<12} {:>8} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length","Sims", "log10 <Var>", "<log10 Var>", "Avg Time",
+                                                                                              "Avg Resets","Sum Stk", "Sum Sat", "Sum Con",
+                                                                                              "Sum Suc", "Sum Fin")
     entry = "{:<8} {:<6} {:>12.4f} {:<12.4f} {:>8.4f} {:>12.3f} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
         np.int(np.mean(chainlen)),
         len(realization_num),
