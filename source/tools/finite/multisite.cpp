@@ -3,18 +3,7 @@
 //
 
 
-
-#ifdef _OPENMP
-#include <omp.h>
-#define EIGEN_USE_THREADS
-#include <unsupported/Eigen/CXX11/Tensor>
-Eigen::ThreadPool       tp_multisite (Eigen::nbThreads());
-Eigen::ThreadPoolDevice dev_multisite(&tp,Eigen::nbThreads());
-#else
-#include <unsupported/Eigen/CXX11/Tensor>
-Eigen::DefaultDevice dev_multisite;
-#endif
-
+#include <general/nmspc_omp.h> // For multithreaded computation
 #include <tools/nmspc_tools.h>
 #include <state/class_finite_state.h>
 #include <simulation/nmspc_settings.h>
@@ -167,7 +156,7 @@ double tools::finite::measure::multisite::energy_variance(const class_finite_sta
         if (log2chiL > log2chiR){
 //            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
             Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{1,0,2});
-            H2.device(dev_multisite) =
+            H2.device(omp::dev) =
                     theta
                             .contract(env2L              , Textra::idx({0}, {0}))
                             .contract(multimpo           , Textra::idx({0,3}, {2,0}))
@@ -179,7 +168,7 @@ double tools::finite::measure::multisite::energy_variance(const class_finite_sta
         else{
 //            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
             Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{2,0,1});
-            H2.device(dev_multisite) =
+            H2.device(omp::dev) =
                     theta
                             .contract(env2R              , Textra::idx({0}, {0}))
                             .contract(multimpo           , Textra::idx({0,3}, {2,1}))
@@ -191,7 +180,7 @@ double tools::finite::measure::multisite::energy_variance(const class_finite_sta
     }else{
 //        tools::log->trace("H2 path: log2spin <= log2chiL + log2chiR");
         Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{1,0,2});
-        H2.device(dev_multisite) =
+        H2.device(omp::dev) =
                 theta
                         .contract(env2L              , Textra::idx({0}, {0}))
                         .contract(multimpo           , Textra::idx({0,3}, {2,0}))
