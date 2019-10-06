@@ -4,7 +4,7 @@
 
 #ifndef TENSOR_EXTRA_H
 #define TENSOR_EXTRA_H
-
+#include <general/nmspc_omp.h> // For multithreaded computation
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <unsupported/Eigen/CXX11/Tensor>

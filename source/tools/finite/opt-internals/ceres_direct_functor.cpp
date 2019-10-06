@@ -2,17 +2,7 @@
 // Created by david on 2019-07-15.
 //
 
-#ifdef _OPENMP
-#include <omp.h>
-#define EIGEN_USE_THREADS
-#include <unsupported/Eigen/CXX11/Tensor>
-Eigen::ThreadPool       tp (Eigen::nbThreads());
-Eigen::ThreadPoolDevice dev(&tp,Eigen::nbThreads());
-#else
-#include <unsupported/Eigen/CXX11/Tensor>
-Eigen::DefaultDevice dev;
-#endif
-
+#include <general/nmspc_omp.h> // For multithreaded computation
 #include "ceres_direct_functor.h"
 #include <state/class_finite_state.h>
 
@@ -179,7 +169,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
         if (log2chiL > log2chiR){
             if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-            H2v_tensor.device(dev) =
+            H2v_tensor.device(omp::dev) =
                     theta
                             .contract(env2L, Textra::idx({0}, {0}))
                             .contract(mpo  , Textra::idx({0,3}, {2,0}))
@@ -191,7 +181,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
         else{
             if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
-            H2v_tensor.device(dev) =
+            H2v_tensor.device(omp::dev) =
                     theta
                             .contract(env2R, Textra::idx({0}, {0}))
                             .contract(mpo  , Textra::idx({0,3}, {2,1}))
@@ -203,7 +193,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
     }else{
         if (print_path) tools::log->trace("get_H2v path: log2spin <= log2chiL + log2chiR");
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-        H2v_tensor.device(dev) =
+        H2v_tensor.device(omp::dev) =
                 theta
                         .contract(env2L, Textra::idx({0}, {0}))
                         .contract(mpo  , Textra::idx({0,3}, {2,0}))
@@ -227,7 +217,7 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
         if (print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
 
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-        Hv_tensor.device(dev) =
+        Hv_tensor.device(omp::dev) =
                 theta
                         .contract(envL, Textra::idx({0}, {0}))
                         .contract(mpo , Textra::idx({0,3}, {2,0}))
@@ -237,7 +227,7 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
         if (print_path) tools::log->trace("get_Hv path: log2chiL <= log2chiR ");
 
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
-        Hv_tensor.device(dev) =
+        Hv_tensor.device(omp::dev) =
                 theta
                         .contract(envR, Textra::idx({0}, {0}))
                         .contract(mpo , Textra::idx({0,3}, {2,1}))

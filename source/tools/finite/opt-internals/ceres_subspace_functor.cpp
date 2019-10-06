@@ -1,7 +1,7 @@
 //
 // Created by david on 2019-07-15.
 //
-
+#include <general/nmspc_omp.h> // For multithreaded computation
 #include "ceres_subspace_functor.h"
 #include <state/class_finite_state.h>
 
@@ -55,7 +55,7 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
 
     Hv  = eigvals.asDiagonal() * v;
     vHv = v.dot(Hv);
-    H2v = H2.template selfadjointView<Eigen::Upper>()*v;
+    H2v  = H2.template selfadjointView<Eigen::Upper>()*v;
     vH2v = v.dot(H2v);
 
 

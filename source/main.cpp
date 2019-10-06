@@ -176,7 +176,6 @@ int main(int argc, char* argv[]) {
         #endif
 
         #ifdef MKL_AVAILABLE
-            if(settings::threading::num_threads_blas   <= 0){ settings::threading::num_threads_blas   = std::thread::hardware_concurrency(); }
             mkl_set_num_threads(settings::threading::num_threads_blas);
             log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
         #endif
