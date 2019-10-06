@@ -368,7 +368,6 @@ const Eigen::Tensor<class_finite_state::Scalar,4> &   class_finite_state::get_mu
     tools::log->trace("Contracting multi mpo...");
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multimpo");}
     Eigen::Tensor<Scalar,4> multimpo;
-    Eigen::Tensor<Scalar,4> temp;
     bool first = true;
     for (auto &site : active_sites){
         if (first){multimpo = get_MPO(site).MPO(); first = false; continue;}
@@ -377,7 +376,9 @@ const Eigen::Tensor<class_finite_state::Scalar,4> &   class_finite_state::get_mu
         long dim1 = mpo.dimension(1);
         long dim2 = multimpo.dimension(2) * mpo.dimension(2);
         long dim3 = multimpo.dimension(3) * mpo.dimension(3);
-        temp = multimpo
+        Eigen::Tensor<Scalar,4> temp(dim0,dim1,dim2,dim3);
+        temp.device(omp::dev) =
+                multimpo
                 .contract(mpo, Textra::idx({1},{0}))
                 .shuffle(Textra::array6{0,3,1,4,2,5})
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3});
@@ -409,7 +410,11 @@ class_finite_state::TType<6> class_finite_state::get_multi_hamiltonian() const{
     if (envL.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", envL.get_position() , active_sites.front()));
     if (envR.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", envR.get_position() , active_sites.back()));
 //    cache.multiham =
-    TType<6> multiham =
+    long dim0 = mpo.dimension(2);
+    long dim1 = envL.block.dimension(0);
+    long dim2 = envR.block.dimension(0);
+    TType<6> multiham(dim0,dim1,dim2,dim0,dim1,dim2);
+    multiham.device(omp::dev) =
             envL.block
             .contract(mpo           , Textra::idx({2},{0}))
             .contract(envR.block    , Textra::idx({2},{2}))
@@ -427,9 +432,12 @@ class_finite_state::TType<6>   class_finite_state::get_multi_hamiltonian2() cons
     auto & env2R = get_ENV2R(active_sites.back());
     if (env2L.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , active_sites.front()));
     if (env2R.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , active_sites.back()));
-
+    long dim0 = mpo.dimension(2);
+    long dim1 = env2L.block.dimension(0);
+    long dim2 = env2R.block.dimension(0);
 //    cache.multiham_sq =
-    TType<6> multiham_sq =
+    TType<6> multiham_sq(dim0,dim1,dim2,dim0,dim1,dim2);
+    multiham_sq.device(omp::dev) =
             env2L.block
             .contract(mpo             , Textra::idx({2},{0}))
             .contract(mpo             , Textra::idx({5,2},{2,0}))
@@ -489,11 +497,12 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
     size_t log2chiL  = std::log2(dims[1]);
     size_t log2chiR  = std::log2(dims[2]);
     size_t log2spin  = std::log2(dims[0]);
-    Eigen::Tensor<Scalar,2> H2;
+    long dimH2 = eigvecs.cols();
+    Eigen::Tensor<Scalar,2> H2(dimH2,dimH2);
     if(log2spin > log2chiL + log2chiR){
         if (log2chiL >= log2chiR){
 //            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR ");
-            H2 =
+            H2.device(omp::dev) =
                     eigvecs_tensor
                             .contract(env2L.block,                Textra::idx({1},{0}))
                             .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
@@ -503,7 +512,7 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
         }
         else{
 //            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR ");
-            H2 =
+            H2.device(omp::dev) =
                     eigvecs_tensor
                             .contract(env2R.block,                Textra::idx({2},{0}))
                             .contract(mpo  ,                      Textra::idx({0,4},{2,1}))
@@ -514,7 +523,7 @@ class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_m
     }else{
 //        tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
 
-        H2 =
+        H2.device(omp::dev) =
                 eigvecs_tensor
                         .contract(env2L.block,                Textra::idx({1},{0}))
                         .contract(mpo  ,                      Textra::idx({0,4},{2,0}))

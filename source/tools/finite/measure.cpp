@@ -93,8 +93,9 @@ double tools::finite::measure::twosite::energy_minus_energy_reduced(const class_
     // Since the state can be reduced, the true energy is always
     // E + E_reduced
     tools::common::profile::t_ene.tic();
-    Eigen::Tensor<Scalar, 0>  E =
-            state.ENV_L.back().block
+    Eigen::Tensor<Scalar, 0>  E;
+    E.device(omp::dev) =
+                state.ENV_L.back().block
                     .contract(theta,                               idx({0},{1}))
                     .contract(state.MPO_L.back()->MPO(),           idx({1,2},{0,2}))
                     .contract(state.MPO_R.front()->MPO(),          idx({3,1},{0,2}))
@@ -130,8 +131,9 @@ double tools::finite::measure::twosite::energy_variance(const class_finite_state
     // IF the state is reduced we get Var H = (H-E_red) - (E-E_red)^2 = H2 - energy_minus_energy_reduced^2
 
     tools::common::profile::t_var.tic();
-    Eigen::Tensor<Scalar, 0> H2 =
-            state.ENV2_L.back().block
+    Eigen::Tensor<Scalar, 0> H2;
+    H2.device(omp::dev) =
+                state.ENV2_L.back().block
                     .contract(theta                        , idx({0}  ,{1}))
                     .contract(state.MPO_L.back()->MPO()    , idx({1,3},{0,2}))
                     .contract(state.MPO_R.front()->MPO()   , idx({4,2},{0,2}))
