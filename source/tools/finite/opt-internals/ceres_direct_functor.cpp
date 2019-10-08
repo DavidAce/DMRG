@@ -104,7 +104,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)/length;
     norm_offset    = std::abs(vv) - 1.0 ;
-    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.2);
+    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
     log10var       = std::log10(variance);
 
     if(fx != nullptr){
@@ -122,12 +122,11 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
         grad += norm_grad * v;
     }
 
-//    tools::log->trace("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad_facit|: {:<24.18f} dot: {:<24.18f} SqNorm: {:<24.18f} Norm: {:<24.18f} Norm_func: {:<24.18f} |Norm_grad *v|: {:<24.18f} fx: {:<24.18f}",
+//    tools::log->trace("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad|_inf: {:<24.18f} SqNorm: {:<24.18f} Norm: {:<24.18f} Norm_func: {:<24.18f} |Norm_grad *v|: {:<24.18f} fx: {:<24.18f}",
 //                      std::log10(std::abs(var)/length),
 //                      std::real(ene + energy_reduced) / length,
 //                      grad.norm(),
-//                      grad_facit.norm(),
-//                      std::abs(grad.normalized().dot(grad_facit.normalized())),
+//                      grad.cwiseAbs().maxCoeff(),
 //                      vv,
 //                      norm,
 //                      norm_func,

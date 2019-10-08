@@ -131,6 +131,71 @@ class_algorithm_base::check_saturation_using_slope(
 }
 
 
+class_algorithm_base::SaturationReport2
+class_algorithm_base::check_saturation_using_slope2(
+        std::list<double> &Y_vec,
+        std::list<int>    &X_vec,
+        double new_data,
+        int iter,
+        int rate,
+        double tolerance)
+/*! \brief Checks convergence based on slope.
+ * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
+ * If the last measurement happened less than rate iterations ago, return.
+ * Starting from the last measurement, and including at least 2 data points, check how far back you can go before
+ * the slope to grows larger than the threshold.
+ * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
+ */
+
+{
+    SaturationReport2 report;
+    int last_measurement = X_vec.empty() ? 0 : X_vec.back();
+    if (iter - last_measurement < rate){return report;}
+
+    // It's time to check. Insert current numbers
+    Y_vec.push_back(new_data);
+    X_vec.push_back(iter);
+    unsigned long data_points = 0;
+    while(data_points <= Y_vec.size()){
+        auto x_it = X_vec.end();
+        auto y_it = Y_vec.end();
+        std::advance(x_it, -data_points);
+        std::advance(y_it, -data_points);
+        if (data_points >= 2){
+            double numerator   = 0.0;
+            double denominator = 0.0;
+            auto v_end = Y_vec.end();
+            double avgX = accumulate(x_it, X_vec.end(), 0.0) / (double)data_points;
+            double avgY = accumulate(y_it, Y_vec.end(), 0.0) / (double)data_points;
+            while(y_it != v_end){
+                numerator   += (*x_it - avgX) * (*y_it - avgY);
+                denominator += (*x_it - avgX) * (*x_it - avgX);
+                y_it++;
+                x_it++;
+            }
+
+            double slope = std::abs(numerator / denominator) / avgY * 100;
+            slope        = std::isnan(slope) ? 0.0 : slope;
+
+            report.has_computed  = true;
+            report.slopes.push_back(slope);
+            report.avgY.push_back(avgY);
+        }
+        if(x_it == X_vec.begin()) break;
+        if(y_it == Y_vec.begin()) break;
+        data_points++;
+    }
+
+    if(report.has_computed){
+        auto first_greater_than_tolerance = std::distance(report.slopes.begin(), std::lower_bound(report.slopes.begin(),report.slopes.end(),tolerance));
+        report.saturated_for = first_greater_than_tolerance;
+        report.has_saturated = report.saturated_for > 0;
+        std::reverse(report.slopes.begin(),report.slopes.end()); //Reverse looks better on print
+    }
+    return report;
+}
+
+
 void class_algorithm_base::update_bond_dimension(){
     sim_status.chi_max = chi_max();
     if(not chi_grow() or sim_status.bond_dimension_has_reached_max or sim_status.chi_temp == chi_max() ){
