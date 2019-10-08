@@ -78,27 +78,28 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 1000;
+    options.max_num_iterations = 500;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = false;
-    options.max_line_search_step_expansion = 100;// 100.0;
-    options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
+    options.max_line_search_step_expansion = 1e4;// 100.0;
+    options.min_line_search_step_size = 1e-5;// std::numeric_limits<double>::epsilon();
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
-    options.max_num_line_search_step_size_iterations  = 30;//20;
+    options.max_num_line_search_step_size_iterations  = 20;//20;
     options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-2;
-    options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
+    options.line_search_sufficient_function_decrease  = 1e-4;
+    options.line_search_sufficient_curvature_decrease = 0.4; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
     options.function_tolerance = 1e-4;
-    options.gradient_tolerance = 1e-4;
+    options.gradient_tolerance = 1e-2;
     options.parameter_tolerance = std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
-    if(sim_status.simulation_has_got_stuck){
-        options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-        options.max_num_iterations = 2000;
-        options.gradient_tolerance = 1e-10;
-    }
+//    if(sim_status.simulation_has_got_stuck){
+//        options.min_line_search_step_size = 1e-10;// std::numeric_limits<double>::epsilon();
+//        options.function_tolerance = 1e-8;
+//        options.max_num_iterations = 2000;
+//        options.gradient_tolerance = 1e-4;
+//    }
     ceres::GradientProblemSolver::Summary summary;
     int counter,iter;
     t_opt->tic();

@@ -130,6 +130,41 @@ std::pair<double,int> get_best_overlap_in_window(const Eigen::VectorXd &overlaps
 
 }
 
+
+
+std::vector<std::pair<double,int>> get_best_candidates_in_window(const Eigen::VectorXd &overlaps, const Eigen::VectorXd & energies_per_site, double lbound, double ubound){
+    assert(overlaps.size() == energies_per_site.size() and "get_best_overlap_in_window: Mismatch in overlaps and energies_per_site sizes");
+    std::vector<std::pair<double,int>> overlaps_in_window;
+    for (long i = 0; i < overlaps.size(); i++){
+        if (energies_per_site(i) < ubound and energies_per_site(i) > lbound)
+            overlaps_in_window.emplace_back(std::make_pair(overlaps(i),i));
+    }
+    if (overlaps_in_window.empty()){
+        tools::log->debug("No candidate eigenstates in given energy window {} to {}.", lbound,ubound);
+        tools::log->debug("Subspace energy range is {} to {}.", energies_per_site.minCoeff(), energies_per_site.maxCoeff());
+        return overlaps_in_window;
+    }
+
+    std::sort(overlaps_in_window.begin(),overlaps_in_window.end()); // Sort in ascending order of overlap
+    std::vector<std::pair<double,int>> candidates;
+
+    auto lambda_sq_sum = [&](double acc, std::pair<double,int> & p){return acc + p.first * p.first; };
+    while(true){
+        if(overlaps_in_window.empty()) break;
+        double sq_sum_overlap = std::accumulate(candidates.begin(),candidates.end(), 0.0, lambda_sq_sum);
+        tools::log->debug("Sq_sum_overlap:  {}",sq_sum_overlap);
+        if(sq_sum_overlap  > 1.0/std::sqrt(2.0)) break;
+        else {
+            candidates.emplace_back(overlaps_in_window.back());
+            overlaps_in_window.pop_back();
+        }
+    }
+    tools::log->debug("Found {} candidates.",candidates.size());
+    return candidates;
+
+}
+
+
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
 find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, std::vector<reports::eig_tuple> &eig_log){
@@ -347,68 +382,6 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
 
 
-    // Explanation:
-    // theta_initial: The starting point , or initial guess, for the gradient descent (L-BFGS) optimization routine.
-    //                By default theta_initial = theta_old, i.e. the current state.
-    // candidate    : One of the eigenvectors obtained from either full or partial diagonalization, i.e. lapack or arpack.
-    // relevant candidate : Eigenvectors inside of the energy window with high enough overlap with the old theta_old.
-    // subspace_error = 1 - Σ_i |<theta_new_i|theta_old>|^2
-    //      If == 0, it means that the set of candidate theta_old's span the old theta_old, i.e. the set can describe the current state.
-    //      The subspace error is "low enough" when subspace_error < subspace_error_threshold
-    //
-    // best_overlap : The highest overlap to the old theta_old achieved by any candidate inside of the energy window, i.e. |<candidate_i | theta_old>|_max
-    // best_overlap_idx: The index of the best overlapping candidate in the energy window. If -1, it means that no state is in the window.
-    // best_variance:
-
-    // overlap_high = 0.9
-    // overlap_cat  = 1/sqrt(2) = 0.707.. (cat state or worse)
-
-
-    // New Decision tree
-    // Step 1)  Start by filtering eigenvectors down to a  smaller set of "relevant" candidates for
-    //          doing subspace optimization. Allowing a maximum of 64 candidates keeps ram below 2GB
-    //          when theta_old.size() == 4096. This means that we filter out
-    //              * candidates outside of the energy window,
-    //              * candidates with little or no overlap to the current state.
-    //          Compute subspace_error_filtered = 1 - Σ_i |<candidate_i|theta_old>|^2
-    //          If subspace_error_filtered > subspace_error_threshold, set optSpace = DIRECT
-    //          Else, set optSpace = SUBSPACE.
-    //
-    // Step 2)  Find the best overlapping state among the relevant candidates.
-    //
-    // Step 3)  We can now make different decisions based on the overlap.
-    //          A)  If best_overlap_idx == -1
-    //              No state is in energy window -> discard! Return old theta_old.
-    //          B)  If overlap_high <= best_overlap.
-    //              This can happen if the environments have been modified just slightly since the last time considered
-    //              these sites, but the signal is still clear -- we are still targeting the same state.
-    //              However we can't be sure that the contributions from nearby states is just noise. Instead of just
-    //              keeping the state we should optimize its variance. This is important in the later stages when variance
-    //              is low and we don't want to ruin those last decimals.
-    //              We just need to decide which initial guess to use.
-    //                  B1) If best_overlap_variance <= theta_variance: set theta_initial = best_overlap_theta.
-    //                  B2) Else, set theta_initial = theta_old.
-    //          C)  If overlap_cat <= best_overlap and best_overlap < overlap_high
-    //              This can happen for one reasons:
-    //                  1) There are a few candidate states with significant overlap (superposition)
-    //              It's clear that we need to optimize, but we have to think carefully about the initial guess.
-    //              Right now it makes sense to always choose best overlap theta, since that forces the algorithm to
-    //              choose a particular state and not get stuck in superposition. Choosing the old theta may not always
-    //              may just entrench the algorithm into a local minima.
-    //          D)  If 0 <= best_overlap and best_overlap < overlap_cat
-    //              This can happen for three reasons, most often early in the simulation.
-    //                  1) There are several candidate states with significant overlap (superposition)
-    //                  2) The highest overlapping states were outside of the energy window, leaving just these candidates.
-    //                  3) The energy targeting of states has failed for some reason, perhaps the spectrum is particularly dense.
-    //              In any case, it is clear we are lost Hilbert space.
-    //              Also, the subspace_error is no longer a good measure of how useful the subspace is to us, since it's only
-    //              measuring how well the old state can be described, but the old state is likely very different from what
-    //              we're looking for.
-    //              So to address all three cases, do DIRECT optimization with best_overlap_theta as initial guess.
-    //
-    // In particular, notice that we never use the candidate that happens to have the best variance.
-
-
 
 
 
@@ -423,10 +396,26 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     tools::log->trace("Current energy  : {:.16f}", tools::finite::measure::energy_per_site(state));
     tools::log->trace("Current variance: {:.16f}", std::log10(theta_old_variance) );
+//    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
+    if (optMode == OptMode::OVERLAP){
+        auto [best_overlap,best_overlap_idx]   = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
+        if (best_overlap_idx  < 0 ){
+            //Option A
+            tools::log->trace("Went for option A -- No overlapping states in energy range. Returning old theta");
+            state.tag_active_sites_have_been_updated(false);
+            return theta_old;
+        }else{
+            auto   best_overlap_theta              = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
+            double best_overlap_energy             = eigvals_per_site_unreduced(best_overlap_idx);
+            double best_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
+            tools::log->trace("Candidate {:2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
+            return best_overlap_theta;
+        }
 
-    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
+    }
 
-    if (best_overlap_idx < 0){
+    auto list_of_candidates = get_best_candidates_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
+    if (list_of_candidates.empty()){
         //Option A
         tools::log->trace("Went for option A -- No overlapping states in energy range. Returning old theta");
         state.tag_active_sites_have_been_updated(false);
@@ -435,60 +424,107 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
 
 
-    auto   best_overlap_theta              = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
-    double best_overlap_energy             = eigvals_per_site_unreduced(best_overlap_idx);
-    double best_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
 
-    tools::log->trace("Candidate {:2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
-
-//    if (sim_status.iteration <= 1 or
-//    sim_status.simulation_has_got_stuck){
-//        return best_overlap_theta;
-//    }
-    if (optMode == OptMode::OVERLAP){
-        return best_overlap_theta;
+    std::vector<Eigen::Tensor<Scalar,3>> initial_guess_thetas;// = {theta_old};
+    for(auto &candidate : list_of_candidates){
+        auto   candidate_theta              = Textra::Matrix_to_Tensor(eigvecs.col(candidate.second), state.active_dimensions());
+        double candidate_energy             = eigvals_per_site_unreduced(candidate.second);
+        double candidate_variance           = tools::finite::measure::energy_variance_per_site(state, candidate_theta);
+        tools::log->trace("Candidate {:2} has good overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",candidate.second ,candidate.first ,candidate_energy  ,std::log10(candidate_variance) );
+        initial_guess_thetas.emplace_back(candidate_theta);
     }
 
-    // We set theta_initial to best overlapping theta, but this can change
-    tools::log->trace("Initial guess   : best overlap candidate {}",best_overlap_idx);
-    auto theta_initial = best_overlap_theta;
+
+//
+//    Eigen::Tensor<Scalar,3> theta_initial;
+//    if (sim_status.simulation_has_got_stuck){
+//        tools::log->trace("Initial guess   : old theta");
+//        theta_initial = theta_old;
+//
+//    }else{
+//        tools::log->trace("Initial guess   : best overlap candidate {}",best_overlap_idx);
+//        theta_initial = best_overlap_theta;
+//    }
+
+    ceres::GradientProblemSolver::Options options;
+    options.line_search_type = ceres::LineSearchType::WOLFE;
+    options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
+    options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
+    options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
+    options.max_num_iterations = 500;
+    options.max_lbfgs_rank     = 250;
+    options.use_approximate_eigenvalue_bfgs_scaling = false;
+    options.max_line_search_step_expansion = 1e4;// 100.0;
+    options.min_line_search_step_size = 1e-5;//  std::numeric_limits<double>::epsilon();
+    options.max_line_search_step_contraction = 1e-3;
+    options.min_line_search_step_contraction = 0.6;
+    options.max_num_line_search_step_size_iterations  = 20;//20;
+    options.max_num_line_search_direction_restarts    = 5;//2;
+    options.line_search_sufficient_function_decrease  = 1e-4;
+    options.line_search_sufficient_curvature_decrease = 0.4; //0.5;
+    options.max_solver_time_in_seconds = 60*5;//60*2;
+    options.function_tolerance = 1e-4; //Operations are cheap in subspace, so you can afford low tolerance
+    options.gradient_tolerance = 1e-2;
+    options.parameter_tolerance = std::numeric_limits<double>::epsilon();//1e-12;
+    options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
+
+//    if(sim_status.simulation_has_got_stuck){
+//        options.min_line_search_step_size = 1e-10;// std::numeric_limits<double>::epsilon();
+//        options.function_tolerance = 1e-8; //Operations are cheap in subspace, so you can afford low tolerance
+//        options.max_num_iterations = 2000;
+//        options.gradient_tolerance = 1e-4;
+//    }
 
 
-    tools::log->debug("Optimizing");
-    // Make sure you use theta_initial from now on, not theta_old
-    auto theta_initial_map             = Eigen::Map<const Eigen::VectorXcd>  (theta_initial.data(),theta_initial.size());
 
 
+//    Progress log definitions:
+//    f is the value of the objective function.
+//    d is the change in the value of the objective function if the step computed in this iteration is accepted.
+//    g is the max norm of the gradient (i.e. the largest element of |grad f|)
+//    h is the change in the parameter vector.
+//    s is the optimal step length computed by the line search.
+//    it is the time take by the current iteration.
+//    tt is the total time taken by the minimizer.
 
-    Eigen::VectorXcd theta_new;
-    double overlap_new  = 0;
-    double energy_new,variance_new,norm;
-    // Note that alpha_i = <theta_initial | theta_new_i> is not supposed to be squared!
-    Eigen::VectorXcd theta_start      = (theta_initial_map.adjoint() * eigvecs).normalized()  ;
+
 
     std::vector<reports::subspc_opt_tuple> opt_log;
 
     if (tools::log->level() <= spdlog::level::debug){
         // Initial sanity check
         t_opt->tic();
-        int iter_0               = 0;
         double energy_old        = tools::finite::measure::energy_per_site(state);
         double variance_old      = tools::finite::measure::energy_variance_per_site(state);
         t_opt->toc();
-        opt_log.emplace_back("Current state", theta_old.size(), energy_old, std::log10(variance_old), 1.0 , theta_old_vec.norm(), iter_0, 0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Current state", theta_old.size(), energy_old, std::log10(variance_old), 1.0 , theta_old_vec.norm(), 0, 0, t_opt->get_last_time_interval());
+    }
 
-        // Initial sanity check
-        t_opt->tic();
-        Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
-        auto theta_0_tensor      = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta_0.data(),state.active_dimensions());
-        double energy_0          = tools::finite::measure::energy_per_site(state,theta_0_tensor);
-        double variance_0        = tools::finite::measure::energy_variance_per_site(state,theta_0_tensor);
-        double overlap_0         = std::abs(theta_old_vec.dot(theta_0));
-        t_opt->toc();
-        opt_log.emplace_back("Initial guess", theta_old.size(), energy_0, std::log10(variance_0), overlap_0, theta_0.norm(), iter_0, 0, t_opt->get_last_time_interval());
+    tools::log->debug("Optimizing");
+
+    std::vector<std::pair<double,Eigen::Tensor<Scalar,3>>> optimized_results;
+    for(auto &theta_initial: initial_guess_thetas){
+        auto theta_initial_map             = Eigen::Map<const Eigen::VectorXcd>  (theta_initial.data(),theta_initial.size());
+
+        Eigen::VectorXcd theta_new;
+        double overlap_new  = 0;
+        double energy_new,variance_new,norm;
+        // Note that alpha_i = <theta_initial | theta_new_i> is not supposed to be squared!
+        Eigen::VectorXcd theta_start      = (theta_initial_map.adjoint() * eigvecs).normalized()  ;
 
 
-        // Initial sanity check 2
+        if (tools::log->level() <= spdlog::level::debug){
+            // Initial sanity check
+            t_opt->tic();
+            Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
+            auto theta_0_tensor      = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta_0.data(),state.active_dimensions());
+            double energy_0          = tools::finite::measure::energy_per_site(state,theta_0_tensor);
+            double variance_0        = tools::finite::measure::energy_variance_per_site(state,theta_0_tensor);
+            double overlap_0         = std::abs(theta_old_vec.dot(theta_0));
+            t_opt->toc();
+            opt_log.emplace_back("Initial guess", theta_old.size(), energy_0, std::log10(variance_0), overlap_0, theta_0.norm(), 0, 0, t_opt->get_last_time_interval());
+
+            // Initial sanity check 2
 //        t_opt->tic();
 //        Eigen::MatrixXcd H2  = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
 //        Eigen::VectorXcd Hv  = eigvals.asDiagonal() * theta_start;
@@ -502,117 +538,94 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 //        double var_init_san = std::abs(var)/state.get_length();
 //        t_opt->toc();
 //        opt_log.emplace_back("Initial (matrix)",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), iter_0,0, t_opt->get_last_time_interval());
-    }
-
-
-    ceres::GradientProblemSolver::Options options;
-    options.line_search_type = ceres::LineSearchType::WOLFE;
-    options.line_search_interpolation_type = ceres::LineSearchInterpolationType::QUADRATIC;
-    options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
-    options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 1000;
-    options.max_lbfgs_rank     = 250;
-    options.use_approximate_eigenvalue_bfgs_scaling = false;
-    options.max_line_search_step_expansion = 100.0;// 100.0;
-    options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
-    options.max_line_search_step_contraction = 1e-3;
-    options.min_line_search_step_contraction = 0.6;
-    options.max_num_line_search_step_size_iterations  = 30;//20;
-    options.max_num_line_search_direction_restarts    = 5;//2;
-    options.line_search_sufficient_function_decrease  = 1e-2;
-    options.line_search_sufficient_curvature_decrease = 0.9; //0.5;
-    options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-4; //Operations are cheap in subspace, so you can afford low tolerance
-    options.gradient_tolerance = 1e-4;
-    options.parameter_tolerance = std::numeric_limits<double>::epsilon();//1e-12;
-    options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
-
-    if(sim_status.variance_mpo_has_saturated and not sim_status.variance_mpo_has_converged){
-        options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-        options.max_num_iterations = 5000;
-        options.gradient_tolerance = 1e-10;
-    }
-
-//    Progress log definitions:
-//    f is the value of the objective function.
-//    d is the change in the value of the objective function if the step computed in this iteration is accepted.
-//    g is the max norm of the gradient.
-//    h is the change in the parameter vector.
-//    s is the optimal step length computed by the line search.
-//    it is the time take by the current iteration.
-//    tt is the total time taken by the minimizer.
-
-
-    ceres::GradientProblemSolver::Summary summary;
-    t_opt->tic();
-    using namespace tools::finite::opt::internals;
-    int counter,iter;
-    switch (optType.option){
-        case opt::TYPE::CPLX:{
-            Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
-            auto * functor = new ceres_subspace_functor<std::complex<double>>(state, sim_status,eigvecs,eigvals);
-            ceres::GradientProblem problem(functor);
-            tools::log->trace("Running L-BFGS");
-            ceres::Solve(options, problem, theta_start_cast.data(), &summary);
-            iter         = (int)summary.iterations.size();
-            counter      = functor->get_count();
-            norm         = functor->get_norm();
-            energy_new   = functor->get_energy();
-            variance_new = functor->get_variance();
-            theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
-            theta_new    = (eigvecs * theta_start.conjugate().asDiagonal()).rowwise().sum().normalized();
-//            delete functor;
-            break;
         }
-        case opt::TYPE::REAL:{
-            Eigen::VectorXd  theta_start_cast = theta_start.real();
-            auto * functor = new ceres_subspace_functor<double>(state, sim_status,eigvecs.real(),eigvals);
-            ceres::GradientProblem problem(functor);
-            tools::log->trace("Running LBFGS");
-            ceres::Solve(options, problem, theta_start_cast.data(), &summary);
-            iter         = (int)summary.iterations.size();
-            counter      = functor->get_count();
-            norm         = functor->get_norm();
-            energy_new   = functor->get_energy();
-            variance_new = functor->get_variance();
-            theta_start  = theta_start_cast.normalized().cast<Scalar>();
-            theta_new    = (eigvecs.real() * theta_start.real().asDiagonal()).rowwise().sum().normalized();
-//            delete functor;
-            break;
-        }
-    }
-    t_opt->toc();
 
-
-
-    if (tools::log->level() <= spdlog::level::debug){
-        // Print results of Ceres LBFGS
-        overlap_new = (theta_old_vec.adjoint() * theta_new).cwiseAbs().sum();
-        opt_log.emplace_back("Ceres L-BFGS", theta_old.size(), energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), iter, counter, t_opt->get_last_time_interval());
-
-        // Sanity check
+        ceres::GradientProblemSolver::Summary summary;
         t_opt->tic();
-        auto theta_san      = Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
-        double energy_san   = tools::finite::measure::energy_per_site(state,theta_san);
-        double variance_san = tools::finite::measure::energy_variance_per_site(state,theta_san);
+        using namespace tools::finite::opt::internals;
+        int counter,iter;
+        switch (optType.option){
+            case opt::TYPE::CPLX:{
+                Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
+                auto * functor = new ceres_subspace_functor<std::complex<double>>(state, sim_status,eigvecs,eigvals);
+                ceres::GradientProblem problem(functor);
+                tools::log->trace("Running L-BFGS");
+                ceres::Solve(options, problem, theta_start_cast.data(), &summary);
+                iter         = (int)summary.iterations.size();
+                counter      = functor->get_count();
+                norm         = functor->get_norm();
+                energy_new   = functor->get_energy();
+                variance_new = functor->get_variance();
+                theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
+                theta_new    = (eigvecs * theta_start.conjugate().asDiagonal()).rowwise().sum().normalized();
+//            delete functor;
+                break;
+            }
+            case opt::TYPE::REAL:{
+                Eigen::VectorXd  theta_start_cast = theta_start.real();
+                auto * functor = new ceres_subspace_functor<double>(state, sim_status,eigvecs.real(),eigvals);
+                ceres::GradientProblem problem(functor);
+                tools::log->trace("Running LBFGS");
+                ceres::Solve(options, problem, theta_start_cast.data(), &summary);
+                iter         = (int)summary.iterations.size();
+                counter      = functor->get_count();
+                norm         = functor->get_norm();
+                energy_new   = functor->get_energy();
+                variance_new = functor->get_variance();
+                theta_start  = theta_start_cast.normalized().cast<Scalar>();
+                theta_new    = (eigvecs.real() * theta_start.real().asDiagonal()).rowwise().sum().normalized();
+//            delete functor;
+                break;
+            }
+        }
         t_opt->toc();
-        opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new,theta_new.norm(), 0,0, t_opt->get_last_time_interval());
+
+
+
+        if (tools::log->level() <= spdlog::level::debug){
+            // Print results of Ceres LBFGS
+            overlap_new = (theta_old_vec.adjoint() * theta_new).cwiseAbs().sum();
+            opt_log.emplace_back("Ceres L-BFGS", theta_old.size(), energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), iter, counter, t_opt->get_last_time_interval());
+
+            // Sanity check
+            t_opt->tic();
+            auto theta_san      = Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
+            double energy_san   = tools::finite::measure::energy_per_site(state,theta_san);
+            double variance_san = tools::finite::measure::energy_variance_per_site(state,theta_san);
+            t_opt->toc();
+            opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new,theta_new.norm(), 0,0, t_opt->get_last_time_interval());
+        }
+
+
+
+        tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
+        //    std::cout << summary.FullReport() << "\n";
+
+        tools::common::profile::t_opt.toc();
+        tools::log->debug("Fine tuning new theta after SUBSPACE optimization");
+        auto optimized_theta    = ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
+        auto optimized_energy   = tools::finite::measure::energy_per_site(state,optimized_theta);
+        auto optimized_variance = tools::finite::measure::energy_variance_per_site(state,optimized_theta);
+        auto optimized_vec      = Eigen::Map<const Eigen::VectorXcd>  (optimized_theta.data(),optimized_theta.size());
+        auto optimized_overlap  = std::abs(theta_old_vec.dot(optimized_vec));
+        opt_log.emplace_back("Ceres L-BFGS (direct) ",optimized_theta.size(), optimized_energy, std::log10(optimized_variance), optimized_overlap,optimized_vec.norm(), 0,0, t_opt->get_last_time_interval());
+
+        optimized_results.emplace_back(std::make_pair(optimized_variance,optimized_theta));
+//        return ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
     }
-
-
 
     // Finish up and print reports
-    tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
-    //    std::cout << summary.FullReport() << "\n";
     reports::print_report(opt_log);
-    tools::log->debug("Fine tuning new theta after SUBSPACE optimization");
 
-    tools::common::profile::t_opt.toc();
-    if (sim_status.simulation_has_got_stuck){
-        return Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
-    }
+    //Sort thetas in ascending order
+//    std::sort(optimized_results.begin(),optimized_results.end());
+    std::sort(optimized_results.begin(), optimized_results.end(), [](auto &left, auto &right) {
+        return left.first < right.first;
+    });
+    //Return the best theta
+    return optimized_results.back().second;
 
-    return ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
+
 
 
 //    auto theta_direct_fine_tuned    =  ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
@@ -637,6 +650,14 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
 
 
+}
+
+
+
+
+
+
+
 //
 //
 //    if (variance_new < 1.0 * tools::finite::measure::energy_variance_per_site(state)){
@@ -647,7 +668,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 //        state.tag_active_sites_have_been_updated(false);
 //
 //    }
-    // Perhaps send theta initial to direct if worse?
+// Perhaps send theta initial to direct if worse?
 
 //    return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
 //
@@ -676,7 +697,77 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
 
 
-}
+
+
+
+
+
+
+
+
+// Explanation:
+// theta_initial: The starting point , or initial guess, for the gradient descent (L-BFGS) optimization routine.
+//                By default theta_initial = theta_old, i.e. the current state.
+// candidate    : One of the eigenvectors obtained from either full or partial diagonalization, i.e. lapack or arpack.
+// relevant candidate : Eigenvectors inside of the energy window with high enough overlap with the old theta_old.
+// subspace_error = 1 - Σ_i |<theta_new_i|theta_old>|^2
+//      If == 0, it means that the set of candidate theta_old's span the old theta_old, i.e. the set can describe the current state.
+//      The subspace error is "low enough" when subspace_error < subspace_error_threshold
+//
+// best_overlap : The highest overlap to the old theta_old achieved by any candidate inside of the energy window, i.e. |<candidate_i | theta_old>|_max
+// best_overlap_idx: The index of the best overlapping candidate in the energy window. If -1, it means that no state is in the window.
+// best_variance:
+
+// overlap_high = 0.9
+// overlap_cat  = 1/sqrt(2) = 0.707.. (cat state or worse)
+
+
+// New Decision tree
+// Step 1)  Start by filtering eigenvectors down to a  smaller set of "relevant" candidates for
+//          doing subspace optimization. Allowing a maximum of 64 candidates keeps ram below 2GB
+//          when theta_old.size() == 4096. This means that we filter out
+//              * candidates outside of the energy window,
+//              * candidates with little or no overlap to the current state.
+//          Compute subspace_error_filtered = 1 - Σ_i |<candidate_i|theta_old>|^2
+//          If subspace_error_filtered > subspace_error_threshold, set optSpace = DIRECT
+//          Else, set optSpace = SUBSPACE.
+//
+// Step 2)  Find the best overlapping state among the relevant candidates.
+//
+// Step 3)  We can now make different decisions based on the overlap.
+//          A)  If best_overlap_idx == -1
+//              No state is in energy window -> discard! Return old theta_old.
+//          B)  If overlap_high <= best_overlap.
+//              This can happen if the environments have been modified just slightly since the last time considered
+//              these sites, but the signal is still clear -- we are still targeting the same state.
+//              However we can't be sure that the contributions from nearby states is just noise. Instead of just
+//              keeping the state we should optimize its variance. This is important in the later stages when variance
+//              is low and we don't want to ruin those last decimals.
+//              We just need to decide which initial guess to use.
+//                  B1) If best_overlap_variance <= theta_variance: set theta_initial = best_overlap_theta.
+//                  B2) Else, set theta_initial = theta_old.
+//          C)  If overlap_cat <= best_overlap and best_overlap < overlap_high
+//              This can happen for one reasons:
+//                  1) There are a few candidate states with significant overlap (superposition)
+//              It's clear that we need to optimize, but we have to think carefully about the initial guess.
+//              Right now it makes sense to always choose best overlap theta, since that forces the algorithm to
+//              choose a particular state and not get stuck in superposition. Choosing the old theta may not always
+//              may just entrench the algorithm into a local minima.
+//          D)  If 0 <= best_overlap and best_overlap < overlap_cat
+//              This can happen for three reasons, most often early in the simulation.
+//                  1) There are several candidate states with significant overlap (superposition)
+//                  2) The highest overlapping states were outside of the energy window, leaving just these candidates.
+//                  3) The energy targeting of states has failed for some reason, perhaps the spectrum is particularly dense.
+//              In any case, it is clear we are lost Hilbert space.
+//              Also, the subspace_error is no longer a good measure of how useful the subspace is to us, since it's only
+//              measuring how well the old state can be described, but the old state is likely very different from what
+//              we're looking for.
+//              So to address all three cases, do DIRECT optimization with best_overlap_theta as initial guess.
+//
+// In particular, notice that we never use the candidate that happens to have the best variance.
+
+
+
 
 
 

@@ -89,16 +89,34 @@ protected:
         double slope         = quietNaN;
         double avgY          = quietNaN;
         int    check_from    = -1;
+        int    saturated_for = 0;
+    };
+    struct SaturationReport2 {
+        bool   has_computed  = false;
+        bool   has_saturated = false;
+        size_t saturated_for = 0;
+        std::vector<double> slopes;
+        std::vector<double> avgY;
     };
 
     SaturationReport
-    check_saturation_using_slope(std::list<bool> &B_vec,
-                                 std::list<double> &Y_vec,
-                                 std::list<int> &X_vec,
-                                 double new_data,
-                                 int iter,
-                                 int rate,
-                                 double tolerance);
+    check_saturation_using_slope(
+            std::list<bool> &B_vec,
+            std::list<double> &Y_vec,
+            std::list<int> &X_vec,
+            double new_data,
+            int iter,
+            int rate,
+            double tolerance);
+    SaturationReport2
+    check_saturation_using_slope2(
+            std::list<double> &Y_vec,
+            std::list<int> &X_vec,
+            double new_data,
+            int iter,
+            int rate,
+            double tolerance);
+
 
 };
 
