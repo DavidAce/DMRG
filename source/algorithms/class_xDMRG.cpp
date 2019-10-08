@@ -165,7 +165,7 @@ void class_xDMRG::single_xDMRG_step()
                 // Check if you ended up with a better state
                 double variance_new   = measure::energy_variance_per_site(*state,theta);
                 double variance_old   = measure::energy_variance_per_site(*state);
-                if (variance_old < variance_new){
+                if (variance_new >= variance_old){
                     // State got worse.
                     log->debug("State got worse during SUBSPACE optimization");
                     if (sim_status.simulation_has_got_stuck){
