@@ -246,16 +246,16 @@ void class_xDMRG::check_convergence(){
         check_convergence_entg_entropy();
     }
 
-    double variance_new  = tools::finite::measure::energy_variance_per_site(*state);
-    double variance_best = tools::finite::measure::energy_variance_per_site(*state_backup);
-    if(variance_new < 0.1 * variance_best and sim_status.simulation_has_got_stuck){
-        log->debug("Simulation got unstuck!");
-        sim_status.simulation_has_got_stuck = false;
-        if(variance_new > settings::precision::varianceConvergenceThreshold){
-            sim_status.variance_mpo_has_saturated = false;
-            sim_status.variance_mpo_saturated_for = 0;
-        }
-    }
+//    double variance_new  = tools::finite::measure::energy_variance_per_site(*state);
+//    double variance_best = tools::finite::measure::energy_variance_per_site(*state_backup);
+//    if(variance_new < 0.1 * variance_best and sim_status.simulation_has_got_stuck){
+//        log->debug("Simulation got unstuck!");
+//        sim_status.simulation_has_got_stuck = false;
+//        if(variance_new > settings::precision::varianceConvergenceThreshold){
+//            sim_status.variance_mpo_has_saturated = false;
+//            sim_status.variance_mpo_saturated_for = 0;
+//        }
+//    }
 
 
     sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
@@ -293,9 +293,10 @@ void class_xDMRG::check_convergence(){
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
                                           sim_status.simulation_has_saturated;
 
-    sim_status.simulation_has_got_stuck = sim_status.variance_mpo_has_saturated and
-                                          sim_status.entanglement_has_saturated and not
-                                          sim_status.variance_mpo_has_converged;
+    sim_status.simulation_has_got_stuck = not sim_status.variance_mpo_has_converged and
+                                          sim_status.variance_mpo_saturated_for > max_saturation_iters or
+                                          (sim_status.variance_mpo_has_saturated and
+                                          sim_status.entanglement_has_saturated);
 
 
     log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);

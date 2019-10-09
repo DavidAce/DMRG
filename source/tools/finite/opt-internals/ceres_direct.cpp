@@ -96,9 +96,10 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
     if(sim_status.simulation_has_got_stuck){
 //        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
-        options.function_tolerance = 1e-6;
-        options.max_num_iterations = 2000;
+        options.function_tolerance = 1e-8;
+        options.max_num_iterations = 12000;
         options.gradient_tolerance = 1e-4;
+        options.max_solver_time_in_seconds = 60*10;//60*2;
     }
     ceres::GradientProblemSolver::Summary summary;
     int counter,iter;
