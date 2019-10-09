@@ -82,7 +82,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = false;
     options.max_line_search_step_expansion = 1e4;// 100.0;
-    options.min_line_search_step_size = 1e-5;// std::numeric_limits<double>::epsilon();
+    options.min_line_search_step_size = 1e-12;// std::numeric_limits<double>::epsilon();
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 20;//20;
@@ -95,7 +95,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.parameter_tolerance = std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
     if(sim_status.simulation_has_got_stuck){
-        options.min_line_search_step_size = 1e-10;// std::numeric_limits<double>::epsilon();
+        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
         options.function_tolerance = 1e-6;
         options.max_num_iterations = 2000;
         options.gradient_tolerance = 1e-4;
