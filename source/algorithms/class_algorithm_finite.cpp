@@ -215,15 +215,21 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
 }
 
 void class_algorithm_finite::backup_best_state(const class_finite_state &state) {
-    log->trace("Checking if given state can beat the backup");
-    double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
-    double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
-    if (variance_candidate <  variance_champion){
-        log->debug("We have a new champion!");
-        *state_backup = state;
+    if (sim_status.variance_mpo_has_saturated and sim_status.entanglement_has_saturated){
+        log->trace("Checking if given state can beat the backup");
+        double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
+        double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
+        if (variance_candidate <  variance_champion){
+            log->debug("We have a new champion!");
+            *state_backup = state;
+        }else{
+            log->trace("Champion defended his title");
+        }
     }else{
-        log->trace("Champion defended his title");
+        log->trace("Waiting for saturation before challenging the current champion");
+
     }
+
 }
 
 
@@ -321,29 +327,37 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
     bool all_computed = std::all_of(reports.begin(), reports.end(), [](const SaturationReport2 r) { return r.has_computed; });
     sim_status.entanglement_has_saturated = false;
     if(all_computed){
-        // idx is the index to the site with maximum slope
-        size_t idx = std::distance(reports.begin(),
-                                   std::max_element(reports.begin(),reports.end(),
+        // idx_max_slope is the index to the site with maximum slope
+        size_t idx_max_slope = std::distance(reports.begin(),
+                                             std::max_element(reports.begin(),reports.end(),
                                    [](const SaturationReport2 &r1, const SaturationReport2 &r2)
                                    {return r1.slopes.back() < r2.slopes.back();}));
-        S_slope = reports[idx].slopes.back();
-        sim_status.entanglement_has_saturated = reports[idx].has_saturated;
-        sim_status.entanglement_saturated_for = reports[idx].saturated_for;
+        // idx_max_slope is the index to the site with maximum slope
+        size_t idx_min_satur = std::distance(reports.begin(),
+                                             std::min_element(reports.begin(),reports.end(),
+                                   [](const SaturationReport2 &r1, const SaturationReport2 &r2)
+                                   {return r1.saturated_for < r2.saturated_for;}));
+        S_slope = reports[idx_max_slope].slopes.back();
+        sim_status.entanglement_has_saturated = reports[idx_max_slope].has_saturated;
+        sim_status.entanglement_saturated_for = reports[idx_min_satur].saturated_for;
         std::vector<double> all_avergs;
         std::vector<double> all_slopes;
         for (auto &r : reports) all_avergs.push_back(r.avgY.back());
         for (auto &r : reports) all_slopes.push_back(r.slopes.back());
-        log->debug("Max slope of entanglement entropy at site {}: {:.8f} %",idx, S_slope);
+        log->debug("Max slope of entanglement entropy at site {}: {:.8f} %", idx_max_slope, S_slope);
         log->debug("Entanglement slope details of worst slope:");
-        log->debug(" -- site              = {}"  , idx);
-        log->debug(" -- relative slope    = {} %", reports[idx].slopes.back());
+        log->debug(" -- site              = {}"  , idx_max_slope);
+        log->debug(" -- relative slope    = {} %", reports[idx_max_slope].slopes.back());
         log->debug(" -- tolerance         = {} %", slope_threshold);
-        log->debug(" -- ent history       = {} " , S_mat[idx]);
-        log->debug(" -- slope history     = {} " , reports[idx].slopes);
-        log->debug(" -- has saturated     = {} " , reports[idx].has_saturated);
-        log->debug(" -- has saturated for = {} " , sim_status.entanglement_saturated_for);
+        log->debug(" -- ent history       = {} " , S_mat[idx_max_slope]);
+        log->debug(" -- slope history     = {} " , reports[idx_max_slope].slopes);
+        log->debug(" -- has saturated     = {} " , reports[idx_max_slope].has_saturated);
+        log->debug(" -- has saturated for = {} (site {} )" , sim_status.entanglement_saturated_for, idx_min_satur);
         log->debug(" -- all averages      = {} " , all_avergs);
         log->debug(" -- all slopes        = {} " , all_slopes);
+
+        if (reports[idx_max_slope].slopes.back() > slope_threshold and sim_status.entanglement_has_saturated)
+            throw std::logic_error("Not supposed to be saturated!!");
     }
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
 

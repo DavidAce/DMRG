@@ -94,12 +94,12 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
     options.gradient_tolerance = 1e-2;
     options.parameter_tolerance = std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
-//    if(sim_status.simulation_has_got_stuck){
-//        options.min_line_search_step_size = 1e-10;// std::numeric_limits<double>::epsilon();
-//        options.function_tolerance = 1e-8;
-//        options.max_num_iterations = 2000;
-//        options.gradient_tolerance = 1e-4;
-//    }
+    if(sim_status.simulation_has_got_stuck){
+        options.min_line_search_step_size = 1e-10;// std::numeric_limits<double>::epsilon();
+        options.function_tolerance = 1e-6;
+        options.max_num_iterations = 2000;
+        options.gradient_tolerance = 1e-4;
+    }
     ceres::GradientProblemSolver::Summary summary;
     int counter,iter;
     t_opt->tic();

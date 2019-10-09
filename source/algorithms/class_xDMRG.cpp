@@ -102,8 +102,8 @@ void class_xDMRG::single_xDMRG_step()
     auto optMode    = opt::OptMode(opt::MODE::OVERLAP);
     auto optSpace   = opt::OptSpace(opt::SPACE::DIRECT);
     auto optType    = opt::OptType(opt::TYPE::CPLX);
-    optMode         = sim_status.iteration  >= 2 and measure::energy_variance_per_site(*state) < 1e-6 ? opt::MODE::VARIANCE : optMode.option;
-    optMode         = sim_status.iteration  >= 5 or  measure::energy_variance_per_site(*state) < 1e-6 ? opt::MODE::VARIANCE : optMode.option;
+    optMode         = sim_status.iteration  >= 2 and measure::energy_variance_per_site(*state) < 1e-2 ? opt::MODE::VARIANCE : optMode.option;
+    optMode         = sim_status.iteration  >= 5 or  measure::energy_variance_per_site(*state) < 1e-2 ? opt::MODE::VARIANCE : optMode.option;
     optSpace        = optMode == opt::MODE::OVERLAP                                                   ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = sim_status.simulation_has_got_stuck                                             ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = state->size_2site()  > settings::precision::maxSizePartDiag                     ? opt::SPACE::DIRECT  : optSpace.option;

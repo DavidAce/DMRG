@@ -187,7 +187,9 @@ class_algorithm_base::check_saturation_using_slope2(
     }
 
     if(report.has_computed){
-        auto first_greater_than_tolerance = std::distance(report.slopes.begin(), std::lower_bound(report.slopes.begin(),report.slopes.end(),tolerance));
+//        auto first_greater_than_tolerance = std::distance(report.slopes.begin(), std::upper_bound(report.slopes.begin(),report.slopes.end(),tolerance));
+        auto first_greater_than_tolerance = std::distance(report.slopes.begin(),
+                std:: find_if(report.slopes.begin(), report.slopes.end(),[tolerance](const double & x) { return x > tolerance; }));
         report.saturated_for = first_greater_than_tolerance;
         report.has_saturated = report.saturated_for > 0;
         std::reverse(report.slopes.begin(),report.slopes.end()); //Reverse looks better on print
