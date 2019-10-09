@@ -25,11 +25,11 @@ template<typename T> using MatrixType = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dy
 
 std::vector<int> tools::finite::opt::internals::generate_size_list(size_t shape){
     int max_nev ;
-    if      (shape <= 512)  {max_nev = shape/4;}
-    else if (shape > 512  and shape <= 1024) {max_nev = 128;}
-    else if (shape > 1024 and shape <= 2048) {max_nev = 128;}
-    else if (shape > 2048 and shape <= 4096) {max_nev = 64;}
-    else if (shape > 4096 and shape <= 8192) {max_nev = 32;}
+    if      (shape <= 512)  {max_nev = shape/2;}
+    else if (shape > 512  and shape <= 1024) {max_nev = shape/4;} // should do full diag
+    else if (shape > 1024 and shape <= 2048) {max_nev = shape/4;} // should do full diag
+    else if (shape > 2048 and shape <= 4096) {max_nev = 128;}
+    else if (shape > 4096 and shape <= 8192) {max_nev = 64;}
     else                                     {max_nev = 8;}
 
     int min_nev = std::min(std::min(8,(int)shape),max_nev);
@@ -153,7 +153,7 @@ std::vector<std::pair<double,int>> get_best_candidates_in_window(const Eigen::Ve
         if(overlaps_in_window.empty()) break;
         double sq_sum_overlap = std::accumulate(candidates.begin(),candidates.end(), 0.0, lambda_sq_sum);
         tools::log->debug("Sq_sum_overlap:  {}",sq_sum_overlap);
-        if(sq_sum_overlap  > 1.0/std::sqrt(2.0)) break;
+        if(sq_sum_overlap  > 0.55) break; // Just a bit more than half, to catch near cat states. Half means cat state.
         else {
             candidates.emplace_back(overlaps_in_window.back());
             overlaps_in_window.pop_back();
@@ -473,9 +473,10 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 
     if(sim_status.simulation_has_got_stuck){
 //        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
-        options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-        options.max_num_iterations = 2000;
+        options.function_tolerance = 1e-8; //Operations are cheap in subspace, so you can afford low tolerance
+        options.max_num_iterations = 12000;
         options.gradient_tolerance = 1e-4;
+        options.max_solver_time_in_seconds = 60*10;//60*2;
     }
 
 
