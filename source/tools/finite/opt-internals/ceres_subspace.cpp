@@ -454,7 +454,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 500;
+    options.max_num_iterations = 100;
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = false;
     options.max_line_search_step_expansion = 1e4;// 100.0;
@@ -473,8 +473,8 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
 
     if(sim_status.simulation_has_got_stuck){
 //        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
-        options.function_tolerance = 1e-8; //Operations are cheap in subspace, so you can afford low tolerance
-        options.max_num_iterations = 1000;
+        options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
+        options.max_num_iterations = 200;
         options.gradient_tolerance = 1e-4;
         options.max_solver_time_in_seconds = 60*10;//60*2;
     }
