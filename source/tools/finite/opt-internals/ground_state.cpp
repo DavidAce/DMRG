@@ -8,10 +8,10 @@
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <math/class_eigsolver.h>
 
-Eigen::Tensor<class_finite_state::Scalar,4> tools::finite::opt::internals::ground_state_optimization(const class_finite_state & state, std::string ritzstring){
+Eigen::Tensor<class_finite_state::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_finite_state & state, std::string ritzstring){
     tools::log->trace("Starting ground state optimization");
     using Scalar = std::complex<double>;
-    using namespace internals;
+    using namespace internal;
     using namespace settings::precision;
     using namespace eigutils::eigSetting;
 

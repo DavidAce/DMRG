@@ -136,12 +136,12 @@ public:
     std::pair<std::reference_wrapper<const class_environment>     , std::reference_wrapper<const class_environment>>      get_multienv ()     const;
     std::pair<std::reference_wrapper<const class_environment_var> , std::reference_wrapper<const class_environment_var>>  get_multienv2()     const;
 
-    TType<6>   get_multi_hamiltonian() const;
-    TType<6>   get_multi_hamiltonian2() const;
-    MType get_multi_hamiltonian_matrix() const;
-    MType get_multi_hamiltonian2_matrix() const;
-    MType get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const;
-
+//    TType<6>   get_multi_hamiltonian() const;
+//    TType<6>   get_multi_hamiltonian2() const;
+//    MType get_multi_hamiltonian_matrix() const;
+//    MType get_multi_hamiltonian2_matrix() const;
+//    MType get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const;
+//
 
     std::vector<double>  truncation_error;
     struct Measurements {

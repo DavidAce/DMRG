@@ -14,7 +14,7 @@ class class_tic_toc;
 
 
 namespace tools::finite::opt{
-    namespace internals{
+    namespace internal{
         extern Eigen::Tensor<std::complex<double>,3> old_subspace_optimization(const class_finite_state &state,
                                                                                const class_simulation_status &sim_status,
                                                                                OptType optType, OptMode optMode);
@@ -33,6 +33,15 @@ namespace tools::finite::opt{
                                                                                     OptType optType, OptMode optMode);
         extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_finite_state & state, const class_simulation_status & sim_status);
         extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_finite_state & state, std::string ritzstring = "SR");
+
+        extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian(const class_finite_state & state);
+        extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian2(const class_finite_state & state);
+        extern Eigen::MatrixXcd                        get_multi_hamiltonian_matrix(const class_finite_state & state);
+        extern Eigen::MatrixXcd                        get_multi_hamiltonian2_matrix(const class_finite_state & state);
+        extern Eigen::MatrixXcd                        get_multi_hamiltonian2_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
+        extern Eigen::MatrixXcd                        get_multi_hamiltonian2_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
+//        extern std::complex<double>                    get_subspace_hamiltonian_component();
+
 
         inline bool no_state_in_window = false;
         inline double subspace_error_threshold = 1e-8;

@@ -8,7 +8,7 @@
 
 
 
-using namespace tools::finite::opt::internals;
+using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
 ceres_direct_functor<Scalar>::ceres_direct_functor(
@@ -259,8 +259,8 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
 
 
 
-template class tools::finite::opt::internals::ceres_direct_functor<double>;
-template class tools::finite::opt::internals::ceres_direct_functor<std::complex<double>>;
+template class tools::finite::opt::internal::ceres_direct_functor<double>;
+template class tools::finite::opt::internal::ceres_direct_functor<std::complex<double>>;
 
 
 

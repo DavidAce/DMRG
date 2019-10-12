@@ -4,7 +4,7 @@
 
 #include <tools/finite/opt.h>
 
-void tools::finite::opt::internals::reports::print_report(const std::vector<direct_opt_tuple> &opt_log){
+void tools::finite::opt::internal::reports::print_report(const std::vector<direct_opt_tuple> &opt_log){
     if (tools::log->level() > spdlog::level::debug) return;
     std::stringstream report;
     report    << std::setprecision(16) << '\n'
@@ -38,7 +38,7 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<dire
 }
 
 
-void tools::finite::opt::internals::reports::print_report(const std::vector<subspc_opt_tuple> &opt_log){
+void tools::finite::opt::internal::reports::print_report(const std::vector<subspc_opt_tuple> &opt_log){
     if (tools::log->level() > spdlog::level::debug) return;
     std::stringstream report;
     report    << std::setprecision(16) << '\n'
@@ -73,7 +73,7 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<subs
 
 
 
-void tools::finite::opt::internals::reports::print_report(const std::vector<eig_tuple> &eig_log){
+void tools::finite::opt::internal::reports::print_report(const std::vector<eig_tuple> &eig_log){
     if (tools::log->level() > spdlog::level::debug) return;
     std::stringstream solver_report;
     solver_report << '\n'
@@ -105,7 +105,7 @@ void tools::finite::opt::internals::reports::print_report(const std::vector<eig_
 
 
 
-void tools::finite::opt::internals::reports::print_report(const lbfgs_tuple lbfgs_log){
+void tools::finite::opt::internal::reports::print_report(const lbfgs_tuple lbfgs_log){
     if (tools::log->level() > spdlog::level::debug) return;
     std::stringstream report;
     report

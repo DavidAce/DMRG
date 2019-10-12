@@ -18,12 +18,12 @@
 #include <ceres/ceres.h>
 
 using namespace tools::finite::opt;
-using namespace tools::finite::opt::internals;
+using namespace tools::finite::opt::internal;
 
 template<typename T> using MatrixType = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>;
 
 
-std::vector<int> tools::finite::opt::internals::generate_size_list(size_t shape){
+std::vector<int> tools::finite::opt::internal::generate_size_list(size_t shape){
     int max_nev ;
     if      (shape <= 512)  {max_nev = shape/2;}
     else if (shape > 512  and shape <= 1024) {max_nev = shape/4;} // should do full diag
@@ -276,10 +276,10 @@ find_subspace(const class_finite_state & state,OptMode optMode){
 
     MatrixType<Scalar> H_local;
     if constexpr(std::is_same<Scalar,double>::value){
-        H_local = state.get_multi_hamiltonian_matrix().real();
+        H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix(state).real();
     }
     if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-        H_local = state.get_multi_hamiltonian_matrix();
+        H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix(state);
     }
 
     if(not H_local.isApprox(H_local.adjoint(), 1e-14)){
@@ -339,7 +339,7 @@ find_subspace(const class_finite_state & state,OptMode optMode){
 
 
 Eigen::Tensor<class_finite_state::Scalar,3>
-tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_state &state, const class_simulation_status &sim_status, OptType optType, OptMode optMode){
+tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_state &state, const class_simulation_status &sim_status, OptType optType, OptMode optMode){
     tools::log->trace("Optimizing in SUBSPACE mode");
     tools::common::profile::t_opt.tic();
     using Scalar = class_finite_state::Scalar;
@@ -389,7 +389,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
 //    double subspace_error_unfiltered = 1.0 - overlaps.cwiseAbs2().sum();
     double subspace_error_filtered;
 
-    std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 32);
+    std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 256);
     eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
 //    bool force_accept = false;
 
@@ -505,7 +505,10 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
     }
 
     tools::log->debug("Optimizing");
-
+    t_opt->tic();
+    Eigen::MatrixXcd H2_subspace     = tools::finite::opt::internal::get_multi_hamiltonian2_subspace_matrix_new(state, eigvecs);
+    t_opt->toc();
+    double t_H2_subspace = t_opt->get_last_time_interval();
     std::vector<std::pair<double,Eigen::Tensor<Scalar,3>>> optimized_results;
     for(auto &theta_initial: initial_guess_thetas){
         auto theta_initial_map             = Eigen::Map<const Eigen::VectorXcd>  (theta_initial.data(),theta_initial.size());
@@ -514,13 +517,15 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
         double overlap_new  = 0;
         double energy_new,variance_new,norm;
         // Note that alpha_i = <theta_initial | theta_new_i> is not supposed to be squared!
-        Eigen::VectorXcd theta_start      = (theta_initial_map.adjoint() * eigvecs).normalized()  ;
+//        Eigen::VectorXcd theta_start      = (theta_initial_map.adjoint() * eigvecs).normalized()  ;
+        Eigen::VectorXcd theta_start      = (eigvecs.adjoint() * theta_initial_map).normalized()  ;
 
 
         if (tools::log->level() <= spdlog::level::debug){
             // Initial sanity check
             t_opt->tic();
-            Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
+//            Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
+            Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal() ).rowwise().sum().normalized();
             auto theta_0_tensor      = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta_0.data(),state.active_dimensions());
             double energy_0          = tools::finite::measure::energy_per_site(state,theta_0_tensor);
             double variance_0        = tools::finite::measure::energy_variance_per_site(state,theta_0_tensor);
@@ -529,29 +534,55 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             opt_log.emplace_back("Initial guess", theta_old.size(), energy_0, std::log10(variance_0), overlap_0, theta_0.norm(), 0, 0, t_opt->get_last_time_interval());
 
             // Initial sanity check 2
-//        t_opt->tic();
-//        Eigen::MatrixXcd H2  = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
-//        Eigen::VectorXcd Hv  = eigvals.asDiagonal() * theta_start;
-//        Eigen::VectorXcd H2v = H2.template selfadjointView<Eigen::Upper>()*theta_start;
-//        Scalar vHv  = theta_start.dot(Hv);
-//        Scalar vH2v = theta_start.dot(H2v);
-//        double vv   = theta_start.squaredNorm();
-//        Scalar ene  = vHv/vv;
-//        Scalar var  = vH2v/vv - ene*ene;
-//        double ene_init_san = std::real(ene+state.get_energy_reduced())/state.get_length();
-//        double var_init_san = std::abs(var)/state.get_length();
-//        t_opt->toc();
-//        opt_log.emplace_back("Initial (matrix)",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), iter_0,0, t_opt->get_last_time_interval());
+//            t_opt->tic();
+//            Eigen::MatrixXcd H2_subspace_old = tools::finite::opt::internal::get_multi_hamiltonian2_subspace_matrix(state, eigvecs);
+//            {
+//                Eigen::VectorXcd Hv = eigvals.asDiagonal() * theta_start;
+//                Eigen::VectorXcd H2v = H2_subspace_old * theta_start;
+//                Scalar vHv = theta_start.dot(Hv);
+//                Scalar vH2v = theta_start.dot(H2v);
+//                double vv = theta_start.squaredNorm();
+//                Scalar ene = vHv / vv;
+//                Scalar var = vH2v / vv - ene * ene;
+//                double ene_init_san = std::real(ene + state.get_energy_reduced()) / state.get_length();
+//                double var_init_san = std::real(var) / state.get_length();
+//                t_opt->toc();
+//                opt_log.emplace_back("Initial (matrix) old", theta_start.size(), ene_init_san, std::log10(var_init_san),overlap_0, theta_start.norm(), 0, 0, t_opt->get_last_time_interval());
+//            }
+
+            {
+            // Initial sanity check 3
+            t_opt->tic();
+            Eigen::VectorXcd Hv  = eigvals.asDiagonal() * theta_start;
+            Eigen::VectorXcd H2v = H2_subspace.template selfadjointView<Eigen::Upper>()*theta_start;
+            Scalar vHv  = theta_start.dot(Hv);
+            Scalar vH2v = theta_start.dot(H2v);
+            double vv   = theta_start.squaredNorm();
+            Scalar ene  = vHv/vv;
+            Scalar var  = vH2v/vv - ene*ene;
+            double ene_init_san = std::real(ene+state.get_energy_reduced())/state.get_length();
+            double var_init_san = std::real(var)/state.get_length();
+            t_opt->toc();
+            opt_log.emplace_back("Initial (matrix) new",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), 0,0, t_H2_subspace+t_opt->get_last_time_interval());
+            }
+
+//            if(not H2_subspace.isApprox(H2_subspace_old,1e-4)){
+//                std::cout << "H2 new = \n" << H2_subspace.topLeftCorner(6,6) << std::endl;
+//                std::cout << "H2 old = \n" << H2_subspace_old.topLeftCorner(6,6) << std::endl;
+//                tools::log->warn("H2 subspace mismatch: {:.16f}", (H2_subspace - H2_subspace_old).cwiseAbs().sum());
+//            }
+
+
         }
 
         ceres::GradientProblemSolver::Summary summary;
         t_opt->tic();
-        using namespace tools::finite::opt::internals;
+        using namespace tools::finite::opt::internal;
         int counter,iter;
         switch (optType.option){
             case opt::TYPE::CPLX:{
                 Eigen::VectorXd  theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double*> (theta_start.data()), 2*theta_start.size());
-                auto * functor = new ceres_subspace_functor<std::complex<double>>(state, sim_status,eigvecs,eigvals);
+                auto * functor = new ceres_subspace_functor<std::complex<double>>(state, sim_status,H2_subspace,eigvals);
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running L-BFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
@@ -561,13 +592,15 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
                 energy_new   = functor->get_energy();
                 variance_new = functor->get_variance();
                 theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
-                theta_new    = (eigvecs * theta_start.conjugate().asDiagonal()).rowwise().sum().normalized();
+//                theta_new    = (eigvecs * theta_start.conjugate().asDiagonal()).rowwise().sum().normalized();
+                theta_new    = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
 //            delete functor;
                 break;
             }
             case opt::TYPE::REAL:{
                 Eigen::VectorXd  theta_start_cast = theta_start.real();
-                auto * functor = new ceres_subspace_functor<double>(state, sim_status,eigvecs.real(),eigvals);
+                Eigen::MatrixXd H2_subspace_real = H2_subspace.real();
+                auto * functor = new ceres_subspace_functor<double>(state, sim_status,H2_subspace_real,eigvals);
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running LBFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
@@ -597,6 +630,7 @@ tools::finite::opt::internals::ceres_subspace_optimization(const class_finite_st
             double energy_san   = tools::finite::measure::energy_per_site(state,theta_san);
             double variance_san = tools::finite::measure::energy_variance_per_site(state,theta_san);
             t_opt->toc();
+            if(std::abs((variance_san - variance_new) / variance_san ) > 0.01 ) tools::log->warn("Variance mismatch in sanity check: {:.16f} != {:.16f}", variance_san, variance_new);
             opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new,theta_new.norm(), 0,0, t_opt->get_last_time_interval());
         }
 
