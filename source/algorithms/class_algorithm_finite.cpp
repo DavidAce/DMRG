@@ -161,6 +161,8 @@ void class_algorithm_finite::run_postprocessing(){
 
     double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
     double variance_champion  = tools::finite::measure::energy_variance_per_site(*state_backup);
+    log->trace("Variance candidate = {}", std::log10(variance_candidate));
+    log->trace("Variance champion  = {}", std::log10(variance_champion));
     if (variance_champion < variance_candidate){
         log->trace("Replacing the current state with the champion");
         *state_backup = *state;
