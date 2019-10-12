@@ -228,6 +228,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
     double max_overlap_threshold = optMode.option == OptMode::OVERLAP ? 1.0/std::sqrt(2.0) : 1.0;
     class_eigsolver solver;
+    solver.solverConf.eigThreshold = settings::precision::eigThreshold;
     std::string reason = "exhausted";
     Eigen::VectorXd  eigvals;
     Eigen::MatrixXcd eigvecs;
@@ -466,15 +467,15 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
     options.line_search_sufficient_function_decrease  = 1e-4;
     options.line_search_sufficient_curvature_decrease = 0.4; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-4; //Operations are cheap in subspace, so you can afford low tolerance
+    options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
     options.gradient_tolerance = 1e-2;
     options.parameter_tolerance = 1e-32;//std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
 
     if(sim_status.simulation_has_got_stuck){
 //        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
-        options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-        options.max_num_iterations = 200;
+        options.function_tolerance = 1e-8; //Operations are cheap in subspace, so you can afford low tolerance
+        options.max_num_iterations = 4000;
         options.gradient_tolerance = 1e-4;
         options.max_solver_time_in_seconds = 60*10;//60*2;
     }
