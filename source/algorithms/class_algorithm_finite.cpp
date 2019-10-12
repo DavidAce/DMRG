@@ -357,7 +357,9 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
         log->debug(" -- has saturated for = {} (site {} )" , sim_status.entanglement_saturated_for, idx_min_satur);
         log->debug(" -- all averages      = {} " , all_avergs);
         log->debug(" -- all slopes        = {} " , all_slopes);
-
+        if(reports[idx_max_slope].slopes.back() == 0 ) throw std::runtime_error("Max slope is zero! Impossible!");
+        if(idx_max_slope == 0 ) throw std::runtime_error("Site 0 has the worst slope! That's impossible!!");
+        if(idx_max_slope ==  entropies.size() - 1) throw std::runtime_error("Last site has the worst slope! That's impossible!!");
         if (reports[idx_max_slope].slopes.back() > slope_threshold and sim_status.entanglement_has_saturated)
             throw std::logic_error("Not supposed to be saturated!!");
     }
