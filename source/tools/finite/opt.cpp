@@ -17,7 +17,7 @@
 Eigen::Tensor<class_finite_state::Scalar,3>
 tools::finite::opt::find_excited_state(const class_finite_state &state, const class_simulation_status &sim_status, OptMode optMode, OptSpace optSpace, OptType optType){
     tools::log->trace("Optimizing excited state");
-    using namespace opt::internals;
+    using namespace opt::internal;
     using namespace Textra;
     static bool googleLogginghasInitialized = false;
     if(not googleLogginghasInitialized){
@@ -36,14 +36,14 @@ tools::finite::opt::find_excited_state(const class_finite_state &state, const cl
     tools::log->debug(problem_report.str());
 
     switch (optSpace.option){
-        case opt::SPACE::SUBSPACE:    return internals::ceres_subspace_optimization(state,sim_status, optType, optMode);
-        case opt::SPACE::DIRECT:      return internals::ceres_direct_optimization(state,sim_status, optType);
+        case opt::SPACE::SUBSPACE:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode);
+        case opt::SPACE::DIRECT:      return internal::ceres_direct_optimization(state,sim_status, optType);
     }
 }
 
 Eigen::Tensor<std::complex<double>,4> tools::finite::opt::find_ground_state(
         const class_finite_state &state, std::string ritz){
-    return internals::ground_state_optimization(state,ritz);
+    return internal::ground_state_optimization(state,ritz);
 
 }
 
@@ -51,7 +51,7 @@ Eigen::Tensor<std::complex<double>,4> tools::finite::opt::find_ground_state(
 
 
 
-void tools::finite::opt::internals::reset_timers(){
+void tools::finite::opt::internal::reset_timers(){
     t_opt-> reset();
     t_eig-> reset();
     t_ham-> reset();
@@ -67,7 +67,7 @@ void tools::finite::opt::internals::reset_timers(){
 
 //
 //template<typename Scalar>
-//tools::finite::opt::internals::MultiComponents<Scalar>::MultiComponents(const class_finite_state & state){
+//tools::finite::opt::internal::MultiComponents<Scalar>::MultiComponents(const class_finite_state & state){
 //    tools::log->trace("Generating multi components");
 //    if constexpr (std::is_same<Scalar,double>::value){
 //        mpo                          = state.get_multimpo().real();
@@ -96,18 +96,18 @@ void tools::finite::opt::internals::reset_timers(){
 //    tools::log->trace("Finished building multicomponents");
 //}
 //
-//template struct tools::finite::opt::internals::MultiComponents<double>;
-//template struct tools::finite::opt::internals::MultiComponents<std::complex<double>>;
+//template struct tools::finite::opt::internal::MultiComponents<double>;
+//template struct tools::finite::opt::internal::MultiComponents<std::complex<double>>;
 
 
-double tools::finite::opt::internals::windowed_func_abs(double x,double window){
+double tools::finite::opt::internal::windowed_func_abs(double x,double window){
     if (std::abs(x) >= window){
         return std::abs(x)-window;
     }else{
         return 0;
     }
 }
-double tools::finite::opt::internals::windowed_grad_abs(double x,double window){
+double tools::finite::opt::internal::windowed_grad_abs(double x,double window){
     if (std::abs(x) >= window){
         return sgn(x);
     }else{
@@ -117,14 +117,14 @@ double tools::finite::opt::internals::windowed_grad_abs(double x,double window){
 
 
 
-double tools::finite::opt::internals::windowed_func_pow(double x,double window){
+double tools::finite::opt::internal::windowed_func_pow(double x,double window){
     if (std::abs(x) >= window){
         return x*x - window*window;
     }else{
         return 0.0;
     }
 }
-double tools::finite::opt::internals::windowed_grad_pow(double x,double window){
+double tools::finite::opt::internal::windowed_grad_pow(double x,double window){
     if (std::abs(x) >= window){
         return 2.0*x;
     }else{
@@ -134,7 +134,7 @@ double tools::finite::opt::internals::windowed_grad_pow(double x,double window){
 
 
 
-std::pair<double,double> tools::finite::opt::internals::windowed_func_grad(double x,double window){
+std::pair<double,double> tools::finite::opt::internal::windowed_func_grad(double x,double window){
     double func = 0;
     double grad = 0;
     if (std::abs(x) >= window){

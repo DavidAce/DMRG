@@ -8,7 +8,7 @@
 #include <state/class_finite_state.h>
 #include <ceres/ceres.h>
 
-using namespace tools::finite::opt::internals;
+using namespace tools::finite::opt::internal;
 
 ceres_base_functor::ceres_base_functor(
         const class_finite_state & state,

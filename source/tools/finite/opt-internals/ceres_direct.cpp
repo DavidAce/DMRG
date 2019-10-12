@@ -15,7 +15,7 @@
 
 
 Eigen::Tensor<class_finite_state::Scalar,3>
-tools::finite::opt::internals::ceres_direct_optimization(const class_finite_state &state,
+tools::finite::opt::internal::ceres_direct_optimization(const class_finite_state &state,
                                                          const class_simulation_status &sim_status,
                                                          OptType optType){
     return ceres_direct_optimization(state,state.get_multitheta(),sim_status,optType);
@@ -23,7 +23,7 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
 
 
 Eigen::Tensor<class_finite_state::Scalar,3>
-tools::finite::opt::internals::ceres_direct_optimization(const class_finite_state &state,
+tools::finite::opt::internal::ceres_direct_optimization(const class_finite_state &state,
                                                          const Eigen::Tensor<class_finite_state::Scalar,3> & theta_initial,
                                                          const class_simulation_status &sim_status, OptType optType){
     tools::log->trace("Optimizing in DIRECT mode");
@@ -161,11 +161,11 @@ tools::finite::opt::internals::ceres_direct_optimization(const class_finite_stat
 //    std::cout << summary.FullReport() << "\n";
     reports::print_report(opt_log);
     reports::print_report(std::make_tuple(
-            tools::finite::opt::internals::t_vH2v->get_measured_time(),
-            tools::finite::opt::internals::t_vHv->get_measured_time(),
-            tools::finite::opt::internals::t_vH2->get_measured_time(),
-            tools::finite::opt::internals::t_vH->get_measured_time(),
-            tools::finite::opt::internals::t_op->get_measured_time()
+            tools::finite::opt::internal::t_vH2v->get_measured_time(),
+            tools::finite::opt::internal::t_vHv->get_measured_time(),
+            tools::finite::opt::internal::t_vH2->get_measured_time(),
+            tools::finite::opt::internal::t_vH->get_measured_time(),
+            tools::finite::opt::internal::t_op->get_measured_time()
     ));
 
     tools::common::profile::t_opt.toc();

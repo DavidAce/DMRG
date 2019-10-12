@@ -5,28 +5,28 @@
 #include "ceres_subspace_functor.h"
 #include <state/class_finite_state.h>
 
-using namespace tools::finite::opt::internals;
+using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
-tools::finite::opt::internals::ceres_subspace_functor<Scalar>::ceres_subspace_functor(
+tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_functor(
         const class_finite_state & state,
         const class_simulation_status & sim_status,
-        const Eigen::MatrixXcd & eigvecs_,
+        const MatrixType & H2_subspace,
         const Eigen::VectorXd  & eigvals_)
         :
         ceres_base_functor(state,sim_status),
-        eigvecs(eigvecs_),
+        H2(H2_subspace),
         eigvals(eigvals_)
 {
-    tools::log->trace("Constructing subspace functor");
-    if constexpr(std::is_same<Scalar,double>::value){
-        H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs).real();
+//    tools::log->trace("Constructing subspace functor");
+//    if constexpr(std::is_same<Scalar,double>::value){
+//        H2 = H2_subspace.real();
+//    }
+//    if constexpr(std::is_same<Scalar,std::complex<double>>::value){
+//        H2 = H2_subspace;
+//    }
 //        H2 = (eigvecs.adjoint().real() * state.get_multi_hamiltonian2_matrix().real().template selfadjointView<Eigen::Upper>() * eigvecs.real());
-    }
-    if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-        H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
-//        H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
-    }
+
     energy_reduced  = state.get_energy_reduced();
     double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
     tools::log->debug("H_local2 nonzeros: {:.8f} %", sparcity*100);
@@ -37,7 +37,7 @@ tools::finite::opt::internals::ceres_subspace_functor<Scalar>::ceres_subspace_fu
 
 
 template<typename Scalar>
-bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(const double* v_double_double,
+bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(const double* v_double_double,
                                                                              double* fx,
                                                                              double* grad_double_double) const
 {
@@ -124,5 +124,5 @@ bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(con
 
 
 
-template class tools::finite::opt::internals::ceres_subspace_functor<double>;
-template class tools::finite::opt::internals::ceres_subspace_functor<std::complex<double>>;
+template class tools::finite::opt::internal::ceres_subspace_functor<double>;
+template class tools::finite::opt::internal::ceres_subspace_functor<std::complex<double>>;

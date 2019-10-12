@@ -9,7 +9,7 @@
 #include <general/nmspc_type_check.h>
 
 namespace tools::finite::opt{
-    namespace internals{
+    namespace internal{
 
 
         template<typename Scalar>
@@ -27,7 +27,7 @@ namespace tools::finite::opt{
             void get_Hv   (const VectorType &v) const;
             void get_H2v  (const VectorType &v) const;
         public:
-            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
             explicit ceres_direct_functor(const class_finite_state & state, const class_simulation_status &sim_status);
             bool Evaluate(const double* v_double_double,
                           double* fx,
