@@ -215,20 +215,20 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
 }
 
 void class_algorithm_finite::backup_best_state(const class_finite_state &state) {
-    if (sim_status.variance_mpo_has_saturated and sim_status.entanglement_has_saturated){
-        log->trace("Checking if given state can beat the backup");
-        double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
-        double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
-        if (variance_candidate <  variance_champion){
-            log->debug("We have a new champion!");
-            *state_backup = state;
-        }else{
-            log->trace("Champion defended his title");
-        }
+    log->trace("Checking if given state can beat the backup");
+    double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
+    double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
+    if (variance_candidate <  variance_champion){
+        log->debug("We have a new champion!");
+        *state_backup = state;
     }else{
-        log->trace("Waiting for saturation before challenging the current champion");
-
+        log->trace("Champion defended his title");
     }
+//    if (sim_status.variance_mpo_has_saturated and sim_status.entanglement_has_saturated){
+//
+//    }else{
+//        log->trace("Waiting for saturation before challenging the current champion");
+//    }
 
 }
 
@@ -312,7 +312,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
     log->debug("Checking convergence of entanglement");
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::entropySlopeThreshold : slope_threshold;
-    auto entropies  = tools::finite::measure::entanglement_entropies(*state);
+    auto entropies  = tools::finite::measure::entanglement_entropies(*state_backup);
     std::vector<SaturationReport2> reports(entropies.size());
 
     for (size_t site = 0; site < entropies.size(); site++){
