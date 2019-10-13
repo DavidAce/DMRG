@@ -78,9 +78,9 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_finite_state
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    options.max_num_iterations = 100;
+    options.max_num_iterations = 250;
     options.max_lbfgs_rank     = 250;
-    options.use_approximate_eigenvalue_bfgs_scaling = false;
+    options.use_approximate_eigenvalue_bfgs_scaling = true; // True makes a huge difference, takes longer steps at each iteration!!
     options.max_line_search_step_expansion = 1e4;// 100.0;
     options.min_line_search_step_size = 1e-32;// std::numeric_limits<double>::epsilon();
     options.max_line_search_step_contraction = 1e-3;
@@ -96,8 +96,8 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_finite_state
     options.minimizer_progress_to_stdout = tools::log->level() == spdlog::level::trace;
     if(sim_status.simulation_has_got_stuck){
 //        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
-        options.function_tolerance = 1e-12;
-        options.max_num_iterations = 4000;
+        options.function_tolerance = 1e-8;
+        options.max_num_iterations = 2000;
         options.gradient_tolerance = 1e-4;
         options.max_solver_time_in_seconds = 60*10;//60*2;
     }
