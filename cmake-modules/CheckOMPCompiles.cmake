@@ -5,8 +5,20 @@ endif()
 
 
 
-function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES REQUIRED_INCLUDES)
+function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_INCLUDES)
     include(CheckIncludeFileCXX)
+
+    set(REQUIRED_LIBRARIES)
+    foreach(elem ${REQUIRED_LIBRARIES_UNPARSED})
+        if(TARGET ${elem})
+            get_target_property(lib ${elem} INTERFACE_LINK_LIBRARIES)
+            list(APPEND REQUIRED_LIBRARIES ${lib})
+        else()
+            list(APPEND REQUIRED_LIBRARIES ${elem})
+        endif()
+    endforeach()
+
+
     set(CMAKE_REQUIRED_FLAGS     "${REQUIRED_FLAGS}" )
     set(CMAKE_REQUIRED_LIBRARIES "${REQUIRED_LIBRARIES}")
     set(CMAKE_REQUIRED_INCLUDES  "${REQUIRED_INCLUDES}")

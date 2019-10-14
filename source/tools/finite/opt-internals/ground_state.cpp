@@ -16,8 +16,8 @@ Eigen::Tensor<class_finite_state::Scalar,4> tools::finite::opt::internal::ground
     using namespace eigutils::eigSetting;
 
     Ritz ritz = stringToRitz(ritzstring);
-    auto dimsL = state.MPS_L.back().get_G().dimensions();
-    auto dimsR = state.MPS_R.front().get_G().dimensions();
+    auto dimsL = state.MPS_L.back().get_M().dimensions();
+    auto dimsR = state.MPS_R.front().get_M().dimensions();
     std::array<long,4> shape_theta4  = {dimsL[0], dimsL[1], dimsR[0], dimsR[2]};
     std::array<long,4> shape_mpo4    =  state.MPO_L.back()->MPO().dimensions();
 

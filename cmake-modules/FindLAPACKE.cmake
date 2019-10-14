@@ -1,7 +1,18 @@
 
 
-function(CheckLapackeCompiles REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_LIBRARIES REQUIRED_INCLUDES)
-    message(STATUS "Checking for working lapacke headers")
+function(CheckLapackeCompiles REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_LIBRARIES_UNPARSED REQUIRED_INCLUDES)
+#    message(STATUS "Checking if lapacke headers are working")
+    set(REQUIRED_LIBRARIES)
+    foreach(elem ${REQUIRED_LIBRARIES_UNPARSED})
+        if(TARGET ${elem})
+            get_target_property(lib ${elem} INTERFACE_LINK_LIBRARIES)
+            list(APPEND REQUIRED_LIBRARIES ${lib})
+        else()
+            list(APPEND REQUIRED_LIBRARIES ${elem})
+        endif()
+    endforeach()
+
+
     set(LAPACKE_LIBRARY ${LAPACKE_LAPACK_LIBRARY})
     #   Test features
     include(CheckCXXSourceCompiles)
@@ -32,16 +43,17 @@ function(CheckLapackeCompiles REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_LIBRA
         }
         " LAPACKE_COMPILES)
     if(LAPACKE_COMPILES)
-        message(STATUS "Checking for working lapacke headers - Success")
+        message(STATUS "Lapacke compiles with the following parameters:")
         set(LAPACKE_COMPILES TRUE PARENT_SCOPE)
     else()
-        message(STATUS "Lapacke does not work with the following parameters:")
-        message(STATUS " -- flags        : ${REQUIRED_FLAGS}")
-        message(STATUS " -- definitions  : ${REQUIRED_DEFINITIONS}")
-        message(STATUS " -- libraries    : ${REQUIRED_LIBRARIES}")
-        message(STATUS " -- includes     : ${REQUIRED_INCLUDES}")
+        message(STATUS "Lapacke does not compile with the following parameters:")
         set(LAPACKE_COMPILES FALSE PARENT_SCOPE)
     endif()
+    message(STATUS "    flags        : " ${REQUIRED_FLAGS})
+    message(STATUS "    definitions  : " ${REQUIRED_DEFINITIONS})
+    message(STATUS "    libraries    : " ${REQUIRED_LIBRARIES})
+    message(STATUS "    includes     : " ${REQUIRED_INCLUDES})
+
 endfunction()
 
 
@@ -56,17 +68,19 @@ if (NOT TARGET lapacke)
     if(TARGET mkl)
         # Try finding lapacke in MKL library
         message(STATUS "Searching for Lapacke in Intel MKL.")
-        get_target_property(MKL_LIBRARIES mkl INTERFACE_LINK_LIBRARIES)
         get_target_property(MKL_INCLUDE_DIR mkl INTERFACE_INCLUDE_DIRECTORIES)
+        get_target_property(MKL_LIBRARIES mkl INTERFACE_LINK_LIBRARIES)
+
         if(MKL_INCLUDE_DIR)
             CheckLapackeCompiles(" "   "-DMKL_AVAILABLE"  "${MKL_LIBRARIES}" "${MKL_INCLUDE_DIR}")
         endif()
+
         if(LAPACKE_COMPILES)
             add_library(lapacke INTERFACE)
             add_dependencies(lapacke INTERFACE mkl)
             target_link_libraries(lapacke INTERFACE ${MKL_LIBRARIES})
             target_include_directories(lapacke SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-            message(STATUS "Searching for Lapacke in Intel MKL - Success: ${MKL_LIBRARIES}")
+            message(STATUS "Searching for Lapacke in Intel MKL - Success")
             return()
         else()
             message(STATUS "Searching for Lapacke in Intel MKL - failed")

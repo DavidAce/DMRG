@@ -4,7 +4,7 @@
 
 #include <tools/nmspc_tools.h>
 #include <state/class_infinite_state.h>
-#include <state/class_vidal_site.h>
+#include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>
 #include <state/class_environment.h>
 #include <model/class_model_base.h>
@@ -37,9 +37,9 @@ void tools::infinite::io::write_all_state(const class_infinite_state &state, h5p
 
 
 void tools::infinite::io::write_2site_mps (const class_infinite_state &state, h5pp::File & h5ppFile, std::string sim_name){
-    h5ppFile.writeDataset(state.MPS->MPS_A->get_A(), sim_name + "/state/2site/MPS_A");
-    h5ppFile.writeDataset(state.MPS->LC                                 , sim_name + "/state/2site/L_C");
-    h5ppFile.writeDataset(state.MPS->MPS_B->get_B(), sim_name + "/state/2site/MPS_B");
+    h5ppFile.writeDataset(state.MPS->MPS_A->get_M() , sim_name + "/state/2site/MPS_A");
+    h5ppFile.writeDataset(state.MPS->MPS_A->get_LC(), sim_name + "/state/2site/L_C");
+    h5ppFile.writeDataset(state.MPS->MPS_B->get_M(), sim_name + "/state/2site/MPS_B");
 }
 
 void tools::infinite::io::write_2site_mpo (const class_infinite_state &state, h5pp::File & h5ppFile, std::string sim_name){

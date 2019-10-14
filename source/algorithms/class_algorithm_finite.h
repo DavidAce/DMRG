@@ -42,6 +42,7 @@ public:
     virtual void single_DMRG_step(std::string ritz);
     virtual bool store_wave_function()               = 0;
     void move_center_point();
+    void update_bond_dimension()                                                                final;
     void run()                                                                                  final;
     void compute_observables()                                                                  final;
     void clear_saturation_status()                                                              override;
@@ -56,7 +57,6 @@ public:
     void write_logs(bool force = false)                                                         final;
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
-
 
     std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances

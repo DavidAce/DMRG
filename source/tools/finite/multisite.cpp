@@ -15,17 +15,17 @@ Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_fin
     Eigen::DSizes<long,3> dimensions;
     int direction = list_of_sites.back() >= list_of_sites.front() ? 1 : -1;
     if (direction == 1){
-        dimensions[1] = state.get_G(list_of_sites.front()).dimension(1);
-        dimensions[2] = state.get_G(list_of_sites.back()) .dimension(2);
+        dimensions[1] = state.get_MPS(list_of_sites.front()).get_M().dimension(1);
+        dimensions[2] = state.get_MPS(list_of_sites.back()) .get_M().dimension(2);
     }
     else{
-        dimensions[1] = state.get_G(list_of_sites.back()) .dimension(1);
-        dimensions[2] = state.get_G(list_of_sites.front()).dimension(2);
+        dimensions[1] = state.get_MPS(list_of_sites.back()) .get_M().dimension(1);
+        dimensions[2] = state.get_MPS(list_of_sites.front()).get_M().dimension(2);
     }
 
     dimensions[0] = 1;
     for (auto & site : list_of_sites){
-        dimensions[0] *= state.get_G(site).dimension(0);
+        dimensions[0] *= state.get_MPS(site).get_M().dimension(0);
     }
     return dimensions;
 }

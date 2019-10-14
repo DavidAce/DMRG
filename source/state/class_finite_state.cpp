@@ -31,7 +31,6 @@ class_finite_state& class_finite_state::operator= (const class_finite_state & ot
     this->chi_max    = other.chi_max;
     this->MPS_L      = other.MPS_L;
     this->MPS_R      = other.MPS_R;
-    this->MPS_C      = other.MPS_C;
     this->ENV_L      = other.ENV_L;
     this->ENV_R      = other.ENV_R;
     this->ENV2_L     = other.ENV2_L;
@@ -101,8 +100,15 @@ void class_finite_state::set_moves(int num_moves_)  { num_moves = num_moves_;}
 void class_finite_state::increment_moves()          {num_moves++;}
 
 
-long class_finite_state::get_chi_max()  const {return chi_max;}
-void class_finite_state::set_chi_max(long chi_max_){ chi_max = chi_max_;}
+long class_finite_state::get_chi_max()  const {
+    //Should return the maximum allowed chi from the settings file
+    return chi_max;
+}
+void class_finite_state::set_chi_max(long chi_max_){
+    //Should set the maximum allowed chi from the settings file
+    chi_max = chi_max_;
+}
+
 int  class_finite_state::get_direction() const {return direction;}
 void class_finite_state::flip_direction() {direction *= -1;}
 
@@ -154,24 +160,29 @@ bool class_finite_state::isReal() const{
     return mps_real and mpo_real;
 }
 
-
-
-Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_A() const{
-    return Textra::asDiagonal(MPS_L.back().get_L()).contract(MPS_L.back().get_G(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::center_bond() const{
+    size_t center_pos = (get_length() -1)/2;
+    if(get_position() <   center_pos) return get_MPS(center_pos).get_L();
+    if(get_position() >   center_pos) return get_MPS(center_pos+1).get_L();
+    if(get_position() ==  center_pos) return get_MPS(center_pos).get_LC();
+    else throw std::logic_error("No valid position to find center_bond");
 }
 
-Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_B() const{
-    return MPS_R.front().get_G().contract(Textra::asDiagonal(MPS_R.front().get_L()), Textra::idx({2},{0}));
-}
 
+//Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_A() const{
+//    return Textra::asDiagonal(MPS_L.back().get_L()).contract(MPS_L.back().get_G(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+//}
+//
+//Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_B() const{
+//    return MPS_R.front().get_G().contract(Textra::asDiagonal(MPS_R.front().get_L()), Textra::idx({2},{0}));
+//}
+//
 Eigen::Tensor<class_finite_state::Scalar,4> class_finite_state::get_theta() const{
-    return get_A()
-           .contract(Textra::asDiagonal(MPS_C), Textra::idx({2},{0}))
-           .contract(get_B(), Textra::idx({2},{1}));
+    return MPS_L.back().get_M().contract(MPS_R.front().get_M(), Textra::idx({2},{1}));
 }
 
 
-const class_vidal_site & class_finite_state::get_MPS(size_t pos) const {
+const class_mps_site & class_finite_state::get_MPS(size_t pos) const {
     if (pos >= get_length())                 throw std::range_error(fmt::format("get_MPS(pos) pos out of range: {}", pos));
     if(pos <= MPS_L.back().get_position()){
         auto mps_it = std::next(MPS_L.begin(),pos);
@@ -185,8 +196,8 @@ const class_vidal_site & class_finite_state::get_MPS(size_t pos) const {
     }
 }
 
-class_vidal_site & class_finite_state::get_MPS(size_t pos){
-    return const_cast<class_vidal_site &>(static_cast<const class_finite_state &>(*this).get_MPS(pos));
+class_mps_site & class_finite_state::get_MPS(size_t pos){
+    return const_cast<class_mps_site &>(static_cast<const class_finite_state &>(*this).get_MPS(pos));
 }
 
 
@@ -211,35 +222,42 @@ class_model_base & class_finite_state::get_MPO(size_t pos){
 
 
 
-const Eigen::Tensor<class_finite_state::Scalar,3> & class_finite_state::get_G(size_t pos) const{
-    return std::as_const(get_MPS(pos).get_G());
-}
+//const Eigen::Tensor<class_finite_state::Scalar,3> & class_finite_state::get_G(size_t pos) const{
+//    return std::as_const(get_MPS(pos).get_G());
+//}
+//
+//Eigen::Tensor<class_finite_state::Scalar,3> & class_finite_state::get_G(size_t pos){
+//    return const_cast<Eigen::Tensor<class_finite_state::Scalar,3> &>(static_cast<const class_finite_state &>(*this).get_G(pos));
+//}
+//
+//const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::get_L(size_t pos) const {
+//    if      (pos == MPS_L.back().get_position() + 1){return MPS_C;}
+//    else if (pos <= MPS_L.back().get_position())    {return get_MPS(pos).get_L();}
+//    else if (pos >= MPS_R.front().get_position())   {return get_MPS(pos-1).get_L();}
+//    else {throw std::runtime_error("Unhandled position");}
+//}
+//
+//Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::get_L(size_t pos) {
+//    return const_cast<Eigen::Tensor<class_finite_state::Scalar,1> &>(static_cast<const class_finite_state &>(*this).get_L(pos));
+//}
+//
+//
+//
+//
+//Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_A(size_t pos) const {
+//    return Textra::asDiagonal(get_L(pos)).contract(get_G(pos), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+//}
+//
+//Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_B(size_t pos) const {
+//    return get_G(pos).contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}));
+//}
 
-Eigen::Tensor<class_finite_state::Scalar,3> & class_finite_state::get_G(size_t pos){
-    return const_cast<Eigen::Tensor<class_finite_state::Scalar,3> &>(static_cast<const class_finite_state &>(*this).get_G(pos));
-}
-
-const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::get_L(size_t pos) const {
-    if      (pos == MPS_L.back().get_position() + 1){return MPS_C;}
-    else if (pos <= MPS_L.back().get_position())    {return get_MPS(pos).get_L();}
-    else if (pos >= MPS_R.front().get_position())   {return get_MPS(pos-1).get_L();}
-    else {throw std::runtime_error("Unhandled position");}
-}
-
-Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::get_L(size_t pos) {
-    return const_cast<Eigen::Tensor<class_finite_state::Scalar,1> &>(static_cast<const class_finite_state &>(*this).get_L(pos));
-}
-
-
-
-
-Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_A(size_t pos) const {
-    return Textra::asDiagonal(get_L(pos)).contract(get_G(pos), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
-}
-
-Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_B(size_t pos) const {
-    return get_G(pos).contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}));
-}
+//
+//Eigen::Tensor<class_finite_state::Scalar,4> class_finite_state::get_theta(size_t pos) const {
+//    return get_A(pos)
+//            .contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}))
+//            .contract(get_B(pos+1), Textra::idx({2},{1}));
+//}
 
 
 
@@ -282,13 +300,6 @@ const class_environment_var & class_finite_state::get_ENV2R(size_t pos) const {
 
 
 
-
-
-Eigen::Tensor<class_finite_state::Scalar,4> class_finite_state::get_theta(size_t pos) const {
-    return get_A(pos)
-            .contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}))
-            .contract(get_B(pos+1), Textra::idx({2},{1}));
-}
 
 
 
@@ -345,19 +356,20 @@ const Eigen::Tensor<class_finite_state::Scalar,3> &  class_finite_state::get_mul
     Eigen::Tensor<Scalar,3> temp;
     bool first = true;
     for (auto &site : active_sites){
-        if (first){multitheta = get_A(site); first = false; continue;}
-        auto A    = get_A(site);
-        long dim0 = multitheta.dimension(0) * A.dimension(0);
+        if (first){multitheta = get_MPS(site).get_M(); first = false; continue;}
+        if (not site == get_MPS(site).get_position()) throw std::runtime_error("Site mismatch in get_multitheta");
+        auto M    = get_MPS(site).get_M();
+        long dim0 = multitheta.dimension(0) * M.dimension(0);
         long dim1 = multitheta.dimension(1);
-        long dim2 = A.dimension(2);
+        long dim2 = M.dimension(2);
         temp = multitheta
-                .contract(A, Textra::idx({2},{1}))
+                .contract(M, Textra::idx({2},{1}))
                 .shuffle(Textra::array4{0,2,1,3})
                 .reshape(Textra::array3{dim0,dim1,dim2});
         multitheta = temp;
     }
-    auto & L = get_L(active_sites.back()+1);
-    temp = multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
+//    auto & L = get_L(active_sites.back()+1);
+//    temp = multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
     tools::log->trace("Contracting multi theta... OK");
     cache.multitheta = temp;
     return cache.multitheta.value();

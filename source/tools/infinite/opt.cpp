@@ -6,7 +6,7 @@
 #include <state/class_infinite_state.h>
 #include <state/class_environment.h>
 #include <state/class_mps_2site.h>
-#include <state/class_vidal_site.h>
+#include <state/class_mps_site.h>
 #include <model/class_model_base.h>
 #include <math/class_eigsolver.h>
 #include <math/class_svd_wrapper.h>
@@ -71,11 +71,11 @@ void tools::infinite::opt::truncate_theta(Eigen::Tensor<Scalar,4> &theta, class_
     SVD.setThreshold(SVDThreshold);
     auto[U, S, V] = SVD.schmidt(theta,chi_);
     state.MPS->truncation_error = SVD.get_truncation_error();
-    state.MPS->LC  = S;
-    Eigen::Tensor<Scalar,3> L_U = Textra::asDiagonalInversed(state.MPS->MPS_A->get_L()).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
-    Eigen::Tensor<Scalar,3> V_L = V.contract(Textra::asDiagonalInversed(state.MPS->MPS_B->get_L()), Textra::idx({2},{0}));
-    state.MPS->MPS_A->set_G(L_U);
-    state.MPS->MPS_B->set_G(V_L);
+    state.MPS->MPS_A->set_LC(S);
+    state.MPS->MPS_A->set_M(U);
+    state.MPS->MPS_B->set_M(V);
+//    Eigen::Tensor<Scalar,3> L_U = Textra::asDiagonalInversed(state.MPS->MPS_A->get_L()).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
+//    Eigen::Tensor<Scalar,3> V_L = V.contract(Textra::asDiagonalInversed(state.MPS->MPS_B->get_L()), Textra::idx({2},{0}));
 }
 
 

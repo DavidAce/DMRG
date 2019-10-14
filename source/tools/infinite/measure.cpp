@@ -4,7 +4,7 @@
 
 #include <tools/nmspc_tools.h>
 #include <state/class_infinite_state.h>
-#include <state/class_vidal_site.h>
+#include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>
 #include <state/class_environment.h>
 #include <model/class_model_base.h>
@@ -355,11 +355,9 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
         //Evolve
         Eigen::Tensor<Scalar, 4> theta_evo = Op.contract(MPS_evolved->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
         auto[U, S, V] = SVD.schmidt(theta_evo,chi_max);
-        MPS_evolved->LC = S;
-        Eigen::Tensor<Scalar,3> L_U =  asDiagonalInversed(MPS_evolved->MPS_A->get_L()).contract(U, idx({1}, {1})).shuffle(array3{1, 0, 2});
-        Eigen::Tensor<Scalar,3> V_L =  V.contract(asDiagonalInversed(MPS_evolved->MPS_B->get_L()), idx({2}, {0}));
-        MPS_evolved->MPS_A->set_G(L_U);
-        MPS_evolved->MPS_B->set_G(V_L);
+        MPS_evolved->MPS_A->set_LC(S);
+        MPS_evolved->MPS_A->set_M(U);
+        MPS_evolved->MPS_B->set_M(V);
 
         if (&Op != &Op_vec.back()) {
             MPS_evolved->swap_AB();
@@ -414,7 +412,7 @@ double tools::infinite::measure::norm(const class_infinite_state & state){
 
 int tools::infinite::measure::bond_dimension(const class_infinite_state & state){
     if(state.measurements.bond_dimension){return state.measurements.bond_dimension.value();}
-    return (int) state.MPS->LC.dimension(0);
+    return (int) state.MPS->MPS_A->get_chiR();
 }
 
 double tools::infinite::measure::truncation_error(const class_infinite_state & state){
@@ -428,7 +426,7 @@ double tools::infinite::measure::current_entanglement_entropy(const class_infini
     tools::log->trace("Measuring entanglement entropy from state");
     tools::common::profile::t_ent.tic();
     if(state.measurements.current_entanglement_entropy){return state.measurements.current_entanglement_entropy.value();}
-    auto & LC = state.MPS->LC;
+    auto & LC = state.MPS->MPS_A->get_LC();
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     tools::common::profile::t_ent.toc();

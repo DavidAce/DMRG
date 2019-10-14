@@ -5,7 +5,7 @@
 //#include <state/class_optimize_mps.h>
 #include <state/class_infinite_state.h>
 #include <state/class_environment.h>
-#include <state/class_vidal_site.h>
+#include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>
 #include <tools/nmspc_tools.h>
 #include <iomanip>

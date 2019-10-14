@@ -69,7 +69,7 @@ public:
 
 
     //common functions
-    void update_bond_dimension();
+    virtual void update_bond_dimension();
     void print_profiling();
     double process_memory_in_mb(std::string name);
 
