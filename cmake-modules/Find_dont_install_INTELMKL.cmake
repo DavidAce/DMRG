@@ -54,7 +54,7 @@ if (MKL_FOUND)
 
         if(MKL_MULTI_THREADED)
             list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group )
-            list(APPEND MKL_FLAGS ${OpenMP_FLAGS})
+#            list(APPEND MKL_FLAGS ${OpenMP_FLAGS})
             if(BUILD_SHARED_LIBS)
                 list(APPEND MKL_LIBRARIES ${MKL_IOMP5_LIBRARY})
             else()
@@ -75,7 +75,8 @@ if (MKL_FOUND)
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
     list(APPEND MKL_LIBRARIES Threads::Threads)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -ldl -lm gfortran)
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -ldl -lm)
+    target_link_libraries(mkl INTERFACE gfortran)
     target_include_directories(mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
     target_compile_options(mkl INTERFACE ${MKL_FLAGS})
     set_target_properties(mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
@@ -100,6 +101,7 @@ if (MKL_FOUND)
     message("MKL_FLAGS                      : ${MKL_FLAGS}" )
     message("MKLROOT                        : $ENV{MKLROOT}" )
     message("MKL_USE_SINGLE_DYNAMIC_LIBRARY : ${MKL_USE_SINGLE_DYNAMIC_LIBRARY}" )
+    message("MKL_MULTI_THREADED             : ${MKL_MULTI_THREADED}" )
     message("=============================================================================")
     message("")
 
@@ -153,7 +155,6 @@ if (MKL_FOUND)
             "${MKL_INCLUDE_DIR}"
             "${MKL_FLAGS}"
             "${MKL_MULTI_THREADED}"
-
     )
 
 endif()

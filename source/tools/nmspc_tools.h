@@ -39,10 +39,10 @@ namespace tools{
         namespace mps {
             extern void initialize                          (class_finite_state & state, size_t length);
             extern void randomize                           (class_finite_state &state, const std::string &parity_sector = "random", int seed_state = -1, bool use_pauli_eigenstates = false, bool enumeration =  false);
-            extern void normalize                           (class_finite_state & state, const std::vector<size_t> & bond_dimensions = {});
+            extern void normalize                           (class_finite_state & state);
             extern void rebuild_environments                (class_finite_state & state);
             extern int  move_center_point                   (class_finite_state & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
-            extern void project_to_closest_parity_sector    (class_finite_state & state, std::string paulistring,bool keep_bond_dimensions = false);
+            extern void project_to_closest_parity_sector    (class_finite_state & state, std::string paulistring);
 
             namespace internals{
                 inline bool seed_state_unused = true;
@@ -65,11 +65,11 @@ namespace tools{
             extern void apply_mpo                     (class_finite_state & state, const Eigen::Tensor<Scalar,4> & mpo, const Eigen::Tensor<Scalar,3> &Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern void apply_mpos                    (class_finite_state & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern class_finite_state
-            get_projection_to_parity_sector           (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix, int sign,bool keep_bond_dimensions = false);
+            get_projection_to_parity_sector           (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix, int sign);
             extern class_finite_state
-            get_projection_to_closest_parity_sector   (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix,bool keep_bond_dimensions = false);
+            get_projection_to_closest_parity_sector   (const class_finite_state & state, const Eigen::MatrixXcd & paulimatrix);
             extern class_finite_state
-            get_projection_to_closest_parity_sector   (const class_finite_state & state, std::string parity_sector, bool keep_bond_dimensions = false);
+            get_projection_to_closest_parity_sector   (const class_finite_state & state, std::string parity_sector);
             extern double overlap                     (const class_finite_state & state1, const class_finite_state & state2);
             extern double expectation_value           (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge);
             extern double exp_sq_value                (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,4> & Ledge, const Eigen::Tensor<Scalar,4> & Redge);
@@ -107,12 +107,7 @@ namespace tools{
             extern double norm                                        (const class_finite_state & state);
 
 
-
-            extern double energy                                      (const class_finite_state & state);
-            extern double energy_per_site                             (const class_finite_state & state);
-            extern double energy_variance                             (const class_finite_state & state);
-            extern double energy_variance_per_site                    (const class_finite_state & state);
-            extern double spin_component                              (const class_finite_state & state, Eigen::Matrix2cd paulimatrix);
+            extern double spin_component                              (const class_finite_state & state, const Eigen::Matrix2cd &paulimatrix);
             extern Eigen::Tensor<Scalar,1> mps_wavefn                 (const class_finite_state & state);
             extern double entanglement_entropy_current                (const class_finite_state & state);
             extern double entanglement_entropy_midchain               (const class_finite_state & state);
@@ -142,6 +137,11 @@ namespace tools{
                 extern double energy_variance                         (const class_finite_state & state);
                 extern double energy_variance_per_site                (const class_finite_state & state);
             }
+
+            extern double energy                                      (const class_finite_state & state);
+            extern double energy_per_site                             (const class_finite_state & state);
+            extern double energy_variance                             (const class_finite_state & state);
+            extern double energy_variance_per_site                    (const class_finite_state & state);
 
             template<typename Derived>
             double energy_minus_energy_reduced(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
@@ -201,7 +201,7 @@ namespace tools{
             extern void write_model                                  (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
             extern void write_entanglement                           (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
             extern void write_all_measurements                       (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_projection_to_closest_parity_sector    (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path, std::string parity_sector,bool keep_bond_dimensions);
+            extern void write_projection_to_closest_parity_sector    (const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path, std::string parity_sector);
             extern void load_from_hdf5                               (const h5pp::File & h5ppFile, class_finite_state & state    , class_simulation_status & sim_status, const std::string & prefix_path);
             extern class_finite_state load_state_from_hdf5           (const h5pp::File & h5ppFile, const std::string & prefix_path);
         }

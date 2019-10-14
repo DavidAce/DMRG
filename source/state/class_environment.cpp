@@ -4,7 +4,7 @@
 
 
 #include "class_environment.h"
-#include <state/class_vidal_site.h>
+#include <state/class_mps_site.h>
 
 using namespace std;
 using namespace Textra;
@@ -20,12 +20,11 @@ bool class_environment_var::isReal() const {
 
 
 
-void class_environment::enlarge(const class_vidal_site & MPS, const Eigen::Tensor<Scalar,4> &MPO){
+void class_environment::enlarge(const class_mps_site & MPS, const Eigen::Tensor<Scalar,4> &MPO){
+    enlarge(MPS.get_M_bare(),MPO);
     if (side == "L"){
-        enlarge(MPS.get_A(),MPO);
         position = MPS.get_position() + 1;
     }else if (side == "R"){
-        enlarge(MPS.get_B(),MPO);
         position = MPS.get_position() - 1;
     }
 }
@@ -89,7 +88,7 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
     }
 }
 
-void class_environment::set_edge_dims(const class_vidal_site & MPS, const Eigen::Tensor<Scalar, 4> &MPO) {
+void class_environment::set_edge_dims(const class_mps_site & MPS, const Eigen::Tensor<Scalar, 4> &MPO) {
     if (side == "L") {
         set_edge_dims(MPS.get_chiL(),MPO.dimension(0));
     }
@@ -130,12 +129,12 @@ void class_environment::set_edge_dims(const int mpsDim, const int mpoDim) {
 
 
 
-void class_environment_var::enlarge(const class_vidal_site & MPS, const Eigen::Tensor<Scalar,4> &MPO){
+void class_environment_var::enlarge(const class_mps_site & MPS, const Eigen::Tensor<Scalar,4> &MPO){
+    enlarge(MPS.get_M_bare(),MPO);
+
     if (side == "L"){
-        enlarge(MPS.get_A(),MPO);
         position = MPS.get_position() + 1;
     }else if (side == "R"){
-        enlarge(MPS.get_B(),MPO);
         position = MPS.get_position() - 1;
     }
 }
@@ -210,7 +209,7 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
     }
 }
 
-void class_environment_var::set_edge_dims(const class_vidal_site & MPS, const Eigen::Tensor<Scalar, 4> &MPO) {
+void class_environment_var::set_edge_dims(const class_mps_site & MPS, const Eigen::Tensor<Scalar, 4> &MPO) {
     if (side == "L") {
         set_edge_dims(MPS.get_chiL(),MPO.dimension(0));
     }

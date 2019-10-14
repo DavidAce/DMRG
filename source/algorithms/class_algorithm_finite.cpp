@@ -125,7 +125,6 @@ void class_algorithm_finite::run_preprocessing(){
     log->info("Running {} preprocessing",sim_name);
     t_pre.tic();
     sim_status.chi_max = chi_max();
-    state->set_chi_max(sim_status.chi_max);
     t_pre.toc();
     log->info("Finished {} preprocessing", sim_name);
 }
@@ -154,9 +153,7 @@ void class_algorithm_finite::run_postprocessing(){
     t_pos.tic();
     tools::finite::debug::check_integrity(*state);
     state->unset_measurements();
-    state->do_all_measurements();
     state_backup->unset_measurements();
-    state_backup->do_all_measurements();
     print_status_update();
 
     double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
@@ -165,10 +162,12 @@ void class_algorithm_finite::run_postprocessing(){
     log->trace("Variance champion  = {}", std::log10(variance_champion));
     if (variance_champion < variance_candidate){
         log->trace("Replacing the current state with the champion");
-        *state_backup = *state;
+        *state = *state_backup;
     }else{
         log->trace("The current state is better than the champion");
+        *state_backup = *state;
     }
+//    state->do_all_measurements();
 
     write_measurements(true);
     write_state(true);
@@ -178,7 +177,7 @@ void class_algorithm_finite::run_postprocessing(){
 //    tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
 //    tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
     tools::finite::io::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name,
-                                                                 settings::model::target_parity_sector,false);
+                                                                 settings::model::target_parity_sector);
 
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
     if(store_wave_function()){
@@ -195,15 +194,40 @@ void class_algorithm_finite::run_postprocessing(){
 void class_algorithm_finite::move_center_point(){
     log->trace("Moving center point ");
     size_t move_steps = state->active_sites.empty() ? 1 : std::max(1ul,state->active_sites.size()-2ul);
+    state->clear_cache();
+//    log->debug("Variance check before move               : {:.16f}", std::log10(tools::finite::measure::energy_variance_per_site(*state)));
     try{
         for(size_t i = 0; i < move_steps;i++){
             tools::finite::mps::move_center_point(*state);
+//            log->debug("Variance check after move  {:2}          : {:.16f}",i, std::log10(tools::finite::measure::energy_variance_per_site(*state)));
         }
     }catch(std::exception & e){
         tools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
 }
+
+void class_algorithm_finite::update_bond_dimension(){
+    sim_status.chi_max = chi_max();
+    if(not chi_grow() or sim_status.bond_dimension_has_reached_max or sim_status.chi_temp == chi_max() ){
+        sim_status.chi_temp = chi_max();
+        sim_status.bond_dimension_has_reached_max = true;
+    }
+    if(not sim_status.simulation_has_converged
+       and sim_status.simulation_has_saturated
+       and sim_status.chi_temp < chi_max()){
+        log->trace("Updating bond dimension");
+        sim_status.chi_temp = std::min(chi_max(), sim_status.chi_temp * 2);
+        log->info("New chi = {}", sim_status.chi_temp);
+        clear_saturation_status();
+    }
+    if(sim_status.chi_temp == chi_max()){
+        sim_status.bond_dimension_has_reached_max = true;
+    }
+    state->set_chi_max(sim_status.chi_max);
+}
+
+
 
 void class_algorithm_finite::reset_to_random_state(const std::string parity_sector, int seed_state) {
     log->trace("Resetting MPS to random product state in parity sector: {} with seed {}", parity_sector,seed_state);
@@ -477,7 +501,7 @@ void class_algorithm_finite::write_state(bool force){
     log->trace("Writing state to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::finite::io::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name,
-                                                                 settings::model::target_parity_sector, false);
+                                                                 settings::model::target_parity_sector);
     //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
     if(store_wave_function()){
         h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
@@ -661,8 +685,8 @@ void class_algorithm_finite::print_status_full(){
     log->info("Simulation saturated               = {:<}"       , sim_status.simulation_has_saturated);
     log->info("Simulation succeeded               = {:<}"       , sim_status.simulation_has_succeeded);
     log->info("Simulation got stuck               = {:<}"       , sim_status.simulation_has_got_stuck);
-    log->info("σ² slope                           = {:<8.4f} %   Converged : {}  Saturated: {}" , V_mpo_slope ,sim_status.variance_mpo_has_converged, sim_status.variance_mpo_has_saturated);
-    log->info("Sₑ slope                           = {:<8.4f} %   Converged : {}  Saturated: {}" , S_slope     ,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
+    log->info("σ² slope                           = {:<8.4f} %   Converged : {:<8}  Saturated: {:<8}" , V_mpo_slope ,sim_status.variance_mpo_has_converged, sim_status.variance_mpo_has_saturated);
+    log->info("Sₑ slope                           = {:<8.4f} %   Converged : {:<8}  Saturated: {:<8}" , S_slope     ,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
     log->info("Memory RSS                         = {:<.1f} MB" , process_memory_in_mb("VmRSS"));
     log->info("Memory Peak                        = {:<.1f} MB" , process_memory_in_mb("VmHWM"));
     log->info("Memory Vm                          = {:<.1f} MB" , process_memory_in_mb("VmPeak"));

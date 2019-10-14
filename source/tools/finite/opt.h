@@ -41,7 +41,7 @@ namespace tools::finite::opt{
         extern Eigen::MatrixXcd                        get_multi_hamiltonian2_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
         extern Eigen::MatrixXcd                        get_multi_hamiltonian2_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
 //        extern std::complex<double>                    get_subspace_hamiltonian_component();
-
+        inline ceres::GradientProblemSolver::Options options;
 
         inline bool no_state_in_window = false;
         inline double subspace_error_threshold = 1e-8;
@@ -50,11 +50,11 @@ namespace tools::finite::opt{
 
 
         template <typename T>  int sgn(const T val) {return (T(0) < val) - (val < T(0)); }
-        double windowed_func_abs(double x,double window);
-        double windowed_grad_abs(double x,double window);
-        double windowed_func_pow(double x,double window);
-        double windowed_grad_pow(double x,double window);
-        std::pair<double,double> windowed_func_grad(double x,double window);
+        extern double windowed_func_abs(double x,double window);
+        extern double windowed_grad_abs(double x,double window);
+        extern double windowed_func_pow(double x,double window);
+        extern double windowed_grad_pow(double x,double window);
+        extern std::pair<double,double> windowed_func_grad(double x,double window);
 
 
 

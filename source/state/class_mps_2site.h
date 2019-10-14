@@ -8,7 +8,7 @@
 
 
 
-class class_vidal_site;
+class class_mps_site;
 
 /*!
  \class class_mps_2site
@@ -69,22 +69,24 @@ public:
     bool swapped = false;                                  /*!< Tracks the swapped state of A and B positions. */
     double truncation_error = 0;
 
-    std::unique_ptr<class_vidal_site> MPS_A;
-    std::unique_ptr<class_vidal_site> MPS_B;
-    Eigen::Tensor<Scalar,1> LC;
+    std::unique_ptr<class_mps_site> MPS_A;
+    std::unique_ptr<class_mps_site> MPS_B;
     bool isReal()const;
     long chiA () const;
     long chiB () const;
     long chiC () const;
     long spindim () const;
-    Eigen::Tensor<Scalar,3> A()     const;
-    Eigen::Tensor<Scalar,3> B()     const;
+    const Eigen::Tensor<Scalar,3> & A()  const;
+    const Eigen::Tensor<Scalar,3> & B()  const;
     Eigen::Tensor<Scalar,2> C()     const;
-
+    Eigen::Tensor<Scalar,3> GA()    const;
+    Eigen::Tensor<Scalar,3> GB()    const;
+    Eigen::Tensor<Scalar,2> LA()    const;
+    Eigen::Tensor<Scalar,2> LB()    const;
     void set_mps(const Eigen::Tensor<Scalar,1> &LA,
-                 const Eigen::Tensor<Scalar,3> &GA,
+                 const Eigen::Tensor<Scalar,3> &U,
                  const Eigen::Tensor<Scalar,1> &LC_,
-                 const Eigen::Tensor<Scalar,3> &GB,
+                 const Eigen::Tensor<Scalar,3> &V_dagger,
                  const Eigen::Tensor<Scalar,1> &LB);
 
     Eigen::DSizes<long,4> dimensions() const;

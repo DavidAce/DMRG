@@ -57,10 +57,9 @@ void tools::finite::io::write_bond_matrices(const class_finite_state & state, h5
     bool extendable = internals::make_extendable_dataset(prefix_path);
     auto middle = (size_t) (state.get_length() / 2);
     for (size_t i = 0; i < state.get_length(); i++){
+        h5ppFile.writeDataset(state.get_MPS(i).get_L(),prefix_path + "/state/mps/L_" + std::to_string(i),extendable);
         if (i == middle){
-            h5ppFile.writeDataset(state.get_L(i),prefix_path + "/state/mps/L_C",extendable);
-        }else{
-            h5ppFile.writeDataset(state.get_L(i),prefix_path + "/state/mps/L_" + std::to_string(i),extendable);
+            h5ppFile.writeDataset(state.center_bond(),prefix_path + "/state/mps/L_C",extendable);
         }
     }
     h5ppFile.writeDataset(state.truncation_error, prefix_path + "/state/truncation_error",extendable);
@@ -73,7 +72,7 @@ void tools::finite::io::write_bond_matrix(const class_finite_state & state, h5pp
 {
     bool extendable = internals::make_extendable_dataset(prefix_path);
     auto middle = (size_t) (state.get_length() / 2);
-    h5ppFile.writeDataset(state.get_L(middle),prefix_path + "/state/mps/L_C",extendable);
+    h5ppFile.writeDataset(state.get_MPS(middle).get_LC(),prefix_path + "/state/mps/L_C",extendable);
     h5ppFile.writeDataset(state.truncation_error[middle], prefix_path + "/state/truncation_error",extendable);
 }
 
@@ -86,7 +85,7 @@ void tools::finite::io::write_full_mps(const class_finite_state & state, h5pp::F
     bool extendable = internals::make_extendable_dataset(prefix_path);
     write_bond_matrices(state,h5ppFile,prefix_path);
     for (size_t i = 0; i < state.get_length(); i++){
-        h5ppFile.writeDataset(state.get_G(i) ,prefix_path + "/state/mps/G_" + std::to_string(i),extendable);
+        h5ppFile.writeDataset(state.get_MPS(i).get_M() ,prefix_path + "/state/mps/M_" + std::to_string(i),extendable);
     }
 }
 
@@ -152,9 +151,9 @@ void tools::finite::io::write_all_measurements(const class_finite_state & state,
 }
 
 
-void tools::finite::io::write_projection_to_closest_parity_sector(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path, std::string parity_sector,bool keep_bond_dimensions){
+void tools::finite::io::write_projection_to_closest_parity_sector(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path, std::string parity_sector){
     if (parity_sector == "none") return;
-    auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(state, parity_sector, keep_bond_dimensions);
+    auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(state, parity_sector);
     state_projected.unset_measurements();
     state_projected.do_all_measurements();
     tools::finite::io::write_all_state(state_projected,h5ppFile, prefix_path + "/projections/" + parity_sector);
@@ -212,7 +211,7 @@ class_finite_state tools::finite::io::load_state_from_hdf5(const h5pp::File & h5
                 state.MPO_R.emplace_back(class_model_factory::create_mpo(i,model_type,Hamiltonian_params.row(i)));
             }
         }
-        h5ppFile.readDataset(state.MPS_C    , prefix_path + "/state/mps/L_C");
+        h5ppFile.readDataset(state.center_bond()    , prefix_path + "/state/mps/L_C");
         if (state.MPS_L.size() + state.MPS_R.size() != (size_t)sites){
             throw std::runtime_error("Number of sites loaded does not match the number of sites advertised by the output file");
         }

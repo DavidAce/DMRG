@@ -45,6 +45,7 @@ void class_xDMRG::run_preprocessing() {
     reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
 //    reset_to_random_state_in_energy_window("random",false, "Initializing");
 //    inflate_initial_state();
+
     t_pre.toc();
     log->info("Finished {} preprocessing", sim_name);
 }
@@ -93,6 +94,8 @@ void class_xDMRG::single_xDMRG_step()
     using namespace tools::finite;
 
     t_run.tic();
+    debug::check_integrity(*state);
+
     log->trace("Starting single xDMRG step");
 //  log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
@@ -118,7 +121,7 @@ void class_xDMRG::single_xDMRG_step()
     debug::check_integrity(*state);
     Eigen::Tensor<Scalar,3> theta;
 
-    std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
+    std::list<size_t> max_num_sites_list = {2,4,settings::precision::maxSitesMultiDmrg};
     if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
 
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
@@ -211,11 +214,13 @@ void class_xDMRG::single_xDMRG_step()
 //    }
 
 
-    log->debug("Variance check before truncate       : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+    log->debug("Variance check before truncate            : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+//
     opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
     move_center_point();
-    tools::finite::mps::rebuild_environments(*state);
-    log->debug("Variance check after truncate + move : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
+//    tools::finite::mps::rebuild_environments(*state);
+//    state->unset_measurements();
+    log->debug("Variance check after truncate + move + env: {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::maxNormError){
         tools::log->warn("Norm too large: {:.18f}",tools::finite::measure::norm(*state) );
@@ -313,8 +318,7 @@ void class_xDMRG::check_convergence(){
             and not outside_of_window )
         {
             log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
-            bool keep_bond_dimensions = true;
-            *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector,keep_bond_dimensions);
+            *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
             has_projected = true;
         }
         else if (    sim_status.num_resets < settings::precision::maxResets
@@ -336,8 +340,7 @@ void class_xDMRG::check_convergence(){
     {
         log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
         log->info("Bond dimensions before: {}", tools::finite::measure::bond_dimensions(*state));
-        bool keep_bond_dimensions = true;
-        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector,keep_bond_dimensions);
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
         log->info("Bond dimensions after: {}", tools::finite::measure::bond_dimensions(*state));
         has_projected = true;
     }
@@ -358,12 +361,11 @@ void class_xDMRG::check_convergence(){
 void class_xDMRG::inflate_initial_state(){
     tools::log->trace("Inflating bond dimension");
     // Inflate by projecting randomly. Each projection doubles the bond dimension
-    bool keep_bond_dimensions = false;
     for (int i = 0; i < 4; i++){
-        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, "random" ,keep_bond_dimensions);
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, "random" );
         log->debug("χ = {}"         , tools::finite::measure::bond_dimensions(*state));
     }
-    *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::initial_parity_sector ,keep_bond_dimensions);
+    *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::initial_parity_sector);
 }
 
 

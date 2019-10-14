@@ -70,15 +70,15 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
     for (auto &mpsL : state.MPS_L ){
         int sign = 2*bs[mpsL.get_position()] - 1;
         carry_sign *= sign;
-        auto G = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
-        mpsL.set_mps(G,L);
+        auto A = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
+        mpsL.set_mps(A, L);
     }
-    state.MPS_C = L;
+    state.MPS_L.back().set_LC(L);
     for (auto &mpsR : state.MPS_R ){
         int sign = 2*bs[mpsR.get_position()] - 1;
         carry_sign *= sign;
-        auto G = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
-        mpsR.set_mps(G,L);
+        auto B = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
+        mpsR.set_mps(B, L);
     }
 
     if(sector * carry_sign == -1){
@@ -86,8 +86,8 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
         auto &mpsR = state.MPS_R.back();
         int sign = 2*bs[mpsR.get_position()] - 1;
         sign *= -1;
-        auto G = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
-        mpsR.set_mps(G,L);
+        auto B = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
+        mpsR.set_mps(B, L);
     }
 }
 
@@ -105,16 +105,16 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
     for (auto &mpsL : state.MPS_L ){
         int sign = 2*rn::uniform_integer_1()-1;
         carry_sign *= sign;
-        auto G = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(), 2, 1, 1);
-        mpsL.set_mps(G,L);
+        auto A = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(), 2, 1, 1);
+        mpsL.set_mps(A, L);
     }
-    state.MPS_C = L;
+    state.MPS_L.back().set_LC(L);
     for (auto &mpsR : state.MPS_R ){
         int sign = 2*rn::uniform_integer_1()-1;
         carry_sign *= sign;
         last_sign = sign;
-        auto G = Textra::Matrix_to_Tensor(get_eigvec(axis, sign).normalized(), 2, 1, 1);
-        mpsR.set_mps(G,L);
+        auto B = Textra::Matrix_to_Tensor(get_eigvec(axis, sign).normalized(), 2, 1, 1);
+        mpsR.set_mps(B, L);
     }
 
     if(sector * carry_sign == -1){
@@ -122,8 +122,8 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
         auto &mpsR = state.MPS_R.back();
         int sign = -last_sign;
         sign *= -1;
-        auto G = Textra::Matrix_to_Tensor(get_eigvec(axis, sign).normalized(), 2, 1, 1);
-        mpsR.set_mps(G,L);
+        auto B = Textra::Matrix_to_Tensor(get_eigvec(axis, sign).normalized(), 2, 1, 1);
+        mpsR.set_mps(B, L);
     }
 }
 
@@ -138,7 +138,7 @@ void tools::finite::mps::internals::set_product_state_randomly(class_finite_stat
     }
     else if (parity_sector_is_defined and not use_pauli_eigenstates){
         set_product_state_randomly(state,"random",false);
-        state = tools::finite::ops::get_projection_to_closest_parity_sector(state,parity_sector,false);
+        state = tools::finite::ops::get_projection_to_closest_parity_sector(state,parity_sector);
     }
     else if (parity_sector == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
@@ -148,13 +148,13 @@ void tools::finite::mps::internals::set_product_state_randomly(class_finite_stat
         Eigen::Tensor<Scalar,1> L (1);
         L.setConstant(1);
         for (auto &mpsL : state.MPS_L ){
-            auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
-            mpsL.set_mps(G,L);
+            auto A = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
+            mpsL.set_mps(A, L);
         }
-        state.MPS_C = L;
+        state.MPS_L.back().set_LC(L);
         for (auto &mpsR : state.MPS_R ){
-            auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
-            mpsR.set_mps(G,L);
+            auto B = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
+            mpsR.set_mps(B, L);
         }
     }else if (parity_sector == "none"){
         return;

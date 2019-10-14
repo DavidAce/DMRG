@@ -227,8 +227,14 @@ namespace Textra {
 
     template<typename Derived, typename sizeType>
     auto Tensor_to_Matrix_Map(const Eigen::TensorBase<Derived,Eigen::WriteAccessors> &tensor,const sizeType rows,const sizeType cols){
-        Derived& temp = static_cast<Derived&>(tensor);
+        const Derived& temp = static_cast<const Derived&>(tensor);
         return Eigen::Map<const MatrixType<typename Derived::Scalar>> (temp.data(), rows,cols);
+    }
+
+    template<typename Derived, typename sizeType>
+    auto Tensor_to_Vector_Map(const Eigen::TensorBase<Derived,Eigen::WriteAccessors> &tensor,const sizeType size){
+        const Derived& temp = static_cast<const Derived&>(tensor);
+        return Eigen::Map<const VectorType<typename Derived::Scalar>> (temp.data(), size);
     }
 
     template <typename Scalar>

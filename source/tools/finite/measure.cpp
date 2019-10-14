@@ -9,15 +9,13 @@
 
 
 #include <iomanip>
-#include <complex>
 #include <tools/nmspc_tools.h>
-#include <state/class_infinite_state.h>
+#include <simulation/nmspc_settings.h>
 #include <state/class_environment.h>
 #include <state/class_mps_2site.h>
 #include <state/class_finite_state.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
-#include <spdlog/spdlog.h>
 
 
 
@@ -34,21 +32,18 @@ int tools::finite::measure::length(const class_finite_state & state){
 
 double tools::finite::measure::norm(const class_finite_state & state){
     if (state.measurements.norm){return state.measurements.norm.value();}
-    Eigen::Tensor<Scalar,3>  A = state.get_A(0); // std::get<1>(*mpsL);
-    Eigen::Tensor<Scalar,2> chain = A.contract(A.conjugate(), idx({0,1},{0,1}));
-    size_t pos = 1;
-    while(pos < state.get_length()){
-        A = state.get_A(pos); // std::get<1>(*mpsL);
-        Eigen::Tensor<Scalar,2> temp = chain
-                .contract(A,             idx({0},{1}))
-                .contract(A.conjugate(), idx({0,1},{1,0}));
+    Eigen::Tensor<Scalar,2> chain;
+    Eigen::Tensor<Scalar,2> temp;
+    bool first = true;
+    for(size_t pos = 0; pos < state.get_length(); pos++){
+        const Eigen::Tensor<Scalar,3>  &M = state.get_MPS(pos).get_M(); // std::get<1>(*mpsL);
+        if(first) {chain = M.contract(M.conjugate(), idx({0,1},{0,1})); first=false;continue;}
+        temp =
+                chain
+                .contract(M,             idx({0},{1}))
+                .contract(M.conjugate(), idx({0,1},{1,0}));
         chain = temp;
-        pos++;
     }
-    Eigen::Tensor<Scalar,2> temp = chain
-            .contract(Textra::asDiagonal(state.get_L(pos)), Textra::idx({0},{1}))
-            .contract(Textra::asDiagonal(state.get_L(pos)), Textra::idx({0},{1}));
-    chain = temp;
     double norm_chain = std::abs(Textra::Tensor2_to_Matrix(chain).trace());
     if(std::abs(norm_chain - 1.0) > settings::precision::maxNormError){
         tools::log->warn("Measure: Norm far from unity: {:.16f}", norm_chain);
@@ -61,15 +56,14 @@ double tools::finite::measure::norm(const class_finite_state & state){
 
 size_t tools::finite::measure::bond_dimension_current(const class_finite_state & state){
     if (state.measurements.bond_dimension_current){return state.measurements.bond_dimension_current.value();}
-    state.measurements.bond_dimension_current = state.MPS_C.dimension(0);
+    state.measurements.bond_dimension_current = state.center_bond().dimension(0);
     return state.measurements.bond_dimension_current.value();
 }
 
 
 size_t tools::finite::measure::bond_dimension_midchain(const class_finite_state & state){
     if (state.measurements.bond_dimension_midchain){return state.measurements.bond_dimension_midchain.value();}
-    size_t middle = state.get_length() / 2;
-    state.measurements.bond_dimension_midchain = state.get_L(middle).dimension(0);
+    state.measurements.bond_dimension_midchain = state.center_bond().dimension(0);
     return state.measurements.bond_dimension_midchain.value();
 }
 
@@ -80,7 +74,7 @@ std::vector<size_t> tools::finite::measure::bond_dimensions(const class_finite_s
     for (auto &mps : state.MPS_L){
         state.measurements.bond_dimensions.value().emplace_back(mps.get_L().dimension(0));
     }
-    state.measurements.bond_dimensions.value().emplace_back(state.MPS_C.dimension(0));
+    state.measurements.bond_dimensions.value().emplace_back(state.center_bond().dimension(0));
     for (auto &mps : state.MPS_R){
         state.measurements.bond_dimensions.value().emplace_back(mps.get_L().dimension(0));
     }
@@ -207,7 +201,7 @@ double tools::finite::measure::energy_variance_per_site(const class_finite_state
 double tools::finite::measure::entanglement_entropy_current(const class_finite_state & state){
     if (state.measurements.entanglement_entropy_current){return state.measurements.entanglement_entropy_current.value();}
     tools::common::profile::t_ent.tic();
-    auto & LC = state.MPS_C;
+    auto & LC = state.center_bond();
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     state.measurements.entanglement_entropy_current = std::real(SA(0));
@@ -218,8 +212,7 @@ double tools::finite::measure::entanglement_entropy_current(const class_finite_s
 double tools::finite::measure::entanglement_entropy_midchain(const class_finite_state & state){
     if (state.measurements.entanglement_entropy_midchain){return state.measurements.entanglement_entropy_midchain.value();}
     tools::common::profile::t_ent.tic();
-    size_t middle = state.get_length() / 2;
-    auto & LC = state.get_L(middle);
+    auto & LC = state.MPS_L.back().get_LC();
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     state.measurements.entanglement_entropy_midchain =  std::real(SA(0));
@@ -263,69 +256,27 @@ std::vector<double> tools::finite::measure::spin_components(const class_finite_s
 
 
 double tools::finite::measure::spin_component(const class_finite_state &state,
-                                                  const Eigen::Matrix2cd paulimatrix){
+                                                  const Eigen::Matrix2cd & paulimatrix){
 
-    Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
-
-    auto mpsL        = state.MPS_L.begin();
-    auto endL        = state.MPS_L.end();
     auto [mpo,L,R]   = qm::mpo::pauli_mpo(paulimatrix);
-
-    int iter = 0;
-    while(mpsL != endL){
-        const Eigen::Tensor<Scalar,1> &LA = mpsL->get_L(); // std::get<0>(*mpsL);
-        const Eigen::Tensor<Scalar,3> &GA = mpsL->get_G(); // std::get<1>(*mpsL);
-        assert(LA.dimension(0) == L.dimension(0));
-        assert(LA.dimension(0) == GA.dimension(1));
-
-        temp = L.contract(asDiagonal(LA), idx({0},{0}))
-                .contract(asDiagonal(LA), idx({0},{0}))
-                .contract(mpo           ,idx({0},{0}))
-                .contract(GA,                  idx({0,3},{1,0}))
-                .contract(GA.conjugate(),      idx({0,2},{1,0}))
-                .shuffle(array3{1,2,0});
+    Eigen::TensorRef<Eigen::Tensor<Scalar,3>> temp;
+    for (size_t pos = 0; pos < state.get_length(); pos++){
+        temp = L.contract(state.get_MPS(pos).get_M()             , idx({0},{1}))
+                .contract(state.get_MPS(pos).get_M().conjugate() , idx({0},{1}))
+                .contract(mpo                                    , idx({0,1,3},{0,2,3}));
         L = temp;
-        mpsL++;
-        iter++;
-    }
-
-
-    //Contract the center point
-    auto &MPS_C = state.MPS_C;
-    temp = L.contract(asDiagonal(MPS_C) , idx({0},{0}))
-            .contract(asDiagonal(MPS_C) , idx({0},{0}))
-            .shuffle(array3{1,2,0});
-    L = temp;
-
-    //Contract the right half of the state
-    auto mpsR  = state.MPS_R.begin();
-    auto endR  = state.MPS_R.end();
-    while(mpsR != endR){
-        const Eigen::Tensor<Scalar,3> &GB = mpsR->get_G(); // std::get<0>(*mpsR);
-        const Eigen::Tensor<Scalar,1> &LB = mpsR->get_L(); // std::get<1>(*mpsR);
-        assert(GB.dimension(1) == L.dimension(0));
-        assert(LB.dimension(0) == GB.dimension(2));
-        temp = L.contract(GB,            idx({0},{1}))
-                .contract(GB.conjugate(),idx({0},{1}))
-                .contract(mpo           ,idx({0,1,3},{0,2,3}))
-                .contract(asDiagonal(LB),idx({0},{0}))
-                .contract(asDiagonal(LB),idx({0},{0}))
-                .shuffle(array3{1,2,0});
-        L = temp;
-        mpsR++;
     }
 
     assert(L.dimensions() == R.dimensions());
     Eigen::Tensor<Scalar,0> parity_tmp = L.contract(R, idx({0,1,2},{0,1,2}));
     double parity = std::real(parity_tmp(0));
     return parity;
+
 }
 
 
 Eigen::Tensor<Scalar,1> tools::finite::measure::mps_wavefn(const class_finite_state & state){
 
-    auto mpsL  = state.MPS_L.begin();
-    auto endL  = state.MPS_L.end();
     Eigen::Tensor<Scalar,2> chain(1,1);
     chain.setConstant(1.0);
     Eigen::TensorRef<Eigen::Tensor<Scalar,2>> temp;
@@ -336,39 +287,25 @@ Eigen::Tensor<Scalar,1> tools::finite::measure::mps_wavefn(const class_finite_st
     // 16x2x9 tensor. Now the reshaping convert it into a 32 x 9 matrix. Because
     // Eigen is column major, the doubling 16->32 will stack the third index twice.
 
-    while(mpsL != endL){
-        const Eigen::Tensor<Scalar,1>  & LA = mpsL->get_L(); //std::get<0>(*mpsL);
-        const Eigen::Tensor<Scalar,3>  & GA = mpsL->get_G(); //std::get<1>(*mpsL);
-        assert(LA.dimension(0) == GA.dimension(1));
-
+    for(auto & mpsL : state.MPS_L){
+        long dim0 = mpsL.get_spin_dim();
+        long dimR = mpsL.get_chiR();
+        long dimL = chain.dimension(0);
         temp = chain
-                .contract(asDiagonal(LA), idx({1},{0}))
-                .contract(GA            , idx({1},{1}))
-                .reshape(array2{GA.dimension(0) * chain.dimension(0), GA.dimension(2)});
+                .contract(mpsL.get_M(), idx({1},{1}))
+                .reshape(array2{dimL * dim0, dimR});
         chain = temp;
-        mpsL++;
+    }
+    for(auto & mpsR : state.MPS_R){
+        long dim0 = mpsR.get_spin_dim();
+        long dimR = mpsR.get_chiR();
+        long dimL = chain.dimension(0);
+        temp = chain
+                .contract(mpsR.get_M(), idx({1},{1}))
+                .reshape(array2{dimL * dim0, dimR});
+        chain = temp;
     }
 
-//    Contract the center point
-    auto &MPS_C = state.MPS_C;
-    temp = chain.contract(asDiagonal(MPS_C), idx({1},{0}));
-    chain = temp;
-
-    //Contract the right half of the state
-    auto mpsR  = state.MPS_R.begin();
-    auto endR  = state.MPS_R.end();
-
-    while(mpsR != endR){
-        const Eigen::Tensor<Scalar,3> &GB  = mpsR->get_G(); // std::get<0>(*mpsR);
-        const Eigen::Tensor<Scalar,1> &LB  = mpsR->get_L(); // std::get<1>(*mpsR);
-        assert(LB.dimension(0) == GB.dimension(2));
-        temp = chain
-                .contract(GB              , idx({1},{1}))
-                .contract(asDiagonal(LB)  , idx({2},{0}))
-                .reshape(array2{GB.dimension(0) * chain.dimension(0), GB.dimension(2)});
-        chain = temp;
-        mpsR++;
-    }
     Eigen::Tensor<Scalar,1> mps_chain = chain.reshape(array1{chain.dimension(0)});
     double norm_chain = Textra::Tensor2_to_Matrix(chain).norm();
     if(std::abs(norm_chain - 1.0) > settings::precision::maxNormError){

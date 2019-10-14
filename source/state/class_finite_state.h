@@ -9,7 +9,7 @@
 #include <optional>
 #include <general/nmspc_tensor_extra.h>
 #include <state/class_environment.h>
-#include <state/class_vidal_site.h>
+#include <state/class_mps_site.h>
 #include <model/class_model_base.h>
 
 
@@ -53,16 +53,16 @@ public:
 
 
 
-    std::list<class_vidal_site>                        MPS_L;   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
-    std::list<class_vidal_site>                        MPS_R;   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
-    TType<1>                                           MPS_C;   /*!< Current center bond matrix. */
-    std::list<class_environment>                       ENV_L;
-    std::list<class_environment>                       ENV_R;
-    std::list<class_environment_var>                   ENV2_L;
-    std::list<class_environment_var>                   ENV2_R;
-    std::list<std::unique_ptr<class_model_base>>       MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-    std::list<std::unique_ptr<class_model_base>>       MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<class_mps_site>                        MPS_L;   /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
+    std::list<class_mps_site>                        MPS_R;   /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
+    std::list<class_environment>                     ENV_L;
+    std::list<class_environment>                     ENV_R;
+    std::list<class_environment_var>                 ENV2_L;
+    std::list<class_environment_var>                 ENV2_R;
+    std::list<std::unique_ptr<class_model_base>>     MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+    std::list<std::unique_ptr<class_model_base>>     MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
+    const TType<1> & center_bond() const;
     void do_all_measurements();
 
 
@@ -99,24 +99,25 @@ public:
     bool isReal()                               const;
 
 
-    const class_vidal_site       & get_MPS(size_t pos)                  const;
-          class_vidal_site       & get_MPS(size_t pos);
+    const class_mps_site       & get_MPS(size_t pos)                  const;
+          class_mps_site       & get_MPS(size_t pos);
     const class_model_base       & get_MPO(size_t pos)                  const;
           class_model_base       & get_MPO(size_t pos);
     const class_environment      & get_ENVL(size_t pos)                 const;
     const class_environment      & get_ENVR(size_t pos)                 const;
     const class_environment_var  & get_ENV2L(size_t pos)                const;
     const class_environment_var  & get_ENV2R(size_t pos)                const;
-    const Eigen::Tensor<Scalar,3> & get_G(size_t pos)                   const;
-    const Eigen::Tensor<Scalar,1> & get_L(size_t pos)                   const;
-    TType<3> & get_G(size_t pos);
-    TType<1> & get_L(size_t pos);
-    TType<3>   get_A()                                   const;
-    TType<3>   get_B()                                   const;
-    TType<3>   get_A(size_t pos)                         const;
-    TType<3>   get_B(size_t pos)                         const;
+
+//    const Eigen::Tensor<Scalar,3> & get_G(size_t pos)                   const;
+//    const Eigen::Tensor<Scalar,1> & get_L(size_t pos)                   const;
+//    TType<3> & get_G(size_t pos);
+//    TType<1> & get_L(size_t pos);
+//    TType<3>   get_A()                                   const;
+//    TType<3>   get_B()                                   const;
+//    TType<3>   get_A(size_t pos)                         const;
+//    TType<3>   get_B(size_t pos)                         const;
+//    TType<4>   get_theta(size_t pos)                     const;
     TType<4>   get_theta()                               const;
-    TType<4>   get_theta(size_t pos)                     const;
 
     // For reduced energy MPO's
     bool   isReduced()                            const;
@@ -144,6 +145,7 @@ public:
 //
 
     std::vector<double>  truncation_error;
+    private:
     struct Measurements {
         std::optional<size_t>               length                                  = {};
         std::optional<size_t>               bond_dimension_midchain                 = {};
@@ -162,6 +164,7 @@ public:
         std::optional<double>               entanglement_entropy_current            = {};
         std::optional<std::vector<double>>  entanglement_entropies                  = {};
     };
+    public:
     mutable Measurements measurements;
     void unset_measurements() const;
     void do_all_measurements()const;

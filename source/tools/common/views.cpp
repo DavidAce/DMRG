@@ -78,8 +78,8 @@ void tools::common::views::compute_mps_components(const class_infinite_state & s
     theta_evn_normalized = get_theta_evn(state, sqrt(eigval_R_evn));
     theta_odd_normalized = get_theta_odd(state, sqrt(eigval_R_odd));
 
-    LBGA                 = state.MPS->A();// / (Scalar_) sqrt(eigval_R_LBGA(0));
-    LAGB                 = state.MPS->C().contract(state.MPS->MPS_B->get_G(), idx({1},{1})).shuffle(array3{1,0,2});// / (Scalar_) sqrt(eigval_R_LAGB(0));
+    LBGA                 = state.MPS->LB().contract(state.MPS->GA(), Textra::idx({1},{1})).shuffle(array3{0,2,1}); // Modified! May contain some error? Check git history for comparison
+    LAGB                 = state.MPS->LA().contract(state.MPS->GB(), Textra::idx({1},{1})).shuffle(array3{0,2,1}); // Modified! May contain some error? Check git history for comparison
 
     transfer_matrix_evn    = theta_evn_normalized.contract(theta_evn_normalized.conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3});
     transfer_matrix_odd    = theta_odd_normalized.contract(theta_odd_normalized.conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3});
@@ -121,9 +121,7 @@ tools::common::views::get_theta(const class_finite_state & state, std::complex<d
      @endverbatim
  */
 {
-    return
-            state.MPS_L.back().get_A().contract(Textra::asDiagonal(state.MPS_C), idx({2},{0}))
-                    .contract(state.MPS_R.front().get_B(), idx({2},{1})) / norm;
+    return state.MPS_L.back().get_M().contract(state.MPS_R.front().get_M(), Textra::idx({2},{1})) /norm;
 }
 
 
@@ -139,9 +137,9 @@ tools::common::views::get_theta(const class_infinite_state & state, std::complex
      @endverbatim
  */
 {
+
     return
-            state.MPS->A().contract(state.MPS->C(), idx({2},{0}))
-                    .contract(state.MPS->B(), idx({2},{1})) / norm;
+            state.MPS->A().contract(state.MPS->B(), Textra::idx({2},{1})) / norm;
 }
 
 
@@ -157,10 +155,11 @@ tools::common::views::get_theta_swapped(const class_infinite_state & state, std:
      @endverbatim
  */
 {
-    return  state.MPS->C() //whatever L_A was in the previous moves
-                    .contract(state.MPS->B(),            idx({1},{1}))
-                    .contract(state.MPS->MPS_A->get_G(), idx({2},{1}))
-                    .contract(state.MPS->C(), idx({3},{0}))
+
+    return  state.MPS->LA() //whatever L_A was in the previous moves
+                    .contract(state.MPS->B() , idx({1},{1}))
+                    .contract(state.MPS->GA(), idx({2},{1}))
+                    .contract(state.MPS->LA(), idx({3},{0}))
                     .shuffle(array4{1,0,2,3})
             /norm;
 }
@@ -182,9 +181,7 @@ tools::common::views::get_theta_evn(const class_infinite_state & state, std::com
 
 {
     return  state.MPS->A()
-                    .contract(state.MPS->C(),  idx({2},{0}))
-                    .contract(state.MPS->MPS_B->get_G(),  idx({2},{1}))
-            //            .shuffle(array4{1,0,2,3})
+             .contract(state.MPS->GB(),  idx({2},{1}))
             /norm;
 }
 
@@ -200,8 +197,8 @@ tools::common::views::get_theta_odd(const class_infinite_state & state, std::com
  */
 {
     return  state.MPS->C()
-                    .contract(state.MPS->MPS_B->get_G(),         idx({1},{1}))
-                    .contract(state.MPS->A(),                    idx({2},{1}))
+                    .contract(state.MPS->B(),    idx({1},{1}))
+                    .contract(state.MPS->GA(),   idx({2},{1}))
                     .shuffle(array4{1,0,2,3})
             /norm;
 }
@@ -209,7 +206,7 @@ tools::common::views::get_theta_odd(const class_infinite_state & state, std::com
 
 Eigen::Tensor<std::complex<double>,4>
 tools::common::views::get_transfer_matrix_zero(const class_infinite_state & state) {
-    Eigen::Tensor<std::complex<double>,1> I = state.MPS->LC;
+    Eigen::Tensor<std::complex<double>,1> I = state.MPS->MPS_A->get_LC();
     I.setConstant(1.0);
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
 
@@ -229,9 +226,9 @@ tools::common::views::get_transfer_matrix_LBGA(const class_infinite_state & stat
 Eigen::Tensor<std::complex<double>,4>
 tools::common::views::get_transfer_matrix_GALC(const class_infinite_state & state, std::complex<double> norm)  {
     return state.MPS->C()
-                   .contract(state.MPS->MPS_A->get_G(),               idx({2},{0}))
-                   .contract(state.MPS->MPS_A->get_G().conjugate(),   idx({0},{0}))
-                   .contract(state.MPS->C(),                          idx({3},{0}) )
+                   .contract(state.MPS->GA(),             idx({2},{0}))
+                   .contract(state.MPS->GA().conjugate(), idx({0},{0}))
+                   .contract(state.MPS->C(),              idx({3},{0}) )
                    .shuffle(array4{0,2,1,3})
            /norm;
 }
@@ -247,9 +244,9 @@ tools::common::views::get_transfer_matrix_GBLB(const class_infinite_state & stat
 Eigen::Tensor<std::complex<double>,4>
 tools::common::views::get_transfer_matrix_LCGB(const class_infinite_state & state, std::complex<double> norm)  {
     return  state.MPS->C()
-                    .contract(state.MPS->MPS_B->get_G(),               idx({1},{1}))
-                    .contract(state.MPS->MPS_B->get_G().conjugate(),   idx({1},{0}))
-                    .contract(state.MPS->C(),                          idx({2},{1}) )
+                    .contract(state.MPS->GB(),               idx({1},{1}))
+                    .contract(state.MPS->GB().conjugate(),   idx({1},{0}))
+                    .contract(state.MPS->C(),                idx({2},{1}) )
                     .shuffle(array4{0,3,1,2})
             /norm;
 }
@@ -308,15 +305,14 @@ tools::common::views::get_theta(const class_mps_2site  &MPS, std::complex<double
 /*!
  * Returns a two-site MPS
      @verbatim
-        1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
+        1--[ LA ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
                      |                 |
                      0                 2
      @endverbatim
  */
 {
     return
-            MPS.A().contract(MPS.C(), idx({2},{0}))
-                    .contract(MPS.B(), idx({2},{1})) / norm;
+            MPS.A().contract(MPS.B(), idx({2},{1})) / norm;
 }
 
 
@@ -326,16 +322,16 @@ tools::common::views::get_theta_swapped(const class_mps_2site  &MPS, std::comple
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
-        1--[ LA ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
+        1--[ LC ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
                      |                 |
                      0                 2
      @endverbatim
  */
 {
     return  MPS.C() //whatever L_A was in the previous moves
-                    .contract(MPS.B(),            idx({1},{1}))
-                    .contract(MPS.MPS_A->get_G(), idx({2},{1}))
-                    .contract(MPS.C(), idx({3},{0}))
+                    .contract(MPS.B(),        idx({1},{1}))
+                    .contract(MPS.GA(),       idx({2},{1}))
+                    .contract(MPS.LA(),       idx({3},{0}))
                     .shuffle(array4{1,0,2,3})
             /norm;
 }
@@ -349,7 +345,7 @@ tools::common::views::get_theta_evn(const class_mps_2site  &MPS, std::complex<do
 /*!
  * Returns a right normalized two-site MPS
      @verbatim
-        1--[ LB ]--[ GA ]-- [ LC ] -- [ GB ]--3
+        1--[ LA ]--[ GA ]-- [ LC ] -- [ GB ]--3
                      |                 |
                      0                 2
      @endverbatim
@@ -357,9 +353,7 @@ tools::common::views::get_theta_evn(const class_mps_2site  &MPS, std::complex<do
 
 {
     return  MPS.A()
-                    .contract(MPS.C(),  idx({2},{0}))
-                    .contract(MPS.MPS_B->get_G(),  idx({2},{1}))
-            //            .shuffle(array4{1,0,2,3})
+             .contract(MPS.GB(),  idx({2},{1}))
             /norm;
 }
 
@@ -368,15 +362,15 @@ tools::common::views::get_theta_odd(const class_mps_2site  &MPS, std::complex<do
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
-        1--[ LA ]--[ GB ]-- [ LB ] -- [ GA ]--3
+        1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
                      |                 |
                      0                 2
      @endverbatim
  */
 {
     return  MPS.C()
-                    .contract(MPS.MPS_B->get_G(),         idx({1},{1}))
-                    .contract(MPS.A(),                    idx({2},{1}))
+                    .contract(MPS.B(),           idx({1},{1}))
+                    .contract(MPS.GA(),          idx({2},{1}))
                     .shuffle(array4{1,0,2,3})
             /norm;
 }
@@ -384,7 +378,7 @@ tools::common::views::get_theta_odd(const class_mps_2site  &MPS, std::complex<do
 
 Eigen::Tensor<std::complex<double>,4>
 tools::common::views::get_transfer_matrix_zero(const class_mps_2site  &MPS) {
-    Eigen::Tensor<std::complex<double>,1> I = MPS.LC;
+    Eigen::Tensor<std::complex<double>,1> I = MPS.MPS_A->get_LC();
     I.setConstant(1.0);
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
 
@@ -404,8 +398,8 @@ tools::common::views::get_transfer_matrix_LBGA(const class_mps_2site  &MPS, std:
 Eigen::Tensor<std::complex<double>,4>
 tools::common::views::get_transfer_matrix_GALC(const class_mps_2site  &MPS, std::complex<double> norm)  {
     return MPS.C()
-                   .contract(MPS.MPS_A->get_G(),               idx({2},{0}))
-                   .contract(MPS.MPS_A->get_G().conjugate(),   idx({0},{0}))
+                   .contract(MPS.GA(),               idx({2},{0}))
+                   .contract(MPS.GA().conjugate(),   idx({0},{0}))
                    .contract(MPS.C(),                          idx({3},{0}) )
                    .shuffle(array4{0,2,1,3})
            /norm;
@@ -422,8 +416,8 @@ tools::common::views::get_transfer_matrix_GBLB(const class_mps_2site  &MPS, std:
 Eigen::Tensor<std::complex<double>,4>
 tools::common::views::get_transfer_matrix_LCGB(const class_mps_2site  &MPS, std::complex<double> norm)  {
     return  MPS.C()
-                    .contract(MPS.MPS_B->get_G(),               idx({1},{1}))
-                    .contract(MPS.MPS_B->get_G().conjugate(),   idx({1},{0}))
+                    .contract(MPS.GB(),               idx({1},{1}))
+                    .contract(MPS.GB().conjugate(),   idx({1},{0}))
                     .contract(MPS.C(),                          idx({2},{1}) )
                     .shuffle(array4{0,3,1,2})
             /norm;
