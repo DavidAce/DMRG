@@ -25,7 +25,6 @@ void tools::finite::mps::initialize(class_finite_state &state, const size_t leng
         state.MPS_R.emplace_back(class_mps_site(G, L, pos++));
         if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
     }
-    state.truncation_error.resize(length+1);
     state.site_update_tags = std::vector<bool>(length,false);
 
 }

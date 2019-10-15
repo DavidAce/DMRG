@@ -28,7 +28,7 @@ class_finite_state& class_finite_state::operator= (const class_finite_state & ot
     this->num_sweeps = other.num_sweeps;
     this->num_moves  = other.num_moves;
     this->direction  = other.direction;
-    this->chi_max    = other.chi_max;
+    this->chi_lim    = other.chi_lim;
     this->MPS_L      = other.MPS_L;
     this->MPS_R      = other.MPS_R;
     this->ENV_L      = other.ENV_L;
@@ -100,13 +100,13 @@ void class_finite_state::set_moves(int num_moves_)  { num_moves = num_moves_;}
 void class_finite_state::increment_moves()          {num_moves++;}
 
 
-long class_finite_state::get_chi_max()  const {
-    //Should return the maximum allowed chi from the settings file
-    return chi_max;
+long class_finite_state::get_chi_lim()  const {
+    //Should get the the current limit on allowed bond dimension
+    return chi_lim;
 }
-void class_finite_state::set_chi_max(long chi_max_){
-    //Should set the maximum allowed chi from the settings file
-    chi_max = chi_max_;
+void class_finite_state::set_chi_lim(long chi_lim_){
+    //Should set the the current limit on allowed bond dimension
+     chi_lim = chi_lim_;
 }
 
 int  class_finite_state::get_direction() const {return direction;}
@@ -160,14 +160,24 @@ bool class_finite_state::isReal() const{
     return mps_real and mpo_real;
 }
 
-const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::center_bond() const{
+const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::midchain_bond() const{
     size_t center_pos = (get_length() -1)/2;
     if(get_position() <   center_pos) return get_MPS(center_pos).get_L();
     if(get_position() >   center_pos) return get_MPS(center_pos+1).get_L();
     if(get_position() ==  center_pos) return get_MPS(center_pos).get_LC();
-    else throw std::logic_error("No valid position to find center_bond");
+    else throw std::logic_error("No valid position to find midchain_bond");
 }
 
+const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::current_bond() const{
+    if(MPS_L.back().isCenter()) {
+        if(MPS_L.back().get_chiR() != MPS_L.back().get_LC().dimension(0))
+            throw std::runtime_error("Current center bond dimension mismatch!");
+        return MPS_L.back().get_LC();
+    }
+    else{
+        throw std::runtime_error("Current center bond LC hasn't been set.");
+    }
+}
 
 //Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_A() const{
 //    return Textra::asDiagonal(MPS_L.back().get_L()).contract(MPS_L.back().get_G(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
@@ -412,149 +422,41 @@ class_finite_state::get_multienv2()     const{
     return std::make_pair(get_ENV2L(active_sites.front()), get_ENV2R(active_sites.back()));
 }
 
+void class_finite_state::set_truncation_error(size_t left_site, double error)
+/*! The truncation error vector has length + 1 elements, as many as there are bond matrices.
+ *  Obviously, the edge matrices are always 1, so we expect these to have truncation_error = 0.
+ *  Any schmidt decomposition involves two neighboriing sites, so "left_site" is the site number of the
+ *  site on the left of the decomposition.
+ */
+{
 
-//class_finite_state::TType<6> class_finite_state::get_multi_hamiltonian() const{
-////    if(cache.multiham) return cache.multiham.value();
-//    auto mpo = get_multimpo();
-//    tools::log->trace("Contracting multi hamiltonian...");
-//    auto & envL = get_ENVL(active_sites.front());
-//    auto & envR = get_ENVR(active_sites.back());
-//    if (envL.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", envL.get_position() , active_sites.front()));
-//    if (envR.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", envR.get_position() , active_sites.back()));
-////    cache.multiham =
-//    long dim0 = mpo.dimension(2);
-//    long dim1 = envL.block.dimension(0);
-//    long dim2 = envR.block.dimension(0);
-//    TType<6> multiham(dim0,dim1,dim2,dim0,dim1,dim2);
-//    multiham.device(omp::dev) =
-//            envL.block
-//            .contract(mpo           , Textra::idx({2},{0}))
-//            .contract(envR.block    , Textra::idx({2},{2}))
-//            .shuffle(Textra::array6{2,0,4,3,1,5});
-//    tools::log->trace("Contracting multi hamiltonian... OK");
-////    return cache.multiham.value();
-//    return multiham;
-//}
-//
-//class_finite_state::TType<6>   class_finite_state::get_multi_hamiltonian2() const{
-////    if(cache.multiham_sq) return cache.multiham_sq.value();
-//    auto mpo = get_multimpo();
-//    tools::log->trace("Contracting multi hamiltonian squared...");
-//    auto & env2L = get_ENV2L(active_sites.front());
-//    auto & env2R = get_ENV2R(active_sites.back());
-//    if (env2L.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , active_sites.front()));
-//    if (env2R.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , active_sites.back()));
-//    long dim0 = mpo.dimension(2);
-//    long dim1 = env2L.block.dimension(0);
-//    long dim2 = env2R.block.dimension(0);
-////    cache.multiham_sq =
-//    TType<6> multiham_sq(dim0,dim1,dim2,dim0,dim1,dim2);
-//    multiham_sq.device(omp::dev) =
-//            env2L.block
-//            .contract(mpo             , Textra::idx({2},{0}))
-//            .contract(mpo             , Textra::idx({5,2},{2,0}))
-//            .contract(env2R.block     , Textra::idx({2,4},{2,3}))
-//            .shuffle(Textra::array6{2,0,4,3,1,5});
-//    tools::log->trace("Contracting multi hamiltonian squared... OK");
-//    return multiham_sq;
-////    return cache.multiham_sq.value();
-//}
-//
-//class_finite_state::MType class_finite_state::get_multi_hamiltonian_matrix() const{
-////    if(cache.multiham_mat) return cache.multiham_mat.value();
-//    long size = active_problem_size();
-//    auto ham_tensor = get_multi_hamiltonian();
-//    auto cols       = ham_tensor.dimension(0)* ham_tensor.dimension(1)* ham_tensor.dimension(2);
-//    auto rows       = ham_tensor.dimension(3)* ham_tensor.dimension(4)* ham_tensor.dimension(5);
-//
-//    if(rows != size)
-//        throw std::runtime_error (fmt::format("Mismatch hamiltonian dim0*dim1*dim2 and cols: {} != {}",cols, size));
-//    if(cols != size)
-//        throw std::runtime_error (fmt::format("Mismatch hamiltonian dim3*dim4*dim5 and rows: {} != {}",rows, size));
-//    return Eigen::Map<MType> (ham_tensor.data(),size,size).transpose();
-////    cache.multiham_mat =  Eigen::Map<MType> (ham_tensor.data(),size,size).transpose();
-////    return cache.multiham_mat.value();
-//}
-//
-//
-//class_finite_state::MType class_finite_state::get_multi_hamiltonian2_matrix() const{
-////    if(cache.multiham_sq_mat) return cache.multiham_sq_mat.value();
-//    long size = active_problem_size();
-//    auto ham_squared_tensor = get_multi_hamiltonian2();
-//    auto cols       = ham_squared_tensor.dimension(0)* ham_squared_tensor.dimension(1)* ham_squared_tensor.dimension(2);
-//    auto rows       = ham_squared_tensor.dimension(3)* ham_squared_tensor.dimension(4)* ham_squared_tensor.dimension(5);
-//    if(rows != size)
-//        throw std::runtime_error (fmt::format("Mismatch hamiltonian sq dim0*dim1*dim2 and cols: {} != {}",cols, size));
-//    if(cols != size)
-//        throw std::runtime_error (fmt::format("Mismatch hamiltonian sq dim3*dim4*dim5 and rows: {} != {}",rows, size));
-//    return Eigen::Map<MType> (ham_squared_tensor.data(),size,size).transpose();
-////    cache.multiham_sq_mat  = Eigen::Map<MType> (ham_squared_tensor.data(),size,size).transpose();
-////    return cache.multiham_sq_mat.value();
-//}
-//
-//
-//class_finite_state::MType  class_finite_state::get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const{
-////    if(cache.multiham_sq_sub) return cache.multiham_sq_sub.value();
-//    auto mpo = get_multimpo();
-//    tools::log->trace("Contracting hamiltonian squared matrix in subspace...");
-//    auto dims = active_dimensions();
-//    Eigen::DSizes<long,4> eigvecs_dims {dims[0],dims[1],dims[2],eigvecs.cols()};
-//    auto eigvecs_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(eigvecs.data(), eigvecs_dims );
-//    auto & env2L = get_ENV2L(active_sites.front());
-//    auto & env2R = get_ENV2R(active_sites.back());
-//    if (env2L.get_position() != active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , active_sites.front()));
-//    if (env2R.get_position() != active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , active_sites.back()));
-//
-//    size_t log2chiL  = std::log2(dims[1]);
-//    size_t log2chiR  = std::log2(dims[2]);
-//    size_t log2spin  = std::log2(dims[0]);
-//    long dimH2 = eigvecs.cols();
-//    Eigen::Tensor<Scalar,2> H2(dimH2,dimH2);
-//    if(log2spin > log2chiL + log2chiR){
-//        if (log2chiL >= log2chiR){
-////            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR ");
-//            H2.device(omp::dev) =
-//                    eigvecs_tensor
-//                            .contract(env2L.block,                Textra::idx({1},{0}))
-//                            .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
-//                            .contract(env2R.block,                Textra::idx({0,4},{0,2}))
-//                            .contract(mpo  ,                      Textra::idx({3,2,5},{2,0,1}))
-//                            .contract(eigvecs_tensor.conjugate(), Textra::idx({3,1,2},{0,1,2}));
-//        }
-//        else{
-////            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR ");
-//            H2.device(omp::dev) =
-//                    eigvecs_tensor
-//                            .contract(env2R.block,                Textra::idx({2},{0}))
-//                            .contract(mpo  ,                      Textra::idx({0,4},{2,1}))
-//                            .contract(env2L.block,                Textra::idx({0,4},{0,2}))
-//                            .contract(mpo  ,                      Textra::idx({3,2,5},{2,1,0}))
-//                            .contract(eigvecs_tensor.conjugate(), Textra::idx({3,2,1},{0,1,2}));
-//        }
-//    }else{
-////        tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
-//
-//        H2.device(omp::dev) =
-//                eigvecs_tensor
-//                        .contract(env2L.block,                Textra::idx({1},{0}))
-//                        .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
-//                        .contract(mpo  ,                      Textra::idx({5,3},{2,0}))
-//                        .contract(eigvecs_tensor.conjugate(), Textra::idx({5,2},{0,1}))
-//                        .contract(env2R.block,                Textra::idx({0,4,2,3},{0,1,2,3}));
-//    }
-////    H2 =
-////            eigvecs_tensor
-////                    .contract(env2L.block,                Textra::idx({1},{0}))
-////                    .contract(mpo  ,                      Textra::idx({0,4},{2,0}))
-////                    .contract(mpo  ,                      Textra::idx({5,3},{2,0}))
-////                    .contract(eigvecs_tensor.conjugate(), Textra::idx({5,2},{0,1}))
-////                    .contract(env2R.block,                Textra::idx({0,4,2,3},{0,1,2,3}));
-//    tools::log->trace("Contracting hamiltonian squared matrix in subspace... OK");
-//    return Eigen::Map<MType>(H2.data(),H2.dimension(0),H2.dimension(1));
-////    cache.multiham_sq_sub = Eigen::Map<MType>(H2.data(),H2.dimension(0),H2.dimension(1));
-////    return cache.multiham_sq_sub.value();
-//}
-//
+    if(truncation_error.empty()){
+        tools::log->debug("Resizing truncation_error container to size: {}", get_length()+1);
+        truncation_error = std::vector<double>(get_length()+1, 0.0);
+    }
+    truncation_error[left_site + 1] = error;
+}
+
+void class_finite_state::set_truncation_error(double error){
+    set_truncation_error(get_position(),error);
+}
+
+double class_finite_state::get_truncation_error(size_t left_site) const {
+    if(truncation_error.empty() or truncation_error.size() < get_length()+1){
+        tools::log->warn("Truncation error container hasn't been initialized! You called this function prematurely");
+        return std::numeric_limits<double>::infinity();
+    }
+    return truncation_error[left_site+1];
+}
+
+double class_finite_state::get_truncation_error() const {
+    return get_truncation_error(get_position());
+}
+
+
+const std::vector<double> & class_finite_state::get_truncation_errors() const {
+    return truncation_error;
+}
 
 void class_finite_state::unset_measurements()const {
     measurements = Measurements();

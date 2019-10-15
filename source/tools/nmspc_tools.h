@@ -84,10 +84,10 @@ namespace tools{
 
             extern Eigen::Tensor<Scalar,3> find_excited_state(const class_finite_state & state, const class_simulation_status & sim_status, OptMode optMode, OptSpace optSpace, OptType optType);
             extern Eigen::Tensor<Scalar,4> find_ground_state (const class_finite_state & state, std::string ritz = "SR");
-            extern void truncate_theta(Eigen::Tensor<Scalar,3> & theta, class_finite_state & state, long chi_, double SVDThreshold);
-            extern void truncate_left (Eigen::Tensor<Scalar,3> & theta, class_finite_state & state, long chi_, double SVDThreshold);
-            extern void truncate_right(Eigen::Tensor<Scalar,3> & theta, class_finite_state & state, long chi_, double SVDThreshold);
-            extern void truncate_theta(Eigen::Tensor<Scalar,4> & theta, class_finite_state & state, long chi_, double SVDThreshold);
+            extern void truncate_theta(Eigen::Tensor<Scalar,3> & theta, class_finite_state & state);
+            extern void truncate_left (Eigen::Tensor<Scalar,3> & theta, class_finite_state & state);
+            extern void truncate_right(Eigen::Tensor<Scalar,3> & theta, class_finite_state & state);
+            extern void truncate_theta(Eigen::Tensor<Scalar,4> & theta, class_finite_state & state);
         }
 
         namespace multisite{
@@ -144,35 +144,35 @@ namespace tools{
             extern double energy_variance_per_site                    (const class_finite_state & state);
 
             template<typename Derived>
-            double energy_minus_energy_reduced(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+            double energy_minus_energy_reduced(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){
                 constexpr int rank = Derived::NumIndices;
                 if constexpr (rank == 4) return twosite::energy_minus_energy_reduced(state,theta);
                 if constexpr (rank == 3) return multisite::energy_minus_energy_reduced(state,theta);
                 static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
             }
             template<typename Derived>
-            double energy(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+            double energy(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){
                 constexpr int rank = Derived::NumIndices;
                 if constexpr (rank == 4) return twosite::energy(state,theta);
                 if constexpr (rank == 3) return multisite::energy(state,theta);
                 static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
             }
             template<typename Derived>
-            double energy_per_site(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+            double energy_per_site(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){
                 constexpr int rank = Derived::NumIndices;
                 if constexpr (rank == 4) return twosite::energy_per_site(state,theta);
                 if constexpr (rank == 3) return multisite::energy_per_site(state,theta);
                 static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
             }
             template<typename Derived>
-            double energy_variance(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+            double energy_variance(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){
                 constexpr int rank = Derived::NumIndices;
                 if constexpr (rank == 4) return twosite::energy_variance(state,theta);
                 if constexpr (rank == 3) return multisite::energy_variance(state,theta);
                 static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
             }
             template<typename Derived>
-            double energy_variance_per_site(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::WriteAccessors> & theta){
+            double energy_variance_per_site(const class_finite_state & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){
                 constexpr int rank = Derived::NumIndices;
                 if constexpr (rank == 4) return twosite::energy_variance_per_site(state,theta);
                 if constexpr (rank == 3) return multisite::energy_variance_per_site(state,theta);
@@ -237,7 +237,7 @@ namespace tools{
         namespace opt{
             extern Eigen::Tensor<Scalar,4> find_ground_state(const class_infinite_state & state, std::string ritz = "SR");
             extern Eigen::Tensor<Scalar,4> time_evolve_theta(const class_infinite_state & state, const Eigen::Tensor<Scalar, 4> &U);
-            extern void truncate_theta(Eigen::Tensor<Scalar,4> &theta, class_infinite_state & state, long chi_, double SVDThreshold);
+            extern void truncate_theta(Eigen::Tensor<Scalar,4> &theta, class_infinite_state & state);
 
         }
 

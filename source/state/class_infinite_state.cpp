@@ -72,7 +72,16 @@ size_t class_infinite_state::get_length() const {
 
 size_t class_infinite_state::get_position() const { return Lblock->sites;}
 
-size_t class_infinite_state::get_chi() const {return MPS->chiC();}
+long class_infinite_state::get_chi() const {return MPS->chiC();}
+
+long class_infinite_state::get_chi_lim()  const {
+    //Should get the the current limit on allowed bond dimension
+    return chi_lim;
+}
+void class_infinite_state::set_chi_lim(long chi_lim_){
+    //Should set the the current limit on allowed bond dimension
+    chi_lim = chi_lim_;
+}
 
 Eigen::DSizes<long,4> class_infinite_state::dimensions()const{return MPS->dimensions();}
 

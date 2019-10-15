@@ -66,10 +66,8 @@ public:
     virtual void   print_status_full()                                                                        = 0;
     virtual void   reset_to_random_state(const std::string parity = "random", int seed_state = -1)            = 0;
     virtual void   clear_saturation_status()                                                                  = 0;
-
-
+    virtual void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                 = 0;
     //common functions
-    virtual void update_bond_dimension();
     void print_profiling();
     double process_memory_in_mb(std::string name);
 

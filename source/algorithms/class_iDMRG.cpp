@@ -9,7 +9,6 @@
 #include <state/class_infinite_state.h>
 #include <tools/nmspc_tools.h>
 #include <math/nmspc_math.h>
-#include <spdlog/spdlog.h>
 #include "class_iDMRG.h"
 using namespace std;
 using namespace Textra;
@@ -61,7 +60,7 @@ void class_iDMRG::single_DMRG_step(std::string ritz){
     log->trace("Starting infinite DMRG moves");
     t_run.tic();
     Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
-    tools::infinite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
+    tools::infinite::opt::truncate_theta(theta, *state);
     state->unset_measurements();
     t_run.toc();
     sim_status.wall_time = t_tot.get_age();
@@ -77,12 +76,12 @@ void class_iDMRG::check_convergence(){
     check_convergence_variance_mpo();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
-    update_bond_dimension();
+    update_bond_dimension_limit();
     if(sim_status.entanglement_has_converged and
        sim_status.variance_mpo_has_converged and
        sim_status.variance_ham_has_converged and
        sim_status.variance_mom_has_converged and
-       sim_status.bond_dimension_has_reached_max)
+       sim_status.chi_lim_has_reached_chi_max)
     {
         sim_status.simulation_has_converged = true;
     }

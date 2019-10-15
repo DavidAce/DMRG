@@ -68,10 +68,10 @@ void tools::common::views::compute_mps_components(const class_infinite_state & s
     std::complex<double> normalization_evn = sqrt((eigvec_L_evn.transpose() * eigvec_R_evn).sum());
     std::complex<double> normalization_odd = sqrt((eigvec_L_odd.transpose() * eigvec_R_odd).sum());
 
-    r_evn = Matrix_to_Tensor2(eigvec_R_evn).reshape(array2{state.MPS->chiB(),state.MPS->chiB()})/normalization_evn;
-    l_evn = Matrix_to_Tensor2(eigvec_L_evn).reshape(array2{state.MPS->chiB(),state.MPS->chiB()})/normalization_evn;
-    r_odd = Matrix_to_Tensor2(eigvec_R_odd).reshape(array2{state.MPS->chiC(),state.MPS->chiC()})/normalization_odd;
-    l_odd = Matrix_to_Tensor2(eigvec_L_odd).reshape(array2{state.MPS->chiC(),state.MPS->chiC()})/normalization_odd;
+    r_evn = MatrixTensorMap(eigvec_R_evn).reshape(array2{state.MPS->chiB(),state.MPS->chiB()})/normalization_evn;
+    l_evn = MatrixTensorMap(eigvec_L_evn).reshape(array2{state.MPS->chiB(),state.MPS->chiB()})/normalization_evn;
+    r_odd = MatrixTensorMap(eigvec_R_odd).reshape(array2{state.MPS->chiC(),state.MPS->chiC()})/normalization_odd;
+    l_odd = MatrixTensorMap(eigvec_L_odd).reshape(array2{state.MPS->chiC(),state.MPS->chiC()})/normalization_odd;
 
     theta                = get_theta(state);
     theta_sw             = get_theta_swapped(state);

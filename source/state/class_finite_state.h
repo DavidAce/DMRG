@@ -44,7 +44,7 @@ private:
     int num_sweeps   = 0;
     int num_moves    = 0;
     int direction    = 1;
-    long chi_max     = 0;
+    long chi_lim     = 0;
 public:
     class_finite_state()=default;
     ~class_finite_state();
@@ -62,7 +62,8 @@ public:
     std::list<std::unique_ptr<class_model_base>>     MPO_L;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
     std::list<std::unique_ptr<class_model_base>>     MPO_R;     /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
-    const TType<1> & center_bond() const;
+    const TType<1> & midchain_bond() const;
+    const TType<1> & current_bond() const;
     void do_all_measurements();
 
 
@@ -79,8 +80,8 @@ public:
 
 
 
-    long   get_chi_max()                        const;
-    void   set_chi_max(long chi_max_);
+    long   get_chi_lim()                        const;
+    void   set_chi_lim(long chi_lim_);
     void set_positions();
     size_t get_length()                         const;
     size_t get_position()                       const;
@@ -137,14 +138,15 @@ public:
     std::pair<std::reference_wrapper<const class_environment>     , std::reference_wrapper<const class_environment>>      get_multienv ()     const;
     std::pair<std::reference_wrapper<const class_environment_var> , std::reference_wrapper<const class_environment_var>>  get_multienv2()     const;
 
-//    TType<6>   get_multi_hamiltonian() const;
-//    TType<6>   get_multi_hamiltonian2() const;
-//    MType get_multi_hamiltonian_matrix() const;
-//    MType get_multi_hamiltonian2_matrix() const;
-//    MType get_multi_hamiltonian2_subspace_matrix(const MType & eigvecs ) const;
-//
-
+    private:
     std::vector<double>  truncation_error;
+    public:
+    void set_truncation_error(size_t left_site, double error);
+    void set_truncation_error(double error);
+    double get_truncation_error(size_t left_site)const;
+    double get_truncation_error()const;
+    const std::vector<double> & get_truncation_errors() const;
+
     private:
     struct Measurements {
         std::optional<size_t>               length                                  = {};

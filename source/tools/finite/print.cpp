@@ -34,7 +34,7 @@ void tools::finite::print::print_state(const class_finite_state &state){
     using namespace Textra;
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
-    auto & MPS_C  = state.center_bond();
+    auto & MPS_C  = state.midchain_bond();
     auto & ENV_L  = state.ENV_L;
     auto & ENV_R  = state.ENV_R;
 
@@ -77,7 +77,7 @@ void tools::finite::print::print_state_compact(const class_finite_state &state){
     using namespace Textra;
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
-    auto & MPS_C  = state.center_bond();
+    auto & MPS_C  = state.midchain_bond();
     auto & ENV_L  = state.ENV_L;
     auto & ENV_R  = state.ENV_R;
 

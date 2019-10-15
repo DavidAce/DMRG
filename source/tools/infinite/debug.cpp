@@ -7,7 +7,6 @@
 #include <tools/nmspc_tools.h>
 #include <state/class_infinite_state.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <spdlog/spdlog.h>
 
 void tools::infinite::debug::check_integrity(const class_infinite_state & state)
 {

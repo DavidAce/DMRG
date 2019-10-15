@@ -13,8 +13,8 @@ void tools::common::io::write_simulation_status(const class_simulation_status &s
     h5ppFile.writeDataset(sim_status.step                          ,sim_name + "/sim_status/step");
     h5ppFile.writeDataset(sim_status.position                      ,sim_name + "/sim_status/position");
     h5ppFile.writeDataset(sim_status.num_resets                    ,sim_name + "/sim_status/num_resets");
-    h5ppFile.writeDataset(sim_status.chi_temp                      ,sim_name + "/sim_status/chi_temp");
     h5ppFile.writeDataset(sim_status.chi_max                       ,sim_name + "/sim_status/chi_max");
+    h5ppFile.writeDataset(sim_status.chi_lim                       ,sim_name + "/sim_status/chi_lim");
     h5ppFile.writeDataset(sim_status.min_sweeps                    ,sim_name + "/sim_status/min_sweeps");
     h5ppFile.writeDataset(sim_status.energy_min                    ,sim_name + "/sim_status/energy_min");
     h5ppFile.writeDataset(sim_status.energy_max                    ,sim_name + "/sim_status/energy_max");
@@ -34,7 +34,7 @@ void tools::common::io::write_simulation_status(const class_simulation_status &s
     h5ppFile.writeDataset(sim_status.simulation_has_succeeded      ,sim_name + "/sim_status/simulation_has_succeeded");
     h5ppFile.writeDataset(sim_status.simulation_has_got_stuck      ,sim_name + "/sim_status/simulation_has_got_stuck");
     h5ppFile.writeDataset(sim_status.simulation_has_to_stop        ,sim_name + "/sim_status/simulation_has_to_stop");
-    h5ppFile.writeDataset(sim_status.bond_dimension_has_reached_max,sim_name + "/sim_status/bond_dimension_has_reached_max");
+    h5ppFile.writeDataset(sim_status.chi_lim_has_reached_chi_max, sim_name + "/sim_status/chi_lim_has_reached_chi_max");
     h5ppFile.writeDataset(sim_status.entanglement_has_converged    ,sim_name + "/sim_status/entanglement_has_converged");
     h5ppFile.writeDataset(sim_status.entanglement_has_saturated    ,sim_name + "/sim_status/entanglement_has_saturated");
     h5ppFile.writeDataset(sim_status.variance_mpo_saturated_for    ,sim_name + "/sim_status/variance_mpo_saturated_for");
@@ -61,8 +61,8 @@ class_simulation_status tools::common::io::load_sim_status_from_hdf5 (const h5pp
         h5ppFile.readDataset(sim_status.step                           , sim_name + "/sim_status/step");
         h5ppFile.readDataset(sim_status.position                       , sim_name + "/sim_status/position");
         h5ppFile.readDataset(sim_status.num_resets                     , sim_name + "/sim_status/num_resets");
-        h5ppFile.readDataset(sim_status.chi_temp                       , sim_name + "/sim_status/chi_temp");
-        h5ppFile.readDataset(sim_status.chi_max                        , sim_name + "/sim_status/chi_temp");
+        h5ppFile.readDataset(sim_status.chi_max                        , sim_name + "/sim_status/chi_max");
+        h5ppFile.readDataset(sim_status.chi_lim                        , sim_name + "/sim_status/chi_lim");
         h5ppFile.readDataset(sim_status.min_sweeps                     , sim_name + "/sim_status/min_sweeps");
         h5ppFile.readDataset(sim_status.energy_min                     , sim_name + "/sim_status/energy_min");
         h5ppFile.readDataset(sim_status.energy_max                     , sim_name + "/sim_status/energy_max");
@@ -82,7 +82,7 @@ class_simulation_status tools::common::io::load_sim_status_from_hdf5 (const h5pp
         h5ppFile.readDataset(sim_status.simulation_has_succeeded       , sim_name + "/sim_status/simulation_has_succeeded");
         h5ppFile.readDataset(sim_status.simulation_has_got_stuck       , sim_name + "/sim_status/simulation_has_got_stuck");
         h5ppFile.readDataset(sim_status.simulation_has_to_stop         , sim_name + "/sim_status/simulation_has_to_stop");
-        h5ppFile.readDataset(sim_status.bond_dimension_has_reached_max , sim_name + "/sim_status/bond_dimension_has_reached_max");
+        h5ppFile.readDataset(sim_status.chi_lim_has_reached_chi_max    , sim_name + "/sim_status/chi_lim_has_reached_chi_max");
         h5ppFile.readDataset(sim_status.entanglement_has_converged     , sim_name + "/sim_status/entanglement_has_converged");
         h5ppFile.readDataset(sim_status.entanglement_has_saturated     , sim_name + "/sim_status/entanglement_has_saturated");
         h5ppFile.readDataset(sim_status.variance_mpo_has_converged     , sim_name + "/sim_status/variance_mpo_has_converged");

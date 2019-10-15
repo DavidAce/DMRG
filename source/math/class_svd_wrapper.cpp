@@ -150,7 +150,7 @@ class_SVD::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor){
     if (tensor.dimension(0) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)");}
     if (tensor.dimension(1) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)");}
     Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-    return Textra::Matrix_to_Tensor2(mat.completeOrthogonalDecomposition().pseudoInverse() );
+    return Textra::MatrixTensorMap(mat.completeOrthogonalDecomposition().pseudoInverse() );
 }
 
 

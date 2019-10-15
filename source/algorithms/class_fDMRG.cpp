@@ -47,7 +47,7 @@ void class_fDMRG::run_simulation(){
             if (sim_status.simulation_has_converged)                 {stop_reason = StopReason::SUCCEEDED; break;}
             if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
         }
-        update_bond_dimension();
+        update_bond_dimension_limit();
         log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
         sim_status.iteration     = state->get_sweeps();
         sim_status.position      = state->get_position();
@@ -89,7 +89,7 @@ void class_fDMRG::check_convergence(){
         sim_status.simulation_has_converged = true;
     }
 
-    if (sim_status.bond_dimension_has_reached_max
+    if (sim_status.chi_lim_has_reached_chi_max
         and (  sim_status.variance_mpo_saturated_for >= max_saturation_iters
                or sim_status.entanglement_saturated_for >= max_saturation_iters)
             )

@@ -50,6 +50,38 @@ void class_algorithm_infinite::compute_observables(){
     state->do_all_measurements();
 }
 
+void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
+    if(not max_bond_dim.has_value()) {
+        log->debug("No max bond dim given, setting {}", chi_max());
+        max_bond_dim = chi_max();
+    }
+
+    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
+    if(not sim_status.chi_lim_has_reached_chi_max){
+        if(chi_grow()){
+            // Here the settings specify to grow the bond dimension limit progressively during the simulation
+            // Only do this if the simulation is stuck.
+            if(sim_status.simulation_has_got_stuck){
+                long chi_new_limit = std::min(max_bond_dim.value(), state->get_chi_lim() * 2);
+                log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
+                state->set_chi_lim(chi_new_limit);
+                clear_saturation_status();
+            }else{
+                log->debug("chi_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", state->get_chi_lim());
+            }
+        }else{
+            // Here the settings specify to just set the limit to maximum chi directly
+            log->debug("Setting bond dimension limit to maximum = {}", chi_max());
+            state->set_chi_lim(max_bond_dim.value());
+        }
+    }else{
+        log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", chi_max(),state->get_chi_lim());
+    }
+    sim_status.chi_max = max_bond_dim.value();
+    sim_status.chi_lim = state->get_chi_lim();
+}
+
+
 
 void class_algorithm_infinite::reset_to_random_state(const std::string parity, int seed_state) {
     log->trace("Resetting MPS to random product state");
@@ -59,6 +91,44 @@ void class_algorithm_infinite::reset_to_random_state(const std::string parity, i
     *state = tools::infinite::mps::set_random_state(*state,parity, seed_state);
     clear_saturation_status();
 }
+
+
+void class_algorithm_infinite::clear_saturation_status(){
+    log->trace("Clearing saturation status");
+
+    BS_vec.clear();
+    S_vec.clear();
+    XS_vec.clear();
+
+    B_mpo_vec.clear();
+    V_mpo_vec.clear();
+    X_mpo_vec.clear();
+    B_ham_vec.clear();
+    V_ham_vec.clear();
+    X_ham_vec.clear();
+    B_mom_vec.clear();
+    V_mom_vec.clear();
+    X_mom_vec.clear();
+
+    sim_status.entanglement_has_saturated      = false;
+    sim_status.variance_mpo_has_saturated      = false;
+    sim_status.variance_ham_has_saturated      = false;
+    sim_status.variance_mom_has_saturated      = false;
+
+    sim_status.variance_mpo_saturated_for = 0;
+    sim_status.variance_ham_saturated_for = 0;
+    sim_status.variance_mom_saturated_for = 0;
+
+
+    sim_status.entanglement_has_converged = false;
+    sim_status.variance_mpo_has_converged = false;
+    sim_status.variance_ham_has_converged = false;
+    sim_status.variance_mom_has_converged = false;
+
+    sim_status.chi_lim_has_reached_chi_max = false;
+    sim_status.simulation_has_to_stop      = false;
+}
+
 
 
 void class_algorithm_infinite::enlarge_environment(){
@@ -203,7 +273,7 @@ void class_algorithm_infinite::write_status(bool force){
 //            state->measurements.length.value(),
 //            sim_status.iteration,
 //            state->measurements.bond_dimension.value(),
-//            settings::idmrg::chi_max,
+//            settings::idmrg::chi_lim,
 //            state->measurements.energy_per_site.value(),
 //            state->measurements.energy_per_site_ham.value(),
 //            state->measurements.energy_per_site_mom.value(),
@@ -221,43 +291,6 @@ void class_algorithm_infinite::write_status(bool force){
 //    t_sto.toc();
 //}
 
-
-void class_algorithm_infinite::clear_saturation_status(){
-    log->trace("Clearing saturation status");
-
-    BS_vec.clear();
-    S_vec.clear();
-    XS_vec.clear();
-
-    B_mpo_vec.clear();
-    V_mpo_vec.clear();
-    X_mpo_vec.clear();
-    B_ham_vec.clear();
-    V_ham_vec.clear();
-    X_ham_vec.clear();
-    B_mom_vec.clear();
-    V_mom_vec.clear();
-    X_mom_vec.clear();
-
-    sim_status.entanglement_has_saturated      = false;
-    sim_status.variance_mpo_has_saturated      = false;
-    sim_status.variance_ham_has_saturated      = false;
-    sim_status.variance_mom_has_saturated      = false;
-
-    sim_status.variance_mpo_saturated_for = 0;
-    sim_status.variance_ham_saturated_for = 0;
-    sim_status.variance_mom_saturated_for = 0;
-
-
-
-    sim_status.entanglement_has_converged = false;
-    sim_status.variance_mpo_has_converged = false;
-    sim_status.variance_ham_has_converged = false;
-    sim_status.variance_mom_has_converged = false;
-
-    sim_status.bond_dimension_has_reached_max = false;
-    sim_status.simulation_has_to_stop         = false;
-}
 
 
 void class_algorithm_infinite::print_status_update() {

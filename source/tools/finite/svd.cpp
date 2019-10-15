@@ -22,7 +22,6 @@ void tools::finite::mps::normalize(class_finite_state & state){
         auto & MPS_R  = state.MPS_R;
         if(MPS_L.empty()) throw std::runtime_error("MPS_L is empty");
         if(MPS_R.empty()) throw std::runtime_error("MPS_R is empty");
-        size_t site = state.get_position();
 
         //Store the special LC bond in a temporary.
         Eigen::Tensor<Scalar,1> LC = MPS_L.back().get_LC();
@@ -35,7 +34,7 @@ void tools::finite::mps::normalize(class_finite_state & state){
                             .contract(state.MPS_L.back().get_M(), Textra::idx({1},{1}))
                             .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                             .shuffle(Textra::array4{1,0,2,3});
-            tools::finite::opt::truncate_theta(theta,state,state.get_chi_max(),settings::precision::SVDThreshold);
+            tools::finite::opt::truncate_theta(theta, state);
         }else{
             MPS_R.emplace_front(class_mps_site(MPS_L.back().get_M(), LC, MPS_L.back().get_position()));
             MPS_L.pop_back();
@@ -43,7 +42,7 @@ void tools::finite::mps::normalize(class_finite_state & state){
                     state.MPS_L.back().get_M()
                             .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                             .contract(Textra::asDiagonal(LC), Textra::idx({3},{0}));
-            tools::finite::opt::truncate_theta(theta,state,state.get_chi_max(),settings::precision::SVDThreshold);
+            tools::finite::opt::truncate_theta(theta, state);
         }
 
         if(MPS_L.empty()) throw std::runtime_error("MPS_L became empty");
@@ -60,7 +59,7 @@ void tools::finite::mps::normalize(class_finite_state & state){
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_finite_state & state, long chi_, double SVDThreshold){
+void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_finite_state & state){
     state.unset_measurements();
     if (state.active_sites.empty()) throw std::runtime_error("truncate_theta: No active sites to truncate");
     if (theta.size() == 0)          throw std::runtime_error("truncate_theta: Theta is empty");
@@ -84,10 +83,10 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_fi
     }
 
     if (state.get_direction() == 1){
-        tools::finite::opt::truncate_left(theta,state,chi_,SVDThreshold);
+        tools::finite::opt::truncate_left(theta,state);
 
     }else{
-        tools::finite::opt::truncate_right(theta,state,chi_,SVDThreshold);
+        tools::finite::opt::truncate_right(theta,state);
 
     }
     state.unset_measurements();
@@ -110,10 +109,10 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_fi
 
 
 
-void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_state & state, long chi_, double SVDThreshold){
+void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_state & state){
     tools::log->trace("Truncating multitheta from left to right");
     class_SVD SVD;
-    SVD.setThreshold(SVDThreshold);
+    SVD.setThreshold(settings::precision::SVDThreshold);
     using Scalar = class_finite_state::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     Eigen::Tensor<Scalar,4> theta4;
@@ -132,13 +131,8 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
         theta4 = V
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3})
                 .shuffle(Textra::array4{0,2,1,3});
-        std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4,chi_);
-        state.truncation_error[site+1] = SVD.get_truncation_error();
-        tools::log->trace("Truncation error site {:2} = {:12.8f}, chi = {:4}", site, std::log10(SVD.get_truncation_error()),S.dimension(0));
-
-//        Eigen::Tensor<Scalar,3> L_U = Textra::asDiagonalInversed(state.get_L(site)).contract(U,Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
-//        state.get_G(site)   = L_U;
-//        state.get_L(site+1) = S;
+        std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4,state.get_chi_lim());
+        state.set_truncation_error(site, SVD.get_truncation_error());
 
         state.get_MPS(site).set_M(U);
         state.get_MPS(site).unset_LC();
@@ -149,8 +143,7 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
 
         Eigen::Tensor<Scalar,2> leftID = state.get_MPS(site).get_M()
                 .contract(state.get_MPS(site).get_M().conjugate(), Textra::idx({0,1},{0,1}) );
-        auto leftIDmap = Textra::Tensor2_to_Matrix(leftID);
-        if(not leftIDmap.isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12.", site));
+        if(not Textra::TensorMatrixMap(leftID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12.", site));
 
 
 
@@ -170,10 +163,8 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
             //Always set LC on the last "A" matrix
             state.get_MPS(site).set_LC(S);
         }
-
+        tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
         active_sites.pop_front();
-
-
     }
 
 
@@ -188,24 +179,24 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
 
     Eigen::Tensor<Scalar,2> rightID = state.get_MPS(site).get_M()
             .contract(state.get_MPS(site).get_M().conjugate(), Textra::idx({0,2},{0,2}) );
-    auto rightIDmap = Textra::Tensor2_to_Matrix(rightID);
-    if(not rightIDmap.isIdentity(1e-12)) {
+    if(not Textra::TensorMatrixMap(rightID).isIdentity(1e-12)) {
         std::cout << "L site   : \n" << state.get_MPS(site).get_L() << std::endl;
         std::cout << "L site+1 : \n" << state.get_MPS(site+1).get_L() << std::endl;
 
         std::cout << "rightID: \n" << rightID << std::endl;
         throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
     }
+    tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
     tools::common::profile::t_svd.toc();
 
 
 }
 
 
-void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_state & state, long chi_, double SVDThreshold){
+void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_state & state){
     tools::log->trace("Truncating multitheta from right to left");
     class_SVD SVD;
-    SVD.setThreshold(SVDThreshold);
+    SVD.setThreshold(settings::precision::SVDThreshold);
     using Scalar = class_finite_state::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     Eigen::Tensor<Scalar,4> theta4;
@@ -225,7 +216,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
         theta4 = U
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3})
                 .shuffle(Textra::array4{0,2,1,3});
-        try {std::tie(U,S,V,norm) = SVD.schmidt_with_norm(theta4, chi_);}
+        try {std::tie(U,S,V,norm) = SVD.schmidt_with_norm(theta4, state.get_chi_lim());}
         catch(std::exception &ex){
             std::cerr << "U :\n" << U << std::endl;
             std::cerr << "S :\n" << S << std::endl;
@@ -235,11 +226,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
         }
 
 
-        state.truncation_error[site-1] = SVD.get_truncation_error();
-        tools::log->trace("Truncation error site {:2} = {:12.8f}, chi = {:4}", site, std::log10(SVD.get_truncation_error()),S.dimension(0));
-//        Eigen::Tensor<Scalar,3> V_L = V.contract(Textra::asDiagonalInversed(state.get_L(site+1)), Textra::idx({2},{0}));
-//        state.get_G(site) = V_L;
-//        state.get_L(site) = S;
+        state.set_truncation_error(site-1,SVD.get_truncation_error());
         state.get_MPS(site).set_M(V);
         state.get_MPS(site).unset_LC();
 
@@ -247,7 +234,6 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 
         if(reverse_active_sites.size() >= 3){
             Eigen::Tensor<Scalar,3> temp =  U.contract(Textra::asDiagonal(S), Textra::idx({2},{0}));
-//            U = Scalar(norm) * temp;
             U = temp;
             state.get_MPS(site-1).set_L(S);
 
@@ -263,6 +249,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
         }else{
             state.get_MPS(site-1).set_LC(S);
         }
+        tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
         reverse_active_sites.pop_front();
 
         if (not Eigen::Map<VectorType>(V.data(),V.size()).allFinite() )
@@ -270,8 +257,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 
         Eigen::Tensor<Scalar,2> rightID = state.get_MPS(site).get_M()
                 .contract(state.get_MPS(site).get_M().conjugate(), Textra::idx({0,2},{0,2}) );
-        auto rightIDmap = Textra::Tensor2_to_Matrix(rightID);
-        if(not rightIDmap.isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
+        if(not Textra::TensorMatrixMap(rightID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
 
     }
     size_t site = reverse_active_sites.front();
@@ -283,29 +269,38 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 
     Eigen::Tensor<Scalar,2> leftID = state.get_MPS(site).get_M_bare()
             .contract(state.get_MPS(site).get_M_bare().conjugate(), Textra::idx({0,1},{0,1}) );
-    auto leftIDmap = Textra::Tensor2_to_Matrix(leftID);
-    if(not leftIDmap.isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12", site));
+    if(not Textra::TensorMatrixMap(leftID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12", site));
+    tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
     tools::common::profile::t_svd.toc();
 
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_finite_state & state, long chi_, double SVDThreshold) {
+void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_finite_state & state) {
     tools::common::profile::t_svd.tic();
+    state.measurements.bond_dimensions         = std::nullopt;
+    state.measurements.bond_dimension_current  = std::nullopt;
+    state.measurements.bond_dimension_midchain = std::nullopt;
+    tools::log->trace("BEFORE SVD: All     bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
     class_SVD SVD;
-    SVD.setThreshold(SVDThreshold);
-    auto[U, S, V] = SVD.schmidt(theta, chi_);
-    state.truncation_error[state.get_position()+1] = SVD.get_truncation_error();
+    SVD.setThreshold(settings::precision::SVDThreshold);
+    auto[U, S, V] = SVD.schmidt(theta, state.get_chi_lim());
+    state.set_truncation_error(SVD.get_truncation_error());
     state.MPS_L.back().set_M(U);
     state.MPS_L.back().set_LC(S);
     state.MPS_R.front().set_M(V);
-    tools::log->trace("Truncation error site {:2} = {:12.8f}, chi = {:4}", state.get_position(), std::log10(SVD.get_truncation_error()),S.dimension(0));
+    state.measurements.bond_dimensions         = std::nullopt;
+    state.measurements.bond_dimension_current  = std::nullopt;
+    state.measurements.bond_dimension_midchain = std::nullopt;
+    tools::log->trace("AFTER  SVD: Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", state.get_position(), std::log10(state.get_truncation_error()),state.get_chi_lim(), state.current_bond().dimension(0));
+    tools::log->trace("AFTER  SVD: Current bond dimension : {}. S dimension: {}", tools::finite::measure::bond_dimension_current(state), S.dimension(0));
+    tools::log->trace("AFTER  SVD: All     bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
     tools::common::profile::t_svd.toc();
 }
 
 
 
-int tools::finite::mps::move_center_point(class_finite_state &  state){
+int tools::finite::mps::move_center_point(class_finite_state & state){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
 //    std::cout << "Current state -- Direction: " << direction << std::endl;
 //    std::cout << "HA: " << state.HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;
@@ -352,8 +347,7 @@ int tools::finite::mps::move_center_point(class_finite_state &  state){
                 .contract(state.MPS_L.back().get_M(), Textra::idx({1},{1}))
                 .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                 .shuffle(Textra::array4{1,0,2,3});
-        size_t bond_dimension = state.MPS_L.back().get_chiR();
-        tools::finite::opt::truncate_theta(theta,state,bond_dimension,settings::precision::SVDThreshold);
+        tools::finite::opt::truncate_theta(theta,state);
     }else{
 
         class_environment     R  = ENV_R.front();
@@ -372,8 +366,7 @@ int tools::finite::mps::move_center_point(class_finite_state &  state){
                 state.MPS_L.back().get_M()
                 .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                 .contract(Textra::asDiagonal(LC), Textra::idx({3},{0}));
-        size_t bond_dimension = state.MPS_L.back().get_chiR();
-        tools::finite::opt::truncate_theta(theta,state,bond_dimension,settings::precision::SVDThreshold);
+        tools::finite::opt::truncate_theta(theta,state);
     }
 
     assert(MPO_L.size() + MPO_R.size() == state.get_length());
