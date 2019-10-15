@@ -3,7 +3,6 @@
 //
 
 #include "ceres_direct_functor.h"
-#include <spdlog/spdlog.h>
 #include <general/class_tic_toc.h>
 #include <state/class_finite_state.h>
 #include <state/class_environment.h>
@@ -144,7 +143,7 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_finite_state
 
         // Sanity check
         t_opt->tic();
-        auto theta_san      = Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
+        auto theta_san      = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
         double energy_san   = tools::finite::measure::multisite::energy_per_site(state,theta_san);
         double variance_san = tools::finite::measure::multisite::energy_variance_per_site(state,theta_san);
         t_opt->toc();
@@ -171,7 +170,7 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_finite_state
     tools::common::profile::t_opt.toc();
 
     tools::log->debug("Returning new theta from DIRECT optimization");
-    return  Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
+    return  Textra::MatrixTensorMap(theta_new, state.active_dimensions());
 
 
 

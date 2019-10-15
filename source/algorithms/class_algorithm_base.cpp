@@ -198,24 +198,24 @@ class_algorithm_base::check_saturation_using_slope2(
 }
 
 
-void class_algorithm_base::update_bond_dimension(){
-    sim_status.chi_max = chi_max();
-    if(not chi_grow() or sim_status.bond_dimension_has_reached_max or sim_status.chi_temp == chi_max() ){
-        sim_status.chi_temp = chi_max();
-        sim_status.bond_dimension_has_reached_max = true;
-    }
-    if(not sim_status.simulation_has_converged
-       and sim_status.simulation_has_saturated
-       and sim_status.chi_temp < chi_max()){
-        log->trace("Updating bond dimension");
-        sim_status.chi_temp = std::min(chi_max(), sim_status.chi_temp * 2);
-        log->info("New chi = {}", sim_status.chi_temp);
-        clear_saturation_status();
-    }
-    if(sim_status.chi_temp == chi_max()){
-        sim_status.bond_dimension_has_reached_max = true;
-    }
-}
+//void class_algorithm_base::update_bond_dimension_limit(std::optional<long> max_bond_dim){
+//    sim_status.chi_lim = chi_max();
+//    if(not chi_grow() or sim_status.chi_lim_has_reached_chi_max or sim_status.chi_temp == chi_max() ){
+//        sim_status.chi_temp = chi_max();
+//        sim_status.chi_lim_has_reached_chi_max = true;
+//    }
+//    if(not sim_status.simulation_has_converged
+//       and sim_status.simulation_has_saturated
+//       and sim_status.chi_temp < chi_max()){
+//        log->trace("Updating bond dimension");
+//        sim_status.chi_temp = std::min(chi_max(), sim_status.chi_temp * 2);
+//        log->info("New chi = {}", sim_status.chi_temp);
+//        clear_saturation_status();
+//    }
+//    if(sim_status.chi_temp == chi_max()){
+//        sim_status.chi_lim_has_reached_chi_max = true;
+//    }
+//}
 
 
 

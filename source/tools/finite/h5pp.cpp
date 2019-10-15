@@ -11,7 +11,6 @@
 #include <simulation/nmspc_settings.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <h5pp/h5pp.h>
 
@@ -59,10 +58,10 @@ void tools::finite::io::write_bond_matrices(const class_finite_state & state, h5
     for (size_t i = 0; i < state.get_length(); i++){
         h5ppFile.writeDataset(state.get_MPS(i).get_L(),prefix_path + "/state/mps/L_" + std::to_string(i),extendable);
         if (i == middle){
-            h5ppFile.writeDataset(state.center_bond(),prefix_path + "/state/mps/L_C",extendable);
+            h5ppFile.writeDataset(state.midchain_bond(), prefix_path + "/state/mps/L_C", extendable);
         }
     }
-    h5ppFile.writeDataset(state.truncation_error, prefix_path + "/state/truncation_error",extendable);
+    h5ppFile.writeDataset(state.get_truncation_error(), prefix_path + "/state/truncation_error",extendable);
 }
 
 
@@ -73,7 +72,7 @@ void tools::finite::io::write_bond_matrix(const class_finite_state & state, h5pp
     bool extendable = internals::make_extendable_dataset(prefix_path);
     auto middle = (size_t) (state.get_length() / 2);
     h5ppFile.writeDataset(state.get_MPS(middle).get_LC(),prefix_path + "/state/mps/L_C",extendable);
-    h5ppFile.writeDataset(state.truncation_error[middle], prefix_path + "/state/truncation_error",extendable);
+    h5ppFile.writeDataset(state.get_truncation_error(middle), prefix_path + "/state/truncation_error",extendable);
 }
 
 void tools::finite::io::write_full_mps(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path)
@@ -211,7 +210,7 @@ class_finite_state tools::finite::io::load_state_from_hdf5(const h5pp::File & h5
                 state.MPO_R.emplace_back(class_model_factory::create_mpo(i,model_type,Hamiltonian_params.row(i)));
             }
         }
-        h5ppFile.readDataset(state.center_bond()    , prefix_path + "/state/mps/L_C");
+        h5ppFile.readDataset(state.midchain_bond()    , prefix_path + "/state/mps/L_C");
         if (state.MPS_L.size() + state.MPS_R.size() != (size_t)sites){
             throw std::runtime_error("Number of sites loaded does not match the number of sites advertised by the output file");
         }

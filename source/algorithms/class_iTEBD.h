@@ -25,7 +25,7 @@ public:
     void run_simulation()                                   final;
     void run_preprocessing()                                final;
     void run_postprocessing()                               final;
-    void single_TEBD_step(long chi_max);
+    void single_TEBD_step();
     void check_convergence_time_step();
     void check_convergence()                                final;
     void write_logs(bool force = false)                     final;

@@ -11,7 +11,6 @@
 #include <model/class_model_base.h>
 #include <math/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <spdlog/spdlog.h>
 #include <h5pp/h5pp.h>
 #include "class_iTEBD.h"
 using namespace std;
@@ -42,7 +41,7 @@ void class_iTEBD::run_preprocessing() {
 void class_iTEBD::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(sim_status.iteration < settings::itebd::max_steps and not sim_status.simulation_has_converged) {
-        single_TEBD_step(sim_status.chi_temp);
+        single_TEBD_step();
         sim_status.phys_time += sim_status.delta_t;
         write_measurements();
         write_state();
@@ -62,7 +61,7 @@ void class_iTEBD::run_postprocessing(){
     t_pos.toc();
 }
 
-void class_iTEBD::single_TEBD_step(long chi){
+void class_iTEBD::single_TEBD_step(){
 /*!
  * \fn single_TEBD_step(class_superblock &state)
  * \brief infinite Time evolving block decimation.
@@ -70,7 +69,7 @@ void class_iTEBD::single_TEBD_step(long chi){
     t_run.tic();
     for (auto &U: unitary_time_evolving_operators){
         Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::time_evolve_theta(*state ,U);
-        tools::infinite::opt::truncate_theta(theta, *state, chi, settings::precision::SVDThreshold);
+        tools::infinite::opt::truncate_theta(theta, *state);
         if (&U != &unitary_time_evolving_operators.back()) {
             state->swap_AB();        }
     }
@@ -87,12 +86,12 @@ void class_iTEBD::check_convergence(){
     check_convergence_entg_entropy();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
-    update_bond_dimension();
+    update_bond_dimension_limit();
     check_convergence_time_step();
     if(sim_status.entanglement_has_converged and
        sim_status.variance_ham_has_converged and
        sim_status.variance_mom_has_converged and
-       sim_status.bond_dimension_has_reached_max and
+       sim_status.chi_lim_has_reached_chi_max and
        sim_status.time_step_has_converged)
     {
         sim_status.simulation_has_converged = true;
@@ -103,7 +102,7 @@ void class_iTEBD::check_convergence(){
 void class_iTEBD::check_convergence_time_step(){
     if(sim_status.delta_t <= settings::itebd::delta_tmin){
         sim_status.time_step_has_converged = true;
-    }else if (sim_status.bond_dimension_has_reached_max and sim_status.entanglement_has_converged) {
+    }else if (sim_status.chi_lim_has_reached_chi_max and sim_status.entanglement_has_converged) {
         sim_status.delta_t = std::max(settings::itebd::delta_tmin, sim_status.delta_t * 0.5);
         unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(-sim_status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
 //        state->H->update_evolution_step_size(-sim_status.delta_t, settings::itebd::suzuki_order);
@@ -120,7 +119,7 @@ void class_iTEBD::check_convergence_time_step(){
 //    log_itebd->append_record(
 //            sim_status.iteration,
 //            state->measurements.bond_dimension.value(),
-//            settings::itebd::chi_max,
+//            settings::itebd::chi_lim,
 //            sim_status.delta_t,
 //            state->measurements.energy_per_site.value(),
 //            state->measurements.energy_per_site_ham.value(),

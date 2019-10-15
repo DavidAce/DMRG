@@ -57,6 +57,7 @@ size_t class_model_base::get_position() const{
 Eigen::MatrixXcd class_model_base::MPO_matrix_view(){
     auto rows = MPO().dimension(0)*MPO().dimension(2);
     auto cols = MPO().dimension(1)*MPO().dimension(3);
-    Eigen::Tensor<Scalar,4> MPO_temp = MPO().shuffle(Textra::array4{0,2,1,3});
-    return Textra::Tensor_to_Matrix<Scalar>(MPO_temp, rows ,cols);
+    Eigen::Tensor<Scalar,2> MPO_temp = MPO().shuffle(Textra::array4{0,2,1,3}).reshape(Textra::array2{rows,cols});
+    return Eigen::Map<Eigen::MatrixXcd>(MPO_temp.data(), rows,cols);
+//    return Textra::Tensor_to_Matrix_Map<Scalar>(MPO_temp, rows ,cols);
 }

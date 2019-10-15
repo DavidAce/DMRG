@@ -7,7 +7,6 @@
 #include <tools/nmspc_tools.h>
 #include <state/class_finite_state.h>
 #include <simulation/nmspc_settings.h>
-#include <spdlog/fmt/bundled/ranges.h>
 
 
 Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_finite_state &state, const std::list<size_t> &list_of_sites){

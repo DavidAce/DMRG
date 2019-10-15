@@ -9,8 +9,6 @@
 #include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <iomanip>
-#include <spdlog/spdlog.h>
-#include <spdlog/fmt/bundled/ranges.h>
 #include <general/nmspc_random_numbers.h>
 
 
@@ -179,7 +177,7 @@ double tools::finite::ops::overlap(const class_finite_state & state1, const clas
         overlap = temp;
     }
 
-    double norm_chain = std::real(Textra::Tensor2_to_Matrix(overlap).trace());
+    double norm_chain = std::real(Textra::TensorMatrixMap(overlap).trace());
 //    std::cout << "Overlap state1 and state2: " << std::setprecision(16) << norm_chain << std::endl;
     return norm_chain;
 }

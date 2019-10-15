@@ -20,8 +20,8 @@ struct status_data{
     size_t step                           = 0; //How many dmrg steps have been taken (each step may cover multiple sites)
     size_t position                       = 0;
     size_t num_resets                     = 0;
-    long   chi_temp                       = 16;
     long   chi_max                        = 16;
+    long   chi_lim                        = 16;
     size_t min_sweeps                     = 2 ;
     double energy_min                     = 0;
     double energy_max                     = 0;
@@ -41,7 +41,7 @@ struct status_data{
     bool   simulation_has_succeeded       = false;
     bool   simulation_has_got_stuck       = false;
     bool   simulation_has_to_stop         = false;
-    bool   bond_dimension_has_reached_max = false;
+    bool   chi_lim_has_reached_chi_max = false;
     bool   entanglement_has_converged     = false;
     bool   entanglement_has_saturated     = false;
     bool   variance_mpo_has_converged     = false;

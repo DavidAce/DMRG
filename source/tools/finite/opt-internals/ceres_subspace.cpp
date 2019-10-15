@@ -9,12 +9,10 @@
 #include <math/class_eigsolver.h>
 #include <math/arpack_extra/matrix_product_stl.h>
 #include <math/arpack_extra/matrix_product_sparse.h>
-#include <spdlog/spdlog.h>
 #include <tools/finite/opt.h>
 #include <state/class_finite_state.h>
 #include <simulation/nmspc_settings.h>
 #include <general/nmspc_random_numbers.h>
-#include <spdlog/fmt/bundled/ranges.h>
 #include <ceres/ceres.h>
 
 using namespace tools::finite::opt;
@@ -94,7 +92,7 @@ get_best_variance_in_window(const class_finite_state &state, const Eigen::Matrix
     Eigen::VectorXd variances(eigvecs.cols());
     for(long idx = 0; idx < eigvecs.cols(); idx++){
         if (energies_per_site(idx) <=  ubound and energies_per_site(idx) >= lbound ) {
-            auto multitheta = Textra::Matrix_to_Tensor(eigvecs.col(idx), state.active_dimensions());
+            auto multitheta = Textra::MatrixTensorMap(eigvecs.col(idx), state.active_dimensions());
             variances(idx)  = tools::finite::measure::energy_variance_per_site(state, multitheta);
         }else{
             variances(idx) = std::numeric_limits<double>::infinity();
@@ -404,12 +402,12 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
             //Option A
 //            tools::log->trace("No overlapping states in energy range. Returning old theta");
             tools::log->trace("No overlapping states in energy range. Returning best overlap out of window");
-            auto   best_overlap_theta              = Textra::Matrix_to_Tensor(eigvecs.col(0), state.active_dimensions());
+            auto   best_overlap_theta              = Textra::MatrixTensorMap(eigvecs.col(0), state.active_dimensions());
             state.tag_active_sites_have_been_updated(false);
             return best_overlap_theta;
 //            return theta_old;
         }else{
-            auto   best_overlap_theta              = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
+            auto   best_overlap_theta              = Textra::MatrixTensorMap(eigvecs.col(best_overlap_idx), state.active_dimensions());
             double best_overlap_energy             = eigvals_per_site_unreduced(best_overlap_idx);
             double best_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
             tools::log->trace("Candidate {:2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
@@ -431,7 +429,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
 
     std::vector<Eigen::Tensor<Scalar,3>> initial_guess_thetas;// = {theta_old};
     for(auto &candidate : list_of_candidates){
-        auto   candidate_theta              = Textra::Matrix_to_Tensor(eigvecs.col(candidate.second), state.active_dimensions());
+        auto   candidate_theta              = Textra::MatrixTensorMap(eigvecs.col(candidate.second), state.active_dimensions());
         double candidate_energy             = eigvals_per_site_unreduced(candidate.second);
         double candidate_variance           = tools::finite::measure::energy_variance_per_site(state, candidate_theta);
         tools::log->trace("Candidate {:2} has good overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",candidate.second ,candidate.first ,candidate_energy  ,std::log10(candidate_variance) );
@@ -527,7 +525,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
             t_opt->tic();
 //            Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
             Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal() ).rowwise().sum().normalized();
-            auto theta_0_tensor      = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(theta_0.data(),state.active_dimensions());
+            auto theta_0_tensor      = Textra::MatrixTensorMap(theta_0,state.active_dimensions());
             double energy_0          = tools::finite::measure::energy_per_site(state,theta_0_tensor);
             double variance_0        = tools::finite::measure::energy_variance_per_site(state,theta_0_tensor);
             double overlap_0         = std::abs(theta_old_vec.dot(theta_0));
@@ -627,7 +625,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
 
             // Sanity check
             t_opt->tic();
-            auto theta_san      = Textra::Matrix_to_Tensor(theta_new, state.active_dimensions());
+            auto theta_san      = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
             double energy_san   = tools::finite::measure::energy_per_site(state,theta_san);
             double variance_san = tools::finite::measure::energy_variance_per_site(state,theta_san);
             t_opt->toc();
@@ -642,7 +640,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
 
         tools::common::profile::t_opt.toc();
         tools::log->debug("Fine tuning new theta after SUBSPACE optimization");
-        auto optimized_theta    = ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
+        auto optimized_theta    = ceres_direct_optimization(state, Textra::MatrixTensorMap(theta_new, state.active_dimensions()) ,sim_status, optType);
         auto optimized_energy   = tools::finite::measure::energy_per_site(state,optimized_theta);
         auto optimized_variance = tools::finite::measure::energy_variance_per_site(state,optimized_theta);
         auto optimized_vec      = Eigen::Map<const Eigen::VectorXcd>  (optimized_theta.data(),optimized_theta.size());

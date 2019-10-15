@@ -42,7 +42,7 @@ public:
     virtual void single_DMRG_step(std::string ritz);
     virtual bool store_wave_function()               = 0;
     void move_center_point();
-    void update_bond_dimension()                                                                final;
+    void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
     void run()                                                                                  final;
     void compute_observables()                                                                  final;
     void clear_saturation_status()                                                              override;

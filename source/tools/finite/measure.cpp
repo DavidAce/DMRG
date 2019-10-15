@@ -44,7 +44,7 @@ double tools::finite::measure::norm(const class_finite_state & state){
                 .contract(M.conjugate(), idx({0,1},{1,0}));
         chain = temp;
     }
-    double norm_chain = std::abs(Textra::Tensor2_to_Matrix(chain).trace());
+    double norm_chain = std::abs(Textra::TensorMatrixMap(chain).trace());
     if(std::abs(norm_chain - 1.0) > settings::precision::maxNormError){
         tools::log->warn("Measure: Norm far from unity: {:.16f}", norm_chain);
 //        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
@@ -56,14 +56,15 @@ double tools::finite::measure::norm(const class_finite_state & state){
 
 size_t tools::finite::measure::bond_dimension_current(const class_finite_state & state){
     if (state.measurements.bond_dimension_current){return state.measurements.bond_dimension_current.value();}
-    state.measurements.bond_dimension_current = state.center_bond().dimension(0);
+    if (state.MPS_L.back().get_chiR() != state.current_bond().dimension(0)) throw std::runtime_error("Center bond dimension mismatch!");
+    state.measurements.bond_dimension_current = state.current_bond().dimension(0);
     return state.measurements.bond_dimension_current.value();
 }
 
 
 size_t tools::finite::measure::bond_dimension_midchain(const class_finite_state & state){
     if (state.measurements.bond_dimension_midchain){return state.measurements.bond_dimension_midchain.value();}
-    state.measurements.bond_dimension_midchain = state.center_bond().dimension(0);
+    state.measurements.bond_dimension_midchain = state.midchain_bond().dimension(0);
     return state.measurements.bond_dimension_midchain.value();
 }
 
@@ -71,12 +72,11 @@ size_t tools::finite::measure::bond_dimension_midchain(const class_finite_state 
 std::vector<size_t> tools::finite::measure::bond_dimensions(const class_finite_state & state){
     if (state.measurements.bond_dimensions){return state.measurements.bond_dimensions.value();}
     state.measurements.bond_dimensions = std::vector<size_t>{};
-    for (auto &mps : state.MPS_L){
-        state.measurements.bond_dimensions.value().emplace_back(mps.get_L().dimension(0));
-    }
-    state.measurements.bond_dimensions.value().emplace_back(state.center_bond().dimension(0));
-    for (auto &mps : state.MPS_R){
-        state.measurements.bond_dimensions.value().emplace_back(mps.get_L().dimension(0));
+    for (size_t pos = 0; pos < state.get_length(); pos++){
+        state.measurements.bond_dimensions.value().emplace_back(state.get_MPS(pos).get_L().dimension(0));
+        if(state.get_MPS(pos).isCenter()){
+            state.measurements.bond_dimensions.value().emplace_back(state.get_MPS(pos).get_LC().dimension(0));
+        }
     }
     return state.measurements.bond_dimensions.value();
 }
@@ -201,10 +201,10 @@ double tools::finite::measure::energy_variance_per_site(const class_finite_state
 double tools::finite::measure::entanglement_entropy_current(const class_finite_state & state){
     if (state.measurements.entanglement_entropy_current){return state.measurements.entanglement_entropy_current.value();}
     tools::common::profile::t_ent.tic();
-    auto & LC = state.center_bond();
-    Eigen::Tensor<Scalar,0> SA  = -LC.square()
+    auto & LC = state.current_bond();
+    Eigen::Tensor<Scalar,0> SE  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
-    state.measurements.entanglement_entropy_current = std::real(SA(0));
+    state.measurements.entanglement_entropy_current = std::real(SE(0));
     tools::common::profile::t_ent.toc();
     return state.measurements.entanglement_entropy_current.value();
 }
@@ -212,10 +212,10 @@ double tools::finite::measure::entanglement_entropy_current(const class_finite_s
 double tools::finite::measure::entanglement_entropy_midchain(const class_finite_state & state){
     if (state.measurements.entanglement_entropy_midchain){return state.measurements.entanglement_entropy_midchain.value();}
     tools::common::profile::t_ent.tic();
-    auto & LC = state.MPS_L.back().get_LC();
-    Eigen::Tensor<Scalar,0> SA  = -LC.square()
+    auto & LC = state.midchain_bond();
+    Eigen::Tensor<Scalar,0> SE  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
-    state.measurements.entanglement_entropy_midchain =  std::real(SA(0));
+    state.measurements.entanglement_entropy_midchain =  std::real(SE(0));
     tools::common::profile::t_ent.toc();
     return state.measurements.entanglement_entropy_midchain.value();
 }
@@ -223,23 +223,21 @@ double tools::finite::measure::entanglement_entropy_midchain(const class_finite_
 std::vector<double> tools::finite::measure::entanglement_entropies(const class_finite_state & state){
     if (state.measurements.entanglement_entropies){return state.measurements.entanglement_entropies.value();}
     tools::common::profile::t_ent.tic();
-    std::vector<double> SA;
-    for (auto & mps : state.MPS_L) {
-        auto &L = mps.get_L();
-        Eigen::Tensor<Scalar, 0> SA_L = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
-        SA.emplace_back(std::real(SA_L(0)));
+    std::vector<double> entanglement_entropies;
+    for (size_t pos = 0; pos < state.get_length(); pos++){
+        auto &L = state.get_MPS(pos).get_L();
+        Eigen::Tensor<Scalar, 0> SE = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
+        entanglement_entropies.emplace_back(std::real(SE(0)));
+        if(state.get_MPS(pos).isCenter()){
+            auto &LC = state.get_MPS(pos).get_LC();
+            SE = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
+            entanglement_entropies.emplace_back(std::real(SE(0)));
+            state.measurements.entanglement_entropy_current =  std::real(SE(0));
+        }
     }
+    state.measurements.entanglement_entropies = entanglement_entropies;
     tools::common::profile::t_ent.toc();
-    state.measurements.entanglement_entropy_current = entanglement_entropy_current(state);
-    tools::common::profile::t_ent.tic();
-    SA.emplace_back(state.measurements.entanglement_entropy_current.value());
-    for (auto & mps : state.MPS_R) {
-        auto &L = mps.get_L();
-        Eigen::Tensor<Scalar, 0> SA_R = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
-        SA.emplace_back(std::real(SA_R(0)));
-    }
-    tools::common::profile::t_ent.toc();
-    return SA;
+    return state.measurements.entanglement_entropies.value();
 }
 
 
@@ -307,7 +305,7 @@ Eigen::Tensor<Scalar,1> tools::finite::measure::mps_wavefn(const class_finite_st
     }
 
     Eigen::Tensor<Scalar,1> mps_chain = chain.reshape(array1{chain.dimension(0)});
-    double norm_chain = Textra::Tensor2_to_Matrix(chain).norm();
+    double norm_chain = Textra::TensorVectorMap(chain).norm();
     if(std::abs(norm_chain - 1.0) > settings::precision::maxNormError){
         tools::log->warn("Norm far from unity: {}", norm_chain);
         throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));

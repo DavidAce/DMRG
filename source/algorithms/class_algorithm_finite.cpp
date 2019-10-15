@@ -7,7 +7,6 @@
 #include <state/class_finite_state.h>
 #include <io/class_hdf5_log_buffer.h>
 #include <math/nmspc_math.h>
-#include <spdlog/fmt/bundled/ranges.h>
 #include <general/nmspc_random_numbers.h>
 #include <h5pp/h5pp.h>
 #include <tools/nmspc_tools.h>
@@ -23,7 +22,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     log_measurements       = std::make_shared<class_hdf5_log<class_log_finite_dmrg_measurements>> (h5pp_file, sim_name + "/logs", "measurements", sim_name);
 
 
-    state->set_chi_max(sim_status.chi_max);
+    state->set_chi_lim(sim_status.chi_lim);
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
     tools::finite::mpo::randomize(*state,settings::model::seed_model);
@@ -124,7 +123,7 @@ void class_algorithm_finite::run()
 void class_algorithm_finite::run_preprocessing(){
     log->info("Running {} preprocessing",sim_name);
     t_pre.tic();
-    sim_status.chi_max = chi_max();
+    update_bond_dimension_limit(16);
     t_pre.toc();
     log->info("Finished {} preprocessing", sim_name);
 }
@@ -139,8 +138,7 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
     log->trace("Starting single xDMRG step");
     t_run.tic();
     Eigen::Tensor<Scalar,4> theta = tools::finite::opt::find_ground_state(*state, ritz);
-    tools::finite::opt::truncate_theta(theta, *state, sim_status.chi_temp, settings::precision::SVDThreshold);
-    move_center_point();
+    tools::finite::opt::truncate_theta(theta, *state);
     state->unset_measurements();
     t_run.toc();
     sim_status.wall_time = t_tot.get_age();
@@ -207,24 +205,35 @@ void class_algorithm_finite::move_center_point(){
     }
 }
 
-void class_algorithm_finite::update_bond_dimension(){
-    sim_status.chi_max = chi_max();
-    if(not chi_grow() or sim_status.bond_dimension_has_reached_max or sim_status.chi_temp == chi_max() ){
-        sim_status.chi_temp = chi_max();
-        sim_status.bond_dimension_has_reached_max = true;
+void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
+    if(not max_bond_dim.has_value()) {
+        log->debug("No max bond dim given, setting {}", chi_max());
+        max_bond_dim = chi_max();
     }
-    if(not sim_status.simulation_has_converged
-       and sim_status.simulation_has_saturated
-       and sim_status.chi_temp < chi_max()){
-        log->trace("Updating bond dimension");
-        sim_status.chi_temp = std::min(chi_max(), sim_status.chi_temp * 2);
-        log->info("New chi = {}", sim_status.chi_temp);
-        clear_saturation_status();
+    tools::log->debug("Bond dimension max comparison: {} {} {}", max_bond_dim.value(), chi_max(), settings::xdmrg::chi_max);
+    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
+    if(not sim_status.chi_lim_has_reached_chi_max){
+        if(chi_grow()){
+            // Here the settings specify to grow the bond dimension limit progressively during the simulation
+            // Only do this if the simulation is stuck.
+            if(sim_status.simulation_has_got_stuck){
+                long chi_new_limit = std::min(max_bond_dim.value(), state->get_chi_lim() * 2);
+                log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
+                state->set_chi_lim(chi_new_limit);
+                clear_saturation_status();
+            }else{
+                log->debug("chi_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", state->get_chi_lim());
+            }
+        }else{
+            // Here the settings specify to just set the limit to maximum chi directly
+            log->debug("Setting bond dimension limit to maximum = {}", chi_max());
+            state->set_chi_lim(max_bond_dim.value());
+        }
+    }else{
+        log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", chi_max(),state->get_chi_lim());
     }
-    if(sim_status.chi_temp == chi_max()){
-        sim_status.bond_dimension_has_reached_max = true;
-    }
-    state->set_chi_max(sim_status.chi_max);
+    sim_status.chi_max = max_bond_dim.value();
+    sim_status.chi_lim = state->get_chi_lim();
 }
 
 
@@ -233,7 +242,7 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
     log->trace("Resetting MPS to random product state in parity sector: {} with seed {}", parity_sector,seed_state);
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
-    state->set_chi_max(chi_max());
+    state->set_chi_lim(chi_max());
     tools::finite::mps::randomize(*state,parity_sector,seed_state, settings::model::use_pauli_eigvecs, settings::model::use_seed_state_as_enumeration);
 //    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
     clear_saturation_status();
@@ -453,7 +462,7 @@ void class_algorithm_finite::clear_saturation_status(){
     sim_status.variance_mpo_saturated_for     = 0;
 
 
-    sim_status.bond_dimension_has_reached_max = false;
+    sim_status.chi_lim_has_reached_chi_max = false;
     sim_status.simulation_has_to_stop         = false;
     sim_status.simulation_has_converged       = false;
     sim_status.simulation_has_saturated       = false;
@@ -583,7 +592,7 @@ void class_algorithm_finite::write_log_measurement(){
     measurements_entry.spin_component_sx               = state->measurements.spin_component_sx.value();
     measurements_entry.spin_component_sy               = state->measurements.spin_component_sy.value();
     measurements_entry.spin_component_sz               = state->measurements.spin_component_sz.value();
-    measurements_entry.truncation_error                = state->truncation_error[state->get_position()];
+    measurements_entry.truncation_error                = state->get_truncation_error();
     measurements_entry.wall_time                       = t_tot.get_age();
     log_measurements->append_record(measurements_entry);
 
@@ -649,8 +658,8 @@ void class_algorithm_finite::print_status_update() {
     }
     report << fmt::format("Sₑ(l): {:<10.8f} "                                 ,tools::finite::measure::entanglement_entropy_current(*state));
     report << fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] "             ,std::log10(tools::finite::measure::energy_variance_per_site(*state)), std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
-    report << fmt::format("χmax: {:<3} χ: {:<3} "                             ,chi_max(), tools::finite::measure::bond_dimension_current(*state));
-    report << fmt::format("log₁₀ trunc: {:<6.4f} "                            ,std::log10(state->truncation_error[state->get_position()]));
+    report << fmt::format("χmax: {:<3} χ: {:<3} "                             , state->get_chi_lim(), tools::finite::measure::bond_dimension_current(*state));
+    report << fmt::format("log₁₀ trunc: {:<6.4f} "                            ,std::log10(state->get_truncation_error(state->get_position())));
     report << fmt::format("con: [σ² {:<5} Sₑ {:<5}] "                         ,sim_status.variance_mpo_has_converged,sim_status.entanglement_has_converged);
     report << fmt::format("sat: [σ² {:<2} Sₑ {:<2}] "                         ,sim_status.variance_mpo_saturated_for,sim_status.entanglement_saturated_for);
     report << fmt::format("time: {:<8.2f}s "                                  ,t_tot.get_age());
@@ -680,7 +689,7 @@ void class_algorithm_finite::print_status_full(){
     log->info("Bond dimension maximum χmax        = {}"         , chi_max());
     log->info("Bond dimensions χ                  = {}"         , tools::finite::measure::bond_dimensions(*state));
     log->info("Entanglement entropies Sₑ          = {}"         , tools::finite::measure::entanglement_entropies(*state));
-    log->info("Truncation Errors                  = {}"         , state->truncation_error);
+    log->info("Truncation Errors                  = {}"         , state->get_truncation_errors());
     log->info("Simulation converged               = {:<}"       , sim_status.simulation_has_converged);
     log->info("Simulation saturated               = {:<}"       , sim_status.simulation_has_saturated);
     log->info("Simulation succeeded               = {:<}"       , sim_status.simulation_has_succeeded);

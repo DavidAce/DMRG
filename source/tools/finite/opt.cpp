@@ -4,7 +4,6 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
-#include <spdlog/spdlog.h>
 #include <tools/finite/opt.h>
 #include <state/class_finite_state.h>
 #include <simulation/class_simulation_status.h>

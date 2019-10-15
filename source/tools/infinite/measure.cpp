@@ -40,12 +40,12 @@ using namespace Textra;
 //    class_SVD<Scalar> SVD;
 //    SVD.setThreshold(settings::precision::SVDThreshold);
 
-//    long chi_max = 5*MPS_evolved->chiC();
+//    long chi_lim = 5*MPS_evolved->chiC();
 ////    t_temp2.tic();
 //    for (auto &Op: Op_vec) {
 //        //Evolve
 //        Eigen::Tensor<Scalar, 4> theta_evo = Op.contract(MPS_evolved->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
-//        auto[U, S, V] = SVD.schmidt(theta_evo,chi_max);
+//        auto[U, S, V] = SVD.schmidt(theta_evo,chi_lim);
 //        MPS_evolved->LC = S;
 //        Eigen::Tensor<Scalar,3> L_U =  asDiagonalInversed(MPS_evolved->MPS_A->get_L()).contract(U, idx({1}, {1})).shuffle(array3{1, 0, 2});
 //        Eigen::Tensor<Scalar,3> V_L =  V.contract(asDiagonalInversed(MPS_evolved->MPS_B->get_L()), idx({2}, {0}));
@@ -487,14 +487,14 @@ double tools::infinite::measure::energy_per_site_ham(const class_infinite_state 
 
     Eigen::Tensor<Scalar,0>
             E_evn = theta_evn_normalized
-            .contract(Matrix_to_Tensor(h_evn,2,2,2,2),  idx({0, 2}, {0, 1}))
+            .contract(MatrixTensorMap(h_evn,2,2,2,2)  , idx({0, 2}, {0, 1}))
             .contract(theta_evn_normalized.conjugate(), idx({2, 3}, {0, 2}))
             .contract(l_evn,                            idx({0, 2}, {0, 1}))
             .contract(r_evn,                            idx({0, 1}, {0, 1}));
 
     Eigen::Tensor<Scalar,0>
             E_odd  = theta_odd_normalized
-            .contract(Matrix_to_Tensor(h_odd,2,2,2,2) ,idx({0, 2}, {0, 1}))
+            .contract(MatrixTensorMap(h_odd,2,2,2,2)  ,idx({0, 2}, {0, 1}))
             .contract(theta_odd_normalized.conjugate(),idx({2, 3}, {0, 2}))
             .contract(l_odd,                           idx({0, 2}, {0, 1}))
             .contract(r_odd,                           idx({0, 1}, {0, 1}));
@@ -605,20 +605,20 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_infini
 
     Eigen::Tensor<Scalar,0>
             E_evn = theta_evn_normalized
-            .contract(Matrix_to_Tensor(h_evn,2,2,2,2),  idx({0, 2}, {0, 1}))
+            .contract(MatrixTensorMap(h_evn,2,2,2,2),   idx({0, 2}, {0, 1}))
             .contract(theta_evn_normalized.conjugate(), idx({2, 3}, {0, 2}))
             .contract(l_evn,                            idx({0, 2}, {0, 1}))
             .contract(r_evn,                            idx({0, 1}, {0, 1}));
 
     Eigen::Tensor<Scalar,0>
             E_odd  = theta_odd_normalized
-            .contract(Matrix_to_Tensor(h_odd,2,2,2,2) ,idx({0, 2}, {0, 1}))
+            .contract(MatrixTensorMap(h_odd,2,2,2,2)  ,idx({0, 2}, {0, 1}))
             .contract(theta_odd_normalized.conjugate(),idx({2, 3}, {0, 2}))
             .contract(l_odd,                           idx({0, 2}, {0, 1}))
             .contract(r_odd,                           idx({0, 1}, {0, 1}));
 
-    Eigen::Tensor<Scalar,4> h0 =  Matrix_to_Tensor((h_evn - E_evn(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
-    Eigen::Tensor<Scalar,4> h1 =  Matrix_to_Tensor((h_odd - E_odd(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
+    Eigen::Tensor<Scalar,4> h0 =  MatrixTensorMap((h_evn - E_evn(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
+    Eigen::Tensor<Scalar,4> h1 =  MatrixTensorMap((h_odd - E_odd(0)*MatrixType<Scalar>::Identity(4,4)).eval(), 2,2,2,2);
 
     Eigen::Tensor<Scalar,0> E2AB =
             theta_evn_normalized
@@ -706,8 +706,8 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_infini
 
     long sizeLA = state.MPS->chiC();
     long sizeLB = state.MPS->chiB();
-    Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_evn = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLB*sizeLB, sizeLA*sizeLA).eval()) - (transfer_matrix_evn-fixpoint_evn).reshape(array2{sizeLB*sizeLB, sizeLA*sizeLA});
-    Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_odd = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLA*sizeLA, sizeLB*sizeLB).eval()) - (transfer_matrix_odd-fixpoint_odd).reshape(array2{sizeLA*sizeLA, sizeLB*sizeLB});
+    Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_evn = MatrixTensorMap(MatrixType<Scalar>::Identity(sizeLB*sizeLB, sizeLA*sizeLA).eval()) - (transfer_matrix_evn-fixpoint_evn).reshape(array2{sizeLB*sizeLB, sizeLA*sizeLA});
+    Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_odd = MatrixTensorMap(MatrixType<Scalar>::Identity(sizeLA*sizeLA, sizeLB*sizeLB).eval()) - (transfer_matrix_odd-fixpoint_odd).reshape(array2{sizeLA*sizeLA, sizeLB*sizeLB});
     class_SVD SVD;
     SVD.setThreshold(settings::precision::SVDThreshold);
     Eigen::Tensor<Scalar,4> E_evn_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(array4{sizeLB,sizeLB,sizeLA,sizeLA});
