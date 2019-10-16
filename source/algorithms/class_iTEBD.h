@@ -2,8 +2,8 @@
 // Created by david on 2018-01-18.
 //
 
-#ifndef DMRG_CLASS_IMAGINARY_TEBD_H
-#define DMRG_CLASS_IMAGINARY_TEBD_H
+#pragma once
+
 #include "class_algorithm_infinite.h"
 class class_log_tebd;
 
@@ -37,5 +37,3 @@ public:
     bool   chi_grow()                                       final;
 };
 
-
-#endif //DMRG_CLASS_IMAGINARY_TEBD_H

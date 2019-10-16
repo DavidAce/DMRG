@@ -1,5 +1,5 @@
-#ifndef DMRG_CLASS_MPS_H
-#define DMRG_CLASS_MPS_H
+#pragma once
+
 
 #include <memory>
 #include "general/nmspc_tensor_extra.h"
@@ -98,5 +98,3 @@ public:
 
 };
 
-
-#endif //DMRG_CLASS_MPS_H

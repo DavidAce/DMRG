@@ -3,25 +3,12 @@
 //
 
 
-#include <iomanip>
 #include <simulation/nmspc_settings.h>
-#include <state/class_mps_2site.h>
 #include <state/class_finite_state.h>
 #include <tools/nmspc_tools.h>
 #include <tools/finite/opt.h>
-#include <math/nmspc_math.h>
-#include <general/nmspc_random_numbers.h>
-#include <general/nmspc_quantum_mechanics.h>
-#include <general/nmspc_tensor_extra.h>
-#include <math/nmspc_math.h>
-#include <h5pp/h5pp.h>
-#include <spdlog/fmt/bundled/ranges.h>
 #include "class_xDMRG.h"
 
-
-
-using namespace std;
-using namespace Textra;
 
 class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG, settings::xdmrg::num_sites) {
@@ -95,8 +82,6 @@ void class_xDMRG::single_xDMRG_step()
     using namespace tools::finite;
 
     t_run.tic();
-    debug::check_integrity(*state);
-
     log->trace("Starting single xDMRG step");
 //  log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
 
@@ -119,10 +104,9 @@ void class_xDMRG::single_xDMRG_step()
         case  opt::SPACE::DIRECT   : threshold = settings::precision::maxSizeDirect  ; break;
     }
 
-    debug::check_integrity(*state);
     Eigen::Tensor<Scalar,3> theta;
 
-    std::list<size_t> max_num_sites_list = {2,4,settings::precision::maxSitesMultiDmrg};
+    std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
     if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
 
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
@@ -375,6 +359,9 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
 
     int counter = 0;
     bool outside_of_window = true;
+    log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
+
+
     while(outside_of_window){
         reset_to_random_state(parity_sector);
         if (inflate) inflate_initial_state();
@@ -388,7 +375,7 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
         }
     }
-    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
+    log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
     clear_saturation_status();
     has_projected   = false;
     sim_status.num_resets++;
@@ -450,28 +437,6 @@ void class_xDMRG::find_energy_range() {
     log->info("Energy lbound  (per site) = {}", sim_status.energy_lbound);
     log->info("Energy ubound  (per site) = {}", sim_status.energy_ubound);
 
-
-
-
-//    int counterA = 0;
-//    int counterB = 0;
-//    tools::finite::mps::internals::seed_state_unused = true;
-//    bool outside_of_window = true;
-//    while(outside_of_window){
-//        reset_to_random_state(settings::model::initial_parity_sector);
-//        sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
-//        outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
-//        counterA++;
-//        counterB++;
-//        if(counterA >= 100){
-//            counterA = 0;
-//            if(sim_status.energy_dens_window >= 0.5){break;}
-//            sim_status.energy_dens_window = std::min(1.2*sim_status.energy_dens_window, 0.5);
-//            sim_status.energy_ubound       = sim_status.energy_target +  sim_status.energy_dens_window*(sim_status.energy_max-sim_status.energy_min);
-//            sim_status.energy_lbound       = sim_status.energy_target -  sim_status.energy_dens_window*(sim_status.energy_max-sim_status.energy_min);
-//        }
-//    }
-//    log->info("Energy initial (per site) = {} | density = {} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counterB );
 }
 
 

@@ -2,8 +2,7 @@
 // Created by david on 2018-10-29.
 //
 
-#ifndef CLASS_EIGSOLVER_H
-#define CLASS_EIGSOLVER_H
+#pragma once
 
 #include "math/arpack_extra/arpackpp_solver.h"
 #include "math/arpack_extra/matrix_recast.h"
@@ -552,6 +551,3 @@ void class_eigsolver::eigs_stl       (StlMatrixProduct<Scalar> &matrix_stl,
 
 
 
-
-
-#endif //EIGBENCH_CLASS_EIGSOLVER_ARPACK_2_H

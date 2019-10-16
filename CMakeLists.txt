@@ -190,6 +190,8 @@ endif()
 ###########################################
 ###  Add all source files recursively   ###
 ###########################################
+unset(SOURCES CACHE)
+unset(HEADERS CACHE)
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 file(GLOB_RECURSE HEADERS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})

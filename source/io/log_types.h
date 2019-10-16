@@ -2,8 +2,8 @@
 // Created by david on 2018-05-24.
 //
 
-#ifndef DMRG_LOG_TYPES_H
-#define DMRG_LOG_TYPES_H
+#pragma once
+
 
 #include <vector>
 #include <array>
@@ -534,4 +534,3 @@ public:
 
 
 
-#endif //DMRG_LOG_TYPES_H

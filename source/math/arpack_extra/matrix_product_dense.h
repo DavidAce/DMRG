@@ -2,8 +2,7 @@
 // Created by david on 2018-05-08.
 //
 
-#ifndef MATRIX_PRODUCT_DENSE_H
-#define MATRIX_PRODUCT_DENSE_H
+#pragma once
 
 #ifdef EIGEN_USE_BLAS
 #define EIGEN_USE_BLAS_SUSPEND
@@ -211,5 +210,3 @@ void DenseMatrixProduct<Scalar>::MultAx(Scalar* x_in, Scalar* x_out) {
 #endif
 
 
-
-#endif

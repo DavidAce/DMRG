@@ -3,7 +3,7 @@
 //
 
 #include "class_mps_site.h"
-
+#include <general/nmspc_tensor_extra.h>
 using Scalar = class_mps_site::Scalar;
 
 bool class_mps_site::isCenter()const{

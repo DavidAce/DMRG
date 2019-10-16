@@ -2,8 +2,8 @@
 // Created by david on 6/7/17.
 //
 
-#ifndef TENSOR_EXTRA_H
-#define TENSOR_EXTRA_H
+#pragma once
+
 #include <general/nmspc_omp.h> // For multithreaded computation
 #include <Eigen/Core>
 #include <Eigen/Sparse>
@@ -436,6 +436,3 @@ namespace Textra {
 }
 
 
-
-
-#endif //TENSOR_EXTRA_H

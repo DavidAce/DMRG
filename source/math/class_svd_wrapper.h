@@ -2,8 +2,7 @@
 // Created by david on 2017-10-04.
 //
 
-#ifndef DMRG_CLASS_SVD_H
-#define DMRG_CLASS_SVD_H
+#pragma once
 
 #include "general/nmspc_tensor_extra.h"
 #include <iomanip>
@@ -224,6 +223,3 @@ class_SVD::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor, long chi_max
 
 
 
-
-
-#endif //DMRG_CLASS_SVD_H

@@ -2,9 +2,7 @@
 // Created by david on 2018-01-18.
 //
 
-#ifndef DMRG_CLASS_INFINITE_DMRG_H
-#define DMRG_CLASS_INFINITE_DMRG_H
-
+#pragma once
 
 #include "class_algorithm_infinite.h"
 
@@ -30,5 +28,3 @@ public:
     bool    chi_grow()                                      final;
 };
 
-
-#endif //DMRG_CLASS_INFINITE_DMRG_H

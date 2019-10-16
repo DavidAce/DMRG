@@ -2,9 +2,7 @@
 // Created by david on 2018-01-31.
 //
 
-#ifndef DMRG_CLASS_FINITE_DMRG_H
-#define DMRG_CLASS_FINITE_DMRG_H
-
+#pragma once
 #include "class_algorithm_finite.h"
 class class_log_finite_dmrg_measurements;
 
@@ -35,5 +33,3 @@ public:
 };
 
 
-
-#endif //DMRG_CLASS_FINITE_DMRG_H

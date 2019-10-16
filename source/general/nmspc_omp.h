@@ -2,8 +2,8 @@
 // Created by david on 2019-10-06.
 //
 
-#ifndef NMSPC_OMP_H
-#define NMSPC_OMP_H
+#pragma once
+
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -22,4 +22,3 @@ namespace omp{
     #endif
 }
 
-#endif //NMSPC_OMP_H

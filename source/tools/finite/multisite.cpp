@@ -1,10 +1,9 @@
 //
 // Created by david on 2019-06-24.
 //
-
-
-#include <general/nmspc_omp.h> // For multithreaded computation
 #include <tools/nmspc_tools.h>
+#include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_omp.h> // For multithreaded computation
 #include <state/class_finite_state.h>
 #include <simulation/nmspc_settings.h>
 
@@ -39,7 +38,7 @@ size_t tools::finite::multisite::get_problem_size(const class_finite_state &stat
 
 
 std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_state &state, const size_t threshold, const size_t max_sites){
-    tools::log->trace("Activating sites. Threshold = {}, Max sites = {}", threshold,max_sites);
+    tools::log->trace("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}", state.get_position(), state.get_direction(), threshold,max_sites);
     using namespace Textra;
     int    direction = state.get_direction();
     size_t position  = state.get_position();
@@ -100,10 +99,10 @@ double tools::finite::measure::multisite::energy_minus_energy_reduced(const clas
 
     Eigen::Tensor<Scalar, 0>  E =
             envL
-                    .contract(multitheta,                               idx({0},{1}))
-                    .contract(multimpo,                                 idx({2,1},{2,0}))
-                    .contract(multitheta.conjugate(),                   idx({3,0},{0,1}))
-                    .contract(envR,                                     idx({0,2,1},{0,1,2}));
+                    .contract(multitheta,             Textra::idx({0},{1}))
+                    .contract(multimpo,               Textra::idx({2,1},{2,0}))
+                    .contract(multitheta.conjugate(), Textra::idx({3,0},{0,1}))
+                    .contract(envR,                   Textra::idx({0,2,1},{0,1,2}));
     if(abs(imag(E(0))) > 1e-10 ){
         tools::log->critical(fmt::format("Energy has an imaginary part: {:.16f} + i {:.16f}",std::real(E(0)), std::imag(E(0))));
 //        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));

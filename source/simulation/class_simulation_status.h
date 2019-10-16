@@ -2,8 +2,8 @@
 // Created by david on 2019-02-14.
 //
 
-#ifndef DMRG_CLASS_SIMULATION_STATUS_H
-#define DMRG_CLASS_SIMULATION_STATUS_H
+#pragma once
+
 
 #include <memory>
 #include <string>
@@ -66,5 +66,3 @@ public:
 };
 
 
-
-#endif //DMRG_CLASS_SIMULATION_STATUS_H

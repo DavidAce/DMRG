@@ -5,9 +5,7 @@
 #include "ceres_direct_functor.h"
 #include <general/class_tic_toc.h>
 #include <state/class_finite_state.h>
-#include <state/class_environment.h>
 #include <simulation/class_simulation_status.h>
-#include <general/nmspc_random_numbers.h>
 #include <simulation/nmspc_settings.h>
 #include <ceres/ceres.h>
 

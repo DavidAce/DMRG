@@ -16,6 +16,7 @@ void tools::finite::mps::normalize(class_finite_state & state){
     tools::common::profile::t_svd.tic();
     size_t num_moves = 2*(state.get_length()-2);
     tools::log->trace("Norm before normalization = {:.16f}", tools::finite::measure::norm(state));
+    tools::log->trace("Bond dimensions before normalization: {}", tools::finite::measure::bond_dimensions(state));
 
     for(size_t moves = 0; moves < num_moves; moves++){
         auto & MPS_L  = state.MPS_L;
@@ -56,6 +57,8 @@ void tools::finite::mps::normalize(class_finite_state & state){
     state.unset_measurements();
     tools::common::profile::t_svd.toc();
     tools::log->trace("Norm after normalization = {:.16f}", tools::finite::measure::norm(state));
+    tools::log->trace("Bond dimensions after  normalization: {}", tools::finite::measure::bond_dimensions(state));
+
 }
 
 
@@ -278,10 +281,6 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 
 void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_finite_state & state) {
     tools::common::profile::t_svd.tic();
-    state.measurements.bond_dimensions         = std::nullopt;
-    state.measurements.bond_dimension_current  = std::nullopt;
-    state.measurements.bond_dimension_midchain = std::nullopt;
-    tools::log->trace("BEFORE SVD: All     bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
     class_SVD SVD;
     SVD.setThreshold(settings::precision::SVDThreshold);
     auto[U, S, V] = SVD.schmidt(theta, state.get_chi_lim());
@@ -289,12 +288,7 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &t
     state.MPS_L.back().set_M(U);
     state.MPS_L.back().set_LC(S);
     state.MPS_R.front().set_M(V);
-    state.measurements.bond_dimensions         = std::nullopt;
-    state.measurements.bond_dimension_current  = std::nullopt;
-    state.measurements.bond_dimension_midchain = std::nullopt;
-    tools::log->trace("AFTER  SVD: Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", state.get_position(), std::log10(state.get_truncation_error()),state.get_chi_lim(), state.current_bond().dimension(0));
-    tools::log->trace("AFTER  SVD: Current bond dimension : {}. S dimension: {}", tools::finite::measure::bond_dimension_current(state), S.dimension(0));
-    tools::log->trace("AFTER  SVD: All     bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
+    state.unset_measurements();
     tools::common::profile::t_svd.toc();
 }
 

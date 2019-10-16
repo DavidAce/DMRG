@@ -2,8 +2,8 @@
 // Created by david on 2018-10-30.
 //
 
-#ifndef MATRIX_PRODUCT_HAMILTONIAN_H
-#define MATRIX_PRODUCT_HAMILTONIAN_H
+#pragma once
+
 #include <general/class_tic_toc.h>
 #include <array>
 #include <vector>
@@ -156,4 +156,3 @@ void DenseHamiltonianProduct<T>::MultAx(T* theta_in_, T* theta_out_) {
 //};
 
 
-#endif //MATRIX_PRODUCT_HAMILTONIAN_H

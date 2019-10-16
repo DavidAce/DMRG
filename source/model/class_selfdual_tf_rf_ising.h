@@ -2,8 +2,7 @@
 // Created by david on 2018-07-06.
 //
 
-#ifndef CLASS_SELFDUAL_TF_ISING_H
-#define CLASS_SELFDUAL_TF_ISING_H
+#pragma once
 
 #include <iostream>
 #include <general/nmspc_tensor_extra.h>
@@ -74,4 +73,3 @@ public:
 
 };
 
-#endif //DMRG_CLASS_SELFDUAL_TF_ISING_H

@@ -2,8 +2,7 @@
 // Created by david on 7/21/17.
 //
 
-#ifndef DMRG_CLASS_ENVIRONMENT_H
-#define DMRG_CLASS_ENVIRONMENT_H
+#pragma once
 
 #include <memory>
 
@@ -99,4 +98,3 @@ public:
         else{throw std::runtime_error("Position hasn't been set on environment var " + side);}
     }};
 
-#endif //DMRG_CLASS_ENVIRONMENT_H

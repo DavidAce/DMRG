@@ -2,8 +2,8 @@
 // Created by david on 2016-07-24.
 //
 
-#ifndef NMSPC_RANDOM_NUMBERS_H
-#define NMSPC_RANDOM_NUMBERS_H
+#pragma once
+
 #include <random>
 #include <iostream>
 #include <complex>
@@ -55,5 +55,3 @@ namespace rn{
 
 
 }
-
-#endif //NMSPC_RANDOM_NUMBERS_H
