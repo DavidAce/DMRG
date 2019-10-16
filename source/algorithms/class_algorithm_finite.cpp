@@ -2,14 +2,13 @@
 // Created by david on 2019-06-24.
 //
 
-#include <iomanip>
 #include "class_algorithm_finite.h"
 #include <state/class_finite_state.h>
 #include <io/class_hdf5_log_buffer.h>
 #include <math/nmspc_math.h>
-#include <general/nmspc_random_numbers.h>
 #include <h5pp/h5pp.h>
 #include <tools/nmspc_tools.h>
+#include <simulation/nmspc_settings.h>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites)
     : class_algorithm_base(std::move(h5ppFile_), sim_name,sim_type)
@@ -207,10 +206,8 @@ void class_algorithm_finite::move_center_point(){
 
 void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
     if(not max_bond_dim.has_value()) {
-        log->debug("No max bond dim given, setting {}", chi_max());
         max_bond_dim = chi_max();
     }
-    tools::log->debug("Bond dimension max comparison: {} {} {}", max_bond_dim.value(), chi_max(), settings::xdmrg::chi_max);
     sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
     if(not sim_status.chi_lim_has_reached_chi_max){
         if(chi_grow()){
@@ -221,6 +218,8 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max
                 log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
                 state->set_chi_lim(chi_new_limit);
                 clear_saturation_status();
+                sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
+                if (sim_status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
             }else{
                 log->debug("chi_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", state->get_chi_lim());
             }
@@ -242,7 +241,6 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
     log->trace("Resetting MPS to random product state in parity sector: {} with seed {}", parity_sector,seed_state);
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
-    state->set_chi_lim(chi_max());
     tools::finite::mps::randomize(*state,parity_sector,seed_state, settings::model::use_pauli_eigvecs, settings::model::use_seed_state_as_enumeration);
 //    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
     clear_saturation_status();
@@ -254,7 +252,7 @@ void class_algorithm_finite::backup_best_state(const class_finite_state &state) 
     double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
     double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
     if (variance_candidate <  variance_champion){
-        log->debug("We have a new champion!");
+        log->debug("We have a new champion! {:.8f} -> {:.8f}", std::log10(variance_champion), std::log10(variance_candidate));
         *state_backup = state;
     }else{
         log->trace("Champion defended his title");

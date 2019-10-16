@@ -1,9 +1,7 @@
 //
 // Created by david on 7/30/17.
 //
-
-#ifndef DMRG_CLASS_ALGORITHMS_H
-#define DMRG_CLASS_ALGORITHMS_H
+#pragma once
 
 #include <memory>
 #include <spdlog/spdlog.h>
@@ -30,5 +28,3 @@ public:
 
 };
 
-
-#endif //DMRG_CLASS_ALGORITHMS_H

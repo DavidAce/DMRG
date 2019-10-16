@@ -2,9 +2,7 @@
 // Created by david on 2018-01-12.
 //
 
-#ifndef DMRG_CLASS_FILE_READER_H
-#define DMRG_CLASS_FILE_READER_H
-
+#pragma once
 
 
 #include<iostream>
@@ -118,6 +116,3 @@ public:
     }
 };
 
-
-
-#endif //DMRG_CLASS_FILE_READER_H

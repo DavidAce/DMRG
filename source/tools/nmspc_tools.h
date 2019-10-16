@@ -1,22 +1,23 @@
 //
 // Created by david on 2019-01-29.
 //
+#pragma once
 
-#ifndef tools_H
-#define tools_H
 #include <memory>
 #include <string>
-#include <general/nmspc_tensor_extra.h>
+#include <complex>
+#include <list>
+#include <vector>
 #include <io/nmspc_logger.h>
 #include <general/class_tic_toc.h>
 #include <tools/finite/opt-internals/enum_classes.h>
-
+#include <Eigen/Core>
+#include <unsupported/Eigen/CXX11/Tensor>
 class class_infinite_state;
 class class_mps_2site;
 class class_finite_state;
 class class_model_base;
 class class_simulation_status;
-
 
 
 namespace h5pp{
@@ -383,6 +384,3 @@ namespace tools{
 
 
 
-
-
-#endif //DMRG_NMSPC_FINITE_CHAIN_TOOLS_H

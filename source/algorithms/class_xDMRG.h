@@ -2,8 +2,7 @@
 // Created by david on 2018-02-09.
 //
 
-#ifndef DMRG_CLASS_EXITED_DMRG_H
-#define DMRG_CLASS_EXITED_DMRG_H
+#pragma once
 
 #include "class_algorithm_finite.h"
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -23,7 +22,6 @@ public:
     using class_algorithm_finite::class_algorithm_finite;
     explicit class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
 
-    bool   has_projected  = false;
 
     void find_energy_range();
     void inflate_initial_state();
@@ -45,4 +43,3 @@ public:
 
 
 
-#endif //DMRG_CLASS_EXITED_DMRG_H

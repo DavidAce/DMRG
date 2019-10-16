@@ -8,16 +8,9 @@
 #include <io/class_hdf5_log_buffer.h>
 #include <io/nmspc_logger.h>
 #include <tools/nmspc_tools.h>
-#include <math/nmspc_math.h>
-#include <general/nmspc_random_numbers.h>
-#include <io/log_types.h>
 #include <h5pp/h5pp.h>
+#include <simulation/nmspc_settings.h>
 
-namespace s = settings;
-using namespace std;
-using namespace Textra;
-//using namespace std::complex_literals;
-//using namespace eigsolver_properties;
 using Scalar = class_algorithm_base::Scalar;
 
 
@@ -198,30 +191,6 @@ class_algorithm_base::check_saturation_using_slope2(
 }
 
 
-//void class_algorithm_base::update_bond_dimension_limit(std::optional<long> max_bond_dim){
-//    sim_status.chi_lim = chi_max();
-//    if(not chi_grow() or sim_status.chi_lim_has_reached_chi_max or sim_status.chi_temp == chi_max() ){
-//        sim_status.chi_temp = chi_max();
-//        sim_status.chi_lim_has_reached_chi_max = true;
-//    }
-//    if(not sim_status.simulation_has_converged
-//       and sim_status.simulation_has_saturated
-//       and sim_status.chi_temp < chi_max()){
-//        log->trace("Updating bond dimension");
-//        sim_status.chi_temp = std::min(chi_max(), sim_status.chi_temp * 2);
-//        log->info("New chi = {}", sim_status.chi_temp);
-//        clear_saturation_status();
-//    }
-//    if(sim_status.chi_temp == chi_max()){
-//        sim_status.chi_lim_has_reached_chi_max = true;
-//    }
-//}
-
-
-
-
-
-
 void class_algorithm_base::print_profiling(){
     if (settings::profiling::on) {
         log->trace("Printing profiling information (tot)");
@@ -236,7 +205,7 @@ void class_algorithm_base::print_profiling(){
 
 
 double class_algorithm_base::process_memory_in_mb(std::string name){
-    ifstream filestream("/proc/self/status");
+    std::ifstream filestream("/proc/self/status");
     std::string line;
     while (std::getline(filestream, line)){
         std::istringstream is_line(line);

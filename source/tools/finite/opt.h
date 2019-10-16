@@ -2,14 +2,12 @@
 // Created by david on 2019-03-18.
 //
 
-#ifndef tools_FINITE_OPT_H
-#define tools_FINITE_OPT_H
+#pragma once
+
 
 #include <tools/nmspc_tools.h>
 #include <general/class_tic_toc.h>
-#include <iomanip>
 #include <ceres/ceres.h>
-#include <glog/logging.h>
 class class_tic_toc;
 
 
@@ -150,6 +148,3 @@ namespace tools::finite::opt{
     }
 }
 
-
-
-#endif //DMRG_OPT_H

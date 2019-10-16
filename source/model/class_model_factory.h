@@ -2,8 +2,7 @@
 // Created by david on 2018-07-04.
 //
 
-#ifndef CLASS_HAMILTONIAN_FACTORY_H
-#define CLASS_HAMILTONIAN_FACTORY_H
+#pragma once
 
 #include <iostream>
 #include <memory>
@@ -26,4 +25,3 @@ public:
 
 
 
-#endif //CLASS_HAMILTONIAN_FACTORY_H

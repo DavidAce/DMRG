@@ -2,8 +2,8 @@
 // Created by david on 2018-11-16.
 //
 
-#ifndef MATRIX_PRODUCT_STL_H
-#define MATRIX_PRODUCT_STL_H
+#pragma once
+
 
 
 
@@ -87,13 +87,6 @@ public:
     class_tic_toc t_multax;
 };
 
-
-
-
-
-
-
-#endif
 
 
 

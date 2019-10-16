@@ -155,6 +155,7 @@ void tools::finite::io::write_projection_to_closest_parity_sector(const class_fi
     auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(state, parity_sector);
     state_projected.unset_measurements();
     state_projected.do_all_measurements();
+    tools::log->trace("Variance of projected state: {:.8f}", std::log10(tools::finite::measure::energy_variance_per_site(state_projected)));
     tools::finite::io::write_all_state(state_projected,h5ppFile, prefix_path + "/projections/" + parity_sector);
     tools::finite::io::write_all_measurements(state_projected,h5ppFile, prefix_path + "/projections/" + parity_sector);
 }

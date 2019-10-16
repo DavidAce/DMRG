@@ -2,8 +2,8 @@
 // Created by david on 2018-06-07.
 //
 
-#ifndef NMSPC_EIGUTILS_H
-#define NMSPC_EIGUTILS_H
+#pragma once
+
 
 #include <iostream>
 #include <array>
@@ -238,7 +238,3 @@ namespace eigutils{
     }
 
 }
-
-
-
-#endif //NMSPC_EIGUTILS_H

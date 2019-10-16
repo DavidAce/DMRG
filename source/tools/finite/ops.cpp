@@ -43,11 +43,6 @@ void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<E
     tools::log->trace("Bond dimensions before applying MPO's = {}", tools::finite::measure::bond_dimensions(state));
     tools::log->trace("Norm before applying MPO's = {:.16f}", tools::finite::measure::norm(state));
 
-//    state.unset_measurements();
-//    std::cout << "Norm              (before mpos): " << tools::finite::measure::norm(state)  << std::endl;
-//    std::cout << "Spin component sx (before mpos): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
-//    std::cout << "Spin component sy (before mpos): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sy)  << std::endl;
-//    std::cout << "Spin component sz (before mpos): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sz)  << std::endl;
     auto mpo = mpos.begin();
     for(size_t pos = 0; pos < state.get_length() ; pos++){
         state.get_MPS(pos).apply_mpo(*mpo);
@@ -108,14 +103,14 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);
     double measured_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
-    tools::log->trace("Resulting global spin component: {}",measured_spin_component );
+    tools::log->trace("Resulting global spin component: {:.16f}",measured_spin_component );
     return state_projected;
 }
 
 class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, const Eigen::MatrixXcd & paulimatrix) {
     tools::log->trace("Finding closest projection");
     double measured_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
-    tools::log->trace("Current global spin component: {}",measured_spin_component );
+    tools::log->trace("Current global spin component: {:.16f}",measured_spin_component );
     if (measured_spin_component > 0){
         return get_projection_to_parity_sector(state, paulimatrix, 1);
     }else{

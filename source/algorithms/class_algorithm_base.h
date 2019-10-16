@@ -2,17 +2,16 @@
 // Created by david on 2018-01-18.
 //
 
-#ifndef DMRG_CLASS_DMRG_BASE_H
-#define DMRG_CLASS_DMRG_BASE_H
+#pragma once
 
 #include <memory>
 #include <map>
 #include <vector>
 #include <complex>
 #include <list>
-#include <math/nmspc_eigutils.h>
+//#include <math/nmspc_eigutils.h>
 #include <general/class_tic_toc.h>
-#include <simulation/nmspc_settings.h>
+#include <simulation/enums.h>
 #include <simulation/class_simulation_status.h>
 
 
@@ -119,13 +118,3 @@ protected:
 };
 
 
-
-
-
-
-
-
-
-
-
-#endif //DMRG_CLASS_DMRG_BASE_H

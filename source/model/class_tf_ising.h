@@ -2,8 +2,7 @@
 // Created by david on 2018-07-04.
 //
 
-#ifndef CLASS_TF_ISING_H
-#define CLASS_TF_ISING_H
+#pragma once
 
 #include <iostream>
 #include <general/nmspc_tensor_extra.h>
@@ -49,4 +48,3 @@ public:
 
 };
 
-#endif //CLASS_TF_ISING_H

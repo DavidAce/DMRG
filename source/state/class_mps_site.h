@@ -2,10 +2,11 @@
 // Created by david on 2019-07-06.
 //
 
-#ifndef DMRG_CLASS_MPS_SITE_H
-#define DMRG_CLASS_MPS_SITE_H
+#pragma once
 
-#include <general/nmspc_tensor_extra.h>
+#include <complex>
+#include <optional>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 
 
@@ -18,7 +19,6 @@ private:
     std::optional<size_t> position;
     std::optional<Eigen::Tensor<Scalar,1>> LC;  /*!< \f$\Lambda_C\f$ Center lambda, if this is a center matrix*/
     mutable std::optional<Eigen::Tensor<Scalar,3>> MC;
-    //    Eigen::Tensor<Scalar,3> G;                  /*!< \f$\Gamma \f$*/
 
 public:
 
@@ -71,4 +71,3 @@ public:
 };
 
 
-#endif //DMRG_CLASS_MPS_SITE_H

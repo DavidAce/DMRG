@@ -2,12 +2,11 @@
 // Created by david on 8/7/17.
 //
 
-#ifndef DMRG_N_SETTINGS_H
-#define DMRG_N_SETTINGS_H
-#include <string>
-#include <unordered_set>
-#include <vector>
+#pragma once
 
+#include <string>
+#include <vector>
+#include <simulation/enums.h>
 /*!
  *  \namespace settings
  *  This namespace contains settings such as time-step length, number of iterations and precision parameters for
@@ -19,8 +18,6 @@ namespace h5pp{
     class File;
 }
 
-enum class SimulationType      {iDMRG,fDMRG, xDMRG, iTEBD};
-enum class StorageLevel:size_t {NONE,LIGHT,NORMAL,FULL};
 
 namespace settings {
     extern void load_from_file(class_settings_reader &indata);
@@ -171,4 +168,3 @@ namespace settings {
         inline bool   timestamp  = false;                /*!< Whether to put a timestamp on console outputs */
     }
 }
-#endif //DMRG_N_SETTINGS_H

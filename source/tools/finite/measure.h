@@ -2,8 +2,8 @@
 // Created by david on 2019-10-13.
 //
 
-#ifndef TOOLS_FINITE_MEASURE_H
-#define TOOLS_FINITE_MEASURE_H
+#pragma once
+
 #include <vector>
 #include <list>
 #include <complex>
@@ -99,5 +99,3 @@ namespace tools::finite::measure{
     }
 }
 
-
-#endif //TOOLS_FINITE_MEASURE_H

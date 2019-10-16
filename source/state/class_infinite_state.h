@@ -2,8 +2,8 @@
 // Created by david on 7/22/17.
 //
 
-#ifndef DMRG_CLASS_INFINITE_STATE_H
-#define DMRG_CLASS_INFINITE_STATE_H
+#pragma once
+
 
 #include <memory>
 #include <optional>
@@ -163,4 +163,3 @@ public:
 };
 
 
-#endif //DMRG_CLASS_INFINITE_STATE_H

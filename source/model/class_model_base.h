@@ -2,8 +2,7 @@
 // Created by david on 2018-07-04.
 //
 
-#ifndef CLASS_HAMILTONIAN_BASE_H
-#define CLASS_HAMILTONIAN_BASE_H
+#pragma once
 
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -62,4 +61,3 @@ public:
 
 
 
-#endif //CLASS_HAMILTONIAN_BASE_H

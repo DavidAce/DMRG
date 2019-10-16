@@ -2,8 +2,7 @@
 // Created by david on 2019-06-24.
 //
 
-#ifndef DMRG_CLASS_ALGORITHM_FINITE_H
-#define DMRG_CLASS_ALGORITHM_FINITE_H
+#pragma once
 
 #include <algorithms/class_algorithm_base.h>
 class class_log_finite_dmrg_measurements;
@@ -30,6 +29,8 @@ public:
 
     size_t min_saturation_iters          = 2;
     size_t max_saturation_iters          = 4;
+    bool   has_projected  = false;
+
 private:
     void write_log_sim_status ();
     void write_log_measurement();
@@ -70,4 +71,3 @@ public:
 
 };
 
-#endif //DMRG_CLASS_ALGORITHM_FINITE_H

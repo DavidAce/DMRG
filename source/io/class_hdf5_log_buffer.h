@@ -2,9 +2,7 @@
 // Created by david on 2018-05-24.
 //
 
-#ifndef DMRG_class_hdf5_log_BUFFER_H
-#define DMRG_class_hdf5_log_BUFFER_H
-
+#pragma once
 
 #include <hdf5.h>
 #include <hdf5_hl.h>
@@ -64,5 +62,3 @@ public:
 
 
 
-
-#endif //DMRG_class_hdf5_log_BUFFER_H

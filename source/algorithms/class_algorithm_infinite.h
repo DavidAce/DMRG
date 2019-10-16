@@ -2,8 +2,8 @@
 // Created by david on 2019-06-24.
 //
 
-#ifndef DMRG_CLASS_ALGORITHM_INFINITE_H
-#define DMRG_CLASS_ALGORITHM_INFINITE_H
+#pragma once
+
 #include <algorithms/class_algorithm_base.h>
 
 class class_infinite_state;
@@ -65,6 +65,3 @@ public:
     std::list<int>    XS_vec;
     double S_slope = 0;
 };
-
-
-#endif //DMRG_CLASS_ALGORITHM_INFINITE_H

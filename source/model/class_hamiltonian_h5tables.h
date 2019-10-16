@@ -2,8 +2,7 @@
 // Created by david on 2018-10-01.
 //
 
-#ifndef DMRG_SELFDUAL_TF_RF_ISING_H5log_H
-#define DMRG_SELFDUAL_TF_RF_ISING_H5log_H
+#pragma once
 
 #include <vector>
 #include <array>
@@ -86,4 +85,3 @@ public:
 
 
 
-#endif //DMRG_log_SELFDUAL_TF_RF_ISING_H

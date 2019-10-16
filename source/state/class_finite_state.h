@@ -2,16 +2,16 @@
 // Created by david on 2019-01-29.
 //
 
-#ifndef CLASS_FINITE_CHAIN_STORAGE_H
-#define CLASS_FINITE_CHAIN_STORAGE_H
+#pragma once
+
 #include <memory>
 #include <complex>
 #include <optional>
-#include <general/nmspc_tensor_extra.h>
 #include <state/class_environment.h>
 #include <state/class_mps_site.h>
 #include <model/class_model_base.h>
-
+#include <Eigen/Core>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 
 
@@ -191,4 +191,3 @@ private:
 };
 
 
-#endif //DMRG_CLASS_FINITE_CHAIN_STORAGE_H

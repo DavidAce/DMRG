@@ -1,5 +1,4 @@
-#ifndef TRAINING_FUNCS_H
-#define TRAINING_FUNCS_H
+#pragma once
 
 
 #include <iostream>
@@ -12,8 +11,6 @@
 #include <functional>
 #include <memory>
 #include <utility>
-//#include <gsl/gsl_errno.h>
-//#include <gsl/gsl_integration.h>
 #include <numeric>
 #include <Eigen/Core>
 
@@ -94,5 +91,3 @@ namespace math
 }
 
 
-
-#endif //TRAINING_FUNCS_H

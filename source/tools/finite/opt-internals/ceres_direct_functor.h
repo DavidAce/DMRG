@@ -2,8 +2,7 @@
 // Created by david on 2019-07-15.
 //
 
-#ifndef DMRG_CERES_DIRECT_FUNCTOR_H
-#define DMRG_CERES_DIRECT_FUNCTOR_H
+#pragma once
 
 #include <tools/finite/opt.h>
 #include <general/nmspc_type_check.h>
@@ -40,5 +39,3 @@ namespace tools::finite::opt{
 
 
 
-
-#endif //DMRG_CERES_DIRECT_FUNCTOR_H

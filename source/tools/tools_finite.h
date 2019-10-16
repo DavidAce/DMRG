@@ -2,8 +2,8 @@
 // Created by david on 2019-10-13.
 //
 
-#ifndef TOOLS_FINITE_H
-#define TOOLS_FINITE_H
+#pragma once
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -122,4 +122,3 @@ namespace tools{
 
     }
 }
-#endif //DMRG_TOOLS_FINITE_H

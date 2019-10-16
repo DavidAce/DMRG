@@ -2,8 +2,8 @@
 // Created by david on 2018-02-06.
 //
 
-#ifndef NMSPC_TYPE_CHECK_H
-#define NMSPC_TYPE_CHECK_H
+#pragma once
+
 #include <experimental/type_traits>
 #include <Eigen/Core>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -101,5 +101,4 @@ namespace TypeCheck{
 //    template <typename Scalar_> using is_ofEigen              = is_instance_of<Eigen::EigenBase,Scalar_>;
 }
 
-#endif //PT_NMSPC_TYPE_CHECK_H
 

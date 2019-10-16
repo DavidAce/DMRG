@@ -2,8 +2,8 @@
 // Created by david on 2019-10-13.
 //
 
-#ifndef TOOLS_H
-#define TOOLS_H
+#pragma once
+
 #include <io/nmspc_logger.h>
 #include <tools/finite/measure.h>
 
@@ -12,4 +12,3 @@ namespace tools{
 }
 
 
-#endif //TOOLS_H
