@@ -1,21 +1,17 @@
 
 #find_package(Ceres PATHS ${INSTALL_DIRECTORY}/ceres/lib/cmake/Ceres ${ceres_DIR})
 
-if(Ceres_FOUND)
-    message(STATUS "ceres FOUND IN SYSTEM: ${CERES_ROOT}")
-    #    get_target_property(CERES_LIBRARY ceres  INTERFACE_LINK_LIBRARIES)
-    #    set_target_properties(ceres PROPERTIES INTERFACE_LINK_LIBRARIES "")
-    #    set_target_properties(ceres PROPERTIES INTERFACE_COMPILE_FEATURES "")
-    #    target_link_libraries(ceres INTERFACE  blas lapack lapacke ${CERES_LIBRARY} Threads::Threads )
-else()
-    message(STATUS "ceres will be installed into ${INSTALL_DIRECTORY}/ceres on first build.")
-    get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
-#    get_target_property(GFLAGS_INCLUDE_DIR   gflags    INTERFACE_INCLUDE_DIRECTORIES)
-#    get_target_property(GFLAGS_LIBRARIES     gflags    INTERFACE_LINK_LIBRARIES)
-#
-#    get_target_property(GLOG_INCLUDE_DIR   glog    INTERFACE_INCLUDE_DIRECTORIES)
-#    get_target_property(GLOG_LIBRARIES     glog    INTERFACE_LINK_LIBRARIES)
+#if(Ceres_FOUND)
+#    message(STATUS "ceres FOUND IN SYSTEM: ${CERES_ROOT}")
+#    #    get_target_property(CERES_LIBRARY ceres  INTERFACE_LINK_LIBRARIES)
+#    #    set_target_properties(ceres PROPERTIES INTERFACE_LINK_LIBRARIES "")
+#    #    set_target_properties(ceres PROPERTIES INTERFACE_COMPILE_FEATURES "")
+#    #    target_link_libraries(ceres INTERFACE  blas lapack lapacke ${CERES_LIBRARY} Threads::Threads )
+#else()
 
+
+    message(STATUS "Ceres will be installed into ${INSTALL_DIRECTORY}/ceres on first build.")
+    get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
 
 #    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
@@ -54,7 +50,7 @@ else()
             GIT_TAG master
             GIT_PROGRESS false
             GIT_SHALLOW true
-#            BUILD_ALWAYS 1
+            BUILD_ALWAYS 1
             PREFIX      ${BUILD_DIRECTORY}/ceres
             INSTALL_DIR ${INSTALL_DIRECTORY}/ceres
             UPDATE_COMMAND ""
@@ -97,4 +93,4 @@ else()
     add_dependencies(ceres glog gflags Eigen3::Eigen blas lapack lapacke)
     target_link_libraries(ceres INTERFACE  ${CERES_LIBRARY} glog gflags Eigen3::Eigen blas lapack lapacke Threads::Threads )
     target_include_directories(ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
-endif()
+#endif()

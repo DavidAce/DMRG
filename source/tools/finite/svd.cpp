@@ -54,8 +54,8 @@ void tools::finite::mps::normalize(class_finite_state & state){
             state.flip_direction();
         }
     }
-    state.unset_measurements();
     tools::common::profile::t_svd.toc();
+    state.unset_measurements();
     tools::log->trace("Norm after normalization = {:.16f}", tools::finite::measure::norm(state));
     tools::log->trace("Bond dimensions after  normalization: {}", tools::finite::measure::bond_dimensions(state));
 

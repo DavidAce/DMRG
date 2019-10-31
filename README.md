@@ -44,7 +44,7 @@ Simply launch the script `.\build.sh` found in the root folder to trigger a CMak
 The script takes optional arguments, run `.\build.sh -h` to learn more.
 
 **Alternatively**, if you intend to develop or study the source code, some IDE's with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This
-is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with the C++ and CMake Tools extensions.
+is perhaps an even simpler approach. Recommended: [CLion](https://www.jetbrains.com/clion/download) or [Visual Studio Code](https://code.visualstudio.com/) with the LC++ and CMake Tools extensions.
 
 
 CMake will check for dependencies in the host system. If not found, it will download and install these automatically to a folder `libs` in the project root (see *Optional Requirements* below).
@@ -73,7 +73,7 @@ The script `analysis/data_analysis.py` (in progress) shows how to analyze the si
 
 ### Minimum Requirements
 The following software is required to build the project:
- - C++ compiler with support for C++17 and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
+ - LC++ compiler with support for LC++17 and libstdc++ standard library implementation  (version >= 7). Tested with two compilers:
     - GNU GCC versions 7 and 8 (these bundle libstdc++)
     - Clang version >= 6.0. (you need to manually install libstdc++ version >= 7, that comes bundled with gcc, for instance from `ppa:ubuntu-toolchain-r/test`)
  - CMake version >= 3.10. 
@@ -98,7 +98,7 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
  - **BLAS** and **LAPACK**. Required for Arpack. You can choose either [Intel MKL](https://software.intel.com/en-us/mkl) or [OpenBLAS](https://github.com/xianyi/OpenBLAS). If not found, OpenBLAS is downloaded automatically. Note that OpenBLAS requires Fortran to compile from source. If both MKL and OpenBLAS are found in the system, MKL is preferred.
  - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
  - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
- - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) C++ frontend for Arpack.
+ - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) LC++ frontend for Arpack.
  - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5.
  - [**HDF5**](https://support.hdfgroup.org/HDF5/) for output binary output file support (tested with version >= 1.10).
  - [**ceres**](http://ceres-solver.org/) Optimization library. Here we use the L-BFGS routines. 

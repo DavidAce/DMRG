@@ -51,6 +51,10 @@ public:
             shape_mpo4(shape_mpo4_)
     {
         t_mul.set_properties(profile_matrix_product_hamiltonian, 10,"Time multiplying");
+        if(Lblock == nullptr) throw std::runtime_error("Lblock is a nullptr!");
+        if(Rblock == nullptr) throw std::runtime_error("Rblock is a nullptr!");
+        if(HA     == nullptr) throw std::runtime_error("HA is a nullptr!");
+        if(HB     == nullptr) throw std::runtime_error("HB is a nullptr!");
 
     }
 
@@ -85,8 +89,7 @@ void DenseHamiltonianProduct<T>::MultAx(T* theta_in_, T* theta_out_) {
 
 
 
-    //Best yet! The sparcity of the effective hamiltonian (Lblock HA HB Rblock) is about 58% nonzeros.
-    //L have shown this to be the fastest contraction ordering
+    //Best yet! I have shown this to be the fastest contraction ordering
     theta_out.device(omp::dev) = Lblock_map
             .contract(theta_in,    Textra::idx({0},{1}))
             .contract(HA_map ,     Textra::idx({1,2},{0,2}))//  idx({1,2,3},{0,4,5}))

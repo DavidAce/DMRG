@@ -18,6 +18,14 @@ class_algorithm_infinite::class_algorithm_infinite(
     : class_algorithm_base(std::move(h5ppFile_),sim_name, sim_type)
 {
     state      = std::make_unique<class_infinite_state>(sim_type,sim_name);
+    state->set_chi_lim(sim_status.chi_lim);
+    tools::infinite::mpo::initialize(*state, settings::model::model_type);
+    tools::infinite::mps::initialize(*state, settings::model::model_type);
+    tools::infinite::mpo::randomize(*state,settings::model::seed_model);
+    tools::infinite::env::initialize(*state);
+//    tools::infinite::mps::randomize(*state,settings::model::initial_parity_sector,settings::model::seed_state);
+    tools::infinite::debug::check_integrity(*state);
+
 }
 
 
@@ -341,6 +349,7 @@ void class_algorithm_infinite::print_status_update() {
     report << left  << "log₁₀ trunc: "                << setw(10) << setprecision(4)     << fixed   << std::log10(state->measurements.truncation_error.value());
     report << left  << "Sites: "                      << setw(6)  << setprecision(1)     << fixed   << state->measurements.length.value();
     switch(sim_type){
+        case SimulationType::iDMRG:
         case SimulationType::iTEBD:
             break;
         default: throw std::runtime_error("Wrong simulation type");
@@ -418,6 +427,8 @@ void class_algorithm_infinite::print_status_full(){
     log->info("log₁₀ truncation:     = {:<16.16f}" , log10(state->measurements.truncation_error.value()));
 
     switch(sim_type){
+        case SimulationType::iDMRG:
+            break;
         case SimulationType::iTEBD:
             log->info("δt                    = {:<16.16f}" , sim_status.delta_t);
             break;

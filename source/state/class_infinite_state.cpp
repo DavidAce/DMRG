@@ -23,16 +23,15 @@ class_infinite_state::class_infinite_state(SimulationType sim_type_,std::string 
         sim_type(sim_type_),
         sim_name(sim_name_),
         MPS(std::make_unique<class_mps_2site>()),
-        HA (class_model_factory::create_mpo(0,settings::model::model_type)),
-        HB (class_model_factory::create_mpo(1,settings::model::model_type)),
+//        HA (class_model_factory::create_mpo(0,settings::model::model_type)),
+//        HB (class_model_factory::create_mpo(1,settings::model::model_type)),
         Lblock(std::make_unique<class_environment>("L")),
         Rblock(std::make_unique<class_environment>("R")),
         Lblock2(std::make_unique<class_environment_var>("L")),
         Rblock2(std::make_unique<class_environment_var>("R"))
 {
-    log = Logger::setLogger(sim_name,settings::console::verbosity);
-//    t_eig.set_properties(profile_optimization, 10,"Time optimizing ");
-    MPS->initialize(HA->get_spin_dimension());
+    tools::log->trace("Constructing class_infinite_state");
+
 }
 
 
@@ -61,7 +60,7 @@ class_infinite_state::class_infinite_state(SimulationType sim_type_,std::string 
 //}
 
 void class_infinite_state::clear(){
-    log->trace("Copying state to state");
+    tools::log->trace("Copying state to state");
     *this = class_infinite_state(sim_type,sim_name);
 }
 

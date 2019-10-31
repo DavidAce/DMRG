@@ -214,8 +214,8 @@ using namespace Textra;
 //
 //
 //
-//    Eigen::Tensor<Scalar,5> thetaABA = theta_evn_normalized.contract(LBGA, idx({3},{1}));
-//    Eigen::Tensor<Scalar,5> thetaBAB = theta_odd_normalized.contract(LAGB, idx({3},{1}));
+//    Eigen::Tensor<Scalar,5> thetaABA = theta_evn_normalized.contract(LAGA, idx({3},{1}));
+//    Eigen::Tensor<Scalar,5> thetaBAB = theta_odd_normalized.contract(LCGB, idx({3},{1}));
 //
 //    Eigen::Tensor<Scalar,0> E2ABA_1  =
 //            thetaABA
@@ -379,12 +379,14 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
 
 //    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
     auto new_theta_evn_normalized        = tools::common::views::get_theta_evn(*MPS_evolved, sqrt(solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0]));
+    auto old_theta_evn_normalized        = tools::common::views::get_theta_evn(MPS_original);
 //    t_temp4.toc();
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original.chiA();// theta_evn_normalized.dimension(1);
     long sizeR = new_theta_evn_normalized.dimension(3) * MPS_original.chiB();// theta_evn_normalized.dimension(3);
 
-    Eigen::Tensor<Scalar,2> transfer_matrix_G =   new_theta_evn_normalized
-            .contract(tools::common::views::theta_evn_normalized.conjugate(), idx({0,2},{0,2}))
+    Eigen::Tensor<Scalar,2> transfer_matrix_G =
+            new_theta_evn_normalized
+            .contract(old_theta_evn_normalized.conjugate(), idx({0,2},{0,2}))
             .shuffle(array4{0,2,1,3})
             .reshape(array2{sizeL,sizeR});
     //Compute the characteristic function G(a).
@@ -475,6 +477,9 @@ double tools::infinite::measure::energy_per_site_ham(const class_infinite_state 
     if (state.sim_type == SimulationType::fDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (state.sim_type == SimulationType::xDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (state.measurements.bond_dimension <= 2 ){return std::numeric_limits<double>::quiet_NaN();}
+    if (state.MPS->chiA() != state.MPS->chiB()){return std::numeric_limits<double>::quiet_NaN();}
+    if (state.MPS->chiA() != state.MPS->chiC()){return std::numeric_limits<double>::quiet_NaN();}
+    if (state.MPS->chiB() != state.MPS->chiC()){return std::numeric_limits<double>::quiet_NaN();}
 
     tools::common::profile::t_ene_ham.tic();
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -586,6 +591,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_infini
     if(state.measurements.energy_variance_per_site_ham){return state.measurements.energy_variance_per_site_ham.value();}
     if (state.MPS->chiA() != state.MPS->chiB()){return std::numeric_limits<double>::quiet_NaN();}
     if (state.MPS->chiA() != state.MPS->chiC()){return std::numeric_limits<double>::quiet_NaN();}
+    if (state.MPS->chiB() != state.MPS->chiC()){return std::numeric_limits<double>::quiet_NaN();}
     if (state.sim_type == SimulationType::fDMRG)    {return std::numeric_limits<double>::quiet_NaN();}
     if (state.sim_type == SimulationType::xDMRG)    {return std::numeric_limits<double>::quiet_NaN();}
     if (state.measurements.bond_dimension <= 2 )    {return std::numeric_limits<double>::quiet_NaN();}
@@ -639,8 +645,8 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_infini
 
 
 
-    Eigen::Tensor<Scalar,5> thetaABA = theta_evn_normalized.contract(LBGA, idx({3},{1}));
-    Eigen::Tensor<Scalar,5> thetaBAB = theta_odd_normalized.contract(LAGB, idx({3},{1}));
+    Eigen::Tensor<Scalar,5> thetaABA = theta_evn_normalized.contract(LAGA, idx({3}, {1}));
+    Eigen::Tensor<Scalar,5> thetaBAB = theta_odd_normalized.contract(LCGB, idx({3}, {1}));
 
     Eigen::Tensor<Scalar,0> E2ABA_1  =
             thetaABA
@@ -713,10 +719,9 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_infini
     Eigen::Tensor<Scalar,4> E_evn_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(array4{sizeLB,sizeLB,sizeLA,sizeLA});
     Eigen::Tensor<Scalar,4> E_odd_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(array4{sizeLA,sizeLA,sizeLB,sizeLB});
     Eigen::Tensor<Scalar,0> E2LRP_ABAB  = E2d_L_evn.contract(E_evn_pinv,idx({0,1},{0,1})).contract(E2d_R_evn,idx({0,1},{0,1}));
-    Eigen::Tensor<Scalar,0> E2LRP_ABBA  = E2d_L_evn.contract(transfer_matrix_LBGA, idx({0,1},{0,1})).contract(E_odd_pinv,idx({0,1},{0,1})).contract(E2d_R_odd,idx({0,1},{0,1}));
+    Eigen::Tensor<Scalar,0> E2LRP_ABBA  = E2d_L_evn.contract(transfer_matrix_LAGA, idx({0,1},{0,1})).contract(E_odd_pinv,idx({0,1},{0,1})).contract(E2d_R_odd,idx({0,1},{0,1}));
     Eigen::Tensor<Scalar,0> E2LRP_BABA  = E2d_L_odd.contract(E_odd_pinv,idx({0,1},{0,1})).contract(E2d_R_odd,idx({0,1},{0,1}));
-    Eigen::Tensor<Scalar,0> E2LRP_BAAB  = E2d_L_odd.contract(transfer_matrix_LAGB, idx({0,1},{0,1})).contract(E_evn_pinv,idx({0,1},{0,1})).contract(E2d_R_evn,idx({0,1},{0,1}));
-
+    Eigen::Tensor<Scalar,0> E2LRP_BAAB  = E2d_L_odd.contract(transfer_matrix_LCGB, idx({0,1},{0,1})).contract(E_evn_pinv,idx({0,1},{0,1})).contract(E2d_R_evn,idx({0,1},{0,1}));
 
     Scalar e2ab           = E2AB(0);
     Scalar e2ba           = E2BA(0);
@@ -738,6 +743,6 @@ double tools::infinite::measure::energy_variance_per_site_mom(const class_infini
     if(state.measurements.energy_variance_per_site_mom){return state.measurements.energy_variance_per_site_mom.value();}
     if (state.sim_type == SimulationType::fDMRG)    {return std::numeric_limits<double>::quiet_NaN();}
     if (state.sim_type == SimulationType::xDMRG)    {return std::numeric_limits<double>::quiet_NaN();}
-    [[maybe_unused]] auto dummy = energy_per_site_mom(state);
+    state.measurements.energy_variance_per_site_mom = energy_per_site_mom(state);
     return state.measurements.energy_variance_per_site_mom.value();
 }

@@ -94,7 +94,6 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     class_finite_state state_projected = state;
     state_projected.unset_measurements();
     state_projected.clear_cache();
-    state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation
 
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
@@ -102,6 +101,7 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     tools::finite::mps::normalize(state_projected);
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);
+    state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation
     double measured_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
     tools::log->trace("Resulting global spin component: {:.16f}",measured_spin_component );
     return state_projected;

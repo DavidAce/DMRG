@@ -31,7 +31,6 @@ Eigen::Tensor<tools::infinite::Scalar,4>
     auto eigvec  = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
     tools::common::profile::t_eig.toc();
-    tools::common::profile::t_eig.print_delta();
 
     return eigvec.reshape(theta.dimensions());
 

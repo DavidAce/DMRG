@@ -232,9 +232,20 @@ namespace tools{
         using Scalar = std::complex<double>;
 
         namespace mps{
-            extern class_infinite_state set_random_state(const class_infinite_state & state, [[maybe_unused]]  std::string parity,  [[maybe_unused]] int seed_state);
+            extern void initialize                          (class_infinite_state & state,std::string model_type_str);
+            extern class_infinite_state set_random_state    (const class_infinite_state & state, [[maybe_unused]]  std::string parity,  [[maybe_unused]] int seed_state);
         }
 
+        namespace env{
+            extern void initialize                          (class_infinite_state & state);
+//            extern void rebuild_environments                (class_infinite_state & state);
+        }
+
+        namespace mpo{
+            extern void initialize                          (class_infinite_state & state,std::string model_type_str);
+            extern void randomize                           (class_infinite_state &state, int seed_model);
+
+            }
         namespace opt{
             extern Eigen::Tensor<Scalar,4> find_ground_state(const class_infinite_state & state, std::string ritz = "SR");
             extern Eigen::Tensor<Scalar,4> time_evolve_theta(const class_infinite_state & state, const Eigen::Tensor<Scalar, 4> &U);
@@ -335,11 +346,11 @@ namespace tools{
         namespace views {
             extern Eigen::Tensor<Scalar,4> theta, theta_evn_normalized, theta_odd_normalized;
             extern Eigen::Tensor<Scalar,4> theta_sw ;
-            extern Eigen::Tensor<Scalar,3> LBGA, LAGB;
+            extern Eigen::Tensor<Scalar,3> LAGA, LCGB;
             extern Eigen::Tensor<Scalar,2> l_evn, r_evn;
             extern Eigen::Tensor<Scalar,2> l_odd, r_odd;
-            extern Eigen::Tensor<Scalar,4> transfer_matrix_LBGA;
-            extern Eigen::Tensor<Scalar,4> transfer_matrix_LAGB;
+            extern Eigen::Tensor<Scalar,4> transfer_matrix_LAGA;
+            extern Eigen::Tensor<Scalar,4> transfer_matrix_LCGB;
             extern Eigen::Tensor<Scalar,4> transfer_matrix_evn;
             extern Eigen::Tensor<Scalar,4> transfer_matrix_odd;
             extern bool components_computed;
