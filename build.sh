@@ -126,7 +126,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         export CXX=clang++
     fi
 
-elif [[ "$HOSTNAME" == *"anderson"* ]];then
+elif [[ "$HOSTNAME" == *"raken"* ]];then
     module load CMake
     if [ "$mkl" = "ON" ] ; then
         module load imkl
