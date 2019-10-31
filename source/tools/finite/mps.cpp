@@ -16,13 +16,14 @@ void tools::finite::mps::initialize(class_finite_state &state, const size_t leng
     log->info("Initializing mps");
     using Scalar = class_finite_state::Scalar;
     //Generate MPS
-    Eigen::Tensor<Scalar,3> G;
+    Eigen::Tensor<Scalar,3> A;
+    Eigen::Tensor<Scalar,3> B;
     Eigen::Tensor<Scalar,1> L = {1};
     size_t pos = 0;
-    state.MPS_L.emplace_back(class_mps_site(G, L, pos++));
+    state.MPS_L.emplace_back(class_mps_site(A, L, pos++));
     state.MPS_L.back().set_LC(L);
     while(true){
-        state.MPS_R.emplace_back(class_mps_site(G, L, pos++));
+        state.MPS_R.emplace_back(class_mps_site(B, L, pos++));
         if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
     }
     state.site_update_tags = std::vector<bool>(length,false);

@@ -52,7 +52,7 @@ public:
     using Scalar = std::complex<double>;
 private:
 
-    long spin_dimension;                          /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
+//    long spin_dimension = 2;                      /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
     Eigen::Tensor<Scalar,3> tmp3;                 /*!< Temporary holder for swapping*/
     Eigen::Tensor<Scalar,1> tmp1;                 /*!< Temporary holder for swapping*/
 
@@ -62,8 +62,9 @@ private:
         return source ? std::make_unique<T>(*source) : nullptr;
     }
 public:
-    class_mps_2site();
-    class_mps_2site(const class_mps_2site &other);
+//    explicit class_mps_2site(std::string model_type_str);
+    class_mps_2site() = default;
+    explicit class_mps_2site(const class_mps_2site &other);
 
 
     bool swapped = false;                                  /*!< Tracks the swapped state of A and B positions. */
@@ -76,17 +77,18 @@ public:
     long chiB () const;
     long chiC () const;
     long spindim () const;
+    const Eigen::Tensor<Scalar,3> & A_bare()  const;
     const Eigen::Tensor<Scalar,3> & A()  const;
     const Eigen::Tensor<Scalar,3> & B()  const;
-    Eigen::Tensor<Scalar,2> C()     const;
+    Eigen::Tensor<Scalar,2> LC()     const;
     Eigen::Tensor<Scalar,3> GA()    const;
     Eigen::Tensor<Scalar,3> GB()    const;
     Eigen::Tensor<Scalar,2> LA()    const;
     Eigen::Tensor<Scalar,2> LB()    const;
     void set_mps(const Eigen::Tensor<Scalar,1> &LA,
-                 const Eigen::Tensor<Scalar,3> &U,
+                 const Eigen::Tensor<Scalar,3> &A,
                  const Eigen::Tensor<Scalar,1> &LC_,
-                 const Eigen::Tensor<Scalar,3> &V_dagger,
+                 const Eigen::Tensor<Scalar,3> &B,
                  const Eigen::Tensor<Scalar,1> &LB);
 
     Eigen::DSizes<long,4> dimensions() const;

@@ -4,9 +4,15 @@
 
 #include "class_mps_site.h"
 #include <general/nmspc_tensor_extra.h>
+#include <spdlog/fmt/bundled/format.h>
+
 using Scalar = class_mps_site::Scalar;
 
 bool class_mps_site::isCenter()const{
+    if (LC.has_value()){
+        if(LC.value().dimension(0) != M.dimension(2))
+            throw std::runtime_error(fmt::format("M and LC dim mismatch: {} != {}", M.dimension(2),LC.value().dimension(0)));
+    }
     return LC.has_value();
 }
 
@@ -19,7 +25,7 @@ const Eigen::Tensor<Scalar,3> & class_mps_site::get_M()  const {
             return std::as_const(MC.value());
         }
         else{
-            MC = M.contract(Textra::asDiagonal(LC.value()), Textra::idx({2},{0}));
+            MC = M.contract(Textra::asDiagonal(get_LC()), Textra::idx({2},{0}));
             return std::as_const(MC.value());
         }
     }else{
@@ -79,20 +85,22 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar,4> & mpo){
     long mpoDimL = mpo.dimension(0);
     long mpoDimR = mpo.dimension(1);
     if(mpoDimL != mpoDimR) throw std::logic_error("Can't apply mpo's with different L/R dims: not implemented yet");
-    Eigen::Tensor<Scalar,3> M_temp =
-            M
-                    .contract(mpo, Textra::idx({0},{2}))
-                    .shuffle(Textra::array5{4,0,2,1,3})
-                    .reshape(Textra::array3{get_spin_dim(), get_chiL()*mpoDimL, get_chiR()*mpoDimR});
 
-    Eigen::Tensor<Scalar,1> L_temp = L.broadcast(Textra::array1{mpoDimL});
-    L = L_temp;
-    M = M_temp;
     if(isCenter()){
         Eigen::Tensor<Scalar,1> LC_temp = get_LC().broadcast(Textra::array1{mpoDimR});
         LC = LC_temp;
         MC.reset();
     }
+
+    Eigen::Tensor<Scalar,3> M_temp =
+            M
+            .contract(mpo, Textra::idx({0},{2}))
+            .shuffle(Textra::array5{4,0,2,1,3})
+            .reshape(Textra::array3{get_spin_dim(), get_chiL()*mpoDimL, get_chiR()*mpoDimR});
+    Eigen::Tensor<Scalar,1> L_temp = L.broadcast(Textra::array1{mpoDimL});
+
+    L = L_temp;
+    M = M_temp;
 }
 void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar,2> & mpo){
     Eigen::Tensor<Scalar,3> M_temp =  mpo.contract(M, Textra::idx({0},{0}));

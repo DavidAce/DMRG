@@ -8,7 +8,7 @@
 #include <general/nmspc_random_numbers.h>
 
 void tools::finite::mpo::initialize(class_finite_state & state, const size_t length, std::string model_type){
-    log->info("Initializing mpo");
+    tools::log->trace("Initializing mpo");
     //Generate MPO
     size_t pos = 0;
     state.MPO_L.emplace_back(class_model_factory::create_mpo(pos++,model_type));
@@ -20,7 +20,7 @@ void tools::finite::mpo::initialize(class_finite_state & state, const size_t len
 
 
 void tools::finite::mpo::randomize(class_finite_state &state, int seed_model) {
-    log->info("Setting random fields in state");
+    tools::log->trace("Setting random fields in MPO's");
     if (seed_model >= 0){
         rn::seed(seed_model);
     }

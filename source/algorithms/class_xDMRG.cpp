@@ -293,17 +293,22 @@ void class_xDMRG::check_convergence(){
     log->debug("Simulation has succeeded: {}", sim_status.simulation_has_succeeded);
     log->debug("Simulation has got stuck: {}", sim_status.simulation_has_got_stuck);
 
-    if(        sim_status.chi_lim_has_reached_chi_max
-       and     sim_status.simulation_has_saturated
-       and not sim_status.simulation_has_converged)
-    {
-        if (        settings::model::project_when_saturated and
-                not has_projected
-            and not outside_of_window )
-        {
-            log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
-            *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-            has_projected = true;
+    if(state->position_is_any_edge() and sim_status.simulation_has_got_stuck){
+        if (settings::model::project_when_saturated and not has_projected  and not outside_of_window ){
+            log->info("Projecting at site {} to {} due to saturation", state->get_position(), settings::model::target_parity_sector);
+            auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+            double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
+            double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
+            if(variance_projected < variance_candidate){
+                log->info("Projection to {} succeeded - variance {:.8f} -> {:.8f}",
+                        settings::model::target_parity_sector,std::log10(variance_candidate),std::log10(variance_projected));
+                *state = state_projected;
+//                has_projected = true;
+            }else{
+                log->info("Projection to {} failed - variance does not improve {:8f} < {:8f} ",
+                        settings::model::target_parity_sector,std::log10(variance_candidate),std::log10(variance_projected));
+
+            }
         }
         else if (    sim_status.num_resets < settings::precision::maxResets
                  and tools::finite::measure::energy_variance_per_site(*state) > 1e-10)
@@ -316,18 +321,24 @@ void class_xDMRG::check_convergence(){
     }
 
 
-    if (        settings::model::project_when_saturated
-        and     state->position_is_any_edge()
-        and     sim_status.simulation_has_got_stuck
-        and not outside_of_window
-        and not has_projected)
-    {
-        log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
-        log->info("Bond dimensions before: {}", tools::finite::measure::bond_dimensions(*state));
-        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-        log->info("Bond dimensions after: {}", tools::finite::measure::bond_dimensions(*state));
-        has_projected = true;
-    }
+//    if (        settings::model::project_when_saturated
+//        and     state->position_is_any_edge()
+//        and     sim_status.simulation_has_got_stuck
+//        and not outside_of_window
+//        and not has_projected)
+//    {
+//        log->info("Projecting to {} because we're stuck", settings::model::target_parity_sector);
+//        auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+//        double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
+//        double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
+//        if(variance_projected < variance_candidate){
+//            log->info("Projection to {} succeeded - variance {:.8f} -> {:.8f}", settings::model::target_parity_sector,variance_candidate,variance_projected);
+//            *state = state_projected;
+////                has_projected = true;
+//        }else{
+//            log->info("Projection to {} failed - variance does not improve {:8f} > {:8f} ", settings::model::target_parity_sector,variance_candidate,variance_projected);
+//        }
+//    }
 
 
 
