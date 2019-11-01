@@ -112,6 +112,10 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                     style = colored.bg("red_3b")
             elif finished[-1] == 0 and got_stuck[-1] == 1:
                 style = colored.fg("red_3b")
+                if variance[-1] < 1e-10:
+                    style = colored.fg("dark_green_sea")
+                else:
+                    style = colored.fg("dark_orange")
             elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 0:
                 style = ''
             elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 1:
@@ -165,11 +169,12 @@ if args.save:
 
 print("Legend:")
 print("Success implies converging to variance < 1e-12")
-print(stylize(colored.bg("green_4")        , "Finished: success"))
-print(stylize(colored.bg("red_3b")         , "Finished: no success"))
-print(stylize(colored.bg("dark_green_sea") , "Finished: almost success (variance < 1e-10)"))
-print(stylize(colored.bg("hot_pink_2")     , "Finished: meeting criteria fur success but not successfully (probably logic error)"))
-print(stylize(colored.fg("green_4")        , "Running, reached success"))
-print(stylize(colored.fg("red_3b")         , "Running, currently stuck"))
+print(stylize("Finished : success"                                                                  , colored.bg("green_4")))
+print(stylize("Finished : no success"                                                               , colored.bg("red_3b")))
+print(stylize("Finished : almost success (variance < 1e-10)"                                        , colored.bg("dark_green_sea")))
+print(stylize("Finished : meeting criteria fur success but not successfully (probably logic error)" , colored.bg("hot_pink_2")))
+print(stylize("Running  : reached success"                                                          , colored.fg("green_4")))
+print(stylize("Running  : almost success  (variance < 1e-10)"                                       , colored.fg("dark_green_sea")))
+print(stylize("Running  : currently stuck"                                                          , colored.fg("dark_orange")))
 print("Running")
 
