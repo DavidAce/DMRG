@@ -103,12 +103,12 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             style = ''
             if finished[-1] == 1 and succeeded[-1] == 1:
                 style = colored.bg("green_4")
-            elif finished[-1] == 1 and converged[-1] == 1 and saturated[-1] == 0:
+            elif finished[-1] == 1 and converged[-1] == 1:
                 style = colored.bg("dark_orange")
             elif finished[-1] == 1 and got_stuck[-1] == 1:
                 style = colored.bg("red_3b")
             elif finished[-1] == 0 and got_stuck[-1] == 1:
-                style = colored.fg("red_3b")
+                style = colored.fg("sandy_brown")
             elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 0:
                 style = ''
             elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 1:
