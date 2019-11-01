@@ -257,12 +257,6 @@ void class_algorithm_finite::backup_best_state(const class_finite_state &state) 
     }else{
         log->trace("Champion defended his title");
     }
-//    if (sim_status.variance_mpo_has_saturated and sim_status.entanglement_has_saturated){
-//
-//    }else{
-//        log->trace("Waiting for saturation before challenging the current champion");
-//    }
-
 }
 
 
