@@ -10,6 +10,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -h                                  : Help. Shows this text.
 -a <app name>                       : Name of the executable to run (default = DMRG++)
 -b <build type>                     : Release | RelWithDebInfo | Debug | Profile |  (default = Release)
+-c <"cluster_list">                 : String with comma-separated list of clusters. At theophys: kraken | draken (default = )
 -e                                  : Enable --exclusive mode. (default = off)
 -f <config file/path>               : File or path to files containing simulation config files (suffixed .cfg) (default = input/ )
 -g <seeds  file/path>               : File or path to files containing a list of seeds (suffixed .seed). Basenames should match the corresponding input files in -f (default = )
@@ -34,11 +35,13 @@ configpath=input/
 mem=4000
 startseed=0
 time=--time=0-1:00:00
-while getopts ha:b:def:g:J:m:n:N:o:p:rs:S:t: o; do
+cluster_list=""
+while getopts ha:b:c:def:g:J:m:n:N:o:p:rs:S:t: o; do
     case $o in
         (h) usage ;;
         (a) execname=$OPTARG;;
         (b) build=$OPTARG;;
+        (c) cluster_list="$OPTARG";;
         (d) dryrun=true;;
         (e) exclusive=--exclusive;;
         (f) configpath=$OPTARG;;
@@ -251,6 +254,7 @@ for simfile in $simfiles; do
         sbatch $partition $requeue $exclusive $time $other \
             --mem-per-cpu=$mem \
             --job-name=$jobname \
+            --cluster=$cluster_list \
             run_parallel.sh -e $exec -f $simfile
     fi
 done
