@@ -104,9 +104,12 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             if finished[-1] == 1 and succeeded[-1] == 1:
                 style = colored.bg("green_4")
             elif finished[-1] == 1 and converged[-1] == 1:
-                style = colored.bg("dark_orange")
+                style = colored.bg("hot_pink_2")
             elif finished[-1] == 1 and got_stuck[-1] == 1:
-                style = colored.bg("red_3b")
+                if variance[-1] < 1e-10:
+                    style = colored.bg("dark_orange")
+                else:
+                    style = colored.bg("red_3b")
             elif finished[-1] == 0 and got_stuck[-1] == 1:
                 style = colored.fg("dark_orange")
             elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 0:
@@ -159,3 +162,12 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         file.write(entry + '\n')
 if args.save:
     file.close()
+
+print("Legend:")
+print("Green  BG: Finished successfully")
+print("Red    BG: Finished unsuccessfully")
+print("Orange BG: Finished almost successfully")
+print("Pink   BG: Finished meeting criteria fur success but not successfully (probably logic error)")
+print("Green  FG: Running, reached success")
+print("Orange FG: Running, is currently stuck")
+print("White  FG: Running")
