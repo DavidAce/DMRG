@@ -108,7 +108,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             elif finished[-1] == 1 and got_stuck[-1] == 1:
                 style = colored.bg("red_3b")
             elif finished[-1] == 0 and got_stuck[-1] == 1:
-                style = colored.fg("sandy_brown")
+                style = colored.fg("dark_orange")
             elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 0:
                 style = ''
             elif finished[-1] == 0 and got_stuck[-1] == 0 and converged[-1] == 1:
