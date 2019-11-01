@@ -107,7 +107,7 @@ void class_xDMRG::single_xDMRG_step()
     Eigen::Tensor<Scalar,3> theta;
 
     std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
-    if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
+    if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::maxSitesMultiDmrg}; //You can take many sites in the beginning
 
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
     for (auto & max_num_sites : max_num_sites_list){
@@ -282,10 +282,14 @@ void class_xDMRG::check_convergence(){
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
                                           sim_status.simulation_has_saturated;
 
+    bool unstuck = sim_status.simulation_has_got_stuck;
     sim_status.simulation_has_got_stuck = not sim_status.variance_mpo_has_converged and
                                           sim_status.variance_mpo_saturated_for > max_saturation_iters or
                                           (sim_status.variance_mpo_has_saturated and
                                           sim_status.entanglement_has_saturated);
+
+    unstuck = unstuck == true  and  sim_status.simulation_has_got_stuck == false; // We were stuck, but no longer.
+    if (unstuck) has_projected = false;
 
 
     log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);
@@ -294,21 +298,10 @@ void class_xDMRG::check_convergence(){
     log->debug("Simulation has got stuck: {}", sim_status.simulation_has_got_stuck);
 
     if(state->position_is_any_edge() and sim_status.simulation_has_got_stuck){
-        if (settings::model::project_when_saturated and not has_projected  and not outside_of_window ){
+        if (settings::model::project_when_stuck and not has_projected and not outside_of_window ){
             log->info("Projecting at site {} to {} due to saturation", state->get_position(), settings::model::target_parity_sector);
-            auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-            double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
-            double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
-            if(variance_projected < variance_candidate){
-                log->info("Projection to {} succeeded - variance {:.8f} -> {:.8f}",
-                        settings::model::target_parity_sector,std::log10(variance_candidate),std::log10(variance_projected));
-                *state = state_projected;
-//                has_projected = true;
-            }else{
-                log->info("Projection to {} failed - variance does not improve {:8f} < {:8f} ",
-                        settings::model::target_parity_sector,std::log10(variance_candidate),std::log10(variance_projected));
-
-            }
+            *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);;
+            has_projected = true;
         }
         else if (    sim_status.num_resets < settings::precision::maxResets
                  and tools::finite::measure::energy_variance_per_site(*state) > 1e-10)
@@ -319,27 +312,6 @@ void class_xDMRG::check_convergence(){
         }
 
     }
-
-
-//    if (        settings::model::project_when_saturated
-//        and     state->position_is_any_edge()
-//        and     sim_status.simulation_has_got_stuck
-//        and not outside_of_window
-//        and not has_projected)
-//    {
-//        log->info("Projecting to {} because we're stuck", settings::model::target_parity_sector);
-//        auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-//        double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
-//        double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
-//        if(variance_projected < variance_candidate){
-//            log->info("Projection to {} succeeded - variance {:.8f} -> {:.8f}", settings::model::target_parity_sector,variance_candidate,variance_projected);
-//            *state = state_projected;
-////                has_projected = true;
-//        }else{
-//            log->info("Projection to {} failed - variance does not improve {:8f} > {:8f} ", settings::model::target_parity_sector,variance_candidate,variance_projected);
-//        }
-//    }
-
 
 
 
@@ -380,11 +352,12 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
         counter++;
-        if (counter % 10 == 0) {
+        if (counter % 10 == 0 and energy_window_growth_factor != 1.0) {
             log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}",
                     sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
         }
+        if(counter >= 2000) throw std::runtime_error("Failed to find initial state in energy window");
     }
     log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
     clear_saturation_status();

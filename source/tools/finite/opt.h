@@ -32,12 +32,29 @@ namespace tools::finite::opt{
         extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_finite_state & state, const class_simulation_status & sim_status);
         extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_finite_state & state, std::string ritzstring = "SR");
 
-        extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian(const class_finite_state & state);
-        extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian2(const class_finite_state & state);
-        extern Eigen::MatrixXcd                        get_multi_hamiltonian_matrix(const class_finite_state & state);
-        extern Eigen::MatrixXcd                        get_multi_hamiltonian2_matrix(const class_finite_state & state);
-        extern Eigen::MatrixXcd                        get_multi_hamiltonian2_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
-        extern Eigen::MatrixXcd                        get_multi_hamiltonian2_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
+        namespace local_hamiltonians{
+            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_tensor(const class_finite_state & state);
+            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_squared_tensor(const class_finite_state & state);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_matrix(const class_finite_state & state);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_matrix(const class_finite_state & state);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
+        }
+
+        template <typename T>
+        Eigen::Tensor<T,6> get_multi_hamiltonian_tensor(const class_finite_state & state);
+        template <typename T>
+        Eigen::Tensor<T,6> get_multi_hamiltonian_squared_tensor(const class_finite_state & state);
+        template <typename T>
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_matrix(const class_finite_state & state);
+        template <typename T>
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_matrix(const class_finite_state & state);
+        template <typename T>
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+        template <typename T>
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+
+
 //        extern std::complex<double>                    get_subspace_hamiltonian_component();
         inline ceres::GradientProblemSolver::Options options;
 

@@ -18,14 +18,6 @@ tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_fun
         H2(H2_subspace),
         eigvals(eigvals_)
 {
-//    tools::log->trace("Constructing subspace functor");
-//    if constexpr(std::is_same<Scalar,double>::value){
-//        H2 = H2_subspace.real();
-//    }
-//    if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-//        H2 = H2_subspace;
-//    }
-//        H2 = (eigvecs.adjoint().real() * state.get_multi_hamiltonian2_matrix().real().template selfadjointView<Eigen::Upper>() * eigvecs.real());
 
     energy_reduced  = state.get_energy_reduced();
     double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();

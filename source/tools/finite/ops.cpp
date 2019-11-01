@@ -61,7 +61,7 @@ void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<E
                 Ledge
                         .shuffle(Textra::array3{0,2,1})
                         .reshape(Textra::array2{Ldim*mpoDimL,Ldim})
-                        .contract(state.MPS_L.front().get_M(),Textra::idx({0},{1}))
+                        .contract(state.MPS_L.front().get_M_bare(),Textra::idx({0},{1}))
                         .shuffle(Textra::array3{1,0,2});
         state.MPS_L.front().set_M(M_temp);
         state.MPS_L.front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0));
@@ -73,7 +73,7 @@ void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<E
                 Redge
                         .shuffle(Textra::array3{0,2,1})
                         .reshape(Textra::array2{Rdim*mpoDimR,Rdim})
-                        .contract(state.MPS_R.back().get_M(),Textra::idx({0},{2}))
+                        .contract(state.MPS_R.back().get_M_bare(),Textra::idx({0},{2}))
                         .shuffle(Textra::array3{1,2,0});
         state.MPS_R.back().set_M(M_temp);
         state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
@@ -90,6 +90,11 @@ void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<E
 class_finite_state tools::finite::ops::get_projection_to_parity_sector(const class_finite_state & state, const Eigen::MatrixXcd  & paulimatrix, int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     tools::log->trace("Generating parity projected state with sign {}", sign);
+    auto spin_components = tools::finite::measure::spin_components(state);
+    double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
+    tools::log->trace("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
+    tools::log->trace("Current reqstd spin component  :     {:.16f}", requested_spin_component );
+
     tools::common::profile::t_prj.tic();
     class_finite_state state_projected = state;
     state_projected.unset_measurements();
@@ -102,16 +107,17 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);
     state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation
-    double measured_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
-    tools::log->trace("Resulting global spin component: {:.16f}",measured_spin_component );
+    spin_components          = tools::finite::measure::spin_components(state_projected);
+    requested_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
+    tools::log->trace("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
+    tools::log->trace("Resulting reqstd spin component  :     {:.16f}", requested_spin_component );
     return state_projected;
 }
 
 class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, const Eigen::MatrixXcd & paulimatrix) {
     tools::log->trace("Finding closest projection");
-    double measured_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
-    tools::log->trace("Current global spin component: {:.16f}",measured_spin_component );
-    if (measured_spin_component > 0){
+    double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
+    if (requested_spin_component > 0){
         return get_projection_to_parity_sector(state, paulimatrix, 1);
     }else{
         return get_projection_to_parity_sector(state, paulimatrix, -1);

@@ -6,33 +6,45 @@
 #include <state/class_finite_state.h>
 #include <general/nmspc_omp.h>
 
-Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::get_multi_hamiltonian(const class_finite_state & state){
-//    if(cache.multiham) return cache.multiham.value();
+Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_finite_state & state){
     auto mpo = state.get_multimpo();
-    tools::log->trace("Contracting multi hamiltonian...");
+    tools::log->trace("Contracting multisite hamiltonian...");
     auto & envL = state.get_ENVL(state.active_sites.front());
     auto & envR = state.get_ENVR(state.active_sites.back());
     if (envL.get_position() != state.active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", envL.get_position() , state.active_sites.front()));
     if (envR.get_position() != state.active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", envR.get_position() , state.active_sites.back()));
-//    cache.multiham =
+//    cache.ham =
     long dim0 = mpo.dimension(2);
     long dim1 = envL.block.dimension(0);
     long dim2 = envR.block.dimension(0);
-    Eigen::Tensor<std::complex<double>,6> multiham(dim0,dim1,dim2,dim0,dim1,dim2);
-    multiham.device(omp::dev) =
+    Eigen::Tensor<std::complex<double>,6> ham(dim0, dim1, dim2, dim0, dim1, dim2);
+    ham.device(omp::dev) =
             envL.block
                     .contract(mpo           , Textra::idx({2},{0}))
                     .contract(envR.block    , Textra::idx({2},{2}))
                     .shuffle(Textra::array6{2,0,4,3,1,5});
-    tools::log->trace("Contracting multi hamiltonian... OK");
-//    return cache.multiham.value();
-    return multiham;
+    tools::log->trace("Contracting multisite hamiltonian... OK");
+    auto cols       = ham.dimension(0)* ham.dimension(1)* ham.dimension(2);
+    auto rows       = ham.dimension(3)* ham.dimension(4)* ham.dimension(5);
+    long size       = state.active_problem_size();
+    if(rows != size) throw std::runtime_error (fmt::format("Mismatch in multisite hamiltonian dim0*dim1*dim2 and cols: {} != {}",cols, size));
+    if(cols != size) throw std::runtime_error (fmt::format("Mismatch in multisite hamiltonian dim3*dim4*dim5 and rows: {} != {}",rows, size));
+
+    auto ham_map = Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows,cols);
+    double non_hermiticity = (ham_map - ham_map.adjoint()).cwiseAbs().sum()/ham_map.size();
+    double sparcity = (ham_map.array().cwiseAbs2() != 0.0).count()/(double)ham_map.size();
+
+    if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("multisite hamiltonian is not hermitian: {:.16f}",non_hermiticity));
+    if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}",non_hermiticity);
+    if(ham_map.hasNaN())        throw std::runtime_error("multisite hamiltonian has NaN's!");
+    tools::log->trace("multisite hamiltonian nonzeros: {:.8f} %", sparcity*100);
+
+    return ham;
 }
 
-Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::get_multi_hamiltonian2(const class_finite_state & state) {
-//    if(cache.multiham_sq) return cache.multiham_sq.value();
+Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(const class_finite_state & state) {
     auto mpo = state.get_multimpo();
-    tools::log->trace("Contracting multi hamiltonian squared...");
+    tools::log->trace("Contracting multisite hamiltonian squared...");
     auto & env2L = state.get_ENV2L(state.active_sites.front());
     auto & env2R = state.get_ENV2R(state.active_sites.back());
     if (env2L.get_position() != state.active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , state.active_sites.front()));
@@ -40,59 +52,55 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::get_multi_
     long dim0 = mpo.dimension(2);
     long dim1 = env2L.block.dimension(0);
     long dim2 = env2R.block.dimension(0);
-//    cache.multiham_sq =
-    Eigen::Tensor<std::complex<double>,6> multiham_sq(dim0,dim1,dim2,dim0,dim1,dim2);
-    multiham_sq.device(omp::dev) =
+    Eigen::Tensor<std::complex<double>,6> ham_sq(dim0, dim1, dim2, dim0, dim1, dim2);
+    ham_sq.device(omp::dev) =
             env2L.block
                     .contract(mpo             , Textra::idx({2},{0}))
                     .contract(mpo             , Textra::idx({5,2},{2,0}))
                     .contract(env2R.block     , Textra::idx({2,4},{2,3}))
                     .shuffle(Textra::array6{2,0,4,3,1,5});
-    tools::log->trace("Contracting multi hamiltonian squared... OK");
-    return multiham_sq;
-//    return cache.multiham_sq.value();
-}
+    tools::log->trace("Contracting multisite hamiltonian squared... OK");
 
-Eigen::MatrixXcd tools::finite::opt::internal::get_multi_hamiltonian_matrix(const class_finite_state & state) {
-//    if(cache.multiham_mat) return cache.multiham_mat.value();
+    auto cols       = ham_sq.dimension(0)* ham_sq.dimension(1)* ham_sq.dimension(2);
+    auto rows       = ham_sq.dimension(3)* ham_sq.dimension(4)* ham_sq.dimension(5);
     long size = state.active_problem_size();
-    auto ham_tensor = tools::finite::opt::internal::get_multi_hamiltonian(state);
-    auto cols       = ham_tensor.dimension(0)* ham_tensor.dimension(1)* ham_tensor.dimension(2);
-    auto rows       = ham_tensor.dimension(3)* ham_tensor.dimension(4)* ham_tensor.dimension(5);
+    if(rows != size) throw std::runtime_error (fmt::format("Mismatch in multisite hamiltonian squared dim0*dim1*dim2 and cols: {} != {}",cols, size));
+    if(cols != size) throw std::runtime_error (fmt::format("Mismatch in multisite hamiltonian squared dim3*dim4*dim5 and rows: {} != {}",rows, size));
 
-    if(rows != size)
-        throw std::runtime_error (fmt::format("Mismatch hamiltonian dim0*dim1*dim2 and cols: {} != {}",cols, size));
-    if(cols != size)
-        throw std::runtime_error (fmt::format("Mismatch hamiltonian dim3*dim4*dim5 and rows: {} != {}",rows, size));
-    return Eigen::Map<Eigen::MatrixXcd> (ham_tensor.data(),size,size).transpose();
-//    cache.multiham_mat =  Eigen::Map<MType> (ham_tensor.data(),size,size).transpose();
-//    return cache.multiham_mat.value();
+    auto ham_sq_map = Eigen::Map<Eigen::MatrixXcd>(ham_sq.data(), rows,cols);
+    double non_hermiticity = (ham_sq_map - ham_sq_map.adjoint()).cwiseAbs().sum()/ham_sq_map.size();
+    double sparcity = (ham_sq_map.array().cwiseAbs2() != 0.0).count()/(double)ham_sq_map.size();
+
+    if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("multisite hamiltonian squared is not hermitian: {:.16f}",non_hermiticity));
+    if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
+    if(ham_sq_map.hasNaN())     throw std::runtime_error("multisite hamiltonian squared has NaN's!");
+    tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity*100);
+
+    return ham_sq;
 }
 
 
-Eigen::MatrixXcd tools::finite::opt::internal::get_multi_hamiltonian2_matrix(const class_finite_state & state) {
-//    if(cache.multiham_sq_mat) return cache.multiham_sq_mat.value();
+
+Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_matrix(const class_finite_state & state) {
     long size = state.active_problem_size();
-    auto ham_squared_tensor = tools::finite::opt::internal::get_multi_hamiltonian2(state);
-    auto cols       = ham_squared_tensor.dimension(0)* ham_squared_tensor.dimension(1)* ham_squared_tensor.dimension(2);
-    auto rows       = ham_squared_tensor.dimension(3)* ham_squared_tensor.dimension(4)* ham_squared_tensor.dimension(5);
-    if(rows != size)
-        throw std::runtime_error (fmt::format("Mismatch hamiltonian sq dim0*dim1*dim2 and cols: {} != {}",cols, size));
-    if(cols != size)
-        throw std::runtime_error (fmt::format("Mismatch hamiltonian sq dim3*dim4*dim5 and rows: {} != {}",rows, size));
-    return Eigen::Map<Eigen::MatrixXcd> (ham_squared_tensor.data(),size,size).transpose();
-//    cache.multiham_sq_mat  = Eigen::Map<MType> (ham_squared_tensor.data(),size,size).transpose();
-//    return cache.multiham_sq_mat.value();
+    auto ham_tensor = tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(state);
+    return Eigen::Map<Eigen::MatrixXcd> (ham_tensor.data(),size,size).transpose().selfadjointView<Eigen::Lower>();
 }
 
 
-Eigen::MatrixXcd  tools::finite::opt::internal::get_multi_hamiltonian2_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs ){
-//    if(cache.multiham_sq_sub) return cache.multiham_sq_sub.value();
+Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_matrix(const class_finite_state & state) {
+    long size = state.active_problem_size();
+    auto ham_squared_tensor = tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(state);
+    return Eigen::Map<Eigen::MatrixXcd> (ham_squared_tensor.data(),size,size).transpose().selfadjointView<Eigen::Lower>();
+}
+
+
+Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(const class_finite_state & state, const Eigen::MatrixXcd & eigvecs ){
     auto mpo = state.get_multimpo();
     auto & env2L = state.get_ENV2L(state.active_sites.front()).block;
     auto & env2R = state.get_ENV2R(state.active_sites.back()).block;
 
-    tools::log->trace("Contracting hamiltonian squared matrix in subspace new...");
+    tools::log->trace("Contracting subspace hamiltonian squared new...");
     auto dims = state.active_dimensions();
     size_t log2chiL  = std::log2(dims[1]);
     size_t log2chiR  = std::log2(dims[2]);
@@ -163,27 +171,23 @@ Eigen::MatrixXcd  tools::finite::opt::internal::get_multi_hamiltonian2_subspace_
     }
 
     H2 = H2.selfadjointView<Eigen::Lower>();
-    tools::log->trace("Contracting hamiltonian squared matrix in subspace new... OK");
+    tools::log->trace("Contracting subspace hamiltonian squared new... OK");
 
-    if(H2.hasNaN())throw std::runtime_error("H2 has NaN's!");
-//    Eigen::MatrixXcd H2_old = tools::finite::opt::internal::get_multi_hamiltonian2_subspace_matrix(state, eigvecs);
-//
-//    if(not H2.isApprox(H2_old,1e-4)){
-//        std::cout << "H2 new = \n" << H2 << std::endl;
-//        std::cout << "H2 old = \n" << H2_old << std::endl;
-//        tools::log->warn("H2 subspace mismatch: {:.16f}", (H2 - H2_old).cwiseAbs().sum());
-//    }
-    if(not H2.isApprox(H2.adjoint(), H2.size()*1e-12)){
-        throw std::runtime_error(fmt::format("H2_subspace is not hermitian: {:.16f}", (H2 - H2.adjoint()).cwiseAbs().sum()));
-    }
-//    return H2.conjugate();
+    double non_hermiticity = (H2 - H2.adjoint()).cwiseAbs().sum()/H2.size();
+    double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
+
+    if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("subspace hamiltonian squared is not hermitian: {:.16f}",non_hermiticity));
+    if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
+    if(H2.hasNaN())     throw std::runtime_error("subspace hamiltonian squared has NaN's!");
+    tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity*100);
+
     return H2;
 
 }
 
 
 
-Eigen::MatrixXcd  tools::finite::opt::internal::get_multi_hamiltonian2_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs ){
+Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix(const class_finite_state & state, const Eigen::MatrixXcd & eigvecs ){
 //    if(cache.multiham_sq_sub) return cache.multiham_sq_sub.value();
     auto mpo = state.get_multimpo();
     tools::log->trace("Contracting hamiltonian squared matrix in subspace old...");
@@ -241,8 +245,94 @@ Eigen::MatrixXcd  tools::finite::opt::internal::get_multi_hamiltonian2_subspace_
                     .shuffle(                             Textra::array2{1,0});
     }
     tools::log->trace("Contracting hamiltonian squared matrix in subspace old... OK");
-    return Eigen::Map<Eigen::MatrixXcd>(H2.data(),H2.dimension(0),H2.dimension(1));
+
+    auto H2_map = Eigen::Map<Eigen::MatrixXcd>(H2.data(),H2.dimension(0),H2.dimension(1));
+    double non_hermiticity = (H2_map - H2_map.adjoint()).cwiseAbs().sum()/H2.size();
+    double sparcity = (H2_map.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
+
+    if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("subspace hamiltonian squared is not hermitian: {:.16f}",non_hermiticity));
+    if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
+    if(H2_map.hasNaN())         throw std::runtime_error("subspace hamiltonian squared has NaN's!");
+    tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity*100);
+
+
+    return H2_map;
 }
+
+
+
+
+
+
+
+// Template definitions
+
+using Scalar = std::complex<double>;
+template<typename T> using MatrixType = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>;
+
+
+template <typename T>
+Eigen::Tensor<T,6> tools::finite::opt::internal::get_multi_hamiltonian_tensor(const class_finite_state & state){
+    static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
+    if      constexpr(std::is_same<T,std::complex<double>>::value) return tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(state);
+    else if constexpr(std::is_same<T,double>::value)               return tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(state).real();
+}
+
+// Explicit instantiations
+template Eigen::Tensor<double,6>tools::finite::opt::internal::get_multi_hamiltonian_tensor<double>(const class_finite_state & state);
+template Eigen::Tensor<Scalar,6>tools::finite::opt::internal::get_multi_hamiltonian_tensor<Scalar>(const class_finite_state & state);
+
+
+template <typename T>
+Eigen::Tensor<T,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor(const class_finite_state & state){
+    static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
+    if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_squared_tensor(state);
+    else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_squared_tensor(state).real();
+}
+// Explicit instantiations
+template Eigen::Tensor<double,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor<double>(const class_finite_state & state);
+template Eigen::Tensor<Scalar,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor<Scalar>(const class_finite_state & state);
+
+
+template <typename T>
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_matrix(const class_finite_state & state){
+    static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
+    if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_matrix(state);
+    else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_matrix(state).real();
+}
+// Explicit instantiations
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_matrix<double>(const class_finite_state & state);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_matrix<Scalar>(const class_finite_state & state);
+
+template <typename T>
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix(const class_finite_state & state){
+    static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
+    if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_squared_matrix(state);
+    else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_squared_matrix(state).real();
+}
+// Explicit instantiations
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix<double>(const class_finite_state & state);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix<Scalar>(const class_finite_state & state);
+
+template <typename T>
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs){
+    static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
+    if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix(state, eigvecs);
+    else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix(state, eigvecs).real();
+}
+// Explicit instantiations
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix<double>(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix<Scalar>(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+
+template <typename T>
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs){
+    static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
+    if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(state, eigvecs);
+    else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(state, eigvecs).real();
+}
+// Explicit instantiations
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<double>(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
 
 
 

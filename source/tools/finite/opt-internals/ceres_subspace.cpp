@@ -272,21 +272,7 @@ find_subspace(const class_finite_state & state,OptMode optMode){
 
     using namespace eigutils::eigSetting;
     t_ham->tic();
-
-    MatrixType<Scalar> H_local;
-    if constexpr(std::is_same<Scalar,double>::value){
-        H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix(state).real();
-    }
-    if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-        H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix(state);
-    }
-
-    if(not H_local.isApprox(H_local.adjoint(), 1e-14)){
-        throw std::runtime_error(fmt::format("H_local is not hermitian: {:.16f}", (H_local - H_local.adjoint()).cwiseAbs().sum()));
-    }
-    double sparcity = (H_local.array().cwiseAbs2() != 0.0).count()/(double)H_local.size();
-    tools::log->debug("H_local nonzeros: {:.8f} %", sparcity*100);
-
+    MatrixType<Scalar> H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix<Scalar>(state);
     t_ham->toc();
     auto multitheta = state.get_multitheta();
 
@@ -505,10 +491,14 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_sta
 
     tools::log->debug("Optimizing");
     t_opt->tic();
-    Eigen::MatrixXcd H2_subspace     = tools::finite::opt::internal::get_multi_hamiltonian2_subspace_matrix_new(state, eigvecs);
+    Eigen::MatrixXcd H2_subspace = tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(state, eigvecs);
+    if(optType.option == opt::TYPE::REAL) H2_subspace = H2_subspace.real();
+
+
     t_opt->toc();
     double t_H2_subspace = t_opt->get_last_time_interval();
     std::vector<std::pair<double,Eigen::Tensor<Scalar,3>>> optimized_results;
+
     for(auto &theta_initial: initial_guess_thetas){
         auto theta_initial_map             = Eigen::Map<const Eigen::VectorXcd>  (theta_initial.data(),theta_initial.size());
 
