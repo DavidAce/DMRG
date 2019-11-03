@@ -61,6 +61,7 @@ void settings::load_from_file(class_settings_reader &indata){
         indata.find_parameter<size_t> ("idmrg::max_steps"  , idmrg::max_steps);
         indata.find_parameter<long>   ("idmrg::chi_max"    , idmrg::chi_max);
         indata.find_parameter<bool>   ("idmrg::chi_grow"   , idmrg::chi_grow);
+        indata.find_parameter<long>   ("idmrg::chi_init"   , idmrg::chi_init);
         indata.find_parameter<size_t> ("idmrg::print_freq" , idmrg::print_freq);
         indata.find_parameter<size_t> ("idmrg::write_freq" , idmrg::write_freq);
     }
@@ -73,6 +74,7 @@ void settings::load_from_file(class_settings_reader &indata){
         indata.find_parameter<size_t> ("fdmrg::min_sweeps "  , fdmrg::min_sweeps);
         indata.find_parameter<long>   ("fdmrg::chi_max"      , fdmrg::chi_max);
         indata.find_parameter<bool>   ("fdmrg::chi_grow"     , fdmrg::chi_grow);
+        indata.find_parameter<long>   ("fdmrg::chi_init"     , fdmrg::chi_init);
         indata.find_parameter<size_t> ("fdmrg::print_freq "  , fdmrg::print_freq);
         indata.find_parameter<size_t> ("fdmrg::write_freq "  , fdmrg::write_freq);
         indata.find_parameter<bool>   ("fdmrg::store_wavefn" , fdmrg::store_wavefn);
@@ -87,6 +89,7 @@ void settings::load_from_file(class_settings_reader &indata){
         indata.find_parameter<size_t> ("xdmrg::min_sweeps "            , xdmrg::min_sweeps);
         indata.find_parameter<long>   ("xdmrg::chi_max"                , xdmrg::chi_max);
         indata.find_parameter<bool>   ("xdmrg::chi_grow"               , xdmrg::chi_grow);
+        indata.find_parameter<long>   ("xdmrg::chi_init"               , xdmrg::chi_init);
         indata.find_parameter<size_t> ("xdmrg::print_freq "            , xdmrg::print_freq);
         indata.find_parameter<size_t> ("xdmrg::write_freq "            , xdmrg::write_freq);
         indata.find_parameter<bool>   ("xdmrg::store_wavefn"           , xdmrg::store_wavefn);
@@ -104,6 +107,7 @@ void settings::load_from_file(class_settings_reader &indata){
         indata.find_parameter<size_t> ("itebd::suzuki_order", itebd::suzuki_order);
         indata.find_parameter<long>   ("itebd::chi_max"     , itebd::chi_max  );
         indata.find_parameter<bool>   ("itebd::chi_grow"    , itebd::chi_grow);
+        indata.find_parameter<long>   ("fdmrg::chi_init"    , itebd::chi_init);
         indata.find_parameter<size_t> ("itebd::print_freq"  , itebd::print_freq);
         indata.find_parameter<size_t> ("itebd::write_freq"  , itebd::write_freq);
     }

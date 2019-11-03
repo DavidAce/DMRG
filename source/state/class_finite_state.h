@@ -44,7 +44,7 @@ private:
     int num_sweeps   = 0;
     int num_moves    = 0;
     int direction    = 1;
-    long chi_lim     = 0;
+    std::optional<long> chi_lim;
 public:
     class_finite_state()=default;
     ~class_finite_state();

@@ -21,10 +21,10 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
 void class_xDMRG::run_preprocessing() {
     log->info("Running {} preprocessing", sim_name);
+    class_algorithm_finite::run_preprocessing();
     t_pre.tic();
     sim_status.energy_dens_target = settings::xdmrg::energy_density_target;
     sim_status.energy_dens_window = settings::xdmrg::energy_density_window;
-    update_bond_dimension_limit(16);
     find_energy_range();
     tools::finite::mps::internals::seed_state_unused = true;
     reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
@@ -432,7 +432,8 @@ size_t class_xDMRG::num_sites()           {return settings::xdmrg::num_sites;}
 size_t class_xDMRG::write_freq()          {return settings::xdmrg::write_freq;}
 size_t class_xDMRG::print_freq()          {return settings::xdmrg::print_freq;}
 bool   class_xDMRG::chi_grow()            {return settings::xdmrg::chi_grow;}
-bool   class_xDMRG::store_wave_function() {return settings::fdmrg::store_wavefn;}
+long   class_xDMRG::chi_init()            {return settings::xdmrg::chi_init;}
+bool   class_xDMRG::store_wave_function() {return settings::xdmrg::store_wavefn;}
 
 
 

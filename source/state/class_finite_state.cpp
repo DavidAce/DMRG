@@ -102,11 +102,12 @@ void class_finite_state::increment_moves()          {num_moves++;}
 
 long class_finite_state::get_chi_lim()  const {
     //Should get the the current limit on allowed bond dimension
-    return chi_lim;
+    return chi_lim.value();
 }
 void class_finite_state::set_chi_lim(long chi_lim_){
     //Should set the the current limit on allowed bond dimension
-     chi_lim = chi_lim_;
+    if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
+    chi_lim = chi_lim_;
 }
 
 int  class_finite_state::get_direction() const {return direction;}

@@ -113,6 +113,7 @@ size_t class_iDMRG::num_sites() {return 2u;}
 size_t class_iDMRG::write_freq(){return settings::idmrg::write_freq;}
 size_t class_iDMRG::print_freq(){return settings::idmrg::print_freq;}
 bool   class_iDMRG::chi_grow()  {return settings::idmrg::chi_grow;}
+long   class_iDMRG::chi_init()  {return settings::idmrg::chi_init;}
 
 
 

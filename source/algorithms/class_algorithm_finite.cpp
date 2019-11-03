@@ -20,8 +20,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     log->trace("Constructing log buffers in finite base");
     log_measurements       = std::make_shared<class_hdf5_log<class_log_finite_dmrg_measurements>> (h5pp_file, sim_name + "/logs", "measurements", sim_name);
 
+    state->set_chi_lim(2); //Can't call chi_init() <-- it's a pure virtual function
 
-    state->set_chi_lim(sim_status.chi_lim);
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
     tools::finite::mpo::randomize(*state,settings::model::seed_model);
@@ -120,11 +120,11 @@ void class_algorithm_finite::run()
 
 
 void class_algorithm_finite::run_preprocessing(){
-    log->info("Running {} preprocessing",sim_name);
+    log->info("Running {} preprocessing (base)",sim_name);
     t_pre.tic();
-    update_bond_dimension_limit(16);
+    update_bond_dimension_limit(chi_init());
     t_pre.toc();
-    log->info("Finished {} preprocessing", sim_name);
+    log->info("Finished {} preprocessing (base)", sim_name);
 }
 
 
@@ -208,7 +208,24 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max
     if(not max_bond_dim.has_value()) {
         max_bond_dim = chi_max();
     }
-    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
+    try{
+        long chi_lim_now = state->get_chi_lim();
+        if(chi_lim_now < chi_init())
+            throw std::logic_error("Chi limit should be larger than chi init");
+    }catch(std::exception &error){
+        //If we reached this stage, either
+        // 1) chi_lim is not initialized yet
+        // 2) chi_lim is initialized, but it is smaller than the init value found in settings
+        // Either way, we should set chi_lim to be chi_init, unless chi_init is larger than max_bond_dim
+        log->info("Setting initial bond dimension limit: {}", chi_init());
+        state->set_chi_lim(std::min(max_bond_dim.value(),chi_init()));
+        sim_status.chi_max = max_bond_dim.value();
+        sim_status.chi_lim = state->get_chi_lim();
+        return;
+    }
+
+
+    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() >= max_bond_dim;
     if(not sim_status.chi_lim_has_reached_chi_max){
         if(chi_grow()){
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
@@ -650,7 +667,7 @@ void class_algorithm_finite::print_status_update() {
     }
     report << fmt::format("Sₑ(l): {:<10.8f} "                                 ,tools::finite::measure::entanglement_entropy_current(*state));
     report << fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] "             ,std::log10(tools::finite::measure::energy_variance_per_site(*state)), std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
-    report << fmt::format("χmax: {:<3} χ: {:<3} "                             , state->get_chi_lim(), tools::finite::measure::bond_dimension_current(*state));
+    report << fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} "                 ,chi_max(), state->get_chi_lim(), tools::finite::measure::bond_dimension_current(*state));
     report << fmt::format("log₁₀ trunc: {:<6.4f} "                            ,std::log10(state->get_truncation_error(state->get_position())));
     report << fmt::format("con: [σ² {:<5} Sₑ {:<5}] "                         ,sim_status.variance_mpo_has_converged,sim_status.entanglement_has_converged);
     report << fmt::format("sat: [σ² {:<2} Sₑ {:<2}] "                         ,sim_status.variance_mpo_saturated_for,sim_status.entanglement_saturated_for);
