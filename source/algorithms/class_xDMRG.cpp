@@ -282,14 +282,14 @@ void class_xDMRG::check_convergence(){
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
                                           sim_status.simulation_has_saturated;
 
-    bool unstuck = sim_status.simulation_has_got_stuck;
+//    bool unstuck = sim_status.simulation_has_got_stuck;
     sim_status.simulation_has_got_stuck = not sim_status.variance_mpo_has_converged and
                                           sim_status.variance_mpo_saturated_for > max_saturation_iters or
                                           (sim_status.variance_mpo_has_saturated and
                                           sim_status.entanglement_has_saturated);
 
-    unstuck = unstuck == true  and  sim_status.simulation_has_got_stuck == false; // We were stuck, but no longer.
-    if (unstuck) has_projected = false;
+//    unstuck = unstuck == true  and  sim_status.simulation_has_got_stuck == false; // We were stuck, but no longer.
+//    if (unstuck) has_projected = false;
 
 
     log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);
@@ -297,7 +297,7 @@ void class_xDMRG::check_convergence(){
     log->debug("Simulation has succeeded: {}", sim_status.simulation_has_succeeded);
     log->debug("Simulation has got stuck: {}", sim_status.simulation_has_got_stuck);
 
-    if(state->position_is_any_edge() and sim_status.simulation_has_got_stuck){
+    if(state->position_is_any_edge() and sim_status.simulation_has_got_stuck and sim_status.chi_lim_has_reached_chi_max){
         if (settings::model::project_when_stuck and not has_projected and not outside_of_window ){
             log->info("Projecting at site {} to {} due to saturation", state->get_position(), settings::model::target_parity_sector);
             *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);;
