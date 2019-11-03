@@ -61,6 +61,7 @@ public:
     virtual size_t write_freq()                                                                               = 0;
     virtual size_t print_freq()                                                                               = 0;
     virtual bool   chi_grow()                                                                                 = 0;
+    virtual long   chi_init()                                                                                 = 0;
     virtual void   print_status_update()                                                                      = 0;
     virtual void   print_status_full()                                                                        = 0;
     virtual void   reset_to_random_state(const std::string parity = "random", int seed_state = -1)            = 0;

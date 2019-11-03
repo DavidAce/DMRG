@@ -110,6 +110,7 @@ namespace settings {
         inline size_t max_steps  = 5000;                           /*!< Final length of 1D quantum chain. */
         inline long chi_max      = 8;                              /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool chi_grow     = true;                           /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long chi_init     = 16;                             /*!< Initial chi limit. Only used when chi_grow == true. */
         inline size_t print_freq = 1000;                           /*!< Print frequency for console output. (0 = off). */
         inline size_t write_freq = 100;                            /*!< Write frequency,for output file buffer. (0 = off). */
 
@@ -122,6 +123,7 @@ namespace settings {
         inline size_t   min_sweeps   = 4;                            /*!< Min number sweeps along the chain. */
         inline long     chi_max      = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_grow     = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_init     = 16;                           /*!< Initial chi limit. Only used when chi_grow == true. */
         inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
         inline size_t   write_freq   = 100;                          /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
@@ -135,6 +137,7 @@ namespace settings {
         inline size_t   min_sweeps              = 4;                /*!< Min number sweeps along the chain. */
         inline long     chi_max                 = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_grow                = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_init                = 16;               /*!< Initial chi limit. Only used when chi_grow == true. */
         inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
         inline size_t   write_freq              = 1;                /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
         inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
@@ -151,6 +154,7 @@ namespace settings {
         inline size_t   suzuki_order = 1;                        /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
         inline long     chi_max      = 8;                        /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool     chi_grow     = true;                     /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_init     = 16;                       /*!< Initial chi limit. Only used when chi_grow == true. */
         inline size_t   print_freq   = 5000;                     /*!< Print frequency for console output. (0 = off).*/
         inline size_t   write_freq   = 100;                      /*!< Write frequency,for output file buffer. (0 = off). */
 

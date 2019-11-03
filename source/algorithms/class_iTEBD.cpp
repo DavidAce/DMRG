@@ -153,4 +153,5 @@ size_t class_iTEBD::num_sites() {return 2u;}
 size_t class_iTEBD::write_freq(){return settings::itebd::write_freq;}
 size_t class_iTEBD::print_freq(){return settings::itebd::print_freq;}
 bool   class_iTEBD::chi_grow()  {return settings::itebd::chi_grow;}
+long   class_iTEBD::chi_init()  {return settings::itebd::chi_init;}
 

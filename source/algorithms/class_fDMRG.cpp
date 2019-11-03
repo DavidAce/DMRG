@@ -73,7 +73,7 @@ void class_fDMRG::check_convergence(){
         check_convergence_entg_entropy();
     }
 
-    if (sim_status.iteration <= settings::xdmrg::min_sweeps){
+    if (sim_status.iteration <= settings::fdmrg::min_sweeps){
         clear_saturation_status();
     }
 
@@ -127,6 +127,7 @@ size_t class_fDMRG::num_sites() {return settings::fdmrg::num_sites;}
 size_t class_fDMRG::write_freq(){return settings::fdmrg::write_freq;}
 size_t class_fDMRG::print_freq(){return settings::fdmrg::print_freq;}
 bool   class_fDMRG::chi_grow()  {return settings::fdmrg::chi_grow;}
+long   class_fDMRG::chi_init()  {return settings::fdmrg::chi_init;}
 bool   class_fDMRG::store_wave_function()  {return settings::fdmrg::store_wavefn;}
 
 

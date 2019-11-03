@@ -18,12 +18,11 @@ class_algorithm_infinite::class_algorithm_infinite(
     : class_algorithm_base(std::move(h5ppFile_),sim_name, sim_type)
 {
     state      = std::make_unique<class_infinite_state>(sim_type,sim_name);
-    state->set_chi_lim(sim_status.chi_lim);
+    state->set_chi_lim(2); //Can't call chi_init() <-- it's a pure virtual function
     tools::infinite::mpo::initialize(*state, settings::model::model_type);
     tools::infinite::mps::initialize(*state, settings::model::model_type);
     tools::infinite::mpo::randomize(*state,settings::model::seed_model);
     tools::infinite::env::initialize(*state);
-//    tools::infinite::mps::randomize(*state,settings::model::initial_parity_sector,settings::model::seed_state);
     tools::infinite::debug::check_integrity(*state);
 
 }
@@ -42,6 +41,7 @@ void class_algorithm_infinite::run() {
 
 void class_algorithm_infinite::run_preprocessing() {
     t_pre.tic();
+
     t_pre.toc();
 }
 
@@ -62,6 +62,21 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> m
     if(not max_bond_dim.has_value()) {
         log->debug("No max bond dim given, setting {}", chi_max());
         max_bond_dim = chi_max();
+    }
+    try{
+        long chi_lim_now = state->get_chi_lim();
+        if(chi_lim_now < chi_init())
+            throw std::logic_error("Chi limit should be larger than chi init");
+    }catch(std::exception &error){
+        //If we reached this stage, either
+        // 1) chi_lim is not initialized yet
+        // 2) chi_lim is initialized, but it is smaller than the init value found in settings
+        // Either way, we should set chi_lim to be chi_init, unless chi_init is larger than max_bond_dim
+        log->info("Setting initial bond dimension limit: {}", chi_init());
+        state->set_chi_lim(std::min(max_bond_dim.value(),chi_init()));
+        sim_status.chi_max = max_bond_dim.value();
+        sim_status.chi_lim = state->get_chi_lim();
+        return;
     }
 
     sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
