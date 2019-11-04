@@ -33,6 +33,7 @@ void tools::common::io::write_simulation_status(const class_simulation_status &s
     h5ppFile.writeDataset(sim_status.simulation_has_saturated      ,sim_name + "/sim_status/simulation_has_saturated");
     h5ppFile.writeDataset(sim_status.simulation_has_succeeded      ,sim_name + "/sim_status/simulation_has_succeeded");
     h5ppFile.writeDataset(sim_status.simulation_has_got_stuck      ,sim_name + "/sim_status/simulation_has_got_stuck");
+    h5ppFile.writeDataset(sim_status.simulation_has_stuck_for      ,sim_name + "/sim_status/simulation_has_stuck_for");
     h5ppFile.writeDataset(sim_status.simulation_has_to_stop        ,sim_name + "/sim_status/simulation_has_to_stop");
     h5ppFile.writeDataset(sim_status.chi_lim_has_reached_chi_max, sim_name + "/sim_status/chi_lim_has_reached_chi_max");
     h5ppFile.writeDataset(sim_status.entanglement_has_converged    ,sim_name + "/sim_status/entanglement_has_converged");
@@ -81,6 +82,7 @@ class_simulation_status tools::common::io::load_sim_status_from_hdf5 (const h5pp
         h5ppFile.readDataset(sim_status.simulation_has_saturated       , sim_name + "/sim_status/simulation_has_saturated");
         h5ppFile.readDataset(sim_status.simulation_has_succeeded       , sim_name + "/sim_status/simulation_has_succeeded");
         h5ppFile.readDataset(sim_status.simulation_has_got_stuck       , sim_name + "/sim_status/simulation_has_got_stuck");
+        h5ppFile.readDataset(sim_status.simulation_has_stuck_for       , sim_name + "/sim_status/simulation_has_stuck_for");
         h5ppFile.readDataset(sim_status.simulation_has_to_stop         , sim_name + "/sim_status/simulation_has_to_stop");
         h5ppFile.readDataset(sim_status.chi_lim_has_reached_chi_max    , sim_name + "/sim_status/chi_lim_has_reached_chi_max");
         h5ppFile.readDataset(sim_status.entanglement_has_converged     , sim_name + "/sim_status/entanglement_has_converged");

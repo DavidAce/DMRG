@@ -40,6 +40,7 @@ struct status_data{
     bool   simulation_has_saturated       = false;
     bool   simulation_has_succeeded       = false;
     bool   simulation_has_got_stuck       = false;
+    size_t simulation_has_stuck_for       = 0;
     bool   simulation_has_to_stop         = false;
     bool   chi_lim_has_reached_chi_max    = false;
     bool   entanglement_has_converged     = false;

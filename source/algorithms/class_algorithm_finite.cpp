@@ -230,7 +230,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max
         if(chi_grow()){
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
             // Only do this if the simulation is stuck.
-            if(sim_status.simulation_has_got_stuck){
+            if(sim_status.simulation_has_stuck_for >= max_stuck_iters){
                 long chi_new_limit = std::min(max_bond_dim.value(), state->get_chi_lim() * 2);
                 log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
                 state->set_chi_lim(chi_new_limit);
@@ -471,11 +471,13 @@ void class_algorithm_finite::clear_saturation_status(){
     sim_status.variance_mpo_saturated_for     = 0;
 
 
-    sim_status.chi_lim_has_reached_chi_max = false;
+    sim_status.chi_lim_has_reached_chi_max    = false;
     sim_status.simulation_has_to_stop         = false;
+    sim_status.simulation_has_got_stuck       = false;
     sim_status.simulation_has_converged       = false;
     sim_status.simulation_has_saturated       = false;
     sim_status.simulation_has_succeeded       = false;
+    sim_status.simulation_has_stuck_for       = 0;
 
 }
 
