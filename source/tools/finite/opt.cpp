@@ -49,7 +49,7 @@ tools::finite::opt::find_excited_state(const class_finite_state &state, const cl
     options.line_search_sufficient_function_decrease  = 1e-2;
     options.line_search_sufficient_curvature_decrease = 0.4; //0.5;
     options.max_solver_time_in_seconds = 60*5;//60*2;
-    options.function_tolerance = 1e-4; //Operations are cheap in subspace, so you can afford low tolerance
+    options.function_tolerance = 1e-5; //Operations are cheap in subspace, so you can afford low tolerance
     options.gradient_tolerance = 1e-2;
     options.parameter_tolerance = 1e-128;//std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;

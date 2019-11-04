@@ -106,7 +106,7 @@ void class_xDMRG::single_xDMRG_step()
 
     Eigen::Tensor<Scalar,3> theta;
 
-    std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
+    std::list<size_t> max_num_sites_list = {2,4,settings::precision::maxSitesMultiDmrg};
     if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::maxSitesMultiDmrg}; //You can take many sites in the beginning
 
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
@@ -275,6 +275,7 @@ void class_xDMRG::check_convergence(){
 
     sim_status.simulation_has_converged = sim_status.variance_mpo_has_converged and
                                           sim_status.entanglement_has_converged;
+
     sim_status.simulation_has_saturated = sim_status.variance_mpo_saturated_for >= min_saturation_iters and
                                           sim_status.entanglement_saturated_for >= min_saturation_iters;
 
@@ -283,19 +284,34 @@ void class_xDMRG::check_convergence(){
                                           sim_status.simulation_has_saturated;
 
 //    bool unstuck = sim_status.simulation_has_got_stuck;
-    sim_status.simulation_has_got_stuck = not sim_status.variance_mpo_has_converged and
-                                          sim_status.variance_mpo_saturated_for > max_saturation_iters or
-                                          (sim_status.variance_mpo_has_saturated and
-                                          sim_status.entanglement_has_saturated);
+//    sim_status.simulation_has_got_stuck = not sim_status.variance_mpo_has_converged and
+//                                          sim_status.variance_mpo_saturated_for >= max_saturation_iters or
+//                                          (sim_status.variance_mpo_has_saturated and
+//                                          sim_status.entanglement_has_saturated);
+    sim_status.simulation_has_got_stuck = sim_status.simulation_has_saturated and not sim_status.simulation_has_succeeded;
+//                                          sim_status.variance_mpo_saturated_for >= max_saturation_iters or
+//                                          (sim_status.variance_mpo_has_saturated and
+//                                           sim_status.entanglement_has_saturated);
 
-//    unstuck = unstuck == true  and  sim_status.simulation_has_got_stuck == false; // We were stuck, but no longer.
-//    if (unstuck) has_projected = false;
+    if(state->position_is_any_edge()) {
+        sim_status.simulation_has_stuck_for = sim_status.simulation_has_got_stuck ? sim_status.simulation_has_stuck_for + 1 : 0;
+    }
+
+        sim_status.simulation_has_to_stop = sim_status.chi_lim_has_reached_chi_max
+                                        and sim_status.simulation_has_stuck_for >= max_stuck_iters;
+
+    //                                        and (sim_status.variance_mpo_saturated_for >= max_saturation_iters and
+    //                                             sim_status.entanglement_saturated_for >= max_saturation_iters);
+    //    unstuck = unstuck == true  and  sim_status.simulation_has_got_stuck == false; // We were stuck, but no longer.
+    //    if (unstuck) has_projected = false;
 
 
     log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);
     log->debug("Simulation has saturated: {}", sim_status.simulation_has_saturated);
     log->debug("Simulation has succeeded: {}", sim_status.simulation_has_succeeded);
     log->debug("Simulation has got stuck: {}", sim_status.simulation_has_got_stuck);
+    log->debug("Simulation has stuck for: {}", sim_status.simulation_has_stuck_for);
+    log->debug("Simulation has to stop  : {}", sim_status.simulation_has_to_stop);
 
     if(state->position_is_any_edge() and sim_status.simulation_has_got_stuck and sim_status.chi_lim_has_reached_chi_max){
         if (settings::model::project_when_stuck and not has_projected and not outside_of_window ){
@@ -315,11 +331,7 @@ void class_xDMRG::check_convergence(){
 
 
 
-    sim_status.simulation_has_to_stop = sim_status.chi_lim_has_reached_chi_max
-                                        and sim_status.simulation_has_saturated
-                                        and (sim_status.variance_mpo_saturated_for >= max_saturation_iters and
-                                             sim_status.entanglement_saturated_for >= max_saturation_iters);
-    log->debug("Simulation has to stop: {}", sim_status.simulation_has_to_stop);
+
 
     t_con.toc();
 }

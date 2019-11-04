@@ -27,6 +27,7 @@ public:
     std::unique_ptr<class_finite_state>    state,state_backup;
 
 
+    size_t max_stuck_iters               = 2;
     size_t min_saturation_iters          = 2;
     size_t max_saturation_iters          = 4;
     bool   has_projected  = false;

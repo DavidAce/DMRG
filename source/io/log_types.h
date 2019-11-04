@@ -347,7 +347,7 @@ public:
 class class_log_simulation_status{
 private:
     struct meta_struct{
-        constexpr static hsize_t                NFIELDS     = 39;
+        constexpr static hsize_t                NFIELDS     = 40;
         size_t           dst_size                           = sizeof (status_data);
         std::array       <size_t,NFIELDS>       dst_offsets =
                 {
@@ -376,6 +376,7 @@ private:
                     HOFFSET(status_data, simulation_has_saturated      ),
                     HOFFSET(status_data, simulation_has_succeeded      ),
                     HOFFSET(status_data, simulation_has_got_stuck      ),
+                    HOFFSET(status_data, simulation_has_stuck_for      ),
                     HOFFSET(status_data, simulation_has_to_stop        ),
                     HOFFSET(status_data, chi_lim_has_reached_chi_max   ),
                     HOFFSET(status_data, entanglement_has_converged    ),
@@ -419,6 +420,7 @@ private:
                 sizeof(status_data::simulation_has_saturated      ),
                 sizeof(status_data::simulation_has_succeeded      ),
                 sizeof(status_data::simulation_has_got_stuck      ),
+                sizeof(status_data::simulation_has_stuck_for      ),
                 sizeof(status_data::simulation_has_to_stop        ),
                 sizeof(status_data::chi_lim_has_reached_chi_max   ),
                 sizeof(status_data::entanglement_has_converged    ),
@@ -462,6 +464,7 @@ private:
                     "simulation_has_saturated",
                     "simulation_has_succeeded",
                     "simulation_has_got_stuck",
+                    "simulation_has_stuck_for",
                     "simulation_has_to_stop",
                     "chi_lim_has_reached_chi_max",
                     "entanglement_has_converged",
@@ -505,6 +508,7 @@ private:
                         H5T_NATIVE_HBOOL,
                         H5T_NATIVE_HBOOL,
                         H5T_NATIVE_HBOOL,
+                        H5T_NATIVE_DOUBLE,
                         H5T_NATIVE_HBOOL,
                         H5T_NATIVE_HBOOL,
                         H5T_NATIVE_HBOOL,
