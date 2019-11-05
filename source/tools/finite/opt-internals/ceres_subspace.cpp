@@ -10,7 +10,7 @@
 #include <math/arpack_extra/matrix_product_stl.h>
 #include <math/arpack_extra/matrix_product_sparse.h>
 #include <tools/finite/opt.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <simulation/nmspc_settings.h>
 #include <general/nmspc_random_numbers.h>
 #include <ceres/ceres.h>
@@ -88,7 +88,7 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,Eigen::VectorXd,double> filter_state
 
 
 std::pair<double,int>
-get_best_variance_in_window(const class_finite_state &state, const Eigen::MatrixXcd &eigvecs, const Eigen::VectorXd & energies_per_site, double lbound, double ubound){
+get_best_variance_in_window(const class_state_finite &state, const Eigen::MatrixXcd &eigvecs, const Eigen::VectorXd & energies_per_site, double lbound, double ubound){
     Eigen::VectorXd variances(eigvecs.cols());
     for(long idx = 0; idx < eigvecs.cols(); idx++){
         if (energies_per_site(idx) <=  ubound and energies_per_site(idx) >= lbound ) {
@@ -267,7 +267,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-find_subspace(const class_finite_state & state,OptMode optMode){
+find_subspace(const class_state_finite & state, OptMode optMode){
     tools::log->trace("Finding subspace");
 
     using namespace eigutils::eigSetting;
@@ -323,11 +323,11 @@ find_subspace(const class_finite_state & state,OptMode optMode){
 
 
 
-Eigen::Tensor<class_finite_state::Scalar,3>
-tools::finite::opt::internal::ceres_subspace_optimization(const class_finite_state &state, const class_simulation_status &sim_status, OptType optType, OptMode optMode){
+Eigen::Tensor<class_state_finite::Scalar,3>
+tools::finite::opt::internal::ceres_subspace_optimization(const class_state_finite &state, const class_simulation_status &sim_status, OptType optType, OptMode optMode){
     tools::log->trace("Optimizing in SUBSPACE mode");
     tools::common::profile::t_opt.tic();
-    using Scalar = class_finite_state::Scalar;
+    using Scalar = class_state_finite::Scalar;
     using namespace eigutils::eigSetting;
 
     // I have learned the following about the interplay of variables

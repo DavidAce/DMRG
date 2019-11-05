@@ -3,7 +3,7 @@
 //
 
 #include "class_algorithm_infinite.h"
-#include <state/class_infinite_state.h>
+#include <state/class_state_infinite.h>
 #include <tools/nmspc_tools.h>
 #include <io/class_hdf5_log_buffer.h>
 #include <math/nmspc_math.h>
@@ -17,7 +17,7 @@ class_algorithm_infinite::class_algorithm_infinite(
         )
     : class_algorithm_base(std::move(h5ppFile_),sim_name, sim_type)
 {
-    state      = std::make_unique<class_infinite_state>(sim_type,sim_name);
+    state      = std::make_unique<class_state_infinite>(sim_type, sim_name);
     state->set_chi_lim(2); //Can't call chi_init() <-- it's a pure virtual function
     tools::infinite::mpo::initialize(*state, settings::model::model_type);
     tools::infinite::mps::initialize(*state, settings::model::model_type);
@@ -49,6 +49,7 @@ void class_algorithm_infinite::run_postprocessing(){
     t_pos.tic();
     print_status_full();
     print_profiling();
+    write_results();
     h5pp_file->writeDataset(true, sim_name + "/simOK");
     t_pos.toc();
 }
@@ -281,6 +282,33 @@ void class_algorithm_infinite::write_status(bool force){
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
     h5pp_file->writeDataset(true, sim_name + "/simOK");
+}
+
+void class_algorithm_infinite::write_results(){
+    if (measurements_result == nullptr){return;}
+    log->trace("Appending measurement result entry");
+    state->do_all_measurements();
+    table_measurements_infinite::data_struct measurements_entry;
+    measurements_entry.step                            = sim_status.step;
+    measurements_entry.iteration                       = sim_status.iteration;
+    measurements_entry.position                        = sim_status.position;
+    measurements_entry.length                          = state->get_length();
+    measurements_entry.bond_dimension                  = state->measurements.bond_dimension.value();
+    measurements_entry.bond_dimension_limit            = state->get_chi_lim();
+    measurements_entry.bond_dimension_maximum          = chi_max();
+    measurements_entry.entanglement_entropy            = state->measurements.current_entanglement_entropy.value();
+    measurements_entry.norm                            = state->measurements.norm.value();
+    measurements_entry.energy_mpo                      = state->measurements.energy_mpo.value();
+    measurements_entry.energy_per_site_mpo             = state->measurements.energy_per_site_mpo.value();
+    measurements_entry.energy_per_site_ham             = state->measurements.energy_per_site_ham.value();
+    measurements_entry.energy_per_site_mom             = state->measurements.energy_per_site_mom.value();
+    measurements_entry.energy_variance_mpo             = state->measurements.energy_variance_mpo.value();
+    measurements_entry.energy_variance_per_site_mpo    = state->measurements.energy_variance_per_site_mpo.value();
+    measurements_entry.energy_variance_per_site_ham    = state->measurements.energy_variance_per_site_ham.value();
+    measurements_entry.energy_variance_per_site_mom    = state->measurements.energy_variance_per_site_mom.value();
+    measurements_entry.truncation_error                = state->measurements.truncation_error.value();
+    measurements_entry.wall_time                       = t_tot.get_age();
+    measurements_result->append_record(measurements_entry);
 }
 
 

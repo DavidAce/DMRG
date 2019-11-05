@@ -4,14 +4,14 @@
 #include <string>
 #include <sstream>
 #include <tools/finite/opt.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <simulation/class_simulation_status.h>
 #include <model/class_model_base.h>
 #include <simulation/nmspc_settings.h>
 #include <glog/logging.h>
 
-Eigen::Tensor<class_finite_state::Scalar,3>
-tools::finite::opt::find_excited_state(const class_finite_state &state, const class_simulation_status &sim_status, OptMode optMode, OptSpace optSpace, OptType optType){
+Eigen::Tensor<class_state_finite::Scalar,3>
+tools::finite::opt::find_excited_state(const class_state_finite &state, const class_simulation_status &sim_status, OptMode optMode, OptSpace optSpace, OptType optType){
     tools::log->trace("Optimizing excited state");
     using namespace opt::internal;
     using namespace Textra;
@@ -72,7 +72,7 @@ tools::finite::opt::find_excited_state(const class_finite_state &state, const cl
 }
 
 Eigen::Tensor<std::complex<double>,4> tools::finite::opt::find_ground_state(
-        const class_finite_state &state, std::string ritz){
+        const class_state_finite &state, std::string ritz){
     return internal::ground_state_optimization(state,ritz);
 
 }
@@ -97,7 +97,7 @@ void tools::finite::opt::internal::reset_timers(){
 
 //
 //template<typename Scalar>
-//tools::finite::opt::internal::MultiComponents<Scalar>::MultiComponents(const class_finite_state & state){
+//tools::finite::opt::internal::MultiComponents<Scalar>::MultiComponents(const class_state_finite & state){
 //    tools::log->trace("Generating multi components");
 //    if constexpr (std::is_same<Scalar,double>::value){
 //        mpo                          = state.get_multimpo().real();

@@ -3,24 +3,24 @@
 //
 
 
-#include "class_finite_state.h"
+#include "class_state_finite.h"
 #include <tools/nmspc_tools.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <spdlog/fmt/bundled/ranges.h>
 
-// We need to make a destructor manually for the enclosing class "class_finite_state"
+// We need to make a destructor manually for the enclosing class "class_state_finite"
 // that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
 // own default deleter.
 // This allows us to forward declare the abstract base class "class_model_base"
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-class_finite_state::~class_finite_state()=default;
+class_state_finite::~class_state_finite()=default;
 
-class_finite_state::class_finite_state(const class_finite_state & other){
+class_state_finite::class_state_finite(const class_state_finite & other){
     *this = other;
 }
 
-class_finite_state& class_finite_state::operator= (const class_finite_state & other){
+class_state_finite& class_state_finite::operator= (const class_state_finite & other){
     // check for self-assignment
     if(&other == this) return *this;
 
@@ -52,7 +52,7 @@ class_finite_state& class_finite_state::operator= (const class_finite_state & ot
 
 
 
-void class_finite_state::do_all_measurements(){
+void class_state_finite::do_all_measurements(){
     using namespace tools::finite;
     measurements.length                         = measure::length(*this);
     measurements.bond_dimension_current         = measure::bond_dimension_current(*this);
@@ -70,7 +70,7 @@ void class_finite_state::do_all_measurements(){
 }
 
 
-void class_finite_state::set_positions(){
+void class_state_finite::set_positions(){
 
     size_t pos = 0;
     for (auto &MPS: MPS_L){MPS.set_position(pos++);}
@@ -86,36 +86,36 @@ void class_finite_state::set_positions(){
     for (auto &MPO : MPO_R){MPO->set_position(pos++);}
 }
 
-size_t class_finite_state::get_length()    const {return MPS_L.size() + MPS_R.size();}
-size_t class_finite_state::get_position()  const {return MPS_L.size() - 1u;}
+size_t class_state_finite::get_length()    const {return MPS_L.size() + MPS_R.size();}
+size_t class_state_finite::get_position()  const {return MPS_L.size() - 1u;}
 
-int  class_finite_state::get_sweeps()    const       {return num_sweeps;}
-int  class_finite_state::reset_sweeps()              {num_sweeps = 0; return num_sweeps;}
-void class_finite_state::set_sweeps(int num_sweeps_) {num_sweeps = num_sweeps_;}
-void class_finite_state::increment_sweeps()          {num_sweeps++;}
+int  class_state_finite::get_sweeps()    const       {return num_sweeps;}
+int  class_state_finite::reset_sweeps()              { num_sweeps = 0; return num_sweeps;}
+void class_state_finite::set_sweeps(int num_sweeps_) { num_sweeps = num_sweeps_;}
+void class_state_finite::increment_sweeps()          {num_sweeps++;}
 
-int  class_finite_state::get_moves()    const       {return num_moves;}
-int  class_finite_state::reset_moves()              { num_moves = 0; return num_moves;}
-void class_finite_state::set_moves(int num_moves_)  { num_moves = num_moves_;}
-void class_finite_state::increment_moves()          {num_moves++;}
+int  class_state_finite::get_moves()    const       {return num_moves;}
+int  class_state_finite::reset_moves()              { num_moves = 0; return num_moves;}
+void class_state_finite::set_moves(int num_moves_)  { num_moves = num_moves_;}
+void class_state_finite::increment_moves()          {num_moves++;}
 
 
-long class_finite_state::get_chi_lim()  const {
+long class_state_finite::get_chi_lim()  const {
     //Should get the the current limit on allowed bond dimension
     return chi_lim.value();
 }
-void class_finite_state::set_chi_lim(long chi_lim_){
+void class_state_finite::set_chi_lim(long chi_lim_){
     //Should set the the current limit on allowed bond dimension
     if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
     chi_lim = chi_lim_;
 }
 
-int  class_finite_state::get_direction() const {return direction;}
-void class_finite_state::flip_direction() {direction *= -1;}
+int  class_state_finite::get_direction() const {return direction;}
+void class_state_finite::flip_direction() { direction *= -1;}
 
 
 Eigen::DSizes<long,3>
-        class_finite_state::dimensions_2site()  const{
+        class_state_finite::dimensions_2site()  const{
     Eigen::DSizes<long,3> dimensions;
     dimensions[1] = MPS_L.back().get_chiL();
     dimensions[2] = MPS_R.front().get_chiR();
@@ -123,35 +123,35 @@ Eigen::DSizes<long,3>
     return dimensions;
 
 }
-size_t  class_finite_state::size_2site() const{
+size_t  class_state_finite::size_2site() const{
     auto dims = dimensions_2site();
     return dims[0]*dims[1]*dims[2];
 }
 
-bool class_finite_state::position_is_the_middle() const {
+bool class_state_finite::position_is_the_middle() const {
     return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0) and direction == 1 ;
 }
-bool class_finite_state::position_is_the_middle_any_direction() const {
+bool class_state_finite::position_is_the_middle_any_direction() const {
     return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0);
 }
 
-bool class_finite_state::position_is_the_left_edge() const {
+bool class_state_finite::position_is_the_left_edge() const {
     return get_position() == 0;
 }
 
-bool class_finite_state::position_is_the_right_edge() const {
+bool class_state_finite::position_is_the_right_edge() const {
     return get_position() == get_length() - 2;
 }
 
-bool class_finite_state::position_is_any_edge() const {
+bool class_state_finite::position_is_any_edge() const {
     return position_is_the_left_edge() or position_is_the_right_edge();
 }
 
-bool class_finite_state::position_is_at(size_t pos)const{
+bool class_state_finite::position_is_at(size_t pos)const{
     return get_position() == pos;
 }
 
-bool class_finite_state::isReal() const{
+bool class_state_finite::isReal() const{
     bool mps_real = true;
     bool mpo_real = true;
     for(auto & mps : MPS_L ){mps_real = mps_real and mps.isReal();}
@@ -161,7 +161,7 @@ bool class_finite_state::isReal() const{
     return mps_real and mpo_real;
 }
 
-const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::midchain_bond() const{
+const Eigen::Tensor<class_state_finite::Scalar,1> & class_state_finite::midchain_bond() const{
     size_t center_pos = (get_length() -1)/2;
     if(get_position() <   center_pos) return get_MPS(center_pos).get_L();
     if(get_position() >   center_pos) return get_MPS(center_pos+1).get_L();
@@ -169,7 +169,7 @@ const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::midchain
     else throw std::logic_error("No valid position to find midchain_bond");
 }
 
-const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::current_bond() const{
+const Eigen::Tensor<class_state_finite::Scalar,1> & class_state_finite::current_bond() const{
     if(MPS_L.back().isCenter()) {
         if(MPS_L.back().get_chiR() != MPS_L.back().get_LC().dimension(0))
             throw std::runtime_error("Current center bond dimension mismatch!");
@@ -180,20 +180,20 @@ const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::current_
     }
 }
 
-//Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_A() const{
+//Eigen::Tensor<class_state_finite::Scalar,3> class_state_finite::get_A() const{
 //    return Textra::asDiagonal(MPS_L.back().get_L()).contract(MPS_L.back().get_G(), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
 //}
 //
-//Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_B() const{
+//Eigen::Tensor<class_state_finite::Scalar,3> class_state_finite::get_B() const{
 //    return MPS_R.front().get_G().contract(Textra::asDiagonal(MPS_R.front().get_L()), Textra::idx({2},{0}));
 //}
 //
-Eigen::Tensor<class_finite_state::Scalar,4> class_finite_state::get_theta() const{
+Eigen::Tensor<class_state_finite::Scalar,4> class_state_finite::get_theta() const{
     return MPS_L.back().get_M().contract(MPS_R.front().get_M(), Textra::idx({2},{1}));
 }
 
 
-const class_mps_site & class_finite_state::get_MPS(size_t pos) const {
+const class_mps_site & class_state_finite::get_MPS(size_t pos) const {
     if (pos >= get_length())                 throw std::range_error(fmt::format("get_MPS(pos) pos out of range: {}", pos));
     if(pos <= MPS_L.back().get_position()){
         auto mps_it = std::next(MPS_L.begin(),pos);
@@ -207,12 +207,12 @@ const class_mps_site & class_finite_state::get_MPS(size_t pos) const {
     }
 }
 
-class_mps_site & class_finite_state::get_MPS(size_t pos){
-    return const_cast<class_mps_site &>(static_cast<const class_finite_state &>(*this).get_MPS(pos));
+class_mps_site & class_state_finite::get_MPS(size_t pos){
+    return const_cast<class_mps_site &>(static_cast<const class_state_finite &>(*this).get_MPS(pos));
 }
 
 
-const class_model_base & class_finite_state::get_MPO(size_t pos) const{
+const class_model_base & class_state_finite::get_MPO(size_t pos) const{
     if (pos >= get_length())throw std::range_error(fmt::format("get_MPO(pos) pos out of range: {}", pos));
     if(pos <= MPO_L.back()->get_position()){
         auto mpo_it = std::next(MPO_L.begin(),pos)->get();
@@ -226,45 +226,45 @@ const class_model_base & class_finite_state::get_MPO(size_t pos) const{
     }
 }
 
-class_model_base & class_finite_state::get_MPO(size_t pos){
-    return const_cast<class_model_base &>(static_cast<const class_finite_state &>(*this).get_MPO(pos));
+class_model_base & class_state_finite::get_MPO(size_t pos){
+    return const_cast<class_model_base &>(static_cast<const class_state_finite &>(*this).get_MPO(pos));
 }
 
 
 
 
-//const Eigen::Tensor<class_finite_state::Scalar,3> & class_finite_state::get_G(size_t pos) const{
+//const Eigen::Tensor<class_state_finite::Scalar,3> & class_state_finite::get_G(size_t pos) const{
 //    return std::as_const(get_MPS(pos).get_G());
 //}
 //
-//Eigen::Tensor<class_finite_state::Scalar,3> & class_finite_state::get_G(size_t pos){
-//    return const_cast<Eigen::Tensor<class_finite_state::Scalar,3> &>(static_cast<const class_finite_state &>(*this).get_G(pos));
+//Eigen::Tensor<class_state_finite::Scalar,3> & class_state_finite::get_G(size_t pos){
+//    return const_cast<Eigen::Tensor<class_state_finite::Scalar,3> &>(static_cast<const class_state_finite &>(*this).get_G(pos));
 //}
 //
-//const Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::get_L(size_t pos) const {
+//const Eigen::Tensor<class_state_finite::Scalar,1> & class_state_finite::get_L(size_t pos) const {
 //    if      (pos == MPS_L.back().get_position() + 1){return MPS_C;}
 //    else if (pos <= MPS_L.back().get_position())    {return get_MPS(pos).get_L();}
 //    else if (pos >= MPS_R.front().get_position())   {return get_MPS(pos-1).get_L();}
 //    else {throw std::runtime_error("Unhandled position");}
 //}
 //
-//Eigen::Tensor<class_finite_state::Scalar,1> & class_finite_state::get_L(size_t pos) {
-//    return const_cast<Eigen::Tensor<class_finite_state::Scalar,1> &>(static_cast<const class_finite_state &>(*this).get_L(pos));
+//Eigen::Tensor<class_state_finite::Scalar,1> & class_state_finite::get_L(size_t pos) {
+//    return const_cast<Eigen::Tensor<class_state_finite::Scalar,1> &>(static_cast<const class_state_finite &>(*this).get_L(pos));
 //}
 //
 //
 //
 //
-//Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_A(size_t pos) const {
+//Eigen::Tensor<class_state_finite::Scalar,3> class_state_finite::get_A(size_t pos) const {
 //    return Textra::asDiagonal(get_L(pos)).contract(get_G(pos), Textra::idx({1},{1})).shuffle(Textra::array3{1,0,2});
 //}
 //
-//Eigen::Tensor<class_finite_state::Scalar,3> class_finite_state::get_B(size_t pos) const {
+//Eigen::Tensor<class_state_finite::Scalar,3> class_state_finite::get_B(size_t pos) const {
 //    return get_G(pos).contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}));
 //}
 
 //
-//Eigen::Tensor<class_finite_state::Scalar,4> class_finite_state::get_theta(size_t pos) const {
+//Eigen::Tensor<class_state_finite::Scalar,4> class_state_finite::get_theta(size_t pos) const {
 //    return get_A(pos)
 //            .contract(Textra::asDiagonal(get_L(pos+1)), Textra::idx({2},{0}))
 //            .contract(get_B(pos+1), Textra::idx({2},{1}));
@@ -272,7 +272,7 @@ class_model_base & class_finite_state::get_MPO(size_t pos){
 
 
 
-const class_environment & class_finite_state::get_ENVL(size_t pos) const {
+const class_environment & class_state_finite::get_ENVL(size_t pos) const {
     if (pos > ENV_L.back().get_position() )  throw std::range_error(fmt::format("get_ENVL(pos):  pos is not in left side: {}",pos));
     if (pos >= ENV_L.size())                 throw std::range_error(fmt::format("get_ENVL(pos) pos out of range: {}",pos));
     auto env_it = std::next(ENV_L.begin(), pos);
@@ -280,7 +280,7 @@ const class_environment & class_finite_state::get_ENVL(size_t pos) const {
     return *env_it;
 }
 
-const class_environment & class_finite_state::get_ENVR(size_t pos) const {
+const class_environment & class_state_finite::get_ENVR(size_t pos) const {
     if (pos < ENV_R.front().get_position() ){throw std::range_error(fmt::format("get_ENVR(pos):  pos is not in right side: {}" , pos));}
     if (pos >= get_length() )               {throw std::range_error(fmt::format("get_ENVR(pos):  pos out of range: {}" , pos));}
 
@@ -290,7 +290,7 @@ const class_environment & class_finite_state::get_ENVR(size_t pos) const {
     return *env_it;
 }
 
-const class_environment_var & class_finite_state::get_ENV2L(size_t pos) const {
+const class_environment_var & class_state_finite::get_ENV2L(size_t pos) const {
     if (pos > ENV2_L.back().get_position() )  throw std::range_error(fmt::format("get_ENV2L(pos):  pos is not in left side: {}",pos));
     if (pos >= ENV2_L.size())                 throw std::range_error(fmt::format("get_ENV2L(pos) pos out of range: {}",pos));
     auto env2_it = std::next(ENV2_L.begin(), pos);
@@ -298,7 +298,7 @@ const class_environment_var & class_finite_state::get_ENV2L(size_t pos) const {
     return *env2_it;
 }
 
-const class_environment_var & class_finite_state::get_ENV2R(size_t pos) const {
+const class_environment_var & class_state_finite::get_ENV2R(size_t pos) const {
     if (pos < ENV2_R.front().get_position() )throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}" , pos));
     if (pos > ENV2_R.back().get_position() ) throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}" , pos));
     if (pos >= get_length() )                throw std::range_error(fmt::format("get_ENV2R(pos):  pos out of range: {}" , pos));
@@ -317,7 +317,7 @@ const class_environment_var & class_finite_state::get_ENV2R(size_t pos) const {
 
 // For reduced energy MPO's
 
-bool   class_finite_state::isReduced()                            const{
+bool   class_state_finite::isReduced()                            const{
     bool reduced = MPO_L.front()->isReduced();
     for(auto &mpo : MPO_L) if(reduced != mpo->isReduced()){throw std::runtime_error(fmt::format("First MPO has isReduce: {}, but MPO at pos {} has isReduce: {}",reduced, mpo->get_position(), mpo->isReduced()));}
     for(auto &mpo : MPO_R) if(reduced != mpo->isReduced()){throw std::runtime_error(fmt::format("First MPO has isReduce: {}, but MPO at pos {} has isReduce: {}",reduced, mpo->get_position(), mpo->isReduced()));}
@@ -325,7 +325,7 @@ bool   class_finite_state::isReduced()                            const{
 }
 
 
-double class_finite_state::get_energy_reduced()                   const{
+double class_state_finite::get_energy_reduced()                   const{
     //Check that all energies are the same
     double e_reduced = MPO_L.front()->get_reduced_energy();
     for(auto &mpo : MPO_L) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
@@ -334,7 +334,7 @@ double class_finite_state::get_energy_reduced()                   const{
     return e_reduced*get_length();
 }
 
-void class_finite_state::set_reduced_energy(double site_energy){
+void class_state_finite::set_reduced_energy(double site_energy){
     if(get_energy_reduced() == site_energy) return;
     cache.multimpo = {};
     for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
@@ -345,21 +345,21 @@ void class_finite_state::set_reduced_energy(double site_energy){
 
 
 
-std::list<size_t> class_finite_state::activate_sites(const long threshold, const size_t max_sites){
+std::list<size_t> class_state_finite::activate_sites(const long threshold, const size_t max_sites){
     clear_cache();
     return active_sites = tools::finite::multisite::generate_site_list(*this,threshold, max_sites);
 }
 
-Eigen::DSizes<long,3> class_finite_state::active_dimensions() const{
+Eigen::DSizes<long,3> class_state_finite::active_dimensions() const{
     return tools::finite::multisite::get_dimensions(*this,active_sites);
 }
 
-size_t class_finite_state::active_problem_size() const {
+size_t class_state_finite::active_problem_size() const {
     return tools::finite::multisite::get_problem_size(*this,active_sites);
 }
 
 
-const Eigen::Tensor<class_finite_state::Scalar,3> &  class_finite_state::get_multitheta()    const{
+const Eigen::Tensor<class_state_finite::Scalar,3> &  class_state_finite::get_multitheta()    const{
     if(cache.multitheta) return cache.multitheta.value();
     tools::log->trace("Contracting multi theta...");
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multitheta");}
@@ -386,7 +386,7 @@ const Eigen::Tensor<class_finite_state::Scalar,3> &  class_finite_state::get_mul
     return cache.multitheta.value();
 }
 
-const Eigen::Tensor<class_finite_state::Scalar,4> &   class_finite_state::get_multimpo()    const{
+const Eigen::Tensor<class_state_finite::Scalar,4> &   class_state_finite::get_multimpo()    const{
     if(cache.multimpo) return cache.multimpo.value();
     tools::log->trace("Contracting multi mpo...");
     if(active_sites.empty()){throw std::runtime_error("No active sites on which to build multimpo");}
@@ -414,16 +414,16 @@ const Eigen::Tensor<class_finite_state::Scalar,4> &   class_finite_state::get_mu
 
 
 std::pair<std::reference_wrapper<const class_environment> , std::reference_wrapper<const class_environment>>
-class_finite_state::get_multienv ()     const{
+class_state_finite::get_multienv ()     const{
     return std::make_pair(get_ENVL(active_sites.front()), get_ENVR(active_sites.back()));
 }
 
 std::pair<std::reference_wrapper<const class_environment_var> , std::reference_wrapper<const class_environment_var>>
-class_finite_state::get_multienv2()     const{
+class_state_finite::get_multienv2()     const{
     return std::make_pair(get_ENV2L(active_sites.front()), get_ENV2R(active_sites.back()));
 }
 
-void class_finite_state::set_truncation_error(size_t left_site, double error)
+void class_state_finite::set_truncation_error(size_t left_site, double error)
 /*! The truncation error vector has length + 1 elements, as many as there are bond matrices.
  *  Obviously, the edge matrices are always 1, so we expect these to have truncation_error = 0.
  *  Any schmidt decomposition involves two neighboriing sites, so "left_site" is the site number of the
@@ -438,11 +438,11 @@ void class_finite_state::set_truncation_error(size_t left_site, double error)
     truncation_error[left_site + 1] = error;
 }
 
-void class_finite_state::set_truncation_error(double error){
+void class_state_finite::set_truncation_error(double error){
     set_truncation_error(get_position(),error);
 }
 
-double class_finite_state::get_truncation_error(size_t left_site) const {
+double class_state_finite::get_truncation_error(size_t left_site) const {
     if(truncation_error.empty() or truncation_error.size() < get_length()+1){
         tools::log->warn("Truncation error container hasn't been initialized! You called this function prematurely");
         return std::numeric_limits<double>::infinity();
@@ -450,24 +450,24 @@ double class_finite_state::get_truncation_error(size_t left_site) const {
     return truncation_error[left_site+1];
 }
 
-double class_finite_state::get_truncation_error() const {
+double class_state_finite::get_truncation_error() const {
     return get_truncation_error(get_position());
 }
 
 
-const std::vector<double> & class_finite_state::get_truncation_errors() const {
+const std::vector<double> & class_state_finite::get_truncation_errors() const {
     return truncation_error;
 }
 
-void class_finite_state::unset_measurements()const {
+void class_state_finite::unset_measurements()const {
     measurements = Measurements();
 }
 
-void class_finite_state::clear_cache()const {
+void class_state_finite::clear_cache()const {
     cache = Cache();
 }
 
-void class_finite_state::do_all_measurements()const {
+void class_state_finite::do_all_measurements()const {
     measurements.length                           = tools::finite::measure::length                        (*this);
     measurements.bond_dimension_current           = tools::finite::measure::bond_dimension_current        (*this);
     measurements.bond_dimension_midchain          = tools::finite::measure::bond_dimension_midchain       (*this);
@@ -484,24 +484,24 @@ void class_finite_state::do_all_measurements()const {
 }
 
 
-void class_finite_state::tag_active_sites_have_been_updated(bool tag)     const{
+void class_state_finite::tag_active_sites_have_been_updated(bool tag)     const{
     if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot tag active sites, size mismatch in site list");
     for (auto & site: active_sites){
         site_update_tags[site] = tag;
     }
 }
 
-void class_finite_state::tag_all_sites_have_been_updated(bool tag) const{
+void class_state_finite::tag_all_sites_have_been_updated(bool tag) const{
     if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
     site_update_tags = std::vector<bool>(get_length(),tag);
 }
 
-bool class_finite_state::all_sites_updated() const {
+bool class_state_finite::all_sites_updated() const {
     if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
     return  std::all_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
 }
 
-bool class_finite_state::active_sites_updated() const {
+bool class_state_finite::active_sites_updated() const {
     if (site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
     if (active_sites.empty()) return false;
     auto first_site_ptr =  site_update_tags.begin() + active_sites.front();

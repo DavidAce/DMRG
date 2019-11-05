@@ -5,10 +5,10 @@
 #include <iomanip>
 #include <simulation/class_simulation_status.h>
 #include <tools/nmspc_tools.h>
-#include <state/class_infinite_state.h>
+#include <state/class_state_infinite.h>
 #include <general/nmspc_quantum_mechanics.h>
 
-void tools::infinite::debug::check_integrity(const class_infinite_state & state)
+void tools::infinite::debug::check_integrity(const class_state_infinite & state)
 {
     tools::log->info("Checking integrity...");
    try{
@@ -22,7 +22,7 @@ void tools::infinite::debug::check_integrity(const class_infinite_state & state)
 
 
 
-void tools::infinite::debug::check_integrity_of_mps(const class_infinite_state &state){
+void tools::infinite::debug::check_integrity_of_mps(const class_state_infinite &state){
     tools::log->info("Checking integrity...");
     tools::log->info("Checking norms");
     auto norm_block = tools::infinite::measure::norm(state);

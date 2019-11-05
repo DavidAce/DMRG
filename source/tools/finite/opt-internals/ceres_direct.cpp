@@ -4,24 +4,24 @@
 
 #include "ceres_direct_functor.h"
 #include <general/class_tic_toc.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <simulation/class_simulation_status.h>
 #include <simulation/nmspc_settings.h>
 #include <ceres/ceres.h>
 
 
 
-Eigen::Tensor<class_finite_state::Scalar,3>
-tools::finite::opt::internal::ceres_direct_optimization(const class_finite_state &state,
+Eigen::Tensor<class_state_finite::Scalar,3>
+tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite &state,
                                                          const class_simulation_status &sim_status,
                                                          OptType optType){
     return ceres_direct_optimization(state,state.get_multitheta(),sim_status,optType);
 }
 
 
-Eigen::Tensor<class_finite_state::Scalar,3>
-tools::finite::opt::internal::ceres_direct_optimization(const class_finite_state &state,
-                                                         const Eigen::Tensor<class_finite_state::Scalar,3> & theta_initial,
+Eigen::Tensor<class_state_finite::Scalar,3>
+tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite &state,
+                                                         const Eigen::Tensor<class_state_finite::Scalar,3> & theta_initial,
                                                          const class_simulation_status &sim_status, OptType optType){
     tools::log->trace("Optimizing in DIRECT mode");
     tools::common::profile::t_opt.tic();

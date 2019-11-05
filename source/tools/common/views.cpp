@@ -9,8 +9,8 @@
 //
 
 #include <tools/nmspc_tools.h>
-#include <state/class_infinite_state.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_infinite.h>
+#include <state/class_state_finite.h>
 #include <state/class_mps_2site.h>
 #include <math/class_eigsolver.h>
 #include <math/nmspc_math.h>
@@ -46,7 +46,7 @@ std::pair<Eigen::VectorXcd, std::complex<double>> dominant_eig(Eigen::Tensor<std
     return std::make_pair(eigvec,eigval);
 }
 
-void tools::common::views::compute_mps_components(const class_infinite_state & state){
+void tools::common::views::compute_mps_components(const class_state_infinite & state){
     if (components_computed)return;
     // On even thetas we have  chiA = chiB on the outer bond
     // On odd thetas we have chiC on the outer bond.
@@ -113,7 +113,7 @@ void tools::common::views::compute_mps_components(const class_infinite_state & s
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_theta(const class_finite_state & state, std::complex<double> norm)
+tools::common::views::get_theta(const class_state_finite & state, std::complex<double> norm)
 /*!
  * Returns a two-site MPS
      @verbatim
@@ -129,7 +129,7 @@ tools::common::views::get_theta(const class_finite_state & state, std::complex<d
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_theta(const class_infinite_state & state, std::complex<double> norm)
+tools::common::views::get_theta(const class_state_infinite & state, std::complex<double> norm)
 /*!
  * Returns a two-site MPS
      @verbatim
@@ -147,7 +147,7 @@ tools::common::views::get_theta(const class_infinite_state & state, std::complex
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_theta_swapped(const class_infinite_state & state, std::complex<double> norm)
+tools::common::views::get_theta_swapped(const class_state_infinite & state, std::complex<double> norm)
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
@@ -171,7 +171,7 @@ tools::common::views::get_theta_swapped(const class_infinite_state & state, std:
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_theta_evn(const class_infinite_state & state, std::complex<double> norm)
+tools::common::views::get_theta_evn(const class_state_infinite & state, std::complex<double> norm)
 /*!
  * Returns a right normalized two-site MPS
      @verbatim
@@ -188,7 +188,7 @@ tools::common::views::get_theta_evn(const class_infinite_state & state, std::com
 }
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_theta_odd(const class_infinite_state & state, std::complex<double> norm)
+tools::common::views::get_theta_odd(const class_state_infinite & state, std::complex<double> norm)
 /*!
  * Returns a two-site MPS with A and B swapped
      @verbatim
@@ -207,7 +207,7 @@ tools::common::views::get_theta_odd(const class_infinite_state & state, std::com
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_transfer_matrix_zero(const class_infinite_state & state) {
+tools::common::views::get_transfer_matrix_zero(const class_state_infinite & state) {
     Eigen::Tensor<std::complex<double>,1> I = state.MPS->MPS_A->get_LC();
     I.setConstant(1.0);
     Eigen::array<Eigen::IndexPair<long>,0> pair = {};
@@ -218,7 +218,7 @@ tools::common::views::get_transfer_matrix_zero(const class_infinite_state & stat
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_transfer_matrix_LBGA(const class_infinite_state & state, std::complex<double> norm)  {
+tools::common::views::get_transfer_matrix_LBGA(const class_state_infinite & state, std::complex<double> norm)  {
     return state.MPS->A().contract( state.MPS->A().conjugate() , idx({0},{0}))
                    .shuffle(array4{0,3,1,2})
            /norm;
@@ -226,7 +226,7 @@ tools::common::views::get_transfer_matrix_LBGA(const class_infinite_state & stat
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_transfer_matrix_GALC(const class_infinite_state & state, std::complex<double> norm)  {
+tools::common::views::get_transfer_matrix_GALC(const class_state_infinite & state, std::complex<double> norm)  {
     return state.MPS->LC()
                    .contract(state.MPS->GA(),             idx({2},{0}))
                    .contract(state.MPS->GA().conjugate(), idx({0},{0}))
@@ -236,7 +236,7 @@ tools::common::views::get_transfer_matrix_GALC(const class_infinite_state & stat
 }
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_transfer_matrix_GBLB(const class_infinite_state & state, std::complex<double> norm)  {
+tools::common::views::get_transfer_matrix_GBLB(const class_state_infinite & state, std::complex<double> norm)  {
     return state.MPS->B().contract(state.MPS->B().conjugate() ,   idx({0},{0}))
                    .shuffle(array4{0,2,1,3})
            /norm;
@@ -244,7 +244,7 @@ tools::common::views::get_transfer_matrix_GBLB(const class_infinite_state & stat
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_transfer_matrix_LCGB(const class_infinite_state & state, std::complex<double> norm)  {
+tools::common::views::get_transfer_matrix_LCGB(const class_state_infinite & state, std::complex<double> norm)  {
     return state.MPS->LC()
                     .contract(state.MPS->GB(),               idx({1},{1}))
                     .contract(state.MPS->GB().conjugate(),   idx({1},{0}))
@@ -255,19 +255,19 @@ tools::common::views::get_transfer_matrix_LCGB(const class_infinite_state & stat
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_transfer_matrix_theta_evn(const class_infinite_state & state, std::complex<double> norm)  {
+tools::common::views::get_transfer_matrix_theta_evn(const class_state_infinite & state, std::complex<double> norm)  {
     using namespace tools::common::views;
     return get_theta_evn(state).contract(get_theta_evn(state).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
 }
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_transfer_matrix_theta_odd(const class_infinite_state & state, std::complex<double> norm)  {
+tools::common::views::get_transfer_matrix_theta_odd(const class_state_infinite & state, std::complex<double> norm)  {
     return get_theta_odd(state).contract(get_theta_odd(state).conjugate(), idx({0,2},{0,2})).shuffle(array4{0,2,1,3}) / norm;
 }
 
 
 Eigen::Tensor<std::complex<double>,4>
-tools::common::views::get_transfer_matrix_AB(const class_infinite_state & state, int p) {
+tools::common::views::get_transfer_matrix_AB(const class_state_infinite & state, int p) {
     Eigen::Tensor<std::complex<double>,4> temp = get_transfer_matrix_zero(state);
     Eigen::Tensor<std::complex<double>,4> temp2;
     for (int i = 0; i < p-2; i++){

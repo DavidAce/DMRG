@@ -3,14 +3,14 @@
 //
 
 #include <tools/nmspc_tools.h>
-#include <state/class_infinite_state.h>
+#include <state/class_state_infinite.h>
 #include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>
 #include <state/class_environment.h>
 #include <model/class_model_base.h>
 #include <h5pp/h5pp.h>
 
-void tools::infinite::io::write_all_state(const class_infinite_state &state, h5pp::File &h5ppFile,
+void tools::infinite::io::write_all_state(const class_state_infinite &state, h5pp::File &h5ppFile,
                                           std::string sim_name){
     if(state.has_been_written){return;}
 
@@ -36,29 +36,29 @@ void tools::infinite::io::write_all_state(const class_infinite_state &state, h5p
 }
 
 
-void tools::infinite::io::write_2site_mps (const class_infinite_state &state, h5pp::File & h5ppFile, std::string sim_name){
+void tools::infinite::io::write_2site_mps (const class_state_infinite &state, h5pp::File & h5ppFile, std::string sim_name){
     h5ppFile.writeDataset(state.MPS->MPS_A->get_M() , sim_name + "/state/2site/MPS_A");
     h5ppFile.writeDataset(state.MPS->MPS_A->get_LC(), sim_name + "/state/2site/L_C");
     h5ppFile.writeDataset(state.MPS->MPS_B->get_M(), sim_name + "/state/2site/MPS_B");
 }
 
-void tools::infinite::io::write_2site_mpo (const class_infinite_state &state, h5pp::File & h5ppFile, std::string sim_name){
+void tools::infinite::io::write_2site_mpo (const class_state_infinite &state, h5pp::File & h5ppFile, std::string sim_name){
     h5ppFile.writeDataset(state.HA->MPO(), sim_name + "/state/2site/MPO_A");
     h5ppFile.writeDataset(state.HB->MPO(), sim_name + "/state/2site/MPO_B");
 
 }
 
-void tools::infinite::io::write_2site_env (const class_infinite_state &state, h5pp::File & h5ppFile, std::string sim_name){
+void tools::infinite::io::write_2site_env (const class_state_infinite &state, h5pp::File & h5ppFile, std::string sim_name){
     h5ppFile.writeDataset(state.Lblock->block, sim_name + "/state/2site/ENV_L");
     h5ppFile.writeDataset(state.Rblock->block, sim_name + "/state/2site/ENV_R");
 }
 
-void tools::infinite::io::write_2site_env2 (const class_infinite_state &state, h5pp::File & h5ppFile, std::string sim_name){
+void tools::infinite::io::write_2site_env2 (const class_state_infinite &state, h5pp::File & h5ppFile, std::string sim_name){
     h5ppFile.writeDataset(state.Lblock2->block, sim_name + "/state/2site/ENV2_L");
     h5ppFile.writeDataset(state.Rblock2->block, sim_name + "/state/2site/ENV2_R");
 }
 
-void tools::infinite::io::write_hamiltonian_params(const class_infinite_state &state, h5pp::File & h5ppFile, std::string sim_name){
+void tools::infinite::io::write_hamiltonian_params(const class_state_infinite &state, h5pp::File & h5ppFile, std::string sim_name){
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what output uses.
     Eigen::MatrixXd hamiltonian_props;
@@ -80,7 +80,7 @@ void tools::infinite::io::write_hamiltonian_params(const class_infinite_state &s
     }
 }
 
-void tools::infinite::io::write_all_measurements  (const class_infinite_state & state, h5pp::File & h5ppFile, std::string sim_name){
+void tools::infinite::io::write_all_measurements  (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name){
     state.do_all_measurements();
     h5ppFile.writeDataset(state.measurements.length.value()                      , sim_name + "/measurements/2site/length");
     h5ppFile.writeDataset(state.measurements.bond_dimension.value()              , sim_name + "/measurements/2site/bond_dimension");

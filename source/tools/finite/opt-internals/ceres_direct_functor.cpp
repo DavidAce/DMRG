@@ -4,7 +4,7 @@
 
 #include <general/nmspc_omp.h> // For multithreaded computation
 #include "ceres_direct_functor.h"
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 
 
 
@@ -12,7 +12,7 @@ using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
 ceres_direct_functor<Scalar>::ceres_direct_functor(
-        const class_finite_state & state,
+        const class_state_finite & state,
         const class_simulation_status & sim_status)
         : ceres_base_functor(state,sim_status)
 {

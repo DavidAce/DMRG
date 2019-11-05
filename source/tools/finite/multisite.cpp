@@ -4,11 +4,11 @@
 #include <tools/nmspc_tools.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_omp.h> // For multithreaded computation
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <simulation/nmspc_settings.h>
 
 
-Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_finite_state &state, const std::list<size_t> &list_of_sites){
+Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_state_finite &state, const std::list<size_t> &list_of_sites){
     if (list_of_sites.empty()) return  Eigen::DSizes<long,3>{0,0,0};
     Eigen::DSizes<long,3> dimensions;
     int direction = list_of_sites.back() >= list_of_sites.front() ? 1 : -1;
@@ -29,7 +29,7 @@ Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_fin
 }
 
 
-size_t tools::finite::multisite::get_problem_size(const class_finite_state &state, const std::list<size_t> &list_of_sites){
+size_t tools::finite::multisite::get_problem_size(const class_state_finite &state, const std::list<size_t> &list_of_sites){
     auto dims = get_dimensions(state,list_of_sites);
     return dims[0]*dims[1]*dims[2];
 }
@@ -37,7 +37,7 @@ size_t tools::finite::multisite::get_problem_size(const class_finite_state &stat
 
 
 
-std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_state &state, const size_t threshold, const size_t max_sites){
+std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, const size_t threshold, const size_t max_sites){
     tools::log->trace("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}", state.get_position(), state.get_direction(), threshold,max_sites);
     using namespace Textra;
     int    direction = state.get_direction();
@@ -80,7 +80,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_stat
 
 
 using namespace Textra;
-using Scalar = class_finite_state::Scalar;
+using Scalar = class_state_finite::Scalar;
 
 
 double tools::finite::measure::multisite::internal::significant_digits(double H2, double E2){
@@ -91,7 +91,7 @@ double tools::finite::measure::multisite::internal::significant_digits(double H2
     return digits = std::floor(max_digits - lost_digits);
 }
 
-double tools::finite::measure::multisite::energy_minus_energy_reduced(const class_finite_state &state, const Eigen::Tensor<Scalar,3> & multitheta){
+double tools::finite::measure::multisite::energy_minus_energy_reduced(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
     tools::common::profile::t_ene.tic();
     auto multimpo   = state.get_multimpo();
     auto & envL     = state.get_ENVL(state.active_sites.front()).block;
@@ -116,7 +116,7 @@ double tools::finite::measure::multisite::energy_minus_energy_reduced(const clas
 }
 
 
-double tools::finite::measure::multisite::energy(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+double tools::finite::measure::multisite::energy(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
     // We want to measure energy accurately always.
     // Since the state can be reduced, the true energy is always
     // E + E_reduced
@@ -128,12 +128,12 @@ double tools::finite::measure::multisite::energy(const class_finite_state &state
 }
 
 
-double tools::finite::measure::multisite::energy_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+double tools::finite::measure::multisite::energy_per_site(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
         return multisite::energy(state,multitheta)/state.get_length();
 }
 
 
-double tools::finite::measure::multisite::energy_variance(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+double tools::finite::measure::multisite::energy_variance(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
     // Depending on whether the state is reduced or not we get different formulas.
     // Luckily, the variance is independent of offsets.
     // If the state is not reduced we get Var H = H^2 - E^2 =  H2 - energy*energy
@@ -215,13 +215,13 @@ double tools::finite::measure::multisite::energy_variance(const class_finite_sta
 }
 
 
-double tools::finite::measure::multisite::energy_variance_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+double tools::finite::measure::multisite::energy_variance_per_site(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
         return multisite::energy_variance(state,multitheta)/state.get_length();
 }
 
 
 
-double tools::finite::measure::multisite::energy(const class_finite_state &state){
+double tools::finite::measure::multisite::energy(const class_state_finite &state){
     if (state.measurements.energy)  return state.measurements.energy.value();
     if (state.active_sites.empty()) return tools::finite::measure::energy(state);
     tools::common::profile::t_ene.tic();
@@ -231,7 +231,7 @@ double tools::finite::measure::multisite::energy(const class_finite_state &state
     return state.measurements.energy.value();
 }
 
-double tools::finite::measure::multisite::energy_per_site(const class_finite_state &state){
+double tools::finite::measure::multisite::energy_per_site(const class_state_finite &state){
     if (state.measurements.energy_per_site){return state.measurements.energy_per_site.value();}
     else{
         if (state.active_sites.empty()) return tools::finite::measure::energy_per_site(state);
@@ -240,7 +240,7 @@ double tools::finite::measure::multisite::energy_per_site(const class_finite_sta
     }
 }
 
-double tools::finite::measure::multisite::energy_variance(const class_finite_state &state){
+double tools::finite::measure::multisite::energy_variance(const class_state_finite &state){
     if (state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
     else{
         if (state.active_sites.empty()) return tools::finite::measure::energy_variance(state);
@@ -251,7 +251,7 @@ double tools::finite::measure::multisite::energy_variance(const class_finite_sta
         return state.measurements.energy_variance_mpo.value();
     }}
 
-double tools::finite::measure::multisite::energy_variance_per_site(const class_finite_state &state){
+double tools::finite::measure::multisite::energy_variance_per_site(const class_state_finite &state){
     if (state.measurements.energy_variance_per_site){return state.measurements.energy_variance_per_site.value();}
     else{
         if (state.active_sites.empty()) return tools::finite::measure::energy_variance_per_site(state);

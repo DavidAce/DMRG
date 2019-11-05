@@ -2,16 +2,16 @@
 // Created by david on 2019-06-29.
 //
 #include <tools/finite/opt.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <math/class_svd_wrapper.h>
 #include <simulation/nmspc_settings.h>
 
 
-void tools::finite::mps::normalize(class_finite_state & state){
+void tools::finite::mps::normalize(class_state_finite & state){
 
     tools::log->trace("Normalizing state");
     using namespace Textra;
-    using Scalar = class_finite_state::Scalar;
+    using Scalar = class_state_finite::Scalar;
     state.unset_measurements();
     tools::common::profile::t_svd.tic();
     size_t num_moves = 2*(state.get_length()-2);
@@ -62,7 +62,7 @@ void tools::finite::mps::normalize(class_finite_state & state){
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_finite_state & state){
+void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_state_finite & state){
     state.unset_measurements();
     if (state.active_sites.empty()) throw std::runtime_error("truncate_theta: No active sites to truncate");
     if (theta.size() == 0)          throw std::runtime_error("truncate_theta: Theta is empty");
@@ -112,11 +112,11 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_fi
 
 
 
-void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_state & state){
+void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &theta, class_state_finite & state){
     tools::log->trace("Truncating multitheta from left to right");
     class_SVD SVD;
     SVD.setThreshold(settings::precision::SVDThreshold);
-    using Scalar = class_finite_state::Scalar;
+    using Scalar = class_state_finite::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     Eigen::Tensor<Scalar,4> theta4;
     Eigen::Tensor<Scalar,3> U;
@@ -196,11 +196,11 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
 }
 
 
-void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_finite_state & state){
+void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_state_finite & state){
     tools::log->trace("Truncating multitheta from right to left");
     class_SVD SVD;
     SVD.setThreshold(settings::precision::SVDThreshold);
-    using Scalar = class_finite_state::Scalar;
+    using Scalar = class_state_finite::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     Eigen::Tensor<Scalar,4> theta4;
     Eigen::Tensor<Scalar,3> U = theta;
@@ -279,7 +279,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_finite_state & state) {
+void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state) {
     tools::common::profile::t_svd.tic();
     class_SVD SVD;
     SVD.setThreshold(settings::precision::SVDThreshold);
@@ -294,7 +294,7 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &t
 
 
 
-int tools::finite::mps::move_center_point(class_finite_state & state){
+int tools::finite::mps::move_center_point(class_state_finite & state){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
 //    std::cout << "Current state -- Direction: " << direction << std::endl;
 //    std::cout << "HA: " << state.HA->get_position() << " MPO_L back : " << MPO_L.back()->get_position() << std::endl;

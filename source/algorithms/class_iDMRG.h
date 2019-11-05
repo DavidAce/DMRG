@@ -5,6 +5,8 @@
 #pragma once
 
 #include "class_algorithm_infinite.h"
+class class_log_infinite_dmrg_measurements;
+
 
 /*!
  * \brief Class that runs the infinite DMRG algorithm.
@@ -14,7 +16,6 @@ public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_infinite::class_algorithm_infinite;
     explicit class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
-//    std::unique_ptr<class_hdf5_log<class_log_infinite_dmrg_measurements>> log_dmrg;
 
     void single_DMRG_step(std::string ritz);
     void run_simulation()                                   final;

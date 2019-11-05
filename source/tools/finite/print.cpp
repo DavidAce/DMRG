@@ -4,7 +4,7 @@
 
 
 #include <tools/nmspc_tools.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <state/class_environment.h>
 #include <general/nmspc_tensor_extra.h>
 #include <string>
@@ -13,7 +13,7 @@
 
 using Scalar         = std::complex<double>;
 
-void tools::finite::print::print_full_state(const class_finite_state &state) {
+void tools::finite::print::print_full_state(const class_state_finite &state) {
     
     for (auto & mps : state.MPS_L){
         std::cout << "MPS " << mps.get_position() << "  :\n";
@@ -30,7 +30,7 @@ void tools::finite::print::print_full_state(const class_finite_state &state) {
 
 
 
-void tools::finite::print::print_state(const class_finite_state &state){
+void tools::finite::print::print_state(const class_state_finite &state){
     using namespace Textra;
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
@@ -73,7 +73,7 @@ void tools::finite::print::print_state(const class_finite_state &state){
 }
 
 
-void tools::finite::print::print_state_compact(const class_finite_state &state){
+void tools::finite::print::print_state_compact(const class_state_finite &state){
     using namespace Textra;
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
@@ -97,7 +97,7 @@ void tools::finite::print::print_state_compact(const class_finite_state &state){
 
 
 
-void tools::finite::print::print_hamiltonians(const class_finite_state &state) {
+void tools::finite::print::print_hamiltonians(const class_state_finite &state) {
     auto & MPO_L  = state.MPO_L;
     auto & MPO_R  = state.MPO_R;
     if (MPO_L.empty()) throw std::runtime_error("MPO_L is empty. Can't print hamiltonian");

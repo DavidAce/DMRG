@@ -74,8 +74,10 @@ function(find_package_omp omp_paths omp_names BUILD_SHARED_LIBS )
         set(OpenMP_FLAGS ${OpenMP_CXX_FLAGS})
 
         # Try to find the header omp.h
-        get_filename_component(OpenMP_ROOT ${OpenMP_LIBRARIES} DIRECTORY)
+        get_filename_component("OpenMP_ROOT" "${OpenMP_LIBRARIES}" DIRECTORY)
         set(OpenMP_HEADER_PATHS  ${OpenMP_ROOT}/../../include ${OpenMP_ROOT}/../include ${OpenMP_ROOT}/include)
+
+
         find_path(OpenMP_INCLUDE_DIR NAMES omp.h PATHS ${OpenMP_HEADER_PATHS} ${omp_paths} PATH_SUFFIXES openmp include)
         message("OpenMP_ROOT         : ${OpenMP_ROOT} ")
         message("OpenMP_HEADER_PATHS : ${OpenMP_HEADER_PATHS} ")
@@ -94,7 +96,7 @@ function(find_package_omp omp_paths omp_names BUILD_SHARED_LIBS )
 
 
     if(NOT OMP_COMPILES)
-        message(STATUS "Checking for OpenMP in given paths")
+        message(STATUS "Checking for OpenMP in given paths: ${omp_paths}")
 #        unset(OpenMP_INCLUDE_DIR)
 #        unset(OpenMP_INCLUDE_DIR CACHE)
         unset(OpenMP_FOUND)
@@ -105,8 +107,7 @@ function(find_package_omp omp_paths omp_names BUILD_SHARED_LIBS )
 #        unset(OpenMP_FLAGS CACHE)
 
         find_library(OpenMP_LIBRARIES NAMES ${omp_names} PATHS ${omp_paths})
-        find_path(OpenMP_INCLUDE_DIR NAMES omp.h PATHS ${OpenMP_HEADER_PATHS} ${omp_paths} PATH_SUFFIXES openmp include)
-
+        find_path(OpenMP_INCLUDE_DIR NAMES omp.h PATHS ${OpenMP_HEADER_PATHS} ${omp_paths} /usr/lib  /usr/lib/llvm-9/include /usr/include /usr/lib/llvm-8/include PATH_SUFFIXES openmp include)
         if(OpenMP_LIBRARIES AND OpenMP_INCLUDE_DIR)
             list(APPEND OpenMP_LIBRARIES Threads::Threads -ldl)
             set(OpenMP_FLAGS "-D_OPENMP")
@@ -151,8 +152,7 @@ endfunction()
 unset(OMP_HEADERTEST)
 unset(OMP_HEADERTEST CACHE)
 
-
-find_path(OMP_HEADERTEST NAMES omp.h PATHS /usr/lib /usr/include /usr/lib/llvm-8/include PATH_SUFFIXES openmp include REQUIRED)
+find_path(OMP_HEADERTEST NAMES omp.h PATHS /usr/lib  /usr/lib/llvm-9/include /usr/include /usr/lib/llvm-8/include  PATH_SUFFIXES openmp include REQUIRED)
 
 message(STATUS "OMP_HEADERTEST: ${OMP_HEADERTEST}")
 

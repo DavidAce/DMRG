@@ -3,7 +3,7 @@
 //
 
 #include "class_algorithm_finite.h"
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <io/class_hdf5_log_buffer.h>
 #include <math/nmspc_math.h>
 #include <h5pp/h5pp.h>
@@ -15,10 +15,13 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
 {
     log->trace("Constructing class_algorithm_finite");
-    state        = std::make_unique<class_finite_state>();
-    state_backup = std::make_unique<class_finite_state>();
+    state        = std::make_unique<class_state_finite>();
+    state_backup = std::make_unique<class_state_finite>();
     log->trace("Constructing log buffers in finite base");
-    log_measurements       = std::make_shared<class_hdf5_log<class_log_finite_dmrg_measurements>> (h5pp_file, sim_name + "/logs", "measurements", sim_name);
+    measurements_logger  = std::make_shared<class_hdf5_log<table_measurements_finite>> (h5pp_file, sim_name + "/logs", "measurements_logger", sim_name);
+    measurements_result  = std::make_shared<class_hdf5_log<table_measurements_finite>> (h5pp_file, sim_name + "/logs", "measurements_result", sim_name);
+
+
 
     state->set_chi_lim(2); //Can't call chi_init() <-- it's a pure virtual function
 
@@ -170,7 +173,7 @@ void class_algorithm_finite::run_postprocessing(){
     write_state(true);
     write_status(true);
     write_logs(true);
-
+    write_results();
 //    tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
 //    tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
     tools::finite::io::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name,
@@ -231,6 +234,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
             // Only do this if the simulation is stuck.
             if(sim_status.simulation_has_stuck_for >= max_stuck_iters){
+                write_results();
                 long chi_new_limit = std::min(max_bond_dim.value(), state->get_chi_lim() * 2);
                 log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
                 state->set_chi_lim(chi_new_limit);
@@ -264,7 +268,7 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
     sim_status.iteration = state->reset_sweeps();
 }
 
-void class_algorithm_finite::backup_best_state(const class_finite_state &state) {
+void class_algorithm_finite::backup_best_state(const class_state_finite &state) {
     log->trace("Checking if given state can beat the backup");
     double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
     double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
@@ -494,7 +498,7 @@ void class_algorithm_finite::write_measurements(bool force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (not state->position_is_any_edge()){return;}
         if (write_freq() == 0){return;}
-        if (settings::output::storage_level <= StorageLevel::NONE){return;}
+        if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
     }
     log->trace("Writing all measurements to file");
     state->unset_measurements();
@@ -516,7 +520,7 @@ void class_algorithm_finite::write_state(bool force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (not state->position_is_any_edge()){return;}
         if (write_freq() == 0){return;}
-        if (settings::output::storage_level <= StorageLevel::NONE){return;}
+        if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
     }
     log->trace("Writing state to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
@@ -584,18 +588,19 @@ void class_algorithm_finite::write_log_sim_status(){
 }
 
 
-
 void class_algorithm_finite::write_log_measurement(){
-    if (log_measurements == nullptr){return;}
+    if (measurements_logger == nullptr){return;}
     log->trace("Appending measurement log entry");
     state->do_all_measurements();
-    class_log_finite_dmrg_measurements::data_struct measurements_entry;
+    table_measurements_finite::data_struct measurements_entry;
     measurements_entry.step                            = sim_status.step;
     measurements_entry.iteration                       = sim_status.iteration;
     measurements_entry.position                        = sim_status.position;
     measurements_entry.length                          = state->get_length();
     measurements_entry.bond_dimension_midchain         = state->measurements.bond_dimension_midchain.value();
     measurements_entry.bond_dimension_current          = state->measurements.bond_dimension_current.value();
+    measurements_entry.bond_dimension_limit            = state->get_chi_lim();
+    measurements_entry.bond_dimension_maximum          = chi_max();
     measurements_entry.entanglement_entropy_midchain   = state->measurements.entanglement_entropy_midchain.value();
     measurements_entry.entanglement_entropy_current    = state->measurements.entanglement_entropy_current.value();
     measurements_entry.norm                            = state->measurements.norm.value();
@@ -608,9 +613,41 @@ void class_algorithm_finite::write_log_measurement(){
     measurements_entry.spin_component_sz               = state->measurements.spin_component_sz.value();
     measurements_entry.truncation_error                = state->get_truncation_error();
     measurements_entry.wall_time                       = t_tot.get_age();
-    log_measurements->append_record(measurements_entry);
+    measurements_logger->append_record(measurements_entry);
 
 }
+
+
+void class_algorithm_finite::write_results(){
+    if (measurements_result == nullptr){return;}
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
+    log->trace("Appending measurement result entry");
+    state->do_all_measurements();
+    table_measurements_finite::data_struct measurements_entry;
+    measurements_entry.step                            = sim_status.step;
+    measurements_entry.iteration                       = sim_status.iteration;
+    measurements_entry.position                        = sim_status.position;
+    measurements_entry.length                          = state_backup->get_length();
+    measurements_entry.bond_dimension_midchain         = state_backup->measurements.bond_dimension_midchain.value();
+    measurements_entry.bond_dimension_current          = state_backup->measurements.bond_dimension_current.value();
+    measurements_entry.bond_dimension_limit            = state_backup->get_chi_lim();
+    measurements_entry.bond_dimension_maximum          = chi_max();
+    measurements_entry.entanglement_entropy_midchain   = state_backup->measurements.entanglement_entropy_midchain.value();
+    measurements_entry.entanglement_entropy_current    = state_backup->measurements.entanglement_entropy_current.value();
+    measurements_entry.norm                            = state_backup->measurements.norm.value();
+    measurements_entry.energy                          = state_backup->measurements.energy.value();
+    measurements_entry.energy_per_site                 = state_backup->measurements.energy_per_site.value();
+    measurements_entry.energy_variance                 = state_backup->measurements.energy_variance_mpo.value();
+    measurements_entry.energy_variance_per_site        = state_backup->measurements.energy_variance_per_site.value();
+    measurements_entry.spin_component_sx               = state_backup->measurements.spin_component_sx.value();
+    measurements_entry.spin_component_sy               = state_backup->measurements.spin_component_sy.value();
+    measurements_entry.spin_component_sz               = state_backup->measurements.spin_component_sz.value();
+    measurements_entry.truncation_error                = state_backup->get_truncation_error();
+    measurements_entry.wall_time                       = t_tot.get_age();
+    measurements_result->append_record(measurements_entry);
+}
+
+
 
 void class_algorithm_finite::write_log_profiling(){
     if (log_profiling == nullptr){return;}
@@ -650,6 +687,8 @@ void class_algorithm_finite::write_log_profiling(){
 
     log_profiling->append_record(profiling_entry);
 }
+
+
 
 
 
