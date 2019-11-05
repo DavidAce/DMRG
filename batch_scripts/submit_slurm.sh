@@ -252,13 +252,13 @@ fi
 
 for simfile in $simfiles; do
     if [ -n "$dryrun" ] ; then
-        echo "sbatch $partition $requeue $exclusive $time $other --mem-per-cpu=$mem --job-name=$jobname --cluster=$cluster_list --ntasks=$simultaneous_sims run_parallel.sh -e $exec -f $simfile"
+        echo "sbatch $partition $requeue $exclusive $time $other --mem-per-cpu=$mem --job-name=$jobname --cluster=$cluster_list --ntasks=$ntasks_parallel run_parallel.sh -e $exec -f $simfile"
     else
         sbatch $partition $requeue $exclusive $time $other \
             --mem-per-cpu=$mem \
             --job-name=$jobname \
             --cluster=$cluster_list \
-            --ntasks=$ntasks_parallel
+            --ntasks=$ntasks_parallel \
             run_parallel.sh -e $exec -f $simfile
     fi
 done
