@@ -59,7 +59,7 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     Eigen::Tensor<std::complex<double>,2> theta_odd_transfer_mat   = get_transfer_matrix_theta_odd(state).reshape(array2{chiC2,chiC2});
 
     using namespace eigutils::eigSetting;
-    int ncvA = std::min(16, chiA2);
+//    int ncvA = std::min(16, chiA2);
     int ncvC = std::min(16, chiC2);
     int ncvB = std::min(16, chiB2);
     [[maybe_unused]] auto [eigvec_R_evn, eigval_R_evn] = dominant_eig<Side::R>(theta_evn_transfer_mat, chiB2, ncvB);
