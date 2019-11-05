@@ -3,7 +3,7 @@
 //
 
 #include <tools/nmspc_tools.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <state/class_mps_2site.h>
 #include <state/class_environment.h>
 #include <general/nmspc_random_numbers.h>
@@ -48,7 +48,7 @@ Eigen::Vector2cd get_eigvec(const std::string & parity, const int sign){
     throw std::runtime_error(fmt::format("get_eigvec given invalid parity sector: {} in {}", parity,sign));
 }
 
-void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset(class_finite_state & state, const std::string &parity_sector, const int seed_state){
+void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset(class_state_finite & state, const std::string &parity_sector, const int seed_state){
     if (seed_state < 0){
         throw std::runtime_error(fmt::format("Can't set sector from bitset with negative seed_state: {}", seed_state));
     }
@@ -89,7 +89,7 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
 
 
 
-void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(class_finite_state & state, const std::string &parity_sector){
+void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(class_state_finite & state, const std::string &parity_sector){
 
     Eigen::Tensor<Scalar,1> L (1);
     std::string axis = get_axis(parity_sector);
@@ -122,7 +122,7 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
 
 
 
-void tools::finite::mps::internals::set_product_state_randomly(class_finite_state & state,const std::string &parity_sector,bool use_pauli_eigenstates){
+void tools::finite::mps::internals::set_product_state_randomly(class_state_finite & state, const std::string &parity_sector, bool use_pauli_eigenstates){
     std::vector<std::string> ok_parity_sectors = {"x","+x","-x","y","+y","-y", "z","+z","-z"};
     bool parity_sector_is_defined = std::find(ok_parity_sectors.begin(), ok_parity_sectors.end(), parity_sector) != ok_parity_sectors.end();
     if (parity_sector_is_defined and use_pauli_eigenstates){

@@ -5,8 +5,8 @@
 #pragma once
 
 #include <algorithms/class_algorithm_base.h>
-class class_log_finite_dmrg_measurements;
-class class_finite_state;
+class table_measurements_finite;
+class class_state_finite;
 
 
 class class_algorithm_finite: public class_algorithm_base {
@@ -20,11 +20,12 @@ public:
             size_t num_sites
             );
     // Logs
-    std::shared_ptr<class_hdf5_log<class_log_finite_dmrg_measurements>>  log_measurements;
+    std::shared_ptr<class_hdf5_log<table_measurements_finite>>  measurements_logger; //Written every sweep
+    std::shared_ptr<class_hdf5_log<table_measurements_finite>>  measurements_result; //Written when we update bond dimension or finish
 
 
     //MPS
-    std::unique_ptr<class_finite_state>    state,state_backup;
+    std::unique_ptr<class_state_finite>    state,state_backup;
 
 
     size_t max_stuck_iters               = 2;
@@ -49,7 +50,7 @@ public:
     void compute_observables()                                                                  final;
     void clear_saturation_status()                                                              override;
     void reset_to_random_state(const std::string parity_sector = "random", int seed_state = -1) final;
-    void backup_best_state(const class_finite_state &state);
+    void backup_best_state(const class_state_finite &state);
     void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
 
@@ -57,6 +58,7 @@ public:
     void write_state(bool force = false)                                                        final;
     void write_status(bool force = false)                                                       final;
     void write_logs(bool force = false)                                                         final;
+    void write_results()                                                                        final;
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
 

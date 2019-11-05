@@ -4,14 +4,14 @@
 
 #include "class_mps_site.h"
 #include <general/nmspc_tensor_extra.h>
-#include <spdlog/fmt/bundled/format.h>
+#include <io/nmspc_logger.h>
 
 using Scalar = class_mps_site::Scalar;
 
 bool class_mps_site::isCenter()const{
     if (LC.has_value()){
         if(LC.value().dimension(0) != M.dimension(2))
-            throw std::runtime_error(fmt::format("M and LC dim mismatch: {} != {}", M.dimension(2),LC.value().dimension(0)));
+            throw std::runtime_error(fmt::format("M and LC dim mismatch: {} != {}", M.dimension(2) ,LC.value().dimension(0)));
     }
     return LC.has_value();
 }

@@ -4,7 +4,7 @@
 
 
 #include <tools/nmspc_tools.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <model/class_model_base.h>
 #include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_quantum_mechanics.h>
@@ -27,14 +27,14 @@ std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std:
 }
 
 
-void tools::finite::ops::apply_mpo(class_finite_state & state,const Eigen::Tensor<Scalar,4> &mpo,const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge){
+void tools::finite::ops::apply_mpo(class_state_finite & state, const Eigen::Tensor<Scalar,4> &mpo, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge){
     std::list<Eigen::Tensor<Scalar,4>> mpos(state.get_length(), mpo);
     apply_mpos(state,mpos,Ledge,Redge);
 }
 
 
 
-void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<Eigen::Tensor<Scalar,4>> & mpos,const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge){
+void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<Eigen::Tensor<Scalar,4>> & mpos, const Eigen::Tensor<Scalar,3> & Ledge, const Eigen::Tensor<Scalar,3> & Redge){
     if (mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
@@ -87,7 +87,7 @@ void tools::finite::ops::apply_mpos(class_finite_state & state,const std::list<E
 }
 
 
-class_finite_state tools::finite::ops::get_projection_to_parity_sector(const class_finite_state & state, const Eigen::MatrixXcd  & paulimatrix, int sign) {
+class_state_finite tools::finite::ops::get_projection_to_parity_sector(const class_state_finite & state, const Eigen::MatrixXcd  & paulimatrix, int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     tools::log->trace("Generating parity projected state with sign {}", sign);
     auto spin_components = tools::finite::measure::spin_components(state);
@@ -96,7 +96,7 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     tools::log->trace("Current reqstd spin component  :     {:.16f}", requested_spin_component );
 
     tools::common::profile::t_prj.tic();
-    class_finite_state state_projected = state;
+    class_state_finite state_projected = state;
     state_projected.unset_measurements();
     state_projected.clear_cache();
 
@@ -114,7 +114,7 @@ class_finite_state tools::finite::ops::get_projection_to_parity_sector(const cla
     return state_projected;
 }
 
-class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, const Eigen::MatrixXcd & paulimatrix) {
+class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector(const class_state_finite &state, const Eigen::MatrixXcd & paulimatrix) {
     tools::log->trace("Finding closest projection");
     double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
     if (requested_spin_component > 0){
@@ -124,7 +124,7 @@ class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(c
     }
 }
 
-class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(const class_finite_state &state, std::string parity_sector) {
+class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector(const class_state_finite &state, std::string parity_sector) {
     tools::log->trace("Finding closest projection in parity sector {}", parity_sector );
     if      (parity_sector == "x")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sx);}
     else if (parity_sector == "y")  {return get_projection_to_closest_parity_sector(state, qm::spinOneHalf::sy);}
@@ -163,7 +163,7 @@ class_finite_state tools::finite::ops::get_projection_to_closest_parity_sector(c
 }
 
 
-double tools::finite::ops::overlap(const class_finite_state & state1, const class_finite_state & state2){
+double tools::finite::ops::overlap(const class_state_finite & state1, const class_state_finite & state2){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
@@ -183,7 +183,7 @@ double tools::finite::ops::overlap(const class_finite_state & state1, const clas
     return norm_chain;
 }
 
-double tools::finite::ops::expectation_value(const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  & mpos, const Eigen::Tensor<std::complex<double>,3> & Ledge, const Eigen::Tensor<std::complex<double>,3> & Redge){
+double tools::finite::ops::expectation_value(const class_state_finite & state1, const class_state_finite & state2, const std::list<Eigen::Tensor<std::complex<double>,4>>  & mpos, const Eigen::Tensor<std::complex<double>,3> & Ledge, const Eigen::Tensor<std::complex<double>,3> & Redge){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
@@ -205,7 +205,7 @@ double tools::finite::ops::expectation_value(const class_finite_state & state1, 
     return energy_chain;
 }
 
-double tools::finite::ops::exp_sq_value     (const class_finite_state & state1, const class_finite_state & state2,const std::list<Eigen::Tensor<std::complex<double>,4>>  & mpos, const Eigen::Tensor<std::complex<double>,4> & Ledge, const Eigen::Tensor<std::complex<double>,4> & Redge){
+double tools::finite::ops::exp_sq_value     (const class_state_finite & state1, const class_state_finite & state2, const std::list<Eigen::Tensor<std::complex<double>,4>>  & mpos, const Eigen::Tensor<std::complex<double>,4> & Ledge, const Eigen::Tensor<std::complex<double>,4> & Redge){
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");

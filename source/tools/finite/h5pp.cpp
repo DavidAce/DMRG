@@ -4,8 +4,8 @@
 
 
 #include <tools/nmspc_tools.h>
-#include <state/class_finite_state.h>
-#include <state/class_infinite_state.h>
+#include <state/class_state_finite.h>
+#include <state/class_state_infinite.h>
 #include <model/class_model_factory.h>
 #include <simulation/class_simulation_status.h>
 #include <simulation/nmspc_settings.h>
@@ -25,7 +25,7 @@ bool tools::finite::io::internals::make_extendable_dataset(const std::string & p
 
 
 
-void tools::finite::io::write_all_state(const class_finite_state &state, h5pp::File & h5ppFile,const std::string & prefix_path) {
+void tools::finite::io::write_all_state(const class_state_finite &state, h5pp::File & h5ppFile, const std::string & prefix_path) {
     tools::common::profile::t_hdf.tic();
     switch(settings::output::storage_level){
         case StorageLevel::NONE:
@@ -49,7 +49,7 @@ void tools::finite::io::write_all_state(const class_finite_state &state, h5pp::F
 }
 
 
-void tools::finite::io::write_bond_matrices(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path)
+void tools::finite::io::write_bond_matrices(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path)
 /*! Writes down all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily.
  */
 {
@@ -65,7 +65,7 @@ void tools::finite::io::write_bond_matrices(const class_finite_state & state, h5
 }
 
 
-void tools::finite::io::write_bond_matrix(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path)
+void tools::finite::io::write_bond_matrix(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path)
 /*! Writes down all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily.
  */
 {
@@ -75,7 +75,7 @@ void tools::finite::io::write_bond_matrix(const class_finite_state & state, h5pp
     h5ppFile.writeDataset(state.get_truncation_error(middle), prefix_path + "/state/truncation_error",extendable);
 }
 
-void tools::finite::io::write_full_mps(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path)
+void tools::finite::io::write_full_mps(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path)
 /*!
  * Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation.
  *
@@ -91,7 +91,7 @@ void tools::finite::io::write_full_mps(const class_finite_state & state, h5pp::F
 
 
 
-void tools::finite::io::write_full_mpo(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path) {
+void tools::finite::io::write_full_mpo(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path) {
     // Write all the MPO's
     // Remember to write tensors in row-major state order because that's what output uses.
     bool extendable = internals::make_extendable_dataset(prefix_path);
@@ -106,7 +106,7 @@ void tools::finite::io::write_full_mpo(const class_finite_state & state, h5pp::F
     }
 }
 
-void tools::finite::io::write_model(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path){
+void tools::finite::io::write_model(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path){
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what output uses.
     if(settings::output::storage_level == StorageLevel::NONE) return;
@@ -128,7 +128,7 @@ void tools::finite::io::write_model(const class_finite_state & state, h5pp::File
     }
 }
 
-void tools::finite::io::write_all_measurements(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path){
+void tools::finite::io::write_all_measurements(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path){
     state.do_all_measurements();
     tools::common::profile::t_hdf.tic();
     h5ppFile.writeDataset(state.measurements.length.value()                        , prefix_path + "/measurements/length");
@@ -150,7 +150,7 @@ void tools::finite::io::write_all_measurements(const class_finite_state & state,
 }
 
 
-void tools::finite::io::write_projection_to_closest_parity_sector(const class_finite_state & state, h5pp::File & h5ppFile, const std::string & prefix_path, std::string parity_sector){
+void tools::finite::io::write_projection_to_closest_parity_sector(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path, std::string parity_sector){
     if (parity_sector == "none") return;
     auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(state, parity_sector);
     state_projected.unset_measurements();
@@ -161,7 +161,7 @@ void tools::finite::io::write_projection_to_closest_parity_sector(const class_fi
 }
 
 
-void tools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_finite_state & state, class_simulation_status &sim_status, const std::string & prefix_path){
+void tools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_state_finite & state, class_simulation_status &sim_status, const std::string & prefix_path){
     // Load into state
     try{
         sim_status = tools::common::io::load_sim_status_from_hdf5(h5ppFile,prefix_path);
@@ -173,8 +173,8 @@ void tools::finite::io::load_from_hdf5(const h5pp::File & h5ppFile, class_finite
     }
 }
 
-class_finite_state tools::finite::io::load_state_from_hdf5(const h5pp::File & h5ppFile, const std::string & prefix_path){
-    class_finite_state state;
+class_state_finite tools::finite::io::load_state_from_hdf5(const h5pp::File & h5ppFile, const std::string & prefix_path){
+    class_state_finite state;
     size_t position = 0;
     size_t sites   = 0;
     Eigen::Tensor<Scalar,3> G;

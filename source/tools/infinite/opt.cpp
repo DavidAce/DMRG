@@ -3,7 +3,7 @@
 //
 
 #include <tools/nmspc_tools.h>
-#include <state/class_infinite_state.h>
+#include <state/class_state_infinite.h>
 #include <state/class_environment.h>
 #include <state/class_mps_2site.h>
 #include <state/class_mps_site.h>
@@ -14,7 +14,7 @@
 
 
 Eigen::Tensor<tools::infinite::Scalar,4>
-        tools::infinite::opt::find_ground_state(const class_infinite_state & state, std::string ritzstring){
+        tools::infinite::opt::find_ground_state(const class_state_infinite & state, std::string ritzstring){
     auto theta = state.get_theta();
     std::array<long,4> shape_theta4 = theta.dimensions();
     std::array<long,4> shape_mpo4   = state.HA->MPO().dimensions();
@@ -42,7 +42,7 @@ Eigen::Tensor<tools::infinite::Scalar,4>
 //============================================================================//
 
 
-Eigen::Tensor<tools::infinite::Scalar, 4> tools::infinite::opt::time_evolve_theta(const class_infinite_state & state, const Eigen::Tensor<Scalar, 4> &U)
+Eigen::Tensor<tools::infinite::Scalar, 4> tools::infinite::opt::time_evolve_theta(const class_state_infinite & state, const Eigen::Tensor<Scalar, 4> &U)
 /*!
 @verbatim
   1--[ Θ ]--3
@@ -65,7 +65,7 @@ Eigen::Tensor<tools::infinite::Scalar, 4> tools::infinite::opt::time_evolve_thet
 
 
 
-void tools::infinite::opt::truncate_theta(Eigen::Tensor<Scalar,4> &theta, class_infinite_state & state){
+void tools::infinite::opt::truncate_theta(Eigen::Tensor<Scalar,4> &theta, class_state_infinite & state){
     class_SVD SVD;
     SVD.setThreshold(settings::precision::SVDThreshold);
     auto[U, S, V] = SVD.schmidt(theta,state.get_chi_lim());

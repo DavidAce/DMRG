@@ -4,7 +4,7 @@
 
 
 #include <tools/nmspc_tools.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <state/class_mps_2site.h>
 #include <state/class_environment.h>
 #include <general/nmspc_random_numbers.h>
@@ -12,9 +12,9 @@
 #include <simulation/nmspc_settings.h>
 
 
-void tools::finite::mps::initialize(class_finite_state &state, const size_t length){
+void tools::finite::mps::initialize(class_state_finite &state, const size_t length){
     log->info("Initializing mps");
-    using Scalar = class_finite_state::Scalar;
+    using Scalar = class_state_finite::Scalar;
     //Generate MPS
     Eigen::Tensor<Scalar,3> A;
     Eigen::Tensor<Scalar,3> B;
@@ -32,7 +32,7 @@ void tools::finite::mps::initialize(class_finite_state &state, const size_t leng
 
 
 
-void tools::finite::mps::randomize(class_finite_state &state,const std::string &parity_sector, int seed_state, bool use_pauli_eigenstates, bool enumeration)
+void tools::finite::mps::randomize(class_state_finite &state, const std::string &parity_sector, int seed_state, bool use_pauli_eigenstates, bool enumeration)
 /*!
  * There are many ways to randomize an initial product state state, based on the
  * arguments (parity_sector,seed_state,use_pauli_eigenstates, enumeration) = (string,int,true/false,true/false).
@@ -77,7 +77,7 @@ void tools::finite::mps::randomize(class_finite_state &state,const std::string &
 }
 
 
-void tools::finite::mps::rebuild_environments(class_finite_state &state){
+void tools::finite::mps::rebuild_environments(class_state_finite &state){
     tools::log->trace("Rebuilding environments");
     if (state.MPS_L.size() != state.MPO_L.size())
         throw std::runtime_error(fmt::format("Size mismatch in MPSL and MPOL: {} != {}",state.MPS_L.size(), state.MPO_L.size()));
@@ -142,6 +142,6 @@ void tools::finite::mps::rebuild_environments(class_finite_state &state){
 
 
 
-void tools::finite::mps::project_to_closest_parity_sector   (class_finite_state & state, std::string parity_sector){
+void tools::finite::mps::project_to_closest_parity_sector   (class_state_finite & state, std::string parity_sector){
     state = tools::finite::ops::get_projection_to_closest_parity_sector(state, parity_sector);
 }

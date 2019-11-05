@@ -33,7 +33,7 @@
  *  The numbers in parentheses denote the position in the chain, note that this isn't the same as the position in the corresponding containers.
  */
 
-class class_finite_state
+class class_state_finite
 {
 public:
     using Scalar = std::complex<double>;
@@ -46,10 +46,10 @@ private:
     int direction    = 1;
     std::optional<long> chi_lim;
 public:
-    class_finite_state()=default;
-    ~class_finite_state();
-    class_finite_state(const class_finite_state & other);
-    class_finite_state& operator= (const class_finite_state & other);
+    class_state_finite()=default;
+    ~class_state_finite();
+    class_state_finite(const class_state_finite & other);
+    class_state_finite& operator= (const class_state_finite & other);
 
 
 

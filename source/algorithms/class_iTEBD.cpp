@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <io/class_hdf5_log_buffer.h>
 #include <simulation/nmspc_settings.h>
-#include <state/class_infinite_state.h>
+#include <state/class_state_infinite.h>
 #include <state/class_mps_2site.h>
 #include <tools/nmspc_tools.h>
 #include <model/class_model_base.h>

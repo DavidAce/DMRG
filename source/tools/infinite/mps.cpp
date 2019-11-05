@@ -3,12 +3,12 @@
 //
 
 #include <tools/nmspc_tools.h>
-#include <state/class_infinite_state.h>
+#include <state/class_state_infinite.h>
 #include <state/class_mps_2site.h>
 #include <state/class_mps_site.h>
 
 
-void tools::infinite::mps::initialize  (class_infinite_state & state,std::string model_type_str){
+void tools::infinite::mps::initialize  (class_state_infinite & state, std::string model_type_str){
     tools::log->trace("Constructing 2site MPS");
     long spin_dimension = 2;
     if      (model_type_str == "tf_ising")             spin_dimension = 2;
@@ -27,14 +27,14 @@ void tools::infinite::mps::initialize  (class_infinite_state & state,std::string
     state.MPS->MPS_A->set_LC(L);
 }
 
-//void tools::infinite::mps::rebuild_environments(class_infinite_state & state){
+//void tools::infinite::mps::rebuild_environments(class_state_infinite & state){
 //
 //}
 
 
 
 
-class_infinite_state tools::infinite::mps::set_random_state(const class_infinite_state & state, [[maybe_unused]] std::string parity,  [[maybe_unused]]  int seed_state){
+class_state_infinite tools::infinite::mps::set_random_state(const class_state_infinite & state, [[maybe_unused]] std::string parity, [[maybe_unused]]  int seed_state){
     throw std::runtime_error("You need to implement set random state for infinite state");
     return state;
 }

@@ -55,6 +55,7 @@ public:
     virtual void   write_state       (bool force = false)                                                     = 0;
     virtual void   write_status      (bool force = false)                                                     = 0;
     virtual void   write_logs        (bool force = false)                                                     = 0;
+    virtual void   write_results()                                                                            = 0;
     virtual bool   sim_on()                                                                                   = 0;
     virtual long   chi_max()                                                                                  = 0;
     virtual size_t num_sites()                                                                                = 0;

@@ -3,10 +3,10 @@
 //
 
 #include <tools/finite/opt.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <general/nmspc_omp.h>
 
-Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_finite_state & state){
+Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_state_finite & state){
     auto mpo = state.get_multimpo();
     tools::log->trace("Contracting multisite hamiltonian...");
     auto & envL = state.get_ENVL(state.active_sites.front());
@@ -42,7 +42,7 @@ Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamilt
     return ham;
 }
 
-Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(const class_finite_state & state) {
+Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(const class_state_finite & state) {
     auto mpo = state.get_multimpo();
     tools::log->trace("Contracting multisite hamiltonian squared...");
     auto & env2L = state.get_ENV2L(state.active_sites.front());
@@ -81,21 +81,21 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hami
 
 
 
-Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_matrix(const class_finite_state & state) {
+Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_matrix(const class_state_finite & state) {
     long size = state.active_problem_size();
     auto ham_tensor = tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(state);
     return Eigen::Map<Eigen::MatrixXcd> (ham_tensor.data(),size,size).transpose().selfadjointView<Eigen::Lower>();
 }
 
 
-Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_matrix(const class_finite_state & state) {
+Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_matrix(const class_state_finite & state) {
     long size = state.active_problem_size();
     auto ham_squared_tensor = tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(state);
     return Eigen::Map<Eigen::MatrixXcd> (ham_squared_tensor.data(),size,size).transpose().selfadjointView<Eigen::Lower>();
 }
 
 
-Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(const class_finite_state & state, const Eigen::MatrixXcd & eigvecs ){
+Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs ){
     auto mpo = state.get_multimpo();
     auto & env2L = state.get_ENV2L(state.active_sites.front()).block;
     auto & env2R = state.get_ENV2R(state.active_sites.back()).block;
@@ -187,7 +187,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
 
 
 
-Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix(const class_finite_state & state, const Eigen::MatrixXcd & eigvecs ){
+Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs ){
 //    if(cache.multiham_sq_sub) return cache.multiham_sq_sub.value();
     auto mpo = state.get_multimpo();
     tools::log->trace("Contracting hamiltonian squared matrix in subspace old...");
@@ -272,67 +272,67 @@ template<typename T> using MatrixType = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dy
 
 
 template <typename T>
-Eigen::Tensor<T,6> tools::finite::opt::internal::get_multi_hamiltonian_tensor(const class_finite_state & state){
+Eigen::Tensor<T,6> tools::finite::opt::internal::get_multi_hamiltonian_tensor(const class_state_finite & state){
     static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
     if      constexpr(std::is_same<T,std::complex<double>>::value) return tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(state);
     else if constexpr(std::is_same<T,double>::value)               return tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(state).real();
 }
 
 // Explicit instantiations
-template Eigen::Tensor<double,6>tools::finite::opt::internal::get_multi_hamiltonian_tensor<double>(const class_finite_state & state);
-template Eigen::Tensor<Scalar,6>tools::finite::opt::internal::get_multi_hamiltonian_tensor<Scalar>(const class_finite_state & state);
+template Eigen::Tensor<double,6>tools::finite::opt::internal::get_multi_hamiltonian_tensor<double>(const class_state_finite & state);
+template Eigen::Tensor<Scalar,6>tools::finite::opt::internal::get_multi_hamiltonian_tensor<Scalar>(const class_state_finite & state);
 
 
 template <typename T>
-Eigen::Tensor<T,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor(const class_finite_state & state){
+Eigen::Tensor<T,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor(const class_state_finite & state){
     static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
     if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_squared_tensor(state);
     else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_squared_tensor(state).real();
 }
 // Explicit instantiations
-template Eigen::Tensor<double,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor<double>(const class_finite_state & state);
-template Eigen::Tensor<Scalar,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor<Scalar>(const class_finite_state & state);
+template Eigen::Tensor<double,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor<double>(const class_state_finite & state);
+template Eigen::Tensor<Scalar,6> tools::finite::opt::internal::get_multi_hamiltonian_squared_tensor<Scalar>(const class_state_finite & state);
 
 
 template <typename T>
-MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_matrix(const class_finite_state & state){
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_matrix(const class_state_finite & state){
     static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
     if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_matrix(state);
     else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_matrix(state).real();
 }
 // Explicit instantiations
-template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_matrix<double>(const class_finite_state & state);
-template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_matrix<Scalar>(const class_finite_state & state);
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_matrix<double>(const class_state_finite & state);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_matrix<Scalar>(const class_state_finite & state);
 
 template <typename T>
-MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix(const class_finite_state & state){
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix(const class_state_finite & state){
     static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
     if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_squared_matrix(state);
     else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_squared_matrix(state).real();
 }
 // Explicit instantiations
-template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix<double>(const class_finite_state & state);
-template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix<Scalar>(const class_finite_state & state);
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix<double>(const class_state_finite & state);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_matrix<Scalar>(const class_state_finite & state);
 
 template <typename T>
-MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs){
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs){
     static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
     if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix(state, eigvecs);
     else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix(state, eigvecs).real();
 }
 // Explicit instantiations
-template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix<double>(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
-template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix<Scalar>(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix<double>(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix<Scalar>(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
 
 template <typename T>
-MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs){
+MatrixType<T> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs){
     static_assert(std::is_same<T,std::complex<double>>::value or std::is_same<T,double>::value,"Wrong type, expected double or complex double");
     if      constexpr(std::is_same<T,std::complex<double>>::value) return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(state, eigvecs);
     else if constexpr(std::is_same<T,double>::value)               return local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(state, eigvecs).real();
 }
 // Explicit instantiations
-template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<double>(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
-template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+template MatrixType<double> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<double>(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
+template MatrixType<Scalar> tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
 
 
 

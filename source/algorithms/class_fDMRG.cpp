@@ -6,8 +6,8 @@
 #include <iomanip>
 #include <io/class_hdf5_log_buffer.h>
 #include <simulation/nmspc_settings.h>
-#include <state/class_infinite_state.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_infinite.h>
+#include <state/class_state_finite.h>
 #include <tools/nmspc_tools.h>
 #include <math/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
@@ -22,7 +22,7 @@ using namespace Textra;
 class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_),"fDMRG", SimulationType::fDMRG, settings::fdmrg::num_sites) {
     log->trace("Constructing class_fDMRG");
-    log_dmrg       = std::make_unique<class_hdf5_log<class_log_finite_dmrg_measurements>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
+    log_dmrg       = std::make_unique<class_hdf5_log<table_measurements_finite>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
 }
 

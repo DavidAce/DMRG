@@ -3,7 +3,7 @@
 //
 
 //#include <state/class_optimize_mps.h>
-#include <state/class_infinite_state.h>
+#include <state/class_state_infinite.h>
 #include <state/class_environment.h>
 #include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>
@@ -17,9 +17,9 @@
 
 using namespace std;
 using namespace Textra;
-using Scalar = class_infinite_state::Scalar;
+using Scalar = class_state_infinite::Scalar;
 
-class_infinite_state::class_infinite_state(SimulationType sim_type_,std::string sim_name_):
+class_state_infinite::class_state_infinite(SimulationType sim_type_, std::string sim_name_):
         sim_type(sim_type_),
         sim_name(sim_name_),
         MPS(std::make_unique<class_mps_2site>()),
@@ -30,7 +30,7 @@ class_infinite_state::class_infinite_state(SimulationType sim_type_,std::string 
         Lblock2(std::make_unique<class_environment_var>("L")),
         Rblock2(std::make_unique<class_environment_var>("R"))
 {
-    tools::log->trace("Constructing class_infinite_state");
+    tools::log->trace("Constructing class_state_infinite");
 
 }
 
@@ -39,52 +39,52 @@ class_infinite_state::class_infinite_state(SimulationType sim_type_,std::string 
 
 
 
-// We need to make a destructor manually for the enclosing class "class_infinite_state"
+// We need to make a destructor manually for the enclosing class "class_state_infinite"
 // that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
 // own default deleter.
 // This allows us to forward declare the abstract base class "class_model_base"
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-//class_infinite_state::~class_infinite_state()=default;
+//class_state_infinite::~class_state_infinite()=default;
 
 // we could the default move constructor
-//class_infinite_state::class_infinite_state(class_infinite_state&&)  = default;
+//class_state_infinite::class_state_infinite(class_state_infinite&&)  = default;
 // we could use the default move assignment operator
-//class_infinite_state & class_infinite_state::operator=(class_infinite_state&&) = default;
+//class_state_infinite & class_state_infinite::operator=(class_state_infinite&&) = default;
 
 // ...but we would have to provide a deep copying assignment operator
-//class_infinite_state & class_infinite_state::operator=(class_infinite_state const& source) {
+//class_state_infinite & class_state_infinite::operator=(class_state_infinite const& source) {
 //    HA = source.HA->clone();
 //    HB = source.HB->clone();
 //    return *this;
 //}
 
-void class_infinite_state::clear(){
+void class_state_infinite::clear(){
     tools::log->trace("Copying state to state");
-    *this = class_infinite_state(sim_type,sim_name);
+    *this = class_state_infinite(sim_type, sim_name);
 }
 
-size_t class_infinite_state::get_length() const {
+size_t class_state_infinite::get_length() const {
     size_t length = Lblock->sites + Rblock->sites + 2;
     return length;
 }
 
-size_t class_infinite_state::get_position() const { return Lblock->sites;}
+size_t class_state_infinite::get_position() const { return Lblock->sites;}
 
-long class_infinite_state::get_chi() const {return MPS->chiC();}
+long class_state_infinite::get_chi() const {return MPS->chiC();}
 
-long class_infinite_state::get_chi_lim()  const {
+long class_state_infinite::get_chi_lim()  const {
     //Should get the the current limit on allowed bond dimension
     return chi_lim;
 }
-void class_infinite_state::set_chi_lim(long chi_lim_){
+void class_state_infinite::set_chi_lim(long chi_lim_){
     //Should set the the current limit on allowed bond dimension
     chi_lim = chi_lim_;
 }
 
-Eigen::DSizes<long,4> class_infinite_state::dimensions()const{return MPS->dimensions();}
+Eigen::DSizes<long,4> class_state_infinite::dimensions()const{return MPS->dimensions();}
 
-Eigen::Tensor<Scalar, 4> class_infinite_state::get_theta() const { return MPS->get_theta();}
+Eigen::Tensor<Scalar, 4> class_state_infinite::get_theta() const { return MPS->get_theta();}
 
 
 
@@ -94,7 +94,7 @@ Eigen::Tensor<Scalar, 4> class_infinite_state::get_theta() const { return MPS->g
 
 
 
-//Eigen::Tensor<Scalar,4> class_infinite_state::optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigutils::eigSetting::Ritz ritz){
+//Eigen::Tensor<Scalar,4> class_state_infinite::optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigutils::eigSetting::Ritz ritz){
 //    std::array<long,4> shape_theta4 = theta.dimensions();
 //    std::array<long,4> shape_mpo4   = HA->MPO().dimensions();
 //
@@ -122,7 +122,7 @@ Eigen::Tensor<Scalar, 4> class_infinite_state::get_theta() const { return MPS->g
 //============================================================================//
 // Do unitary evolution on an MPS
 //============================================================================//
-//Eigen::Tensor<Scalar, 4> class_infinite_state::evolve_MPS(const Eigen::Tensor<Scalar, 4> &U)
+//Eigen::Tensor<Scalar, 4> class_state_infinite::evolve_MPS(const Eigen::Tensor<Scalar, 4> &U)
 ///*!
 //@verbatim
 //  1--[ Θ ]--3
@@ -142,7 +142,7 @@ Eigen::Tensor<Scalar, 4> class_infinite_state::get_theta() const { return MPS->g
 //            .shuffle(array4{0,2,1,3});
 //}
 //
-//Eigen::Tensor<Scalar, 4> class_infinite_state::evolve_MPS(const Eigen::Tensor<Scalar, 4> &theta, const Eigen::Tensor<Scalar, 4> &U)
+//Eigen::Tensor<Scalar, 4> class_state_infinite::evolve_MPS(const Eigen::Tensor<Scalar, 4> &theta, const Eigen::Tensor<Scalar, 4> &U)
 ///*!
 //@verbatim
 //  1--[ Θ ]--3
@@ -164,7 +164,7 @@ Eigen::Tensor<Scalar, 4> class_infinite_state::get_theta() const { return MPS->g
 //============================================================================//
 // Do SVD decomposition, truncation and normalization of the MPS->
 //============================================================================//
-//Eigen::Tensor<Scalar,4> class_infinite_state::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double SVDThreshold){
+//Eigen::Tensor<Scalar,4> class_state_infinite::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double SVDThreshold){
 //    class_SVD SVD;
 //    SVD.setThreshold(SVDThreshold);
 //    auto[U, S, V] = SVD.schmidt(theta,chi_);
@@ -177,7 +177,7 @@ Eigen::Tensor<Scalar, 4> class_infinite_state::get_theta() const { return MPS->g
 //    return get_theta();
 //}
 //
-//void class_infinite_state::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, class_mps_2site &MPS_out,long chi_, double SVDThreshold){
+//void class_state_infinite::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, class_mps_2site &MPS_out,long chi_, double SVDThreshold){
 //    class_SVD SVD;
 //    SVD.setThreshold(SVDThreshold);
 //    auto[U, S, V] = SVD.schmidt(theta, chi_);
@@ -192,7 +192,7 @@ Eigen::Tensor<Scalar, 4> class_infinite_state::get_theta() const { return MPS->g
 
 
 
-bool class_infinite_state::isReal() const {
+bool class_state_infinite::isReal() const {
     bool MPS_isReal         = MPS->isReal();
     bool HA_isReal          = HA->isReal();
     bool HB_isReal          = HB->isReal();
@@ -212,7 +212,7 @@ bool class_infinite_state::isReal() const {
 }
 
 template<typename T>
-Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> class_infinite_state::get_H_local_matrix ()const{
+Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_matrix ()const{
     Eigen::Tensor<T,5>tempL;
     Eigen::Tensor<T,5>tempR;
     if constexpr (std::is_same<T,double>::value){
@@ -231,12 +231,12 @@ Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> class_infinite_state::get_H_loca
     return Eigen::Map<Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic>>(H_local.data(),shape,shape);
 }
 
-template Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic>                class_infinite_state::get_H_local_matrix<double>() const;
-template Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>  class_infinite_state::get_H_local_matrix<std::complex<double>>() const;
+template Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic>                class_state_infinite::get_H_local_matrix<double>() const;
+template Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>  class_state_infinite::get_H_local_matrix<std::complex<double>>() const;
 
 
 template<typename T>
-Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> class_infinite_state::get_H_local_sq_matrix ()const{
+Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_sq_matrix ()const{
     Eigen::Tensor<T,6>tempL;
     Eigen::Tensor<T,6>tempR;
     if constexpr(std::is_same<T,double>::value){
@@ -271,12 +271,12 @@ Eigen::Matrix<T,Eigen::Dynamic, Eigen::Dynamic> class_infinite_state::get_H_loca
 }
 
 
-template Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic>                class_infinite_state::get_H_local_sq_matrix<double>() const ;
-template Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>  class_infinite_state::get_H_local_sq_matrix<std::complex<double>>() const;
+template Eigen::Matrix<double,Eigen::Dynamic, Eigen::Dynamic>                class_state_infinite::get_H_local_sq_matrix<double>() const ;
+template Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>  class_state_infinite::get_H_local_sq_matrix<std::complex<double>>() const;
 
 
 
-void class_infinite_state::enlarge_environment(int direction){
+void class_state_infinite::enlarge_environment(int direction){
     if (direction == 1){
         assert(Lblock->get_position()  == HA->get_position());
         assert(Lblock2->get_position() == HA->get_position());
@@ -306,7 +306,7 @@ void class_infinite_state::enlarge_environment(int direction){
 }
 
 
-void class_infinite_state::set_positions(int position){
+void class_state_infinite::set_positions(int position){
     MPS->MPS_A->set_position(position);
     MPS->MPS_B->set_position(position+1);
     Lblock->set_position(position);
@@ -318,12 +318,12 @@ void class_infinite_state::set_positions(int position){
 }
 
 
-void class_infinite_state::unset_measurements() const {
+void class_state_infinite::unset_measurements() const {
     measurements = Measurements();
     tools::common::views::components_computed = false;
 }
 
-void class_infinite_state::do_all_measurements() const {
+void class_state_infinite::do_all_measurements() const {
     measurements.length                         = tools::infinite::measure::length(*this);
     measurements.bond_dimension                 = tools::infinite::measure::bond_dimension(*this);
     measurements.norm                           = tools::infinite::measure::norm(*this);
@@ -341,6 +341,6 @@ void class_infinite_state::do_all_measurements() const {
 
 
 
-void  class_infinite_state::swap_AB(){
+void  class_state_infinite::swap_AB(){
     MPS->swap_AB();
 }

@@ -27,7 +27,7 @@ namespace tools::finite::opt{
             void get_H2v  (const VectorType &v) const;
         public:
 //            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-            explicit ceres_direct_functor(const class_finite_state & state, const class_simulation_status &sim_status);
+            explicit ceres_direct_functor(const class_state_finite & state, const class_simulation_status &sim_status);
             bool Evaluate(const double* v_double_double,
                           double* fx,
                           double* grad_double_double) const override;

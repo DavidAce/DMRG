@@ -19,7 +19,7 @@ namespace tools::finite::opt{
             const Eigen::VectorXd  &eigvals;
         public:
 //            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-            explicit ceres_subspace_functor(const class_finite_state & state,
+            explicit ceres_subspace_functor(const class_state_finite & state,
                                             const class_simulation_status & sim_status,
                                             const MatrixType & H2_subspace_,
                                             const Eigen::VectorXd  & eigvals_);

@@ -1,13 +1,13 @@
 //
 // Created by david on 2019-06-25.
 //
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <tools/nmspc_tools.h>
 #include <model/class_model_base.h>
 #include <model/class_model_factory.h>
 #include <general/nmspc_random_numbers.h>
 
-void tools::finite::mpo::initialize(class_finite_state & state, const size_t length, std::string model_type){
+void tools::finite::mpo::initialize(class_state_finite & state, const size_t length, std::string model_type){
     tools::log->trace("Initializing mpo");
     //Generate MPO
     size_t pos = 0;
@@ -19,7 +19,7 @@ void tools::finite::mpo::initialize(class_finite_state & state, const size_t len
 }
 
 
-void tools::finite::mpo::randomize(class_finite_state &state, int seed_model) {
+void tools::finite::mpo::randomize(class_state_finite &state, int seed_model) {
     tools::log->trace("Setting random fields in MPO's");
     if (seed_model >= 0){
         rn::seed(seed_model);
@@ -49,7 +49,7 @@ void tools::finite::mpo::randomize(class_finite_state &state, int seed_model) {
 
 
 
-void tools::finite::mpo::reduce_mpo_energy(class_finite_state &state){
+void tools::finite::mpo::reduce_mpo_energy(class_state_finite &state){
     state.unset_measurements();
     state.clear_cache();
     double energy_per_site   = tools::finite::measure::energy_per_site(state);

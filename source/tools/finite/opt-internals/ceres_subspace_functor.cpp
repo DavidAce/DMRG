@@ -3,13 +3,13 @@
 //
 #include <general/nmspc_omp.h> // For multithreaded computation
 #include "ceres_subspace_functor.h"
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
 tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_functor(
-        const class_finite_state & state,
+        const class_state_finite & state,
         const class_simulation_status & sim_status,
         const MatrixType & H2_subspace,
         const Eigen::VectorXd  & eigvals_)

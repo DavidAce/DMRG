@@ -6,7 +6,8 @@
 
 #include <algorithms/class_algorithm_base.h>
 
-class class_infinite_state;
+class table_measurements_infinite;
+class class_state_infinite;
 
 class class_algorithm_infinite: public class_algorithm_base {
 public:
@@ -17,7 +18,10 @@ public:
             std::string sim_name,
             SimulationType sim_type
     );
-    std::shared_ptr<class_infinite_state> state;
+    std::shared_ptr<class_state_infinite> state;
+    // Logs
+    std::shared_ptr<class_hdf5_log<table_measurements_infinite>>  measurements_logger; //Written every sweep
+    std::shared_ptr<class_hdf5_log<table_measurements_infinite>>  measurements_result; //Written when we update bond dimension or finish
 
 
     virtual void run_simulation()         = 0;
@@ -35,6 +39,7 @@ public:
     void write_measurements(bool force = false)                                                 final;
     void write_state(bool force = false)                                                        final;
     void write_status(bool force = false)                                                       final;
+    void write_results()                                                                        final;
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
 

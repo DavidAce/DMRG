@@ -24,7 +24,7 @@ class class_environment_var;
 */
 
 
-class class_infinite_state {
+class class_state_infinite {
 public:
     SimulationType sim_type;
     std::string sim_name;
@@ -34,15 +34,15 @@ private:
 public:
     using Scalar = std::complex<double>;
 
-    class_infinite_state(SimulationType sim_type_, std::string sim_name_);
+    class_state_infinite(SimulationType sim_type_, std::string sim_name_);
 
 //    // we can use the default move constructor
-//    class_infinite_state(class_infinite_state&&);
+//    class_state_infinite(class_state_infinite&&);
 //    // We have to provide a deep copying assignment operator
-//    class_infinite_state& operator=(class_infinite_state const& source);
+//    class_state_infinite& operator=(class_state_infinite const& source);
 //    // we can use the default move assignment operator
-//    class_infinite_state& operator=(class_infinite_state&&);
-//    ~class_infinite_state();
+//    class_state_infinite& operator=(class_state_infinite&&);
+//    ~class_state_infinite();
     void clear();
 
 
@@ -121,8 +121,8 @@ public:
     struct Measurements {
         std::optional<size_t> length                            = {};
         std::optional<size_t> bond_dimension                    = {};
+        std::optional<double> current_entanglement_entropy      = {};
         std::optional<double> norm                              = {};
-        std::optional<double> truncation_error                  = {};
         std::optional<double> energy_mpo                        = {};
         std::optional<double> energy_per_site_mpo               = {};
         std::optional<double> energy_variance_mpo               = {};
@@ -131,7 +131,7 @@ public:
         std::optional<double> energy_variance_per_site_mpo      = {};
         std::optional<double> energy_variance_per_site_ham      = {};
         std::optional<double> energy_variance_per_site_mom      = {};
-        std::optional<double> current_entanglement_entropy      = {};
+        std::optional<double> truncation_error                  = {};
     };
     mutable Measurements measurements;
     mutable bool has_been_written  = false;

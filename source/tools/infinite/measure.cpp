@@ -3,7 +3,7 @@
 //
 
 #include <tools/nmspc_tools.h>
-#include <state/class_infinite_state.h>
+#include <state/class_state_infinite.h>
 #include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>
 #include <state/class_environment.h>
@@ -17,7 +17,7 @@ using namespace Textra;
 
 //
 //
-//void tools::infinite::measure::do_all_measurements(const class_infinite_state & state)
+//void tools::infinite::measure::do_all_measurements(const class_state_infinite & state)
 //{
 //
 //
@@ -94,7 +94,7 @@ using namespace Textra;
 //
 //
 //
-//double tools::infinite::measure::energy(const class_infinite_state & state){
+//double tools::infinite::measure::energy(const class_state_infinite & state){
 ////    state.t_ene_mpo.tic();
 //    double energy = tools::finite::measure::energy(state);
 //    double L      = tools::finite::measure::length(state);
@@ -105,7 +105,7 @@ using namespace Textra;
 //
 //
 //
-//double tools::infinite::measure::energy_per_site_ham(const class_infinite_state & state){
+//double tools::infinite::measure::energy_per_site_ham(const class_state_infinite & state){
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
 //    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
 //    auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -134,7 +134,7 @@ using namespace Textra;
 //}
 //
 //
-//double tools::infinite::measure::energy_per_site_mom(const class_infinite_state & state){
+//double tools::infinite::measure::energy_per_site_mom(const class_state_infinite & state){
 ////    t_var_gen.tic();
 //    Scalar a  = (0.0 + 1.0i) *5e-3;
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -160,14 +160,14 @@ using namespace Textra;
 //}
 //
 //
-//double tools::infinite::measure::energy_variance_per_site(const class_infinite_state &state) {
+//double tools::infinite::measure::energy_variance_per_site(const class_state_infinite &state) {
 //
 //    double VarE  = tools::finite::measure::energy_variance(state);
 //    double L     = tools::finite::measure::length(state);
 //    return VarE/L;
 //}
 //
-//double tools::infinite::measure::energy_variance_per_site_ham(const class_infinite_state &state) {
+//double tools::infinite::measure::energy_variance_per_site_ham(const class_state_infinite &state) {
 ////    t_var_ham.tic();
 //    using namespace tools::common::views;
 //
@@ -311,7 +311,7 @@ using namespace Textra;
 //
 //
 //
-//double tools::infinite::measure::energy_variance_per_site_mom(const class_infinite_state &state){
+//double tools::infinite::measure::energy_variance_per_site_mom(const class_state_infinite &state){
 ////    t_var_gen.tic();
 //    Scalar a  = (0.0 + 1.0i) *5e-3;
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -398,12 +398,12 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
 }
 
 
-int tools::infinite::measure::length(const class_infinite_state & state){
+int tools::infinite::measure::length(const class_state_infinite & state){
     return state.get_length();
 }
 
 
-double tools::infinite::measure::norm(const class_infinite_state & state){
+double tools::infinite::measure::norm(const class_state_infinite & state){
     if(state.measurements.norm) {return state.measurements.norm.value();}
     auto theta = state.get_theta();
     Eigen::Tensor<Scalar, 0> norm =
@@ -412,19 +412,19 @@ double tools::infinite::measure::norm(const class_infinite_state & state){
 }
 
 
-int tools::infinite::measure::bond_dimension(const class_infinite_state & state){
+int tools::infinite::measure::bond_dimension(const class_state_infinite & state){
     if(state.measurements.bond_dimension){return state.measurements.bond_dimension.value();}
     return (int) state.MPS->MPS_A->get_chiR();
 }
 
-double tools::infinite::measure::truncation_error(const class_infinite_state & state){
+double tools::infinite::measure::truncation_error(const class_state_infinite & state){
     if(state.measurements.truncation_error){return state.measurements.truncation_error.value();}
     return state.MPS->truncation_error;
 }
 
 
 
-double tools::infinite::measure::current_entanglement_entropy(const class_infinite_state & state){
+double tools::infinite::measure::current_entanglement_entropy(const class_state_infinite & state){
     tools::log->trace("Measuring entanglement entropy from state");
     tools::common::profile::t_ent.tic();
     if(state.measurements.current_entanglement_entropy){return state.measurements.current_entanglement_entropy.value();}
@@ -436,7 +436,7 @@ double tools::infinite::measure::current_entanglement_entropy(const class_infini
 }
 
 
-double tools::infinite::measure::energy_mpo(const class_infinite_state & state, const Eigen::Tensor<Scalar,4> &theta){
+double tools::infinite::measure::energy_mpo(const class_state_infinite & state, const Eigen::Tensor<Scalar,4> &theta){
     tools::log->trace("Measuring energy mpo from state");
     tools::common::profile::t_ene_mpo.tic();
     Eigen::Tensor<Scalar, 0>  E =
@@ -456,7 +456,7 @@ double tools::infinite::measure::energy_mpo(const class_infinite_state & state, 
 }
 
 
-double tools::infinite::measure::energy_mpo(const class_infinite_state & state){
+double tools::infinite::measure::energy_mpo(const class_state_infinite & state){
     if(state.measurements.energy_mpo){return state.measurements.energy_mpo.value();}
     if(state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     auto theta    = tools::common::views::get_theta(state);
@@ -465,14 +465,14 @@ double tools::infinite::measure::energy_mpo(const class_infinite_state & state){
 }
 
 
-double tools::infinite::measure::energy_per_site_mpo(const class_infinite_state & state){
+double tools::infinite::measure::energy_per_site_mpo(const class_state_infinite & state){
     if(state.measurements.energy_per_site_mpo){return state.measurements.energy_per_site_mpo.value();}
     auto L     = tools::infinite::measure::length(state);
     return tools::infinite::measure::energy_mpo(state) / L;
 }
 
 
-double tools::infinite::measure::energy_per_site_ham(const class_infinite_state & state){
+double tools::infinite::measure::energy_per_site_ham(const class_state_infinite & state){
     if(state.measurements.energy_per_site_ham){return state.measurements.energy_per_site_ham.value();}
     if (state.sim_type == SimulationType::fDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (state.sim_type == SimulationType::xDMRG){return std::numeric_limits<double>::quiet_NaN();}
@@ -510,7 +510,7 @@ double tools::infinite::measure::energy_per_site_ham(const class_infinite_state 
 }
 
 
-double tools::infinite::measure::energy_per_site_mom(const class_infinite_state & state){
+double tools::infinite::measure::energy_per_site_mom(const class_state_infinite & state){
     if(state.measurements.energy_per_site_mom){return state.measurements.energy_per_site_mom.value();}
     if (state.sim_type == SimulationType::fDMRG){return std::numeric_limits<double>::quiet_NaN();}
     if (state.sim_type == SimulationType::xDMRG){return std::numeric_limits<double>::quiet_NaN();}
@@ -540,7 +540,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_infinite_state 
 }
 
 
-double tools::infinite::measure::energy_variance_mpo(const class_infinite_state & state,const Eigen::Tensor<std::complex<double>,4> &theta , double &energy_mpo) {
+double tools::infinite::measure::energy_variance_mpo(const class_state_infinite & state, const Eigen::Tensor<std::complex<double>,4> &theta , double &energy_mpo) {
     if (state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     tools::log->trace("Measuring energy variance mpo from state");
     tools::common::profile::t_var_mpo.tic();
@@ -562,14 +562,14 @@ double tools::infinite::measure::energy_variance_mpo(const class_infinite_state 
 
 
 
-double tools::infinite::measure::energy_variance_mpo(const class_infinite_state & state,const Eigen::Tensor<std::complex<double>,4> &theta) {
+double tools::infinite::measure::energy_variance_mpo(const class_state_infinite & state, const Eigen::Tensor<std::complex<double>,4> &theta) {
     if (state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     auto energy_mpo = tools::infinite::measure::energy_mpo(state,theta);
     double result = tools::infinite::measure::energy_variance_mpo(state,theta,energy_mpo);
     return result;
 }
 
-double tools::infinite::measure::energy_variance_mpo(const class_infinite_state & state) {
+double tools::infinite::measure::energy_variance_mpo(const class_state_infinite & state) {
     if(state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
     if (state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     auto energy_mpo = tools::infinite::measure::energy_mpo(state);
@@ -578,7 +578,7 @@ double tools::infinite::measure::energy_variance_mpo(const class_infinite_state 
 }
 
 
-double tools::infinite::measure::energy_variance_per_site_mpo(const class_infinite_state & state) {
+double tools::infinite::measure::energy_variance_per_site_mpo(const class_state_infinite & state) {
     if(state.measurements.energy_variance_per_site_mpo){return state.measurements.energy_variance_per_site_mpo.value();}
     auto L = tools::infinite::measure::length(state);
     return tools::infinite::measure::energy_variance_mpo(state)/L;
@@ -587,7 +587,7 @@ double tools::infinite::measure::energy_variance_per_site_mpo(const class_infini
 
 
 
-double tools::infinite::measure::energy_variance_per_site_ham(const class_infinite_state & state) {
+double tools::infinite::measure::energy_variance_per_site_ham(const class_state_infinite & state) {
     if(state.measurements.energy_variance_per_site_ham){return state.measurements.energy_variance_per_site_ham.value();}
     if (state.MPS->chiA() != state.MPS->chiB()){return std::numeric_limits<double>::quiet_NaN();}
     if (state.MPS->chiA() != state.MPS->chiC()){return std::numeric_limits<double>::quiet_NaN();}
@@ -739,7 +739,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_infini
 }
 
 
-double tools::infinite::measure::energy_variance_per_site_mom(const class_infinite_state & state){
+double tools::infinite::measure::energy_variance_per_site_mom(const class_state_infinite & state){
     if(state.measurements.energy_variance_per_site_mom){return state.measurements.energy_variance_per_site_mom.value();}
     if (state.sim_type == SimulationType::fDMRG)    {return std::numeric_limits<double>::quiet_NaN();}
     if (state.sim_type == SimulationType::xDMRG)    {return std::numeric_limits<double>::quiet_NaN();}

@@ -13,7 +13,7 @@
 
 
 
-class class_log_finite_dmrg_measurements {
+class table_measurements_finite {
 public:
     struct data_struct {
         int     step;
@@ -22,6 +22,8 @@ public:
         int     length;
         int     bond_dimension_midchain;
         int     bond_dimension_current;
+        int     bond_dimension_limit;
+        int     bond_dimension_maximum;
         double  entanglement_entropy_midchain;
         double  entanglement_entropy_current;
         double  norm;
@@ -37,7 +39,7 @@ public:
     };
 
     struct meta_struct {
-        constexpr static hsize_t NFIELDS = 18;
+        constexpr static hsize_t NFIELDS = 20;
         size_t dst_size = sizeof(data_struct);
         std::array<size_t, NFIELDS> dst_offsets = {
                 HOFFSET(data_struct, step),
@@ -46,6 +48,8 @@ public:
                 HOFFSET(data_struct, length),
                 HOFFSET(data_struct, bond_dimension_midchain),
                 HOFFSET(data_struct, bond_dimension_current),
+                HOFFSET(data_struct, bond_dimension_limit),
+                HOFFSET(data_struct, bond_dimension_maximum),
                 HOFFSET(data_struct, entanglement_entropy_midchain),
                 HOFFSET(data_struct, entanglement_entropy_current),
                 HOFFSET(data_struct, norm),
@@ -66,6 +70,8 @@ public:
                 sizeof(data_struct::length),
                 sizeof(data_struct::bond_dimension_midchain),
                 sizeof(data_struct::bond_dimension_current),
+                sizeof(data_struct::bond_dimension_limit),
+                sizeof(data_struct::bond_dimension_maximum),
                 sizeof(data_struct::entanglement_entropy_midchain),
                 sizeof(data_struct::entanglement_entropy_current),
                 sizeof(data_struct::norm),
@@ -86,6 +92,8 @@ public:
                 "length",
                 "bond_dimension_midchain",
                 "bond_dimension_current",
+                "bond_dimension_limit",
+                "bond_dimension_maximum",
                 "entanglement_entropy_midchain",
                 "entanglement_entropy_current",
                 "norm",
@@ -107,6 +115,8 @@ public:
                 H5T_NATIVE_INT,
                 H5T_NATIVE_INT,
                 H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
@@ -116,12 +126,127 @@ public:
         int compress = 0;
     };
 public:
-    class_log_finite_dmrg_measurements() = default;
+    table_measurements_finite() = default;
     meta_struct meta;
     std::vector<data_struct> buffer;
 
 };
 
+
+class table_measurements_infinite{
+public:
+    struct data_struct {
+        int     step;
+        int     iteration;
+        int     position;
+        int     length;
+        int     bond_dimension;
+        int     bond_dimension_limit;
+        int     bond_dimension_maximum;
+        double  entanglement_entropy;
+        double  norm;
+        double  energy_mpo;
+        double  energy_per_site_mpo;
+        double  energy_per_site_ham;
+        double  energy_per_site_mom;
+        double  energy_variance_mpo;
+        double  energy_variance_per_site_mpo;
+        double  energy_variance_per_site_ham;
+        double  energy_variance_per_site_mom;
+        double  truncation_error;
+        double  wall_time;
+
+    };
+
+    struct meta_struct {
+        constexpr static hsize_t NFIELDS = 19;
+        size_t dst_size = sizeof(data_struct);
+        std::array<size_t, NFIELDS> dst_offsets = {
+                HOFFSET(data_struct, step),
+                HOFFSET(data_struct, iteration),
+                HOFFSET(data_struct, position),
+                HOFFSET(data_struct, length),
+                HOFFSET(data_struct, bond_dimension),
+                HOFFSET(data_struct, bond_dimension_limit),
+                HOFFSET(data_struct, bond_dimension_maximum),
+                HOFFSET(data_struct, entanglement_entropy),
+                HOFFSET(data_struct, norm),
+                HOFFSET(data_struct, energy_mpo),
+                HOFFSET(data_struct, energy_per_site_mpo),
+                HOFFSET(data_struct, energy_per_site_ham),
+                HOFFSET(data_struct, energy_per_site_mom),
+                HOFFSET(data_struct, energy_variance_mpo),
+                HOFFSET(data_struct, energy_variance_per_site_mpo),
+                HOFFSET(data_struct, energy_variance_per_site_ham),
+                HOFFSET(data_struct, energy_variance_per_site_mom),
+                HOFFSET(data_struct, truncation_error),
+                HOFFSET(data_struct, wall_time)
+        };
+        std::array<size_t, NFIELDS> dst_sizes = {
+                sizeof(data_struct::step),
+                sizeof(data_struct::iteration),
+                sizeof(data_struct::position),
+                sizeof(data_struct::length),
+                sizeof(data_struct::bond_dimension),
+                sizeof(data_struct::bond_dimension_limit),
+                sizeof(data_struct::bond_dimension_maximum),
+                sizeof(data_struct::entanglement_entropy),
+                sizeof(data_struct::norm),
+                sizeof(data_struct::energy_mpo),
+                sizeof(data_struct::energy_per_site_mpo),
+                sizeof(data_struct::energy_per_site_ham),
+                sizeof(data_struct::energy_per_site_mom),
+                sizeof(data_struct::energy_variance_mpo),
+                sizeof(data_struct::energy_variance_per_site_mpo),
+                sizeof(data_struct::energy_variance_per_site_ham),
+                sizeof(data_struct::energy_variance_per_site_mom),
+                sizeof(data_struct::truncation_error),
+                sizeof(data_struct::wall_time)
+        };
+        std::array<const char *, NFIELDS> field_names = {
+                " step",
+                " iteration",
+                " position",
+                " length",
+                " bond_dimension",
+                " bond_dimension_limit",
+                " bond_dimension_maximum",
+                " entanglement_entropy",
+                " norm",
+                " energy_mpo",
+                " energy_per_site_mpo",
+                " energy_per_site_ham",
+                " energy_per_site_mom",
+                " energy_variance_mpo",
+                " energy_variance_per_site_mpo",
+                " energy_variance_per_site_ham",
+                " energy_variance_per_site_mom",
+                " truncation_error",
+                " wall_time"
+        };
+
+        std::array<hid_t, NFIELDS> field_types = {
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
+        hsize_t chunk_size = 32;
+        void *fill_data = nullptr;
+        int compress = 0;
+    };
+public:
+    table_measurements_infinite() = default;
+    meta_struct meta;
+    std::vector<data_struct> buffer;
+
+};
 
 class class_log_tebd{
 private:

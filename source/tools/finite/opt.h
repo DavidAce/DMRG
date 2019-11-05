@@ -13,46 +13,46 @@ class class_tic_toc;
 
 namespace tools::finite::opt{
     namespace internal{
-        extern Eigen::Tensor<std::complex<double>,3> old_subspace_optimization(const class_finite_state &state,
+        extern Eigen::Tensor<std::complex<double>,3> old_subspace_optimization(const class_state_finite &state,
                                                                                const class_simulation_status &sim_status,
                                                                                OptType optType, OptMode optMode);
-        extern Eigen::Tensor<std::complex<double>,3> old_direct_optimization(const class_finite_state &state,
+        extern Eigen::Tensor<std::complex<double>,3> old_direct_optimization(const class_state_finite &state,
                                                                              const class_simulation_status &sim_status,
                                                                              OptType optType);
-        extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_finite_state &state,
+        extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_state_finite &state,
                                                                                const class_simulation_status &sim_status,
                                                                                OptType optType);
-        extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_finite_state &state,
+        extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_state_finite &state,
                                                                                const Eigen::Tensor<std::complex<double>,3> &theta,
                                                                                const class_simulation_status &sim_status,
                                                                                OptType optType);
-        extern Eigen::Tensor<std::complex<double>,3> ceres_subspace_optimization   (const class_finite_state & state,
+        extern Eigen::Tensor<std::complex<double>,3> ceres_subspace_optimization   (const class_state_finite & state,
                                                                                     const class_simulation_status & sim_status,
                                                                                     OptType optType, OptMode optMode);
-        extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_finite_state & state, const class_simulation_status & sim_status);
-        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_finite_state & state, std::string ritzstring = "SR");
+        extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_state_finite & state, const class_simulation_status & sim_status);
+        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_state_finite & state, std::string ritzstring = "SR");
 
         namespace local_hamiltonians{
-            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_tensor(const class_finite_state & state);
-            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_squared_tensor(const class_finite_state & state);
-            extern Eigen::MatrixXcd                        get_multi_hamiltonian_matrix(const class_finite_state & state);
-            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_matrix(const class_finite_state & state);
-            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
-            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs );
+            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_tensor(const class_state_finite & state);
+            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_squared_tensor(const class_state_finite & state);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_matrix(const class_state_finite & state);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_matrix(const class_state_finite & state);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs );
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs );
         }
 
         template <typename T>
-        Eigen::Tensor<T,6> get_multi_hamiltonian_tensor(const class_finite_state & state);
+        Eigen::Tensor<T,6> get_multi_hamiltonian_tensor(const class_state_finite & state);
         template <typename T>
-        Eigen::Tensor<T,6> get_multi_hamiltonian_squared_tensor(const class_finite_state & state);
+        Eigen::Tensor<T,6> get_multi_hamiltonian_squared_tensor(const class_state_finite & state);
         template <typename T>
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_matrix(const class_finite_state & state);
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_matrix(const class_state_finite & state);
         template <typename T>
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_matrix(const class_finite_state & state);
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_matrix(const class_state_finite & state);
         template <typename T>
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
         template <typename T>
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix_new(const class_finite_state & state,const Eigen::MatrixXcd & eigvecs);
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
 
 
 //        extern std::complex<double>                    get_subspace_hamiltonian_component();
@@ -147,7 +147,7 @@ namespace tools::finite::opt{
             bool   have_bounds_on_energy = false;
 
         public:
-            explicit ceres_base_functor(const class_finite_state & state, const class_simulation_status &sim_status);
+            explicit ceres_base_functor(const class_state_finite & state, const class_simulation_status &sim_status);
 
             double get_variance   () const;
             double get_energy     () const;

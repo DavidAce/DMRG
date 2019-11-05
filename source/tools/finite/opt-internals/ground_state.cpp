@@ -3,12 +3,12 @@
 //
 
 #include <tools/finite/opt.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <simulation/nmspc_settings.h>
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <math/class_eigsolver.h>
 
-Eigen::Tensor<class_finite_state::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_finite_state & state, std::string ritzstring){
+Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_state_finite & state, std::string ritzstring){
     tools::log->trace("Starting ground state optimization");
     using Scalar = std::complex<double>;
     using namespace internal;

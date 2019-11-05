@@ -4,7 +4,7 @@
 
 
 #include <simulation/nmspc_settings.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <tools/nmspc_tools.h>
 #include <tools/finite/opt.h>
 #include "class_xDMRG.h"

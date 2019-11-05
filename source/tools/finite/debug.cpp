@@ -5,12 +5,12 @@
 #include <iomanip>
 #include <simulation/class_simulation_status.h>
 #include <tools/nmspc_tools.h>
-#include <state/class_finite_state.h>
+#include <state/class_state_finite.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <spdlog/fmt/fmt.h>
 #include <simulation/nmspc_settings.h>
 
-void tools::finite::debug::check_integrity(const class_finite_state &state)
+void tools::finite::debug::check_integrity(const class_state_finite &state)
 {
     tools::log->trace("Checking integrity of state");
     state.unset_measurements();
@@ -29,7 +29,7 @@ void tools::finite::debug::check_integrity(const class_finite_state &state)
 
 
 
-void tools::finite::debug::check_integrity_of_mps(const class_finite_state &state){
+void tools::finite::debug::check_integrity_of_mps(const class_state_finite &state){
     tools::log->trace("Checking integrity of MPS");
     try{
         tools::common::profile::t_chk.tic();
@@ -62,7 +62,7 @@ void tools::finite::debug::check_integrity_of_mps(const class_finite_state &stat
             }
         }
 
-        using VectorType = const Eigen::Matrix<class_finite_state::Scalar,Eigen::Dynamic,1>;
+        using VectorType = const Eigen::Matrix<class_state_finite::Scalar,Eigen::Dynamic,1>;
         for (size_t pos = 1; pos < state.get_length(); pos++){
 
             auto & mps_left = state.get_MPS(pos-1);
@@ -242,7 +242,7 @@ void tools::finite::debug::check_integrity_of_mps(const class_finite_state &stat
 }
 
 
-void tools::finite::debug::check_integrity_of_mpo(const class_finite_state &state) {
+void tools::finite::debug::check_integrity_of_mpo(const class_state_finite &state) {
     tools::common::profile::t_chk.tic();
 
     try{
@@ -263,7 +263,7 @@ void tools::finite::debug::check_integrity_of_mpo(const class_finite_state &stat
 }
 
 
-void tools::finite::debug::print_parity_properties(const class_finite_state &state) {
+void tools::finite::debug::print_parity_properties(const class_state_finite &state) {
     tools::log->debug("Printing parity properties");
 
     tools::log->debug("\tComputing spin components");
@@ -308,7 +308,7 @@ void tools::finite::debug::print_parity_properties(const class_finite_state &sta
 
 
 
-void tools::finite::debug::check_normalization_routine(const class_finite_state &state){
+void tools::finite::debug::check_normalization_routine(const class_state_finite &state){
     tools::log->debug("Checking normalization routine");
     tools::log->debug("\t Generating Pauli Identity mpo");
 
