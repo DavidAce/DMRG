@@ -622,7 +622,7 @@ void class_algorithm_finite::write_results(){
     if (measurements_result == nullptr){return;}
     if (settings::output::storage_level == StorageLevel::NONE){return;}
     log->trace("Appending measurement result entry");
-    state->do_all_measurements();
+    state_backup->do_all_measurements();
     table_measurements_finite::data_struct measurements_entry;
     measurements_entry.step                            = sim_status.step;
     measurements_entry.iteration                       = sim_status.iteration;
