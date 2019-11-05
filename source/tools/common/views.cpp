@@ -50,7 +50,7 @@ void tools::common::views::compute_mps_components(const class_state_infinite & s
     if (components_computed)return;
     // On even thetas we have  chiA = chiB on the outer bond
     // On odd thetas we have chiC on the outer bond.
-    int chiA2 = (int)(state.MPS->chiA()*state.MPS->chiA());
+//    int chiA2 = (int)(state.MPS->chiA()*state.MPS->chiA());
     int chiB2 = (int)(state.MPS->chiB()*state.MPS->chiB());
     int chiC2 = (int)(state.MPS->chiC()*state.MPS->chiC());
 
