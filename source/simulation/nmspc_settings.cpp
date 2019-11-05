@@ -14,13 +14,12 @@ using namespace std;
 
 
 void settings::load_from_file(class_settings_reader &indata){
-    input::input_filename             = indata.get_input_filename();
-    input::input_file                 = indata.get_input_file();
+    input::input_file                 = indata.get_input_filename();
     indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
     indata.find_parameter<int>        ("model::seed_model"                          , model::seed_model);
     indata.find_parameter<int>        ("model::seed_state"                          , model::seed_state);
     indata.find_parameter<bool>       ("model::use_seed_state_as_enumeration"       , model::use_seed_state_as_enumeration);
-    indata.find_parameter<bool>       ("model::project_when_stuck"              , model::project_when_stuck);
+    indata.find_parameter<bool>       ("model::project_when_stuck"                  , model::project_when_stuck);
     indata.find_parameter<bool>       ("model::use_pauli_eigvecs"                   , model::use_pauli_eigvecs);
     indata.find_parameter<std::string>("model::initial_parity_sector"               , model::initial_parity_sector);
     indata.find_parameter<std::string>("model::target_parity_sector"                , model::target_parity_sector);
@@ -134,7 +133,7 @@ void settings::load_from_hdf5(h5pp::File & h5ppFile){
 
     std::string settings_from_hdf5;
     std::string temp_filename = "indata_temp.cfg";
-    h5ppFile.readDataset(settings_from_hdf5, "/common/input_file");
+    h5ppFile.readDataset(settings_from_hdf5, "/common/input_filepath");
 
     std::ofstream temp_settings_file(temp_filename);
     temp_settings_file << settings_from_hdf5;
