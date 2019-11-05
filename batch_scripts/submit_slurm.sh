@@ -16,12 +16,12 @@ Usage                               : $PROGNAME [-options] with the following op
 -g <seeds  file/path>               : File or path to files containing a list of seeds (suffixed .seed). Basenames should match the corresponding input files in -f (default = )
 -J <job name>                       : Job name. (default = DMRG)
 -m <memory (MB)>                    : Reserved amount of ram for each task in MB. (default = 4000)
--n <sims per cfg>                   : Number of simulations per config file (default = 10)
--N <nodes per cfg>                  : Number of nodes per config file (default = 10)
+-n <ntasks (sims in parallel)>      : Number of simulations that are run in parallel on each node per job (default = 32)
+-N <num sims per cfg>               : Number of simulations per config file (default = 10)
 -o <other>                          : Other options passed to sbatch
 -p <partition>                      : Partition name (default = all)
 -r <requeue>                        : Enable --requeue, for requeuing in case of failure (default OFF)
--s <sims per node>                  : Number of simulations per node (default = 32)
+-s <sims per sbatch>                : Number of tasks/realizations per invocation of sbatch  (default = 10)
 -S <start seed>                     : Starting seed, if you don't want to start from 0.
 -t <time>                           : Time for each run (default = 1:00:00, i.e. 1 hour)
 EOF
@@ -36,6 +36,9 @@ mem=4000
 startseed=0
 time=--time=0-1:00:00
 cluster_list=""
+ntasks_parallel=32
+simspercfg=10
+simspersbatch=10
 while getopts ha:b:c:def:g:J:m:n:N:o:p:rs:S:t: o; do
     case $o in
         (h) usage ;;
@@ -48,12 +51,12 @@ while getopts ha:b:c:def:g:J:m:n:N:o:p:rs:S:t: o; do
         (g) seedpath=$OPTARG;;
         (J) jobname=$OPTARG;;
         (m) mem=$OPTARG;;
-        (n) simspercfg=$OPTARG;;
-        (N) nodespercfg=$OPTARG;;
+        (n) ntasks_parallel=$OPTARG;;
+        (N) simspercfg=$OPTARG;;
         (o) other=$OPTARG;;
         (p) partition=--partition=$OPTARG;;
         (r) requeue=--requeue;;
-        (s) simspernode=$OPTARG;;
+        (s) simspersbatch=$OPTARG;;
         (S) startseed=$OPTARG;;
         (t) time=--time=0-$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
@@ -66,48 +69,48 @@ export OMP_NUM_THREADS=1
 
 
 # Handle incompatible options
-if [ -n "$seedpath" ] ; then
-    if [ "$startseed" -gt 0 ] ; then echo "Options  -g and -S are incompatible" ; exit 1; fi
-    # We only need simspernode to continue
-    if   [ -z "$simspernode" ]; then echo "Given option -g, you must also give -s" ;exit 1; fi
-    if   [ -n "$simspercfg" ];  then echo "Given option -g, you must also give -s, but not -n" ;exit 1; fi
-    if   [ -n "$nodespercfg" ]; then echo "Given option -g, you must also give -s, but not -N" ;exit 1; fi
-    echo "Sims per node = $simspernode"
-
-else
-    if [ -z "$simspercfg" ]  && [ -z "$simspernode" ];  then echo "At least two of -N -n and -s must be given." ;exit 1; fi
-    if [ -z "$simspercfg" ]  && [ -z "$nodespercfg" ];  then echo "At least two of -N -n and -s must be given." ;exit 1; fi
-    if [ -z "$simspernode" ] && [ -z "$nodespercfg" ]; then echo "At least two of -N -n and -s must be given." ;exit 1; fi
-
-    if [ -n "$nodespercfg" ] && [ "$nodespercfg" -gt 1 ]; then
-        # Make sure simspercfg and simspernode haven't both been given
-        if [ -n "$simspercfg" ] && [ -n "$simspernode" ]; then echo "Options -N -n and -s are incompatible together. Choose two."  ; exit 1; fi
-        if [ -n "$simspercfg" ] && [ -z "$simspernode" ]; then echo "Computing simspernode" ; simspernode=$((simspercfg / nodespercfg)); fi
-        if [ -z "$simspercfg" ] && [ -n "$simspernode" ]; then echo "Computing simspercfg" ; simspercfg=$((simspernode * nodespercfg)); fi
-    else
-        # Make sure both simspercfg and simspernode is given,
-        if [ -n "$simspercfg" ] && [ -n "$simspernode" ]; then echo "Computing nodespercfg"; nodespercfg=$((simspercfg / simspernode)) ; fi
-    fi
-
-    echo "Sims per conf = $simspercfg"
-    echo "Sims per node = $simspernode"
-    echo "Node per conf = $nodespercfg"
-fi
-
-
+#if [ -n "$seedpath" ] ; then
+#    if [ "$startseed" -gt 0 ] ; then echo "Options  -g and -S are incompatible" ; exit 1; fi
+#    # We only need simspernode to continue
+#    if   [ -z "$simspernode" ]; then echo "Given option -g, you must also give -s" ;exit 1; fi
+#    if   [ -n "$simspercfg" ];  then echo "Given option -g, you must also give -s, but not -n" ;exit 1; fi
+#    if   [ -n "$nodespercfg" ]; then echo "Given option -g, you must also give -s, but not -N" ;exit 1; fi
+#    echo "Sims per node = $simspernode"
+#
+#else
+#    if [ -z "$simspercfg" ]  && [ -z "$simspernode" ];  then echo "At least two of -N -n and -s must be given." ;exit 1; fi
+#    if [ -z "$simspercfg" ]  && [ -z "$nodespercfg" ];  then echo "At least two of -N -n and -s must be given." ;exit 1; fi
+#    if [ -z "$simspernode" ] && [ -z "$nodespercfg" ]; then echo "At least two of -N -n and -s must be given." ;exit 1; fi
+#
+#    if [ -n "$nodespercfg" ] && [ "$nodespercfg" -gt 1 ]; then
+#        # Make sure simspercfg and simspernode haven't both been given
+#        if [ -n "$simspercfg" ] && [ -n "$simspernode" ]; then echo "Options -N -n and -s are incompatible together. Choose two."  ; exit 1; fi
+#        if [ -n "$simspercfg" ] && [ -z "$simspernode" ]; then echo "Computing simspernode" ; simspernode=$((simspercfg / nodespercfg)); fi
+#        if [ -z "$simspercfg" ] && [ -n "$simspernode" ]; then echo "Computing simspercfg" ; simspercfg=$((simspernode * nodespercfg)); fi
+#    else
+#        # Make sure both simspercfg and simspernode is given,
+#        if [ -n "$simspercfg" ] && [ -n "$simspernode" ]; then echo "Computing nodespercfg"; nodespercfg=$((simspercfg / simspernode)) ; fi
+#    fi
+#
+#    echo "Sims per conf = $simspercfg"
+#    echo "Sims per node = $simspernode"
+#    echo "Node per conf = $nodespercfg"
+#fi
 
 
 
-if [ "$simspernode" -lt 32 ]; then
-    read -p "Running with fewer than 32 simulations per node. Are you sure? [y/n] " -n 1 -r
-    echo    # (optional) move to a new line
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "Going ahead with $simspernode simulations per node"
-    else
-        echo "Abort."
-        exit 0
-    fi
-fi
+
+
+#if [ "$simspernode" -lt 32 ]; then
+#    read -p "Running with fewer than 32 simulations per node. Are you sure? [y/n] " -n 1 -r
+#    echo    # (optional) move to a new line
+#    if [[ $REPLY =~ ^[Yy]$ ]]; then
+#        echo "Going ahead with $simspernode simulations per node"
+#    else
+#        echo "Abort."
+#        exit 0
+#    fi
+#fi
 
 
 
@@ -227,7 +230,7 @@ if [ -e "$masterfile" ] ; then
     echo "Shuffling and splitting master file into simulation files..."
     shuffledfile=seeds/randomsims.txt
     cat $masterfile | shuf --output $shuffledfile
-    split --lines=$simspernode --additional-suffix=.sim -d --suffix-length=3 $shuffledfile seeds/part_
+    split --lines=$simspersbatch --additional-suffix=.sim -d --suffix-length=3 $shuffledfile seeds/part_
     rm $masterfile $shuffledfile
     echo "Shuffling and splitting master file into simulation files... OK"
 else
@@ -249,12 +252,13 @@ fi
 
 for simfile in $simfiles; do
     if [ -n "$dryrun" ] ; then
-        echo "sbatch $partition $requeue $exclusive $time $other --mem-per-cpu=$mem --job-name=$jobname run_parallel.sh -e $exec -f $simfile"
+        echo "sbatch $partition $requeue $exclusive $time $other --mem-per-cpu=$mem --job-name=$jobname --cluster=$cluster_list --ntasks=$simultaneous_sims run_parallel.sh -e $exec -f $simfile"
     else
         sbatch $partition $requeue $exclusive $time $other \
             --mem-per-cpu=$mem \
             --job-name=$jobname \
             --cluster=$cluster_list \
+            --ntasks=$ntasks_parallel
             run_parallel.sh -e $exec -f $simfile
     fi
 done
