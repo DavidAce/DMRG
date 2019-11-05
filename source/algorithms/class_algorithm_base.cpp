@@ -36,7 +36,6 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
 
     log->trace("Writing input file");
     h5pp_file->writeDataset(settings::input::input_file, "common/input_file");
-    h5pp_file->writeDataset(settings::input::input_filename, "common/input_filename");
 }
 
 
