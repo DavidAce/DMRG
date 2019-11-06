@@ -130,7 +130,7 @@ void tools::finite::io::write_model(const class_state_finite & state, h5pp::File
 
 void tools::finite::io::write_all_measurements(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path){
     state.do_all_measurements();
-    tools::log->trace("Writing all measurements...")
+    tools::log->trace("Writing all measurements...");
     tools::common::profile::t_hdf.tic();
     h5ppFile.writeDataset(state.measurements.length.value()                        , prefix_path + "/measurements/length");
     h5ppFile.writeDataset(state.measurements.norm.value()                          , prefix_path + "/measurements/norm");
@@ -147,7 +147,7 @@ void tools::finite::io::write_all_measurements(const class_state_finite & state,
     h5ppFile.writeDataset(state.measurements.spin_component_sy.value()             , prefix_path + "/measurements/spin_component_sy");
     h5ppFile.writeDataset(state.measurements.spin_component_sz.value()             , prefix_path + "/measurements/spin_component_sz");
     tools::common::profile::t_hdf.toc();
-    tools::log->trace("Writing all measurements... OK")
+    tools::log->trace("Writing all measurements... OK");
 
 }
 
