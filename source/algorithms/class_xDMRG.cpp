@@ -91,13 +91,14 @@ void class_xDMRG::single_xDMRG_step()
     auto optMode    = opt::OptMode(opt::MODE::OVERLAP);
     auto optSpace   = opt::OptSpace(opt::SPACE::DIRECT);
     auto optType    = opt::OptType(opt::TYPE::CPLX);
-    optMode         = sim_status.iteration  >= 2 and measure::energy_variance_per_site(*state) < 1e-2 ? opt::MODE::VARIANCE : optMode.option;
-    optMode         = sim_status.iteration  >= 5 or  measure::energy_variance_per_site(*state) < 1e-2 ? opt::MODE::VARIANCE : optMode.option;
+    optMode         = sim_status.iteration  >= 2 and measure::energy_variance_per_site(*state) < 1e-2 ? opt::MODE::VARIANCE   : optMode.option;
+    optMode         = sim_status.iteration  >= 5 or  measure::energy_variance_per_site(*state) < 1e-2 ? opt::MODE::VARIANCE   : optMode.option;
+//    optSpace        = state->get_chi_lim() <= 16                                                      ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = optMode == opt::MODE::OVERLAP                                                   ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = sim_status.simulation_has_got_stuck                                             ? opt::SPACE::SUBSPACE  : optSpace.option;
-    optSpace        = state->size_2site()  > settings::precision::maxSizePartDiag                     ? opt::SPACE::DIRECT  : optSpace.option;
-    optSpace        = sim_status.variance_mpo_has_converged                                           ? opt::SPACE::DIRECT  : optSpace.option;
-    optType         = state->isReal()                                                                 ? opt::TYPE::REAL     : optType.option;
+    optSpace        = state->size_2site()  > settings::precision::maxSizePartDiag                     ? opt::SPACE::DIRECT    : optSpace.option;
+    optSpace        = sim_status.variance_mpo_has_converged                                           ? opt::SPACE::DIRECT    : optSpace.option;
+    optType         = state->isReal()                                                                 ? opt::TYPE::REAL       : optType.option;
     long threshold = 0;
     switch(optSpace.option){
         case  opt::SPACE::SUBSPACE : threshold = settings::precision::maxSizePartDiag; break;
@@ -107,13 +108,20 @@ void class_xDMRG::single_xDMRG_step()
     Eigen::Tensor<Scalar,3> theta;
 
     std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
+    while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
+
+//    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
+//    std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
 //    if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::maxSitesMultiDmrg}; //You can take many sites in the beginning
 
-    while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
     for (auto & max_num_sites : max_num_sites_list){
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
 
+        if (max_num_sites > 2){
+            optSpace  = opt::OptSpace::DIRECT;
+            threshold = settings::precision::maxSizeDirect;
+        }
 
         state->activate_sites(threshold, max_num_sites);
 
@@ -123,14 +131,15 @@ void class_xDMRG::single_xDMRG_step()
                 log->debug("Changing to DIRECT optimization to activate more sites");
                 optSpace = opt::OptSpace::DIRECT;
                 threshold = settings::precision::maxSizeDirect;
-                state->activate_sites(threshold, max_num_sites);
+//                max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
+                state->activate_sites(threshold, settings::precision::maxSitesMultiDmrg);
             }else{
                 log->debug("Keeping old theta: Can't activate more sites");
                 theta = state->get_multitheta();
                 break;
             }
         }
-
+        if(optSpace ==  opt::OptSpace::SUBSPACE and max_num_sites > 2) log->warn("About to do subspace with too many sites!");
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         if(optSpace ==  opt::OptSpace::DIRECT){
             double variance_direct   = measure::energy_variance_per_site(*state,theta);
@@ -276,8 +285,10 @@ void class_xDMRG::check_convergence(){
     sim_status.simulation_has_converged = sim_status.variance_mpo_has_converged and
                                           sim_status.entanglement_has_converged;
 
-    sim_status.simulation_has_saturated = sim_status.variance_mpo_saturated_for >= min_saturation_iters and
-                                          sim_status.entanglement_saturated_for >= min_saturation_iters;
+    sim_status.simulation_has_saturated = (sim_status.variance_mpo_saturated_for >= min_saturation_iters and
+                                           sim_status.entanglement_saturated_for >= min_saturation_iters) or
+                                          (sim_status.variance_mpo_saturated_for >= max_saturation_iters  or
+                                           sim_status.entanglement_saturated_for >= max_saturation_iters)   ;
 
 
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
@@ -314,7 +325,7 @@ void class_xDMRG::check_convergence(){
     log->debug("Simulation has to stop  : {}", sim_status.simulation_has_to_stop);
 
     if(state->position_is_any_edge() and sim_status.simulation_has_got_stuck and sim_status.chi_lim_has_reached_chi_max){
-        if (settings::model::project_when_stuck and not has_projected and not outside_of_window ){
+        if (settings::model::project_when_updating_bond_dimension and not has_projected and not outside_of_window ){
             log->info("Projecting at site {} to {} due to saturation", state->get_position(), settings::model::target_parity_sector);
             *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);;
             has_projected = true;

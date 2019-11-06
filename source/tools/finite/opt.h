@@ -56,7 +56,7 @@ namespace tools::finite::opt{
 
 
 //        extern std::complex<double>                    get_subspace_hamiltonian_component();
-        inline ceres::GradientProblemSolver::Options options;
+        inline ceres::GradientProblemSolver::Options ceres_default_options;
 
         inline bool no_state_in_window = false;
         inline double subspace_error_threshold = 1e-8;

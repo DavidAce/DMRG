@@ -233,16 +233,38 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max
         if(chi_grow()){
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
             // Only do this if the simulation is stuck.
+
             if(sim_status.simulation_has_stuck_for >= max_stuck_iters){
-                write_results();
-                long chi_new_limit = std::min(max_bond_dim.value(), state->get_chi_lim() * 2);
-                log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
-                state->set_chi_lim(chi_new_limit);
-                clear_saturation_status();
-                sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
-                if (sim_status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
+                size_t trunc_bond_count = (size_t)  std::count_if(state->get_truncation_errors().begin(), state->get_truncation_errors().end(),
+                                                                  [](auto const& val){ return val > 10*std::pow(settings::precision::SVDThreshold,2); });
+                auto bond_dims = tools::finite::measure::bond_dimensions(*state);
+                size_t bond_at_lim_count = (size_t)  std::count_if(bond_dims.begin(), bond_dims.end(),
+                                                                   [this](auto const& val){ return val >= (size_t)state->get_chi_lim(); });
+                log->debug("Truncation errors: {}", state->get_truncation_errors());
+                log->debug("Bond dimensions  : {}", bond_dims);
+                log->debug("Truncated bond count: {} ", trunc_bond_count);
+                log->debug("Bond at limit  count: {} ", bond_at_lim_count);
+                if(trunc_bond_count > 0 and bond_at_lim_count > 0){
+                    write_results();
+                    long chi_new_limit = std::min(max_bond_dim.value(), long(state->get_chi_lim() * 2));
+                    log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
+                    state->set_chi_lim(chi_new_limit);
+                    clear_saturation_status();
+                    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
+                    if (sim_status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
+
+                    if (settings::model::project_when_updating_bond_dimension){
+                        log->info("Projecting at site {} to {} due to saturation", state->get_position(), settings::model::target_parity_sector);
+                        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+                    }
+
+                }else{
+                    log->debug("chi_grow is ON, and simulation is stuck, but there is no reason to increase bond dimension -> Kept current bond dimension limit {}", state->get_chi_lim());
+
+                }
             }else{
-                log->debug("chi_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", state->get_chi_lim());
+                log->debug("Not stuck -> Kept current bond dimension limit {}", state->get_chi_lim());
+
             }
         }else{
             // Here the settings specify to just set the limit to maximum chi directly
@@ -482,6 +504,7 @@ void class_algorithm_finite::clear_saturation_status(){
     sim_status.simulation_has_saturated       = false;
     sim_status.simulation_has_succeeded       = false;
     sim_status.simulation_has_stuck_for       = 0;
+    has_projected = false;
 
 }
 
