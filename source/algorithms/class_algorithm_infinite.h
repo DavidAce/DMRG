@@ -32,7 +32,7 @@ public:
     void enlarge_environment();
     void swap();
     void run()                                                                                  override;
-    void compute_observables()                                                                  final;
+//    void compute_observables()                                                                  final;
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
     void reset_to_random_state(const std::string parity_secto = "random", int seed_state = -1)  final;
     void clear_saturation_status()                                                              override;

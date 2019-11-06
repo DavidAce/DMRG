@@ -49,7 +49,7 @@ public:
 
     //Virtual Functions
     virtual void   run()                                                                                      = 0;
-    virtual void   compute_observables()                                                                      = 0;
+//    virtual void   compute_observables()                                                                      = 0;
     virtual void   check_convergence()                                                                        = 0;
     virtual void   write_measurements(bool force = false)                                                     = 0;
     virtual void   write_state       (bool force = false)                                                     = 0;
