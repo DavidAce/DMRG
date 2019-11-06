@@ -26,9 +26,9 @@ std::vector<int> tools::finite::opt::internal::generate_size_list(size_t shape){
     if      (shape <= 512)  {max_nev = shape/2;}
     else if (shape > 512  and shape <= 1024) {max_nev = shape/4;} // should do full diag
     else if (shape > 1024 and shape <= 2048) {max_nev = shape/4;} // should do full diag
-    else if (shape > 2048 and shape <= 4096) {max_nev = 128;}
-    else if (shape > 4096 and shape <= 8192) {max_nev = 64;}
-    else                                     {max_nev = 8;}
+    else if (shape > 2048 and shape <= 4096) {max_nev = 64;}
+    else if (shape > 4096 and shape <= 8192) {max_nev = 32;}
+    else                                     {max_nev = 16;}
 
     int min_nev = std::min(std::min(8,(int)shape),max_nev);
 
@@ -329,15 +329,11 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
     tools::common::profile::t_opt.tic();
     using Scalar = class_state_finite::Scalar;
     using namespace eigutils::eigSetting;
+    auto options = ceres_default_options;
+    options.max_num_iterations = 2000; // We need a lot of iterations to recover from initial guesses
+//    options.function_tolerance = 1e-6;
 
-    // I have learned the following about the interplay of variables
-    //      settings::precision::maxSubspaceError
-    //      settings::precision::minSubspaceError
-    //      settings::precision::maxVarianceIncrease
-    // Previously, I thought maxSubspaceError and minSubspaceError had to be set very low (1e-8 and 1e-12, resp.)
-    // Trying much higher values (1e-4 and 1e-8, resp.) helped tremendously to get troublesome realizations to converge.
-    // It seems that allowing a subspace optimization with slightly worse subspace can let the algorithm escape local minimas.
-    // What about maxVarianceincrease? It's set to 10 but I don't know yet what it does
+
     double theta_old_variance    = tools::finite::measure::energy_variance_per_site(state);
     subspace_error_threshold     = settings::precision::subspaceErrorFactor * theta_old_variance;
     subspace_error_threshold     = std::min(subspace_error_threshold, settings::precision::maxSubspaceError);

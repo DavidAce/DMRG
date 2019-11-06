@@ -29,8 +29,8 @@ public:
 
 
     size_t max_stuck_iters               = 2;
-    size_t min_saturation_iters          = 2;
-    size_t max_saturation_iters          = 4;
+    size_t min_saturation_iters          = 1;
+    size_t max_saturation_iters          = 3;
     bool   has_projected  = false;
 
 private:
