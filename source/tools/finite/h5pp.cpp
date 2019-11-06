@@ -27,23 +27,20 @@ bool tools::finite::io::internals::make_extendable_dataset(const std::string & p
 
 void tools::finite::io::write_all_state(const class_state_finite &state, h5pp::File & h5ppFile, const std::string & prefix_path) {
     tools::common::profile::t_hdf.tic();
-    switch(settings::output::storage_level){
-        case StorageLevel::NONE:
-            break;
-        case StorageLevel::LIGHT:
-            write_bond_matrix(state,h5ppFile,prefix_path);
-            break;
-        case StorageLevel::NORMAL:
-            write_bond_matrices(state,h5ppFile,prefix_path);
-            break;
-        case StorageLevel::FULL:
-            write_full_mps(state,h5ppFile,prefix_path);
-            write_full_mpo(state,h5ppFile,prefix_path);
-            break;
+
+    if (settings::output::storage_level >= StorageLevel::LIGHT){
+        write_bond_matrix(state,h5ppFile,prefix_path);
+        h5ppFile.writeDataset(state.get_length()         ,prefix_path + "/state/sites");
+        h5ppFile.writeDataset(state.get_position()       ,prefix_path + "/state/position");
     }
-    h5ppFile.writeDataset(state.get_position()       ,prefix_path + "/state/position");
-    h5ppFile.writeDataset(state.get_length()         ,prefix_path + "/state/sites");
-    h5ppFile.writeDataset(settings::model::model_type,prefix_path + "/model/model_type");
+    if(settings::output::storage_level >= StorageLevel::NORMAL){
+        write_bond_matrices(state,h5ppFile,prefix_path);
+    }
+    if(settings::output::storage_level >= StorageLevel::FULL){
+        write_full_mps(state,h5ppFile,prefix_path);
+        write_full_mpo(state,h5ppFile,prefix_path);
+    }
+
     tools::common::profile::t_hdf.toc();
 
 }
@@ -71,7 +68,7 @@ void tools::finite::io::write_bond_matrix(const class_state_finite & state, h5pp
 {
     bool extendable = internals::make_extendable_dataset(prefix_path);
     auto middle = (size_t) (state.get_length() / 2);
-    h5ppFile.writeDataset(state.get_MPS(middle).get_LC(),prefix_path + "/state/mps/L_C",extendable);
+    h5ppFile.writeDataset(state.midchain_bond(),prefix_path + "/state/mps/L_C",extendable);
     h5ppFile.writeDataset(state.get_truncation_error(middle), prefix_path + "/state/truncation_error",extendable);
 }
 
@@ -110,6 +107,8 @@ void tools::finite::io::write_model(const class_state_finite & state, h5pp::File
     // Write down the Hamiltonian metadata as a table
     // Remember to write tensors in row-major state order because that's what output uses.
     if(settings::output::storage_level == StorageLevel::NONE) return;
+    h5ppFile.writeDataset(settings::model::model_type,prefix_path + "/model/model_type");
+
     Eigen::MatrixXd hamiltonian_props;
     for (auto site = 0ul ; site < state.get_length(); site++){
         auto props = state.get_MPO(site).get_parameter_values();
