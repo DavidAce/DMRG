@@ -25,12 +25,13 @@ public:
 
     void find_energy_range();
     void inflate_initial_state();
-    void reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason );
     void single_xDMRG_step();
+    void reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason );
+    void try_projection();
+
     void run_preprocessing()                final;
     void run_simulation()                   final;
     void check_convergence()                final;
-
     bool   sim_on()                         final;
     long   chi_max()                        final;
     size_t num_sites()                      final;

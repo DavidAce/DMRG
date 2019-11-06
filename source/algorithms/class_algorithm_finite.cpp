@@ -234,7 +234,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
             // Only do this if the simulation is stuck.
 
-            if(sim_status.simulation_has_stuck_for >= max_stuck_iters){
+            if(sim_status.simulation_has_stuck_for >= min_stuck_iters){
                 size_t trunc_bond_count = (size_t)  std::count_if(state->get_truncation_errors().begin(), state->get_truncation_errors().end(),
                                                                   [](auto const& val){ return val > 10*std::pow(settings::precision::SVDThreshold,2); });
                 auto bond_dims = tools::finite::measure::bond_dimensions(*state);
@@ -247,14 +247,14 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max
                 if(trunc_bond_count > 0 and bond_at_lim_count > 0){
                     write_results();
                     long chi_new_limit = std::min(max_bond_dim.value(), long(state->get_chi_lim() * 2));
-                    log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
+                    log->info("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
                     state->set_chi_lim(chi_new_limit);
                     clear_saturation_status();
                     sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
                     if (sim_status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
 
-                    if (settings::model::project_when_updating_bond_dimension){
-                        log->info("Projecting at site {} to {} due to saturation", state->get_position(), settings::model::target_parity_sector);
+                    if (settings::model::projection_when_growing_chi){
+                        log->info("Projecting at site {} to direction {} after updating bond dimension to χ = {} ", state->get_position(), settings::model::target_parity_sector,chi_new_limit);
                         *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
                     }
 
@@ -268,7 +268,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> max
             }
         }else{
             // Here the settings specify to just set the limit to maximum chi directly
-            log->debug("Setting bond dimension limit to maximum = {}", chi_max());
+            log->info("Setting bond dimension limit to maximum = {}", chi_max());
             state->set_chi_lim(max_bond_dim.value());
         }
     }else{
@@ -735,7 +735,7 @@ void class_algorithm_finite::print_status_update() {
     report << fmt::format("Sₑ(l): {:<10.8f} "                                 ,tools::finite::measure::entanglement_entropy_current(*state));
     report << fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] "             ,std::log10(tools::finite::measure::energy_variance_per_site(*state)), std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
     report << fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} "                 ,chi_max(), state->get_chi_lim(), tools::finite::measure::bond_dimension_current(*state));
-    report << fmt::format("log₁₀ trunc: {:<6.4f} "                            ,std::log10(state->get_truncation_error(state->get_position())));
+    report << fmt::format("log₁₀ trunc: {:<10.4f} "                            ,std::log10(state->get_truncation_error(state->get_position())));
     report << fmt::format("con: [σ² {:<5} Sₑ {:<5}] "                         ,sim_status.variance_mpo_has_converged,sim_status.entanglement_has_converged);
     report << fmt::format("sat: [σ² {:<2} Sₑ {:<2}] "                         ,sim_status.variance_mpo_saturated_for,sim_status.entanglement_saturated_for);
     report << fmt::format("time: {:<8.2f}s "                                  ,t_tot.get_age());
