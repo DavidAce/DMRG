@@ -54,10 +54,10 @@ void class_algorithm_infinite::run_postprocessing(){
     t_pos.toc();
 }
 
-void class_algorithm_infinite::compute_observables(){
-    log->trace("Starting all measurements on current state");
-    state->do_all_measurements();
-}
+//void class_algorithm_infinite::compute_observables(){
+//    log->trace("Starting all measurements on current state");
+//    state->do_all_measurements();
+//}
 
 void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
     if(not max_bond_dim.has_value()) {
@@ -171,7 +171,7 @@ void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,d
     log->debug("Checking convergence of variance mpo");
     threshold       = std::isnan(threshold) ? settings::precision::varianceConvergenceThreshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::varianceSlopeThreshold : slope_threshold;
-    compute_observables();
+//    compute_observables();
 
     auto report = check_saturation_using_slope(
                     B_mpo_vec,
@@ -253,7 +253,7 @@ void class_algorithm_infinite::write_measurements(bool force){
     }
     log->trace("Writing all measurements to file");
     state->unset_measurements();
-    compute_observables();
+//    compute_observables();
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::infinite::io::write_all_measurements(*state, *h5pp_file, sim_name);
     h5pp_file->writeDataset(true, sim_name + "/simOK");
@@ -348,7 +348,7 @@ void class_algorithm_infinite::print_status_update() {
     if (math::mod(sim_status.iteration, print_freq()) != 0) {return;}
 //    if (not state->position_is_the_middle()) {return;}
     if (print_freq() == 0) {return;}
-    compute_observables();
+//    compute_observables();
     using namespace std;
     t_prt.tic();
     std::stringstream report;
@@ -433,7 +433,8 @@ void class_algorithm_infinite::print_status_update() {
 }
 
 void class_algorithm_infinite::print_status_full(){
-    compute_observables();
+//    compute_observables();
+    state->do_all_measurements();
     using namespace std;
     using namespace tools::infinite::measure;
     t_prt.tic();

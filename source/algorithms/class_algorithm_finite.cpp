@@ -509,10 +509,12 @@ void class_algorithm_finite::clear_saturation_status(){
 }
 
 
-void class_algorithm_finite::compute_observables(){
-    log->trace("Starting all measurements on current mps");
-    state->do_all_measurements();
-}
+//void class_algorithm_finite::compute_observables(){
+//    log->trace("Computing observables...");
+//    state->do_all_measurements();
+//    log->trace("Computing observables... OK");
+//
+//}
 
 
 void class_algorithm_finite::write_measurements(bool force){
@@ -525,7 +527,7 @@ void class_algorithm_finite::write_measurements(bool force){
     }
     log->trace("Writing all measurements to file");
     state->unset_measurements();
-    compute_observables();
+//    compute_observables();
     h5pp_file->writeDataset(false, sim_name + "/simOK");
     tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
 
@@ -721,7 +723,7 @@ void class_algorithm_finite::print_status_update() {
     if (print_freq() == 0) {return;}
     using namespace std;
     using namespace tools::finite::measure;
-    compute_observables();
+//    compute_observables();
     t_prt.tic();
     std::stringstream report;
     report << fmt::format("{:<} "                                             ,sim_name);
