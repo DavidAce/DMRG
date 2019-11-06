@@ -468,6 +468,7 @@ void class_state_finite::clear_cache()const {
 }
 
 void class_state_finite::do_all_measurements()const {
+    tools::log->trace("Doing all measurements on state...");
     measurements.length                           = tools::finite::measure::length                        (*this);
     measurements.bond_dimension_current           = tools::finite::measure::bond_dimension_current        (*this);
     measurements.bond_dimension_midchain          = tools::finite::measure::bond_dimension_midchain       (*this);
@@ -481,6 +482,7 @@ void class_state_finite::do_all_measurements()const {
     measurements.entanglement_entropy_current     = tools::finite::measure::entanglement_entropy_current  (*this);
     measurements.entanglement_entropy_midchain    = tools::finite::measure::entanglement_entropy_midchain (*this);
     measurements.entanglement_entropies           = tools::finite::measure::entanglement_entropies        (*this);
+    tools::log->trace("Doing all measurements on state... OK");
 }
 
 
