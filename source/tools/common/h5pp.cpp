@@ -5,9 +5,11 @@
 #include <tools/nmspc_tools.h>
 #include <simulation/class_simulation_status.h>
 #include <h5pp/h5pp.h>
+#include <simulation/nmspc_settings.h>
 
 void tools::common::io::write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
                                                 std::string sim_name) {
+    if (settings::output::storage_level <= StorageLevel::LIGHT) return;
     h5ppFile.writeDataset(sim_status.iteration                     ,sim_name + "/sim_status/iteration");
     h5ppFile.writeDataset(sim_status.moves                         ,sim_name + "/sim_status/moves");
     h5ppFile.writeDataset(sim_status.step                          ,sim_name + "/sim_status/step");
@@ -35,7 +37,7 @@ void tools::common::io::write_simulation_status(const class_simulation_status &s
     h5ppFile.writeDataset(sim_status.simulation_has_got_stuck      ,sim_name + "/sim_status/simulation_has_got_stuck");
     h5ppFile.writeDataset(sim_status.simulation_has_stuck_for      ,sim_name + "/sim_status/simulation_has_stuck_for");
     h5ppFile.writeDataset(sim_status.simulation_has_to_stop        ,sim_name + "/sim_status/simulation_has_to_stop");
-    h5ppFile.writeDataset(sim_status.chi_lim_has_reached_chi_max, sim_name + "/sim_status/chi_lim_has_reached_chi_max");
+    h5ppFile.writeDataset(sim_status.chi_lim_has_reached_chi_max   ,sim_name + "/sim_status/chi_lim_has_reached_chi_max");
     h5ppFile.writeDataset(sim_status.entanglement_has_converged    ,sim_name + "/sim_status/entanglement_has_converged");
     h5ppFile.writeDataset(sim_status.entanglement_has_saturated    ,sim_name + "/sim_status/entanglement_has_saturated");
     h5ppFile.writeDataset(sim_status.variance_mpo_saturated_for    ,sim_name + "/sim_status/variance_mpo_saturated_for");

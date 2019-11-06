@@ -567,6 +567,7 @@ void class_algorithm_finite::write_state(bool force){
     }
 
     h5pp_file->writeDataset(true, sim_name + "/simOK");
+    log->trace("Writing state to file... OK");
 }
 
 
