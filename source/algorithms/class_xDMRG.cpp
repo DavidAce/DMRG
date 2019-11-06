@@ -45,6 +45,7 @@ void class_xDMRG::run_simulation()    {
         write_status();
         write_logs();
         check_convergence();
+        try_projection();
         backup_best_state(*state); //Should come after check_convergence
         print_status_update();
 
@@ -294,22 +295,18 @@ void class_xDMRG::check_convergence(){
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
                                           sim_status.simulation_has_saturated;
 
-//    bool unstuck = sim_status.simulation_has_got_stuck;
-//    sim_status.simulation_has_got_stuck = not sim_status.variance_mpo_has_converged and
-//                                          sim_status.variance_mpo_saturated_for >= max_saturation_iters or
-//                                          (sim_status.variance_mpo_has_saturated and
-//                                          sim_status.entanglement_has_saturated);
-    sim_status.simulation_has_got_stuck = sim_status.simulation_has_saturated and not sim_status.simulation_has_succeeded;
-//                                          sim_status.variance_mpo_saturated_for >= max_saturation_iters or
-//                                          (sim_status.variance_mpo_has_saturated and
-//                                           sim_status.entanglement_has_saturated);
+
+    sim_status.simulation_has_got_stuck = sim_status.simulation_has_saturated and not
+                                          sim_status.simulation_has_succeeded;
+
 
     if(state->position_is_any_edge()) {
         sim_status.simulation_has_stuck_for = sim_status.simulation_has_got_stuck ? sim_status.simulation_has_stuck_for + 1 : 0;
     }
 
-        sim_status.simulation_has_to_stop = sim_status.chi_lim_has_reached_chi_max
-                                        and sim_status.simulation_has_stuck_for >= max_stuck_iters;
+        sim_status.simulation_has_to_stop = sim_status.simulation_has_stuck_for >= max_stuck_iters or
+                                           (sim_status.simulation_has_stuck_for >= min_stuck_iters and
+                                            sim_status.chi_lim_has_reached_chi_max);
 
     //                                        and (sim_status.variance_mpo_saturated_for >= max_saturation_iters and
     //                                             sim_status.entanglement_saturated_for >= max_saturation_iters);
@@ -324,27 +321,39 @@ void class_xDMRG::check_convergence(){
     log->debug("Simulation has stuck for: {}", sim_status.simulation_has_stuck_for);
     log->debug("Simulation has to stop  : {}", sim_status.simulation_has_to_stop);
 
-    if(state->position_is_any_edge() and sim_status.simulation_has_got_stuck and sim_status.chi_lim_has_reached_chi_max){
-        if (settings::model::project_when_updating_bond_dimension and not has_projected and not outside_of_window ){
-            log->info("Projecting at site {} to {} due to saturation", state->get_position(), settings::model::target_parity_sector);
-            *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);;
-            has_projected = true;
-        }
-        else if (    sim_status.num_resets < settings::precision::maxResets
-                 and tools::finite::measure::energy_variance_per_site(*state) > 1e-10)
-        {
-            std::string reason = fmt::format("simulation has saturated with bad precision",
-                                             sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
-            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
-        }
 
-    }
-
-
+//    if (    sim_status.num_resets < settings::precision::maxResets
+//            and tools::finite::measure::energy_variance_per_site(*state) > 1e-10)
+//    {
+//        std::string reason = fmt::format("simulation has saturated with bad precision",
+//                                         sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
+//        reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
+//    }
 
 
 
     t_con.toc();
+}
+
+void class_xDMRG::try_projection(){
+    if(settings::model::projection_trial_when_stuck and
+        sim_status.simulation_has_got_stuck and
+        state->position_is_any_edge())
+    {
+        log->debug("Trying projection to {}", settings::model::target_parity_sector);
+        auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+        double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
+        double variance_original  = tools::finite::measure::energy_variance_per_site(*state);
+        if (variance_projected < variance_original){
+            log->info("Projection succeeded, variance improved {} -> {}",
+                      std::log10(variance_original), std::log10(variance_projected));
+            *state = state_projected;
+        }else{
+            log->info("Projection did not improve variance {} -> {}",
+                      std::log10(variance_original), std::log10(variance_projected));
+        }
+    }
+
 }
 
 

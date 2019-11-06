@@ -19,7 +19,8 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<int>        ("model::seed_model"                          , model::seed_model);
     indata.find_parameter<int>        ("model::seed_state"                          , model::seed_state);
     indata.find_parameter<bool>       ("model::use_seed_state_as_enumeration"       , model::use_seed_state_as_enumeration);
-    indata.find_parameter<bool>       ("model::project_when_updating_bond_dimension"                  , model::project_when_updating_bond_dimension);
+    indata.find_parameter<bool>       ("model::projection_when_growing_chi"         , model::projection_when_growing_chi);
+    indata.find_parameter<bool>       ("model::projection_trial_when_stuck"         , model::projection_trial_when_stuck);
     indata.find_parameter<bool>       ("model::use_pauli_eigvecs"                   , model::use_pauli_eigvecs);
     indata.find_parameter<std::string>("model::initial_parity_sector"               , model::initial_parity_sector);
     indata.find_parameter<std::string>("model::target_parity_sector"                , model::target_parity_sector);
