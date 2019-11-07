@@ -28,9 +28,12 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     log->trace("Constructing class_algorithm_base");
     set_profiling_labels();
     tools::common::profile::init_profiling();
-    log->trace("Constructing table buffers in base");
-    h5tbuf_profiling  = std::make_unique<class_h5table_buffer<class_h5table_profiling>>        (h5pp_file, sim_name + "/progress/profiling");
-    h5tbuf_sim_status = std::make_unique<class_h5table_buffer<class_h5table_simulation_status>>(h5pp_file, sim_name + "/progress/sim_status");
+    if (settings::output::storage_level >= StorageLevel::NORMAL){
+        log->trace("Constructing table buffers in base");
+        h5tbuf_profiling  = std::make_unique<class_h5table_buffer<class_h5table_profiling>>        (h5pp_file, sim_name + "/progress/profiling");
+        h5tbuf_sim_status = std::make_unique<class_h5table_buffer<class_h5table_simulation_status>>(h5pp_file, sim_name + "/progress/sim_status");
+    }
+
 
     log->trace("Writing input file");
     h5pp_file->writeDataset(settings::input::input_filename  , "common/input_filename");

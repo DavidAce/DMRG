@@ -25,6 +25,11 @@ class_algorithm_infinite::class_algorithm_infinite(
     tools::infinite::env::initialize(*state);
     tools::infinite::debug::check_integrity(*state);
 
+    if (settings::output::storage_level >= StorageLevel::NORMAL){
+        log->trace("Constructing table buffers in infinite base");
+        h5tbuf_measurements  = std::make_shared<class_h5table_buffer<class_h5table_measurements_infinite>> (h5pp_file, sim_name + "/progress/measurements");
+    }
+
 }
 
 

@@ -17,9 +17,11 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     log->trace("Constructing class_algorithm_finite");
     state        = std::make_unique<class_state_finite>();
     state_backup = std::make_unique<class_state_finite>();
-    log->trace("Constructing log buffers in finite base");
-    h5tbuf_measurements  = std::make_shared<class_h5table_buffer<class_h5table_measurements_finite>> (h5pp_file, sim_name + "/progress/measurements");
 
+    if (settings::output::storage_level >= StorageLevel::NORMAL){
+        log->trace("Constructing table buffers in finite base");
+        h5tbuf_measurements  = std::make_shared<class_h5table_buffer<class_h5table_measurements_finite>> (h5pp_file, sim_name + "/progress/measurements");
+    }
 
 
     state->set_chi_lim(2); //Can't call chi_init() <-- it's a pure virtual function
