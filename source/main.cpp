@@ -54,6 +54,21 @@ NOTE                        : Order of argument matters. In particular, set seed
 }
 
 
+#include <signal.h>
+void signal_callback_handler(int signum) {
+    switch(signum){
+        case SIGTERM: {std::cout  << "Caught SIGTERM" <<std::endl; break;}
+        case SIGKILL: {std::cout  << "Caught SIGKILL" <<std::endl; break;}
+        case SIGINT : {std::cout  << "Caught SIGINT" <<std::endl; break;}
+        case SIGHUP : {std::cout  << "Caught SIGHUP" <<std::endl; break;}
+        case SIGQUIT : {std::cout << "Caught SIGQUIT" <<std::endl; break;}
+    }
+    std::cout << "Exiting" << std::endl << std::flush;
+    exit(signum);
+}
+
+
+
 
 /*!
     \brief  Main function. Sets simulation parameters and excecutes the desired algorithms.
@@ -61,6 +76,13 @@ NOTE                        : Order of argument matters. In particular, set seed
 */
 
 int main(int argc, char* argv[]) {
+    //Register termination codes and what to do in those cases
+    signal(SIGTERM , signal_callback_handler);
+    signal(SIGINT  , signal_callback_handler);
+    signal(SIGKILL , signal_callback_handler);
+    signal(SIGHUP  , signal_callback_handler);
+    signal(SIGQUIT , signal_callback_handler);
+
     auto log = Logger::setLogger("DMRG",0);
 
     // print current Git status
@@ -80,12 +102,12 @@ int main(int argc, char* argv[]) {
 
         switch(opt){
             case 'i': {
-                settings::input::input_file = std::string(optarg);
-                class_settings_reader indata(settings::input::input_file);
+                settings::input::input_filename = std::string(optarg);
+                class_settings_reader indata(settings::input::input_filename);
                 if(indata.found_file){
                     settings::load_from_file(indata);
                 }else{
-                    log->critical("Could not find input file: {}", settings::input::input_file);
+                    log->critical("Could not find input file: {}", settings::input::input_filename);
                     exit(1);
                 }
                 continue;

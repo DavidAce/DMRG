@@ -20,7 +20,7 @@ namespace fs = std::experimental::filesystem;
 class class_settings_reader {
 private:
     fs::path    file_path;
-//    std::ifstream    file;
+    std::string file_string = "";
     bool check_if_input_file_exists(const fs::path &path_to_file);
     fs::path find_input_file(const fs::path &given_path);
     void remove_spaces(std::string &str);
@@ -34,7 +34,7 @@ public:
     class_settings_reader() = default;
     explicit class_settings_reader(const fs::path &file_path_, std::string logName="DMRG");
 
-    std::string get_input_file();
+    std::string get_input_file_as_string();
     std::string get_input_filename();
 
 

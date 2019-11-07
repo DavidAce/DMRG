@@ -15,9 +15,9 @@
 #include <simulation/class_simulation_status.h>
 
 
-template <typename log_type> class class_hdf5_log;
-class class_log_profiling;
-class class_log_simulation_status;
+template <typename table_type> class class_h5table_buffer;
+class class_h5table_profiling;
+class class_h5table_simulation_status;
 namespace h5pp{class File;}
 namespace spdlog{class logger;}
 
@@ -34,9 +34,9 @@ public:
     enum class StopReason {SUCCEEDED, SATURATED, MAX_ITERS} stop_reason;
     void set_profiling_labels ();
 
-    std::shared_ptr<h5pp::File>                                   h5pp_file;
-    std::shared_ptr<class_hdf5_log<class_log_profiling>>          log_profiling;
-    std::shared_ptr<class_hdf5_log<class_log_simulation_status>>  log_sim_status;
+    std::shared_ptr<h5pp::File>                                             h5pp_file;
+    std::shared_ptr<class_h5table_buffer<class_h5table_profiling>>          h5tbuf_profiling;
+    std::shared_ptr<class_h5table_buffer<class_h5table_simulation_status>>  h5tbuf_sim_status;
 
     std::string              sim_name;
     SimulationType           sim_type;
@@ -49,13 +49,11 @@ public:
 
     //Virtual Functions
     virtual void   run()                                                                                      = 0;
-//    virtual void   compute_observables()                                                                      = 0;
     virtual void   check_convergence()                                                                        = 0;
-    virtual void   write_measurements(bool force = false)                                                     = 0;
-    virtual void   write_state       (bool force = false)                                                     = 0;
-    virtual void   write_status      (bool force = false)                                                     = 0;
-    virtual void   write_logs        (bool force = false)                                                     = 0;
-    virtual void   write_results()                                                                            = 0;
+    virtual void   write_state       (bool result = false)                                                    = 0;
+    virtual void   write_measurements(bool result = false)                                                    = 0;
+    virtual void   write_sim_status  (bool result = false)                                                    = 0;
+    virtual void   write_profiling   (bool result = false)                                                    = 0;
     virtual bool   sim_on()                                                                                   = 0;
     virtual long   chi_max()                                                                                  = 0;
     virtual size_t num_sites()                                                                                = 0;
@@ -68,6 +66,7 @@ public:
     virtual void   reset_to_random_state(const std::string parity = "random", int seed_state = -1)            = 0;
     virtual void   clear_saturation_status()                                                                  = 0;
     virtual void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                 = 0;
+
     //common functions
     void print_profiling();
     double process_memory_in_mb(std::string name);

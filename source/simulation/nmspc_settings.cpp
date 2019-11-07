@@ -14,7 +14,8 @@ using namespace std;
 
 
 void settings::load_from_file(class_settings_reader &indata){
-    input::input_file                 = indata.get_input_filename();
+    input::input_filename             = indata.get_input_filename();
+    input::input_file_raw             = indata.get_input_file_as_string();
     indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
     indata.find_parameter<int>        ("model::seed_model"                          , model::seed_model);
     indata.find_parameter<int>        ("model::seed_state"                          , model::seed_state);

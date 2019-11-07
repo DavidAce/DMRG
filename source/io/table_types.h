@@ -13,7 +13,7 @@
 
 
 
-class table_measurements_finite {
+class class_h5table_measurements_finite {
 public:
     struct data_struct {
         int     step;
@@ -121,19 +121,19 @@ public:
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
-        hsize_t chunk_size = 32;
+        hsize_t chunk_size = 4;
         void *fill_data = nullptr;
         int compress = 0;
     };
 public:
-    table_measurements_finite() = default;
+    class_h5table_measurements_finite() = default;
     meta_struct meta;
     std::vector<data_struct> buffer;
 
 };
 
 
-class table_measurements_infinite{
+class class_h5table_measurements_infinite{
 public:
     struct data_struct {
         int     step;
@@ -155,11 +155,13 @@ public:
         double  energy_variance_per_site_mom;
         double  truncation_error;
         double  wall_time;
+        double  phys_time;
+        double  time_step; //Only used in itebd
 
     };
 
     struct meta_struct {
-        constexpr static hsize_t NFIELDS = 19;
+        constexpr static hsize_t NFIELDS = 21;
         size_t dst_size = sizeof(data_struct);
         std::array<size_t, NFIELDS> dst_offsets = {
                 HOFFSET(data_struct, step),
@@ -180,7 +182,9 @@ public:
                 HOFFSET(data_struct, energy_variance_per_site_ham),
                 HOFFSET(data_struct, energy_variance_per_site_mom),
                 HOFFSET(data_struct, truncation_error),
-                HOFFSET(data_struct, wall_time)
+                HOFFSET(data_struct, wall_time),
+                HOFFSET(data_struct, phys_time),
+                HOFFSET(data_struct, time_step)
         };
         std::array<size_t, NFIELDS> dst_sizes = {
                 sizeof(data_struct::step),
@@ -201,28 +205,32 @@ public:
                 sizeof(data_struct::energy_variance_per_site_ham),
                 sizeof(data_struct::energy_variance_per_site_mom),
                 sizeof(data_struct::truncation_error),
-                sizeof(data_struct::wall_time)
+                sizeof(data_struct::wall_time),
+                sizeof(data_struct::phys_time),
+                sizeof(data_struct::time_step)
         };
         std::array<const char *, NFIELDS> field_names = {
-                " step",
-                " iteration",
-                " position",
-                " length",
-                " bond_dimension",
-                " bond_dimension_limit",
-                " bond_dimension_maximum",
-                " entanglement_entropy",
-                " norm",
-                " energy_mpo",
-                " energy_per_site_mpo",
-                " energy_per_site_ham",
-                " energy_per_site_mom",
-                " energy_variance_mpo",
-                " energy_variance_per_site_mpo",
-                " energy_variance_per_site_ham",
-                " energy_variance_per_site_mom",
-                " truncation_error",
-                " wall_time"
+                "step",
+                "iteration",
+                "position",
+                "length",
+                "bond_dimension",
+                "bond_dimension_limit",
+                "bond_dimension_maximum",
+                "entanglement_entropy",
+                "norm",
+                "energy_mpo",
+                "energy_per_site_mpo",
+                "energy_per_site_ham",
+                "energy_per_site_mom",
+                "energy_variance_mpo",
+                "energy_variance_per_site_mpo",
+                "energy_variance_per_site_ham",
+                "energy_variance_per_site_mom",
+                "truncation_error",
+                "wall_time",
+                "phys_time",
+                "time_step"
         };
 
         std::array<hid_t, NFIELDS> field_types = {
@@ -236,91 +244,92 @@ public:
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
-        hsize_t chunk_size = 32;
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
+        hsize_t chunk_size = 4;
         void *fill_data = nullptr;
         int compress = 0;
     };
 public:
-    table_measurements_infinite() = default;
+    class_h5table_measurements_infinite() = default;
     meta_struct meta;
     std::vector<data_struct> buffer;
 
 };
 
-class class_log_tebd{
-private:
-    struct data_struct {
-        int     iteration;
-        long    chi;
-        long    chi_max;
-        double  time_step;
-        double  energy_mpo; double  energy_ham; double  energy_mom;
-        double  variance_mpo; double  variance_ham; double  variance_mom;
-        double  entanglement_entropy;
-        double  truncation_error;
-        double  phys_time;
-        double  wall_time;
-    };
-    struct meta_struct {
-        constexpr static hsize_t NFIELDS = 14;
-        size_t dst_size = sizeof(data_struct);
-        std::array<size_t, NFIELDS> dst_offsets = {HOFFSET(data_struct, iteration),
-                                                   HOFFSET(data_struct, chi),
-                                                   HOFFSET(data_struct, chi_max),
-                                                   HOFFSET(data_struct, time_step),
-                                                   HOFFSET(data_struct, energy_mpo), HOFFSET(data_struct, energy_ham), HOFFSET(data_struct, energy_mom),
-                                                   HOFFSET(data_struct, variance_mpo), HOFFSET(data_struct, variance_ham), HOFFSET(data_struct, variance_mom),
-                                                   HOFFSET(data_struct, entanglement_entropy),
-                                                   HOFFSET(data_struct, truncation_error),
-                                                   HOFFSET(data_struct, phys_time),
-                                                   HOFFSET(data_struct, wall_time)
-        };
-        std::array<size_t, NFIELDS> dst_sizes = {
-                sizeof(data_struct::iteration),
-                sizeof(data_struct::chi),
-                sizeof(data_struct::chi_max),
-                sizeof(data_struct::time_step),
-                sizeof(data_struct::energy_mpo), sizeof(data_struct::energy_ham), sizeof(data_struct::energy_mom),
-                sizeof(data_struct::variance_mpo), sizeof(data_struct::variance_ham), sizeof(data_struct::variance_mom),
-                sizeof(data_struct::entanglement_entropy),
-                sizeof(data_struct::truncation_error),
-                sizeof(data_struct::phys_time),
-                sizeof(data_struct::wall_time)
-        };
-        std::array<const char *, NFIELDS> field_names = {"iteration",
-                                                         "chi",
-                                                         "chi_lim",
-                                                         "time_step",
-                                                         "energy","energy_per_site_ham","energy_per_site_mom",
-                                                         "variance_mpo","variance_ham","variance_mom",
-                                                         "entanglement_entropy_midchain",
-                                                         "truncation_error",
-                                                         "phys_time",
-                                                         "wall_time"
-        };
+//class class_h5table_tebd{
+//private:
+//    struct data_struct {
+//        int     iteration;
+//        long    chi;
+//        long    chi_max;
+//        double  time_step;
+//        double  energy_mpo; double  energy_ham; double  energy_mom;
+//        double  variance_mpo; double  variance_ham; double  variance_mom;
+//        double  entanglement_entropy;
+//        double  truncation_error;
+//        double  phys_time;
+//        double  wall_time;
+//    };
+//    struct meta_struct {
+//        constexpr static hsize_t NFIELDS = 14;
+//        size_t dst_size = sizeof(data_struct);
+//        std::array<size_t, NFIELDS> dst_offsets = {HOFFSET(data_struct, iteration),
+//                                                   HOFFSET(data_struct, chi),
+//                                                   HOFFSET(data_struct, chi_max),
+//                                                   HOFFSET(data_struct, time_step),
+//                                                   HOFFSET(data_struct, energy_mpo), HOFFSET(data_struct, energy_ham), HOFFSET(data_struct, energy_mom),
+//                                                   HOFFSET(data_struct, variance_mpo), HOFFSET(data_struct, variance_ham), HOFFSET(data_struct, variance_mom),
+//                                                   HOFFSET(data_struct, entanglement_entropy),
+//                                                   HOFFSET(data_struct, truncation_error),
+//                                                   HOFFSET(data_struct, phys_time),
+//                                                   HOFFSET(data_struct, wall_time)
+//        };
+//        std::array<size_t, NFIELDS> dst_sizes = {
+//                sizeof(data_struct::iteration),
+//                sizeof(data_struct::chi),
+//                sizeof(data_struct::chi_max),
+//                sizeof(data_struct::time_step),
+//                sizeof(data_struct::energy_mpo), sizeof(data_struct::energy_ham), sizeof(data_struct::energy_mom),
+//                sizeof(data_struct::variance_mpo), sizeof(data_struct::variance_ham), sizeof(data_struct::variance_mom),
+//                sizeof(data_struct::entanglement_entropy),
+//                sizeof(data_struct::truncation_error),
+//                sizeof(data_struct::phys_time),
+//                sizeof(data_struct::wall_time)
+//        };
+//        std::array<const char *, NFIELDS> field_names = {"iteration",
+//                                                         "chi",
+//                                                         "chi_lim",
+//                                                         "time_step",
+//                                                         "energy","energy_per_site_ham","energy_per_site_mom",
+//                                                         "variance_mpo","variance_ham","variance_mom",
+//                                                         "entanglement_entropy_midchain",
+//                                                         "truncation_error",
+//                                                         "phys_time",
+//                                                         "wall_time"
+//        };
+//
+//        std::array<hid_t, NFIELDS> field_types = {H5T_NATIVE_INT,
+//                                                  H5T_NATIVE_LONG,
+//                                                  H5T_NATIVE_LONG,
+//                                                  H5T_NATIVE_DOUBLE,
+//                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+//                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+//                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+//                                                  H5T_NATIVE_DOUBLE};
+//        hsize_t chunk_size = 4;
+//        void *fill_data = nullptr;
+//        int compress = 0;
+//    };
+//public:
+//    class_h5table_tebd() = default;
+//    meta_struct meta;
+//    std::vector<data_struct> buffer;
+//};
 
-        std::array<hid_t, NFIELDS> field_types = {H5T_NATIVE_INT,
-                                                  H5T_NATIVE_LONG,
-                                                  H5T_NATIVE_LONG,
-                                                  H5T_NATIVE_DOUBLE,
-                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-                                                  H5T_NATIVE_DOUBLE};
-        hsize_t chunk_size = 32;
-        void *fill_data = nullptr;
-        int compress = 0;
-    };
-public:
-    class_log_tebd() = default;
-    meta_struct meta;
-    std::vector<data_struct> buffer;
-};
 
 
-
-class class_log_profiling{
+class class_h5table_profiling{
 public:
     struct data_struct{
         int    step      = 0;
@@ -458,18 +467,18 @@ private:
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE
         };
 
-        hsize_t          chunk_size                         = 32;
-        void             *fill_data                         = nullptr;
-        int              compress                           = 0;
+        hsize_t          chunk_size = 4;
+        void             *fill_data = nullptr;
+        int              compress   = 0;
     };
 public:
-    class_log_profiling() = default;
+    class_h5table_profiling() = default;
     meta_struct meta;
     std::vector<data_struct> buffer;
 };
 
 
-class class_log_simulation_status{
+class class_h5table_simulation_status{
 private:
     struct meta_struct{
         constexpr static hsize_t                NFIELDS     = 40;
@@ -650,12 +659,12 @@ private:
                         H5T_NATIVE_UINT
                 };
 
-        hsize_t          chunk_size                         = 32;
-        void             *fill_data                         = nullptr;
-        int              compress                           = 0;
+        hsize_t          chunk_size = 4;
+        void             *fill_data = nullptr;
+        int              compress   = 0;
     };
 public:
-    class_log_simulation_status() = default;
+    class_h5table_simulation_status() = default;
     meta_struct meta;
     std::vector<status_data> buffer;
 };

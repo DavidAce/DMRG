@@ -424,7 +424,7 @@ double tools::infinite::measure::truncation_error(const class_state_infinite & s
 
 
 
-double tools::infinite::measure::current_entanglement_entropy(const class_state_infinite & state){
+double tools::infinite::measure::entanglement_entropy(const class_state_infinite & state){
     tools::log->trace("Measuring entanglement entropy from state");
     tools::common::profile::t_ent.tic();
     if(state.measurements.current_entanglement_entropy){return state.measurements.current_entanglement_entropy.value();}

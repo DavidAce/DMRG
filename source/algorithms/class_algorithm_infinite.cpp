@@ -5,7 +5,7 @@
 #include "class_algorithm_infinite.h"
 #include <state/class_state_infinite.h>
 #include <tools/nmspc_tools.h>
-#include <io/class_hdf5_log_buffer.h>
+#include <io/class_h5table_buffer.h>
 #include <math/nmspc_math.h>
 #include <h5pp/h5pp.h>
 
@@ -47,10 +47,12 @@ void class_algorithm_infinite::run_preprocessing() {
 
 void class_algorithm_infinite::run_postprocessing(){
     t_pos.tic();
+    write_state(true);
+    write_measurements(true);
+    write_sim_status(true);
+    write_profiling(true);
     print_status_full();
     print_profiling();
-    write_results();
-    h5pp_file->writeDataset(true, sim_name + "/simOK");
     t_pos.toc();
 }
 
@@ -237,13 +239,27 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
             BS_vec,
             S_vec,
             XS_vec,
-            tools::infinite::measure::current_entanglement_entropy(*state),
+            tools::infinite::measure::entanglement_entropy(*state),
             sim_status.iteration,
             1,
             slope_threshold);
     if(report.has_computed) S_slope       = report.slope;
     sim_status.entanglement_has_saturated = report.has_saturated;
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
+}
+
+
+
+void class_algorithm_infinite::write_state(bool force){
+    if(not force){
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
+        if (write_freq() == 0){return;}
+        if (settings::output::storage_level <= StorageLevel::NONE){return;}
+    }
+    log->trace("Writing state to file");
+    h5pp_file->writeDataset(false, sim_name + "/simOK");
+    tools::infinite::io::h5dset::write_all_state(*state, *h5pp_file, sim_name);
+    h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
 void class_algorithm_infinite::write_measurements(bool force){
@@ -255,24 +271,11 @@ void class_algorithm_infinite::write_measurements(bool force){
     state->unset_measurements();
 //    compute_observables();
     h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::infinite::io::write_all_measurements(*state, *h5pp_file, sim_name);
+    tools::infinite::io::h5dset::write_all_measurements(*state, *h5pp_file, sim_name);
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
-void class_algorithm_infinite::write_state(bool force){
-    if(not force){
-        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (write_freq() == 0){return;}
-        if (settings::output::storage_level <= StorageLevel::NONE){return;}
-    }
-    log->trace("Writing state to file");
-    h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::infinite::io::write_all_state(*state, *h5pp_file, sim_name);
-    h5pp_file->writeDataset(true, sim_name + "/simOK");
-}
-
-
-void class_algorithm_infinite::write_status(bool force){
+void class_algorithm_infinite::write_sim_status(bool force){
     if (not force){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (write_freq() == 0){return;}
@@ -280,68 +283,31 @@ void class_algorithm_infinite::write_status(bool force){
     }
     log->trace("Writing simulation status to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
+    tools::common::io::h5dset::write_simulation_status(sim_status, *h5pp_file, sim_name);
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
-void class_algorithm_infinite::write_results(){
-    if (measurements_result == nullptr){return;}
-    log->trace("Appending measurement result entry");
-    state->do_all_measurements();
-    table_measurements_infinite::data_struct measurements_entry;
-    measurements_entry.step                            = sim_status.step;
-    measurements_entry.iteration                       = sim_status.iteration;
-    measurements_entry.position                        = sim_status.position;
-    measurements_entry.length                          = state->get_length();
-    measurements_entry.bond_dimension                  = state->measurements.bond_dimension.value();
-    measurements_entry.bond_dimension_limit            = state->get_chi_lim();
-    measurements_entry.bond_dimension_maximum          = chi_max();
-    measurements_entry.entanglement_entropy            = state->measurements.current_entanglement_entropy.value();
-    measurements_entry.norm                            = state->measurements.norm.value();
-    measurements_entry.energy_mpo                      = state->measurements.energy_mpo.value();
-    measurements_entry.energy_per_site_mpo             = state->measurements.energy_per_site_mpo.value();
-    measurements_entry.energy_per_site_ham             = state->measurements.energy_per_site_ham.value();
-    measurements_entry.energy_per_site_mom             = state->measurements.energy_per_site_mom.value();
-    measurements_entry.energy_variance_mpo             = state->measurements.energy_variance_mpo.value();
-    measurements_entry.energy_variance_per_site_mpo    = state->measurements.energy_variance_per_site_mpo.value();
-    measurements_entry.energy_variance_per_site_ham    = state->measurements.energy_variance_per_site_ham.value();
-    measurements_entry.energy_variance_per_site_mom    = state->measurements.energy_variance_per_site_mom.value();
-    measurements_entry.truncation_error                = state->measurements.truncation_error.value();
-    measurements_entry.wall_time                       = t_tot.get_age();
-    measurements_result->append_record(measurements_entry);
+void class_algorithm_infinite::write_profiling(bool result){
+    if (not settings::profiling::on ){return;}
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
+    if(result){
+        // This means that we are writing an important result:
+        // Either the simulation has converged successfully or
+        // it has finalized some stage, like saturated at the
+        // current bond dimension.
+        class_h5table_buffer<class_h5table_profiling> h5tbuf_profiling_results(h5pp_file, sim_name + "/results/profiling");
+        log->trace("Appending profiling to table (result)");
+        tools::infinite::io::h5table::write_profiling(sim_status, h5tbuf_profiling_results);
+        log->trace("Appending profiling to table (result)... OK");
+    }
+
+    if (h5tbuf_profiling == nullptr){return;}
+    if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
+    if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
+    log->trace("Appending profiling to table");
+    tools::infinite::io::h5table::write_profiling(sim_status,*h5tbuf_profiling);
+    log->trace("Appending profiling to table... OK");
 }
-
-
-//void class_algorithm_infinite::store_log_entry_progress(bool force){
-//    if (not force){
-//        if (math::mod(sim_status.iteration, settings::idmrg::write_freq) != 0) {return;}
-//    }
-//    compute_observables();
-//    using namespace tools::infinite::measure;
-//    t_sto.tic();
-//    log_dmrg->append_record(
-//            sim_status.iteration,
-//            state->measurements.length.value(),
-//            sim_status.iteration,
-//            state->measurements.bond_dimension.value(),
-//            settings::idmrg::chi_lim,
-//            state->measurements.energy_per_site.value(),
-//            state->measurements.energy_per_site_ham.value(),
-//            state->measurements.energy_per_site_mom.value(),
-//            std::numeric_limits<double>::quiet_NaN(),
-//            std::numeric_limits<double>::quiet_NaN(),
-//            std::numeric_limits<double>::quiet_NaN(),
-//            state->measurements.energy_variance_per_site.value(),
-//            state->measurements.energy_variance_per_site_ham.value(),
-//            state->measurements.energy_variance_per_site_mom.value(),
-//            state->measurements.current_entanglement_entropy.value(),
-//            state->measurements.truncation_error.value(),
-//            t_tot.get_age());
-//
-//
-//    t_sto.toc();
-//}
-
 
 
 void class_algorithm_infinite::print_status_update() {

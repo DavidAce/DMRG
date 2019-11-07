@@ -5,7 +5,7 @@
 #pragma once
 
 #include <algorithms/class_algorithm_base.h>
-class table_measurements_finite;
+class class_h5table_measurements_finite;
 class class_state_finite;
 
 
@@ -19,9 +19,9 @@ public:
             SimulationType sim_type,
             size_t num_sites
             );
-    // Logs
-    std::shared_ptr<class_hdf5_log<table_measurements_finite>>  measurements_logger; //Written every sweep
-    std::shared_ptr<class_hdf5_log<table_measurements_finite>>  measurements_result; //Written when we update bond dimension or finish
+
+    // Tables
+    std::shared_ptr<class_h5table_buffer<class_h5table_measurements_finite>>  h5tbuf_measurements; //Written every sweep
 
 
     //MPS
@@ -35,10 +35,6 @@ public:
     size_t max_saturation_iters          = 3;
     bool   has_projected  = false;
 
-private:
-    void write_log_sim_status ();
-    void write_log_measurement();
-    void write_log_profiling();
 public:
 
     virtual void run_simulation()                    = 0;
@@ -47,22 +43,22 @@ public:
     virtual void single_DMRG_step(std::string ritz);
     virtual bool store_wave_function()               = 0;
     void move_center_point();
-    void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
+    void update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt)         final;
     void run()                                                                                  final;
-//    void compute_observables()                                                                  final;
     void clear_saturation_status()                                                              override;
     void reset_to_random_state(const std::string parity_sector = "random", int seed_state = -1) final;
+
+    void write_state        (bool result = false)                                               final;
+    void write_measurements (bool result = false)                                               final;
+    void write_sim_status   (bool result = false)                                               final;
+    void write_profiling    (bool result = false)                                               final;
+    void print_status_update()                                                                  final;
+    void print_status_full()                                                                    final;
     void backup_best_state(const class_state_finite &state);
     void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
+    void write_projection(const class_state_finite & state_projected, std::string parity_sector);
 
-    void write_measurements(bool force = false)                                                 final;
-    void write_state(bool force = false)                                                        final;
-    void write_status(bool force = false)                                                       final;
-    void write_logs(bool force = false)                                                         final;
-    void write_results()                                                                        final;
-    void print_status_update()                                                                  final;
-    void print_status_full()                                                                    final;
 
     std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances

@@ -23,6 +23,11 @@ class class_simulation_status;
 namespace h5pp{
     class File;
 }
+template <typename table_type> class class_h5table_buffer;
+class class_h5table_measurements_finite;
+class class_h5table_measurements_infinite;
+class class_h5table_profiling;
+class class_h5table_simulation_status;
 
 
 
@@ -191,20 +196,35 @@ namespace tools{
         }
 
         namespace io{
-            namespace internals{
-                inline bool make_extendable_dataset(const std::string & prefix_path);
+
+            namespace h5dset{
+                namespace internals{
+                    inline bool make_extendable_dataset(const std::string & prefix_path);
+                }
+                extern void write_all_state                              (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+                extern void write_bond_matrices                          (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+                extern void write_bond_matrix                            (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+                extern void write_full_mps                               (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+                extern void write_full_mpo                               (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+                extern void write_model                                  (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+                extern void write_entanglement                           (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+                extern void write_all_measurements                       (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+
             }
-            extern void write_all_state                              (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_bond_matrices                          (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_bond_matrix                            (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_full_mps                               (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_full_mpo                               (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_model                                  (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_entanglement                           (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_all_measurements                       (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-            extern void write_projection_to_closest_parity_sector    (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path, std::string parity_sector);
-            extern void load_from_hdf5                               (const h5pp::File & h5ppFile, class_state_finite & state    , class_simulation_status & sim_status, const std::string & prefix_path);
-            extern class_state_finite load_state_from_hdf5           (const h5pp::File & h5ppFile, const std::string & prefix_path);
+
+
+            namespace h5table{
+                extern void write_measurements                       (const class_state_finite &state, const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_measurements_finite> &h5tbuf);
+                extern void write_sim_status                         (const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_simulation_status> &h5tbuf);
+                extern void write_profiling                          (const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_profiling> &h5tbuf);
+            }
+
+            namespace h5restore{
+                extern void load_from_hdf5                               (const h5pp::File & h5ppFile, class_state_finite & state    , class_simulation_status & sim_status, const std::string & prefix_path);
+                extern class_state_finite load_state_from_hdf5           (const h5pp::File & h5ppFile, const std::string & prefix_path);
+            }
+
+
         }
 
 
@@ -269,7 +289,7 @@ namespace tools{
             extern double energy_variance_per_site_mpo    (const class_state_infinite & state);
             extern double energy_variance_per_site_ham    (const class_state_infinite & state);
             extern double energy_variance_per_site_mom    (const class_state_infinite & state);
-            extern double current_entanglement_entropy    (const class_state_infinite & state);
+            extern double entanglement_entropy    (const class_state_infinite & state);
         }
 
         namespace print {
@@ -279,16 +299,28 @@ namespace tools{
         }
 
         namespace io{
-            extern void write_all_state(const class_state_infinite &state, h5pp::File &h5ppFile, std::string sim_name);
-            extern void write_2site_mps                    (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_2site_mpo                    (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_2site_env                    (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_2site_env2                   (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_hamiltonian_params           (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void write_all_measurements             (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
-            extern void load_from_hdf5                     (const h5pp::File & h5ppFile, class_state_infinite & state, class_simulation_status &sim_status, std::string sim_name);
-            extern void load_superblock_from_hdf5          (const h5pp::File & h5ppFile, class_state_infinite & state, std::string sim_name);
-            extern void load_sim_status_from_hdf5           (const h5pp::File & h5ppFile, class_simulation_status & sim_status, std::string sim_name);
+            namespace h5dset{
+                extern void write_all_state(const class_state_infinite &state, h5pp::File &h5ppFile, std::string sim_name);
+                extern void write_2site_mps                    (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
+                extern void write_2site_mpo                    (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
+                extern void write_2site_env                    (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
+                extern void write_2site_env2                   (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
+                extern void write_hamiltonian_params           (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
+                extern void write_all_measurements             (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name);
+            }
+
+            namespace h5table{
+                extern void write_measurements                       (const class_state_infinite &state, const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_measurements_infinite> &h5tbuf);
+                extern void write_sim_status                         (const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_simulation_status> &h5tbuf);
+                extern void write_profiling                          (const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_profiling> &h5tbuf);
+            }
+
+            namespace h5restore{
+                extern void load_from_hdf5                     (const h5pp::File & h5ppFile, class_state_infinite & state, class_simulation_status &sim_status, std::string sim_name);
+                extern void load_superblock_from_hdf5          (const h5pp::File & h5ppFile, class_state_infinite & state, std::string sim_name);
+                extern void load_sim_status_from_hdf5          (const h5pp::File & h5ppFile, class_simulation_status & sim_status, std::string sim_name);
+            }
+
 
         }
 
@@ -312,11 +344,17 @@ namespace tools{
         using Scalar = std::complex<double>;
 
         namespace io {
-            extern void
-            write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
-                                    std::string sim_name);
-            extern class_simulation_status
-            load_sim_status_from_hdf5(const h5pp::File &h5ppFile, std::string sim_name);
+            namespace h5dset{
+                extern void write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile, std::string sim_name);
+            }
+            namespace h5table{
+                extern void write_sim_status                         (const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_simulation_status> &h5tbuf);
+                extern void write_profiling                          (const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_profiling> &h5tbuf);
+            }
+
+            namespace h5restore{
+                extern class_simulation_status load_sim_status_from_hdf5(const h5pp::File &h5ppFile, std::string sim_name);
+            }
 
         }
 

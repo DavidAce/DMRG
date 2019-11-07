@@ -3,23 +3,21 @@
 //
 
 #include <iomanip>
-#include <io/class_hdf5_log_buffer.h>
+#include <io/class_h5table_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_infinite.h>
 #include <state/class_mps_2site.h>
 #include <tools/nmspc_tools.h>
 #include <model/class_model_base.h>
-#include <math/nmspc_math.h>
+//#include <math/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <h5pp/h5pp.h>
 #include "class_iTEBD.h"
 using namespace std;
 using namespace Textra;
-//using namespace std::complex_literals;
 
 class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_infinite(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
-    log_tebd = std::make_unique<class_hdf5_log<class_log_tebd>>(h5pp_file, sim_name + "/logs", "measurements", sim_name);
     sim_status.delta_t      = settings::itebd::delta_t0;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -43,10 +41,10 @@ void class_iTEBD::run_simulation()    {
     while(sim_status.iteration < settings::itebd::max_steps and not sim_status.simulation_has_converged) {
         single_TEBD_step();
         sim_status.phys_time += sim_status.delta_t;
-        write_measurements();
         write_state();
-        write_status();
-        write_logs();
+        write_measurements();
+        write_sim_status();
+        write_profiling();
         print_status_update();
         check_convergence();
         sim_status.iteration++;
@@ -127,7 +125,7 @@ void class_iTEBD::check_convergence_time_step(){
 //            state->measurements.energy_variance_per_site.value(),
 //            state->measurements.energy_variance_per_site_ham.value(),
 //            state->measurements.energy_variance_per_site_mom.value(),
-//            state->measurements.current_entanglement_entropy.value(),
+//            state->measurements.entanglement_entropy.value(),
 //            state->measurements.truncation_error.value(),
 //            sim_status.phys_time,
 //            t_tot.get_age());
@@ -135,16 +133,7 @@ void class_iTEBD::check_convergence_time_step(){
 //    t_sto.toc();
 //}
 
-void class_iTEBD::write_logs(bool force){
-    if(not force){
-        if (not settings::output::save_logs){return;}
-        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
-    }
-    log_sim_status->append_record(sim_status);
-//    log_profiling->append_record();
-//    log_tebd->append_record();
-}
+
 
 
 bool   class_iTEBD::sim_on()    {return settings::itebd::on;}

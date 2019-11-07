@@ -40,10 +40,10 @@ void class_xDMRG::run_simulation()    {
     while(true) {
         log->trace("Starting step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
         single_xDMRG_step();
-        write_measurements();
         write_state();
-        write_status();
-        write_logs();
+        write_measurements();
+        write_sim_status();
+        write_profiling();
         check_convergence();
         try_projection();
         backup_best_state(*state); //Should come after check_convergence

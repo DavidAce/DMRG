@@ -23,8 +23,6 @@ class_state_infinite::class_state_infinite(SimulationType sim_type_, std::string
         sim_type(sim_type_),
         sim_name(sim_name_),
         MPS(std::make_unique<class_mps_2site>()),
-//        HA (class_model_factory::create_mpo(0,settings::model::model_type)),
-//        HB (class_model_factory::create_mpo(1,settings::model::model_type)),
         Lblock(std::make_unique<class_environment>("L")),
         Rblock(std::make_unique<class_environment>("R")),
         Lblock2(std::make_unique<class_environment_var>("L")),
@@ -75,12 +73,24 @@ long class_state_infinite::get_chi() const {return MPS->chiC();}
 
 long class_state_infinite::get_chi_lim()  const {
     //Should get the the current limit on allowed bond dimension
-    return chi_lim;
+    return chi_lim.value();
 }
 void class_state_infinite::set_chi_lim(long chi_lim_){
     //Should set the the current limit on allowed bond dimension
+    if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
     chi_lim = chi_lim_;
 }
+
+long class_state_infinite::get_chi_max()  const {
+    //Should get the the current limit on allowed bond dimension for the duration of the simulation
+    return chi_max.value();
+}
+void class_state_infinite::set_chi_max(long chi_max_){
+    //Should set the the current limit on allowed bond dimension for the duration of the simulation
+    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
+    chi_max = chi_max_;
+}
+
 
 Eigen::DSizes<long,4> class_state_infinite::dimensions()const{return MPS->dimensions();}
 
@@ -336,7 +346,7 @@ void class_state_infinite::do_all_measurements() const {
     measurements.energy_variance_per_site_mpo   = tools::infinite::measure::energy_variance_per_site_mpo(*this);
     measurements.energy_variance_per_site_ham   = tools::infinite::measure::energy_variance_per_site_ham(*this);
     measurements.energy_variance_per_site_mom   = tools::infinite::measure::energy_variance_per_site_mom(*this);
-    measurements.current_entanglement_entropy   = tools::infinite::measure::current_entanglement_entropy(*this);
+    measurements.current_entanglement_entropy   = tools::infinite::measure::entanglement_entropy(*this);
 }
 
 

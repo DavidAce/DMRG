@@ -29,6 +29,7 @@ class_state_finite& class_state_finite::operator= (const class_state_finite & ot
     this->num_moves  = other.num_moves;
     this->direction  = other.direction;
     this->chi_lim    = other.chi_lim;
+    this->chi_max    = other.chi_max;
     this->MPS_L      = other.MPS_L;
     this->MPS_R      = other.MPS_R;
     this->ENV_L      = other.ENV_L;
@@ -108,6 +109,16 @@ void class_state_finite::set_chi_lim(long chi_lim_){
     //Should set the the current limit on allowed bond dimension
     if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
     chi_lim = chi_lim_;
+}
+
+long class_state_finite::get_chi_max()  const {
+    //Should get the the current limit on allowed bond dimension for the duration of the simulation
+    return chi_max.value();
+}
+void class_state_finite::set_chi_max(long chi_max_){
+    //Should set the the highest limit on allowed bond dimension for the duration of the simulation
+    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
+    chi_max = chi_max_;
 }
 
 int  class_state_finite::get_direction() const {return direction;}
