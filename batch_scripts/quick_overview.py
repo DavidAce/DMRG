@@ -77,16 +77,22 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             continue
 
         table_path = ''
-
+        step_results  = 0
+        step_progress = 0
         try:
             if 'xDMRG/progress' in h5file:
-                table_path = 'xDMRG/progress'
+                step_progress = h5file['xDMRG/progress'].get('sim_status')['step'][-1];
             elif 'xDMRG/results' in h5file:
-                table_path = 'xDMRG/results'
+                step_results = h5file['xDMRG/results'].get('sim_status')['step'][-1];
             else:
                 continue
         except:
             print("Could not check existence of paths!?")
+        if step_progress > step_results:
+            table_path = 'xDMRG/progress'
+        else:
+            table_path = 'xDMRG/results'
+
 
         try:
             realization_name = h5path.replace('.h5', '')
