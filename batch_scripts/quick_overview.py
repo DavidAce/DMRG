@@ -75,8 +75,15 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             print("Could not open file [", h5path, "] Reason: ", er)
             continue
 
+        measurements_path = 'xDMRG/progress/measurements'
+        sim_status_path   = 'xDMRG/progress/sim_status_path'
+        try:
+                
+
         try:
             realization_name = h5path.replace('.h5', '')
+            chainlen.append(h5file['xDMRG/progress/measurements'].get('length')[-1])
+            print(chainlen)
             chainlen.append(h5file['xDMRG/measurements/length'][-1])
             realization_num.append([int(x) for x in regex.findall(realization_name)][-1])
             variance.append(h5file['xDMRG/measurements/energy_variance_per_site'][-1])
