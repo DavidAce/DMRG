@@ -82,10 +82,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         try:
             if 'xDMRG/progress' in h5file:
                 step_progress = h5file['xDMRG/progress'].get('sim_status')['step'][-1];
-            elif 'xDMRG/results' in h5file:
+            if 'xDMRG/results' in h5file:
                 step_results = h5file['xDMRG/results'].get('sim_status')['step'][-1];
-            else:
-                continue
         except:
             print("Could not check existence of paths!?")
         if step_progress > step_results:
@@ -93,7 +91,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         else:
             table_path = 'xDMRG/results'
 
-
+        # print(table_path,step_progress, step_results)
         try:
             realization_name = h5path.replace('.h5', '')
             chainlen       .append(h5file[table_path].get('measurements')['length'][-1])
