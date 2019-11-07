@@ -46,8 +46,10 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         continue
     fileList.sort()
     chainlen  = []
-    realization_num = []
+    seed      = []
+    iter      = []
     variance  = []
+    ententrp  = []
     walltime  = []
     resets    = []
     got_stuck = []
@@ -59,9 +61,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary:
-        header = "{:8} {:15} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length", "Realization", "Variance", "Time",
-                                                                                             "Resets", "Got Stuck", "Saturated" ,"Converged",
-                                                                                             "Succeeded", "Finished")
+        header = "{:<8} {:<6} {:<6} {:^24} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter", "Variance","Ent.Entr.", "Time",
+                                                                                             "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
         print(header)
         if args.save:
             file.write(header + '\n')
@@ -75,23 +76,31 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             print("Could not open file [", h5path, "] Reason: ", er)
             continue
 
-        measurements_path = 'xDMRG/progress/measurements'
-        sim_status_path   = 'xDMRG/progress/sim_status_path'
+        table_path = ''
+
         try:
-                
+            if 'xDMRG/progress' in h5file:
+                table_path = 'xDMRG/progress'
+            elif 'xDMRG/results' in h5file:
+                table_path = 'xDMRG/results'
+            else:
+                continue
+        except:
+            print("Could not check existence of paths!?")
 
         try:
             realization_name = h5path.replace('.h5', '')
-            chainlen.append(h5file['xDMRG/progress/measurements'].get('length')[-1])
-            print(chainlen)
-            chainlen.append(h5file['xDMRG/measurements/length'][-1])
-            realization_num.append([int(x) for x in regex.findall(realization_name)][-1])
-            variance.append(h5file['xDMRG/measurements/energy_variance_per_site'][-1])
-            walltime.append(h5file['xDMRG/sim_status/wall_time'][-1])
-            resets.append(h5file['xDMRG/sim_status/num_resets'][-1])
-            saturated.append(h5file['xDMRG/sim_status/simulation_has_saturated'][-1])
-            converged.append(h5file['xDMRG/sim_status/simulation_has_converged'][-1])
-            succeeded.append(h5file['xDMRG/sim_status/simulation_has_succeeded'][-1])
+            chainlen       .append(h5file[table_path].get('measurements')['length'][-1])
+            seed           .append([int(x) for x in regex.findall(realization_name)][-1])
+            iter           .append(h5file[table_path].get('sim_status')['iteration'][-1])
+            variance       .append(h5file[table_path].get('measurements')['energy_variance_per_site'][-1])
+            ententrp       .append(h5file[table_path].get('measurements')['entanglement_entropy_midchain'][-1])
+            walltime       .append(h5file[table_path].get('sim_status')['wall_time'][-1])
+            resets         .append(h5file[table_path].get('sim_status')['num_resets'][-1])
+            saturated      .append(h5file[table_path].get('sim_status')['simulation_has_saturated'][-1])
+            converged      .append(h5file[table_path].get('sim_status')['simulation_has_converged'][-1])
+            succeeded      .append(h5file[table_path].get('sim_status')['simulation_has_succeeded'][-1])
+
             try:
                 finished.append(h5file['common/finOK'][-1])
             except:
@@ -133,10 +142,12 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
             if not args.summary:
-                entry = "{:<8} {:<15} {:>12.4f} {:>12.4f} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
+                entry = "{:<8} {:<6} {:<6} {:^24.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
                     chainlen[-1],
-                    realization_num[-1],
+                    seed[-1],
+                    iter[-1],
                     np.log10(variance[-1]),
+                    ententrp[-1],
                     walltime[-1] / 60,
                     resets[-1],
                     got_stuck[-1],
@@ -152,14 +163,16 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
             continue
-    header = "{:8} {:6} {:>12} {:<12} {:>8} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12}".format("Length","Sims", "log10 <Var>", "<log10 Var>", "Avg Time",
-                                                                                              "Avg Resets","Sum Stk", "Sum Sat", "Sum Con",
-                                                                                              "Sum Suc", "Sum Fin")
-    entry = "{:<8} {:<6} {:>12.4f} {:<12.4f} {:>8.4f} {:>12.3f} {:>12} {:>12} {:>12} {:>12} {:>12}".format(
+    header = "{:<8} {:<6} {:<6} {:>12} {:<12} {:>11} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>", "log10 <Var>", "<log10 Var>","<Entgl>","<Time>",
+                                                                                              "<Resets>","Stk", "Sat", "Con",
+                                                                                              "Suc", "Fin")
+    entry = "{:<8} {:<6} {:<6.1f} {:>12.4f} {:<12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
         np.int(np.mean(chainlen)),
-        len(realization_num),
+        len(seed),
+        np.nanmean(iter),
         np.log10(np.nanmean(variance)),
         np.nanmean(np.log10(variance)),
+        np.mean(ententrp),
         np.mean(walltime) / 60,
         np.mean(resets),
         np.sum(got_stuck),
@@ -167,7 +180,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         np.sum(converged),
         np.sum(succeeded),
         np.sum(finished))
-
+    print("="*120)
     print(header)
     print(entry)
     if args.save:
