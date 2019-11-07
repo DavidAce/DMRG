@@ -30,7 +30,8 @@ namespace settings {
     }
 
     namespace input{
-        inline std::string input_file = "input/input.cfg";
+        inline std::string input_filename = "input/input.cfg";
+        inline std::string input_file_raw;
     }
 
     namespace output {

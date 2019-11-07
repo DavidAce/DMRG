@@ -29,7 +29,8 @@ public:
     SimulationType sim_type;
     std::string sim_name;
 private:
-    long chi_lim;
+    std::optional<long> chi_lim;
+    std::optional<long> chi_max;
     std::shared_ptr<spdlog::logger> log;
 public:
     using Scalar = std::complex<double>;
@@ -60,6 +61,8 @@ public:
     long                     get_chi()        const ;
     long                     get_chi_lim()    const;
     void                     set_chi_lim(long chi_lim_);
+    long                     get_chi_max()    const;
+    void                     set_chi_max(long chi_max_);
     Eigen::Tensor<Scalar, 4> get_theta()      const;
     Eigen::DSizes<long,4>    dimensions()     const;
 

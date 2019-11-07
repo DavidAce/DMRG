@@ -7,7 +7,7 @@
 #include <h5pp/h5pp.h>
 #include <simulation/nmspc_settings.h>
 
-void tools::common::io::write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
+void tools::common::io::h5dset::write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
                                                 std::string sim_name) {
     if (settings::output::storage_level <= StorageLevel::LIGHT) return;
     h5ppFile.writeDataset(sim_status.iteration                     ,sim_name + "/sim_status/iteration");
@@ -54,7 +54,7 @@ void tools::common::io::write_simulation_status(const class_simulation_status &s
 
 
 
-class_simulation_status tools::common::io::load_sim_status_from_hdf5 (const h5pp::File & h5ppFile, std::string sim_name){
+class_simulation_status tools::common::io::h5restore::load_sim_status_from_hdf5 (const h5pp::File & h5ppFile, std::string sim_name){
     class_simulation_status sim_status;
     // common variables
     try{

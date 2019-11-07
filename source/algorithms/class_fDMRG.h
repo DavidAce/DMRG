@@ -4,7 +4,7 @@
 
 #pragma once
 #include "class_algorithm_finite.h"
-class table_measurements_finite;
+class class_h5table_measurements_finite;
 
 
 /*!
@@ -17,7 +17,6 @@ public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;
     explicit class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
-    std::unique_ptr<class_hdf5_log<table_measurements_finite>> log_dmrg;
 
     bool   projected_during_saturation  = false;
     void run_simulation()                                        final;

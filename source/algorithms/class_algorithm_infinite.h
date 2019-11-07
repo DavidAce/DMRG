@@ -6,7 +6,7 @@
 
 #include <algorithms/class_algorithm_base.h>
 
-class table_measurements_infinite;
+class class_h5table_measurements_infinite;
 class class_state_infinite;
 
 class class_algorithm_infinite: public class_algorithm_base {
@@ -19,9 +19,8 @@ public:
             SimulationType sim_type
     );
     std::shared_ptr<class_state_infinite> state;
-    // Logs
-    std::shared_ptr<class_hdf5_log<table_measurements_infinite>>  measurements_logger; //Written every sweep
-    std::shared_ptr<class_hdf5_log<table_measurements_infinite>>  measurements_result; //Written when we update bond dimension or finish
+    // Tables
+    std::shared_ptr<class_h5table_buffer<class_h5table_measurements_infinite>>  h5tbuf_measurements; //Written every iteration
 
 
     virtual void run_simulation()         = 0;
@@ -36,10 +35,11 @@ public:
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
     void reset_to_random_state(const std::string parity_secto = "random", int seed_state = -1)  final;
     void clear_saturation_status()                                                              override;
-    void write_measurements(bool force = false)                                                 final;
-    void write_state(bool force = false)                                                        final;
-    void write_status(bool force = false)                                                       final;
-    void write_results()                                                                        final;
+
+    void write_state        (bool result = false)                                               final;
+    void write_measurements (bool result = false)                                               final;
+    void write_sim_status   (bool result = false)                                               final;
+    void write_profiling    (bool result = false)                                               final;
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
 

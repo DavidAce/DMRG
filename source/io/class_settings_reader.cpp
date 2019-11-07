@@ -21,51 +21,56 @@ class_settings_reader::class_settings_reader(const fs::path &file_path_,std::str
     }
 
     // Load the file into memory
-    std::vector<std::istringstream> file_cache;
     if (file.is_open()) {
         file.clear();
         file.seekg(0, std::ios::beg);
-        std::string line;
-        while (std::getline(file, line)){
-            if(is_parameterline(line)){
-                log->debug("Loading line: {}",line);
-                file_cache.emplace_back(line);
-            }
+        file_string = std::string ( (std::istreambuf_iterator<char>(file) ),
+                                    (std::istreambuf_iterator<char>()     ));
+
+    }
+    file.close();
+
+    // Extract the parameters and generate a key-value map
+    std::istringstream file_stream (file_string);
+    std::string line;
+    while (std::getline(file_stream, line)){
+        if(is_parameterline(line)){
+            log->debug("Loading line: {}",line);
+            std::string param_key;
+            std::string param_val;
+            std::istringstream linestream(line);
+            std::getline(linestream,param_key, '=');
+            std::getline(linestream,param_val,  '\n');
+            param_val = param_val.substr(0, find_comment_character(param_val));
+            remove_spaces(param_key);
+            remove_spaces(param_val);
+            std::transform(param_key.begin(), param_key.end(), param_key.begin(), ::tolower);
+            param_map[param_key] = param_val;
         }
     }
 
 
     //Generate a parameter  key-value map
-
-    for (auto & linestream: file_cache){
-        std::string param_key;
-        std::string param_val;
-//        std::istringstream is(line);
-        std::getline(linestream,param_key, '=');
-        std::getline(linestream,param_val,  '\n');
-        param_val = param_val.substr(0, find_comment_character(param_val));
-        remove_spaces(param_key);
-        remove_spaces(param_val);
-        std::transform(param_key.begin(), param_key.end(), param_key.begin(), ::tolower);
-        param_map[param_key] = param_val;
-    }
+//    std::vector<std::istringstream> file_cache;
+//
+//    for (auto & linestream: file_cache){
+//        std::string param_key;
+//        std::string param_val;
+////        std::istringstream is(line);
+//        std::getline(linestream,param_key, '=');
+//        std::getline(linestream,param_val,  '\n');
+//        param_val = param_val.substr(0, find_comment_character(param_val));
+//        remove_spaces(param_key);
+//        remove_spaces(param_val);
+//        std::transform(param_key.begin(), param_key.end(), param_key.begin(), ::tolower);
+//        param_map[param_key] = param_val;
+//    }
 
 }
 
-//std::string class_settings_reader::get_input_file(){
-//
-//
-////    if (file.is_open()) {
-////        file.clear();
-////        file.seekg(0, std::ios::beg);
-////        std::string the_file ( (std::istreambuf_iterator<char>(file) ),
-////                               (std::istreambuf_iterator<char>()     ) );
-////
-////        return the_file;
-////    }else{
-////        return "";
-////    }
-//}
+std::string class_settings_reader::get_input_file_as_string(){
+    return file_string;
+}
 
 std::string class_settings_reader::get_input_filename(){
     return file_path.string();

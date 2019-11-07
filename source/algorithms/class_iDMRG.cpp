@@ -4,7 +4,7 @@
 
 #include <iomanip>
 #include <h5pp/h5pp.h>
-#include <io/class_hdf5_log_buffer.h>
+#include <io/class_h5table_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_infinite.h>
 #include <tools/nmspc_tools.h>
@@ -26,10 +26,10 @@ void class_iDMRG::run_simulation() {
     log->info("Starting {} simulation", sim_name);
     while(true){
         single_DMRG_step("SR");
-        write_measurements();
         write_state();
-        write_status();
-        write_logs();
+        write_measurements();
+        write_sim_status();
+        write_profiling();
         print_status_update();
         check_convergence();
 
@@ -94,18 +94,6 @@ void class_iDMRG::check_convergence(){
 
 
 
-
-void class_iDMRG::write_logs(bool force){
-    if(not force){
-        if (not settings::output::save_logs){return;}
-        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (settings::output::storage_level < StorageLevel::NORMAL){return;}
-    }
-    log_sim_status->append_record(sim_status);
-//    log_profiling->append_record();
-//    log_dmrg->append_record();
-
-}
 
 bool   class_iDMRG::sim_on()   {return settings::idmrg::on;}
 long   class_iDMRG::chi_max()   {return settings::idmrg::chi_max;}

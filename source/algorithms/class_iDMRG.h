@@ -20,7 +20,6 @@ public:
     void single_DMRG_step(std::string ritz);
     void run_simulation()                                   final;
     void check_convergence()                                final;
-    void write_logs(bool force = false)                     final;
     bool    sim_on ()                                       final;
     long    chi_max()                                       final;
     size_t  num_sites()                                     final;

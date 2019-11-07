@@ -10,7 +10,7 @@
 #include <iomanip>
 #include "class_model_base.h"
 
-template<typename log_type> class class_hdf5_log;
+template<typename log_type> class class_h5table_buffer;
 class class_selfdual_tf_rf_ising_table;
 
 class class_selfdual_tf_rf_ising : public class_model_base {

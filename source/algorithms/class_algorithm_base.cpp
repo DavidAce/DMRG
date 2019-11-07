@@ -5,7 +5,7 @@
 #include <fstream>
 #include <complex>
 #include "class_algorithm_base.h"
-#include <io/class_hdf5_log_buffer.h>
+#include <io/class_h5table_buffer.h>
 #include <io/nmspc_logger.h>
 #include <tools/nmspc_tools.h>
 #include <h5pp/h5pp.h>
@@ -28,14 +28,13 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     log->trace("Constructing class_algorithm_base");
     set_profiling_labels();
     tools::common::profile::init_profiling();
-    log->trace("Constructing log buffers in base");
-    log_profiling  = std::make_unique<class_hdf5_log<class_log_profiling>>        (h5pp_file, sim_name + "/logs", "profiling", sim_name);
-    log_sim_status = std::make_unique<class_hdf5_log<class_log_simulation_status>>(h5pp_file, sim_name + "/logs", "status"   , sim_name);
-
-
+    log->trace("Constructing table buffers in base");
+    h5tbuf_profiling  = std::make_unique<class_h5table_buffer<class_h5table_profiling>>        (h5pp_file, sim_name + "/progress/profiling");
+    h5tbuf_sim_status = std::make_unique<class_h5table_buffer<class_h5table_simulation_status>>(h5pp_file, sim_name + "/progress/sim_status");
 
     log->trace("Writing input file");
-    h5pp_file->writeDataset(settings::input::input_file, "common/input_file");
+    h5pp_file->writeDataset(settings::input::input_filename  , "common/input_filename");
+    h5pp_file->writeDataset(settings::input::input_file_raw  , "common/input_file");
 }
 
 

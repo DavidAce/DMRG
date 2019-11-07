@@ -4,15 +4,11 @@
 
 
 #include <iomanip>
-#include <io/class_hdf5_log_buffer.h>
 #include <simulation/nmspc_settings.h>
-#include <state/class_state_infinite.h>
 #include <state/class_state_finite.h>
 #include <tools/nmspc_tools.h>
-#include <math/nmspc_math.h>
-#include <general/nmspc_quantum_mechanics.h>
-#include <general/nmspc_random_numbers.h>
-#include <h5pp/h5pp.h>
+//#include <math/nmspc_math.h>
+//#include <h5pp/h5pp.h>
 #include "class_fDMRG.h"
 
 
@@ -22,7 +18,6 @@ using namespace Textra;
 class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_),"fDMRG", SimulationType::fDMRG, settings::fdmrg::num_sites) {
     log->trace("Constructing class_fDMRG");
-    log_dmrg       = std::make_unique<class_hdf5_log<table_measurements_finite>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
     settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
 }
 
@@ -32,10 +27,10 @@ void class_fDMRG::run_simulation(){
     log->info("Starting {} simulation", sim_name);
     while(true) {
         single_DMRG_step("SR");
-        write_measurements();
         write_state();
-        write_status();
-        write_logs();
+        write_measurements();
+        write_sim_status();
+        write_profiling();
         check_convergence();
         print_status_update();
 

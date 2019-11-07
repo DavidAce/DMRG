@@ -45,6 +45,7 @@ private:
     int num_moves    = 0;
     int direction    = 1;
     std::optional<long> chi_lim;
+    std::optional<long> chi_max;
 public:
     class_state_finite()=default;
     ~class_state_finite();
@@ -82,6 +83,8 @@ public:
 
     long   get_chi_lim()                        const;
     void   set_chi_lim(long chi_lim_);
+    long   get_chi_max()                        const;
+    void   set_chi_max(long chi_max_);
     void set_positions();
     size_t get_length()                         const;
     size_t get_position()                       const;
