@@ -45,12 +45,41 @@ fi
 
 
 
+
 echo "Running job $SLURM_JOB_ID at $HOSTNAME with simfile $simfile"
 outdir=$(dirname $outfile)
 mkdir -p $outdir/$simbase
 
 
+
 num_cols=$(awk '{print NF}' $simfile | head -n 1)
+
+
+
+function Cleanup ()
+{
+    trap "" SIGTERM EXIT # Disable trap now we're in it
+    # Clean up task
+    cleanupfile=logs/$simbase.cleanup_log
+    if [ "$num_cols" -eq 2 ]; then
+        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}*)      &> $outdir/$simbase.cleanup"
+    elif [ "$num_cols" -eq 3 ]; then
+        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}_{3}*)  &> $outdir/$simbase.cleanup"
+    else
+    echo "Case not implemented"
+    exit 1
+fi
+
+    exit 0
+}
+
+DATADIR=$(pwd)
+trap Cleanup SIGTERM EXIT # Enable trap
+
+
+
+
+
 
 if [ "$num_cols" -eq 2 ]; then
     cat $simfile | parallel --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -i {1} -r {2} &> $outdir/${simbase}/{1/.}_{2}.out"
