@@ -41,6 +41,9 @@ namespace settings {
         inline std::string  create_mode          = "RENAME";                     /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
         inline std::string  output_filename      = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
         inline StorageLevel storage_level        = StorageLevel::NORMAL;         /*!< Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL */
+        inline bool         use_temp_dir         = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
+        inline size_t       copy_from_temp_freq  = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
+        inline std::string  temp_dir             = "/scratch/local";             /*!< Local temp directory on the "local" system. If it doesn't exist we default to /tmp instead (or whatever is the default */
     }
 
     //Parameters for the model Hamiltonian

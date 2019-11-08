@@ -159,7 +159,7 @@ endif()
 #######################################
 set(COMPILER_LFLAGS)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    list(APPEND COMPILER_LFLAGS -lstdc++fs)     ### For experimental::filesystem
+    list(APPEND COMPILER_LFLAGS -lstdc++fs)     ### For include<filesystem>
     list(APPEND COMPILER_LFLAGS -flto)          ### Link time optimization flag
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     list(APPEND COMPILER_LFLAGS -stdlib=libstdc++)
@@ -228,9 +228,9 @@ set_target_properties(${PROJECT_NAME}
 
 
 ######################################
-###  Check  experimental headers  ###
+###  Check  C++17 compiles         ###
 ######################################
-include(cmake-modules/CheckExperimentalHeaders.cmake)
+include(cmake-modules/CheckCXX17Compiles.cmake)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     set(TEST_REQUIRED_FLAGS     "-std=c++17 -lstdc++fs" )
     set(TEST_REQUIRED_LIBRARIES "")
@@ -238,7 +238,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(TEST_REQUIRED_FLAGS     "-stdlib=libstdc++ -lstdc++fs -std=c++17 ${GCC_TOOLCHAIN}" )
     set(TEST_REQUIRED_LIBRARIES "-stdlib=libstdc++ -lstdc++fs -std=c++17")
 endif()
-CheckExperimentalHeaders("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
+CheckCXX17Compiles("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
 
 
 ##################################################

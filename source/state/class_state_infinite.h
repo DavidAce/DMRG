@@ -63,6 +63,7 @@ public:
     void                     set_chi_lim(long chi_lim_);
     long                     get_chi_max()    const;
     void                     set_chi_max(long chi_max_);
+    double                   get_truncation_error()const;
     Eigen::Tensor<Scalar, 4> get_theta()      const;
     Eigen::DSizes<long,4>    dimensions()     const;
 

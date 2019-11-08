@@ -30,6 +30,7 @@ void class_iDMRG::run_simulation() {
         write_measurements();
         write_sim_status();
         write_profiling();
+        copy_from_tmp();
         print_status_update();
         check_convergence();
 

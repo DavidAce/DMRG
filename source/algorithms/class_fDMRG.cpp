@@ -31,6 +31,7 @@ void class_fDMRG::run_simulation(){
         write_measurements();
         write_sim_status();
         write_profiling();
+        copy_from_tmp();
         check_convergence();
         print_status_update();
 

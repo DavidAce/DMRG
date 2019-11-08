@@ -236,7 +236,7 @@ void class_algorithm_base::set_profiling_labels() {
     t_tot.set_properties(true, precision,"+Total Time              ");
     t_prt.set_properties(on,   precision,"↳ Printing to console    ");
     t_con.set_properties(on,   precision,"↳ Convergence checks     ");
-    t_run.set_properties(on, precision, "↳+Simulation             ");
+    t_run.set_properties(on,   precision, "↳+Simulation             ");
 //    t_obs.set_properties(on,   precision,"↳ Computing observables  ");
 
 //    t_sto.set_properties(on,   precision,"↳ Store to file          ");

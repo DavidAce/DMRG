@@ -40,6 +40,7 @@ public:
     void write_measurements (bool result = false)                                               final;
     void write_sim_status   (bool result = false)                                               final;
     void write_profiling    (bool result = false)                                               final;
+    void copy_from_tmp      (bool result = false)                                               final;
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
 

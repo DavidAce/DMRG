@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <h5pp/h5pp.h>
-#include <experimental/filesystem>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -156,7 +155,6 @@ int main(int argc, char* argv[]) {
 
     if (not load_previous and append_seed and settings::model::seed_model >= 0 ){
         //Append the seed_model to the output filename
-        namespace fs = std::experimental::filesystem;
         fs::path oldFileName = settings::output::output_filename;
         fs::path newFileName = settings::output::output_filename;
         newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_model) + oldFileName.extension().string() );
@@ -165,7 +163,6 @@ int main(int argc, char* argv[]) {
     }
     if (not load_previous and append_seed and settings::model::seed_state >= 0){
         //Append the seed_state to the output filename
-        namespace fs = std::experimental::filesystem;
         fs::path oldFileName = settings::output::output_filename;
         fs::path newFileName = settings::output::output_filename;
         newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_state) + oldFileName.extension().string() );

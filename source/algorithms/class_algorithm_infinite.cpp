@@ -46,7 +46,8 @@ void class_algorithm_infinite::run() {
 
 void class_algorithm_infinite::run_preprocessing() {
     t_pre.tic();
-
+    state->set_chi_max(chi_max());
+    update_bond_dimension_limit(chi_init());
     t_pre.toc();
 }
 
@@ -56,6 +57,7 @@ void class_algorithm_infinite::run_postprocessing(){
     write_measurements(true);
     write_sim_status(true);
     write_profiling(true);
+    copy_from_tmp(true);
     print_status_full();
     print_profiling();
     t_pos.toc();
@@ -66,11 +68,15 @@ void class_algorithm_infinite::run_postprocessing(){
 //    state->do_all_measurements();
 //}
 
-void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
-    if(not max_bond_dim.has_value()) {
-        log->debug("No max bond dim given, setting {}", chi_max());
-        max_bond_dim = chi_max();
+void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit){
+    if(tmp_bond_limit.has_value()) {
+        state->set_chi_lim(tmp_bond_limit.value());
+        sim_status.chi_lim = tmp_bond_limit.value();
+        return;
     }
+
+
+
     try{
         long chi_lim_now = state->get_chi_lim();
         if(chi_lim_now < chi_init())
@@ -79,38 +85,106 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> m
         //If we reached this stage, either
         // 1) chi_lim is not initialized yet
         // 2) chi_lim is initialized, but it is smaller than the init value found in settings
-        // Either way, we should set chi_lim to be chi_init, unless chi_init is larger than max_bond_dim
+        // Either way, we should set chi_lim to be chi_init, unless chi_init is larger than tmp_bond_limit
         log->info("Setting initial bond dimension limit: {}", chi_init());
-        state->set_chi_lim(std::min(max_bond_dim.value(),chi_init()));
-        sim_status.chi_max = max_bond_dim.value();
-        sim_status.chi_lim = state->get_chi_lim();
+        state->set_chi_lim(chi_init());
+        sim_status.chi_lim = chi_init();
         return;
     }
 
-    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
+
+    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() >= chi_max();
     if(not sim_status.chi_lim_has_reached_chi_max){
         if(chi_grow()){
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
             // Only do this if the simulation is stuck.
             if(sim_status.simulation_has_got_stuck){
-                long chi_new_limit = std::min(max_bond_dim.value(), state->get_chi_lim() * 2);
-                log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
-                state->set_chi_lim(chi_new_limit);
-                clear_saturation_status();
+                log->debug("Truncation error : {}", state->get_truncation_error());
+                log->debug("Bond dimensions  : {}", tools::infinite::measure::bond_dimension(*state) );
+                if(state->get_truncation_error() > 10*std::pow(settings::precision::SVDThreshold,2) and
+                    tools::infinite::measure::bond_dimension(*state) >=state->get_chi_lim() )
+                {
+                    //Write final results before updating bond dimension chi
+                    write_state(true);
+                    write_measurements(true);
+                    write_sim_status(true);
+                    write_profiling(true);
+
+                    long chi_new_limit = std::min(state->get_chi_max(), state->get_chi_lim() * 2);
+                    log->info("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
+                    state->set_chi_lim(chi_new_limit);
+                    clear_saturation_status();
+                    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == chi_max();
+
+                    copy_from_tmp(true);
+
+                }else{
+                    log->debug("chi_grow is ON, and simulation is stuck, but there is no reason to increase bond dimension -> Kept current bond dimension limit {}", state->get_chi_lim());
+
+                }
             }else{
-                log->debug("chi_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", state->get_chi_lim());
+                log->debug("Not stuck -> Kept current bond dimension limit {}", state->get_chi_lim());
+
             }
         }else{
             // Here the settings specify to just set the limit to maximum chi directly
-            log->debug("Setting bond dimension limit to maximum = {}", chi_max());
-            state->set_chi_lim(max_bond_dim.value());
+            log->info("Setting bond dimension limit to maximum = {}", chi_max());
+            state->set_chi_lim(chi_max());
         }
     }else{
         log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", chi_max(),state->get_chi_lim());
     }
-    sim_status.chi_max = max_bond_dim.value();
     sim_status.chi_lim = state->get_chi_lim();
+    if (state->get_chi_lim() > state->get_chi_max())
+        throw std::runtime_error(fmt::format("chi_lim is larger than chi_max! {} > {}",state->get_chi_lim() , state->get_chi_max() ));
+
 }
+//
+//void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
+//    if(not max_bond_dim.has_value()) {
+//        log->debug("No max bond dim given, setting {}", chi_max());
+//        max_bond_dim = chi_max();
+//    }
+//    try{
+//        long chi_lim_now = state->get_chi_lim();
+//        if(chi_lim_now < chi_init())
+//            throw std::logic_error("Chi limit should be larger than chi init");
+//    }catch(std::exception &error){
+//        //If we reached this stage, either
+//        // 1) chi_lim is not initialized yet
+//        // 2) chi_lim is initialized, but it is smaller than the init value found in settings
+//        // Either way, we should set chi_lim to be chi_init, unless chi_init is larger than max_bond_dim
+//        log->info("Setting initial bond dimension limit: {}", chi_init());
+//        state->set_chi_lim(std::min(max_bond_dim.value(),chi_init()));
+//        sim_status.chi_max = max_bond_dim.value();
+//        sim_status.chi_lim = state->get_chi_lim();
+//        return;
+//    }
+//
+//    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == max_bond_dim;
+//    if(not sim_status.chi_lim_has_reached_chi_max){
+//        if(chi_grow()){
+//            // Here the settings specify to grow the bond dimension limit progressively during the simulation
+//            // Only do this if the simulation is stuck.
+//            if(sim_status.simulation_has_got_stuck){
+//                long chi_new_limit = std::min(max_bond_dim.value(), state->get_chi_lim() * 2);
+//                log->debug("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
+//                state->set_chi_lim(chi_new_limit);
+//                clear_saturation_status();
+//            }else{
+//                log->debug("chi_grow is ON but sim is not stuck -> Kept current bond dimension limit {}", state->get_chi_lim());
+//            }
+//        }else{
+//            // Here the settings specify to just set the limit to maximum chi directly
+//            log->debug("Setting bond dimension limit to maximum = {}", chi_max());
+//            state->set_chi_lim(max_bond_dim.value());
+//        }
+//    }else{
+//        log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", chi_max(),state->get_chi_lim());
+//    }
+//    sim_status.chi_max = max_bond_dim.value();
+//    sim_status.chi_lim = state->get_chi_lim();
+//}
 
 
 
@@ -312,6 +386,14 @@ void class_algorithm_infinite::write_profiling(bool result){
     log->trace("Appending profiling to table");
     tools::infinite::io::h5table::write_profiling(sim_status,*h5tbuf_profiling);
     log->trace("Appending profiling to table... OK");
+}
+
+
+void class_algorithm_infinite::copy_from_tmp(bool result) {
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
+    if(result) tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
+    if (math::mod(sim_status.iteration, settings::output::copy_from_temp_freq) != 0) {return;} //Check that we write according to the frequency given
+    tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
 }
 
 
