@@ -76,17 +76,21 @@ num_cols=$(awk '{print NF}' $simfile | head -n 1)
 #trap Cleanup SIGTERM EXIT # Enable trap
 
 cleanup() {
-    echo "Startin cleanup"
+    echo "Starting cleanup"
     # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
     cleanupfile=logs/$simbase.cleanup_log
     for line in $simfile; do
         if [ "$num_cols" -eq 2 ]; then
             seed=$(cut -d ' ' -f2 $line)
-            rm $(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
+            target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
+            echo "Command1: rm $target"
+            rm $target
         elif [ "$num_cols" -eq 3 ]; then
             seed1=$(cut -d ' ' -f2 $line)
             seed2=$(cut -d ' ' -f3 $line)
-            rm $(find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5")
+            target=$(find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5")
+            echo "Command2: rm $target"
+            rm $target
         else
             echo "Case not implemented"
         fi
