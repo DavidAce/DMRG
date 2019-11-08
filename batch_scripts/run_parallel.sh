@@ -85,13 +85,10 @@ cleanup() {
         cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name "*_{2}_{3}.h5*")"
     else
         echo "Case not implemented"
-        exit 1
     fi
-
-    exit 0
 }
 
-trap cleanup INT TERM
+trap cleanup EXIT
 
 
 
