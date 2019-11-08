@@ -80,9 +80,9 @@ cleanup() {
     # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
     cleanupfile=logs/$simbase.cleanup_log
     if [ "$num_cols" -eq 2 ]; then
-        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name "*_{2}.h5*")      &> $outdir/$simbase.cleanup"
+        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name "*_{2}.h5*")"
     elif [ "$num_cols" -eq 3 ]; then
-        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name "*_{2}_{3}.h5*")  &> $outdir/$simbase.cleanup"
+        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name "*_{2}_{3}.h5*")"
     else
         echo "Case not implemented"
         exit 1
