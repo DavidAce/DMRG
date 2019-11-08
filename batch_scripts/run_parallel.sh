@@ -79,13 +79,19 @@ cleanup() {
     echo "Startin cleanup"
     # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
     cleanupfile=logs/$simbase.cleanup_log
-    if [ "$num_cols" -eq 2 ]; then
-        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' rm $(find /tmp/DMRG/ -type f -name "*_{2}.h5")
-    elif [ "$num_cols" -eq 3 ]; then
-        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' rm $(find /tmp/DMRG/ -type f -name "*_{2}_{3}.h5")
-    else
-        echo "Case not implemented"
-    fi
+    for line in $simfile; do
+        if [ "$num_cols" -eq 2 ]; then
+            seed=$(cut -d ' ' -f2 $line)
+            rm $(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
+        elif [ "$num_cols" -eq 3 ]; then
+            seed1=$(cut -d ' ' -f2 $line)
+            seed2=$(cut -d ' ' -f3 $line)
+            rm $(find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5")
+        else
+            echo "Case not implemented"
+        fi
+    done
+
 }
 
 trap cleanup EXIT
