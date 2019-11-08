@@ -76,6 +76,7 @@ num_cols=$(awk '{print NF}' $simfile | head -n 1)
 #trap Cleanup SIGTERM EXIT # Enable trap
 
 cleanup() {
+    sleep 5
     echo "Starting cleanup"
     # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
     if [ "$num_cols" -eq 2 ]; then
