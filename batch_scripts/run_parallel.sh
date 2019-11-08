@@ -78,8 +78,7 @@ num_cols=$(awk '{print NF}' $simfile | head -n 1)
 cleanup() {
     echo "Starting cleanup"
     # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
-    cleanupfile=logs/$simbase.cleanup_log
-    for line in $simfile; do
+    cat $simfile | cut -d ' ' -f2  | while read -r line ; do
         if [ "$num_cols" -eq 2 ]; then
             seed=$(cut -d ' ' -f2 $line)
             target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
