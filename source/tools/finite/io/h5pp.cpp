@@ -134,9 +134,9 @@ void tools::finite::io::h5dset::write_array_measurements(const class_state_finit
     state.do_all_measurements();
     tools::log->trace("Writing all measurements...");
     tools::common::profile::t_hdf.tic();
-    h5ppFile.writeDataset(state.measurements.bond_dimensions.value()               , prefix_path + "/measurements/bond_dimensions");
-    h5ppFile.writeDataset(state.measurements.entanglement_entropies.value()        , prefix_path + "/measurements/entanglement_entropies");
-    h5ppFile.writeDataset(state.measurements.spin_components.value()               , prefix_path + "/measurements/spin_components");
+    h5ppFile.writeDataset(state.measurements.bond_dimensions.value()               , prefix_path + "/bond_dimensions");
+    h5ppFile.writeDataset(state.measurements.entanglement_entropies.value()        , prefix_path + "/entanglement_entropies");
+    h5ppFile.writeDataset(state.measurements.spin_components.value()               , prefix_path + "/spin_components");
 
 //    h5ppFile.writeDataset(state.measurements.length.value()                        , prefix_path + "/measurements/length");
 //    h5ppFile.writeDataset(state.measurements.norm.value()                          , prefix_path + "/measurements/norm");
