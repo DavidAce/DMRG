@@ -119,6 +119,13 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<string> ("output::output_filename"         , output::output_filename);
     indata.find_parameter<string> ("output::access_mode"             , output::access_mode);
     indata.find_parameter<string> ("output::create_mode"             , output::create_mode);
+    indata.find_parameter<bool>   ("output::use_temp_dir"            , output::use_temp_dir);
+    indata.find_parameter<size_t> ("output::copy_from_temp_freq"     , output::copy_from_temp_freq);
+    indata.find_parameter<string> ("output::temp_dir"                , output::temp_dir);
+
+//    inline bool         use_temp_dir         = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
+//    inline size_t       copy_from_temp_freq  = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
+//    inline std::string  temp_dir             = "/scratch/local";             /*!< Local temp directory on the "local" system. If it doesn't exist we default to /tmp instead (or whatever is the default */
     int storageLevelRead = 2;
     indata.find_parameter<int>    ("output::storage_level"           , storageLevelRead );
     output::storage_level            = static_cast<StorageLevel>     (storageLevelRead);

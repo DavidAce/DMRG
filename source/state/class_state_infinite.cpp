@@ -91,6 +91,10 @@ void class_state_infinite::set_chi_max(long chi_max_){
     chi_max = chi_max_;
 }
 
+double class_state_infinite::get_truncation_error() const{
+    //Should get the the current limit on allowed bond dimension for the duration of the simulation
+    return tools::infinite::measure::truncation_error(*this);
+}
 
 Eigen::DSizes<long,4> class_state_infinite::dimensions()const{return MPS->dimensions();}
 

@@ -13,6 +13,7 @@
 #include <spdlog/spdlog.h>
 #include <h5pp/h5pp.h>
 #include <gitversion.h>
+#include <tools/nmspc_tools.h>
 
 
 namespace s = settings;
@@ -48,7 +49,10 @@ class_algorithm_launcher::class_algorithm_launcher()
     else if (settings::output::create_mode == "OPEN") createMode      = h5pp::CreateMode::OPEN;
     else {throw std::runtime_error("Wrong create mode: " + settings::output::create_mode);}
 
-
+    if(settings::output::use_temp_dir){
+        settings::output::output_filename = tools::common::io::h5tmp::set_tmp_prefix(settings::output::output_filename);
+    }
+    tools::common::io::h5tmp::create_directory(settings::output::output_filename);
     h5ppFile = std::make_shared<h5pp::File>(
             settings::output::output_filename,
             h5pp::AccessMode::READWRITE,
@@ -74,6 +78,8 @@ void class_algorithm_launcher::run_algorithms(){
     h5ppFile->writeDataset(true, "/common/finOK");
     log->info("All simulations finished");
     log->info("Simulation data written to file: {}", h5ppFile->getFilePath());
+    h5ppFile.reset();
+    tools::common::io::h5tmp::remove_from_temp(hdf5_path);
 }
 
 

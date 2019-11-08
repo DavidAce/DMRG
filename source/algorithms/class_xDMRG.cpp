@@ -44,6 +44,7 @@ void class_xDMRG::run_simulation()    {
         write_measurements();
         write_sim_status();
         write_profiling();
+        copy_from_tmp();
         check_convergence();
         try_projection();
         backup_best_state(*state); //Should come after check_convergence

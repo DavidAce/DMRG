@@ -53,7 +53,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.gradient_tolerance = 1e-2;
     ceres_default_options.parameter_tolerance = 1e-128;//std::numeric_limits<double>::epsilon();//1e-12;
     ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
-
+    ceres_default_options.logging_type = ceres::LoggingType::SILENT;
     if(sim_status.simulation_has_got_stuck){
 //        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
         ceres_default_options.function_tolerance = 1e-7; //Operations are cheap in subspace, so you can afford low tolerance

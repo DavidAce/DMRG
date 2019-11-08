@@ -181,6 +181,7 @@ void class_algorithm_finite::run_postprocessing(){
     print_status_full();
     print_profiling();
     t_pos.toc();
+    copy_from_tmp(true);
     log->info("Finished {} postprocessing",sim_name);
 }
 
@@ -261,6 +262,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
                         *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
                         write_projection(*state,settings::model::target_parity_sector);
                     }
+                    copy_from_tmp(true);
 
                 }else{
                     log->debug("chi_grow is ON, and simulation is stuck, but there is no reason to increase bond dimension -> Kept current bond dimension limit {}", state->get_chi_lim());
@@ -543,6 +545,13 @@ void class_algorithm_finite::write_projection(const class_state_finite & state_p
 }
 
 
+void class_algorithm_finite::copy_from_tmp(bool result) {
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
+    if(result) tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
+    if (not state->position_is_any_edge()){return;}
+    if (math::mod(sim_status.iteration, settings::output::copy_from_temp_freq) != 0) {return;} //Check that we write according to the frequency given
+    tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
+}
 
 void class_algorithm_finite::print_status_update() {
     if (math::mod(sim_status.step, print_freq()) != 0) {return;}

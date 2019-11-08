@@ -54,6 +54,7 @@ public:
     virtual void   write_measurements(bool result = false)                                                    = 0;
     virtual void   write_sim_status  (bool result = false)                                                    = 0;
     virtual void   write_profiling   (bool result = false)                                                    = 0;
+    virtual void   copy_from_tmp     (bool result = false)                                                    = 0;
     virtual bool   sim_on()                                                                                   = 0;
     virtual long   chi_max()                                                                                  = 0;
     virtual size_t num_sites()                                                                                = 0;

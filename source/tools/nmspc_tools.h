@@ -356,6 +356,15 @@ namespace tools{
                 extern class_simulation_status load_sim_status_from_hdf5(const h5pp::File &h5ppFile, std::string sim_name);
             }
 
+            namespace h5tmp{
+                extern std::string set_tmp_prefix(const std::string &output_filename);
+                extern std::string unset_tmp_prefix(const std::string &output_filename);
+                extern void copy_from_tmp(const std::string & output_filename);
+                extern void create_directory(const std::string & dir);
+                extern void remove_from_temp(const std::string & output_filename);
+
+            }
+
         }
 
 
