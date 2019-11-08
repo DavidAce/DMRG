@@ -77,12 +77,12 @@ num_cols=$(awk '{print NF}' $simfile | head -n 1)
 
 cleanup() {
     echo "Startin cleanup"
-    # Clean up task
+    # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
     cleanupfile=logs/$simbase.cleanup_log
     if [ "$num_cols" -eq 2 ]; then
-        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}*)      &> $outdir/$simbase.cleanup"
+        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name "*_{2}.h5*")      &> $outdir/$simbase.cleanup"
     elif [ "$num_cols" -eq 3 ]; then
-        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}_{3}*)  &> $outdir/$simbase.cleanup"
+        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name "*_{2}_{3}.h5*")  &> $outdir/$simbase.cleanup"
     else
         echo "Case not implemented"
         exit 1
