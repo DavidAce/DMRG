@@ -81,15 +81,19 @@ cleanup() {
     if [ "$num_cols" -eq 2 ]; then
         cat $simfile | cut -d " " -f2  | while read -r seed ; do
             target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
-            echo "Find command: find  /tmp/DMRG/ -type f -name "*_$seed.h5""
-            echo "Command1: rm $target"
+            if [ -z "$target" ]; then
+                continue
+            fi
             rm $target
         done
     elif [ "$num_cols" -eq 3 ]; then
         cat $simfile | cut -d " " -f2,3  | while read -r seed ; do
-            target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
-            echo "Find command: find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5""
-            echo "Command2: rm $target"
+            seed1=$(cut -d " " -f1 $seed)
+            seed2=$(cut -d " " -f2 $seed)
+            target=$(find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5")
+            if [ -z "$target" ]; then
+                continue
+            fi
             rm $target
         done
     else
