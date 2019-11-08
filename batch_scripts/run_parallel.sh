@@ -56,9 +56,27 @@ num_cols=$(awk '{print NF}' $simfile | head -n 1)
 
 
 
-function Cleanup ()
-{
-    trap "" SIGTERM EXIT # Disable trap now we're in it
+#function Cleanup ()
+#{
+#    trap "" SIGTERM EXIT # Disable trap now we're in it
+#    # Clean up task
+#    cleanupfile=logs/$simbase.cleanup_log
+#    if [ "$num_cols" -eq 2 ]; then
+#        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}*)      &> $outdir/$simbase.cleanup"
+#    elif [ "$num_cols" -eq 3 ]; then
+#        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}_{3}*)  &> $outdir/$simbase.cleanup"
+#    else
+#        echo "Case not implemented"
+#        exit 1
+#    fi
+#
+#    exit 0
+#}
+#
+#trap Cleanup SIGTERM EXIT # Enable trap
+
+cleanup() {
+    echo "Startin cleanup"
     # Clean up task
     cleanupfile=logs/$simbase.cleanup_log
     if [ "$num_cols" -eq 2 ]; then
@@ -66,17 +84,14 @@ function Cleanup ()
     elif [ "$num_cols" -eq 3 ]; then
         cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}_{3}*)  &> $outdir/$simbase.cleanup"
     else
-    echo "Case not implemented"
-    exit 1
-fi
+        echo "Case not implemented"
+        exit 1
+    fi
 
     exit 0
 }
 
-DATADIR=$(pwd)
-trap Cleanup SIGTERM EXIT # Enable trap
-
-
+trap cleanup INT TERM
 
 
 
