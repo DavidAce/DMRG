@@ -50,7 +50,7 @@ void tools::common::io::h5tmp::create_directory(const std::string & path){
         else tools::log = spdlog::get("DMRG");
     }
     fs::path dir = fs::absolute(path);
-    if(dir.has_filename()) dir = dir.parent_path();
+    if(dir.has_filename() and dir.has_extension()) dir = dir.parent_path();
 
     try{
         if (fs::create_directories(dir)){
@@ -72,7 +72,7 @@ void tools::common::io::h5tmp::copy_from_tmp(const std::string &output_filename)
     if(target_path == source_path) return;
 
     if(not fs::exists(target_path.parent_path())){
-        tools::common::io::h5tmp::create_directory(target_path.parent_path());
+        tools::common::io::h5tmp::create_directory(target_path);
     }
     if(fs::exists(target_path)){
         std::ifstream target_stream(target_path.string(), std::ios_base::binary);
