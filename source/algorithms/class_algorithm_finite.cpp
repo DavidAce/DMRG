@@ -480,6 +480,7 @@ void class_algorithm_finite::write_measurements(bool result){
         // current bond dimension.
         class_h5table_buffer<class_h5table_measurements_finite> h5tbuf_measurements_results(h5pp_file, sim_name + "/results/measurements");
         tools::finite::io::h5table::write_measurements(*state_backup,sim_status, h5tbuf_measurements_results);
+        tools::finite::io::h5dset::write_array_measurements(*state_backup,*h5pp_file, sim_name + "/results");
     }
 
     if (h5tbuf_measurements == nullptr){return;}
@@ -487,6 +488,7 @@ void class_algorithm_finite::write_measurements(bool result){
     if (not state->position_is_any_edge()){return;}
     if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
     tools::finite::io::h5table::write_measurements(*state,sim_status, *h5tbuf_measurements);
+    tools::finite::io::h5dset::write_array_measurements(*state,*h5pp_file, sim_name + "/progress");
 }
 
 
