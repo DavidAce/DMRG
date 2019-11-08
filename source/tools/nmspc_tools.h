@@ -207,8 +207,7 @@ namespace tools{
                 extern void write_full_mps                               (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
                 extern void write_full_mpo                               (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
                 extern void write_model                                  (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-                extern void write_entanglement                           (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
-                extern void write_all_measurements                       (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
+                extern void write_array_measurements                     (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
 
             }
 

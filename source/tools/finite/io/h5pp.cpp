@@ -74,6 +74,7 @@ void tools::finite::io::h5dset::write_bond_matrix(const class_state_finite & sta
     h5ppFile.writeDataset(state.get_truncation_error(middle), prefix_path + "/state/truncation_error",extendable);
 }
 
+
 void tools::finite::io::h5dset::write_full_mps(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path)
 /*!
  * Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation.
@@ -129,24 +130,25 @@ void tools::finite::io::h5dset::write_model(const class_state_finite & state, h5
     }
 }
 
-void tools::finite::io::h5dset::write_all_measurements(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path){
+void tools::finite::io::h5dset::write_array_measurements(const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path){
     state.do_all_measurements();
     tools::log->trace("Writing all measurements...");
     tools::common::profile::t_hdf.tic();
-    h5ppFile.writeDataset(state.measurements.length.value()                        , prefix_path + "/measurements/length");
-    h5ppFile.writeDataset(state.measurements.norm.value()                          , prefix_path + "/measurements/norm");
     h5ppFile.writeDataset(state.measurements.bond_dimensions.value()               , prefix_path + "/measurements/bond_dimensions");
-    h5ppFile.writeDataset(state.measurements.bond_dimension_midchain.value()       , prefix_path + "/measurements/bond_dimension_midchain");
-    h5ppFile.writeDataset(state.measurements.energy.value()                        , prefix_path + "/measurements/energy");
-    h5ppFile.writeDataset(state.measurements.energy_per_site.value()               , prefix_path + "/measurements/energy_per_site");
-    h5ppFile.writeDataset(state.measurements.energy_variance_mpo.value()           , prefix_path + "/measurements/energy_variance_mpo");
-    h5ppFile.writeDataset(state.measurements.energy_variance_per_site.value()      , prefix_path + "/measurements/energy_variance_per_site");
     h5ppFile.writeDataset(state.measurements.entanglement_entropies.value()        , prefix_path + "/measurements/entanglement_entropies");
-    h5ppFile.writeDataset(state.measurements.entanglement_entropy_midchain.value() , prefix_path + "/measurements/entanglement_entropy_midchain");
     h5ppFile.writeDataset(state.measurements.spin_components.value()               , prefix_path + "/measurements/spin_components");
-    h5ppFile.writeDataset(state.measurements.spin_component_sx.value()             , prefix_path + "/measurements/spin_component_sx");
-    h5ppFile.writeDataset(state.measurements.spin_component_sy.value()             , prefix_path + "/measurements/spin_component_sy");
-    h5ppFile.writeDataset(state.measurements.spin_component_sz.value()             , prefix_path + "/measurements/spin_component_sz");
+
+//    h5ppFile.writeDataset(state.measurements.length.value()                        , prefix_path + "/measurements/length");
+//    h5ppFile.writeDataset(state.measurements.norm.value()                          , prefix_path + "/measurements/norm");
+//    h5ppFile.writeDataset(state.measurements.bond_dimension_midchain.value()       , prefix_path + "/measurements/bond_dimension_midchain");
+//    h5ppFile.writeDataset(state.measurements.energy.value()                        , prefix_path + "/measurements/energy");
+//    h5ppFile.writeDataset(state.measurements.energy_per_site.value()               , prefix_path + "/measurements/energy_per_site");
+//    h5ppFile.writeDataset(state.measurements.energy_variance_mpo.value()           , prefix_path + "/measurements/energy_variance_mpo");
+//    h5ppFile.writeDataset(state.measurements.energy_variance_per_site.value()      , prefix_path + "/measurements/energy_variance_per_site");
+//    h5ppFile.writeDataset(state.measurements.entanglement_entropy_midchain.value() , prefix_path + "/measurements/entanglement_entropy_midchain");
+//    h5ppFile.writeDataset(state.measurements.spin_component_sx.value()             , prefix_path + "/measurements/spin_component_sx");
+//    h5ppFile.writeDataset(state.measurements.spin_component_sy.value()             , prefix_path + "/measurements/spin_component_sy");
+//    h5ppFile.writeDataset(state.measurements.spin_component_sz.value()             , prefix_path + "/measurements/spin_component_sz");
     tools::common::profile::t_hdf.toc();
     tools::log->trace("Writing all measurements... OK");
 
