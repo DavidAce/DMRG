@@ -78,24 +78,24 @@ num_cols=$(awk '{print NF}' $simfile | head -n 1)
 cleanup() {
     echo "Starting cleanup"
     # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
-    cat $simfile | cut -d ' ' -f2  | while read -r line ; do
-        if [ "$num_cols" -eq 2 ]; then
-            seed=$(cut -d ' ' -f2 $line)
+    if [ "$num_cols" -eq 2 ]; then
+        cat $simfile | cut -d " " -f2  | while read -r seed ; do
             target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
             echo "Find command: find  /tmp/DMRG/ -type f -name "*_$seed.h5""
             echo "Command1: rm $target"
             rm $target
-        elif [ "$num_cols" -eq 3 ]; then
-            seed1=$(cut -d ' ' -f2 $line)
-            seed2=$(cut -d ' ' -f3 $line)
-            target=$(find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5")
+        done
+    elif [ "$num_cols" -eq 3 ]; then
+        cat $simfile | cut -d " " -f2,3  | while read -r seed ; do
+            target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
             echo "Find command: find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5""
             echo "Command2: rm $target"
             rm $target
-        else
-            echo "Case not implemented"
-        fi
-    done
+        done
+    else
+        echo "Case not implemented"
+    fi
+
 
 }
 
