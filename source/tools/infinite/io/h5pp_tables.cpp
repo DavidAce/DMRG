@@ -8,7 +8,7 @@
 
 
 void tools::infinite::io::h5table::write_measurements(const class_state_infinite &state, const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_measurements_infinite> &h5tbuf) {
-    log->trace("Appending measurement entry to table: {} ...",h5tbuf.get_table_name());
+    log->trace("Appending measurement entry to table: {}...",h5tbuf.get_table_name());
     class_h5table_measurements_infinite::data_struct measurements_entry;
     measurements_entry.step                            = sim_status.step;
     measurements_entry.iteration                       = sim_status.iteration;
@@ -32,7 +32,7 @@ void tools::infinite::io::h5table::write_measurements(const class_state_infinite
     measurements_entry.wall_time                       = sim_status.phys_time;
     measurements_entry.wall_time                       = sim_status.delta_t;
     h5tbuf.append_record(measurements_entry);
-    log->trace("Appending measurement entry to table: {} ... OK",h5tbuf.get_table_name());
+    log->trace("Appending measurement entry to table: {}... OK",h5tbuf.get_table_name());
 }
 
 
