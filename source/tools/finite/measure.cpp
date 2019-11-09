@@ -12,10 +12,11 @@
 #include <tools/nmspc_tools.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_environment.h>
-#include <state/class_mps_2site.h>
+//#include <state/class_mps_2site.h>
 #include <state/class_state_finite.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
+#include <simulation/class_simulation_status.h>
 
 
 
@@ -196,6 +197,11 @@ double tools::finite::measure::energy_variance_per_site(const class_state_finite
 
 }
 
+
+double tools::finite::measure::energy_normalized(const class_state_finite &state, const class_simulation_status &sim_status) {
+    return  (tools::finite::measure::energy_per_site(state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
+
+}
 
 
 double tools::finite::measure::entanglement_entropy_current(const class_state_finite & state){

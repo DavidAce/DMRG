@@ -9,6 +9,7 @@
 #include <h5pp/h5pp.h>
 #include <tools/nmspc_tools.h>
 #include <simulation/nmspc_settings.h>
+#include "../../unused/class_h5table_buffer_dynamic.h"
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites)
     : class_algorithm_base(std::move(h5ppFile_), sim_name,sim_type)
@@ -20,7 +21,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
     if (settings::output::storage_level >= StorageLevel::NORMAL){
         log->trace("Constructing table buffers in finite base");
-        h5tbuf_measurements  = std::make_shared<class_h5table_buffer<class_h5table_measurements_finite>> (h5pp_file, sim_name + "/progress/measurements");
+        h5tbuf_measurements  = std::make_shared<class_h5table_buffer<class_h5table_measurements_finite>> (h5pp_file, sim_name + "/journal/measurements");
     }
 
 
@@ -155,28 +156,27 @@ void class_algorithm_finite::run_postprocessing(){
     state_backup->unset_measurements();
     print_status_update();
 
-    double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
-    double variance_champion  = tools::finite::measure::energy_variance_per_site(*state_backup);
-    log->trace("Variance candidate = {}", std::log10(variance_candidate));
-    log->trace("Variance champion  = {}", std::log10(variance_champion));
-    if (variance_champion < variance_candidate){
-        log->trace("Replacing the current state with the champion");
-        *state = *state_backup;
-    }else{
-        log->trace("The current state is better than the champion");
-        *state_backup = *state;
-    }
+    backup_best_state(*state);
+//    double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
+//    double variance_champion  = tools::finite::measure::energy_variance_per_site(*state_backup);
+//    log->trace("Variance candidate = {}", std::log10(variance_candidate));
+//    log->trace("Variance champion  = {}", std::log10(variance_champion));
+//    if (variance_champion < variance_candidate){
+//        log->trace("Replacing the current state with the champion");
+//        *state = *state_backup;
+//    }else{
+//        log->trace("The current state is better than the champion");
+//        *state_backup = *state;
+//    }
 //    state->do_all_measurements();
 
-    write_measurements(true);
     write_state(true);
+    write_measurements(true);
     write_sim_status(true);
+    write_profiling(true);
 
-//    tools::finite::io::write_all_measurements(*state, *h5pp_file, sim_name);
-//    tools::finite::io::write_all_state(*state,*h5pp_file, sim_name);
     auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state,settings::model::target_parity_sector);
     write_projection(state_projected,settings::model::target_parity_sector);
-//    tools::finite::io::h5dset::write_projection_to_closest_parity_sector(*state, *h5pp_file, sim_name, settings::model::target_parity_sector);
 
     print_status_full();
     print_profiling();
@@ -190,17 +190,20 @@ void class_algorithm_finite::move_center_point(){
     log->trace("Moving center point ");
     size_t move_steps = state->active_sites.empty() ? 1 : std::max(1ul,state->active_sites.size()-2ul);
     state->clear_cache();
-//    log->debug("Variance check before move               : {:.16f}", std::log10(tools::finite::measure::energy_variance_per_site(*state)));
     try{
         for(size_t i = 0; i < move_steps;i++){
             tools::finite::mps::move_center_point(*state);
-//            log->debug("Variance check after move  {:2}          : {:.16f}",i, std::log10(tools::finite::measure::energy_variance_per_site(*state)));
         }
     }catch(std::exception & e){
         tools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
 }
+
+
+
+
+
 
 void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit){
     if(tmp_bond_limit.has_value()) {
@@ -245,6 +248,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
                 log->debug("Bond at limit  count: {} ", bond_at_lim_count);
                 if(trunc_bond_count > 0 and bond_at_lim_count > 0){
                     //Write final results before updating bond dimension chi
+                    backup_best_state(*state);
                     write_state(true);
                     write_measurements(true);
                     write_sim_status(true);
@@ -347,7 +351,6 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
         if (V_mpo_vec.back() < threshold and sim_status.variance_mpo_saturated_for == 0) throw std::logic_error("Variance should have saturated");
         if (V_mpo_vec.back() < threshold and not sim_status.variance_mpo_has_converged ) throw std::logic_error("Variance should have converged");
     }
-
 }
 
 
@@ -432,7 +435,6 @@ void class_algorithm_finite::clear_saturation_status(){
     sim_status.variance_mpo_has_saturated     = false;
     sim_status.variance_mpo_saturated_for     = 0;
 
-
     sim_status.chi_lim_has_reached_chi_max    = false;
     sim_status.simulation_has_to_stop         = false;
     sim_status.simulation_has_got_stuck       = false;
@@ -453,19 +455,18 @@ void class_algorithm_finite::write_state(bool result){
         // it has finalized some stage, like saturated at the
         // current bond dimension.
 
-        tools::finite::io::h5dset::write_all_state(*state_backup, *h5pp_file, sim_name + "/results");
+        tools::finite::io::h5dset::write_all_state(*state_backup, *h5pp_file, sim_name);
         if(store_wave_function()){
             //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
-              h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state_backup), sim_name + "results/state/psi");
+              h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state_backup), sim_name + "/state/psi");
         }
-
     }
 
     if (not state->position_is_any_edge()){return;}
     if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
     tools::finite::io::h5dset::write_all_state(*state, *h5pp_file, sim_name);
     if (settings::output::storage_level >= StorageLevel::FULL){
-        std::string prefix = sim_name + "/progress/iter_" + std::to_string(sim_status.iteration);
+        std::string prefix = sim_name + "/journal/iter_" + std::to_string(sim_status.iteration);
         tools::finite::io::h5dset::write_all_state(*state, *h5pp_file, prefix);
     }
 }
@@ -481,14 +482,31 @@ void class_algorithm_finite::write_measurements(bool result){
         class_h5table_buffer<class_h5table_measurements_finite> h5tbuf_measurements_results(h5pp_file, sim_name + "/results/measurements");
         tools::finite::io::h5table::write_measurements(*state_backup,sim_status, h5tbuf_measurements_results);
         tools::finite::io::h5dset::write_array_measurements(*state_backup,*h5pp_file, sim_name + "/results");
+        if (settings::output::storage_level >= StorageLevel::NORMAL){
+            std::string prefix = sim_name + "/results/iter_" + std::to_string(sim_status.iteration);
+            tools::finite::io::h5dset::write_array_measurements(*state_backup,*h5pp_file, prefix);
+        }
     }
 
+    // For the journalning we do the usual checks
+    // Except we can forcefully insert an entry to the journal if it's a result
+    // and we're actually keeping a journal.
     if (h5tbuf_measurements == nullptr){return;}
     if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
-    if (not state->position_is_any_edge()){return;}
-    if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
+    if(not result){
+        if (not state->position_is_any_edge()){return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
+        if (settings::output::storage_level >= StorageLevel::FULL){
+            //In full mode we keep everything at each sweep
+            std::string prefix = sim_name + "/journal/iter_" + std::to_string(sim_status.iteration);
+            tools::finite::io::h5dset::write_array_measurements(*state,*h5pp_file, prefix);
+        }
+    }
     tools::finite::io::h5table::write_measurements(*state,sim_status, *h5tbuf_measurements);
-    tools::finite::io::h5dset::write_array_measurements(*state,*h5pp_file, sim_name + "/progress");
+    tools::finite::io::h5dset::write_array_measurements(*state,*h5pp_file, sim_name + "/journal");
+
+
+
 }
 
 
@@ -503,47 +521,43 @@ void class_algorithm_finite::write_sim_status(bool result){
         class_h5table_buffer<class_h5table_simulation_status> h5tbuf_sim_status_results(h5pp_file, sim_name + "/results/sim_status");
         tools::finite::io::h5table::write_sim_status(sim_status, h5tbuf_sim_status_results);
     }
-
+    // For the journalning we do the usual checks
+    // Except we can forcefully insert an entry to the journal if it's a result
+    // and we're actually keeping a journal.
     if (h5tbuf_sim_status == nullptr){return;}
     if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
-    if (not state->position_is_any_edge()){return;}
-    if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
+    if (not result){
+        if (not state->position_is_any_edge()){return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
+    }
     tools::finite::io::h5table::write_sim_status(sim_status, *h5tbuf_sim_status);
-
 }
 
 
 void class_algorithm_finite::write_profiling(bool result){
     if (not settings::profiling::on ){return;}
     if (settings::output::storage_level == StorageLevel::NONE){return;}
-    if(result){
-        // This means that we are writing an important result:
-        // Either the simulation has converged successfully or
-        // it has finalized some stage, like saturated at the
-        // current bond dimension.
-        class_h5table_buffer<class_h5table_profiling> h5tbuf_profiling_results(h5pp_file, sim_name + "/results/profiling");
-        tools::finite::io::h5table::write_profiling(sim_status, h5tbuf_profiling_results);
+    if (h5tbuf_profiling == nullptr){return;}
+
+    if(not result){
+        if (not state->position_is_any_edge()){return;}
+        if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
+        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
     }
 
-    if (h5tbuf_profiling == nullptr){return;}
-    if (not state->position_is_any_edge()){return;}
-    if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
-    if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
     tools::finite::io::h5table::write_profiling(sim_status,*h5tbuf_profiling);
 }
 
 void class_algorithm_finite::write_projection(const class_state_finite & state_projected, std::string parity_sector){
     if (settings::output::storage_level == StorageLevel::NONE){return;}
     if (parity_sector == "none") return;
-    std::string prefix = sim_name + "/projections/" + parity_sector;
+    std::string prefix = sim_name + "/projections/" + parity_sector + "/results";
     tools::finite::io::h5dset::write_all_state(state_projected,*h5pp_file,prefix);
     class_h5table_buffer<class_h5table_measurements_finite> h5tbuf_measurements_projection(h5pp_file, prefix + "/measurements");
     class_h5table_buffer<class_h5table_simulation_status>   h5tbuf_sim_status_projection(h5pp_file, prefix + "/sim_status");
     tools::finite::io::h5table::write_measurements(state_projected,sim_status, h5tbuf_measurements_projection);
     tools::finite::io::h5table::write_sim_status(sim_status,h5tbuf_sim_status_projection);
-
-
-
+    tools::finite::io::h5dset::write_array_measurements(state_projected,*h5pp_file, prefix);
 }
 
 
@@ -575,7 +589,7 @@ void class_algorithm_finite::print_status_update() {
     report << fmt::format("Sₑ(l): {:<10.8f} "                                 ,tools::finite::measure::entanglement_entropy_current(*state));
     report << fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] "             ,std::log10(tools::finite::measure::energy_variance_per_site(*state)), std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
     report << fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} "                 ,chi_max(), state->get_chi_lim(), tools::finite::measure::bond_dimension_current(*state));
-    report << fmt::format("log₁₀ trunc: {:<10.4f} "                            ,std::log10(state->get_truncation_error(state->get_position())));
+    report << fmt::format("log₁₀ trunc: {:<10.4f} "                           ,std::log10(state->get_truncation_error(state->get_position())));
     report << fmt::format("con: [σ² {:<5} Sₑ {:<5}] "                         ,sim_status.variance_mpo_has_converged,sim_status.entanglement_has_converged);
     report << fmt::format("sat: [σ² {:<2} Sₑ {:<2}] "                         ,sim_status.variance_mpo_saturated_for,sim_status.entanglement_saturated_for);
     report << fmt::format("time: {:<8.2f}s "                                  ,t_tot.get_age());
@@ -593,19 +607,19 @@ void class_algorithm_finite::print_status_full(){
     log->info("{:=^60}","");
 
     log->info("--- Final results  --- {} ---", sim_name);
-    log->info("Sites                              = {}"    , state->get_length());
-    log->info("Iterations                         = {}"    , sim_status.iteration);
-    log->info("Sweeps                             = {}"    , state->get_sweeps());
+    log->info("Sites                              = {}"    , state_backup->get_length());
+    log->info("Iterations (sweeps)                = {}"    , sim_status.iteration);
+    log->info("Steps                              = {}"    , sim_status.step);
     log->info("Simulation time                    = {:<.1f} s = {:<.2f} min" , t_tot.get_age(), t_tot.get_age()/60);
-    log->info("Energy per site E/L                = {:<.16f}"   , tools::finite::measure::energy_per_site(*state));
+    log->info("Energy per site E/L                = {:<.16f}"   , tools::finite::measure::energy_per_site(*state_backup));
     if (sim_type == SimulationType::xDMRG){
-    log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}" ,sim_status.energy_dens);
+    log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}"   ,tools::finite::measure::energy_normalized(*state_backup,sim_status));
     }
-    log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}"   , std::log10(tools::finite::measure::energy_variance_per_site(*state)));
+    log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}"   , std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
     log->info("Bond dimension maximum χmax        = {}"         , chi_max());
-    log->info("Bond dimensions χ                  = {}"         , tools::finite::measure::bond_dimensions(*state));
-    log->info("Entanglement entropies Sₑ          = {}"         , tools::finite::measure::entanglement_entropies(*state));
-    log->info("Truncation Errors                  = {}"         , state->get_truncation_errors());
+    log->info("Bond dimensions χ                  = {}"         , tools::finite::measure::bond_dimensions(*state_backup));
+    log->info("Entanglement entropies Sₑ          = {}"         , tools::finite::measure::entanglement_entropies(*state_backup));
+    log->info("Truncation Errors                  = {}"         , state_backup->get_truncation_errors());
     log->info("Simulation converged               = {:<}"       , sim_status.simulation_has_converged);
     log->info("Simulation saturated               = {:<}"       , sim_status.simulation_has_saturated);
     log->info("Simulation succeeded               = {:<}"       , sim_status.simulation_has_succeeded);

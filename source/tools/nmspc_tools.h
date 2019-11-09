@@ -148,7 +148,7 @@ namespace tools{
             extern double energy_per_site                             (const class_state_finite & state);
             extern double energy_variance                             (const class_state_finite & state);
             extern double energy_variance_per_site                    (const class_state_finite & state);
-
+            extern double energy_normalized                           (const class_state_finite & state, const class_simulation_status & sim_status);
             template<typename Derived>
             double energy_minus_energy_reduced(const class_state_finite & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){
                 constexpr int rank = Derived::NumIndices;

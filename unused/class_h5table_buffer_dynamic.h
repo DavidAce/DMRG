@@ -1,11 +1,8 @@
 //
-// Created by david on 2018-05-24.
+// Created by david on 2019-11-08.
 //
 
 #pragma once
-
-//#include <hdf5.h>
-//#include <hdf5_hl.h>
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <io/table_types.h>
@@ -18,11 +15,10 @@ namespace h5pp{
 }
 
 
-template<typename table_type>
-class class_h5table_buffer{
+class class_h5table_buffer_dynamic{
 private:
     std::shared_ptr<h5pp::File> h5ppFile;
-    std::unique_ptr<table_type> table_entries;
+//    std::unique_ptr<table_type> table_entries;
     std::string table_path;
     std::string group_name            = "default_group";
     std::string table_name            = "default_table";
@@ -34,32 +30,34 @@ private:
 
     // For console logging
     std::shared_ptr<spdlog::logger> log;
-    size_t logLevel      = 3;
-    std::string logName  = "h5t_buffer";
+    size_t logLevel      = 0;
+    std::string logName  = "h5t_dynamic";
 
 
-    void initialize_table();
+    void initialize_empty_table();
     void write_buffer_to_file();
 public:
-    explicit class_h5table_buffer();
-    ~class_h5table_buffer();
-    class_h5table_buffer(std::shared_ptr<h5pp::File> h5ppFile_,
+    explicit class_h5table_buffer_dynamic();
+    ~class_h5table_buffer_dynamic();
+    class_h5table_buffer_dynamic(std::shared_ptr<h5pp::File> h5ppFile_,
                          std::filesystem::path table_path_,
                          bool mpi_on_ = false  );
 
 
-    template<typename ...Args>
-    void append_record(Args&& ...args){
-        log->trace("Appending record to output table: {}", table_name);
-        table_entries->buffer.emplace_back(std::forward<Args> (args)...);
-        buffer_is_empty = false;
-        if (get_num_buffered_entries() >= table_entries->meta.chunk_size){
-            write_buffer_to_file();
-        }
-    }
-
+//    template<typename ...Args>
+//    void append_record(Args&& ...args){
+//        log->trace("Appending record to output table: {}", table_name);
+//        table_entries->buffer.emplace_back(std::forward<Args> (args)...);
+//        buffer_is_empty = false;
+//        if (get_num_buffered_entries() >= table_entries->meta.chunk_size){
+//            write_buffer_to_file();
+//        }
+//    }
+    template<typename T>
+    void insert_field(const std::string &field_name);
     std::string get_table_name() const;
     std::string get_table_path() const;
+    std::vector<std::string> get_field_names() const;
     size_t get_num_recorded_entries() const;
     size_t get_num_buffered_entries() const;
 

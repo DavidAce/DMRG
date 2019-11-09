@@ -105,6 +105,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
                     tools::infinite::measure::bond_dimension(*state) >=state->get_chi_lim() )
                 {
                     //Write final results before updating bond dimension chi
+//                    backup_best_state(*state);
                     write_state(true);
                     write_measurements(true);
                     write_sim_status(true);
