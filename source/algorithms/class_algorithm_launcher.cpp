@@ -36,18 +36,23 @@ class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h
 {
 
     setLogger("DMRG");
-    hdf5_path = h5ppFile->getFilePath();
+    hdf5_temp_path  = h5ppFile->getFilePath();
+    hdf5_final_path = h5ppFile->getFilePath();
 
 }
 class_algorithm_launcher::class_algorithm_launcher()
 {
     setLogger("DMRG");
 
+    if (settings::output::storage_level == StorageLevel::NONE){return;}
+
     h5pp::CreateMode createMode;
     if(settings::output::create_mode == "TRUNCATE") createMode        = h5pp::CreateMode::TRUNCATE;
     else if (settings::output::create_mode == "RENAME") createMode    = h5pp::CreateMode::RENAME;
     else if (settings::output::create_mode == "OPEN") createMode      = h5pp::CreateMode::OPEN;
     else {throw std::runtime_error("Wrong create mode: " + settings::output::create_mode);}
+
+
 
     if(settings::output::use_temp_dir){
         settings::output::output_filename = tools::common::io::h5tmp::set_tmp_prefix(settings::output::output_filename);
@@ -58,6 +63,9 @@ class_algorithm_launcher::class_algorithm_launcher()
             h5pp::AccessMode::READWRITE,
             createMode);
 
+    hdf5_temp_path  = h5ppFile->getFilePath();
+    hdf5_final_path = tools::common::io::h5tmp::unset_tmp_prefix(h5ppFile->getFilePath());
+
 
     if (createMode == h5pp::CreateMode::TRUNCATE or createMode == h5pp::CreateMode::RENAME){
         //Put git revision in file attribute
@@ -66,20 +74,24 @@ class_algorithm_launcher::class_algorithm_launcher()
         h5ppFile->writeAttributeToFile(GIT::REVISION    , "GIT REVISION");
     }
 
-    hdf5_path = h5ppFile->getFilePath();
 }
 
 
 void class_algorithm_launcher::run_algorithms(){
+    if(h5ppFile) h5ppFile->writeDataset(false, "/common/finOK");
     run_iDMRG();
     run_fDMRG();
     run_xDMRG();
     run_iTEBD();
-    h5ppFile->writeDataset(true, "/common/finOK");
+
+    if(h5ppFile) {
+        h5ppFile->writeDataset(true, "/common/finOK");
+        tools::common::io::h5tmp::copy_from_tmp(hdf5_temp_path);
+        h5ppFile.reset();// Kill the file
+        tools::common::io::h5tmp::remove_from_temp(hdf5_temp_path);
+        log->info("Simulation data written to file: {}", hdf5_final_path);
+    }
     log->info("All simulations finished");
-    log->info("Simulation data written to file: {}", h5ppFile->getFilePath());
-    h5ppFile.reset();
-    tools::common::io::h5tmp::remove_from_temp(hdf5_path);
 }
 
 
