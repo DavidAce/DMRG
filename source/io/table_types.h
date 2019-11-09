@@ -43,8 +43,8 @@ public:
         constexpr static hsize_t NFIELDS = 20;
         size_t dst_size = sizeof(data_struct);
         std::array<size_t, NFIELDS> dst_offsets = {
-                HOFFSET(data_struct, step),
                 HOFFSET(data_struct, iteration),
+                HOFFSET(data_struct, step),
                 HOFFSET(data_struct, position),
                 HOFFSET(data_struct, length),
                 HOFFSET(data_struct, bond_dimension_midchain),
@@ -65,8 +65,8 @@ public:
                 HOFFSET(data_struct, wall_time)
         };
         std::array<size_t, NFIELDS> dst_sizes = {
-                sizeof(data_struct::step),
                 sizeof(data_struct::iteration),
+                sizeof(data_struct::step),
                 sizeof(data_struct::position),
                 sizeof(data_struct::length),
                 sizeof(data_struct::bond_dimension_midchain),
@@ -87,8 +87,8 @@ public:
                 sizeof(data_struct::wall_time),
         };
         std::array<const char *, NFIELDS> field_names = {
-                "step",
                 "iteration",
+                "step",
                 "position",
                 "length",
                 "bond_dimension_midchain",
@@ -137,8 +137,8 @@ public:
 class class_h5table_measurements_infinite{
 public:
     struct data_struct {
-        int     step;
         int     iteration;
+        int     step;
         int     position;
         int     length;
         int     bond_dimension;
@@ -165,8 +165,8 @@ public:
         constexpr static hsize_t NFIELDS = 21;
         size_t dst_size = sizeof(data_struct);
         std::array<size_t, NFIELDS> dst_offsets = {
-                HOFFSET(data_struct, step),
                 HOFFSET(data_struct, iteration),
+                HOFFSET(data_struct, step),
                 HOFFSET(data_struct, position),
                 HOFFSET(data_struct, length),
                 HOFFSET(data_struct, bond_dimension),
@@ -188,8 +188,8 @@ public:
                 HOFFSET(data_struct, time_step)
         };
         std::array<size_t, NFIELDS> dst_sizes = {
-                sizeof(data_struct::step),
                 sizeof(data_struct::iteration),
+                sizeof(data_struct::step),
                 sizeof(data_struct::position),
                 sizeof(data_struct::length),
                 sizeof(data_struct::bond_dimension),
@@ -211,8 +211,8 @@ public:
                 sizeof(data_struct::time_step)
         };
         std::array<const char *, NFIELDS> field_names = {
-                "step",
                 "iteration",
+                "step",
                 "position",
                 "length",
                 "bond_dimension",
@@ -258,83 +258,12 @@ public:
 
 };
 
-//class class_h5table_tebd{
-//private:
-//    struct data_struct {
-//        int     iteration;
-//        long    chi;
-//        long    chi_max;
-//        double  time_step;
-//        double  energy_mpo; double  energy_ham; double  energy_mom;
-//        double  variance_mpo; double  variance_ham; double  variance_mom;
-//        double  entanglement_entropy;
-//        double  truncation_error;
-//        double  phys_time;
-//        double  wall_time;
-//    };
-//    struct meta_struct {
-//        constexpr static hsize_t NFIELDS = 14;
-//        size_t dst_size = sizeof(data_struct);
-//        std::array<size_t, NFIELDS> dst_offsets = {HOFFSET(data_struct, iteration),
-//                                                   HOFFSET(data_struct, chi),
-//                                                   HOFFSET(data_struct, chi_max),
-//                                                   HOFFSET(data_struct, time_step),
-//                                                   HOFFSET(data_struct, energy_mpo), HOFFSET(data_struct, energy_ham), HOFFSET(data_struct, energy_mom),
-//                                                   HOFFSET(data_struct, variance_mpo), HOFFSET(data_struct, variance_ham), HOFFSET(data_struct, variance_mom),
-//                                                   HOFFSET(data_struct, entanglement_entropy),
-//                                                   HOFFSET(data_struct, truncation_error),
-//                                                   HOFFSET(data_struct, phys_time),
-//                                                   HOFFSET(data_struct, wall_time)
-//        };
-//        std::array<size_t, NFIELDS> dst_sizes = {
-//                sizeof(data_struct::iteration),
-//                sizeof(data_struct::chi),
-//                sizeof(data_struct::chi_max),
-//                sizeof(data_struct::time_step),
-//                sizeof(data_struct::energy_mpo), sizeof(data_struct::energy_ham), sizeof(data_struct::energy_mom),
-//                sizeof(data_struct::variance_mpo), sizeof(data_struct::variance_ham), sizeof(data_struct::variance_mom),
-//                sizeof(data_struct::entanglement_entropy),
-//                sizeof(data_struct::truncation_error),
-//                sizeof(data_struct::phys_time),
-//                sizeof(data_struct::wall_time)
-//        };
-//        std::array<const char *, NFIELDS> field_names = {"iteration",
-//                                                         "chi",
-//                                                         "chi_lim",
-//                                                         "time_step",
-//                                                         "energy","energy_per_site_ham","energy_per_site_mom",
-//                                                         "variance_mpo","variance_ham","variance_mom",
-//                                                         "entanglement_entropy_midchain",
-//                                                         "truncation_error",
-//                                                         "phys_time",
-//                                                         "wall_time"
-//        };
-//
-//        std::array<hid_t, NFIELDS> field_types = {H5T_NATIVE_INT,
-//                                                  H5T_NATIVE_LONG,
-//                                                  H5T_NATIVE_LONG,
-//                                                  H5T_NATIVE_DOUBLE,
-//                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-//                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-//                                                  H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-//                                                  H5T_NATIVE_DOUBLE};
-//        hsize_t chunk_size = 4;
-//        void *fill_data = nullptr;
-//        int compress = 0;
-//    };
-//public:
-//    class_h5table_tebd() = default;
-//    meta_struct meta;
-//    std::vector<data_struct> buffer;
-//};
-
-
 
 class class_h5table_profiling{
 public:
     struct data_struct{
-        int    step      = 0;
         int    iteration = 0;
+        int    step      = 0;
         int    position  = 0;
         double t_tot = 0;
         double t_run = 0;
@@ -369,8 +298,8 @@ private:
         constexpr static hsize_t                NFIELDS     = 28;
         size_t           dst_size                           = sizeof (data_struct);
         std::array       <size_t,NFIELDS>       dst_offsets = {
-                HOFFSET(data_struct, step),
                 HOFFSET(data_struct, iteration),
+                HOFFSET(data_struct, step),
                 HOFFSET(data_struct, position),
                 HOFFSET(data_struct, t_tot),
                 HOFFSET(data_struct, t_run),
@@ -399,8 +328,8 @@ private:
                 HOFFSET(data_struct, t_chi),
         };
         std::array       <size_t,NFIELDS>       dst_sizes   = {
-                sizeof(data_struct::step),
                 sizeof(data_struct::iteration),
+                sizeof(data_struct::step),
                 sizeof(data_struct::position),
                 sizeof(data_struct::t_tot),
                 sizeof(data_struct::t_run),
@@ -429,8 +358,8 @@ private:
                 sizeof(data_struct::t_chi)
         };
         std::array       <const char*,NFIELDS>  field_names = {
-                "step",
                 "iteration",
+                "step",
                 "position",
                 "t_tot",
                 "t_run",
@@ -487,9 +416,9 @@ private:
         std::array       <size_t,NFIELDS>       dst_offsets =
                 {
                     HOFFSET(status_data, iteration                     ),
-                    HOFFSET(status_data, moves                         ),
                     HOFFSET(status_data, step                          ),
                     HOFFSET(status_data, position                      ),
+                    HOFFSET(status_data, moves                         ),
                     HOFFSET(status_data, num_resets                    ),
                     HOFFSET(status_data, chi_max                       ),
                     HOFFSET(status_data, chi_lim                       ),
@@ -531,9 +460,9 @@ private:
 
         std::array       <size_t,NFIELDS>       dst_sizes   = {
                 sizeof(status_data::iteration                     ),
-                sizeof(status_data::moves                         ),
                 sizeof(status_data::step                          ),
                 sizeof(status_data::position                      ),
+                sizeof(status_data::moves                         ),
                 sizeof(status_data::num_resets                    ),
                 sizeof(status_data::chi_max                       ),
                 sizeof(status_data::chi_lim                       ),
@@ -575,9 +504,9 @@ private:
         std::array       <const char*,NFIELDS>  field_names =
                 {
                     "iteration",
-                    "moves",
                     "step",
                     "position",
+                    "moves",
                     "num_resets",
                     "chi_max",
                     "chi_lim",

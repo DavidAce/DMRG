@@ -18,9 +18,9 @@ void class_simulation_status::clear(){*this = class_simulation_status();}
 std::ostream & operator << (std::ostream& os, const class_simulation_status & sim_status){
     return os
             << std::string("iteration                      : ") << sim_status.iteration << '\n'
-            << std::string("moves                          : ") << sim_status.moves << '\n'
             << std::string("step                           : ") << sim_status.step << '\n'
             << std::string("position                       : ") << sim_status.position << '\n'
+            << std::string("moves                          : ") << sim_status.moves << '\n'
             << std::string("num_resets                     : ") << sim_status.num_resets << '\n'
             << std::string("chi_max                        : ") << sim_status.chi_max << '\n'
             << std::string("chi_lim                        : ") << sim_status.chi_lim << '\n'

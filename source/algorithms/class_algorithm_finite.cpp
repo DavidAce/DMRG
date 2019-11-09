@@ -490,7 +490,7 @@ void class_algorithm_finite::write_measurements(bool result){
 
     // For the journalning we do the usual checks
     // Except we can forcefully insert an entry to the journal if it's a result
-    // and we're actually keeping a journal.
+    // and we're actually keeping a journal. We do no journaling on LIGHT mode
     if (h5tbuf_measurements == nullptr){return;}
     if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
     if(not result){
@@ -523,7 +523,7 @@ void class_algorithm_finite::write_sim_status(bool result){
     }
     // For the journalning we do the usual checks
     // Except we can forcefully insert an entry to the journal if it's a result
-    // and we're actually keeping a journal.
+    // and we're actually keeping a journal. We do no journaling on LIGHT mode
     if (h5tbuf_sim_status == nullptr){return;}
     if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
     if (not result){

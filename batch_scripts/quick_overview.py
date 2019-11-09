@@ -48,6 +48,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     chainlen  = []
     seed      = []
     iter      = []
+    step      = []
     variance  = []
     ententrp  = []
     walltime  = []
@@ -61,8 +62,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary:
-        header = "{:<8} {:<6} {:<6} {:^24} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter", "Variance","Ent.Entr.", "Time",
-                                                                                             "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
+        header = "{:<8} {:<6} {:<6} {:<6} {:^24} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Variance","Ent.Entr.", "Time",
+                                                                                                           "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
         print(header)
         if args.save:
             file.write(header + '\n')
@@ -81,22 +82,26 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         step_journal = 0
         try:
             if 'xDMRG/journal' in h5file:
-                step_progress = h5file['xDMRG/journal'].get('sim_status')['step'][-1];
+                step_journal = h5file['xDMRG/journal'].get('sim_status')['step'][-1]
+                # print("step_journal: ", step_journal)
+
             if 'xDMRG/results' in h5file:
-                step_results = h5file['xDMRG/results'].get('sim_status')['step'][-1];
+                step_results = h5file['xDMRG/results'].get('sim_status')['step'][-1]
+                # print("step_results: ", step_results)
         except:
             print("Could not check existence of paths!?")
-        if step_progress > step_results:
+        if step_journal > step_results:
             table_path = 'xDMRG/journal'
         else:
             table_path = 'xDMRG/results'
 
-        # print(table_path,step_progress, step_results)
+        # print(table_path,step_journal, step_results)
         try:
             realization_name = h5path.replace('.h5', '')
             chainlen       .append(h5file[table_path].get('measurements')['length'][-1])
             seed           .append([int(x) for x in regex.findall(realization_name)][-1])
             iter           .append(h5file[table_path].get('sim_status')['iteration'][-1])
+            step           .append(h5file[table_path].get('sim_status')['step'][-1])
             variance       .append(h5file[table_path].get('measurements')['energy_variance_per_site'][-1])
             ententrp       .append(h5file[table_path].get('measurements')['entanglement_entropy_midchain'][-1])
             walltime       .append(h5file[table_path].get('sim_status')['wall_time'][-1])
@@ -146,10 +151,11 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
             if not args.summary:
-                entry = "{:<8} {:<6} {:<6} {:^24.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+                entry = "{:<8} {:<6} {:<6} {:<6} {:^24.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
                     chainlen[-1],
                     seed[-1],
                     iter[-1],
+                    step[-1],
                     np.log10(variance[-1]),
                     ententrp[-1],
                     walltime[-1] / 60,
@@ -167,13 +173,14 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
             continue
-    header = "{:<8} {:<6} {:<6} {:>12} {:<12} {:>11} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>", "log10 <Var>", "<log10 Var>","<Entgl>","<Time>",
-                                                                                              "<Resets>","Stk", "Sat", "Con",
-                                                                                              "Suc", "Fin")
-    entry = "{:<8} {:<6} {:<6.1f} {:>12.4f} {:<12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:<12} {:>11} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>", "log10 <Var>", "<log10 Var>","<Entgl>","<Time>",
+                                                                                                              "<Resets>","Stk", "Sat", "Con",
+                                                                                                              "Suc", "Fin")
+    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:<12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
         np.int(np.mean(chainlen)),
         len(seed),
         np.nanmean(iter),
+        np.nanmean(step),
         np.log10(np.nanmean(variance)),
         np.nanmean(np.log10(variance)),
         np.mean(ententrp),
