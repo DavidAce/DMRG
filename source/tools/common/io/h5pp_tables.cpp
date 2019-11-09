@@ -6,14 +6,14 @@
 #include <io/class_h5table_buffer.h>
 
 void tools::common::io::h5table::write_sim_status(const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_simulation_status> &h5tbuf) {
-    log->trace("Appending simulation status table: {} ...",h5tbuf.get_table_name());
+    log->trace("Appending simulation status table: {}...",h5tbuf.get_table_name());
     h5tbuf.append_record(sim_status);
-    log->trace("Appending simulation status table: {} ... OK",h5tbuf.get_table_name());
+    log->trace("Appending simulation status table: {}... OK",h5tbuf.get_table_name());
 }
 
 
 void tools::common::io::h5table::write_profiling(const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_profiling> &h5tbuf) {
-    log->trace("Appending profiling data to table: {} ...",h5tbuf.get_table_name());
+    log->trace("Appending profiling data to table: {}...",h5tbuf.get_table_name());
     class_h5table_profiling::data_struct profiling_entry;
     profiling_entry.step            = sim_status.step;
     profiling_entry.iteration       = sim_status.iteration;
@@ -47,6 +47,6 @@ void tools::common::io::h5table::write_profiling(const class_simulation_status &
     profiling_entry.t_chi = 0;
 
     h5tbuf.append_record(profiling_entry);
-    log->trace("Appending profiling data to table: {} ... OK",h5tbuf.get_table_name());
+    log->trace("Appending profiling data to table: {}... OK",h5tbuf.get_table_name());
 
 }

@@ -8,7 +8,7 @@
 #include <state/class_state_finite.h>
 #include <general/nmspc_quantum_mechanics.h>
 void tools::finite::io::h5table::write_measurements(const class_state_finite &state, const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_measurements_finite> &h5tbuf) {
-    log->trace("Appending measurement entry to table: {} ...",h5tbuf.get_table_name());
+    log->trace("Appending measurement entry to table: {}...",h5tbuf.get_table_name());
     class_h5table_measurements_finite::data_struct measurements_entry;
     measurements_entry.step                            = sim_status.step;
     measurements_entry.iteration                       = sim_status.iteration;
@@ -31,7 +31,7 @@ void tools::finite::io::h5table::write_measurements(const class_state_finite &st
     measurements_entry.truncation_error                = state.get_truncation_error();
     measurements_entry.wall_time                       = sim_status.wall_time;
     h5tbuf.append_record(measurements_entry);
-    log->trace("Appending measurement entry to table: {} ... OK",h5tbuf.get_table_name());
+    log->trace("Appending measurement entry to table: {}... OK",h5tbuf.get_table_name());
 }
 
 void tools::finite::io::h5table::write_sim_status(const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_simulation_status> &h5tbuf) {
