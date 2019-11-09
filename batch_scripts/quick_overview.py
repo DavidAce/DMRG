@@ -106,6 +106,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             ententrp       .append(h5file[table_path].get('measurements')['entanglement_entropy_midchain'][-1])
             walltime       .append(h5file[table_path].get('sim_status')['wall_time'][-1])
             resets         .append(h5file[table_path].get('sim_status')['num_resets'][-1])
+            got_stuck      .append(h5file[table_path].get('sim_status')['simulation_has_got_stuck'][-1])
             saturated      .append(h5file[table_path].get('sim_status')['simulation_has_saturated'][-1])
             converged      .append(h5file[table_path].get('sim_status')['simulation_has_converged'][-1])
             succeeded      .append(h5file[table_path].get('sim_status')['simulation_has_succeeded'][-1])
@@ -115,22 +116,12 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             except:
                 finished.append(0)
 
-            try:
-                got_stuck.append(h5file['xDMRG/sim_status/simulation_has_got_stuck'][-1])
-            except:
-                if finished[-1] == 0 and converged[-1] == 0 and saturated[-1] == 1:
-                    got_stuck.append(1)
-                else:
-                    got_stuck.append(0)
-
             h5file.close()
 
             style = ''
             if finished[-1] == 1 and succeeded[-1] == 1:
                 style = colored.bg("green_4")
-            elif finished[-1] == 1 and converged[-1] == 1:
-                style = colored.bg("hot_pink_2")
-            elif finished[-1] == 1 and got_stuck[-1] == 1:
+            elif finished[-1] == 1:
                 if variance[-1] < 1e-10:
                     style = colored.bg("dark_green_sea")
                 elif variance[-1] < 1e-8:
