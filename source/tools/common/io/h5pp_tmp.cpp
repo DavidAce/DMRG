@@ -98,11 +98,16 @@ void tools::common::io::h5tmp::remove_from_temp(const std::string & output_filen
         temp_path = settings::output::temp_dir/ fs::path("DMRG/");
     else temp_path = fs::temp_directory_path() / fs::path("DMRG/");
 
+
     std::string::size_type pos = output_filename.find(temp_path.string());
     if (pos != std::string::npos){
-        // Its in the temp directory!
-        copy_from_tmp(output_filename);
-        tools::log->debug("Deleting temporary file: {}",output_filename);
-        fs::remove(output_filename);
+        // Path points to the temp directory!
+        if(fs::exists(output_filename)){
+            tools::log->debug("Deleting temporary file: {}",output_filename);
+            fs::remove(output_filename);
+        }else{
+            tools::log->debug("Nothing to delete");
+        }
+
     }
 }
