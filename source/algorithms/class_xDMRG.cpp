@@ -93,12 +93,11 @@ void class_xDMRG::single_xDMRG_step()
     auto optMode    = opt::OptMode(opt::MODE::OVERLAP);
     auto optSpace   = opt::OptSpace(opt::SPACE::DIRECT);
     auto optType    = opt::OptType(opt::TYPE::CPLX);
+//    optSpace        = not chi_grow()                                                                  ? opt::SPACE::SUBSPACE   : optSpace.option;
     optMode         = sim_status.iteration  >= 2  and measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
     optMode         = sim_status.iteration  >= 6  or  measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
-//    optSpace        = state->get_chi_lim() <= 16                                                      ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = optMode == opt::MODE::OVERLAP                                                   ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = sim_status.simulation_has_stuck_for >= 2                                        ? opt::SPACE::SUBSPACE  : optSpace.option;
-//    optSpace        = sim_status.simulation_has_stuck_for >= 2                                        ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = state->size_2site()  > settings::precision::maxSizePartDiag                     ? opt::SPACE::DIRECT    : optSpace.option;
     optSpace        = sim_status.variance_mpo_has_converged                                           ? opt::SPACE::DIRECT    : optSpace.option;
     optType         = state->isReal()                                                                 ? opt::TYPE::REAL       : optType.option;

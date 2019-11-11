@@ -19,7 +19,15 @@ std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_f
     if (pos != std::string::npos){
         return output_filename;
     }else{
-        fs::path h5pp_path = fs::absolute(output_filename);
+        fs::path h5pp_path1 = fs::absolute(output_filename);
+        fs::path h5pp_path2 = temp_path / fs::relative(h5pp_path1,fs::current_path());
+        fs::path h5pp_path3 = temp_path / fs::relative(output_filename,fs::current_path());
+        fs::path h5pp_path4 = temp_path / output_filename;
+        std::cout << "path1: "<< h5pp_path1 << std::endl;
+        std::cout << "path2: "<< h5pp_path2 << std::endl;
+        std::cout << "path3: "<< h5pp_path3 << std::endl;
+        std::cout << "path4: "<< h5pp_path4 << std::endl;
+        exit(0);
         return fs::absolute(temp_path / fs::relative(h5pp_path,fs::current_path()));
     }
 
