@@ -44,6 +44,7 @@ std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string &output
 }
 
 void tools::common::io::h5tmp::create_directory(const std::string & path){
+    if(path.empty()) return;
     if(tools::log == nullptr){
         if(spdlog::get("DMRG") == nullptr)
              tools::log = spdlog::default_logger();
@@ -66,6 +67,7 @@ void tools::common::io::h5tmp::create_directory(const std::string & path){
 
 
 void tools::common::io::h5tmp::copy_from_tmp(const std::string &output_filename){
+    if(output_filename.empty()) return;
     fs::path target_path = unset_tmp_prefix(output_filename);
     fs::path source_path = output_filename;
 
@@ -92,7 +94,8 @@ void tools::common::io::h5tmp::copy_from_tmp(const std::string &output_filename)
 
 }
 
-void tools::common::io::h5tmp::remove_from_temp(const std::string & output_filename){
+void tools::common::io::h5tmp::remove_from_temp(const std::string output_filename){
+    if(output_filename.empty()) {std::cout << "Nothing to delete" << std::endl << std::flush; return;}
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
         temp_path = settings::output::temp_dir/ fs::path("DMRG/");
@@ -108,6 +111,7 @@ void tools::common::io::h5tmp::remove_from_temp(const std::string & output_filen
         }else{
             tools::log->debug("Nothing to delete");
         }
-
+    }else{
+        tools::log->debug("Temp file is disabled - nothing to delete");
     }
 }

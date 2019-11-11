@@ -15,9 +15,20 @@
 #include <gitversion.h>
 #include <tools/nmspc_tools.h>
 
+//#include <stdlib.h>
+#include <cstdlib>
 
 namespace s = settings;
 using namespace std;
+
+static std::string hdf5_temp_path;
+static std::string hdf5_final_path;
+
+void class_algorithm_launcher::remove_temp_file() {
+    tools::common::io::h5tmp::remove_from_temp(hdf5_temp_path);
+}
+
+
 
 void class_algorithm_launcher::setLogger(std::string name){
     if(spdlog::get(name) == nullptr){
@@ -43,6 +54,7 @@ class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h
 class_algorithm_launcher::class_algorithm_launcher()
 {
     setLogger("DMRG");
+    std::at_quick_exit(class_algorithm_launcher::remove_temp_file);
 
     if (settings::output::storage_level == StorageLevel::NONE){return;}
 
@@ -55,15 +67,14 @@ class_algorithm_launcher::class_algorithm_launcher()
 
 
     if(settings::output::use_temp_dir){
-        settings::output::output_filename = tools::common::io::h5tmp::set_tmp_prefix(settings::output::output_filename);
+        hdf5_temp_path = tools::common::io::h5tmp::set_tmp_prefix(settings::output::output_filename);
+        tools::common::io::h5tmp::create_directory(hdf5_temp_path);
+        h5ppFile = std::make_shared<h5pp::File>(hdf5_temp_path,h5pp::AccessMode::READWRITE,createMode);
+    }else{
+        tools::common::io::h5tmp::create_directory(settings::output::output_filename);
+        h5ppFile = std::make_shared<h5pp::File>(settings::output::output_filename,h5pp::AccessMode::READWRITE,createMode);
     }
-    tools::common::io::h5tmp::create_directory(settings::output::output_filename);
-    h5ppFile = std::make_shared<h5pp::File>(
-            settings::output::output_filename,
-            h5pp::AccessMode::READWRITE,
-            createMode);
 
-    hdf5_temp_path  = h5ppFile->getFilePath();
     hdf5_final_path = tools::common::io::h5tmp::unset_tmp_prefix(h5ppFile->getFilePath());
 
 
@@ -73,6 +84,7 @@ class_algorithm_launcher::class_algorithm_launcher()
         h5ppFile->writeAttributeToFile(GIT::COMMIT_HASH , "GIT COMMIT");
         h5ppFile->writeAttributeToFile(GIT::REVISION    , "GIT REVISION");
     }
+
 
 }
 

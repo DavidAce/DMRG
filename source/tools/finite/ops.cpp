@@ -103,7 +103,7 @@ class_state_finite tools::finite::ops::get_projection_to_parity_sector(const cla
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
     tools::common::profile::t_prj.toc();
-    tools::finite::mps::normalize(state_projected);
+    tools::finite::mps::normalize(state_projected,2*state.get_chi_lim());
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);
     state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation

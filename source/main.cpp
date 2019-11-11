@@ -56,14 +56,14 @@ NOTE                        : Order of argument matters. In particular, set seed
 #include <signal.h>
 void signal_callback_handler(int signum) {
     switch(signum){
-        case SIGTERM: {std::cout  << "Caught SIGTERM" <<std::endl; break;}
-        case SIGKILL: {std::cout  << "Caught SIGKILL" <<std::endl; break;}
-        case SIGINT : {std::cout  << "Caught SIGINT" <<std::endl; break;}
-        case SIGHUP : {std::cout  << "Caught SIGHUP" <<std::endl; break;}
-        case SIGQUIT : {std::cout << "Caught SIGQUIT" <<std::endl; break;}
+        case SIGTERM:  {std::cout  << "Caught SIGTERM" <<std::endl; break;}
+        case SIGKILL:  {std::cout  << "Caught SIGKILL" <<std::endl; break;}
+        case SIGINT :  {std::cout  << "Caught SIGINT"  <<std::endl; break;}
+        case SIGHUP :  {std::cout  << "Caught SIGHUP"  <<std::endl; break;}
+        case SIGQUIT : {std::cout  << "Caught SIGQUIT" <<std::endl; break;}
     }
     std::cout << "Exiting" << std::endl << std::flush;
-    exit(signum);
+    std::quick_exit(signum);
 }
 
 

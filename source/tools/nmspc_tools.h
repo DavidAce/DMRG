@@ -45,7 +45,7 @@ namespace tools{
         namespace mps {
             extern void initialize                          (class_state_finite & state, size_t length);
             extern void randomize                           (class_state_finite &state, const std::string &parity_sector = "random", int seed_state = -1, bool use_pauli_eigenstates = false, bool enumeration =  false);
-            extern void normalize                           (class_state_finite & state);
+            extern void normalize                           (class_state_finite & state, const std::optional<size_t> chi_lim = std::nullopt);
             extern void rebuild_environments                (class_state_finite & state);
             extern int  move_center_point                   (class_state_finite & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
             extern void project_to_closest_parity_sector    (class_state_finite & state, std::string paulistring);
@@ -93,7 +93,7 @@ namespace tools{
             extern void truncate_theta(Eigen::Tensor<Scalar,3> & theta, class_state_finite & state);
             extern void truncate_left (Eigen::Tensor<Scalar,3> & theta, class_state_finite & state);
             extern void truncate_right(Eigen::Tensor<Scalar,3> & theta, class_state_finite & state);
-            extern void truncate_theta(Eigen::Tensor<Scalar,4> & theta, class_state_finite & state);
+            extern void truncate_theta(Eigen::Tensor<Scalar,4> & theta, class_state_finite & state,const std::optional<size_t> chi_lim = std::nullopt);
         }
 
         namespace multisite{
@@ -360,7 +360,7 @@ namespace tools{
                 extern std::string unset_tmp_prefix(const std::string &output_filename);
                 extern void copy_from_tmp(const std::string & output_filename);
                 extern void create_directory(const std::string & dir);
-                extern void remove_from_temp(const std::string & output_filename);
+                extern void remove_from_temp(const std::string output_filename);
 
             }
 

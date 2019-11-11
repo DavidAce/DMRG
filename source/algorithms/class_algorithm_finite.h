@@ -29,8 +29,8 @@ public:
     //MPS
     std::unique_ptr<class_state_finite>    state,state_backup;
     // What happens when stuck this many iterations:
-    // 1: direct, 2: subspace, 3: update bond dim, 4: max_stuck_iters = stop
-    size_t max_stuck_iters               = 4; // If stuck for this many sweeps -> stop simulation
+    // 1: direct, 2: subspace, 2: subspace, 4: update bond dim, 5: max_stuck_iters = stop
+    size_t max_stuck_iters               = 5; // If stuck for this many sweeps -> stop simulation
     size_t min_stuck_iters               = 2; // If stuck for this many sweeps -> do subspace instead of direct
     //What happens when saturated this many iterations
     size_t min_saturation_iters          = 1; // If both var and ent saturated  this long -> got_stuck: true
