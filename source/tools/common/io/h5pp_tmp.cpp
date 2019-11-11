@@ -33,8 +33,8 @@ std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_f
         std::cout << "path5: "<< h5pp_path5 << std::endl;
 //        std::cout << "path6: "<< h5pp_path6 << std::endl;
         std::cout << "path7: "<< h5pp_path7 << std::endl;
-        exit(0);
-//        return fs::absolute(temp_path / fs::relative(h5pp_path,fs::current_path()));
+//        exit(0);
+        return fs::absolute(temp_path / output_filename);
     }
 
 
