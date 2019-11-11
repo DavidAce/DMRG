@@ -103,7 +103,8 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite
     }
 
     // Finish up and print reports
-    tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
+    tools::log->trace("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
+//    tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
 //    std::cout << summary.FullReport() << "\n";
     reports::print_report(opt_log);
     reports::print_report(std::make_tuple(

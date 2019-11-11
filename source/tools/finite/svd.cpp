@@ -7,7 +7,7 @@
 #include <simulation/nmspc_settings.h>
 
 
-void tools::finite::mps::normalize(class_state_finite & state){
+void tools::finite::mps::normalize(class_state_finite & state, const std::optional<size_t> chi_lim_opt){
 
     tools::log->trace("Normalizing state");
     using namespace Textra;
@@ -15,6 +15,8 @@ void tools::finite::mps::normalize(class_state_finite & state){
     state.unset_measurements();
     tools::common::profile::t_svd.tic();
     size_t num_moves = 2*(state.get_length()-2);
+    size_t chi_lim = state.get_chi_lim();
+    if(chi_lim_opt.has_value()) chi_lim = chi_lim_opt.value();
     tools::log->trace("Norm before normalization = {:.16f}", tools::finite::measure::norm(state));
     tools::log->trace("Bond dimensions before normalization: {}", tools::finite::measure::bond_dimensions(state));
 
@@ -35,7 +37,7 @@ void tools::finite::mps::normalize(class_state_finite & state){
                             .contract(state.MPS_L.back().get_M(), Textra::idx({1},{1}))
                             .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                             .shuffle(Textra::array4{1,0,2,3});
-            tools::finite::opt::truncate_theta(theta, state);
+            tools::finite::opt::truncate_theta(theta, state,chi_lim);
         }else{
             MPS_R.emplace_front(class_mps_site(MPS_L.back().get_M(), LC, MPS_L.back().get_position()));
             MPS_L.pop_back();
@@ -43,7 +45,7 @@ void tools::finite::mps::normalize(class_state_finite & state){
                     state.MPS_L.back().get_M()
                             .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                             .contract(Textra::asDiagonal(LC), Textra::idx({3},{0}));
-            tools::finite::opt::truncate_theta(theta, state);
+            tools::finite::opt::truncate_theta(theta, state,chi_lim);
         }
 
         if(MPS_L.empty()) throw std::runtime_error("MPS_L became empty");
@@ -134,7 +136,15 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
         theta4 = V
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3})
                 .shuffle(Textra::array4{0,2,1,3});
-        std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4,state.get_chi_lim());
+//        std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4,state.get_chi_lim());
+        auto chi_lim = state.get_chi_lim();
+        std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4, chi_lim);
+
+//        while(true){
+//            if(SVD.get_truncation_error() > 1e-12){chi_lim *=2; tools::log->warn("SVD truncation is ridiculous: {} chi_lim -> {}", SVD.get_truncation_error(), chi_lim);}
+//            else {break;}
+//        }
+
         state.set_truncation_error(site, SVD.get_truncation_error());
 
         state.get_MPS(site).set_M(U);
@@ -219,7 +229,16 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
         theta4 = U
                 .reshape(Textra::array4{dim0,dim1,dim2,dim3})
                 .shuffle(Textra::array4{0,2,1,3});
-        try {std::tie(U,S,V,norm) = SVD.schmidt_with_norm(theta4, state.get_chi_lim());}
+        try {
+            auto chi_lim = state.get_chi_lim();
+//            std::tie(U,S,V,norm) = SVD.schmidt_with_norm(theta4, state.get_chi_lim());
+            std::tie(U, S, V,norm) = SVD.schmidt_with_norm(theta4, chi_lim);
+
+//            while(true){
+//                if(SVD.get_truncation_error() > 1e-12){chi_lim *=2; tools::log->warn("SVD truncation is ridiculous: {} chi_lim -> {}", SVD.get_truncation_error(), chi_lim);}
+//                else {break;}
+//            }
+        }
         catch(std::exception &ex){
             std::cerr << "U :\n" << U << std::endl;
             std::cerr << "S :\n" << S << std::endl;
@@ -279,15 +298,26 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state) {
+void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state,const std::optional<size_t> chi_lim_opt) {
     tools::common::profile::t_svd.tic();
     class_SVD SVD;
     SVD.setThreshold(settings::precision::SVDThreshold);
-    auto[U, S, V] = SVD.schmidt(theta, state.get_chi_lim());
+    size_t chi_lim = state.get_chi_lim();
+    if(chi_lim_opt.has_value())  chi_lim = chi_lim_opt.value();
+    auto[U, S, V] = SVD.schmidt(theta, chi_lim);
     state.set_truncation_error(SVD.get_truncation_error());
     state.MPS_L.back().set_M(U);
     state.MPS_L.back().set_LC(S);
     state.MPS_R.front().set_M(V);
+
+//    while(true){
+//        if(SVD.get_truncation_error() > 1e-12){chi_lim *=2; tools::log->warn("SVD truncation is ridiculous: {} chi_lim -> {}", SVD.get_truncation_error(), chi_lim);}
+//        else {
+//
+//            break;
+//        }
+//    }
+
     state.unset_measurements();
     tools::common::profile::t_svd.toc();
 }

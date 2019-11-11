@@ -392,7 +392,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             auto   best_overlap_theta              = Textra::MatrixTensorMap(eigvecs.col(best_overlap_idx), state.active_dimensions());
             double best_overlap_energy             = eigvals_per_site_unreduced(best_overlap_idx);
             double best_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
-            tools::log->trace("Candidate {:2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
+            tools::log->trace("Candidate {:<2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
             return best_overlap_theta;
         }
 
@@ -414,63 +414,21 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         auto   candidate_theta              = Textra::MatrixTensorMap(eigvecs.col(candidate.second), state.active_dimensions());
         double candidate_energy             = eigvals_per_site_unreduced(candidate.second);
         double candidate_variance           = tools::finite::measure::energy_variance_per_site(state, candidate_theta);
-        tools::log->trace("Candidate {:2} has good overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",candidate.second ,candidate.first ,candidate_energy  ,std::log10(candidate_variance) );
+        tools::log->trace("Candidate {:<2} has good overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",candidate.second ,candidate.first ,candidate_energy  ,std::log10(candidate_variance) );
         initial_guess_thetas.emplace_back(candidate_theta);
     }
 
-
-//
-//    Eigen::Tensor<Scalar,3> theta_initial;
-//    if (sim_status.simulation_has_got_stuck){
-//        tools::log->trace("Initial guess   : old theta");
-//        theta_initial = theta_old;
-//
-//    }else{
-//        tools::log->trace("Initial guess   : best overlap candidate {}",best_overlap_idx);
-//        theta_initial = best_overlap_theta;
-//    }
-
-//    ceres::GradientProblemSolver::Options options;
-//    options.line_search_type = ceres::LineSearchType::WOLFE;
-//    options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
-//    options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
-//    options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-//    options.max_num_iterations = 250;
-//    options.max_lbfgs_rank     = 250;
-//    options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
-//    options.max_line_search_step_expansion = 1e4;// 100.0;
-//    options.min_line_search_step_size = 1e-64;//  std::numeric_limits<double>::epsilon();
-//    options.max_line_search_step_contraction = 1e-3;
-//    options.min_line_search_step_contraction = 0.6;
-//    options.max_num_line_search_step_size_iterations  = 40;//20;
-//    options.max_num_line_search_direction_restarts    = 5;//2;
-//    options.line_search_sufficient_function_decrease  = 1e-2;
-//    options.line_search_sufficient_curvature_decrease = 0.4; //0.5;
-//    options.max_solver_time_in_seconds = 60*5;//60*2;
-//    options.function_tolerance = 1e-5; //Operations are cheap in subspace, so you can afford low tolerance
-//    options.gradient_tolerance = 1e-2;
-//    options.parameter_tolerance = 1e-64;//std::numeric_limits<double>::epsilon();//1e-12;
-//    options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
-//
-//    if(sim_status.simulation_has_got_stuck){
-////        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
-//        options.function_tolerance = 1e-7; //Operations are cheap in subspace, so you can afford low tolerance
-//        options.max_num_iterations = 500;
-//        options.gradient_tolerance = 1e-4;
-//        options.max_solver_time_in_seconds = 60*10;//60*2;
+//TODO: This is just testing something!
+//    if(initial_guess_thetas.size() > 1 and sim_status.simulation_has_got_stuck ){
+//        tools::log->debug("Possibly stuck on cat-state. Returning second-best overlapping state");
+//        exit(0);
+//        return initial_guess_thetas[1];
 //    }
 
 
 
 
-//    Progress log definitions:
-//    f is the value of the objective function.
-//    d is the change in the value of the objective function if the step computed in this iteration is accepted.
-//    g is the max norm of the gradient (i.e. the largest element of |grad f|)
-//    h is the change in the parameter vector.
-//    s is the optimal step length computed by the line search.
-//    it is the time take by the current iteration.
-//    tt is the total time taken by the minimizer.
+
 
 
 
@@ -621,7 +579,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 
 
 
-        tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
+        tools::log->trace("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
         //    std::cout << summary.FullReport() << "\n";
 
         tools::common::profile::t_opt.toc();
@@ -634,7 +592,6 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         opt_log.emplace_back("Ceres L-BFGS (direct) ",optimized_theta.size(), optimized_energy, std::log10(optimized_variance), optimized_overlap,optimized_vec.norm(), 0,0, t_opt->get_last_time_interval());
 
         optimized_results.emplace_back(std::make_pair(optimized_variance,optimized_theta));
-//        return ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status, optType);
     }
 
     // Finish up and print reports

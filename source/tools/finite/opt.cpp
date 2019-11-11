@@ -37,7 +37,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     ceres_default_options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     ceres_default_options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
-    ceres_default_options.max_num_iterations = 250;
+    ceres_default_options.max_num_iterations = 1000;
     ceres_default_options.max_lbfgs_rank     = 250;
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
     ceres_default_options.max_line_search_step_expansion = 1e4;// 100.0;
@@ -63,6 +63,14 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     }
 
 
+//    Progress log definitions:
+//    f is the value of the objective function.
+//    d is the change in the value of the objective function if the step computed in this iteration is accepted.
+//    g is the max norm of the gradient (i.e. the largest element of |grad f|)
+//    h is the change in the parameter vector.
+//    s is the optimal step length computed by the line search.
+//    it is the time take by the current iteration.
+//    tt is the total time taken by the minimizer.
 
 
     switch (optSpace.option){
