@@ -632,8 +632,9 @@ void class_algorithm_finite::print_status_update() {
     report << fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] "             ,std::log10(tools::finite::measure::energy_variance_per_site(*state)), std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
     report << fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} "                 ,chi_max(), state->get_chi_lim(), tools::finite::measure::bond_dimension_current(*state));
     report << fmt::format("log₁₀ trunc: {:<10.4f} "                           ,std::log10(state->get_truncation_error(state->get_position())));
-    report << fmt::format("con: [σ² {:<5} Sₑ {:<5}] "                         ,sim_status.variance_mpo_has_converged,sim_status.entanglement_has_converged);
-    report << fmt::format("sat: [σ² {:<2} Sₑ {:<2}] "                         ,sim_status.variance_mpo_saturated_for,sim_status.entanglement_saturated_for);
+    report << fmt::format("stk: {:<1} "                                       ,sim_status.simulation_has_stuck_for);
+    report << fmt::format("sat: [σ² {:<1} Sₑ {:<1}] "                         ,sim_status.variance_mpo_saturated_for,sim_status.entanglement_saturated_for);
+    report << fmt::format("con: {:<5} "                                       ,sim_status.simulation_has_converged);
     report << fmt::format("time: {:<8.2f}s "                                  ,t_tot.get_age());
     report << fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] "    ,process_memory_in_mb("VmRSS"), process_memory_in_mb("VmHWM") ,process_memory_in_mb("VmPeak"));
     log->info(report.str());

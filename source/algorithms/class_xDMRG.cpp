@@ -26,6 +26,8 @@ void class_xDMRG::run_preprocessing() {
     sim_status.energy_dens_target = settings::xdmrg::energy_density_target;
     sim_status.energy_dens_window = settings::xdmrg::energy_density_window;
     find_energy_range();
+    state->set_chi_max(chi_max());
+    update_bond_dimension_limit(chi_init());
     tools::finite::mps::internals::seed_state_unused = true;
     reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
 //    reset_to_random_state_in_energy_window("random",false, "Initializing");
@@ -95,12 +97,12 @@ void class_xDMRG::single_xDMRG_step()
     auto optType    = opt::OptType(opt::TYPE::CPLX);
 //    optSpace        = not chi_grow()                                                                  ? opt::SPACE::SUBSPACE   : optSpace.option;
     optMode         = sim_status.iteration  >= 2  and measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
-    optMode         = sim_status.iteration  >= 6  or  measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
-    optSpace        = optMode == opt::MODE::OVERLAP                                                   ? opt::SPACE::SUBSPACE  : optSpace.option;
-    optSpace        = sim_status.simulation_has_stuck_for >= 2                                        ? opt::SPACE::SUBSPACE  : optSpace.option;
-    optSpace        = state->size_2site()  > settings::precision::maxSizePartDiag                     ? opt::SPACE::DIRECT    : optSpace.option;
-    optSpace        = sim_status.variance_mpo_has_converged                                           ? opt::SPACE::DIRECT    : optSpace.option;
-    optType         = state->isReal()                                                                 ? opt::TYPE::REAL       : optType.option;
+    optMode         = sim_status.iteration  >= 5  or  measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
+    optSpace        = optMode == opt::MODE::OVERLAP                                                    ? opt::SPACE::SUBSPACE  : optSpace.option;
+    optSpace        = sim_status.simulation_has_stuck_for >= 2                                         ? opt::SPACE::SUBSPACE  : optSpace.option;
+    optSpace        = state->size_2site()  > settings::precision::maxSizePartDiag                      ? opt::SPACE::DIRECT    : optSpace.option;
+    optSpace        = sim_status.variance_mpo_has_converged                                            ? opt::SPACE::DIRECT    : optSpace.option;
+    optType         = state->isReal()                                                                  ? opt::TYPE::REAL       : optType.option;
     long threshold = 0;
     switch(optSpace.option){
         case  opt::SPACE::SUBSPACE : threshold = settings::precision::maxSizePartDiag; break;
