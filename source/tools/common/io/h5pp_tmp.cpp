@@ -28,7 +28,7 @@ std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_f
         std::cout << "path3: "<< h5pp_path3 << std::endl;
         std::cout << "path4: "<< h5pp_path4 << std::endl;
         exit(0);
-        return fs::absolute(temp_path / fs::relative(h5pp_path,fs::current_path()));
+//        return fs::absolute(temp_path / fs::relative(h5pp_path,fs::current_path()));
     }
 
 
