@@ -320,7 +320,8 @@ void class_xDMRG::check_convergence(){
 
 void class_xDMRG::try_projection(){
     if(settings::model::projection_trial_when_stuck and
-        sim_status.simulation_has_got_stuck and
+        sim_status.simulation_has_got_stuck and not
+        has_projected and
         state->position_is_any_edge())
     {
         log->debug("Trying projection to {}", settings::model::target_parity_sector);
@@ -335,10 +336,6 @@ void class_xDMRG::try_projection(){
         }else{
             log->info("Projection did not improve variance {} -> {}",
                       std::log10(variance_original), std::log10(variance_projected));
-//            if (sim_status.simulation_has_stuck_for >=2){
-//                log->info("Keeping projection anyway due to saturation");
-//                *state = state_projected;
-//            }
         }
     }
 
