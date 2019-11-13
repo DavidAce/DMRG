@@ -327,11 +327,11 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
     auto report = check_saturation_using_slope2(
                     V_mpo_vec,
                     X_mpo_vec,
-                    tools::finite::measure::energy_variance_per_site(*state_backup), // HEY! THIS IS NEW
+                    tools::finite::measure::energy_variance(*state_backup),
                     sim_status.iteration,
                     1,
                     slope_threshold);
-    sim_status.variance_mpo_has_converged = tools::finite::measure::energy_variance_per_site(*state_backup) < threshold;
+    sim_status.variance_mpo_has_converged = tools::finite::measure::energy_variance(*state_backup) < threshold;
     if (report.has_computed){
         auto last_nonconverged_ptr = std::find_if(V_mpo_vec.begin(),V_mpo_vec.end(), [threshold](auto const& val){ return val > threshold; });
         if (last_nonconverged_ptr  == V_mpo_vec.end()) last_nonconverged_ptr =  V_mpo_vec.begin();
