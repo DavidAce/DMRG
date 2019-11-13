@@ -54,57 +54,37 @@ mkdir -p $outdir/$simbase
 
 num_cols=$(awk '{print NF}' $simfile | head -n 1)
 
-
-
-#function Cleanup ()
-#{
-#    trap "" SIGTERM EXIT # Disable trap now we're in it
-#    # Clean up task
-#    cleanupfile=logs/$simbase.cleanup_log
+#
+#cleanup() {
+#    sleep 5
+#    echo "Starting cleanup"
+#    # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
 #    if [ "$num_cols" -eq 2 ]; then
-#        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}*)      &> $outdir/$simbase.cleanup"
+#        cat $simfile | cut -d " " -f2  | while read -r seed ; do
+#            target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
+#            if [ -z "$target" ]; then
+#                continue
+#            fi
+#            rm $target
+#        done
 #    elif [ "$num_cols" -eq 3 ]; then
-#        cat $simfile | parallel --joblog $cleanupfile --colsep ' ' "rm $(find /tmp/DMRG/ -type f -name *{2}_{3}*)  &> $outdir/$simbase.cleanup"
+#        cat $simfile | cut -d " " -f2,3  | while read -r seed ; do
+#            seed1=$(cut -d " " -f1 $seed)
+#            seed2=$(cut -d " " -f2 $seed)
+#            target=$(find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5")
+#            if [ -z "$target" ]; then
+#                continue
+#            fi
+#            rm $target
+#        done
 #    else
 #        echo "Case not implemented"
-#        exit 1
 #    fi
 #
-#    exit 0
+#
 #}
 #
-#trap Cleanup SIGTERM EXIT # Enable trap
-
-cleanup() {
-    sleep 5
-    echo "Starting cleanup"
-    # Clean up task$(find /tmp/DMRG -type f -name "*_43.h5")
-    if [ "$num_cols" -eq 2 ]; then
-        cat $simfile | cut -d " " -f2  | while read -r seed ; do
-            target=$(find  /tmp/DMRG/ -type f -name "*_$seed.h5")
-            if [ -z "$target" ]; then
-                continue
-            fi
-            rm $target
-        done
-    elif [ "$num_cols" -eq 3 ]; then
-        cat $simfile | cut -d " " -f2,3  | while read -r seed ; do
-            seed1=$(cut -d " " -f1 $seed)
-            seed2=$(cut -d " " -f2 $seed)
-            target=$(find  /tmp/DMRG/ -type f -name "*_$seed1_$seed2.h5")
-            if [ -z "$target" ]; then
-                continue
-            fi
-            rm $target
-        done
-    else
-        echo "Case not implemented"
-    fi
-
-
-}
-
-trap cleanup EXIT
+#trap cleanup EXIT
 
 
 
