@@ -37,6 +37,8 @@ void class_xDMRG::run_preprocessing() {
     log->info("Finished {} preprocessing", sim_name);
 }
 
+
+
 void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
@@ -56,9 +58,10 @@ void class_xDMRG::run_simulation()    {
         // That last state would not get optimized
         if (state->position_is_any_edge())
         {
-            if (sim_status.iteration >= settings::xdmrg::max_sweeps) {stop_reason = StopReason::MAX_ITERS; break;}
-            if (sim_status.simulation_has_succeeded)                 {stop_reason = StopReason::SUCCEEDED; break;}
-            if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
+            if (sim_status.iteration >= settings::xdmrg::max_sweeps)    {stop_reason = StopReason::MAX_ITERS; break;}
+            if (sim_status.simulation_has_succeeded)                    {stop_reason = StopReason::SUCCEEDED; break;}
+            if (sim_status.simulation_has_to_stop)                      {stop_reason = StopReason::SATURATED; break;}
+            if (sim_status.num_resets > settings::precision::maxResets) {stop_reason = StopReason::MAX_RESET; break;}
         }
 
         log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
@@ -70,10 +73,12 @@ void class_xDMRG::run_simulation()    {
         sim_status.moves         = state->get_moves();
         sim_status.step++;
     }
+
     switch(stop_reason){
         case StopReason::MAX_ITERS : log->info("Finished {} simulation -- reason: MAX ITERS",sim_name) ;break;
         case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED",sim_name) ;break;
         case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+        case StopReason::MAX_RESET : log->info("Finished {} simulation -- reason: MAX RESET",sim_name) ;break;
         default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
 }
@@ -356,7 +361,12 @@ void class_xDMRG::inflate_initial_state(){
 
 void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason ){
     log->info("Resetting to product state -- Reason: {}", reason);
-//    sim_status.energy_dens_window = std::min(growth_factor*sim_status.energy_dens_window, 0.5);
+
+    sim_status.num_resets++;
+    if(sim_status.num_resets > settings::precision::maxResets){
+        log->info("Not allowed more resets: num resets {} > max resets {}",sim_status.num_resets, settings::precision::maxResets);
+        return;
+    }
 
     int counter = 0;
     bool outside_of_window = true;
@@ -368,19 +378,17 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
         if (inflate) inflate_initial_state();
 
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
-        outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
+        outside_of_window      = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
         counter++;
         if (counter % 10 == 0 and energy_window_growth_factor != 1.0) {
             log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}",
                     sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
             sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
         }
-        if(counter >= 2000) throw std::runtime_error("Failed to find initial state in energy window");
+        if(counter >= 2000) throw std::runtime_error(fmt::format("Failed to find initial state in energy window after {} retries", counter));
     }
     log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
     clear_saturation_status();
-    has_projected   = false;
-    sim_status.num_resets++;
     sim_status.energy_ubound      = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
     sim_status.energy_lbound      = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max-sim_status.energy_min);
 
@@ -392,7 +400,7 @@ void class_xDMRG::find_energy_range() {
     log->trace("Finding energy range");
     if (state->get_length() != num_sites()) throw std::runtime_error("find_energy_range: state lenght mismatch");
     size_t max_sweeps_during_f_range = 4;
-    sim_status.iteration = state->reset_sweeps();
+    sim_status.iteration  = state->reset_sweeps();
     sim_status.moves      = state->reset_moves();
     reset_to_random_state("random");
     update_bond_dimension_limit(16);
