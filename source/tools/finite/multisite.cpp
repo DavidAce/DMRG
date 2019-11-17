@@ -62,6 +62,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
     while (true){
         bool allequal = std::all_of(costs.begin(), costs.end(), [costs](size_t c) { return c == costs.front(); });
         auto c = costs.back();
+        if (c <  threshold  and sites.size() == max_sites) {reason = "can't take any more sites"; break;}
         if (c <= threshold  and sites.size() <= max_sites) {reason = "good threshold found: " + std::to_string(c) ;break;}
         else if (sites.size() <= 2)                        {reason = "at least two sites were kept"; break;}
         else if (allequal and sites.size() <= max_sites)   {reason = "equal costs: " + std::to_string(c); break;}
@@ -92,6 +93,13 @@ double tools::finite::measure::multisite::internal::significant_digits(double H2
 }
 
 double tools::finite::measure::multisite::energy_minus_energy_reduced(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
+    // This measures the bare energy as given by the MPO's.
+    // On each MPO the site energy *could* be reduced.
+    // If they are reduced, then
+    //      < H > = E - E_reduced ~ 0
+    // Else
+    //      < H > = E
+
     tools::common::profile::t_ene.tic();
     auto multimpo   = state.get_multimpo();
     auto & envL     = state.get_ENVL(state.active_sites.front()).block;
@@ -117,14 +125,13 @@ double tools::finite::measure::multisite::energy_minus_energy_reduced(const clas
 
 
 double tools::finite::measure::multisite::energy(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
-    // We want to measure energy accurately always.
-    // Since the state can be reduced, the true energy is always
-    // E + E_reduced
-//    double e_minus_e_reduced = multisite::energy_minus_energy_reduced(state,multitheta);
-//    double e_reduced = state.get_energy_reduced();
-//    tools::log->debug("Energy minus Energy_reduced = {}",e_minus_e_reduced);
-//    tools::log->debug("Energy_reduced              = {}",e_reduced);
-    return multisite::energy_minus_energy_reduced(state,multitheta) + state.get_energy_reduced();
+    // This measures the actual energy of the system regardless of the reduced/non-reduced state of the MPO's
+    // If they are reduced, then
+    //      "Actual energy" = (E - E_reduced) + E_reduced = (~0) + E_reduced = E
+    // Else
+    //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
+
+    return multisite::energy_minus_energy_reduced(state,multitheta) + state.get_energy_reduced()*state.get_length();
 }
 
 
@@ -134,11 +141,16 @@ double tools::finite::measure::multisite::energy_per_site(const class_state_fini
 
 
 double tools::finite::measure::multisite::energy_variance(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
-    // Depending on whether the state is reduced or not we get different formulas.
-    // Luckily, the variance is independent of offsets.
-    // If the state is not reduced we get Var H = H^2 - E^2 =  H2 - energy*energy
-    // IF the state is reduced we get Var H = (H-E_red) - (E-E_red)^2 = H2 - energy_minus_energy_reduced^2
-
+    // Depending on whether the mpo's are reduced or not we get different formulas.
+    // If mpo's are reduced:
+    //      Var H = <(H-E_red)^2> - <(H-E_red)>^2 = <H^2> - 2<H>E_red + E_red^2 - (<H> - E_red) ^2
+    //                                            = H2    - 2*E*E_red + E_red^2 - E^2 + 2*E*E_red - E_red^2
+    //                                            = H2    - E^2
+    //      so Var H = <(H-E_red)^2> - energy_minus_energy_reduced^2 = H2 - ~0
+    //      where H2 is computed with reduced mpo's. Note that ~0 is not exactly zero
+    //      because E_red != E necessarily (though they are supposed to be very close)
+    // Else:
+    //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
     tools::common::profile::t_var.tic();
     auto multimpo   = state.get_multimpo();
     auto & env2L    = state.get_ENV2L(state.active_sites.front()).block;
@@ -241,14 +253,14 @@ double tools::finite::measure::multisite::energy_per_site(const class_state_fini
 }
 
 double tools::finite::measure::multisite::energy_variance(const class_state_finite &state){
-    if (state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
+    if (state.measurements.energy_variance){return state.measurements.energy_variance.value();}
     else{
         if (state.active_sites.empty()) return tools::finite::measure::energy_variance(state);
         tools::common::profile::t_var.tic();
         auto theta = state.get_multitheta();
         tools::common::profile::t_var.toc();
-        state.measurements.energy_variance_mpo = multisite::energy_variance(state,theta);
-        return state.measurements.energy_variance_mpo.value();
+        state.measurements.energy_variance = multisite::energy_variance(state, theta);
+        return state.measurements.energy_variance.value();
     }}
 
 double tools::finite::measure::multisite::energy_variance_per_site(const class_state_finite &state){

@@ -96,6 +96,10 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     ene2             = std::real(ene2) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(ene2);
 
     var             = ene2 - ene*ene;
+//    tools::log->info("log10var/L = {:<24.18f} + i{:<24.18f} | ene = {:<24.18f} + i {:<24.18f}",
+//            std::log10(std::abs(std::real(var))/length),  std::log10(std::abs(std::imag(var))/length),
+//            std::real(ene), std::imag(ene)
+//            );
     if (std::real(var)  < 0.0 ) tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f}" , counter, std::real(var)  , std::imag(var));
     var             = std::real(var) <  0.0 ? std::abs(var)                          : std::real(var);
     var             = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
@@ -104,7 +108,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)/length;
     norm_offset    = std::abs(vv) - 1.0 ;
-    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
+    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.1);
     log10var       = std::log10(variance);
 
     if(fx != nullptr){

@@ -103,8 +103,8 @@ public:
     bool isReal()                               const;
 
 
-    const class_mps_site       & get_MPS(size_t pos)                  const;
-          class_mps_site       & get_MPS(size_t pos);
+    const class_mps_site         & get_MPS(size_t pos)                  const;
+          class_mps_site         & get_MPS(size_t pos);
     const class_model_base       & get_MPO(size_t pos)                  const;
           class_model_base       & get_MPO(size_t pos);
     const class_environment      & get_ENVL(size_t pos)                 const;
@@ -112,15 +112,7 @@ public:
     const class_environment_var  & get_ENV2L(size_t pos)                const;
     const class_environment_var  & get_ENV2R(size_t pos)                const;
 
-//    const Eigen::Tensor<Scalar,3> & get_G(size_t pos)                   const;
-//    const Eigen::Tensor<Scalar,1> & get_L(size_t pos)                   const;
-//    TType<3> & get_G(size_t pos);
-//    TType<1> & get_L(size_t pos);
-//    TType<3>   get_A()                                   const;
-//    TType<3>   get_B()                                   const;
-//    TType<3>   get_A(size_t pos)                         const;
-//    TType<3>   get_B(size_t pos)                         const;
-//    TType<4>   get_theta(size_t pos)                     const;
+
     TType<4>   get_theta()                               const;
 
     // For reduced energy MPO's
@@ -159,7 +151,7 @@ public:
         std::optional<double>               norm                                    = {};
         std::optional<double>               energy                                  = {};
         std::optional<double>               energy_per_site                         = {};
-        std::optional<double>               energy_variance_mpo                     = {};
+        std::optional<double>               energy_variance                     = {};
         std::optional<double>               energy_variance_per_site                = {};
         std::optional<double>               spin_component_sx                       = {};
         std::optional<double>               spin_component_sy                       = {};
@@ -182,13 +174,9 @@ public:
     mutable std::vector<bool> site_update_tags;
 private:
     struct Cache{
+        std::optional<TType<4>> theta           = {};
         std::optional<TType<4>> multimpo        = {};
         std::optional<TType<3>> multitheta      = {};
-//        std::optional<TType<6>> multiham        = {};
-//        std::optional<TType<6>> multiham_sq     = {};
-//        std::optional<MType>    multiham_mat    = {};
-//        std::optional<MType>    multiham_sq_mat = {};
-//        std::optional<MType>    multiham_sq_sub = {};
     };
     mutable Cache cache;
 };

@@ -80,14 +80,14 @@ public:
 //    Eigen::Tensor<Scalar,4> truncate_MPS(
 //            const Eigen::Tensor<Scalar, 4> &theta,        /*!< The 2-site MPS to truncate */
 //            long chi_,                                      /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-//            double SVDThreshold                            /*!< Minimum threshold value for keeping singular values. */
+//            double svd_threshold                            /*!< Minimum threshold value for keeping singular values. */
 //    )             __attribute((hot));                      /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */
 
 //    void truncate_MPS(
 //            const Eigen::Tensor<Scalar, 4> &theta,        /*!< The 2-site MPS to truncate */
 //            class_mps_2site &MPS_out,
 //            long chi_,                                      /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-//            double SVDThreshold                            /*!< Minimum threshold value for keeping singular values. */
+//            double svd_threshold                            /*!< Minimum threshold value for keeping singular values. */
 //    )             __attribute((hot));                      /*!< Singular value decomposition, SVD, or Schmidt decomposition, of the ground state, where the truncation keeps \f$\chi\f$ (`chi`) singular values. */
 
 

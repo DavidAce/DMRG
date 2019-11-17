@@ -28,6 +28,8 @@ public:
 
     //MPS
     std::unique_ptr<class_state_finite>    state,state_backup;
+//    std::list<std::unique_ptr<class_state_finite>> state_champions; // We keep the best from each sweep
+    std::list<class_state_finite> state_champions; // We keep the best from each sweep
     // What happens when stuck this many iterations:
     // 1: direct, 2: subspace, 2: subspace, 4: update bond dim, 5: max_stuck_iters = stop
     size_t max_stuck_iters               = 5; // If stuck for this many sweeps -> stop simulation
@@ -63,15 +65,17 @@ public:
     void write_projection(const class_state_finite & state_projected, std::string parity_sector);
 
 
-    std::list<bool>   B_mpo_vec; //History of saturation true/false
+//    std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances
     std::list<int>    X_mpo_vec; //History of moves numbers
-    double V_mpo_slope = 0;
+//    double V_mpo_slope = 0;
+    std::list<double> V_mpo_slopes; //History of variance slopes
 
-    std::vector<std::list<bool>  > BS_mat;
+//    std::vector<std::list<bool>  > BS_mat;
     std::vector<std::list<double>> S_mat;
-    std::vector<std::list<int>>    XS_mat;
-    double S_slope = 0;
+    std::vector<std::list<int>>    X_mat;
+//    double S_slope = 0;
+    std::list<double> S_slopes; //History of variance slopes
 
 };
 

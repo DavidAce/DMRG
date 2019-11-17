@@ -143,7 +143,7 @@ void tools::finite::io::h5dset::write_array_measurements(const class_state_finit
 //    h5ppFile.writeDataset(state.measurements.bond_dimension_midchain.value()       , prefix_path + "/measurements/bond_dimension_midchain");
 //    h5ppFile.writeDataset(state.measurements.energy.value()                        , prefix_path + "/measurements/energy");
 //    h5ppFile.writeDataset(state.measurements.energy_per_site.value()               , prefix_path + "/measurements/energy_per_site");
-//    h5ppFile.writeDataset(state.measurements.energy_variance_mpo.value()           , prefix_path + "/measurements/energy_variance_mpo");
+//    h5ppFile.writeDataset(state.measurements.energy_variance.value()           , prefix_path + "/measurements/energy_variance");
 //    h5ppFile.writeDataset(state.measurements.energy_variance_per_site.value()      , prefix_path + "/measurements/energy_variance_per_site");
 //    h5ppFile.writeDataset(state.measurements.entanglement_entropy_midchain.value() , prefix_path + "/measurements/entanglement_entropy_midchain");
 //    h5ppFile.writeDataset(state.measurements.spin_component_sx.value()             , prefix_path + "/measurements/spin_component_sx");

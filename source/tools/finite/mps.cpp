@@ -27,7 +27,6 @@ void tools::finite::mps::initialize(class_state_finite &state, const size_t leng
         if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
     }
     state.site_update_tags = std::vector<bool>(length,false);
-
 }
 
 
@@ -84,57 +83,51 @@ void tools::finite::mps::rebuild_environments(class_state_finite &state){
     if (state.MPS_R.size() != state.MPO_R.size())
         throw std::runtime_error(fmt::format("Size mismatch in MPSR and MPOR: {} != {}",state.MPS_R.size(), state.MPO_R.size()));
     // Generate new environments
-    state.ENV_L.clear();
-    state.ENV_R.clear();
 
-    state.ENV2_L.clear();
-    state.ENV2_R.clear();
-    size_t position = 0;
     {
-        long dimMPS = state.MPS_L.front().get_chiL();
-        long dimMPO = state.MPO_L.front()->MPO().dimension(0);
+        state.ENV_L.clear();
+        state.ENV2_L.clear();
 
-        auto ENV_L  = class_environment    ("L",dimMPS,dimMPO);
-        auto ENV2_L = class_environment_var("L",dimMPS,dimMPO);
-        ENV_L.set_position(state.MPS_L.front().get_position());
-        ENV2_L.set_position(state.MPS_L.front().get_position());
+
         auto mpsL_it   = state.MPS_L.begin();
         auto mpoL_it   = state.MPO_L.begin();
+        auto ENV_L     = class_environment    ("L",*mpsL_it, *mpoL_it->get()); //Initialized envs
+        auto ENV2_L    = class_environment_var("L",*mpsL_it, *mpoL_it->get()); //Initialized envs
         while(mpsL_it != state.MPS_L.end() and mpoL_it != state.MPO_L.end()) {
-            state.ENV_L.emplace_back(ENV_L);
+            state.ENV_L .emplace_back(ENV_L );
             state.ENV2_L.emplace_back(ENV2_L);
-            ENV_L.enlarge(*mpsL_it, mpoL_it->get()->MPO());
-            ENV2_L.enlarge(*mpsL_it, mpoL_it->get()->MPO());
             if (mpsL_it->get_position() != state.ENV_L.back().get_position())
                 throw std::runtime_error(fmt::format("Size mismatch in MPSL and ENVL: {} != {}",mpsL_it->get_position(), state.ENV_L.back().get_position()));
+            if (mpsL_it->get_chiL() != state.ENV_L.back().block.dimension(0))
+                throw std::runtime_error(fmt::format("Size mismatch in MPSL and ENVL dimensions {} != {}",mpsL_it->get_chiL(), state.ENV_L.back().block.dimension(2)));
 
-            position ++;
+            ENV_L  = ENV_L .enlarge(*mpsL_it,*mpoL_it->get());
+            ENV2_L = ENV2_L.enlarge(*mpsL_it,*mpoL_it->get());
             mpsL_it++;
             mpoL_it++;
         }
     }
 
     {
-        position = state.MPS_R.back().get_position();
-        long dimMPS = state.MPS_R.back().get_chiR();
-        long dimMPO = state.MPO_R.back()->MPO().dimension(1);
-        auto ENV_R  = class_environment    ("R",dimMPS,dimMPO);
-        auto ENV2_R = class_environment_var("R",dimMPS,dimMPO);
-        ENV_R.set_position(state.MPS_R.back().get_position());
-        ENV2_R.set_position(state.MPS_R.back().get_position());
+
+        state.ENV_R.clear();
+        state.ENV2_R.clear();
+
         auto mpsR_it   = state.MPS_R.rbegin();
         auto mpoR_it   = state.MPO_R.rbegin();
+        auto ENV_R  = class_environment    ("R",*mpsR_it,*mpoR_it->get());
+        auto ENV2_R = class_environment_var("R",*mpsR_it,*mpoR_it->get());
         while(mpsR_it != state.MPS_R.rend() and mpoR_it != state.MPO_R.rend()){
-            state.ENV_R .emplace_front(ENV_R);
+            state.ENV_R .emplace_front(ENV_R );
             state.ENV2_R.emplace_front(ENV2_R);
-            ENV_R.enlarge(*mpsR_it, mpoR_it->get()->MPO());
-            ENV2_R.enlarge(*mpsR_it, mpoR_it->get()->MPO());
             if (mpsR_it->get_position() != state.ENV_R.front().get_position())
                 throw std::runtime_error(fmt::format("Size mismatch in MPSR and ENVR: {} != {}",mpsR_it->get_position(), state.ENV_R.front().get_position()));
-            position --;
+            if (mpsR_it->get_chiR() != state.ENV_R.front().block.dimension(0))
+                throw std::runtime_error(fmt::format("Size mismatch in MPSR and ENVR dimensions {} != {}",mpsR_it->get_chiR() , state.ENV_R.front().block.dimension(2)));
+            ENV_R  = ENV_R .enlarge(*mpsR_it,*mpoR_it->get());
+            ENV2_R = ENV2_R.enlarge(*mpsR_it,*mpoR_it->get());
             mpsR_it++;
             mpoR_it++;
-
 
         }
     }

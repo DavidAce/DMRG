@@ -96,7 +96,7 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long ran
         or not VT.topRows(rank).allFinite() )
     {
         std::cerr   << "SVD error \n"
-                    << "  SVDThreshold     = " << SVDThreshold << '\n'
+                    << "  svd_threshold     = " << SVDThreshold << '\n'
                     << "  Truncation Error = " << truncation_error << '\n'
                     << "  Rank             = " << rank << '\n'
                     << "  U all finite     : " << std::boolalpha << U.leftCols(rank).allFinite() << '\n'

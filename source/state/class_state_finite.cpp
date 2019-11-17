@@ -62,7 +62,7 @@ void class_state_finite::do_all_measurements(){
     measurements.norm                           = measure::norm(*this);
     measurements.energy                         = measure::energy(*this);  //This number is needed for variance calculation!
     measurements.energy_per_site                = measure::energy_per_site(*this);
-    measurements.energy_variance_mpo            = measure::energy_variance(*this);
+    measurements.energy_variance            = measure::energy_variance(*this);
     measurements.energy_variance_per_site       = measure::energy_variance_per_site(*this);
     measurements.entanglement_entropy_current   = measure::entanglement_entropy_current (*this);
     measurements.entanglement_entropy_midchain  = measure::entanglement_entropy_midchain(*this);
@@ -200,7 +200,11 @@ const Eigen::Tensor<class_state_finite::Scalar,1> & class_state_finite::current_
 //}
 //
 Eigen::Tensor<class_state_finite::Scalar,4> class_state_finite::get_theta() const{
-    return MPS_L.back().get_M().contract(MPS_R.front().get_M(), Textra::idx({2},{1}));
+    if(cache.theta) return cache.theta.value();
+    tools::log->trace("Contracting theta...");
+    cache.theta = MPS_L.back().get_M().contract(MPS_R.front().get_M(), Textra::idx({2},{1}));
+    tools::log->trace("Contracting theta... OK");
+    return cache.theta.value();
 }
 
 
@@ -342,11 +346,12 @@ double class_state_finite::get_energy_reduced()                   const{
     for(auto &mpo : MPO_L) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
     for(auto &mpo : MPO_R) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
 
-    return e_reduced*get_length();
+    return e_reduced;
 }
 
 void class_state_finite::set_reduced_energy(double site_energy){
     if(get_energy_reduced() == site_energy) return;
+    unset_measurements();
     cache.multimpo = {};
     for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
     for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
@@ -487,7 +492,7 @@ void class_state_finite::do_all_measurements()const {
     measurements.norm                             = tools::finite::measure::norm                          (*this);
     measurements.energy                           = tools::finite::measure::energy                        (*this);
     measurements.energy_per_site                  = tools::finite::measure::energy_per_site               (*this);
-    measurements.energy_variance_mpo              = tools::finite::measure::energy_variance               (*this);
+    measurements.energy_variance              = tools::finite::measure::energy_variance               (*this);
     measurements.energy_variance_per_site         = tools::finite::measure::energy_variance_per_site      (*this);
     measurements.spin_components                  = tools::finite::measure::spin_components               (*this); // This will automatically measure sx,sy and sz as well
     measurements.entanglement_entropy_current     = tools::finite::measure::entanglement_entropy_current  (*this);

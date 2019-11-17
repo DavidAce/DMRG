@@ -226,7 +226,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
     double max_overlap_threshold = optMode.option == OptMode::OVERLAP ? 1.0/std::sqrt(2.0) : 1.0;
     class_eigsolver solver;
-    solver.solverConf.eigThreshold = settings::precision::eigThreshold;
+    solver.solverConf.eigThreshold = settings::precision::eig_threshold;
     std::string reason = "exhausted";
     Eigen::VectorXd  eigvals;
     Eigen::MatrixXcd eigvecs;
@@ -283,7 +283,7 @@ find_subspace(const class_state_finite & state, OptMode optMode){
 
 
     // If multitheta is small enough you can afford full diag.
-    if   ((size_t)multitheta.size() <= settings::precision::maxSizeFullDiag) {
+    if   ((size_t)multitheta.size() <= settings::precision::max_size_full_diag) {
         std::tie(eigvecs, eigvals) = find_subspace_full(H_local, multitheta, eig_log);
     }else{
         double energy_target;
@@ -331,13 +331,13 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
     using namespace eigutils::eigSetting;
     auto options = ceres_default_options;
     options.max_num_iterations = 2000; // We need a lot of iterations to recover from initial guesses
-//    options.function_tolerance = 1e-6;
+//    options.function_tolerance = 1e-12;
 
 
     double theta_old_variance    = tools::finite::measure::energy_variance_per_site(state);
-    subspace_error_threshold     = settings::precision::subspaceErrorFactor * theta_old_variance;
-    subspace_error_threshold     = std::min(subspace_error_threshold, settings::precision::maxSubspaceError);
-    subspace_error_threshold     = std::max(subspace_error_threshold, settings::precision::minSubspaceError);
+    subspace_error_threshold     = settings::precision::subspace_error_factor * theta_old_variance;
+    subspace_error_threshold     = std::min(subspace_error_threshold, settings::precision::max_subspace_error);
+    subspace_error_threshold     = std::max(subspace_error_threshold, settings::precision::min_subspace_error);
 
 
     auto & theta_old               = state.get_multitheta();
@@ -401,7 +401,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
     auto list_of_candidates = get_best_candidates_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
     if (list_of_candidates.empty()){
         //Option A
-        tools::log->trace("Went for option A -- No overlapping states in energy range. Returning old theta");
+        tools::log->warn("Went for option A -- No overlapping states in energy range. Returning old theta");
         state.tag_active_sites_have_been_updated(false);
         return theta_old;
     }
@@ -417,17 +417,6 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         tools::log->trace("Candidate {:<2} has good overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",candidate.second ,candidate.first ,candidate_energy  ,std::log10(candidate_variance) );
         initial_guess_thetas.emplace_back(candidate_theta);
     }
-
-//TODO: This is just testing something!
-//    if(initial_guess_thetas.size() > 1 and sim_status.simulation_has_got_stuck ){
-//        tools::log->debug("Possibly stuck on cat-state. Returning second-best overlapping state");
-//        exit(0);
-//        return initial_guess_thetas[1];
-//    }
-
-
-
-
 
 
 
@@ -579,7 +568,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 
 
 
-        tools::log->trace("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
+        tools::log->debug("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
         //    std::cout << summary.FullReport() << "\n";
 
         tools::common::profile::t_opt.toc();
@@ -668,7 +657,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 //    else{
 //        tools::log->debug("Subspace optimization didn't improve variance.");
 //        tools::log->debug("Returning old theta");
-//        if (variance_new <= settings::precision::varianceConvergenceThreshold)
+//        if (variance_new <= settings::precision::variance_convergence_threshold)
 //              state.tag_active_sites_have_been_updated(true);
 //        else  state.tag_active_sites_have_been_updated(false);
 //        return  theta_old;

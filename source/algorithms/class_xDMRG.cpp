@@ -61,7 +61,7 @@ void class_xDMRG::run_simulation()    {
             if (sim_status.iteration >= settings::xdmrg::max_sweeps)    {stop_reason = StopReason::MAX_ITERS; break;}
             if (sim_status.simulation_has_succeeded)                    {stop_reason = StopReason::SUCCEEDED; break;}
             if (sim_status.simulation_has_to_stop)                      {stop_reason = StopReason::SATURATED; break;}
-            if (sim_status.num_resets > settings::precision::maxResets) {stop_reason = StopReason::MAX_RESET; break;}
+            if (sim_status.num_resets > settings::precision::max_resets) { stop_reason = StopReason::MAX_RESET; break;}
         }
 
         log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
@@ -105,33 +105,33 @@ void class_xDMRG::single_xDMRG_step()
     optMode         = sim_status.iteration  >= 5  or  measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
     optSpace        = optMode == opt::MODE::OVERLAP                                                    ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = sim_status.simulation_has_stuck_for >= 2                                         ? opt::SPACE::SUBSPACE  : optSpace.option;
-    optSpace        = state->size_2site()  > settings::precision::maxSizePartDiag                      ? opt::SPACE::DIRECT    : optSpace.option;
+    optSpace        = state->size_2site()  > settings::precision::min_size_part_diag ? opt::SPACE::DIRECT : optSpace.option;
     optSpace        = sim_status.variance_mpo_has_converged                                            ? opt::SPACE::DIRECT    : optSpace.option;
     optType         = state->isReal()                                                                  ? opt::TYPE::REAL       : optType.option;
     long threshold = 0;
     switch(optSpace.option){
-        case  opt::SPACE::SUBSPACE : threshold = settings::precision::maxSizePartDiag; break;
-        case  opt::SPACE::DIRECT   : threshold = settings::precision::maxSizeDirect  ; break;
+        case  opt::SPACE::SUBSPACE : threshold = settings::precision::min_size_part_diag; break;
+        case  opt::SPACE::DIRECT   : threshold = settings::precision::max_size_direct  ; break;
     }
 
     Eigen::Tensor<Scalar,3> theta;
 
-    std::list<size_t> max_num_sites_list = {2};
-    if(sim_status.simulation_has_stuck_for >= 2) max_num_sites_list.push_back(settings::precision::maxSitesMultiDmrg);
+    std::list<size_t> max_num_sites_list = {2,4};
+    if(sim_status.simulation_has_got_stuck) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
 
-//    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
-//    std::list<size_t> max_num_sites_list = {2,settings::precision::maxSitesMultiDmrg};
-//    if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::maxSitesMultiDmrg}; //You can take many sites in the beginning
+//    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::max_sites_multidmrg};
+//    std::list<size_t> max_num_sites_list = {2,settings::precision::max_sites_multidmrg};
+//    if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::max_sites_multidmrg}; //You can take many sites in the beginning
 
     for (auto & max_num_sites : max_num_sites_list){
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
 
-        if (max_num_sites > 2){
-            optSpace  = opt::OptSpace::DIRECT;
-            threshold = settings::precision::maxSizeDirect;
-        }
+//        if (max_num_sites > 2){
+//            optSpace  = opt::OptSpace::DIRECT;
+//            threshold = settings::precision::max_size_direct;
+//        }
 
         state->activate_sites(threshold, max_num_sites);
 
@@ -140,9 +140,9 @@ void class_xDMRG::single_xDMRG_step()
             if(optSpace == opt::OptSpace::SUBSPACE){
                 log->debug("Changing to DIRECT optimization to activate more sites");
                 optSpace = opt::OptSpace::DIRECT;
-                threshold = settings::precision::maxSizeDirect;
-//                max_num_sites_list = {settings::precision::maxSitesMultiDmrg};
-                state->activate_sites(threshold, settings::precision::maxSitesMultiDmrg);
+                threshold = settings::precision::max_size_direct;
+//                max_num_sites_list = {settings::precision::max_sites_multidmrg};
+                state->activate_sites(threshold, settings::precision::max_sites_multidmrg);
             }else{
                 log->debug("Keeping old theta: Can't activate more sites");
                 theta = state->get_multitheta();
@@ -212,19 +212,18 @@ void class_xDMRG::single_xDMRG_step()
     }
 
 
-    log->debug("Variance check before truncate            : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
-//
-    opt::truncate_theta(theta, *state);
-    log->debug("Variance check after truncate + move + env: {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
-    if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::maxNormError){
+    log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+    opt::truncate_theta(theta, *state);
+    log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
+
+    if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){
         tools::log->warn("Norm too large: {:.18f}",tools::finite::measure::norm(*state) );
         tools::finite::mps::normalize(*state);
         tools::finite::mps::rebuild_environments(*state);
     }
-    if (state->position_is_the_left_edge()){
+    if(settings::precision::use_reduced_energy and state->position_is_any_edge()){
         tools::finite::mpo::reduce_mpo_energy(*state);
-        log->debug("Variance check after reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
     }
     debug::check_integrity(*state);
 
@@ -248,16 +247,20 @@ void class_xDMRG::check_convergence(){
 
     sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  > sim_status.energy_dens_window;
-    if (sim_status.iteration > 2)
+    if (sim_status.iteration > 2 and state->position_is_any_edge())
     {
+        std::cout << "TRYING TO DO RESET: OUT OF WINDOW:" << std::boolalpha <<outside_of_window  << std::endl;
         if (    outside_of_window
             and (sim_status.variance_mpo_has_saturated or
                  sim_status.variance_mpo_has_converged or
-                 tools::finite::measure::energy_variance_per_site(*state) < 1e-4))
+                 tools::finite::measure::energy_variance_per_site(*state_backup) < 1e-4))
         {
-            sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
-            std::string reason = fmt::format("saturated outside of energy window. Energy density: {}, Energy window: {} --> {}",
-                    sim_status.energy_dens, sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
+            double old_energy_dens_window = sim_status.energy_dens_window;
+            double new_energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
+            std::string reason = fmt::format("saturated outside of energy window. Energy density: {}, Energy window: {} --> {}, Energy bounds [{} - {}]",
+                    sim_status.energy_dens, old_energy_dens_window,new_energy_dens_window,
+                    sim_status.energy_dens_target - new_energy_dens_window, sim_status.energy_dens_target + new_energy_dens_window);
+            sim_status.energy_dens_window = new_energy_dens_window;
             reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
         }
 //        else
@@ -311,7 +314,7 @@ void class_xDMRG::check_convergence(){
     log->debug("Simulation has to stop  : {}", sim_status.simulation_has_to_stop);
 
 
-//    if (    sim_status.num_resets < settings::precision::maxResets
+//    if (    sim_status.num_resets < settings::precision::max_resets
 //            and tools::finite::measure::energy_variance_per_site(*state) > 1e-10)
 //    {
 //        std::string reason = fmt::format("simulation has saturated with bad precision",
@@ -325,22 +328,27 @@ void class_xDMRG::check_convergence(){
 }
 
 void class_xDMRG::try_projection(){
-    if(settings::model::projection_trial_when_stuck and
-        sim_status.simulation_has_got_stuck and not
-        has_projected and
-        state->position_is_any_edge())
+    bool  try_when_stuck = settings::model::projection_trial_when_stuck and
+                           sim_status.simulation_has_got_stuck and not
+                           has_projected and
+                           state->position_is_any_edge();
+
+    bool try_every_sweep = settings::model::projection_on_every_sweep and
+                           state->position_is_any_edge();
+
+    if(try_every_sweep or try_when_stuck)
     {
         log->debug("Trying projection to {}", settings::model::target_parity_sector);
-        auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-        double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
         double variance_original  = tools::finite::measure::energy_variance_per_site(*state);
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+        double variance_projected = tools::finite::measure::energy_variance_per_site(*state);
+        has_projected = true;
+
         if (variance_projected < variance_original){
-            log->info("Projection succeeded, variance improved {} -> {}",
+            log->info("Projection: variance improved {:.8} -> {:.8}",
                       std::log10(variance_original), std::log10(variance_projected));
-            *state = state_projected;
-            has_projected = true;
         }else{
-            log->info("Projection did not improve variance {} -> {}",
+            log->info("Projection: variance worsened {:.8} -> {:.8}",
                       std::log10(variance_original), std::log10(variance_projected));
         }
     }
@@ -363,8 +371,8 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
     log->info("Resetting to product state -- Reason: {}", reason);
 
     sim_status.num_resets++;
-    if(sim_status.num_resets > settings::precision::maxResets){
-        log->info("Not allowed more resets: num resets {} > max resets {}",sim_status.num_resets, settings::precision::maxResets);
+    if(sim_status.num_resets > settings::precision::max_resets){
+        log->info("Not allowed more resets: num resets {} > max resets {}",sim_status.num_resets, settings::precision::max_resets);
         return;
     }
 
@@ -381,9 +389,12 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
         outside_of_window      = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
         counter++;
         if (counter % 10 == 0 and energy_window_growth_factor != 1.0) {
+            double old_energy_dens_window = sim_status.energy_dens_window;
+            double new_energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
+
             log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}",
-                    sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
-            sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
+                      old_energy_dens_window, new_energy_dens_window );
+            sim_status.energy_dens_window = new_energy_dens_window;
         }
         if(counter >= 2000) throw std::runtime_error(fmt::format("Failed to find initial state in energy window after {} retries", counter));
     }

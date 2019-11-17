@@ -38,7 +38,7 @@ using namespace Textra;
 //    std::unique_ptr<class_mps_2site> MPS_evolved = std::make_unique<class_mps_2site>(MPS_original);
 //
 //    class_SVD<Scalar> SVD;
-//    SVD.setThreshold(settings::precision::SVDThreshold);
+//    SVD.setThreshold(settings::precision::svd_threshold);
 
 //    long chi_lim = 5*MPS_evolved->chiC();
 ////    t_temp2.tic();
@@ -67,7 +67,7 @@ using namespace Textra;
 //
 ////    t_temp4.tic();
 //    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
-//    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
+//    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eig_max_ncv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
 //    auto new_theta_evn_normalized        = tools::common::views::get_theta_evn(*MPS_evolved, sqrt(solver.ref_eigvals()[0]));
 ////    t_temp4.toc();
 //    long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original.chiA();// theta_evn_normalized.dimension(1);
@@ -78,7 +78,7 @@ using namespace Textra;
 //            .shuffle(array4{0,2,1,3})
 //            .reshape(array2{sizeL,sizeR});
 //    //Compute the characteristic function G(a).
-//    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eigMaxNcv, Ritz::LM, Side::R, false);
+//    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eig_max_ncv, Ritz::LM, Side::R, false);
 //    Scalar lambdaG = solver.ref_eigvals()[0];
 ////    t_temp1.toc();
 //    return lambdaG;
@@ -284,7 +284,7 @@ using namespace Textra;
 //    Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_evn = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLB*sizeLB, sizeLA*sizeLA).eval()) - (transfer_matrix_evn-fixpoint_evn).reshape(array2{sizeLB*sizeLB, sizeLA*sizeLA});
 //    Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_odd = Matrix_to_Tensor2(MatrixType<Scalar>::Identity(sizeLA*sizeLA, sizeLB*sizeLB).eval()) - (transfer_matrix_odd-fixpoint_odd).reshape(array2{sizeLA*sizeLA, sizeLB*sizeLB});
 //    class_SVD<Scalar> SVD;
-//    SVD.setThreshold(settings::precision::SVDThreshold);
+//    SVD.setThreshold(settings::precision::svd_threshold);
 
 //    Eigen::Tensor<Scalar,4> E_evn_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(array4{sizeLB,sizeLB,sizeLA,sizeLA});
 //    Eigen::Tensor<Scalar,4> E_odd_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(array4{sizeLA,sizeLA,sizeLB,sizeLB});
@@ -347,7 +347,7 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
     std::unique_ptr<class_mps_2site> MPS_evolved = std::make_unique<class_mps_2site>(MPS_original);
 
     class_SVD SVD;
-    SVD.setThreshold(settings::precision::SVDThreshold);
+    SVD.setThreshold(settings::precision::svd_threshold);
 
     long chi_max = 5*MPS_evolved->chiC();
 //    t_temp2.tic();
@@ -375,9 +375,9 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
 //    t_temp4.tic();
 //    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
     class_eigsolver solver;
-    solver.eigs<Storage::DENSE>(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv,NAN,Form::NONSYMMETRIC,Ritz::LM,Side::R,false);
+    solver.eigs<Storage::DENSE>(transfer_matrix_theta_evn.data(), (int)sizeLB, 1, eig_max_ncv, NAN, Form::NONSYMMETRIC, Ritz::LM, Side::R, false);
 
-//    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eigMaxNcv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
+//    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eig_max_ncv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
     auto new_theta_evn_normalized        = tools::common::views::get_theta_evn(*MPS_evolved, sqrt(solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0]));
     auto old_theta_evn_normalized        = tools::common::views::get_theta_evn(MPS_original);
 //    t_temp4.toc();
@@ -390,8 +390,8 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
             .shuffle(array4{0,2,1,3})
             .reshape(array2{sizeL,sizeR});
     //Compute the characteristic function G(a).
-    solver.eigs<Storage::DENSE>(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eigMaxNcv,NAN,Form::NONSYMMETRIC,Ritz::LM,Side::R,false);
-//    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eigMaxNcv, Ritz::LM, Side::R, false);
+    solver.eigs<Storage::DENSE>(transfer_matrix_G.data(), (int)transfer_matrix_G.dimension(0), 1, eig_max_ncv, NAN, Form::NONSYMMETRIC, Ritz::LM, Side::R, false);
+//    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eig_max_ncv, Ritz::LM, Side::R, false);
     Scalar lambdaG = solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0];
 //    t_temp1.toc();
     return lambdaG;
@@ -715,7 +715,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_state_
     Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_evn = MatrixTensorMap(MatrixType<Scalar>::Identity(sizeLB*sizeLB, sizeLA*sizeLA).eval()) - (transfer_matrix_evn-fixpoint_evn).reshape(array2{sizeLB*sizeLB, sizeLA*sizeLA});
     Eigen::Tensor<Scalar,2> one_minus_transfer_matrix_odd = MatrixTensorMap(MatrixType<Scalar>::Identity(sizeLA*sizeLA, sizeLB*sizeLB).eval()) - (transfer_matrix_odd-fixpoint_odd).reshape(array2{sizeLA*sizeLA, sizeLB*sizeLB});
     class_SVD SVD;
-    SVD.setThreshold(settings::precision::SVDThreshold);
+    SVD.setThreshold(settings::precision::svd_threshold);
     Eigen::Tensor<Scalar,4> E_evn_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(array4{sizeLB,sizeLB,sizeLA,sizeLA});
     Eigen::Tensor<Scalar,4> E_odd_pinv  = SVD.pseudo_inverse(one_minus_transfer_matrix_odd).reshape(array4{sizeLA,sizeLA,sizeLB,sizeLB});
     Eigen::Tensor<Scalar,0> E2LRP_ABAB  = E2d_L_evn.contract(E_evn_pinv,idx({0,1},{0,1})).contract(E2d_R_evn,idx({0,1},{0,1}));

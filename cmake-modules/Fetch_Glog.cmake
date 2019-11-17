@@ -40,7 +40,7 @@ else()
     include(ExternalProject)
     ExternalProject_Add(external_GLOG
             GIT_REPOSITORY https://github.com/google/glog.git
-            GIT_TAG master
+            GIT_TAG v0.4.0
             GIT_PROGRESS false
             GIT_SHALLOW true
             PREFIX      ${BUILD_DIRECTORY}/glog

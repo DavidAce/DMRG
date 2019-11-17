@@ -27,7 +27,7 @@ Eigen::Tensor<tools::infinite::Scalar,4>
 
     DenseHamiltonianProduct<Scalar>  matrix (state.Lblock->block.data(), state.Rblock->block.data(), state.HA->MPO().data(), state.HB->MPO().data(), shape_theta4, shape_mpo4);
     class_eigsolver solver;
-    solver.eigs_dense(matrix,nev,eigMaxNcv,NAN,Form::SYMMETRIC,ritz,Side::R,true,true);
+    solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
     auto eigvec  = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
     tools::common::profile::t_eig.toc();
@@ -67,7 +67,7 @@ Eigen::Tensor<tools::infinite::Scalar, 4> tools::infinite::opt::time_evolve_thet
 
 void tools::infinite::opt::truncate_theta(Eigen::Tensor<Scalar,4> &theta, class_state_infinite & state){
     class_SVD SVD;
-    SVD.setThreshold(settings::precision::SVDThreshold);
+    SVD.setThreshold(settings::precision::svd_threshold);
     auto[U, S, V] = SVD.schmidt(theta,state.get_chi_lim());
     state.MPS->truncation_error = SVD.get_truncation_error();
     state.MPS->MPS_A->set_LC(S);
