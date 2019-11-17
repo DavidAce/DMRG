@@ -23,10 +23,10 @@ class_state_infinite::class_state_infinite(SimulationType sim_type_, std::string
         sim_type(sim_type_),
         sim_name(sim_name_),
         MPS(std::make_unique<class_mps_2site>()),
-        Lblock(std::make_unique<class_environment>("L")),
-        Rblock(std::make_unique<class_environment>("R")),
-        Lblock2(std::make_unique<class_environment_var>("L")),
-        Rblock2(std::make_unique<class_environment_var>("R"))
+        Lblock(std::make_unique<class_environment>("L",0)),
+        Rblock(std::make_unique<class_environment>("R",1)),
+        Lblock2(std::make_unique<class_environment_var>("L",0)),
+        Rblock2(std::make_unique<class_environment_var>("R",1))
 {
     tools::log->trace("Constructing class_state_infinite");
 
@@ -118,7 +118,7 @@ Eigen::Tensor<Scalar, 4> class_state_infinite::get_theta() const { return MPS->g
 //    using namespace eigutils::eigSetting;
 //    DenseHamiltonianProduct<Scalar>  matrix (Lblock->block.data(), Rblock->block.data(), HA->MPO().data(), HB->MPO().data(), shape_theta4, shape_mpo4);
 //    class_eigsolver solver;
-//    solver.eigs_dense(matrix,nev,eigMaxNcv,NAN,Form::SYMMETRIC,ritz,Side::R,true,true);
+//    solver.eigs_dense(matrix,nev,eig_max_ncv,NAN,Form::SYMMETRIC,ritz,Side::R,true,true);
 //
 //    auto eigvals           = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
 //    auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
@@ -178,9 +178,9 @@ Eigen::Tensor<Scalar, 4> class_state_infinite::get_theta() const { return MPS->g
 //============================================================================//
 // Do SVD decomposition, truncation and normalization of the MPS->
 //============================================================================//
-//Eigen::Tensor<Scalar,4> class_state_infinite::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double SVDThreshold){
+//Eigen::Tensor<Scalar,4> class_state_infinite::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double svd_threshold){
 //    class_SVD SVD;
-//    SVD.setThreshold(SVDThreshold);
+//    SVD.setThreshold(svd_threshold);
 //    auto[U, S, V] = SVD.schmidt(theta,chi_);
 //    MPS->truncation_error         = SVD.get_truncation_error();
 //    MPS->LC  = S;
@@ -191,9 +191,9 @@ Eigen::Tensor<Scalar, 4> class_state_infinite::get_theta() const { return MPS->g
 //    return get_theta();
 //}
 //
-//void class_state_infinite::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, class_mps_2site &MPS_out,long chi_, double SVDThreshold){
+//void class_state_infinite::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, class_mps_2site &MPS_out,long chi_, double svd_threshold){
 //    class_SVD SVD;
-//    SVD.setThreshold(SVDThreshold);
+//    SVD.setThreshold(svd_threshold);
 //    auto[U, S, V] = SVD.schmidt(theta, chi_);
 //    MPS_out.truncation_error = SVD.get_truncation_error();
 //    MPS_out.LC  = S;
@@ -294,23 +294,30 @@ void class_state_infinite::enlarge_environment(int direction){
     if (direction == 1){
         assert(Lblock->get_position()  == HA->get_position());
         assert(Lblock2->get_position() == HA->get_position());
-        Lblock->enlarge(*MPS->MPS_A,  HA->MPO_reduced_view());
-        Lblock2->enlarge(*MPS->MPS_A, HA->MPO_reduced_view());
+//        Lblock->enlarge(*MPS->MPS_A,  HA->MPO_reduced_view());
+//        Lblock2->enlarge(*MPS->MPS_A, HA->MPO_reduced_view());
+        Lblock->enlarge(*MPS->MPS_A,  *HA);
+        Lblock2->enlarge(*MPS->MPS_A, *HA);
         Lblock->set_position (HB->get_position());
         Lblock2->set_position(HB->get_position());
     }else if (direction == -1){
         assert(Rblock->get_position()  == HB->get_position());
         assert(Rblock2->get_position() == HB->get_position());
-        Rblock->enlarge(*MPS->MPS_B,  HB->MPO_reduced_view());
-        Rblock2->enlarge(*MPS->MPS_B, HB->MPO_reduced_view());
+//        Rblock->enlarge(*MPS->MPS_B,  HB->MPO_reduced_view());
+//        Rblock2->enlarge(*MPS->MPS_B, HB->MPO_reduced_view());
+        Rblock->enlarge(*MPS->MPS_B,  *HB);
+        Rblock2->enlarge(*MPS->MPS_B, *HB);
         Rblock->set_position (HA->get_position());
         Rblock2->set_position(HA->get_position());
     }else if(direction == 0){
-        Lblock->enlarge (*MPS->MPS_A,  HA->MPO_reduced_view());
-        Rblock->enlarge (*MPS->MPS_B,  HB->MPO_reduced_view());
-        Lblock2->enlarge(*MPS->MPS_A, HA->MPO_reduced_view());
-        Rblock2->enlarge(*MPS->MPS_B, HB->MPO_reduced_view());
-
+//        Lblock->enlarge (*MPS->MPS_A,  HA->MPO_reduced_view());
+//        Rblock->enlarge (*MPS->MPS_B,  HB->MPO_reduced_view());
+//        Lblock2->enlarge(*MPS->MPS_A, HA->MPO_reduced_view());
+//        Rblock2->enlarge(*MPS->MPS_B, HB->MPO_reduced_view());
+        Lblock->enlarge (*MPS->MPS_A, *HA);
+        Rblock->enlarge (*MPS->MPS_B, *HB);
+        Lblock2->enlarge(*MPS->MPS_A, *HA);
+        Rblock2->enlarge(*MPS->MPS_B, *HB);
         Lblock->set_position (HB->get_position());
         Rblock->set_position (HB->get_position()+1);
         Lblock2->set_position(HB->get_position());

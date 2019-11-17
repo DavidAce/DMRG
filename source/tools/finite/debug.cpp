@@ -228,7 +228,7 @@ void tools::finite::debug::check_integrity_of_mps(const class_state_finite &stat
 
         tools::log->trace("Checking norms");
         auto norm_chain = tools::finite::measure::norm(state);
-        if(std::abs(norm_chain - 1.0) > settings::precision::maxNormError) {
+        if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) {
             throw std::runtime_error(fmt::format("Norm of state too far from unity: {:.16f}",norm_chain));
         }
 

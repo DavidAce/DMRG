@@ -224,7 +224,7 @@ public:
                 "energy_per_site_mpo",
                 "energy_per_site_ham",
                 "energy_per_site_mom",
-                "energy_variance_mpo",
+                "energy_variance",
                 "energy_variance_per_site_mpo",
                 "energy_variance_per_site_ham",
                 "energy_variance_per_site_mom",

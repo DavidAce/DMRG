@@ -40,19 +40,72 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     if(h5pp_file) h5pp_file->writeDataset(settings::input::input_file_raw  , "common/input_file");
 }
 
+std::list<double> get_cumsum(std::list<int> &X_vec,std::list<double> &Y_vec){
+    if (X_vec.size() != Y_vec.size())throw std::logic_error("Lists must be equal in size!");
+    auto Y_abs = Y_vec;
+    std::for_each(Y_abs.begin(),Y_abs.end(), std::abs<double>);
+    double minval = *std::min_element(Y_abs.begin(),Y_abs.end());
+    std::for_each(Y_abs.begin(),Y_abs.end(),[minval](auto &val){val-=minval;});
+    double maxval = *std::max_element(Y_abs.begin(),Y_abs.end());
+    std::for_each(Y_abs.begin(),Y_abs.end(),[maxval](auto &val){val/=maxval;});
+    //Now data should be normalized between 0 and 1.
 
+    double sum = 0.0;
+    std::list<double> cumsum;
+    std::list<double> deltaX(X_vec.size());
+    std::adjacent_difference(X_vec.begin(),X_vec.end(),deltaX.begin());
+    deltaX.front() = 0;
+    auto d_it = deltaX.begin();
+    auto y_it = Y_abs.begin();
+    while(d_it != deltaX.end()){
+        sum += *d_it * *y_it;
+        cumsum.emplace_back(sum);
+        d_it++;
+        y_it++;
+    }
+    return cumsum;
+}
 
+std::list<std::list<double>> get_slopes(std::list<int> &X_vec,std::list<double> &Y_vec){
+    if (X_vec.size() != Y_vec.size())throw std::logic_error("Lists must be equal in size!");
+    size_t size = X_vec.size();
 
+    std::list<std::list<double>> slope_lists;
+    for(size_t win_size = size; win_size > 2; win_size --){
+        auto x_it = X_vec.begin();
+        auto y_it = Y_vec.begin();
+        std::list<double> slopes;
+        while(std::distance(x_it,X_vec.end()) >= (int) win_size){
+            std::vector<int>    x_win(x_it, std::next(x_it,win_size) );
+            std::vector<double> y_win(y_it, std::next(y_it,win_size) );
+            double avgX = accumulate(x_win.begin(), x_win.end(), 0.0) / x_win.size();
+            double avgY = accumulate(y_win.begin(), y_win.end(), 0.0) / y_win.size();
+            double numerator   = 0.0;
+            double denominator = 0.0;
+            for(size_t i = 0; i < win_size; i++){
+                numerator   += (x_win[i] - avgX) * (y_win[i] - avgY);
+                denominator += (x_win[i] - avgX) * (x_win[i] - avgX);
+            }
+            double slope = std::abs(numerator / denominator) / avgY * 100;
+            slope        = std::isnan(slope) ? 0.0 : slope;
+            slopes.push_back(slope);
+            std::advance(x_it, 1);
+            std::advance(y_it, 1);
+        }
+        slope_lists.push_back(slopes);
+    }
+    return slope_lists;
+
+}
 
 class_algorithm_base::SaturationReport
 class_algorithm_base::check_saturation_using_slope(
-        std::list<bool>  & B_vec,
+//        std::list<bool>  & B_vec,
         std::list<double> &Y_vec,
         std::list<int> &X_vec,
         double new_data,
         int iter,
-        int rate,
-        double tolerance)
+        int rate)
 /*! \brief Checks convergence based on slope.
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
  * If the measurement happened less than rate iterations ago, return.
@@ -66,37 +119,25 @@ class_algorithm_base::check_saturation_using_slope(
     if (iter - last_measurement < rate){return report;}
 
     // It's time to check. Insert current numbers
-    B_vec.push_back(false);
+//    B_vec.push_back(false);
     Y_vec.push_back(new_data);
     X_vec.push_back(iter);
-    unsigned long min_data_points = 2;
+    size_t min_data_points = 2;
     if (Y_vec.size() < min_data_points){return report;}
-//    [2019-09-04 09:41:16][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.107435, 0.0755767, 0.689875, 0.692682, 0.709075, 0.936858, 0.771467, 0.609487, 0.637618, 0.708048, 0.703904, 0.716228, 0.131454 , 0.0982134, 0.165784, -0}
-//    [2019-09-04 14:09:38][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.107185, 0.0750735, 0.689648, 0.69319 , 0.705737, 0.764265, 0.71776 , 0.640145, 0.658814, 0.706533, 0.687854, 0.659679, 0.0969757, 0.0707726, 0.14884 , -0}
-//    [2019-09-04 15:50:25][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.109655, 0.0794533, 0.690183, 0.633393, 0.638498, 0.852765, 0.680258, 0.604823, 0.636992, 0.707849, 0.693525, 0.664779, 0.0980222, 0.191848 , 0.249013, -0} xDMRG Iter: 7     E: 1.1380981061517343    ε: 0.5688  log₁₀ σ²(E): -13.0853826559
-//    [2019-09-04 16:12:27][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.260162, 0.0767326, 0.691241, 0.693091, 0.704597, 0.744191, 0.683444, 0.603736, 0.63557 , 0.705953, 0.693286, 0.664763, 0.0973455, 0.0711479, 0.149059, -0} xDMRG Iter: 20    E: 0.3989677607237975    ε: 0.5241  log₁₀ σ²(E): -13.0536331913 (svd 1e-10)
+    size_t max_data_points = std::max(min_data_points,size_t(0.5*Y_vec.size()) ) ;
 
-
-    auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check from last part of the measurements in Y_vec.
-    while (X_vec.size() - check_from < min_data_points and check_from > 0){
-        check_from -=1; //Decrease check from if out of bounds.
-    }
-
-
+    size_t check_from = X_vec.size() - max_data_points;
     double n = X_vec.size() - check_from;
-    double numerator = 0.0;
+    double numerator   = 0.0;
     double denominator = 0.0;
-
 
     auto x_it = X_vec.begin();
     auto y_it = Y_vec.begin();
     std::advance(x_it, check_from);
     std::advance(y_it, check_from);
-
-    auto v_end = Y_vec.end();
     double avgX = accumulate(x_it, X_vec.end(), 0.0) / n;
     double avgY = accumulate(y_it, Y_vec.end(), 0.0) / n;
-
+    auto v_end = Y_vec.end();
     while(y_it != v_end){
         numerator   += (*x_it - avgX) * (*y_it - avgY);
         denominator += (*x_it - avgX) * (*x_it - avgX);
@@ -104,23 +145,12 @@ class_algorithm_base::check_saturation_using_slope(
         x_it++;
 
     }
-
+    //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
     double slope = std::abs(numerator / denominator) / avgY * 100;
     slope       = std::isnan(slope) ? 0.0 : slope;
-    //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
-    bool has_saturated;
-    if (slope < tolerance){
-        B_vec.back()  = true;
-        has_saturated = true;
-    }else{
-        B_vec.clear();
-        has_saturated = false;
-    }
+    report.slope = slope;
+    report.avgY  = avgY;
     report.has_computed  = true;
-    report.has_saturated = has_saturated;
-    report.slope         = slope;
-    report.avgY          = avgY;
-    report.check_from    = check_from;
     return report;
 }
 
@@ -134,9 +164,10 @@ class_algorithm_base::check_saturation_using_slope2(
         int rate,
         double tolerance)
 /*! \brief Checks convergence based on slope.
+ * NOTE! THIS FUNCTION REQUIRES MONOTONICALLY DECREASING Y-elements
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
  * If the last measurement happened less than rate iterations ago, return.
- * Starting from the last measurement, and including at least 2 data points, check how far back you can go before
+ * Starting from the last measurement, and including at last 2 data points, check how far back you can go before
  * the slope to grows larger than the threshold.
  * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
  */

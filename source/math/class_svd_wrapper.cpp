@@ -87,7 +87,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
     or not SVD.matrixV().leftCols(rank).allFinite() )
     {
         std::cerr   << "SVD error \n"
-                    << "  SVDThreshold     = " << SVDThreshold << '\n'
+                    << "  svd_threshold     = " << SVDThreshold << '\n'
                     << "  Truncation Error = " << truncation_error << '\n'
                     << "  Rank             = " << rank << '\n'
                     << "  U all finite     : " << std::boolalpha << SVD.matrixU().leftCols(rank).allFinite() << '\n'
@@ -115,7 +115,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
 //    std::cout << "Singular values           : " << SVD.singularValues().transpose() << std::endl;
 //    std::cout << "Singular values after norm: " << SVD.singularValues().head(rank).normalized().transpose() << std::endl;
 //    std::cout << "Rank                      : " << rank << std::endl;
-//    std::cout << "Threshold                 : " << SVDThreshold << std::endl;
+//    std::cout << "Threshold                 : " << svd_threshold << std::endl;
 //    std::cout << "Truncation error          : " << truncation_error << std::endl;
 
     return std::make_tuple(

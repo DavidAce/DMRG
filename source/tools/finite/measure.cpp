@@ -46,7 +46,7 @@ double tools::finite::measure::norm(const class_state_finite & state){
         chain = temp;
     }
     double norm_chain = std::abs(Textra::TensorMatrixMap(chain).trace());
-    if(std::abs(norm_chain - 1.0) > settings::precision::maxNormError){
+    if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error){
         tools::log->warn("Measure: Norm far from unity: {:.16f}", norm_chain);
 //        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
     }
@@ -84,9 +84,12 @@ std::vector<size_t> tools::finite::measure::bond_dimensions(const class_state_fi
 
 
 double tools::finite::measure::twosite::energy_minus_energy_reduced(const class_state_finite &state, const Eigen::Tensor<Scalar,4> & theta){
-    // We want to measure energy accurately always.
-    // Since the state can be reduced, the true energy is always
-    // E + E_reduced
+    // This measures the bare energy as given by the MPO's.
+    // On each MPO the site energy *could* be reduced.
+    // If they are reduced, then
+    //      < H > = E - E_reduced ~ 0
+    // Else
+    //      < H > = E
     tools::common::profile::t_ene.tic();
     Eigen::Tensor<Scalar, 0>  E;
     E.device(omp::dev) =
@@ -103,15 +106,18 @@ double tools::finite::measure::twosite::energy_minus_energy_reduced(const class_
     double ene = std::real(E(0));
     if (std::isnan(ene) or std::isinf(ene)) throw std::runtime_error(fmt::format("Energy is invalid: {}", ene));
     tools::common::profile::t_ene.toc();
-    return  std::real(E(0));
+    return  ene;
 }
 
 
 double tools::finite::measure::twosite::energy(const class_state_finite &state, const Eigen::Tensor<Scalar,4> & theta){
-    // We want to measure energy accurately always.
-    // Since the state can be reduced, the true energy is always
-    // (E-E_reduced) + E_reduced
-    return twosite::energy_minus_energy_reduced(state,theta) + state.get_energy_reduced();
+    // This measures the actual energy of the system regardless of the reduced/non-reduced state of the MPO's
+    // If they are reduced, then
+    //      "Actual energy" = (E - E_reduced) + E_reduced = (~0) + E_reduced = E
+    // Else
+    //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
+
+    return twosite::energy_minus_energy_reduced(state,theta) + state.get_energy_reduced()*state.get_length();
 }
 
 
@@ -120,10 +126,16 @@ double tools::finite::measure::twosite::energy_per_site(const class_state_finite
 }
 
 double tools::finite::measure::twosite::energy_variance(const class_state_finite &state, const Eigen::Tensor<Scalar,4> & theta){
-    // Depending on whether the state is reduced or not we get different formulas.
-    // Luckily, the variance is independent of offsets.
-    // If the state is not reduced we get Var H = H^2 - E^2 =  H2 - energy*energy
-    // IF the state is reduced we get Var H = (H-E_red) - (E-E_red)^2 = H2 - energy_minus_energy_reduced^2
+    // Depending on whether the mpo's are reduced or not we get different formulas.
+    // If mpo's are reduced:
+    //      Var H = <(H-E_red)^2> - <(H-E_red)>^2 = <H^2> - 2<H>E_red + E_red^2 - (<H> - E_red) ^2
+    //                                            = H2    - 2*E*E_red + E_red^2 - E^2 + 2*E*E_red - E_red^2
+    //                                            = H2    - E^2
+    //      so Var H = <(H-E_red)^2> - energy_minus_energy_reduced^2 = H2 - ~0
+    //      where H2 is computed with reduced mpo's. Note that ~0 is not exactly zero
+    //      because E_red != E necessarily (though they are supposed to be very close)
+    // Else:
+    //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
 
     tools::common::profile::t_var.tic();
     Eigen::Tensor<Scalar, 0> H2;
@@ -159,11 +171,18 @@ double tools::finite::measure::twosite::energy_variance_per_site(const class_sta
 
 double tools::finite::measure::energy(const class_state_finite &state){
     if (state.measurements.energy)         return state.measurements.energy.value();
-    if (state.active_sites.size() > 2)     return multisite::energy(state);
-    tools::common::profile::t_ene.tic();
-    auto theta = state.get_theta();
-    tools::common::profile::t_ene.toc();
-    state.measurements.energy = twosite::energy(state,theta);
+    if (state.active_sites.empty()){
+        tools::common::profile::t_ene.tic();
+        auto theta = state.get_theta();
+        tools::common::profile::t_ene.toc();
+        state.measurements.energy = twosite::energy(state,theta);
+    }else
+    {
+        tools::common::profile::t_ene.tic();
+        auto theta = state.get_multitheta();
+        tools::common::profile::t_ene.toc();
+        state.measurements.energy = multisite::energy(state,theta);
+    }
     return state.measurements.energy.value();
 }
 
@@ -178,23 +197,26 @@ double tools::finite::measure::energy_per_site(const class_state_finite &state){
 
 
 double tools::finite::measure::energy_variance(const class_state_finite &state){
-    if (state.measurements.energy_variance_mpo) return state.measurements.energy_variance_mpo.value();
-    if (state.active_sites.size() > 2)          return multisite::energy_variance(state);
-    tools::common::profile::t_var.tic();
-    auto theta = state.get_theta();
-    tools::common::profile::t_var.toc();
-    state.measurements.energy_variance_mpo = twosite::energy_variance(state,theta);
-    return state.measurements.energy_variance_mpo.value();
-
+    if (state.measurements.energy_variance) return state.measurements.energy_variance.value();
+    if (state.active_sites.empty()){
+        tools::common::profile::t_var.tic();
+        auto theta = state.get_theta();
+        tools::common::profile::t_var.toc();
+        state.measurements.energy_variance = twosite::energy_variance(state, theta);
+    }else{
+        tools::common::profile::t_var.tic();
+        auto theta = state.get_multitheta();
+        tools::common::profile::t_var.toc();
+        state.measurements.energy_variance = multisite::energy_variance(state, theta);
+    }
+    return state.measurements.energy_variance.value();
 }
 
 
 double tools::finite::measure::energy_variance_per_site(const class_state_finite &state){
     if (state.measurements.energy_variance_per_site) return state.measurements.energy_variance_per_site.value();
-    if (state.active_sites.size() > 2)               return multisite::energy_variance_per_site(state);
-    state.measurements.energy_variance_per_site = energy_variance(state)/state.get_length();
+    state.measurements.energy_variance_per_site = tools::finite::measure::energy_variance(state)/state.get_length();
     return state.measurements.energy_variance_per_site.value();
-
 }
 
 
@@ -312,7 +334,7 @@ Eigen::Tensor<Scalar,1> tools::finite::measure::mps_wavefn(const class_state_fin
 
     Eigen::Tensor<Scalar,1> mps_chain = chain.reshape(array1{chain.dimension(0)});
     double norm_chain = Textra::TensorVectorMap(chain).norm();
-    if(std::abs(norm_chain - 1.0) > settings::precision::maxNormError){
+    if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error){
         tools::log->warn("Norm far from unity: {}", norm_chain);
         throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
     }

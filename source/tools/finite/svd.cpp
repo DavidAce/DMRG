@@ -71,8 +71,8 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_st
     auto theta_map = Eigen::Map<Eigen::VectorXcd>(theta.data(),theta.size());
     auto fullnorm  = tools::finite::measure::norm(state);
     auto thetanorm = theta_map.norm();
-    if(std::abs(fullnorm  - 1.0) > settings::precision::maxNormError){ tools::log->error("Norm before truncation too far from unity: {:.16f}", fullnorm);}
-    if(std::abs(thetanorm - 1.0) > settings::precision::maxNormError){ tools::log->error("Norm of theta too far from unity: {:.16f}", thetanorm); theta_map.normalize();}
+    if(std::abs(fullnorm  - 1.0) > settings::precision::max_norm_error){ tools::log->error("Norm before truncation too far from unity: {:.16f}", fullnorm);}
+    if(std::abs(thetanorm - 1.0) > settings::precision::max_norm_error){ tools::log->error("Norm of theta too far from unity: {:.16f}", thetanorm); theta_map.normalize();}
 
     //Start by clearing the environments that will become stale.
     while(true){
@@ -117,7 +117,7 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_st
 void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &theta, class_state_finite & state){
     tools::log->trace("Truncating multitheta from left to right");
     class_SVD SVD;
-    SVD.setThreshold(settings::precision::SVDThreshold);
+    SVD.setThreshold(settings::precision::svd_threshold);
     using Scalar = class_state_finite::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     Eigen::Tensor<Scalar,4> theta4;
@@ -166,12 +166,12 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
             V = temp;
             if(state.ENV_L. back().get_position() != site) throw std::runtime_error(fmt::format("Site and postion mismatch in ENV_L while truncating  left to right {} != {}",state.ENV_L. front().get_position() , site));
             if(state.ENV2_L.back().get_position() != site) throw std::runtime_error(fmt::format("Site and postion mismatch in ENV2_L while truncating  left to right{} != {}",state.ENV2_L.front().get_position() , site));
-            class_environment     L  = state.ENV_L.back();
-            class_environment_var L2 = state.ENV2_L.back();
-            L.enlarge (state.get_MPS(site), state.get_MPO(site).MPO());
-            L2.enlarge(state.get_MPS(site), state.get_MPO(site).MPO());
-            state.ENV_L.emplace_back(L);
-            state.ENV2_L.emplace_back(L2);
+//            class_environment     L  = state.ENV_L.back();
+//            class_environment_var L2 = state.ENV2_L.back();
+//            L.enlarge (state.get_MPS(site), state.get_MPO(site));
+//            L2.enlarge(state.get_MPS(site), state.get_MPO(site));
+            state.ENV_L .emplace_back(state.ENV_L .back().enlarge(state.get_MPS(site), state.get_MPO(site)));
+            state.ENV2_L.emplace_back(state.ENV2_L.back().enlarge(state.get_MPS(site), state.get_MPO(site)));
         } else{
             //Always set LC on the last "A" matrix
             state.get_MPS(site).set_LC(S);
@@ -209,7 +209,7 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
 void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_state_finite & state){
     tools::log->trace("Truncating multitheta from right to left");
     class_SVD SVD;
-    SVD.setThreshold(settings::precision::SVDThreshold);
+    SVD.setThreshold(settings::precision::svd_threshold);
     using Scalar = class_state_finite::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
     Eigen::Tensor<Scalar,4> theta4;
@@ -261,12 +261,12 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 
             if(state.ENV_R. front().get_position() != site) throw std::runtime_error(fmt::format("Site and postion mismatch in ENV_R while truncating right to left {} != {}", state.ENV_R. front().get_position() , site));
             if(state.ENV2_R.front().get_position() != site) throw std::runtime_error(fmt::format("Site and postion mismatch in ENV2_R while truncating right to left {} != {}",state.ENV2_R.front().get_position() , site));
-            class_environment     R  = state.ENV_R.front();
-            class_environment_var R2 = state.ENV2_R.front();
-            R.enlarge (state.get_MPS(site), state.get_MPO(site).MPO());
-            R2.enlarge(state.get_MPS(site), state.get_MPO(site).MPO());
-            state.ENV_R.emplace_front(R);
-            state.ENV2_R.emplace_front(R2);
+//            class_environment     R  = state.ENV_R.front();
+//            class_environment_var R2 = state.ENV2_R.front();
+//            R.enlarge (state.get_MPS(site), state.get_MPO(site));
+//            R2.enlarge(state.get_MPS(site), state.get_MPO(site));
+            state.ENV_R .emplace_front(state.ENV_R .front().enlarge(state.get_MPS(site), state.get_MPO(site)));
+            state.ENV2_R.emplace_front(state.ENV2_R.front().enlarge(state.get_MPS(site), state.get_MPO(site)));
 
         }else{
             state.get_MPS(site-1).set_LC(S);
@@ -301,7 +301,7 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state,const std::optional<size_t> chi_lim_opt) {
     tools::common::profile::t_svd.tic();
     class_SVD SVD;
-    SVD.setThreshold(settings::precision::SVDThreshold);
+    SVD.setThreshold(settings::precision::svd_threshold);
     size_t chi_lim = state.get_chi_lim();
     if(chi_lim_opt.has_value())  chi_lim = chi_lim_opt.value();
     auto[U, S, V] = SVD.schmidt(theta, chi_lim);
@@ -354,12 +354,12 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
     MPS_L.back().unset_LC();
 
     if (state.get_direction() == 1){
-        class_environment     L  = ENV_L.back();
-        class_environment_var L2 = ENV2_L.back();
-        L.enlarge(MPS_L.back(), MPO_L.back()->MPO());
-        L2.enlarge(MPS_L.back(), MPO_L.back()->MPO());
-        ENV_L.emplace_back(L);
-        ENV2_L.emplace_back(L2);
+//        class_environment     L  = ENV_L.back();
+//        class_environment_var L2 = ENV2_L.back();
+//        ENV_L .back().enlarge(MPS_L.back(), MPO_L.back());
+//        ENV2_L.back().enlarge(MPS_L.back(), MPO_L.back());
+        ENV_L .emplace_back(ENV_L .back().enlarge(MPS_L.back(), *MPO_L.back()));
+        ENV2_L.emplace_back(ENV2_L.back().enlarge(MPS_L.back(), *MPO_L.back()));
         MPS_L.emplace_back(class_mps_site(MPS_R.front().get_M(), LC, MPS_R.front().get_position()));
         MPO_L.emplace_back(MPO_R.front()->clone());
         MPS_R.pop_front();
@@ -374,12 +374,12 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
         tools::finite::opt::truncate_theta(theta,state);
     }else{
 
-        class_environment     R  = ENV_R.front();
-        class_environment_var R2 = ENV2_R.front();
-        R.enlarge(MPS_R.front(), MPO_R.front()->MPO());
-        R2.enlarge(MPS_R.front(), MPO_R.front()->MPO());
-        ENV_R.emplace_front(R);
-        ENV2_R.emplace_front(R2);
+//        class_environment     R  = ENV_R.front();
+//        class_environment_var R2 = ENV2_R.front();
+//        R .enlarge(MPS_R.front(), MPO_R.front()->MPO());
+//        R2.enlarge(MPS_R.front(), MPO_R.front()->MPO());
+        ENV_R .emplace_front(ENV_R .front().enlarge(MPS_R.front(), *MPO_R.front()));
+        ENV2_R.emplace_front(ENV2_R.front().enlarge(MPS_R.front(), *MPO_R.front()));
         MPS_R.emplace_front(class_mps_site(MPS_L.back().get_M(), LC, MPS_L.back().get_position()));
         MPO_R.emplace_front(MPO_L.back()->clone());
         MPS_L.pop_back();

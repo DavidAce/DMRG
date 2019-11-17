@@ -63,6 +63,8 @@ namespace tools{
             extern void initialize                 (class_state_finite & state, size_t length, std::string model_type);
             extern void randomize                  (class_state_finite & state, int seed_state = -1);
             extern void reduce_mpo_energy          (class_state_finite & state);
+            extern void reduce_mpo_energy_multi    (class_state_finite & state);
+            extern void reduce_mpo_energy_2site    (class_state_finite & state);
         }
 
         namespace ops {
