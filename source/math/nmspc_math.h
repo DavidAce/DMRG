@@ -22,6 +22,103 @@
 namespace math
 
 {
+
+    template<typename ContainerType>
+    void check_bounds(ContainerType &X,
+                std::optional<size_t> start_point = std::nullopt,
+                std::optional<size_t> end_point   = std::nullopt)
+    {
+        if(start_point.has_value() and (start_point.value() >= X.size() or start_point.value() < 0))
+            throw std::range_error("Start point is out of range");
+        if(end_point.has_value() and (end_point.value() > X.size() or end_point.value() < start_point ))
+            throw std::range_error("End point is out of range");
+    }
+
+
+    template<typename ContainerType>
+    double mean(ContainerType &X,
+            std::optional<size_t> start_point = std::nullopt,
+            std::optional<size_t> end_point   = std::nullopt)
+    {
+        try {check_bounds(X,start_point,end_point);}
+        catch(std::exception &err){throw std::range_error("mean: " + std::string(err.what()));}
+        if(not start_point.has_value()) start_point = 0;
+        if(not end_point.has_value())   end_point = X.size();
+        if(end_point == start_point) return 0.0;
+
+        auto x_it_start = X.begin();
+        auto x_it_end   = X.begin();
+        double n  = end_point.value() - start_point.value();
+        std::advance(x_it_start, start_point.value());
+        std::advance(x_it_end  , end_point.value());
+        return accumulate(x_it_start, x_it_end, 0.0) / n;
+
+    }
+
+    template<typename ContainerType>
+    double stdev(const ContainerType & X,
+             std::optional<size_t> start_point = std::nullopt,
+             std::optional<size_t> end_point   = std::nullopt)
+    {
+        try {check_bounds(X,start_point,end_point);}
+        catch(std::exception &err){throw std::range_error("stdev: " + std::string(err.what()));}
+        if(not start_point.has_value()) start_point = 0;
+        if(not end_point.has_value())   end_point = X.size();
+        if(end_point == start_point) return 0.0;
+
+        double X_mean = math::mean(X,start_point,end_point);
+//        std::cout << "X_mean: " << X_mean << std::endl;
+        double n = end_point.value() - start_point.value();
+        auto x_it = X.begin();
+        auto x_en = X.begin();
+
+        std::advance(x_it, start_point.value());
+        std::advance(x_en, end_point.value());
+
+         double sum    = std::accumulate(x_it, x_en, 0.0, [&X_mean](auto &x1, auto &x2)
+                        {return x1 + (x2 - X_mean)*(x2 - X_mean);});
+
+        return std::sqrt(sum/n);
+    }
+
+    template<typename ContainerType1, typename ContainerType2>
+    double slope(ContainerType1 &X,ContainerType2 & Y,
+            std::optional<size_t> start_point = std::nullopt,
+            std::optional<size_t> end_point   = std::nullopt)
+    {
+        if(X.size() != Y.size()) throw std::range_error("slope: Size mismatch in arrays");
+        try {check_bounds(X,start_point,end_point);}
+        catch(std::exception &err){throw std::range_error("slope: " + std::string(err.what()));}
+        if(not start_point.has_value()) start_point = 0;
+        if(not end_point.has_value())   end_point =  X.size();
+        if(end_point == start_point) return 0.0;
+
+        auto x_it = X.begin();
+        auto x_en = X.begin();
+        auto y_it = Y.begin();
+        auto y_en = Y.begin();
+        std::advance(x_it, start_point.value());
+        std::advance(y_it, start_point.value());
+        std::advance(x_en  , end_point.value());
+        std::advance(y_en  , end_point.value());
+        double n    = end_point.value() - start_point.value();
+        double avgX = accumulate(x_it, x_en, 0.0) / n;
+        double avgY = accumulate(y_it, y_en, 0.0) / n;
+
+        double numerator   = 0.0;
+        double denominator = 0.0;
+        while(x_it != x_en){
+            numerator   += (*x_it - avgX) * (*y_it - avgY);
+            denominator += (*x_it - avgX) * (*x_it - avgX);
+            y_it++;
+            x_it++;
+        }
+        return std::abs(numerator / denominator);
+    }
+
+
+
+
     /*! \brief MatLab-style modulo operator
     *   \param x first number
     *   \param y second number

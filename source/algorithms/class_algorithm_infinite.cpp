@@ -261,7 +261,8 @@ void class_algorithm_infinite::check_convergence_variance_mpo(double threshold,d
                     X_mpo_vec,
                     tools::infinite::measure::energy_variance_per_site_mpo(*state),
                     sim_status.iteration,
-                    1);
+                    1,
+                    slope_threshold);
 //    if(report.has_computed) V_mpo_slope  = report.slopes.back(); //TODO: Fix this, changed slope calculation, back is not relevant
     if(report.has_computed){
         V_mpo_slope  = report.slope; //TODO: Fix this, changed slope calculation, back is not relevant
@@ -285,7 +286,8 @@ void class_algorithm_infinite::check_convergence_variance_ham(double threshold,d
             X_ham_vec,
             tools::infinite::measure::energy_variance_per_site_ham(*state),
             sim_status.iteration,
-            1);
+            1,
+            slope_threshold);
 //    if(report.has_computed) V_ham_slope  = report.slopes.back();//TODO: Fix this, changed slope calculation, back is not relevant
     if(report.has_computed){
         V_ham_slope   = report.slope;//TODO: Fix this, changed slope calculation, back is not relevant
@@ -307,7 +309,8 @@ void class_algorithm_infinite::check_convergence_variance_mom(double threshold,d
             X_mom_vec,
             tools::infinite::measure::energy_variance_per_site_mom(*state),
             sim_status.iteration,
-            1);
+            1,
+            slope_threshold);
     if(report.has_computed){
         V_mom_slope  = report.slope; //TODO: Fix this, slopes.back() not relevant anymore
         sim_status.variance_mom_has_saturated = V_mom_slope < slope_threshold;
@@ -327,7 +330,8 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
             XS_vec,
             tools::infinite::measure::entanglement_entropy(*state),
             sim_status.iteration,
-            1);
+            1,
+            slope_threshold);
     if(report.has_computed){
         S_slope       = report.slope;//TODO: Fix this, changed slope calculation, back is not relevant
         sim_status.entanglement_has_saturated = S_slope < slope_threshold;

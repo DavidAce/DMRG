@@ -304,22 +304,25 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
 }
 
 void class_algorithm_finite::backup_best_state(const class_state_finite &state) {
-    log->trace("Checking if given state can beat the backup");
-    double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
-    double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
-    if (variance_candidate <  variance_champion){
-        log->debug("We have a new champion! {:.8f} -> {:.8f}", std::log10(variance_champion), std::log10(variance_candidate));
-        *state_backup = state;
-    }else{
-        log->trace("Champion defended his title");
-    }
-    if(state.position_is_any_edge()){
-        //The backup is the best yet this current sweep,  so we store him
-        //in a list
-//        state_champions.emplace_back(std::make_unique<class_state_finite>(*state_backup));
-        state_champions.emplace_back(*state_backup);
-        *state_backup = state;
-    }
+    *state_backup = state;
+    return;
+
+//    log->trace("Checking if given state can beat the backup");
+//    double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
+//    double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
+//    if (variance_candidate <  variance_champion){
+//        log->debug("We have a new champion! {:.8f} -> {:.8f}", std::log10(variance_champion), std::log10(variance_candidate));
+//        *state_backup = state;
+//    }else{
+//        log->trace("Champion defended his title");
+//    }
+//    if(state.position_is_any_edge()){
+//        //The backup is the best yet this current sweep,  so we store him
+//        //in a list
+////        state_champions.emplace_back(std::make_unique<class_state_finite>(*state_backup));
+//        state_champions.emplace_back(*state_backup);
+//        *state_backup = state;
+//    }
 }
 
 
@@ -337,7 +340,8 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
                     X_mpo_vec,
                     tools::finite::measure::energy_variance(*state_backup),
                     sim_status.iteration,
-                    1);
+                    1,
+                    slope_threshold);
     sim_status.variance_mpo_has_converged = tools::finite::measure::energy_variance(*state_backup) < threshold;
     if (report.has_computed){
         V_mpo_slopes.emplace_back(report.slope);
@@ -351,6 +355,7 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
         log->info(" -- relative slope    = {} %", report.slope);
         log->info(" -- tolerance         = {} %", slope_threshold);
         log->info(" -- last var average  = {} " , report.avgY);
+        log->info(" -- check from        = {} " , report.check_from);
         log->info(" -- var history       = {} " , V_mpo_vec);
         log->info(" -- slope history     = {} " , V_mpo_slopes);
         log->info(" -- has saturated     = {} " , sim_status.variance_mpo_has_saturated);
@@ -379,7 +384,8 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
                 X_mat[site],
                 entropies[site],
                 sim_status.iteration,
-                1);
+                1,
+                slope_threshold);
     }
     bool all_computed = std::all_of(reports.begin(), reports.end(), [](const SaturationReport r) { return r.has_computed; });
     sim_status.entanglement_has_saturated = false;
@@ -410,6 +416,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
         log->info(" -- site              = {}"  , idx_max_slope);
         log->info(" -- relative slope    = {} %", reports[idx_max_slope].slope);
         log->info(" -- tolerance         = {} %", slope_threshold);
+        log->info(" -- check from        = {} " , reports[idx_max_slope].check_from);
         log->info(" -- ent history       = {} " , S_mat[idx_max_slope]);
         log->info(" -- slope history     = {} " , S_slopes);
         log->info(" -- has saturated     = {} " , sim_status.entanglement_has_saturated);

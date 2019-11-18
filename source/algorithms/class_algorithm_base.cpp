@@ -10,6 +10,7 @@
 #include <tools/nmspc_tools.h>
 #include <h5pp/h5pp.h>
 #include <simulation/nmspc_settings.h>
+#include <math/nmspc_math.h>
 
 using Scalar = class_algorithm_base::Scalar;
 
@@ -40,63 +41,8 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     if(h5pp_file) h5pp_file->writeDataset(settings::input::input_file_raw  , "common/input_file");
 }
 
-std::list<double> get_cumsum(std::list<int> &X_vec,std::list<double> &Y_vec){
-    if (X_vec.size() != Y_vec.size())throw std::logic_error("Lists must be equal in size!");
-    auto Y_abs = Y_vec;
-    std::for_each(Y_abs.begin(),Y_abs.end(), std::abs<double>);
-    double minval = *std::min_element(Y_abs.begin(),Y_abs.end());
-    std::for_each(Y_abs.begin(),Y_abs.end(),[minval](auto &val){val-=minval;});
-    double maxval = *std::max_element(Y_abs.begin(),Y_abs.end());
-    std::for_each(Y_abs.begin(),Y_abs.end(),[maxval](auto &val){val/=maxval;});
-    //Now data should be normalized between 0 and 1.
 
-    double sum = 0.0;
-    std::list<double> cumsum;
-    std::list<double> deltaX(X_vec.size());
-    std::adjacent_difference(X_vec.begin(),X_vec.end(),deltaX.begin());
-    deltaX.front() = 0;
-    auto d_it = deltaX.begin();
-    auto y_it = Y_abs.begin();
-    while(d_it != deltaX.end()){
-        sum += *d_it * *y_it;
-        cumsum.emplace_back(sum);
-        d_it++;
-        y_it++;
-    }
-    return cumsum;
-}
 
-std::list<std::list<double>> get_slopes(std::list<int> &X_vec,std::list<double> &Y_vec){
-    if (X_vec.size() != Y_vec.size())throw std::logic_error("Lists must be equal in size!");
-    size_t size = X_vec.size();
-
-    std::list<std::list<double>> slope_lists;
-    for(size_t win_size = size; win_size > 2; win_size --){
-        auto x_it = X_vec.begin();
-        auto y_it = Y_vec.begin();
-        std::list<double> slopes;
-        while(std::distance(x_it,X_vec.end()) >= (int) win_size){
-            std::vector<int>    x_win(x_it, std::next(x_it,win_size) );
-            std::vector<double> y_win(y_it, std::next(y_it,win_size) );
-            double avgX = accumulate(x_win.begin(), x_win.end(), 0.0) / x_win.size();
-            double avgY = accumulate(y_win.begin(), y_win.end(), 0.0) / y_win.size();
-            double numerator   = 0.0;
-            double denominator = 0.0;
-            for(size_t i = 0; i < win_size; i++){
-                numerator   += (x_win[i] - avgX) * (y_win[i] - avgY);
-                denominator += (x_win[i] - avgX) * (x_win[i] - avgX);
-            }
-            double slope = std::abs(numerator / denominator) / avgY * 100;
-            slope        = std::isnan(slope) ? 0.0 : slope;
-            slopes.push_back(slope);
-            std::advance(x_it, 1);
-            std::advance(y_it, 1);
-        }
-        slope_lists.push_back(slopes);
-    }
-    return slope_lists;
-
-}
 
 class_algorithm_base::SaturationReport
 class_algorithm_base::check_saturation_using_slope(
@@ -105,7 +51,8 @@ class_algorithm_base::check_saturation_using_slope(
         std::list<int> &X_vec,
         double new_data,
         int iter,
-        int rate)
+        int rate,
+        double tolerance)
 /*! \brief Checks convergence based on slope.
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
  * If the measurement happened less than rate iterations ago, return.
@@ -124,32 +71,27 @@ class_algorithm_base::check_saturation_using_slope(
     X_vec.push_back(iter);
     size_t min_data_points = 2;
     if (Y_vec.size() < min_data_points){return report;}
-    size_t max_data_points = std::max(min_data_points,size_t(0.5*Y_vec.size()) ) ;
+    size_t start_point = 0;
+    double band_size   = 2.0 + 10.0*tolerance;
 
-    size_t check_from = X_vec.size() - max_data_points;
-    double n = X_vec.size() - check_from;
-    double numerator   = 0.0;
-    double denominator = 0.0;
-
-    auto x_it = X_vec.begin();
-    auto y_it = Y_vec.begin();
-    std::advance(x_it, check_from);
-    std::advance(y_it, check_from);
-    double avgX = accumulate(x_it, X_vec.end(), 0.0) / n;
-    double avgY = accumulate(y_it, Y_vec.end(), 0.0) / n;
-    auto v_end = Y_vec.end();
-    while(y_it != v_end){
-        numerator   += (*x_it - avgX) * (*y_it - avgY);
-        denominator += (*x_it - avgX) * (*x_it - avgX);
-        y_it++;
-        x_it++;
-
+    size_t recent_point   = std::floor(0.75*Y_vec.size());
+    recent_point = std::min(Y_vec.size()-min_data_points , recent_point);
+    double recent_point_std = math::stdev(Y_vec, recent_point); //Computes the standard dev of Y_vec from recent_point to end
+    for(size_t some_point = 0; some_point < Y_vec.size(); some_point++){
+        double some_point_std = math::stdev(Y_vec, some_point); //Computes the standard dev of Y_vec from some_point to end
+        std::string arrow = "";
+        if(some_point_std < band_size * recent_point_std and start_point == 0){
+            start_point = some_point;
+            break;
+        }
     }
     //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
-    double slope = std::abs(numerator / denominator) / avgY * 100;
-    slope       = std::isnan(slope) ? 0.0 : slope;
-    report.slope = slope;
-    report.avgY  = avgY;
+    double avgY          = math::mean(Y_vec,start_point);
+    double slope         = math::slope(X_vec,Y_vec,start_point)/avgY * 100;
+    slope                = std::isnan(slope) ? 0.0 : slope;
+    report.slope         = slope;
+    report.check_from    = start_point;
+    report.avgY          = avgY;
     report.has_computed  = true;
     return report;
 }

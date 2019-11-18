@@ -84,6 +84,7 @@ protected:
 //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from
     struct SaturationReport {
         bool   has_computed  = false;
+        size_t check_from    = 0;
         double slope;
         double avgY;
     };
@@ -101,7 +102,8 @@ protected:
             std::list<int> &X_vec,
             double new_data,
             int iter,
-            int rate);
+            int rate,
+            double tolerance);
     SaturationReport2
     check_saturation_using_slope2(
             std::list<double> &Y_vec,
