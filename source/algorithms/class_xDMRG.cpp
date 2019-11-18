@@ -338,16 +338,18 @@ void class_xDMRG::try_projection(){
     if(try_every_sweep or try_when_stuck)
     {
         log->debug("Trying projection to {}", settings::model::target_parity_sector);
+        auto state_projected      = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
         double variance_original  = tools::finite::measure::energy_variance_per_site(*state);
-        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-        double variance_projected = tools::finite::measure::energy_variance_per_site(*state);
+        double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
+
         has_projected = true;
 
         if (variance_projected < variance_original){
             log->info("Projection: variance improved {:.8} -> {:.8}",
                       std::log10(variance_original), std::log10(variance_projected));
+            *state = state_projected ;
         }else{
-            log->info("Projection: variance worsened {:.8} -> {:.8}",
+            log->info("Projection: variance would have worsened {:.8} -> {:.8}",
                       std::log10(variance_original), std::log10(variance_projected));
         }
     }
