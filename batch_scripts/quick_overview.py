@@ -91,7 +91,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                     step_results = step_array[-1]
         except Exception as err:
             print("Could not read sim_status. Reason:", err)
-
+        if step_results == 0 and step_journal == 0:
+            continue
         if step_journal >= step_results:
             table_path = 'xDMRG/journal'
         else:
