@@ -117,7 +117,7 @@ void class_xDMRG::single_xDMRG_step()
     Eigen::Tensor<Scalar,3> theta;
 
     std::list<size_t> max_num_sites_list = {2};
-    if(sim_status.simulation_has_got_stuck) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
+    if(sim_status.simulation_has_stuck_for >= 3) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
 
 //    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::max_sites_multidmrg};
@@ -128,10 +128,10 @@ void class_xDMRG::single_xDMRG_step()
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
 
-//        if (max_num_sites > 2){
-//            optSpace  = opt::OptSpace::DIRECT;
-//            threshold = settings::precision::max_size_direct;
-//        }
+        if (max_num_sites > 2){
+            optSpace  = opt::OptSpace::DIRECT;
+            threshold = settings::precision::max_size_direct;
+        }
 
         state->activate_sites(threshold, max_num_sites);
 
