@@ -72,7 +72,7 @@ class_algorithm_base::check_saturation_using_slope(
     size_t min_data_points = 2;
     if (Y_vec.size() < min_data_points){return report;}
     size_t start_point = 0;
-    double band_size   = 2.0 + 10.0*tolerance;
+    double band_size   = 2.0 + 2.0*tolerance;  // Between 2 and  4 standard deviations away
 
     size_t recent_point   = std::floor(0.75*Y_vec.size());
     recent_point = std::min(Y_vec.size()-min_data_points , recent_point);
