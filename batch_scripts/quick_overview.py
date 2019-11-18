@@ -82,11 +82,15 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         step_journal = 0
         try:
             if 'xDMRG/journal/sim_status' in h5file:
-                step_journal = h5file['xDMRG/journal'].get('sim_status')['step'][-1]
+                step_array =  h5file['xDMRG/journal'].get('sim_status')['step']
+                if(len(step_array)>0):
+                    step_journal = step_array[-1]
             if 'xDMRG/results/sim_status' in h5file:
-                step_results = h5file['xDMRG/results'].get('sim_status')['step'][-1]
+                step_array = h5file['xDMRG/results'].get('sim_status')['step']
+                if(len(step_array)>0):
+                    step_results = step_array[-1]
         except Exception as err:
-            print("Could not find sim_status. Reason:", err)
+            print("Could not read sim_status. Reason:", err)
 
         if step_journal > step_results:
             table_path = 'xDMRG/journal'
