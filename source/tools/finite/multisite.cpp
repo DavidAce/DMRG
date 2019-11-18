@@ -131,7 +131,7 @@ double tools::finite::measure::multisite::energy(const class_state_finite &state
     // Else
     //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
 
-    return multisite::energy_minus_energy_reduced(state,multitheta) + state.get_energy_reduced()*state.get_length();
+    return multisite::energy_minus_energy_reduced(state,multitheta) + state.get_energy_reduced();
 }
 
 

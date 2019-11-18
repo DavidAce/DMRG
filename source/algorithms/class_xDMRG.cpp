@@ -50,9 +50,9 @@ void class_xDMRG::run_simulation()    {
         write_profiling();
         copy_from_tmp();
         check_convergence();
-        try_projection();
         backup_best_state(*state); //Should come after check_convergence
         print_status_update();
+        try_projection();
 
         // It's important not to perform the last step.
         // That last state would not get optimized
@@ -116,13 +116,13 @@ void class_xDMRG::single_xDMRG_step()
 
     Eigen::Tensor<Scalar,3> theta;
 
-    std::list<size_t> max_num_sites_list = {2,4};
+    std::list<size_t> max_num_sites_list = {2};
     if(sim_status.simulation_has_got_stuck) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
 
 //    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::max_sites_multidmrg};
 //    std::list<size_t> max_num_sites_list = {2,settings::precision::max_sites_multidmrg};
-//    if(sim_status.iteration == 0) max_num_sites_list = {settings::precision::max_sites_multidmrg}; //You can take many sites in the beginning
+//    if(sim_status.iteration <= 1) max_num_sites_list = {settings::precision::max_sites_multidmrg}; //You can take many sites in the beginning
 
     for (auto & max_num_sites : max_num_sites_list){
         auto old_num_sites = state->active_sites.size();
@@ -149,7 +149,8 @@ void class_xDMRG::single_xDMRG_step()
                 break;
             }
         }
-        if(optSpace ==  opt::OptSpace::SUBSPACE and max_num_sites > 2) log->warn("About to do subspace with too many sites!");
+        if(optSpace ==  opt::OptSpace::SUBSPACE and optMode == opt::OptMode::VARIANCE and max_num_sites > 2)
+            log->warn("About to do subspace with too many sites!");
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         if(optSpace ==  opt::OptSpace::DIRECT){
             double variance_direct   = measure::energy_variance_per_site(*state,theta);
@@ -212,7 +213,6 @@ void class_xDMRG::single_xDMRG_step()
     }
 
 
-
     log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
     opt::truncate_theta(theta, *state);
     log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
@@ -249,7 +249,6 @@ void class_xDMRG::check_convergence(){
     bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  > sim_status.energy_dens_window;
     if (sim_status.iteration > 2 and state->position_is_any_edge())
     {
-        std::cout << "TRYING TO DO RESET: OUT OF WINDOW:" << std::boolalpha <<outside_of_window  << std::endl;
         if (    outside_of_window
             and (sim_status.variance_mpo_has_saturated or
                  sim_status.variance_mpo_has_converged or
