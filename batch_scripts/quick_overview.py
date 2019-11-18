@@ -62,7 +62,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary:
-        header = "{:<8} {:<6} {:<6} {:<6} {:^24} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Variance","Ent.Entr.", "Time",
+        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Variance","Ent.Entr.", "Time",
                                                                                                            "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
         print(header)
         if args.save:
@@ -144,7 +144,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
             if not args.summary:
-                entry = "{:<8} {:<6} {:<6} {:<6} {:^24.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+                entry = "{:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
                     chainlen[-1],
                     seed[-1],
                     iter[-1],
@@ -166,15 +166,14 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
             continue
-    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:<12} {:>11} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>", "log10 <Var>", "<log10 Var>","<Entgl>","<Time>",
+    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>11} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>", "<log10 Var>","<Entgl>","<Time>",
                                                                                                               "<Resets>","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
-    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:<12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
         np.int(np.mean(chainlen)),
         len(seed),
         np.nanmean(iter),
         np.nanmean(step),
-        np.log10(np.nanmean(variance)),
         np.nanmean(np.log10(variance)),
         np.mean(ententrp),
         np.mean(walltime) / 60,
