@@ -375,7 +375,9 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 //    bool force_accept = false;
 
 
-    tools::log->trace("Current energy  : {:.16f}", tools::finite::measure::energy_per_site(state));
+    tools::log->trace("Current energy          : {:.16f}", tools::finite::measure::energy_per_site(state));
+    tools::log->trace("Current energy (2site)  : {:.16f}", tools::finite::measure::twosite::energy_per_site(state,state.get_theta()));
+    tools::log->trace("Current energy (multi)  : {:.16f}", tools::finite::measure::multisite::energy_per_site(state,state.get_multitheta()));
     tools::log->trace("Current variance: {:.16f}", std::log10(theta_old_variance) );
 //    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
     if (optMode == OptMode::OVERLAP){
@@ -392,7 +394,8 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             auto   best_overlap_theta              = Textra::MatrixTensorMap(eigvecs.col(best_overlap_idx), state.active_dimensions());
             double best_overlap_energy             = eigvals_per_site_unreduced(best_overlap_idx);
             double best_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
-            tools::log->trace("Candidate {:<2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
+            tools::log->trace("Candidate {:<2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",
+                    best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
             return best_overlap_theta;
         }
 

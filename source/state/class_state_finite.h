@@ -118,7 +118,9 @@ public:
     // For reduced energy MPO's
     bool   isReduced()                            const;
     double get_energy_reduced()                   const;
-    void   set_reduced_energy(double site_energy);
+    double get_energy_per_site_reduced()          const;
+    void   set_reduced_energy(double total_energy);
+    void   set_reduced_energy_per_site(double site_energy);
 
 
 

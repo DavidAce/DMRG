@@ -117,7 +117,7 @@ double tools::finite::measure::twosite::energy(const class_state_finite &state, 
     // Else
     //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
 
-    return twosite::energy_minus_energy_reduced(state,theta) + state.get_energy_reduced()*state.get_length();
+    return twosite::energy_minus_energy_reduced(state,theta) + state.get_energy_reduced();
 }
 
 

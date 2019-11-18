@@ -341,24 +341,32 @@ bool   class_state_finite::isReduced()                            const{
 
 
 double class_state_finite::get_energy_reduced()                   const{
+    return get_energy_per_site_reduced() * get_length();
+}
+
+double class_state_finite::get_energy_per_site_reduced()                   const{
     //Check that all energies are the same
     double e_reduced = MPO_L.front()->get_reduced_energy();
-    for(auto &mpo : MPO_L) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
-    for(auto &mpo : MPO_R) {if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
-
+    for(auto &mpo : MPO_L) {mpo->get_reduced_energy() ; if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
+    for(auto &mpo : MPO_R) {mpo->get_reduced_energy() ; if (mpo->get_reduced_energy() != e_reduced){throw std::runtime_error("Reduced energy mismatch!");}}
     return e_reduced;
 }
 
-void class_state_finite::set_reduced_energy(double site_energy){
-    if(get_energy_reduced() == site_energy) return;
+
+
+void class_state_finite::set_reduced_energy(double total_energy){
+    set_reduced_energy_per_site(total_energy/get_length());
+}
+
+
+void class_state_finite::set_reduced_energy_per_site(double site_energy){
+    if(get_energy_per_site_reduced() == site_energy) return;
     unset_measurements();
     cache.multimpo = {};
     for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
     for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
     tools::finite::mps::rebuild_environments(*this);
 }
-
-
 
 
 std::list<size_t> class_state_finite::activate_sites(const long threshold, const size_t max_sites){
