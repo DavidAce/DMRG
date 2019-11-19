@@ -256,9 +256,8 @@ void class_xDMRG::check_convergence(){
         {
             double old_energy_dens_window = sim_status.energy_dens_window;
             double new_energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
-            std::string reason = fmt::format("saturated outside of energy window. Energy density: {}, Energy window: {} --> {}, Energy bounds [{} - {}]",
-                    sim_status.energy_dens, old_energy_dens_window,new_energy_dens_window,
-                    sim_status.energy_dens_target - new_energy_dens_window, sim_status.energy_dens_target + new_energy_dens_window);
+            std::string reason = fmt::format("saturated outside of energy window {} ± {}", sim_status.energy_dens_target,sim_status.energy_dens_window);
+            log->info("Increasing energy window: {} --> {}",old_energy_dens_window, new_energy_dens_window);
             sim_status.energy_dens_window = new_energy_dens_window;
             reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
         }
@@ -370,6 +369,7 @@ void class_xDMRG::inflate_initial_state(){
 
 void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason ){
     log->info("Resetting to product state -- Reason: {}", reason);
+    log->info("Searching for product state in normalized energy range: {} +- {}", sim_status.energy_dens_target, sim_status.energy_dens_window);
 
     sim_status.num_resets++;
     if(sim_status.num_resets > settings::precision::max_resets){
@@ -379,25 +379,24 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
 
     int counter = 0;
     bool outside_of_window = true;
-    log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
 
 
-    while(outside_of_window){
+    while(true){
         reset_to_random_state(parity_sector);
         if (inflate) inflate_initial_state();
-
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window      = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
+        if(not outside_of_window) break;
         counter++;
+        if(counter >= 2000) throw std::runtime_error(fmt::format("Failed to find initial state in energy window after {}. retries: ", counter));
         if (counter % 10 == 0 and energy_window_growth_factor != 1.0) {
             double old_energy_dens_window = sim_status.energy_dens_window;
             double new_energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
 
-            log->info("Resetting to product state -- can't find state in energy window.  Increasing energy window: {} --> {}",
+            log->info("Can't find state in energy window.  Increasing energy window: {} --> {}",
                       old_energy_dens_window, new_energy_dens_window );
             sim_status.energy_dens_window = new_energy_dens_window;
         }
-        if(counter >= 2000) throw std::runtime_error(fmt::format("Failed to find initial state in energy window after {} retries", counter));
     }
     log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens,counter );
     clear_saturation_status();
