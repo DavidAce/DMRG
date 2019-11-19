@@ -168,7 +168,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             print("Could not read dataset. Reason: ", er)
             continue
     header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>11} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>", "<log10 Var>","<Entgl>","<Time>",
-                                                                                                              "<Resets>","Stk", "Sat", "Con",
+                                                                                                              "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
     entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
         np.int(np.mean(chainlen)),
@@ -178,13 +178,13 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         np.nanmean(np.log10(variance)),
         np.mean(ententrp),
         np.mean(walltime) / 60,
-        np.mean(resets),
+        np.sum(resets),
         np.sum(got_stuck),
         np.sum(saturated),
         np.sum(converged),
         np.sum(succeeded),
         np.sum(finished))
-    print("="*120)
+    print("="*len(header))
     print(header)
     print(entry)
     if args.save:
