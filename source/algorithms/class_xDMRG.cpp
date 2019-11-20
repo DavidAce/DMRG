@@ -27,6 +27,7 @@ void class_xDMRG::run_preprocessing() {
     sim_status.energy_dens_window = settings::xdmrg::energy_density_window;
     find_energy_range();
     state->set_chi_max(chi_max());
+    sim_status.chi_max = chi_max();
     update_bond_dimension_limit(chi_init());
     tools::finite::mps::internals::seed_state_unused = true;
     reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
@@ -352,7 +353,6 @@ void class_xDMRG::try_projection(){
                       std::log10(variance_original), std::log10(variance_projected));
         }
     }
-
 }
 
 

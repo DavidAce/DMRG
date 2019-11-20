@@ -126,6 +126,7 @@ void class_algorithm_finite::run_preprocessing(){
     log->info("Running {} preprocessing (base)",sim_name);
     t_pre.tic();
     state->set_chi_max(chi_max());
+    sim_status.chi_max = chi_max();
     update_bond_dimension_limit(chi_init());
     t_pre.toc();
     log->info("Finished {} preprocessing (base)", sim_name);
