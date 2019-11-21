@@ -485,7 +485,7 @@ void class_algorithm_finite::write_state(bool result){
             //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
               h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state_backup), sim_name + "/state/psi");
         }
-        if (settings::output::storage_level >= StorageLevel::FULL){
+        if (settings::output::storage_level >= StorageLevel::FULL and chi_grow()){
             //In full mode we keep a copy every time we update
             std::string prefix = sim_name + "/results/chi_" + std::to_string(sim_status.chi_lim);
             tools::finite::io::h5dset::write_all_state(*state_backup, *h5pp_file, prefix);
@@ -526,7 +526,7 @@ void class_algorithm_finite::write_measurements(bool result){
         class_h5table_buffer<class_h5table_measurements_finite> h5tbuf_measurements_results(h5pp_file, sim_name + "/results/measurements");
         tools::finite::io::h5table::write_measurements(*state_backup,sim_status, h5tbuf_measurements_results);
         tools::finite::io::h5dset::write_array_measurements(*state_backup,*h5pp_file, sim_name + "/results");
-        if (settings::output::storage_level >= StorageLevel::NORMAL){
+        if (settings::output::storage_level >= StorageLevel::NORMAL and chi_grow()){
             //Write even more results
             std::string prefix = sim_name + "/results/chi_" + std::to_string(sim_status.chi_lim);
             tools::finite::io::h5dset::write_array_measurements(*state_backup,*h5pp_file, prefix);

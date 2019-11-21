@@ -98,12 +98,14 @@ void class_xDMRG::single_xDMRG_step()
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
 
+//    auto optMode    = opt::OptMode(opt::MODE::VARIANCE); //TODO: This should be OVERLAP, i'm just testing
     auto optMode    = opt::OptMode(opt::MODE::OVERLAP);
     auto optSpace   = opt::OptSpace(opt::SPACE::DIRECT);
     auto optType    = opt::OptType(opt::TYPE::CPLX);
 //    optSpace        = not chi_grow()                                                                  ? opt::SPACE::SUBSPACE   : optSpace.option;
     optMode         = sim_status.iteration  >= 2  and measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
     optMode         = sim_status.iteration  >= 5  or  measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
+//    optSpace        = sim_status.iteration  < 2                                                        ? opt::SPACE::SUBSPACE  : optSpace.option; //TODO: This is just for testing
     optSpace        = optMode == opt::MODE::OVERLAP                                                    ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = sim_status.simulation_has_stuck_for >= 2                                         ? opt::SPACE::SUBSPACE  : optSpace.option;
     optSpace        = state->size_2site()  > settings::precision::min_size_part_diag ? opt::SPACE::DIRECT : optSpace.option;
@@ -118,7 +120,7 @@ void class_xDMRG::single_xDMRG_step()
     Eigen::Tensor<Scalar,3> theta;
 
     std::list<size_t> max_num_sites_list = {2};
-    if(sim_status.simulation_has_stuck_for >= 3) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
+    if(sim_status.simulation_has_stuck_for >= 2) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
     while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
 
 //    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::max_sites_multidmrg};
@@ -129,7 +131,7 @@ void class_xDMRG::single_xDMRG_step()
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
 
-        if (max_num_sites > 2){
+        if (optMode == opt::OptMode::VARIANCE and max_num_sites > 2){
             optSpace  = opt::OptSpace::DIRECT;
             threshold = settings::precision::max_size_direct;
         }
@@ -277,10 +279,11 @@ void class_xDMRG::check_convergence(){
     sim_status.simulation_has_converged = sim_status.variance_mpo_has_converged and
                                           sim_status.entanglement_has_converged;
 
+    //TODO: When we don't use chi_grow it may be safer to actually require saturation on both variance and entanglement
     sim_status.simulation_has_saturated = (sim_status.variance_mpo_saturated_for >= min_saturation_iters and
-                                           sim_status.entanglement_saturated_for >= min_saturation_iters) or
-                                          (sim_status.variance_mpo_saturated_for >= max_saturation_iters  or
-                                           sim_status.entanglement_saturated_for >= max_saturation_iters)   ;
+                                           sim_status.entanglement_saturated_for >= min_saturation_iters);// or
+//                                          (sim_status.variance_mpo_saturated_for >= max_saturation_iters  or
+//                                           sim_status.entanglement_saturated_for >= max_saturation_iters)   ;
 
 
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
@@ -333,6 +336,7 @@ void class_xDMRG::try_projection(){
                            state->position_is_any_edge();
 
     bool try_every_sweep = settings::model::projection_on_every_sweep and
+                           sim_status.iteration >= 2 and
                            state->position_is_any_edge();
 
     if(try_every_sweep or try_when_stuck)

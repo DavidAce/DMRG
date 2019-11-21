@@ -385,16 +385,21 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         if (best_overlap_idx  < 0 ){
             //Option A
 //            tools::log->trace("No overlapping states in energy range. Returning old theta");
-            tools::log->trace("No overlapping states in energy range. Returning best overlap out of window");
-            auto   best_overlap_theta              = Textra::MatrixTensorMap(eigvecs.col(0), state.active_dimensions());
-            state.tag_active_sites_have_been_updated(false);
-            return best_overlap_theta;
-//            return theta_old;
+            tools::log->debug("No overlapping states in energy range. Returning best overlap out of window");
+//            auto   best_overlap_theta              = Textra::MatrixTensorMap(eigvecs.col(0), state.active_dimensions());
+//            state.tag_active_sites_have_been_updated(false);
+//            return best_overlap_theta;
+            return theta_old;
+        }else if (best_overlap < 0.0){
+            //Overlap is too, bad, just go to the next site and hope for something better to come along
+            //Turn this option off with best_overlap < 0.0
+            tools::log->debug("Overlap too low, returning old theta");
+            return theta_old;
         }else{
             auto   best_overlap_theta              = Textra::MatrixTensorMap(eigvecs.col(best_overlap_idx), state.active_dimensions());
             double best_overlap_energy             = eigvals_per_site_unreduced(best_overlap_idx);
             double best_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
-            tools::log->trace("Candidate {:<2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",
+            tools::log->debug("Candidate {:<2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",
                     best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
             return best_overlap_theta;
         }
