@@ -361,17 +361,58 @@ void class_state_finite::set_reduced_energy(double total_energy){
 
 void class_state_finite::set_reduced_energy_per_site(double site_energy){
     if(get_energy_per_site_reduced() == site_energy) return;
-    unset_measurements();
+    clear_measurements();
     cache.multimpo = {};
     for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
     for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
     tools::finite::mps::rebuild_environments(*this);
 }
 
+void   class_state_finite::perturb_hamiltonian(double amplitude){
 
-std::list<size_t> class_state_finite::activate_sites(const long threshold, const size_t max_sites){
+    if(is_perturbed() and amplitude == 0.0){
+        for(size_t pos = 0; pos < get_length(); pos++){
+            get_MPO(pos).perturb_hamiltonian(amplitude);
+        }
+    }else{
+
+        //Get the largest coupling
+        double J_max_val = 0;
+        size_t J_max_idx = 0;
+        for(size_t pos = 0; pos < get_length(); pos++){
+            double J_i = get_MPO(pos).get_parameter_values()[1];
+            if(J_i > J_max_val){
+                J_max_val =  J_i;
+                J_max_idx = pos;
+            }
+        }
+
+        //Now we have the largest offender.
+        get_MPO(J_max_idx).perturb_hamiltonian(amplitude);
+
+    }
+
+
     clear_cache();
-    return active_sites = tools::finite::multisite::generate_site_list(*this,threshold, max_sites);
+    clear_measurements();
+    tools::finite::mps::rebuild_environments(*this);
+    if (amplitude == 0.0 and is_perturbed())
+        throw std::runtime_error("State: Should have unperturbed!");
+}
+
+bool   class_state_finite::is_perturbed() const{
+    std::vector<bool> perturbed(true,get_length());
+    for(size_t pos = 0; pos < get_length(); pos++){
+        perturbed[pos] = get_MPO(pos).is_perturbed();
+    }
+    return std::any_of(perturbed.begin(), perturbed.end(),  [](bool elem){return elem;});
+}
+
+
+
+std::list<size_t> class_state_finite::activate_sites(const long threshold, const size_t max_sites, const size_t min_sites){
+    clear_cache();
+    return active_sites = tools::finite::multisite::generate_site_list(*this,threshold, max_sites, min_sites);
 }
 
 Eigen::DSizes<long,3> class_state_finite::active_dimensions() const{
@@ -424,7 +465,7 @@ const Eigen::Tensor<class_state_finite::Scalar,4> &   class_state_finite::get_mu
         long dim2 = multimpo.dimension(2) * mpo.dimension(2);
         long dim3 = multimpo.dimension(3) * mpo.dimension(3);
         Eigen::Tensor<Scalar,4> temp(dim0,dim1,dim2,dim3);
-        temp.device(omp::dev) =
+        temp =
                 multimpo
                 .contract(mpo, Textra::idx({1},{0}))
                 .shuffle(Textra::array6{0,3,1,4,2,5})
@@ -483,7 +524,7 @@ const std::vector<double> & class_state_finite::get_truncation_errors() const {
     return truncation_error;
 }
 
-void class_state_finite::unset_measurements()const {
+void class_state_finite::clear_measurements()const {
     measurements = Measurements();
 }
 

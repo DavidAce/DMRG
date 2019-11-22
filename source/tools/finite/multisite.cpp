@@ -37,8 +37,10 @@ size_t tools::finite::multisite::get_problem_size(const class_state_finite &stat
 
 
 
-std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, const size_t threshold, const size_t max_sites){
-    tools::log->trace("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}", state.get_position(), state.get_direction(), threshold,max_sites);
+std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, const size_t threshold, const size_t max_sites, const size_t min_sites){
+    if(max_sites < min_sites) throw std::runtime_error("generate site list: asked for max sites < min sites");
+    tools::log->trace("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}",
+            state.get_position(), state.get_direction(), threshold,max_sites,min_sites);
     using namespace Textra;
     int    direction = state.get_direction();
     size_t position  = state.get_position();
@@ -52,7 +54,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
         costs.emplace_back(get_problem_size(state,sites));
         position += direction;
     }
-    tools::log->debug("Activation problem sizes: {}", costs);
+    tools::log->trace("Activation problem sizes: {}", costs);
     // Evaluate best cost. Threshold depends on optSpace
     // Case 1: All costs are equal              -> take all sites
     // Case 2: Costs increase indefinitely      -> take until threshold
@@ -64,7 +66,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
         auto c = costs.back();
         if (c <  threshold  and sites.size() == max_sites) {reason = "can't take any more sites"; break;}
         if (c <= threshold  and sites.size() <= max_sites) {reason = "good threshold found: " + std::to_string(c) ;break;}
-        else if (sites.size() <= 2)                        {reason = "at least two sites were kept"; break;}
+        else if (sites.size() <= min_sites)                {reason = "at least " + std::to_string(min_sites) + " sites were kept"; break;}
         else if (allequal and sites.size() <= max_sites)   {reason = "equal costs: " + std::to_string(c); break;}
         else if (sites.size() == 1)                        {throw std::logic_error("At least two sites required!");}
         else if (sites.empty())                            {throw std::logic_error("No sites for a jump");}
@@ -74,8 +76,10 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
         }
     }
     if (direction == -1){std::reverse(sites.begin(),sites.end());}
-    tools::log->debug("Chosen sites {}. Reason: {}", sites, reason);
+//    tools::log->debug("Chosen sites {}. Reason: {}", sites, reason);
     state.active_sites = sites;
+    tools::log->debug("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}, Chosen sites {}, Final cost: {}, Reason: {}",
+                     state.get_position(), state.get_direction(), threshold,max_sites,min_sites,sites, costs.back(),reason );
     return sites;
 }
 
@@ -162,11 +166,12 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
     size_t log2chiR  = std::log2(dsizes[2]);
     size_t log2spin  = std::log2(dsizes[0]);
     Eigen::Tensor<Scalar, 0> H2;
+    OMP omp(settings::threading::num_threads_eigen);
     if (log2spin > log2chiL + log2chiR){
         if (log2chiL > log2chiR){
 //            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
             Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{1,0,2});
-            H2.device(omp::dev) =
+            H2.device(omp.dev) =
                     theta
                             .contract(env2L              , Textra::idx({0}, {0}))
                             .contract(multimpo           , Textra::idx({0,3}, {2,0}))
@@ -178,7 +183,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
         else{
 //            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
             Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{2,0,1});
-            H2.device(omp::dev) =
+            H2.device(omp.dev) =
                     theta
                             .contract(env2R              , Textra::idx({0}, {0}))
                             .contract(multimpo           , Textra::idx({0,3}, {2,1}))
@@ -190,7 +195,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
     }else{
 //        tools::log->trace("H2 path: log2spin <= log2chiL + log2chiR");
         Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{1,0,2});
-        H2.device(omp::dev) =
+        H2.device(omp.dev) =
                 theta
                         .contract(env2L              , Textra::idx({0}, {0}))
                         .contract(multimpo           , Textra::idx({0,3}, {2,0}))
@@ -223,6 +228,9 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
     double var = std::abs(H2(0) - E2);
     if (std::isnan(var) or std::isinf(var)) throw std::runtime_error(fmt::format("Variance is invalid: {}", var));
     internal::significant_digits(std::abs(H2(0)),E2);
+    if(var < state.lowest_recorded_variance){
+        state.lowest_recorded_variance = var;
+    }
     return var;
 }
 

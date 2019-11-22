@@ -122,11 +122,11 @@ public:
     void   set_reduced_energy(double total_energy);
     void   set_reduced_energy_per_site(double site_energy);
 
-
-
+    void   perturb_hamiltonian(double amplitude);
+    bool   is_perturbed() const;
     //For multisite
     std::list<size_t>      active_sites;
-    std::list<size_t>      activate_sites(const long threshold, const size_t max_sites);
+    std::list<size_t>      activate_sites(const long threshold, const size_t max_sites,const size_t min_sites = 2);
     Eigen::DSizes<long,3>  active_dimensions() const;
     size_t                 active_problem_size() const;
 
@@ -165,7 +165,9 @@ public:
     };
     public:
     mutable Measurements measurements;
-    void unset_measurements() const;
+    mutable double lowest_recorded_variance = 1.0;
+
+    void clear_measurements() const;
     void do_all_measurements()const;
     void clear_cache() const;
 

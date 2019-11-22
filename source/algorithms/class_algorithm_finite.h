@@ -27,9 +27,9 @@ public:
 
 
     //MPS
-    std::unique_ptr<class_state_finite>    state,state_backup;
+    std::unique_ptr<class_state_finite>    state;
 //    std::list<std::unique_ptr<class_state_finite>> state_champions; // We keep the best from each sweep
-    std::list<class_state_finite> state_champions; // We keep the best from each sweep
+//    std::list<class_state_finite> state_champions; // We keep the best from each sweep
     // What happens when stuck this many iterations:
     // 1: direct, 2: subspace, 2: subspace, 4: update bond dim, 5: max_stuck_iters = stop
     size_t max_stuck_iters               = 5; // If stuck for this many sweeps -> stop simulation
@@ -59,7 +59,6 @@ public:
     void copy_from_tmp      (bool result = false)                                               final;
     void print_status_update()                                                                  final;
     void print_status_full()                                                                    final;
-    void backup_best_state(const class_state_finite &state);
     void check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
     void check_convergence_entg_entropy(double slope_threshold = quietNaN);
     void write_projection(const class_state_finite & state_projected, std::string parity_sector);

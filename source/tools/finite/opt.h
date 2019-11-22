@@ -8,6 +8,7 @@
 #include <tools/nmspc_tools.h>
 #include <general/class_tic_toc.h>
 #include <ceres/ceres.h>
+#include <general/nmspc_omp.h>
 class class_tic_toc;
 
 
@@ -145,6 +146,7 @@ namespace tools::finite::opt{
             int    iteration;
             int    num_parameters;
             bool   have_bounds_on_energy = false;
+            OMP omp;
 
         public:
             explicit ceres_base_functor(const class_state_finite & state, const class_simulation_status &sim_status);

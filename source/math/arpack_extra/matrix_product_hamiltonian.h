@@ -30,7 +30,7 @@ private:
     std::array<long,4> shape_mpo4;
     eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC;
     eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R;
-
+    OMP omp;
 public:
 
     DenseHamiltonianProduct(
@@ -38,8 +38,9 @@ public:
             const Scalar_ *Rblock_,                            /*!< The right block tensor.  */
             const Scalar_ *HA_,                                /*!< The left Hamiltonian MPO's  */
             const Scalar_ *HB_,                                /*!< The right Hamiltonian MPO's */
-            const std::array<long,4> shape_theta4_,      /*!< An array containing the shapes of theta  */
-            const std::array<long,4> shape_mpo4_         /*!< An array containing the shapes of the MPO  */
+            const std::array<long,4> shape_theta4_,       /*!< An array containing the shapes of theta  */
+            const std::array<long,4> shape_mpo4_,         /*!< An array containing the shapes of the MPO  */
+            const size_t num_threads = 1
     ):                                                   /*!< Initializes the custom contraction. */
             Lblock(Lblock_),
             Rblock(Rblock_),
@@ -48,7 +49,8 @@ public:
             shape_theta4(shape_theta4_),
             shape_theta2({shape_theta4[0] * shape_theta4[1] , shape_theta4[2] * shape_theta4[3]}),
             shape_theta1({shape_theta4[0] * shape_theta4[1] * shape_theta4[2] * shape_theta4[3]}),
-            shape_mpo4(shape_mpo4_)
+            shape_mpo4(shape_mpo4_),
+            omp(num_threads)
     {
         t_mul.set_properties(profile_matrix_product_hamiltonian, 10,"Time multiplying");
         if(Lblock == nullptr) throw std::runtime_error("Lblock is a nullptr!");
@@ -90,7 +92,7 @@ void DenseHamiltonianProduct<T>::MultAx(T* theta_in_, T* theta_out_) {
 
 
     //Best yet! I have shown this to be the fastest contraction ordering
-    theta_out.device(omp::dev) = Lblock_map
+    theta_out.device(omp.dev) = Lblock_map
             .contract(theta_in,    Textra::idx({0},{1}))
             .contract(HA_map ,     Textra::idx({1,2},{0,2}))//  idx({1,2,3},{0,4,5}))
             .contract(HB_map ,     Textra::idx({3,1},{0,2}))//  idx({1,2,3},{0,4,5}))

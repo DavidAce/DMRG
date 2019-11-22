@@ -25,7 +25,9 @@ Eigen::Tensor<tools::infinite::Scalar,4>
     using namespace eigutils::eigSetting;
     Ritz ritz = stringToRitz(ritzstring);
 
-    DenseHamiltonianProduct<Scalar>  matrix (state.Lblock->block.data(), state.Rblock->block.data(), state.HA->MPO().data(), state.HB->MPO().data(), shape_theta4, shape_mpo4);
+    DenseHamiltonianProduct<Scalar>  matrix (state.Lblock->block.data(), state.Rblock->block.data(),
+            state.HA->MPO().data(), state.HB->MPO().data(), shape_theta4, shape_mpo4,
+            settings::threading::num_threads_eigen);
     class_eigsolver solver;
     solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
     auto eigvec  = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);

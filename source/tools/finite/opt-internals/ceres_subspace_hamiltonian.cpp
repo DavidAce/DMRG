@@ -5,7 +5,7 @@
 #include <tools/finite/opt.h>
 #include <state/class_state_finite.h>
 #include <general/nmspc_omp.h>
-
+#include <simulation/nmspc_settings.h>
 Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_state_finite & state){
     auto mpo = state.get_multimpo();
     tools::log->trace("Contracting multisite hamiltonian...");
@@ -17,8 +17,9 @@ Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamilt
     long dim0 = mpo.dimension(2);
     long dim1 = envL.block.dimension(0);
     long dim2 = envR.block.dimension(0);
+    OMP omp(settings::threading::num_threads_eigen);
     Eigen::Tensor<std::complex<double>,6> ham(dim0, dim1, dim2, dim0, dim1, dim2);
-    ham.device(omp::dev) =
+    ham.device(omp.dev) =
             envL.block
                     .contract(mpo           , Textra::idx({2},{0}))
                     .contract(envR.block    , Textra::idx({2},{2}))
@@ -52,8 +53,9 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hami
     long dim0 = mpo.dimension(2);
     long dim1 = env2L.block.dimension(0);
     long dim2 = env2R.block.dimension(0);
+    OMP omp(settings::threading::num_threads_eigen);
     Eigen::Tensor<std::complex<double>,6> ham_sq(dim0, dim1, dim2, dim0, dim1, dim2);
-    ham_sq.device(omp::dev) =
+    ham_sq.device(omp.dev) =
             env2L.block
                     .contract(mpo             , Textra::idx({2},{0}))
                     .contract(mpo             , Textra::idx({5,2},{2,0}))
@@ -113,13 +115,14 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     Eigen::Tensor<Scalar,3> Hv(dims);
     Eigen::MatrixXcd H2(eignum,eignum);
 
+    OMP omp(settings::threading::num_threads_eigen);
 
     if(log2spin > log2chiL + log2chiR){
         if (log2chiL >= log2chiR){
             tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR");
             for (size_t col = 0; col < eignum; col++ ){
                 auto theta_j = map(eigvecs.data() + col*eigdim, dims);
-                Hv.device(omp::dev) =
+                Hv.device(omp.dev) =
                     theta_j
                      .contract(env2L , Textra::idx({1}, {0}))
                      .contract(mpo   , Textra::idx({0,3}, {2,0}))
@@ -128,7 +131,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                      .shuffle(         Textra::array3{2,0,1});
                 for (size_t row = col; row < eignum; row++ ){
                     auto theta_i = map(eigvecs.data()+row*eigdim, dims);
-                    H2_ij.device(omp::dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
+                    H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
                     H2(row,col) = H2_ij(0);
                 }
             }
@@ -137,7 +140,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
             tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR");
             for (size_t col = 0; col < eignum; col++ ){
                 auto theta_j = map(eigvecs.data() + col*eigdim, dims);
-                Hv.device(omp::dev) =
+                Hv.device(omp.dev) =
                     theta_j
                      .contract(env2R    , Textra::idx({2}, {0}))
                      .contract(mpo      , Textra::idx({0,3}, {2,1}))
@@ -146,7 +149,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                      .shuffle(            Textra::array3{2,1,0});
                 for (size_t row = col; row < eignum; row++ ){
                     auto theta_i = map(eigvecs.data()+ row*eigdim, dims);
-                    H2_ij.device(omp::dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
+                    H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
                     H2(row,col) = H2_ij(0);
                 }
             }
@@ -155,7 +158,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
         tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
         for (size_t col = 0; col < eignum; col++ ){
             auto theta_j = map(eigvecs.data()+ col*eigdim, dims);
-            Hv.device(omp::dev) =
+            Hv.device(omp.dev) =
                 theta_j
                  .contract(env2L , Textra::idx({1}, {0}))
                  .contract(mpo   , Textra::idx({0,3}, {2,0}))
@@ -164,7 +167,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                  .shuffle(         Textra::array3{1,0,2});
             for (size_t row = col; row < eignum; row++ ){
                 auto theta_i = map(eigvecs.data() + row*eigdim, dims);
-                H2_ij.device(omp::dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
+                H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
                 H2(row,col) = H2_ij(0);
             }
         }
@@ -203,6 +206,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     size_t log2spin  = std::log2(dims[0]);
     long dimH2 = eigvecs.cols();
     Eigen::Tensor<Scalar,2> H2(dimH2,dimH2);
+
     if(log2spin > log2chiL + log2chiR){
         if (log2chiL >= log2chiR){
             tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR ");

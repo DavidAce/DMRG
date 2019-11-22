@@ -17,7 +17,6 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 {
     log->trace("Constructing class_algorithm_finite");
     state        = std::make_unique<class_state_finite>();
-    state_backup = std::make_unique<class_state_finite>();
 
     if (settings::output::storage_level >= StorageLevel::NORMAL){
         log->trace("Constructing table buffers in finite base");
@@ -42,9 +41,6 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tools::finite::print::print_hamiltonians(*state);
     tools::finite::print::print_state(*state);
     tools::finite::io::h5dset::write_model(*state, *h5pp_file, sim_name);
-
-    // Do a backup
-    *state_backup = *state;
 
 }
 
@@ -143,7 +139,7 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz){
     t_run.tic();
     Eigen::Tensor<Scalar,4> theta = tools::finite::opt::find_ground_state(*state, ritz);
     tools::finite::opt::truncate_theta(theta, *state);
-    state->unset_measurements();
+    state->clear_measurements();
     t_run.toc();
     sim_status.wall_time = t_tot.get_age();
     sim_status.simu_time = t_run.get_measured_time();
@@ -154,23 +150,8 @@ void class_algorithm_finite::run_postprocessing(){
     log->info("Running {} postprocessing",sim_name);
     t_pos.tic();
     tools::finite::debug::check_integrity(*state);
-    state->unset_measurements();
-    state_backup->unset_measurements();
+    state->clear_measurements();
     print_status_update();
-
-    backup_best_state(*state);
-//    double variance_candidate = tools::finite::measure::energy_variance_per_site(*state);
-//    double variance_champion  = tools::finite::measure::energy_variance_per_site(*state_backup);
-//    log->trace("Variance candidate = {}", std::log10(variance_candidate));
-//    log->trace("Variance champion  = {}", std::log10(variance_champion));
-//    if (variance_champion < variance_candidate){
-//        log->trace("Replacing the current state with the champion");
-//        *state = *state_backup;
-//    }else{
-//        log->trace("The current state is better than the champion");
-//        *state_backup = *state;
-//    }
-//    state->do_all_measurements();
 
     write_state(true);
     write_measurements(true);
@@ -249,7 +230,6 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
                 log->debug("Bond at limit  count: {} ", bond_at_lim_count);
                 if(trunc_bond_count > 0 and bond_at_lim_count > 0){
                     //Write final results before updating bond dimension chi
-                    backup_best_state(*state);
                     write_state(true);
                     write_measurements(true);
                     write_sim_status(true);
@@ -301,29 +281,9 @@ void class_algorithm_finite::reset_to_random_state(const std::string parity_sect
     tools::finite::mps::randomize(*state,parity_sector,seed_state, settings::model::use_pauli_eigvecs, settings::model::use_seed_state_as_enumeration);
 //    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
     clear_saturation_status();
+    state->lowest_recorded_variance = 1;
     sim_status.iteration = state->reset_sweeps();
-}
 
-void class_algorithm_finite::backup_best_state(const class_state_finite &state) {
-    *state_backup = state;
-    return;
-
-//    log->trace("Checking if given state can beat the backup");
-//    double variance_candidate  = tools::finite::measure::energy_variance_per_site(state);
-//    double variance_champion   = tools::finite::measure::energy_variance_per_site(*state_backup);
-//    if (variance_candidate <  variance_champion){
-//        log->debug("We have a new champion! {:.8f} -> {:.8f}", std::log10(variance_champion), std::log10(variance_candidate));
-//        *state_backup = state;
-//    }else{
-//        log->trace("Champion defended his title");
-//    }
-//    if(state.position_is_any_edge()){
-//        //The backup is the best yet this current sweep,  so we store him
-//        //in a list
-////        state_champions.emplace_back(std::make_unique<class_state_finite>(*state_backup));
-//        state_champions.emplace_back(*state_backup);
-//        *state_backup = state;
-//    }
 }
 
 
@@ -339,11 +299,11 @@ void class_algorithm_finite::check_convergence_variance(double threshold,double 
     auto report = check_saturation_using_slope(
                     V_mpo_vec,
                     X_mpo_vec,
-                    tools::finite::measure::energy_variance(*state_backup),
+                    tools::finite::measure::energy_variance(*state),
                     sim_status.iteration,
                     1,
                     slope_threshold);
-    sim_status.variance_mpo_has_converged = tools::finite::measure::energy_variance(*state_backup) < threshold;
+    sim_status.variance_mpo_has_converged = tools::finite::measure::energy_variance(*state) < threshold;
     if (report.has_computed){
         V_mpo_slopes.emplace_back(report.slope);
         auto last_nonconverged_ptr = std::find_if(V_mpo_vec.rbegin(),V_mpo_vec.rend(), [threshold](auto const& val){ return val > threshold; });
@@ -376,7 +336,7 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
     log->debug("Checking convergence of entanglement");
 
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::entropy_slope_threshold : slope_threshold;
-    auto entropies  = tools::finite::measure::entanglement_entropies(*state_backup);
+    auto entropies  = tools::finite::measure::entanglement_entropies(*state);
     std::vector<SaturationReport> reports(entropies.size());
 
     for (size_t site = 0; site < entropies.size(); site++){
@@ -480,18 +440,18 @@ void class_algorithm_finite::write_state(bool result){
         // it has finalized some stage, like saturated at the
         // current bond dimension.
 
-        tools::finite::io::h5dset::write_all_state(*state_backup, *h5pp_file, sim_name);
+        tools::finite::io::h5dset::write_all_state(*state, *h5pp_file, sim_name);
         if(store_wave_function()){
             //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
-              h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state_backup), sim_name + "/state/psi");
+              h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), sim_name + "/state/psi");
         }
         if (settings::output::storage_level >= StorageLevel::FULL and chi_grow()){
             //In full mode we keep a copy every time we update
             std::string prefix = sim_name + "/results/chi_" + std::to_string(sim_status.chi_lim);
-            tools::finite::io::h5dset::write_all_state(*state_backup, *h5pp_file, prefix);
+            tools::finite::io::h5dset::write_all_state(*state, *h5pp_file, prefix);
             if(store_wave_function()){
                 //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
-                h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state_backup), prefix + "/state/psi");
+                h5pp_file->writeDataset(tools::finite::measure::mps_wavefn(*state), prefix + "/state/psi");
             }
         }
     }
@@ -524,12 +484,12 @@ void class_algorithm_finite::write_measurements(bool result){
         // it has finalized some stage, like saturated at the
         // current bond dimension.
         class_h5table_buffer<class_h5table_measurements_finite> h5tbuf_measurements_results(h5pp_file, sim_name + "/results/measurements");
-        tools::finite::io::h5table::write_measurements(*state_backup,sim_status, h5tbuf_measurements_results);
-        tools::finite::io::h5dset::write_array_measurements(*state_backup,*h5pp_file, sim_name + "/results");
+        tools::finite::io::h5table::write_measurements(*state,sim_status, h5tbuf_measurements_results);
+        tools::finite::io::h5dset::write_array_measurements(*state,*h5pp_file, sim_name + "/results");
         if (settings::output::storage_level >= StorageLevel::NORMAL and chi_grow()){
             //Write even more results
             std::string prefix = sim_name + "/results/chi_" + std::to_string(sim_status.chi_lim);
-            tools::finite::io::h5dset::write_array_measurements(*state_backup,*h5pp_file, prefix);
+            tools::finite::io::h5dset::write_array_measurements(*state,*h5pp_file, prefix);
         }
     }
 
@@ -649,7 +609,7 @@ void class_algorithm_finite::print_status_update() {
         report << fmt::format("ε: {:<6.4f} " ,sim_status.energy_dens);
     }
     report << fmt::format("Sₑ(l): {:<10.8f} "                                 ,tools::finite::measure::entanglement_entropy_current(*state));
-    report << fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] "             ,std::log10(tools::finite::measure::energy_variance_per_site(*state)), std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
+    report << fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] "             ,std::log10(tools::finite::measure::energy_variance_per_site(*state)), std::log10(state->lowest_recorded_variance/state->get_length()));
     report << fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} "                 ,chi_max(), state->get_chi_lim(), tools::finite::measure::bond_dimension_current(*state));
     report << fmt::format("log₁₀ trunc: {:<10.4f} "                           ,std::log10(state->get_truncation_error(state->get_position())));
     report << fmt::format("stk: {:<1} "                                       ,sim_status.simulation_has_stuck_for);
@@ -670,19 +630,19 @@ void class_algorithm_finite::print_status_full(){
     log->info("{:=^60}","");
 
     log->info("--- Final results  --- {} ---", sim_name);
-    log->info("Sites                              = {}"    , state_backup->get_length());
+    log->info("Sites                              = {}"    , state->get_length());
     log->info("Iterations (sweeps)                = {}"    , sim_status.iteration);
     log->info("Steps                              = {}"    , sim_status.step);
     log->info("Simulation time                    = {:<.1f} s = {:<.2f} min" , t_tot.get_age(), t_tot.get_age()/60);
-    log->info("Energy per site E/L                = {:<.16f}"   , tools::finite::measure::energy_per_site(*state_backup));
+    log->info("Energy per site E/L                = {:<.16f}"   , tools::finite::measure::energy_per_site(*state));
     if (sim_type == SimulationType::xDMRG){
-    log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}"   ,tools::finite::measure::energy_normalized(*state_backup,sim_status));
+    log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}"   ,tools::finite::measure::energy_normalized(*state,sim_status));
     }
-    log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}"   , std::log10(tools::finite::measure::energy_variance_per_site(*state_backup)));
+    log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}"   , std::log10(tools::finite::measure::energy_variance_per_site(*state)));
     log->info("Bond dimension maximum χmax        = {}"         , chi_max());
-    log->info("Bond dimensions χ                  = {}"         , tools::finite::measure::bond_dimensions(*state_backup));
-    log->info("Entanglement entropies Sₑ          = {}"         , tools::finite::measure::entanglement_entropies(*state_backup));
-    log->info("Truncation Errors                  = {}"         , state_backup->get_truncation_errors());
+    log->info("Bond dimensions χ                  = {}"         , tools::finite::measure::bond_dimensions(*state));
+    log->info("Entanglement entropies Sₑ          = {}"         , tools::finite::measure::entanglement_entropies(*state));
+    log->info("Truncation Errors                  = {}"         , state->get_truncation_errors());
     log->info("Simulation converged               = {:<}"       , sim_status.simulation_has_converged);
     log->info("Simulation saturated               = {:<}"       , sim_status.simulation_has_saturated);
     log->info("Simulation succeeded               = {:<}"       , sim_status.simulation_has_succeeded);

@@ -29,7 +29,8 @@ Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground
             state.MPO_L.back()->MPO().data(),
             state.MPO_R.front()->MPO().data(),
             shape_theta4,
-            shape_mpo4);
+            shape_mpo4,
+            settings::threading::num_threads_eigen);
 
 
 

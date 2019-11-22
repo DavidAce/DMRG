@@ -39,7 +39,7 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     tools::log->trace("Applying MPO's");
-    state.unset_measurements();
+    state.clear_measurements();
     tools::log->trace("Bond dimensions before applying MPO's = {}", tools::finite::measure::bond_dimensions(state));
     tools::log->trace("Norm before applying MPO's = {:.16f}", tools::finite::measure::norm(state));
 
@@ -78,7 +78,7 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
         state.MPS_R.back().set_M(M_temp);
         state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
     }
-    state.unset_measurements();
+    state.clear_measurements();
     tools::log->trace("Bond dimensions after applying MPO's = {}", tools::finite::measure::bond_dimensions(state));
     tools::log->trace("Norm after  applying MPO's = {:.16f}", tools::finite::measure::norm(state));//    std::cout << "Norm              (after mpos): " << tools::finite::measure::norm(state)  << std::endl;
 //    std::cout << "Spin component sx (after mpos): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;
@@ -97,7 +97,7 @@ class_state_finite tools::finite::ops::get_projection_to_parity_sector(const cla
 
     tools::common::profile::t_prj.tic();
     class_state_finite state_projected = state;
-    state_projected.unset_measurements();
+    state_projected.clear_measurements();
     state_projected.clear_cache();
 
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);

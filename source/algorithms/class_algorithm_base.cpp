@@ -87,7 +87,7 @@ class_algorithm_base::check_saturation_using_slope(
     }
     //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
     double avgY          = math::mean(Y_vec,start_point);
-    double slope         = math::slope(X_vec,Y_vec,start_point)/avgY * 100;
+    double slope         = math::slope(X_vec,Y_vec,start_point)/avgY * 100 / std::sqrt(Y_vec.size()-start_point); //TODO: Is dividing by sqrt(elems) reasonable?
     slope                = std::isnan(slope) ? 0.0 : slope;
     report.slope         = slope;
     report.check_from    = start_point;
