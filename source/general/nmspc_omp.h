@@ -12,13 +12,39 @@
 
 #include <unsupported/Eigen/CXX11/Tensor>
 
-
-namespace omp{
+class OMP{
+public:
+    size_t num_threads;
     #ifdef _OPENMP
-    inline Eigen::ThreadPool       tp (Eigen::nbThreads());
-    inline Eigen::ThreadPoolDevice dev(&tp,Eigen::nbThreads());
+    Eigen::ThreadPool       tp;
+    Eigen::ThreadPoolDevice dev;
+    OMP(size_t num_threads_):
+    num_threads(num_threads_),
+    tp(num_threads),
+    dev(&tp, num_threads)
+    {}
     #else
-    inline Eigen::DefaultDevice dev;
+    Eigen::DefaultDevice dev;
+    OMP(size_t num_threads_):
+    num_threads(num_threads_)
+    {}
     #endif
-}
+
+};
+//
+//namespace omp{
+//    #ifdef _OPENMP
+//    inline size_t num_threads  = Eigen::nbThreads();
+//    inline Eigen::ThreadPool       tp (num_threads);
+//    inline Eigen::ThreadPoolDevice dev(&tp,num_threads);
+//    inline void change_num_threads(size_t threads){
+//        num_threads = threads;
+//        tp  = Eigen::ThreadPool       (num_threads);
+//        dev = Eigen::ThreadPoolDevice (&tp,num_threads);
+//
+//    }
+//    #else
+//    inline Eigen::DefaultDevice dev;
+//    #endif
+//}
 
