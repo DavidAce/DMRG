@@ -27,7 +27,7 @@ namespace settings {
     // Make sure just one of these is > 1 otherwise too many threads
     // may be spawned inside of already threaded parts.
     namespace threading{
-        inline int num_threads_eigen  = 16;                                                        /*!< Number of threads for Eigen operations. num_threads <= 0 will try to use as many as possible */
+        inline int num_threads_eigen  = 1;                                                        /*!< Number of threads for Eigen operations. num_threads <= 0 will try to use as many as possible */
         inline int num_threads_omp    = 1;                                                        /*!< Number of threads for OpenMP operations. num_threads <= 0 will try to use as many as possible */
         inline int num_threads_blas   = 1;                                                        /*!< Number of threads for BLAS operations. num_threads <= 0 will try to use as many as possible */
     }
