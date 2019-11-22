@@ -90,9 +90,11 @@ double tools::finite::measure::twosite::energy_minus_energy_reduced(const class_
     //      < H > = E - E_reduced ~ 0
     // Else
     //      < H > = E
+
     tools::common::profile::t_ene.tic();
+    OMP omp(settings::threading::num_threads_eigen);
     Eigen::Tensor<Scalar, 0>  E;
-    E.device(omp::dev) =
+    E.device(omp.dev) =
                 state.ENV_L.back().block
                     .contract(theta,                               idx({0},{1}))
                     .contract(state.MPO_L.back()->MPO(),           idx({1,2},{0,2}))
@@ -138,8 +140,9 @@ double tools::finite::measure::twosite::energy_variance(const class_state_finite
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
 
     tools::common::profile::t_var.tic();
+    OMP omp(settings::threading::num_threads_eigen);
     Eigen::Tensor<Scalar, 0> H2;
-    H2.device(omp::dev) =
+    H2.device(omp.dev) =
                 state.ENV2_L.back().block
                     .contract(theta                        , idx({0}  ,{1}))
                     .contract(state.MPO_L.back()->MPO()    , idx({1,3},{0,2}))
@@ -158,6 +161,9 @@ double tools::finite::measure::twosite::energy_variance(const class_state_finite
     double E2 = energy*energy;
     double var = std::abs(H2(0) - E2);
     if (std::isnan(var) or std::isinf(var)) throw std::runtime_error(fmt::format("Variance is invalid: {}", var));
+    if(var < state.lowest_recorded_variance){
+        state.lowest_recorded_variance = var;
+    }
     return var;
 }
 

@@ -110,8 +110,8 @@ void class_selfdual_tf_rf_ising::build_mpo()
     mpo_internal.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(sz);
     mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(sx);
     mpo_internal.slice(Eigen::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
-    mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-h_rnd * sx);
-    mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-J_rnd * sz);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - e_reduced * Id);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(J_rnd + J_ptb) * sz);
     mpo_internal.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(lambda*h_avg) * sx);
     mpo_internal.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(lambda*J_avg) * sz);
     mpo_internal.slice(Eigen::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
@@ -121,11 +121,25 @@ void class_selfdual_tf_rf_ising::randomize_hamiltonian(){
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
     if(all_mpo_parameters_have_been_set or mpo_internal.size()>5){
-        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-h_rnd * sx);
-        mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-J_rnd * sz);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - e_reduced * Id);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(J_rnd + J_ptb) * sz);
     }
 }
 
+void class_selfdual_tf_rf_ising::perturb_hamiltonian(double amplitude){
+    h_ptb  = - amplitude * h_rnd;//* rn::uniform_double(0,1);
+    J_ptb  = - amplitude * J_rnd;//* rn::uniform_double(0,1);
+    if(all_mpo_parameters_have_been_set or mpo_internal.size()>5){
+        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - e_reduced * Id);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(J_rnd + J_ptb) * sz);
+    }
+    if (amplitude == 0.0 and is_perturbed())
+        throw std::runtime_error("MPO(" + std::to_string(get_position()) + ": Should have unperturbed!");
+}
+
+bool class_selfdual_tf_rf_ising::is_perturbed() const {
+    return J_ptb != 0.0 and h_ptb != 0.0;
+}
 
 Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view() const {
     if (e_reduced == 0){return MPO();}
@@ -135,7 +149,7 @@ Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view() const {
 Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view(double site_energy) const {
     if (site_energy == 0){return MPO();}
     Eigen::Tensor<Scalar,4> temp  = MPO();
-    temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-h_rnd * sx - site_energy * Id);
+    temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - site_energy * Id);
     return temp;
 }
 

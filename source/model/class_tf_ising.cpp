@@ -92,7 +92,7 @@ void class_tf_ising::build_mpo()
     mpo_internal.setZero();
     mpo_internal.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
     mpo_internal.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(sz);
-    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field + r_rnd_field) * sx);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field + r_ptb_field + r_rnd_field) * sx - e_reduced * Id);
     mpo_internal.slice(Eigen::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-J_coupling * sz);
     mpo_internal.slice(Eigen::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
 }
@@ -100,8 +100,21 @@ void class_tf_ising::build_mpo()
 void class_tf_ising::randomize_hamiltonian(){
     r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
     if(all_mpo_parameters_have_been_set or mpo_internal.size()>3){
-        mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field+r_rnd_field) * sx);
+        mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field+r_ptb_field + r_rnd_field) * sx - e_reduced * Id);
     }
+}
+
+void class_tf_ising::perturb_hamiltonian(double amplitude){
+    r_ptb_field  = amplitude * r_rnd_field * rn::uniform_double(-1,1);
+    if(all_mpo_parameters_have_been_set or mpo_internal.size()>3){
+        mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field+r_ptb_field + r_rnd_field) * sx - e_reduced * Id);
+    }
+    if (amplitude == 0.0 and is_perturbed())
+        throw std::runtime_error("MPO(" + std::to_string(get_position()) + ": Should have unperturbed!");
+}
+
+bool class_tf_ising::is_perturbed() const {
+    return r_ptb_field != 0.0;
 }
 
 Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view() const {
@@ -112,7 +125,7 @@ Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view() const {
 Eigen::Tensor<Scalar,4> class_tf_ising::MPO_reduced_view(double site_energy) const {
     if (site_energy == 0){return MPO();}
     Eigen::Tensor<Scalar,4> temp  = MPO();
-    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field+r_rnd_field) * sx - site_energy * Id);
+    temp.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field + (r_rnd_field + r_ptb_field)) * sx - site_energy * Id);
     return temp;
 }
 

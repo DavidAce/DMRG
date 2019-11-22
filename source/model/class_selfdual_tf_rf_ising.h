@@ -27,6 +27,8 @@ private:
     double h_sigma             = 0;
     double lambda              = 0;
     double delta               = 0;
+    double J_ptb               = 0; //Perturbation
+    double h_ptb               = 0; //Perturbation
     int    num_params = 13;  //Number of parameters for this model excluding this one.
 
 
@@ -46,6 +48,8 @@ public:
     void set_hamiltonian(const Eigen::VectorXd & parameters)                                     override;
     void build_mpo()                                                                             override;
     void randomize_hamiltonian()                                                                 override;
+    void perturb_hamiltonian(double amplitude)                                                   override;
+    bool is_perturbed()                                                                    const override;
     Eigen::Tensor<Scalar,4> MPO_reduced_view()                                             const override;
     Eigen::Tensor<Scalar,4> MPO_reduced_view(double site_energy)                           const override;
     std::unique_ptr<class_model_base> clone()                                              const override;

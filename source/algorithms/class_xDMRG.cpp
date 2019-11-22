@@ -7,6 +7,7 @@
 #include <state/class_state_finite.h>
 #include <tools/nmspc_tools.h>
 #include <tools/finite/opt.h>
+#include <general/nmspc_random_numbers.h>
 #include "class_xDMRG.h"
 
 
@@ -31,6 +32,9 @@ void class_xDMRG::run_preprocessing() {
     update_bond_dimension_limit(chi_init());
     tools::finite::mps::internals::seed_state_unused = true;
     reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
+//    for (size_t i = 0; i < rn::uniform_integer(0,state->get_length()) ; i++){
+//        move_center_point();
+//    }
 //    reset_to_random_state_in_energy_window("random",false, "Initializing");
 //    inflate_initial_state();
 
@@ -44,15 +48,14 @@ void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
     while(true) {
         log->trace("Starting step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
-        single_xDMRG_step();
+        check_convergence();
+//        backup_best_state(*state); //Should come after check_convergence
+        copy_from_tmp();
+
         write_state();
         write_measurements();
         write_sim_status();
         write_profiling();
-        copy_from_tmp();
-        check_convergence();
-        backup_best_state(*state); //Should come after check_convergence
-        print_status_update();
         try_projection();
 
         // It's important not to perform the last step.
@@ -64,9 +67,9 @@ void class_xDMRG::run_simulation()    {
             if (sim_status.simulation_has_to_stop)                      {stop_reason = StopReason::SATURATED; break;}
             if (sim_status.num_resets > settings::precision::max_resets) { stop_reason = StopReason::MAX_RESET; break;}
         }
-
+        single_xDMRG_step();
+        print_status_update();
         log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
-
         move_center_point();
         update_bond_dimension_limit();
         sim_status.iteration     = state->get_sweeps();
@@ -118,10 +121,15 @@ void class_xDMRG::single_xDMRG_step()
     }
 
     Eigen::Tensor<Scalar,3> theta;
-
-    std::list<size_t> max_num_sites_list = {2};
+    // Generate a list of maximum number of active sites to try
+    std::list<size_t> max_num_sites_list = {2,4};
     if(sim_status.simulation_has_stuck_for >= 2) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
-    while (max_num_sites_list.front() >=  max_num_sites_list.back() and not max_num_sites_list.size()==1) max_num_sites_list.pop_back();
+    if(max_num_sites_list.size() > 1 and sim_status.iteration <= 1)                max_num_sites_list.pop_front(); //You can take many sites in the beginning
+    if(max_num_sites_list.size() > 1 and sim_status.simulation_has_stuck_for >= 1) max_num_sites_list.pop_front(); //Take more sites if stuck
+    if(sim_status.simulation_has_stuck_for >= 3) max_num_sites_list = {settings::precision::max_sites_multidmrg}; //Take as many as possible now
+    max_num_sites_list.sort();
+    max_num_sites_list.unique();
+    max_num_sites_list.remove_if([](auto &elem){return elem > settings::precision::max_sites_multidmrg;});
 
 //    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::max_sites_multidmrg};
 //    std::list<size_t> max_num_sites_list = {2,settings::precision::max_sites_multidmrg};
@@ -131,10 +139,10 @@ void class_xDMRG::single_xDMRG_step()
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
 
-        if (optMode == opt::OptMode::VARIANCE and max_num_sites > 2){
-            optSpace  = opt::OptSpace::DIRECT;
-            threshold = settings::precision::max_size_direct;
-        }
+//        if (optMode == opt::OptMode::VARIANCE and max_num_sites > 2){
+//            optSpace  = opt::OptSpace::DIRECT;
+//            threshold = settings::precision::max_size_direct;
+//        }
 
         state->activate_sites(threshold, max_num_sites);
 
@@ -255,7 +263,7 @@ void class_xDMRG::check_convergence(){
         if (    outside_of_window
             and (sim_status.variance_mpo_has_saturated or
                  sim_status.variance_mpo_has_converged or
-                 tools::finite::measure::energy_variance_per_site(*state_backup) < 1e-4))
+                 tools::finite::measure::energy_variance_per_site(*state) < 1e-4))
         {
             double old_energy_dens_window = sim_status.energy_dens_window;
             double new_energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
@@ -297,12 +305,23 @@ void class_xDMRG::check_convergence(){
     if(state->position_is_any_edge()) {
         sim_status.simulation_has_stuck_for = sim_status.simulation_has_got_stuck ? sim_status.simulation_has_stuck_for + 1 : 0;
     }
+//    if (state->position_is_any_edge() and sim_status.simulation_has_stuck_for == 1 and state->is_perturbed() ){
+//        log->info("Unperturbing");
+//        state->perturb_hamiltonian(0.0);
+//    }
+//    static int num_perturbs = 0;
+//    if (state->position_is_any_edge() and sim_status.simulation_has_stuck_for == 1 and not state->is_perturbed() and num_perturbs == 0){
+//        double amplitude = 0.9;//tools::finite::measure::energy_variance_per_site(*state);
+//        log->info("Perturbing with amplitude {}",amplitude);
+//        state->perturb_hamiltonian(amplitude);
+//        num_perturbs = 1;
+//    }
 
-        sim_status.simulation_has_to_stop = sim_status.simulation_has_stuck_for >= max_stuck_iters or
-                                           (sim_status.simulation_has_stuck_for >= min_stuck_iters and
-                                            sim_status.chi_lim_has_reached_chi_max);
 
-    //                                        and (sim_status.variance_mpo_saturated_for >= max_saturation_iters and
+    sim_status.simulation_has_to_stop = sim_status.simulation_has_stuck_for >= max_stuck_iters and
+                                        sim_status.chi_lim_has_reached_chi_max;
+
+//                                        and (sim_status.variance_mpo_saturated_for >= max_saturation_iters and
     //                                             sim_status.entanglement_saturated_for >= max_saturation_iters);
     //    unstuck = unstuck == true  and  sim_status.simulation_has_got_stuck == false; // We were stuck, but no longer.
     //    if (unstuck) has_projected = false;

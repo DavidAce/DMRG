@@ -13,6 +13,8 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include <general/nmspc_omp.h>
+
 
 #ifdef OpenBLAS_AVAILABLE
 #include <cblas.h>
@@ -54,6 +56,7 @@ NOTE                        : Order of argument matters. In particular, set seed
 
 
 #include <signal.h>
+
 void signal_callback_handler(int signum) {
     switch(signum){
         case SIGTERM:  {std::cout  << "Caught SIGTERM" <<std::endl; break;}

@@ -101,7 +101,7 @@ namespace tools{
         namespace multisite{
             extern Eigen::DSizes<long,3> get_dimensions  (const class_state_finite &state, const std::list<size_t> &list_of_sites);
             extern size_t                get_problem_size(const class_state_finite &state, const std::list<size_t> &list_of_sites);
-            extern std::list<size_t>     generate_site_list(class_state_finite &state, const size_t threshold, const size_t max_sites);
+            extern std::list<size_t>     generate_site_list(class_state_finite &state, const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
         }
 
 

@@ -60,7 +60,7 @@ void tools::finite::mps::randomize(class_state_finite &state, const std::string 
 */
 {
     tools::log->trace("Randomizing mps");
-    state.unset_measurements();
+    state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_have_been_updated(false);
 

@@ -12,7 +12,7 @@ void tools::finite::mps::normalize(class_state_finite & state, const std::option
     tools::log->trace("Normalizing state");
     using namespace Textra;
     using Scalar = class_state_finite::Scalar;
-    state.unset_measurements();
+    state.clear_measurements();
     tools::common::profile::t_svd.tic();
     size_t num_moves = 2*(state.get_length()-2);
     size_t chi_lim = state.get_chi_lim();
@@ -57,7 +57,7 @@ void tools::finite::mps::normalize(class_state_finite & state, const std::option
         }
     }
     tools::common::profile::t_svd.toc();
-    state.unset_measurements();
+    state.clear_measurements();
     tools::log->trace("Norm after normalization = {:.16f}", tools::finite::measure::norm(state));
     tools::log->trace("Bond dimensions after  normalization: {}", tools::finite::measure::bond_dimensions(state));
 
@@ -65,7 +65,7 @@ void tools::finite::mps::normalize(class_state_finite & state, const std::option
 
 
 void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_state_finite & state){
-    state.unset_measurements();
+    state.clear_measurements();
     if (state.active_sites.empty()) throw std::runtime_error("truncate_theta: No active sites to truncate");
     if (theta.size() == 0)          throw std::runtime_error("truncate_theta: Theta is empty");
     auto theta_map = Eigen::Map<Eigen::VectorXcd>(theta.data(),theta.size());
@@ -94,7 +94,7 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_st
         tools::finite::opt::truncate_right(theta,state);
 
     }
-    state.unset_measurements();
+    state.clear_measurements();
     state.clear_cache();
     if (state.ENV_L.size() + state.ENV_R.size() != state.get_length())
         throw std::runtime_error(fmt::format("Environment sizes do not add up to system size after truncation: {} + {} != {}", state.ENV_L.size() , state.ENV_R.size(), state.get_length()));
@@ -318,7 +318,7 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &t
 //        }
 //    }
 
-    state.unset_measurements();
+    state.clear_measurements();
     tools::common::profile::t_svd.toc();
 }
 
@@ -410,7 +410,7 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
 
     state.increment_moves();
     state.clear_cache();
-    state.unset_measurements();
+    state.clear_measurements();
     state.active_sites.clear();
 
     tools::finite::debug::check_integrity(state);

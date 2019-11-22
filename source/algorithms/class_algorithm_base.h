@@ -81,7 +81,9 @@ public:
     class_tic_toc t_con;    /*!< Convergence checks time */
 
 protected:
-//    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from
+
+
+    //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from
     struct SaturationReport {
         bool   has_computed  = false;
         size_t check_from    = 0;

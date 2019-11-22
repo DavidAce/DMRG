@@ -13,7 +13,7 @@
 void tools::finite::debug::check_integrity(const class_state_finite &state)
 {
     tools::log->trace("Checking integrity of state");
-    state.unset_measurements();
+    state.clear_measurements();
 
     try{
         check_integrity_of_mps(state);
@@ -24,7 +24,7 @@ void tools::finite::debug::check_integrity(const class_state_finite &state)
 //        tools::finite::debug::print_parity_properties(state) ;
         throw std::runtime_error(fmt::format("Check failed: {}", ex.what()));
     }
-    state.unset_measurements();
+    state.clear_measurements();
 }
 
 

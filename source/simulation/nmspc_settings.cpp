@@ -58,6 +58,9 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<double>     ("precision::max_norm_error"                  , precision::max_norm_error);
     indata.find_parameter<size_t>     ("precision::max_resets"                      , precision::max_resets);
     indata.find_parameter<bool>       ("precision::use_reduced_energy"              , precision::use_reduced_energy);
+    indata.find_parameter<int>        ("threading::num_threads_eigen"               , threading::num_threads_eigen);
+    indata.find_parameter<int>        ("threading::num_threads_omp"                 , threading::num_threads_omp);
+    indata.find_parameter<int>        ("threading::num_threads_blas"                , threading::num_threads_blas);
 
 
     //Parameters controlling infinite-DMRG

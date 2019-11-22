@@ -6,13 +6,18 @@
 #include <h5pp/h5pp.h>
 #include <filesystem>
 #include <fstream>
+#include <stdlib.h>
 namespace fs = std::filesystem;
+
+std::string get_dirname(){
+    return "DMRG." + std::string(getenv("USER")) + "/";
+}
 
 std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_filename) {
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
-         temp_path = settings::output::temp_dir/ fs::path("DMRG/");
-    else temp_path = fs::temp_directory_path() / fs::path("DMRG/");
+         temp_path = settings::output::temp_dir/ fs::path(get_dirname());
+    else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
 
 
     std::string::size_type pos = output_filename.find(temp_path.string());
@@ -43,8 +48,8 @@ std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_f
 std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string &output_filename) {
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
-         temp_path = settings::output::temp_dir/ fs::path("DMRG/");
-    else temp_path = fs::temp_directory_path() / fs::path("DMRG/");
+         temp_path = settings::output::temp_dir/ fs::path(get_dirname());
+    else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
 
     std::string::size_type pos = output_filename.find(temp_path.string());
     if (pos != std::string::npos){
@@ -112,8 +117,8 @@ void tools::common::io::h5tmp::remove_from_temp(const std::string output_filenam
     if(output_filename.empty()) {std::cout << "Nothing to delete" << std::endl << std::flush; return;}
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
-        temp_path = settings::output::temp_dir/ fs::path("DMRG/");
-    else temp_path = fs::temp_directory_path() / fs::path("DMRG/");
+        temp_path = settings::output::temp_dir / fs::path(get_dirname());
+    else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
 
 
     std::string::size_type pos = output_filename.find(temp_path.string());

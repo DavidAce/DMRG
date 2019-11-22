@@ -7,12 +7,14 @@
 #include <tools/finite/opt.h>
 #include <state/class_state_finite.h>
 #include <ceres/ceres.h>
+#include <simulation/nmspc_settings.h>
 
 using namespace tools::finite::opt::internal;
 
 ceres_base_functor::ceres_base_functor(
         const class_state_finite & state,
-        const class_simulation_status & sim_status)
+        const class_simulation_status & sim_status):
+        omp(settings::threading::num_threads_eigen)
 {
     reset_timers();
     length                   = state.get_length();

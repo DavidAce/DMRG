@@ -50,7 +50,7 @@ void tools::finite::mpo::randomize(class_state_finite &state, int seed_model) {
 
 
 void tools::finite::mpo::reduce_mpo_energy(class_state_finite &state){
-    state.unset_measurements();
+    state.clear_measurements();
     state.clear_cache();
     if (state.active_sites.empty())
         reduce_mpo_energy_2site(state);
@@ -63,28 +63,28 @@ void tools::finite::mpo::reduce_mpo_energy(class_state_finite &state){
 void tools::finite::mpo::reduce_mpo_energy_multi(class_state_finite &state){
     auto     theta = state.get_multitheta();
     double energy_per_site_before                       = tools::finite::measure::energy_per_site(state,theta);
-//    double energy_per_site_reduced_before               = state.get_energy_reduced();
-//    double energy_per_site_minus_reduced_before         = tools::finite::measure::energy_minus_energy_reduced(state,theta)/state.get_length();
-//    double energy_variance_per_site_before              = tools::finite::measure::energy_variance_per_site(state,theta);
+    double energy_per_site_reduced_before               = state.get_energy_per_site_reduced();
+    double energy_per_site_minus_reduced_before         = tools::finite::measure::energy_minus_energy_reduced(state,theta)/state.get_length();
+    double energy_variance_per_site_before              = tools::finite::measure::energy_variance_per_site(state,theta);
     log->debug("Variance check before reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(state,theta)));
-//    log->debug("Status before reduce (multi)         : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
-//               energy_per_site_before,
-//               energy_per_site_reduced_before,
-//               energy_per_site_minus_reduced_before,
-//               std::log10(energy_variance_per_site_before));
+    log->debug("Status before reduce (multi)         : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
+               energy_per_site_before,
+               energy_per_site_reduced_before,
+               energy_per_site_minus_reduced_before,
+               std::log10(energy_variance_per_site_before));
 
     tools::log->trace("Reducing MPO energy by: {:<20.16f}",energy_per_site_before);
     state.set_reduced_energy_per_site(energy_per_site_before);
     double energy_per_site_after                        = tools::finite::measure::energy_per_site(state,theta);
-//    double energy_per_site_reduced_after                = state.get_energy_reduced();
+    double energy_per_site_reduced_after                = state.get_energy_per_site_reduced();
     double energy_per_site_minus_reduced_after          = tools::finite::measure::energy_minus_energy_reduced(state,theta)/state.get_length();
-//    double energy_variance_per_site_after               = tools::finite::measure::energy_variance_per_site(state,theta);
+    double energy_variance_per_site_after               = tools::finite::measure::energy_variance_per_site(state,theta);
         log->debug("Variance check after reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(state,theta)));
-//    log->debug("Status after reduce (multi)           : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
-//               energy_per_site_after,
-//               energy_per_site_reduced_after,
-//               energy_per_site_minus_reduced_after,
-//               std::log10(energy_variance_per_site_after));
+    log->debug("Status after reduce (multi)           : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
+               energy_per_site_after,
+               energy_per_site_reduced_after,
+               energy_per_site_minus_reduced_after,
+               std::log10(energy_variance_per_site_after));
 
     if (std::abs(energy_per_site_before - energy_per_site_after) > 0.1  )
         throw std::logic_error("Energy before and after mpo reduction differ");
@@ -96,7 +96,7 @@ void tools::finite::mpo::reduce_mpo_energy_multi(class_state_finite &state){
 
 
 void tools::finite::mpo::reduce_mpo_energy_2site(class_state_finite &state){
-    state.unset_measurements();
+    state.clear_measurements();
     state.clear_cache();
     auto   theta = state.get_theta();
     double energy_per_site_before                       = tools::finite::measure::energy_per_site(state,theta);
@@ -113,7 +113,7 @@ void tools::finite::mpo::reduce_mpo_energy_2site(class_state_finite &state){
 
     tools::log->trace("Reducing MPO energy by: {}",energy_per_site_before);
     state.set_reduced_energy_per_site(energy_per_site_before);
-    state.unset_measurements();
+    state.clear_measurements();
     state.clear_cache();
     theta = state.get_theta();
     double energy_per_site_after                        = tools::finite::measure::energy_per_site(state,theta);
