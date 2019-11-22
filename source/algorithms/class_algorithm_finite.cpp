@@ -218,7 +218,9 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
             // Only do this if the simulation is stuck.
 
-            if(sim_status.simulation_has_stuck_for >= max_stuck_iters - 1){ //Do a bond-dim update after having tried careful "direct" and subspace for some sweeps
+//            if(sim_status.simulation_has_stuck_for >= max_stuck_iters){ //Do a bond-dim update after having tried careful "direct" and subspace for some sweeps
+//            if(sim_status.simulation_has_to_stop){ //Do a bond-dim update after having tried careful "direct" and subspace for some sweeps
+            if(sim_status.simulation_has_stuck_for >= max_stuck_iters -2){ //Do a bond-dim update after having tried careful "direct" and subspace for some sweeps
                 size_t trunc_bond_count = (size_t)  std::count_if(state->get_truncation_errors().begin(), state->get_truncation_errors().end(),
                                                                   [](auto const& val){ return val > std::pow(0.5*settings::precision::svd_threshold, 2); });
                 auto bond_dims = tools::finite::measure::bond_dimensions(*state);
