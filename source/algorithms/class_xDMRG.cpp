@@ -49,6 +49,7 @@ void class_xDMRG::run_simulation()    {
     while(true) {
         log->trace("Starting step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
         check_convergence();
+        update_bond_dimension_limit();
 //        backup_best_state(*state); //Should come after check_convergence
         copy_from_tmp();
 
@@ -71,7 +72,6 @@ void class_xDMRG::run_simulation()    {
         print_status_update();
         log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
         move_center_point();
-        update_bond_dimension_limit();
         sim_status.iteration     = state->get_sweeps();
         sim_status.position      = state->get_position();
         sim_status.moves         = state->get_moves();
@@ -318,8 +318,7 @@ void class_xDMRG::check_convergence(){
 //    }
 
 
-    sim_status.simulation_has_to_stop = sim_status.simulation_has_stuck_for >= max_stuck_iters and
-                                        sim_status.chi_lim_has_reached_chi_max;
+    sim_status.simulation_has_to_stop = sim_status.simulation_has_stuck_for >= max_stuck_iters;
 
 //                                        and (sim_status.variance_mpo_saturated_for >= max_saturation_iters and
     //                                             sim_status.entanglement_saturated_for >= max_saturation_iters);
