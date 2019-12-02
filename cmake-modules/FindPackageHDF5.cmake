@@ -22,17 +22,21 @@
 function(find_package_hdf5 hdf5_roots HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE_STATIC_LIBRARIES HDF5_PREFER_PARALLEL HDF5_REQUIRED )
 
     foreach(hdf5_root ${hdf5_roots})
-        message(STATUS "Searching for hdf5 execs in ${hdf5_root}" )
+
         unset(HDF5_CXX_COMPILER_EXECUTABLE CACHE)
         unset(HDF5_C_COMPILER_EXECUTABLE   CACHE)
         unset(HDF5_FOUND CACHE)
         unset(HDF5_FOUND PARENT_SCOPE)
-
+        set(HDF5_FIND_DEBUG OFF)
+        if(HDF5_FIND_DEBUG)
+            message(STATUS "Searching for hdf5 execs in ${hdf5_root}" )
+        endif()
         find_file(HDF5_C_COMPILER_EXECUTABLE    NAMES h5cc  PATH_SUFFIXES bin envs/bin dmrg/bin envs/dmrg/bin PATHS ${hdf5_root} )
         find_file(HDF5_CXX_COMPILER_EXECUTABLE  NAMES h5c++ PATH_SUFFIXES bin envs/bin dmrg/bin envs/dmrg/bin PATHS ${hdf5_root} )
         if (HDF5_C_COMPILER_EXECUTABLE OR HDF5_CXX_COMPILER_EXECUTABLE)
-            message(STATUS "Searching for hdf5 execs in ${hdf5_root} - Success -- C:  ${HDF5_C_COMPILER_EXECUTABLE}  CXX: ${HDF5_CXX_COMPILER_EXECUTABLE}" )
-            set(HDF5_FIND_DEBUG OFF)
+            if(HDF5_FIND_DEBUG)
+                message(STATUS "Searching for hdf5 execs in ${hdf5_root} - Success -- C:  ${HDF5_C_COMPILER_EXECUTABLE}  CXX: ${HDF5_CXX_COMPILER_EXECUTABLE}" )
+            endif()
             set(HDF5_NO_FIND_PACKAGE_CONFIG_FILE ON)
             find_package(HDF5 ${HDF5_ATLEAST_VERSION} COMPONENTS ${HDF5_MODULES})
 
@@ -92,6 +96,7 @@ function(find_package_hdf5 hdf5_roots HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE
                 endif()
             endif()
         else()
+
             message(STATUS "Searching for hdf5 execs in ${hdf5_root} - failed:" )
             set(HDF5_FOUND FALSE PARENT_SCOPE)
 #            return()

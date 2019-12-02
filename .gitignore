@@ -5,6 +5,7 @@ output/
 build/
 tmp/
 libs/
+libs*/
 doxygen_log.txt
 test*.cfg
 *.log

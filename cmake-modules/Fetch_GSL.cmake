@@ -44,12 +44,12 @@ if(GSL_LIBRARY AND GSL_CBLAS_LIBRARY AND GSL_INCLUDE_DIRS)
     message(STATUS "GSL FOUND IN SYSTEM: ${GSL_LIBRARIES}")
     add_library(GSL INTERFACE)
 else()
-    message(STATUS "GSL will be installed into ${INSTALL_DIRECTORY}/gsl on first build.")
+    message(STATUS "GSL will be installed into ${EXTERNAL_INSTALL_DIR}/gsl on first build.")
     include(ExternalProject)
     ExternalProject_Add(external_GSL
             URL      http://ftp.acc.umu.se/mirror/gnu.org/gnu/gsl/gsl-2.4.tar.gz
-            PREFIX      ${BUILD_DIRECTORY}/gsl
-            INSTALL_DIR ${INSTALL_DIRECTORY}/gsl
+            PREFIX      ${EXTERNAL_BUILD_DIR}/gsl
+            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/gsl
             CONFIGURE_COMMAND
                 cd <SOURCE_DIR> &&
                 pwd &&

@@ -1,12 +1,12 @@
-message(STATUS "CppNumSolvers will be installed into ${INSTALL_DIRECTORY}/CppNumSolvers on first build.")
+message(STATUS "CppNumSolvers will be installed into ${EXTERNAL_INSTALL_DIR}/CppNumSolvers on first build.")
 
 include(ExternalProject)
 ExternalProject_Add(external_CppNumSolvers
         GIT_REPOSITORY https://github.com/PatWie/CppNumericalSolvers.git
         GIT_TAG master
         GIT_PROGRESS 1
-        PREFIX      ${BUILD_DIRECTORY}/CppNumSolvers
-        INSTALL_DIR ${INSTALL_DIRECTORY}/CppNumSolvers
+        PREFIX      ${EXTERNAL_BUILD_DIR}/CppNumSolvers
+        INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/CppNumSolvers
         UPDATE_COMMAND ""
         TEST_COMMAND ""
         INSTALL_COMMAND ""

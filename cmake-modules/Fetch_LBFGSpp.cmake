@@ -1,12 +1,12 @@
-message(STATUS "LBFGS++ will be installed into ${INSTALL_DIRECTORY}/LBFGS++ on first build.")
+message(STATUS "LBFGS++ will be installed into ${EXTERNAL_INSTALL_DIR}/LBFGS++ on first build.")
 
 include(ExternalProject)
 ExternalProject_Add(external_LBFGSpp
         GIT_REPOSITORY https://github.com/yixuan/LBFGSpp.git
         GIT_TAG master
         GIT_PROGRESS 1
-        PREFIX      ${BUILD_DIRECTORY}/LBFGS++
-        INSTALL_DIR ${INSTALL_DIRECTORY}/LBFGS++
+        PREFIX      ${EXTERNAL_BUILD_DIR}/LBFGS++
+        INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/LBFGS++
         UPDATE_COMMAND ""
         TEST_COMMAND ""
         INSTALL_COMMAND ""

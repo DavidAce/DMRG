@@ -1,13 +1,13 @@
 
 include(GNUInstallDirs)
-find_package(spdlog 1.3 NO_DEFAULT_PATH HINTS ${INSTALL_DIRECTORY}/spdlog/${CMAKE_INSTALL_LIBDIR}/cmake/spdlog ${spdlog_DIR} )
+find_package(spdlog 1.3 NO_DEFAULT_PATH HINTS ${EXTERNAL_INSTALL_DIR}/spdlog/${CMAKE_INSTALL_LIBDIR}/cmake/spdlog ${spdlog_DIR} )
 
 if(spdlog_FOUND)
     get_target_property(SPDLOG_INCLUDE_DIR spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
     message(STATUS "SPDLOG FOUND IN SYSTEM: ${SPDLOG_INCLUDE_DIR}")
 
-elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
-    message(STATUS "Spdlog will be installed into ${INSTALL_DIRECTORY}/spdlog on first build.")
+elseif (DOWNLOAD_MISSING)
+    message(STATUS "Spdlog will be installed into ${EXTERNAL_INSTALL_DIR}/spdlog on first build.")
     include(ExternalProject)
     ExternalProject_Add(external_SPDLOG
             GIT_REPOSITORY https://github.com/gabime/spdlog.git
@@ -16,8 +16,8 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
             GIT_SHALLOW true
             UPDATE_COMMAND ""
             TEST_COMMAND ""
-            PREFIX      ${BUILD_DIRECTORY}/spdlog
-            INSTALL_DIR ${INSTALL_DIRECTORY}/spdlog
+            PREFIX      ${EXTERNAL_BUILD_DIR}/spdlog
+            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/spdlog
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_BUILD_TYPE=Release
@@ -34,6 +34,6 @@ elseif (DOWNLOAD_SPDLOG OR DOWNLOAD_ALL)
     add_dependencies(spdlog external_SPDLOG)
     target_include_directories(spdlog SYSTEM INTERFACE ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
 else()
-    message("WARNING: Dependency spdlog not found and DOWNLOAD_SPDLOG is OFF. Build will fail.")
+    message(FATAL_ERROR "Dependency spdlog not found and DOWNLOAD_MISSING is OFF. Build will fail.")
 
 endif()

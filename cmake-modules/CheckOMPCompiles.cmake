@@ -1,37 +1,79 @@
 
-if (NOT USE_OpenMP)
+if (NOT ENABLE_OPENMP)
+    message(STATUS "OpenMP not enabled")
     return()
+endif()
+
+if(USE_MKL AND NOT MKLROOT)
+    if(DEFINED $ENV{MKLROOT})
+        set(MKLROOT $ENV{MKLROOT})
+    else()
+        set(MKLROOT  /opt/intel/mkl)
+        message(STATUS "MKLROOT is not defined. Setting default: ${MKLROOT}")
+    endif()
+endif()
+
+if (NOT CUSTOM_SUFFIX)
+    if(BUILD_SHARED_LIBS)
+        set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    else()
+        set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    endif()
+endif()
+
+
+if (NOT TARGET Threads::Threads)
+    ##################################################
+    ###  Adapt pthread linking for static/dynamic  ###
+    ##################################################
+    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+    set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+    find_package(Threads REQUIRED)
+    if(NOT BUILD_SHARED_LIBS)
+        set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive ${CMAKE_THREAD_LIBS_INIT} -Wl,--no-whole-archive")
+    endif()
 endif()
 
 
 
 function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_INCLUDES)
     include(CheckIncludeFileCXX)
+    include(cmake-modules/getExpandedTarget.cmake)
+    expandTargetLibs("${REQUIRED_LIBRARIES_UNPARSED}" expanded_libs)
+    expandTargetIncs("${REQUIRED_LIBRARIES_UNPARSED}" expanded_incs)
+    expandTargetOpts("${REQUIRED_LIBRARIES_UNPARSED}" expanded_opts)
+    set(CMAKE_REQUIRED_LIBRARIES "${expanded_libs}") # Can be a ;list
+    set(CMAKE_REQUIRED_INCLUDES  "${REQUIRED_INCLUDES};${expanded_incs}") # Can be a ;list
+    string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${REQUIRED_FLAGS} ${expanded_opts}") # Needs to be a space-separated list
+#    message("REQUIRED_LIBRARIES_UNPARSED    : ${REQUIRED_LIBRARIES_UNPARSED}")
+#    message("REQUIRED_INCLUDES              : ${REQUIRED_INCLUDES}")
+#    message("REQUIRED_FLAGS                 : ${REQUIRED_FLAGS}")
+#    message("CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
+#    message("CMAKE_REQUIRED_INCLUDES : ${CMAKE_REQUIRED_INCLUDES}")
+#    message("CMAKE_REQUIRED_FLAGS    : ${CMAKE_REQUIRED_FLAGS}")
 
-    set(REQUIRED_LIBRARIES)
-    foreach(elem ${REQUIRED_LIBRARIES_UNPARSED})
-        if(TARGET ${elem})
-            get_target_property(lib ${elem} INTERFACE_LINK_LIBRARIES)
-            list(APPEND REQUIRED_LIBRARIES ${lib})
-        else()
-            list(APPEND REQUIRED_LIBRARIES ${elem})
-        endif()
-    endforeach()
-
-
-    set(CMAKE_REQUIRED_FLAGS     "${REQUIRED_FLAGS}" )
-    set(CMAKE_REQUIRED_LIBRARIES "${REQUIRED_LIBRARIES}")
-    set(CMAKE_REQUIRED_INCLUDES  "${REQUIRED_INCLUDES}")
-    message(STATUS "REQFLAG: ${CMAKE_REQUIRED_FLAGS}")
-    message(STATUS "REQLIBS: ${CMAKE_REQUIRED_LIBRARIES}")
-    message(STATUS "REQINCS: ${CMAKE_REQUIRED_INCLUDES}")
+#    set(REQUIRED_LIBRARIES)
+#    foreach(elem ${REQUIRED_LIBRARIES_UNPARSED})
+#        if(TARGET ${elem})
+#            get_target_property(lib ${elem} INTERFACE_LINK_LIBRARIES)
+#            list(APPEND REQUIRED_LIBRARIES ${lib})
+#        else()
+#            list(APPEND REQUIRED_LIBRARIES ${elem})
+#        endif()
+#    endforeach()
+#
+#
+#    set(CMAKE_REQUIRED_FLAGS     "${REQUIRED_FLAGS}" )
+#    set(CMAKE_REQUIRED_LIBRARIES "${REQUIRED_LIBRARIES}")
+#    set(CMAKE_REQUIRED_INCLUDES  "${REQUIRED_INCLUDES}")
 
     unset(has_omp_h)
     unset(has_omp_h CACHE)
     unset(OMP_COMPILES CACHE)
     unset(OMP_COMPILES)
-#    include(CheckIncludeFile)
-#    check_include_file("omp.h" has_omp_h LANGUAGE CXX)
+
     check_include_file_cxx(omp.h    has_omp_h)
     include(CheckCXXSourceCompiles)
     check_cxx_source_compiles("
@@ -53,10 +95,8 @@ function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_
             " OMP_COMPILES
             )
     if(NOT OMP_COMPILES)
-#        message(STATUS "Unable to compile a simple OpenMP program")
         set(OMP_COMPILES FALSE PARENT_SCOPE)
     else()
-#        message(STATUS "Unable to compile a simple OpenMP program")
         set(OMP_COMPILES TRUE PARENT_SCOPE)
     endif()
 endfunction()
@@ -69,7 +109,7 @@ function(find_package_omp omp_paths omp_names BUILD_SHARED_LIBS )
     find_package(OpenMP)
     if (OpenMP_FOUND)
         include(cmake-modules/PrintTargetProperties.cmake)
-        print_target_properties(OpenMP::OpenMP_CXX)
+        #print_target_properties(OpenMP::OpenMP_CXX)
         set(OpenMP_LIBRARIES  ${OpenMP_gomp_LIBRARY} ${OpenMP_omp_LIBRARY} ${OpenMP_iomp_LIBRARY})
         set(OpenMP_FLAGS ${OpenMP_CXX_FLAGS})
 
@@ -79,11 +119,6 @@ function(find_package_omp omp_paths omp_names BUILD_SHARED_LIBS )
 
 
         find_path(OpenMP_INCLUDE_DIR NAMES omp.h PATHS ${OpenMP_HEADER_PATHS} ${omp_paths} PATH_SUFFIXES openmp include)
-        message("OpenMP_ROOT         : ${OpenMP_ROOT} ")
-        message("OpenMP_HEADER_PATHS : ${OpenMP_HEADER_PATHS} ")
-        message("OpenMP_LIBRARIES    : ${OpenMP_LIBRARIES} ")
-        message("OpenMP_INCLUDE_DIR  : ${OpenMP_INCLUDE_DIR} ")
-
         list(APPEND OpenMP_LIBRARIES  Threads::Threads -ldl)
         message(STATUS "OpenMP libraries found: ${OpenMP_LIBRARIES}" )
         if(BUILD_SHARED_LIBS)
@@ -97,76 +132,57 @@ function(find_package_omp omp_paths omp_names BUILD_SHARED_LIBS )
 
     if(NOT OMP_COMPILES)
         message(STATUS "Checking for OpenMP in given paths: ${omp_paths}")
-#        unset(OpenMP_INCLUDE_DIR)
-#        unset(OpenMP_INCLUDE_DIR CACHE)
+
         unset(OpenMP_FOUND)
         unset(OpenMP_FOUND CACHE)
         unset(OpenMP_LIBRARIES)
         unset(OpenMP_LIBRARIES CACHE)
-#        unset(OpenMP_FLAGS)
-#        unset(OpenMP_FLAGS CACHE)
+        unset(OpenMP_INCLUDE_DIR)
+        unset(OpenMP_INCLUDE_DIR CACHE)
 
         find_library(OpenMP_LIBRARIES NAMES ${omp_names} PATHS ${omp_paths})
         find_path(OpenMP_INCLUDE_DIR NAMES omp.h PATHS ${OpenMP_HEADER_PATHS} ${omp_paths} /usr/lib  /usr/lib/llvm-9/include /usr/include /usr/lib/llvm-8/include PATH_SUFFIXES openmp include)
-        if(OpenMP_LIBRARIES AND OpenMP_INCLUDE_DIR)
-            list(APPEND OpenMP_LIBRARIES Threads::Threads -ldl)
-            set(OpenMP_FLAGS "-D_OPENMP")
-            if(${BUILD_SHARED_LIBS})
-                check_omp_compiles("${OpenMP_FLAGS}" "${OpenMP_LIBRARIES}" "${OpenMP_INCLUDE_DIR}")
-            else()
-                check_omp_compiles("${OpenMP_FLAGS}" "-static;${OpenMP_LIBRARIES}" "${OpenMP_INCLUDE_DIR}")
-            endif()
+        if(NOT OpenMP_LIBRARIES)
+            unset(OpenMP_LIBRARIES)
+            unset(OpenMP_LIBRARIES CACHE)
+        endif()
+        if(NOT OpenMP_INCLUDE_DIR)
+            unset(OpenMP_INCLUDE_DIR)
+            unset(OpenMP_INCLUDE_DIR CACHE)
+        endif()
+#        message("OpenMP_LIBRARIES    : ${OpenMP_LIBRARIES}")
+#        message("OpenMP_INCLUDE_DIR  : ${OpenMP_INCLUDE_DIR}")
+        list(APPEND OpenMP_LIBRARIES Threads::Threads -ldl)
+        set(OpenMP_FLAGS "-D_OPENMP")
+        if(${BUILD_SHARED_LIBS})
+            check_omp_compiles("${OpenMP_FLAGS}" "${OpenMP_LIBRARIES}" "${OpenMP_INCLUDE_DIR}")
         else()
-            message("OpenMP_LIBRARIES    : ${OpenMP_LIBRARIES} ")
-            message("OpenMP_INCLUDE_DIR  : ${OpenMP_INCLUDE_DIR} ")
+            check_omp_compiles("${OpenMP_FLAGS}" "-static;${OpenMP_LIBRARIES}" "${OpenMP_INCLUDE_DIR}")
         endif()
     endif()
-#    get_cmake_property(_variableNames VARIABLES)
-#    foreach (_variableName ${_variableNames})
-#        if("${_variableName}" MATCHES "OpenMP"
-#                OR "${_variableName}" MATCHES "openmp")
-#            message(STATUS "${_variableName}=${${_variableName}}")
-#        endif()
-#    endforeach()
 
     if(OMP_COMPILES)
-        message(STATUS "Found OpenMP" )
-        message(STATUS "OpenMP_LIBRARIES    : ${OpenMP_LIBRARIES} ")
-        message(STATUS "OpenMP_INCLUDE_DIR  : ${OpenMP_INCLUDE_DIR} ")
-        message(STATUS "OpenMP_FLAGS        : ${OpenMP_FLAGS} ")
         set(OpenMP_FOUND        TRUE                    PARENT_SCOPE)
-        set(OpenMP_LIBRARIES    ${OpenMP_LIBRARIES}     PARENT_SCOPE)
-        set(OpenMP_INCLUDE_DIR  ${OpenMP_INCLUDE_DIR}   PARENT_SCOPE)
-        set(OpenMP_FLAGS        ${OpenMP_FLAGS}         PARENT_SCOPE)
-        set(USE_OpenMP          TRUE                    PARENT_SCOPE)
-        set(OMP_COMPILES        TRUE                    PARENT_SCOPE)
+        set(ENABLE_OPENMP       TRUE                    PARENT_SCOPE)
+        add_library(OpenMP INTERFACE IMPORTED)
+        target_link_libraries(OpenMP INTERFACE ${OpenMP_LIBRARIES} ${OpenMP_FLAGS})
+        target_compile_options(OpenMP INTERFACE ${OpenMP_FLAGS})
+        target_include_directories(OpenMP INTERFACE ${OpenMP_INCLUDE_DIR})
     else()
-        message(WARNING "Setting USE_OpenMP OFF" )
-        set(USE_OpenMP   FALSE PARENT_SCOPE)
+        message(STATUS "Could not compile simle OpenMP program. Setting ENABLE_OPENMP OFF" )
+        set(ENABLE_OPENMP FALSE PARENT_SCOPE)
         set(OMP_COMPILES FALSE PARENT_SCOPE)
     endif()
 
 endfunction()
 
 
-unset(OMP_HEADERTEST)
-unset(OMP_HEADERTEST CACHE)
-
-find_path(OMP_HEADERTEST NAMES omp.h PATHS /usr/lib  /usr/lib/llvm-9/include /usr/include /usr/lib/llvm-8/include  PATH_SUFFIXES openmp include REQUIRED)
-
-message(STATUS "OMP_HEADERTEST: ${OMP_HEADERTEST}")
-
 
 set(OMP_LIBRARY_NAMES)
 set(OMP_LIBRARY_PATHS)
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND NOT BUILD_SHARED_LIBS)
-    list(APPEND OMP_LIBRARY_NAMES libiomp5${CUSTOM_SUFFIX} libiomp${CUSTOM_SUFFIX})
-    list(APPEND OMP_LIBRARY_PATHS
-            ${MKLROOT}/../intel/lib/intel64  ${MKL_ROOT}/../intel/lib/intel64
-            $ENV{MKLROOT}/../intel/lib/intel64 $ENV{MKL_ROOT}/../intel/lib/intel64
-            $ENV{EBROOTIMKL}/../intel/lib/intel64
-            /opt/intel/lib/intel64
-            )
+    # Append possible locations for iomp5
+    list(APPEND OMP_LIBRARY_NAMES  libiomp5${CUSTOM_SUFFIX} libiomp${CUSTOM_SUFFIX})
     foreach(omp_name ${OMP_LIBRARY_NAMES})
         execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-file-name=${omp_name}
                 OUTPUT_VARIABLE OMP_LIB
@@ -178,21 +194,16 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" AND NOT BUILD_SHARED_LIBS)
             message(STATUS "Inserting: ${OMP_PATH}")
         endif()
     endforeach()
+    list(APPEND OMP_LIBRARY_PATHS
+        ${MKLROOT}/../intel/lib/intel64
+        $ENV{EBROOTIMKL}/../intel/lib/intel64
+        /opt/intel/lib/intel64
+        )
 endif()
 
 
 
 find_package_omp("${OMP_LIBRARY_PATHS}" "${OMP_LIBRARY_NAMES}" "${BUILD_SHARED_LIBS}")
-
-if (OpenMP_FOUND)
-    add_library(OpenMP INTERFACE)
-    target_link_libraries(OpenMP INTERFACE ${OpenMP_LIBRARIES})
-    target_compile_options(OpenMP INTERFACE ${OpenMP_FLAGS})
-    target_include_directories(OpenMP INTERFACE ${OpenMP_INCLUDE_DIR})
-endif()
-
-
-#add_library(OpenMP INTERFACE)
-#target_link_libraries(OpenMP INTERFACE /opt/intel/lib/intel64/libiomp5.a)
-#target_compile_options(OpenMP INTERFACE "")
-#target_include_directories(OpenMP INTERFACE /usr/lib/llvm-8/lib/clang/8.0.1/include/omp.h)
+#include(cmake-modules/PrintTargetInfo.cmake)
+#print_target_info(OpenMP)
+#

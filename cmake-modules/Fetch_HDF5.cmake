@@ -5,19 +5,19 @@ include(cmake-modules/FindPackageHDF5.cmake)
 if(HDF5_FOUND AND TARGET hdf5)
     message(STATUS "HDF5 FOUND IN SYSTEM: ${HDF5_BUILD_DIR} ${HDF5_CXX_INCLUDE_DIRS} ${HDF5_hdf5_LIBRARY}")
     return()
-elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
-    message(STATUS "HDF5 will be installed into ${INSTALL_DIRECTORY}/hdf5 on first build.")
+elseif (DOWNLOAD_MISSING)
+    message(STATUS "HDF5 will be installed into ${EXTERNAL_INSTALL_DIR}/hdf5 on first build.")
     include(ExternalProject)
     set(HDF5_IS_PARALLEL OFF)
     ExternalProject_Add(external_HDF5
             URL     https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.3/src/hdf5-1.10.3.tar.bz2
-            PREFIX      ${BUILD_DIRECTORY}/hdf5
-            INSTALL_DIR ${INSTALL_DIRECTORY}/hdf5
+            PREFIX      ${EXTERNAL_BUILD_DIR}/hdf5
+            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/hdf5
             UPDATE_DISCONNECTED 1
             TEST_COMMAND ""
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_ANSI_CFLAGS:STRING=-fPIC
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
             -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
@@ -59,7 +59,7 @@ elseif (DOWNLOAD_HDF5 OR DOWNLOAD_ALL)
     )
 
 else()
-    message("WARNING: Dependency HDF5 not found and DOWNLOAD_HDF5 is OFF. Build will fail.")
+    message(FATAL_ERROR "Dependency HDF5 not found and DOWNLOAD_MISSING is OFF. Build will fail.")
 endif()
 
 

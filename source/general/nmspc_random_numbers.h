@@ -18,6 +18,7 @@ namespace rn{
     extern double  uniform_double_1();
     extern double  uniform_double(const double min, const double max);
     extern std::complex<double>  uniform_complex_1();
+    extern double  normal(const double mean, const double std);
     extern double  log_normal(const double mean, const double std);
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata);
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata, const int num_choose);

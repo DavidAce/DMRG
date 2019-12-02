@@ -11,10 +11,10 @@
 #include <iomanip>
 #include <cctype>
 
-#include <experimental/filesystem>
+#include <filesystem>
 #include <algorithm>
 #include <io/nmspc_logger.h>
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 
 class class_settings_reader {

@@ -3,13 +3,16 @@ function(CheckCXX17Compiles REQUIRED_FLAGS REQUIRED_LIBRARIES)
     string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS     "${REQUIRED_FLAGS}")
     string(REPLACE ";" " " CMAKE_REQUIRED_LIBRARIES "${REQUIRED_LIBRARIES}")
 
-    check_include_file_cxx(optional      has_optional  )
-    check_include_file_cxx(filesystem    has_filesystem  )
-    check_include_file_cxx(experimental/filesystem    has_experimental_filesystem  )
-    check_include_file_cxx(experimental/type_traits   has_experimental_type_traits )
-    if(NOT has_filesystem OR NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
+    check_include_file_cxx(optional                     has_optional  )
+    check_include_file_cxx(filesystem                   has_filesystem  )
+    check_include_file_cxx(experimental/type_traits     has_experimental_type_traits )
+
+    if(NOT has_filesystem OR NOT has_experimental_type_traits OR NOT has_optional )
         message(FATAL_ERROR "\n\
         Missing one or more C++17 headers.\n\
+                optional                : ${has_optional}\n\
+                filesystem              : ${has_filesystem}\n\
+                experimental/type_traits: ${has_experimental_type_traits}\n\
         Consider using a newer compiler (GCC 8 or above, Clang 7 or above),\n\
         or checking the compiler flags. If using Clang, pass the variable \n\
         GCC_TOOLCHAIN=<path> \n\
@@ -20,10 +23,9 @@ function(CheckCXX17Compiles REQUIRED_FLAGS REQUIRED_LIBRARIES)
 
     include(CheckCXXSourceCompiles)
     check_cxx_source_compiles("
-    #include <filesystem>
-    #include <experimental/filesystem>
-    #include <experimental/type_traits>
     #include <optional>
+    #include <filesystem>
+    #include <experimental/type_traits>
     namespace fs = std::filesystem;
 
     int main(){

@@ -11,13 +11,13 @@ using namespace Textra;
 using Scalar = class_environment_base::Scalar;
 
 
-class_environment_base::class_environment_base(std::string side_, size_t position_):position(position_),side(side_){};
+class_environment_base::class_environment_base(std::string side_, size_t position_):position(position_),side(side_){}
 class_environment_base::class_environment_base(std::string side_, const class_mps_site & MPS, const class_model_base &MPO):side(side_)
     {
         if (MPS.get_position() != MPO.get_position())
             throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(),MPO.get_position()));
         position = MPS.get_position();
-    };
+    }
 
 class_environment::class_environment(std::string side_, const class_mps_site & MPS, const class_model_base &MPO):
         class_environment_base(side_,MPS,MPO){set_edge_dims(MPS,MPO);}

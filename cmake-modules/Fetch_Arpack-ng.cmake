@@ -47,7 +47,7 @@ if(ARPACK_LIBRARIES)
     target_link_libraries(arpack INTERFACE ${ARPACK_LIBRARIES} blas lapack gfortran)
     add_dependencies(arpack blas lapack gfortran)
 else()
-    message(STATUS "Arpack-ng will be installed into ${INSTALL_DIRECTORY}/arpack-ng on first build.")
+    message(STATUS "Arpack-ng will be installed into ${EXTERNAL_INSTALL_DIR}/arpack-ng on first build.")
 
     #####################################################################
     ### Prepare lists with generator expressions, replacing all semicolons.
@@ -68,13 +68,13 @@ else()
             GIT_TAG             3.7.0
             GIT_PROGRESS false
             GIT_SHALLOW true
-            PREFIX      ${BUILD_DIRECTORY}/arpack-ng
-            INSTALL_DIR ${INSTALL_DIRECTORY}/arpack-ng
+            PREFIX      ${EXTERNAL_BUILD_DIR}/arpack-ng
+            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/arpack-ng
             UPDATE_COMMAND ""
             BUILD_IN_SOURCE 1
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             -DCMAKE_C_FLAGS=${FLAGS}
             -DCMAKE_Fortran_FLAGS=${FLAGS}
@@ -95,8 +95,8 @@ else()
     add_library(arpack INTERFACE)
     add_dependencies(arpack external_ARPACK)
     add_dependencies(arpack blas lapack gfortran)
-    message(STATUS "ARPACK_LIBRARIES   :  ${ARPACK_LIBRARIES}")
-    message(STATUS "ARPACK_INCLUDE_DIRS:  ${ARPACK_INCLUDE_DIRS}")
+#    message(STATUS "ARPACK_LIBRARIES   :  ${ARPACK_LIBRARIES}")
+#    message(STATUS "ARPACK_INCLUDE_DIRS:  ${ARPACK_INCLUDE_DIRS}")
     target_link_libraries(arpack INTERFACE  ${ARPACK_LIBRARIES} blas lapack )
     target_include_directories(arpack SYSTEM INTERFACE  ${ARPACK_INCLUDE_DIRS})
 endif()

@@ -4,7 +4,7 @@
 
 #include "class_settings_reader.h"
 #include <io/nmspc_logger.h>
-
+#include <sstream>
 
 class_settings_reader::class_settings_reader(const fs::path &file_path_,std::string logName): file_path(file_path_) {
     log = Logger::setLogger(logName,2,true);
@@ -97,7 +97,11 @@ bool class_settings_reader::check_if_input_file_exists(const fs::path &path_to_f
 fs::path class_settings_reader::find_input_file(const fs::path &given_path) {
 
     //Check if file exists in the given path.
-    fs::path complete_path = fs::system_complete(given_path);
+//    fs::path complete_path = fs::system_complete(given_path);
+    fs::path complete_path = fs::absolute(given_path);
+    if(fs::exists(given_path)){
+        complete_path = fs::canonical(given_path);
+    }
 
     log->debug("Checking for input file: [ {} ] in path: [ {} ]", given_path.string() ,complete_path.string());
     if (check_if_input_file_exists(complete_path)){
@@ -108,7 +112,7 @@ fs::path class_settings_reader::find_input_file(const fs::path &given_path) {
 
     //Check if file exists in the given path (if it is a relative path!), relative to the executable.
     if (given_path.is_relative()) {
-        complete_path = fs::system_complete(fs::current_path() / given_path);
+        complete_path = fs::absolute(fs::current_path() / given_path);
         log->debug("Checking for input file: [ {} ] in path: [ {} ]", given_path.string() ,complete_path.string());
         if (check_if_input_file_exists(complete_path)) {
             log->info("Found input file: [ {} ] in path: [ {} ]", given_path.string() ,fs::canonical(complete_path).string());
@@ -118,7 +122,7 @@ fs::path class_settings_reader::find_input_file(const fs::path &given_path) {
     }
 
     //Check if file exists in current directory
-    complete_path = fs::system_complete(fs::current_path()/given_path.filename());
+    complete_path = fs::absolute(fs::current_path()/given_path.filename());
     log->debug("Checking for input file: [ {} ] in path: [ {} ]", given_path.string() ,complete_path.string());
     if(check_if_input_file_exists(complete_path)){
         log->info("Found input file: [ {} ] in path: [ {} ]", given_path.string() ,fs::canonical(complete_path).string());

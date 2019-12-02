@@ -19,17 +19,16 @@ if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (TEST-arpack++_mps PRIVATE -static)                                             ### Static linkage
 endif()
 
-
-target_link_libraries(TEST-arpack++_mps PRIVATE  arpack++ Eigen3::Eigen spdlog::spdlog)
-target_link_libraries(TEST-arpack++_mps PRIVATE ${COMPILER_LFLAGS})
-
-
-set_target_properties  (TEST-arpack++_mps PROPERTIES CXX_STANDARD_REQUIRED 17)
-target_compile_features(TEST-arpack++_mps PRIVATE cxx_std_17)
-target_compile_options (TEST-arpack++_mps PRIVATE "${COMMON_OPTIONS}")                                        ### Common options
-target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")                      ### Debug build options
-target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")                  ### Release build options
-target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
+target_link_libraries(TEST-arpack++_mps PRIVATE project-settings)
+target_link_libraries(TEST-arpack++_mps PRIVATE arpack++ Eigen3::Eigen spdlog::spdlog)
+#
+#
+#set_target_properties  (TEST-arpack++_mps PROPERTIES CXX_STANDARD_REQUIRED 17)
+#target_compile_features(TEST-arpack++_mps PRIVATE cxx_std_17)
+#target_compile_options (TEST-arpack++_mps PRIVATE "${COMMON_OPTIONS}")                                        ### Common options
+#target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")                      ### Debug build options
+#target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")                  ### Release build options
+#target_compile_options (TEST-arpack++_mps PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
 
 add_test(NAME arpack++_mps_test COMMAND TEST-arpack++_mps)
 add_dependencies(TEST-arpack++_mps arpack++ Eigen3::Eigen spdlog::spdlog)
