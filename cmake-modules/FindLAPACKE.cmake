@@ -43,16 +43,16 @@ function(CheckLapackeCompiles REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_LIBRA
         }
         " LAPACKE_COMPILES)
     if(LAPACKE_COMPILES)
-        message(STATUS "Lapacke compiles with the following parameters:")
+#        message(STATUS "Lapacke compiles with the following parameters:")
         set(LAPACKE_COMPILES TRUE PARENT_SCOPE)
     else()
-        message(STATUS "Lapacke does not compile with the following parameters:")
+#        message(STATUS "Lapacke does not compile with the following parameters:")
         set(LAPACKE_COMPILES FALSE PARENT_SCOPE)
     endif()
-    message(STATUS "    flags        : " ${REQUIRED_FLAGS})
-    message(STATUS "    definitions  : " ${REQUIRED_DEFINITIONS})
-    message(STATUS "    libraries    : " ${REQUIRED_LIBRARIES})
-    message(STATUS "    includes     : " ${REQUIRED_INCLUDES})
+#    message(STATUS "    flags        : " ${REQUIRED_FLAGS})
+#    message(STATUS "    definitions  : " ${REQUIRED_DEFINITIONS})
+#    message(STATUS "    libraries    : " ${REQUIRED_LIBRARIES})
+#    message(STATUS "    includes     : " ${REQUIRED_INCLUDES})
 
 endfunction()
 

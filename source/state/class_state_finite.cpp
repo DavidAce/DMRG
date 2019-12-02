@@ -433,7 +433,7 @@ const Eigen::Tensor<class_state_finite::Scalar,3> &  class_state_finite::get_mul
     bool first = true;
     for (auto &site : active_sites){
         if (first){multitheta = get_MPS(site).get_M(); first = false; continue;}
-        if (not site == get_MPS(site).get_position()) throw std::runtime_error("Site mismatch in get_multitheta");
+        if (site != get_MPS(site).get_position()) throw std::runtime_error("Site mismatch in get_multitheta");
         auto M    = get_MPS(site).get_M();
         long dim0 = multitheta.dimension(0) * M.dimension(0);
         long dim1 = multitheta.dimension(1);

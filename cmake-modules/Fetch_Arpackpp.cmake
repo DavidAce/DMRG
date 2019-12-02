@@ -58,15 +58,15 @@ if (ARPACKPP_LIBRARIES OR ARPACKPP_INCLUDE_DIR)
     target_link_libraries(arpack++ INTERFACE ${ARPACKPP_LIBRARIES} arpack)
     target_include_directories(arpack++ SYSTEM INTERFACE ${ARPACKPP_INCLUDE_DIR})
 else()
-    message(STATUS "Arpack++ will be installed into ${INSTALL_DIRECTORY}/arpackpp on first build.")
+    message(STATUS "Arpack++ will be installed into ${EXTERNAL_INSTALL_DIR}/arpackpp on first build.")
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
             GIT_TAG             master
             GIT_PROGRESS false
             GIT_SHALLOW true
-            PREFIX      ${BUILD_DIRECTORY}/arpack++
-            INSTALL_DIR ${INSTALL_DIRECTORY}/arpack++
+            PREFIX      ${EXTERNAL_BUILD_DIR}/arpack++
+            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/arpack++
 #            CMAKE_ARGS
 #            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 #            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}

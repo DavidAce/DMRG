@@ -124,12 +124,12 @@ void class_xDMRG::single_xDMRG_step()
     // Generate a list of maximum number of active sites to try
     std::list<size_t> max_num_sites_list = {2,4};
     if(sim_status.simulation_has_stuck_for >= 2) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
-    if(max_num_sites_list.size() > 1 and sim_status.iteration <= 1)                max_num_sites_list.pop_front(); //You can take many sites in the beginning
+    if(max_num_sites_list.size() > 1 and optMode == opt::MODE::OVERLAP)            max_num_sites_list.pop_front(); //You can take many sites in the beginning
     if(max_num_sites_list.size() > 1 and sim_status.simulation_has_stuck_for >= 1) max_num_sites_list.pop_front(); //Take more sites if stuck
-    if(sim_status.simulation_has_stuck_for >= 3) max_num_sites_list = {settings::precision::max_sites_multidmrg}; //Take as many as possible now
     max_num_sites_list.sort();
     max_num_sites_list.unique();
     max_num_sites_list.remove_if([](auto &elem){return elem > settings::precision::max_sites_multidmrg;});
+    if(max_num_sites_list.empty()) max_num_sites_list = {2}; //Just make sure the list isn't empty...
 
 //    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::max_sites_multidmrg};
 //    std::list<size_t> max_num_sites_list = {2,settings::precision::max_sites_multidmrg};

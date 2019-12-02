@@ -21,7 +21,7 @@ if(NOT BLAS_FOUND)
     message(STATUS "Searching for OpenBLAS in system.")
     find_package(OpenBLAS 0.3
             PATHS
-            ${INSTALL_DIRECTORY}/OpenBLAS
+            ${EXTERNAL_INSTALL_DIR}/OpenBLAS
             $ENV{EBROOTOPENBLAS}
             $ENV{BLAS_DIR}/lib
             $ENV{HOME}/.conda/lib
@@ -53,7 +53,7 @@ if(NOT OpenBLAS_FOUND)
     find_library(OpenBLAS_LIBRARY
             NAMES libopenblas${CUSTOM_SUFFIX}
             PATHS
-            ${INSTALL_DIRECTORY}/OpenBLAS
+            ${EXTERNAL_INSTALL_DIR}/OpenBLAS
             $ENV{EBROOTOPENBLAS}/lib
             $ENV{BLAS_DIR}/lib
             $ENV{HOME}/.conda/lib
@@ -64,7 +64,7 @@ if(NOT OpenBLAS_FOUND)
     find_path(OpenBLAS_INCLUDE_DIRS
             NAMES openblas_config.h
             PATHS
-            ${INSTALL_DIRECTORY}/OpenBLAS
+            ${EXTERNAL_INSTALL_DIR}/OpenBLAS
             $ENV{EBROOTOPENBLAS}/include
             $ENV{BLAS_DIR}/include
             $ENV{HOME}/.conda/include
@@ -114,13 +114,13 @@ if(OpenBLAS_FOUND)
         add_definitions(-DOpenBLAS_AVAILABLE)
     endif()
 else()
-    message(STATUS "OpenBLAS will be installed into ${INSTALL_DIRECTORY}/OpenBLAS on first build.")
+    message(STATUS "OpenBLAS will be installed into ${EXTERNAL_INSTALL_DIR}/OpenBLAS on first build.")
     message(STATUS "OpenBLAS TARGET: ${OPENBLAS_MARCH}")
     set(OpenBLAS_MULTITHREADED 1 )
     if(OpenMP_FOUND)
-        set(OpenBLAS_USE_OPENMP 0) # Openmp doesnt work on clang it seems
+        set(OpenBLAS_ENABLE_OPENMP 0) # Openmp doesnt work on clang it seems
     else()
-        set(OpenBLAS_USE_OPENMP 0) # Openmp doesnt work on clang it seems
+        set(OpenBLAS_ENABLE_OPENMP 0) # Openmp doesnt work on clang it seems
     endif()
     set(LDFLAGS "-L${GFORTRAN_PATH} -l${GFORTRAN_LIB} -l${QUADMATH_LIB}")
     set(FFLAGS  "-O3 -Wno-maybe-uninitialized -Wno-conversion -Wno-unused-but-set-variable -Wno-unused-variable")
@@ -130,8 +130,8 @@ else()
             GIT_TAG             v0.3.5
             GIT_PROGRESS false
             GIT_SHALLOW true
-            PREFIX      ${BUILD_DIRECTORY}/OpenBLAS
-            INSTALL_DIR ${INSTALL_DIRECTORY}/OpenBLAS
+            PREFIX      ${EXTERNAL_BUILD_DIR}/OpenBLAS
+            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/OpenBLAS
             UPDATE_COMMAND ""
             TEST_COMMAND ""
             CONFIGURE_COMMAND ""
@@ -159,7 +159,7 @@ else()
             $(MAKE) TARGET=SANDYBRIDGE
             DYNAMIC_ARCH=1
             USE_THREAD=${OpenBLAS_MULTITHREADED}
-            USE_OPENMP=${OpenBLAS_USE_OPENMP}
+            USE_OPENMP=${OpenBLAS_ENABLE_OPENMP}
             NO_AFFINITY=1
             NO_WARMUP=1
             QUIET_MAKE=0
@@ -192,9 +192,8 @@ target_link_libraries(blas INTERFACE ${OpenBLAS_LIBRARY}   -lm -ldl -fPIC Thread
 target_include_directories(blas SYSTEM INTERFACE ${OpenBLAS_INCLUDE_DIRS})
 set(FC_LDLAGS Threads::Threads ${GFORTRAN_LIB})
 
-if(OpenBLAS_USE_OPENMP AND OpenMP_FOUND)
-    target_link_libraries(blas INTERFACE ${OpenMP_LIBRARIES})
-    target_link_options(blas INTERFACE ${OpenMP_CXX_FLAGS})
+if(OpenBLAS_ENABLE_OPENMP AND TARGET OpenMP)
+    target_link_libraries(blas INTERFACE OpenMP)
 endif()
 
 

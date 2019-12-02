@@ -22,7 +22,7 @@
 
 if (USE_MKL)
     #    set(MKL_USE_STATIC_LIBS ON)
-    set(MKL_MULTI_THREADED ${USE_OpenMP})
+    set(MKL_MULTI_THREADED ${ENABLE_OPENMP})
     set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason... You need to use the mkl_set_interface_layer(int) to select at runtime, which is not good when building dependencies!
     if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND NOT BUILD_SHARED_LIBS)
         message(WARNING "Disabling single dynamic mkl library\nCan't use MKL_USE_SINGLE_DYNAMIC_LIBRARY and -static simultaneously.")
@@ -54,12 +54,6 @@ if (MKL_FOUND)
 
         if(MKL_MULTI_THREADED)
             list(APPEND MKL_LIBRARIES  ${MKL_GNUTHREAD_LIBRARY} ${MKL_INTELTHREAD_LIBRARY} ${MKL_CORE_LIBRARY} -Wl,--end-group )
-#            list(APPEND MKL_FLAGS ${OpenMP_FLAGS})
-            if(BUILD_SHARED_LIBS)
-                list(APPEND MKL_LIBRARIES ${MKL_IOMP5_LIBRARY})
-            else()
-                list(APPEND MKL_LIBRARIES ${OpenMP_LIBRARIES})
-            endif()
         else()
             list(APPEND MKL_LIBRARIES  ${MKL_SEQUENTIAL_LIBRARY}  ${MKL_CORE_LIBRARY}  -Wl,--end-group -Wl,--as-needed )
         endif()
@@ -74,8 +68,11 @@ if (MKL_FOUND)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-    list(APPEND MKL_LIBRARIES Threads::Threads)
     target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -ldl -lm)
+    target_link_libraries(mkl INTERFACE Threads::Threads)
+    if(TARGET OpenMP)
+        target_link_libraries(mkl INTERFACE OpenMP)
+    endif()
     target_link_libraries(mkl INTERFACE gfortran)
     target_include_directories(mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
     target_compile_options(mkl INTERFACE ${MKL_FLAGS})
@@ -106,12 +103,22 @@ if (MKL_FOUND)
     message("")
 
 
+
     #   Test features
-    function(check_mkl_compiles MKL_LIBRARIES MKL_INCLUDE_DIR MKL_FLAGS MKL_MULTI_THREADED)
+    function(check_mkl_compiles mkl_target_name)
         include(CheckCXXSourceCompiles)
-        set(CMAKE_REQUIRED_LIBRARIES ${MKL_LIBRARIES}  ${FC_LDLAGS})
-        set(CMAKE_REQUIRED_INCLUDES  ${MKL_INCLUDE_DIR})
-        set(CMAKE_REQUIRED_FLAGS     ${MKL_FLAGS})
+        include(cmake-modules/PrintTargetInfo.cmake)
+        include(cmake-modules/getExpandedTarget.cmake)
+        expandTargetLibs(${mkl_target_name} mkl_valid_libs)
+        expandTargetIncs(${mkl_target_name} mkl_valid_incs)
+        expandTargetOpts(${mkl_target_name} mkl_valid_opts)
+        set(CMAKE_REQUIRED_LIBRARIES " ${mkl_valid_libs}") # Can be a ;list
+        set(CMAKE_REQUIRED_INCLUDES  " ${mkl_valid_incs}") # Can be a ;list
+        string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${mkl_valid_opts}") # Needs to be a space-separated list
+
+#        message("CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
+#        message("CMAKE_REQUIRED_INCLUDES : ${CMAKE_REQUIRED_INCLUDES}")
+#        message("CMAKE_REQUIRED_FLAGS    : ${CMAKE_REQUIRED_FLAGS}")
         check_cxx_source_compiles("
             #include <mkl.h>
             int main() {
@@ -126,8 +133,6 @@ if (MKL_FOUND)
         if(NOT MKL_COMPILES)
             message(FATAL_ERROR "Unable to compile a simple MKL program")
         endif()
-
-
 
         if(MKL_MULTI_THREADED)
             check_cxx_source_compiles("
@@ -150,12 +155,7 @@ if (MKL_FOUND)
     endfunction()
 
 
-    check_mkl_compiles(
-            "${MKL_LIBRARIES}"
-            "${MKL_INCLUDE_DIR}"
-            "${MKL_FLAGS}"
-            "${MKL_MULTI_THREADED}"
-    )
+    check_mkl_compiles(mkl)
 
 endif()
 

@@ -10,6 +10,7 @@
 #include "class_model_base.h"
 #include "class_hamiltonian_h5tables.h"
 #include "class_selfdual_tf_rf_ising.h"
+#include "class_selfdual_tf_rf_ising_normal.h"
 
 std::unique_ptr<class_model_base> class_model_factory::create_mpo(size_t position, std::string model_type_str){
 
@@ -23,6 +24,9 @@ std::unique_ptr<class_model_base> class_model_factory::create_mpo(size_t positio
     else
     if (model_type_str == std::string("selfdual_tf_rf_ising")){
         return std::make_unique<class_selfdual_tf_rf_ising>(position,model_type_str);
+    }
+    if (model_type_str == std::string("selfdual_tf_rf_ising_normal")){
+        return std::make_unique<class_selfdual_tf_rf_ising_normal>(position,model_type_str);
     }
     else{
         throw std::runtime_error("Wrong model: [ "  + model_type_str + " ]");

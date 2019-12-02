@@ -12,6 +12,8 @@
 #include <memory>
 #include <utility>
 #include <numeric>
+#include <optional>
+
 #include <Eigen/Core>
 
 /*!

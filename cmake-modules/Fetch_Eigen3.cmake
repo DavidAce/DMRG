@@ -2,10 +2,10 @@
 
 if(NOT TARGET Eigen3::Eigen)
     message(STATUS "Searching for Eigen3")
-    find_package(Eigen3 3.3.7  PATHS ${INSTALL_DIRECTORY}/Eigen3 NO_DEFAULT_PATH NO_MODULE)
-    #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH NO_MODULE)
-    #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY NO_MODULE)
-    #find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3)
+    find_package(Eigen3 3.3.7  PATHS ${EXTERNAL_INSTALL_DIR}/Eigen3 NO_DEFAULT_PATH NO_MODULE)
+    #find_package(Eigen3 3.3.4  PATHS ${EXTERNAL_INSTALL_DIR}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH NO_MODULE)
+    #find_package(Eigen3 3.3.4  PATHS ${EXTERNAL_INSTALL_DIR}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY NO_MODULE)
+    #find_package(Eigen3 3.3.4  PATHS ${EXTERNAL_INSTALL_DIR}/Eigen3 $ENV{EBROOTEIGEN} $ENV{HOME}/.conda  $ENV{HOME}/anaconda3)
     if(TARGET Eigen3::Eigen)
         get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
         message(STATUS "Searching for Eigen3 - Success - | Version ${EIGEN3_VERSION} | ${EIGEN3_INCLUDE_DIR}")
@@ -42,8 +42,8 @@ if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
         target_link_libraries(Eigen3 INTERFACE blas)
     endif()
 
-elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
-    message(STATUS "Eigen3 will be installed into ${INSTALL_DIRECTORY}/Eigen3 on first build.")
+elseif (DOWNLOAD_MISSING)
+    message(STATUS "Eigen3 will be installed into ${EXTERNAL_INSTALL_DIR}/Eigen3 on first build.")
 
     include(ExternalProject)
     ExternalProject_Add(external_EIGEN3
@@ -52,8 +52,8 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
             GIT_PROGRESS false
             GIT_SHALLOW true
             PATCH_COMMAND git apply ${PROJECT_SOURCE_DIR}/cmake-modules/patches/Eigen_3.3.7.patch
-            PREFIX      ${BUILD_DIRECTORY}/Eigen3
-            INSTALL_DIR ${INSTALL_DIRECTORY}/Eigen3
+            PREFIX      ${EXTERNAL_BUILD_DIR}/Eigen3
+            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/Eigen3
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console, like up-to-date and installing
@@ -77,7 +77,7 @@ elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
         target_link_libraries(Eigen3 INTERFACE blas)
     endif()
 else()
-    message("WARNING: Dependency Eigen3 not found and DOWNLOAD_EIGEN3 is OFF. Build will fail.")
+    message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_MISSING is OFF. Build will fail.")
 endif()
 
 

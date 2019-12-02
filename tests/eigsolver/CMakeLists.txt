@@ -17,17 +17,9 @@ target_compile_definitions(TEST-eigsolver PRIVATE TEST_MATRIX_DIR="${PROJECT_SOU
 if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (TEST-eigsolver PRIVATE -static)                                             ### Static linkage
 endif()
-target_link_libraries(TEST-eigsolver PRIVATE Eigen3::Eigen lapacke h5pp::h5pp  hdf5   spdlog::spdlog)
-target_link_libraries(TEST-eigsolver PRIVATE ${COMPILER_LFLAGS})
 
-
-
-set_target_properties  (TEST-eigsolver PROPERTIES CXX_STANDARD_REQUIRED 17)
-target_compile_features(TEST-eigsolver PRIVATE cxx_std_17)
-target_compile_options (TEST-eigsolver PRIVATE ${COMMON_OPTIONS})                                   ### Common options
-target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
-target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
+target_link_libraries(TEST-eigsolver PRIVATE project-settings)
+target_link_libraries(TEST-eigsolver PRIVATE h5pp::h5pp h5pp::deps h5pp::flags lapacke )
 add_test(NAME eigsolver_test COMMAND TEST-eigsolver)
 
-add_dependencies(TEST-eigsolver h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog gfortran )
+add_dependencies(TEST-eigsolver h5pp::h5pp h5pp::deps h5pp::flags gfortran )

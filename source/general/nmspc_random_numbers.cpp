@@ -40,6 +40,11 @@ namespace rn{
     }
 
 
+    double normal(const double mean, const double std){
+        std::normal_distribution<double>  distribution(mean, std);
+        return distribution(rng);
+    }
+
 
      double log_normal(const double mean, const double std){
         std::lognormal_distribution<double>  distribution(mean, std);
