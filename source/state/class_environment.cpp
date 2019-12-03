@@ -44,6 +44,8 @@ class_environment class_environment::enlarge(const class_mps_site & MPS, const c
     class_environment env = *this;
 
     env.enlarge(MPS.get_M_bare(),MPO.MPO());
+    // Update positions assuming this is a finite chain.
+    // This needs to be corrected (on the right side) on infinite chains
     if (env.side == "L"){
         env.position = MPS.get_position() + 1;
     }else if (env.side == "R"){

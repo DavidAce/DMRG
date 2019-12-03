@@ -62,7 +62,7 @@ public:
     Eigen::Tensor<Scalar,3> block;                 /*!< The environment block. */
     using class_environment_base::class_environment_base;
     explicit class_environment(std::string side_, const class_mps_site & MPS, const class_model_base &MPO);
-    class_environment enlarge(const class_mps_site & MPS, const class_model_base &MPO);
+    [[nodiscard]] class_environment enlarge(const class_mps_site & MPS, const class_model_base &MPO);
 
     bool isReal () const                                                                            final;
     void set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO)                     final;
@@ -77,7 +77,7 @@ public:
     Eigen::Tensor<Scalar,4> block;                 /*!< The environment block. */
     using class_environment_base::class_environment_base;
     explicit class_environment_var(std::string side_, const class_mps_site & MPS, const class_model_base &MPO);
-    class_environment_var enlarge(const class_mps_site & MPS, const class_model_base &MPO);
+    [[nodiscard]] class_environment_var enlarge(const class_mps_site & MPS, const class_model_base &MPO);
     bool isReal () const                                                                            final;
     void set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO)                     final;
 };

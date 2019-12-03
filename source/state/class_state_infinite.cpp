@@ -13,6 +13,8 @@
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <simulation/nmspc_settings.h>
 #include <model/class_model_factory.h>
+#include <math/nmspc_math.h>
+
 #define profile_optimization 0
 
 using namespace std;
@@ -99,6 +101,19 @@ double class_state_infinite::get_truncation_error() const{
 Eigen::DSizes<long,4> class_state_infinite::dimensions()const{return MPS->dimensions();}
 
 Eigen::Tensor<Scalar, 4> class_state_infinite::get_theta() const { return MPS->get_theta();}
+
+
+void class_state_infinite::assert_positions() const {
+
+    if(not math::all_equal(Lblock->get_position(),Lblock2->get_position(), HA->get_position(), MPS->MPS_A->get_position()))
+        throw std::runtime_error(fmt::format("Position error: Lblock ({}), Lblock2 ({}), HA ({}), MPS_A ({})",
+                                         Lblock->get_position(),Lblock2->get_position() , HA->get_position(),MPS->MPS_A->get_position()));
+
+    if(not math::all_equal(Rblock->get_position(),Rblock2->get_position(), HB->get_position(), MPS->MPS_B->get_position()))
+        throw std::runtime_error(fmt::format("Position error: Rblock ({}), Rblock2 ({}), HB ({}), MPS_B ({})",
+                                         Rblock->get_position(),Rblock2->get_position() , HB->get_position(),MPS->MPS_B->get_position()));
+
+}
 
 
 
@@ -291,39 +306,30 @@ template Eigen::Matrix<std::complex<double>,Eigen::Dynamic, Eigen::Dynamic>  cla
 
 
 void class_state_infinite::enlarge_environment(int direction){
-    if (direction == 1){
-        assert(Lblock->get_position()  == HA->get_position());
-        assert(Lblock2->get_position() == HA->get_position());
-//        Lblock->enlarge(*MPS->MPS_A,  HA->MPO_reduced_view());
-//        Lblock2->enlarge(*MPS->MPS_A, HA->MPO_reduced_view());
-        Lblock->enlarge(*MPS->MPS_A,  *HA);
-        Lblock2->enlarge(*MPS->MPS_A, *HA);
-        Lblock->set_position (HB->get_position());
-        Lblock2->set_position(HB->get_position());
-    }else if (direction == -1){
-        assert(Rblock->get_position()  == HB->get_position());
-        assert(Rblock2->get_position() == HB->get_position());
-//        Rblock->enlarge(*MPS->MPS_B,  HB->MPO_reduced_view());
-//        Rblock2->enlarge(*MPS->MPS_B, HB->MPO_reduced_view());
-        Rblock->enlarge(*MPS->MPS_B,  *HB);
-        Rblock2->enlarge(*MPS->MPS_B, *HB);
-        Rblock->set_position (HA->get_position());
-        Rblock2->set_position(HA->get_position());
-    }else if(direction == 0){
-//        Lblock->enlarge (*MPS->MPS_A,  HA->MPO_reduced_view());
-//        Rblock->enlarge (*MPS->MPS_B,  HB->MPO_reduced_view());
-//        Lblock2->enlarge(*MPS->MPS_A, HA->MPO_reduced_view());
-//        Rblock2->enlarge(*MPS->MPS_B, HB->MPO_reduced_view());
-        Lblock->enlarge (*MPS->MPS_A, *HA);
-        Rblock->enlarge (*MPS->MPS_B, *HB);
-        Lblock2->enlarge(*MPS->MPS_A, *HA);
-        Rblock2->enlarge(*MPS->MPS_B, *HB);
-        Lblock->set_position (HB->get_position());
-        Rblock->set_position (HB->get_position()+1);
-        Lblock2->set_position(HB->get_position());
-        Rblock2->set_position(HB->get_position()+1);
-    }
+    assert_positions();
+    auto position_A_new = MPS->MPS_A->get_position() + 1;
+    *Lblock  = Lblock->enlarge (*MPS->MPS_A, *HA);
+    *Rblock  = Rblock->enlarge (*MPS->MPS_B, *HB);
+    *Lblock2 = Lblock2->enlarge(*MPS->MPS_A, *HA);
+    *Rblock2 = Rblock2->enlarge(*MPS->MPS_B, *HB);
+    set_positions(position_A_new);
+    if (direction != 0) throw std::runtime_error("Ooops, direction != 0");
+//    if (direction == 1){
+//        *Lblock  = Lblock->enlarge(*MPS->MPS_A,  *HA);
+//        *Lblock2 = Lblock2->enlarge(*MPS->MPS_A, *HA);
+//        Lblock->set_position (HB->get_position());
+//        Lblock2->set_position(HB->get_position());
+//    }else if (direction == -1){
+//        *Rblock  = Rblock->enlarge(*MPS->MPS_B,  *HB);
+//        *Rblock2 = Rblock2->enlarge(*MPS->MPS_B, *HB);
+//        Rblock->set_position (HA->get_position());
+//        Rblock2->set_position(HA->get_position());
+//    }else if(direction == 0){
+//
+//
+//    }
     unset_measurements();
+    assert_positions();
 }
 
 

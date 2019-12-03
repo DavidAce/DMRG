@@ -66,7 +66,7 @@ public:
     double                   get_truncation_error()const;
     Eigen::Tensor<Scalar, 4> get_theta()      const;
     Eigen::DSizes<long,4>    dimensions()     const;
-
+    void assert_positions() const;
 //
 //    Eigen::Tensor<Scalar, 4>
 //    optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigutils::eigSetting::Ritz ritz = eigutils::eigSetting::Ritz::SR
