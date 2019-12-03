@@ -120,6 +120,9 @@ Eigen::DSizes<long,4> class_mps_2site::dimensions() const {return Eigen::DSizes<
 void class_mps_2site::swap_AB() {
     tools::log->trace("Swapping AB");
     swapped = !swapped;
+    // Store the positions
+    auto position_left  = MPS_A->get_position();
+    auto position_right = MPS_B->get_position();
 
     //Swap Gamma
     Eigen::Tensor<Scalar,1> LC = MPS_A->get_LC();
@@ -129,19 +132,9 @@ void class_mps_2site::swap_AB() {
     MPS_A->set_LC(MPS_A->get_L());
     MPS_A->set_L(LC);
     MPS_B->set_L(LC);
+    MPS_A->set_position(position_left);
+    MPS_B->set_position(position_right);
 
-//    MPS_A->set_L (MPS_B->get_LC());
-//    MPS_B->unset_LC(); // Delete LC from B.
-//
-//    tmp3 = MPS_A->get_G();
-//    MPS_A->set_G(MPS_B->get_G());
-//    MPS_B->set_G(tmp3);
-//
-//
-//    tmp1 = LC;
-//    LC = MPS_B->get_L();
-//    MPS_A->set_L(tmp1);
-//    MPS_B->set_L(tmp1);
 }
 
 

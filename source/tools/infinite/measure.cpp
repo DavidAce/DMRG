@@ -441,10 +441,10 @@ double tools::infinite::measure::energy_mpo(const class_state_infinite & state, 
     tools::common::profile::t_ene_mpo.tic();
     Eigen::Tensor<Scalar, 0>  E =
             state.Lblock->block
-                    .contract(theta,                                     idx({0},{1}))
+                    .contract(theta,                                idx({0},{1}))
                     .contract(state.HA->MPO(),                      idx({1,2},{0,2}))
                     .contract(state.HB->MPO(),                      idx({3,1},{0,2}))
-                    .contract(theta.conjugate(),                         idx({0,2,4},{1,0,2}))
+                    .contract(theta.conjugate(),                    idx({0,2,4},{1,0,2}))
                     .contract(state.Rblock->block,                  idx({0,2,1},{0,1,2}));
     if(abs(imag(E(0))) > 1e-10 ){
         tools::log->critical(fmt::format("Energy has an imaginary part: {:.16f} + i {:.16f}",std::real(E(0)), std::imag(E(0))));
@@ -459,16 +459,17 @@ double tools::infinite::measure::energy_mpo(const class_state_infinite & state, 
 double tools::infinite::measure::energy_mpo(const class_state_infinite & state){
     if(state.measurements.energy_mpo){return state.measurements.energy_mpo.value();}
     if(state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
-    auto theta    = tools::common::views::get_theta(state);
-    double result = tools::infinite::measure::energy_mpo(state,theta);
-    return result ;
+    auto theta    = state.get_theta();
+    state.measurements.energy_mpo = tools::infinite::measure::energy_mpo(state,theta);
+    return state.measurements.energy_mpo.value() ;
 }
 
 
 double tools::infinite::measure::energy_per_site_mpo(const class_state_infinite & state){
     if(state.measurements.energy_per_site_mpo){return state.measurements.energy_per_site_mpo.value();}
     auto L     = tools::infinite::measure::length(state);
-    return tools::infinite::measure::energy_mpo(state) / L;
+    state.measurements.energy_per_site_mpo = tools::infinite::measure::energy_mpo(state) / L;
+    return state.measurements.energy_per_site_mpo.value();
 }
 
 
@@ -505,16 +506,21 @@ double tools::infinite::measure::energy_per_site_ham(const class_state_infinite 
             .contract(r_odd,                           idx({0, 1}, {0, 1}));
     assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
     tools::common::profile::t_ene_ham.toc();
-    return 0.5*std::real(E_evn(0) + E_odd(0));
+    state.measurements.energy_per_site_ham =  0.5*std::real(E_evn(0) + E_odd(0));
+    return state.measurements.energy_per_site_ham.value();
 
 }
 
 
 double tools::infinite::measure::energy_per_site_mom(const class_state_infinite & state){
-    if(state.measurements.energy_per_site_mom){return state.measurements.energy_per_site_mom.value();}
-    if (state.sim_type == SimulationType::fDMRG){return std::numeric_limits<double>::quiet_NaN();}
-    if (state.sim_type == SimulationType::xDMRG){return std::numeric_limits<double>::quiet_NaN();}
-    if (state.measurements.bond_dimension <= 2 ){return std::numeric_limits<double>::quiet_NaN();}
+    if (state.measurements.energy_per_site_mom){return state.measurements.energy_per_site_mom.value();}
+    if (state.sim_type == SimulationType::fDMRG){throw std::logic_error("Infinite measurement on finite system!");}
+    if (state.sim_type == SimulationType::xDMRG){throw std::logic_error("Infinite measurement on finite system!");}
+    if (state.measurements.bond_dimension <= 2 ){
+        state.measurements.energy_per_site_mom          = std::numeric_limits<double>::quiet_NaN();
+        state.measurements.energy_variance_per_site_mom = std::numeric_limits<double>::quiet_NaN();
+        return state.measurements.energy_per_site_mom.value();
+    }
     tools::common::profile::t_ene_mom.tic();
     Scalar a  = Scalar(0.0 , 1.0) * 5e-3;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -536,7 +542,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_state_infinite 
     state.measurements.energy_per_site_mom           = std::real(O);
     state.measurements.energy_variance_per_site_mom  = std::real(VarO);
     tools::common::profile::t_ene_mom.toc();
-    return std::real(O);
+    return state.measurements.energy_per_site_mom.value();
 }
 
 
@@ -563,25 +569,28 @@ double tools::infinite::measure::energy_variance_mpo(const class_state_infinite 
 
 
 double tools::infinite::measure::energy_variance_mpo(const class_state_infinite & state, const Eigen::Tensor<std::complex<double>,4> &theta) {
+    if(state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
     if (state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     auto energy_mpo = tools::infinite::measure::energy_mpo(state,theta);
-    double result = tools::infinite::measure::energy_variance_mpo(state,theta,energy_mpo);
-    return result;
+    state.measurements.energy_variance_mpo = tools::infinite::measure::energy_variance_mpo(state,theta,energy_mpo);
+    return state.measurements.energy_variance_mpo.value();
 }
 
 double tools::infinite::measure::energy_variance_mpo(const class_state_infinite & state) {
     if(state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
     if (state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     auto energy_mpo = tools::infinite::measure::energy_mpo(state);
-    auto theta      = tools::common::views::get_theta(state);
-    return            tools::infinite::measure::energy_variance_mpo(state,theta,energy_mpo);
+    auto theta      = state.get_theta();
+    state.measurements.energy_variance_mpo = tools::infinite::measure::energy_variance_mpo(state,theta,energy_mpo);
+    return state.measurements.energy_variance_mpo.value();
 }
 
 
 double tools::infinite::measure::energy_variance_per_site_mpo(const class_state_infinite & state) {
     if(state.measurements.energy_variance_per_site_mpo){return state.measurements.energy_variance_per_site_mpo.value();}
     auto L = tools::infinite::measure::length(state);
-    return tools::infinite::measure::energy_variance_mpo(state)/L;
+    state.measurements.energy_variance_per_site_mpo = tools::infinite::measure::energy_variance_mpo(state)/L;
+    return state.measurements.energy_variance_per_site_mpo.value();
 }
 
 
@@ -734,15 +743,15 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_state_
     Scalar e2lrpbaba      = E2LRP_BABA(0);
     Scalar e2lrpbaab      = E2LRP_BAAB(0);
     tools::common::profile::t_var_ham.toc();
-
-    return std::real(0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab) ;
+    state.measurements.energy_variance_per_site_ham = std::real(0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab) ;
+    return state.measurements.energy_variance_per_site_ham.value();
 }
 
 
 double tools::infinite::measure::energy_variance_per_site_mom(const class_state_infinite & state){
     if(state.measurements.energy_variance_per_site_mom){return state.measurements.energy_variance_per_site_mom.value();}
-    if (state.sim_type == SimulationType::fDMRG)    {return std::numeric_limits<double>::quiet_NaN();}
-    if (state.sim_type == SimulationType::xDMRG)    {return std::numeric_limits<double>::quiet_NaN();}
-    state.measurements.energy_variance_per_site_mom = energy_per_site_mom(state);
+    if (state.sim_type == SimulationType::fDMRG) throw std::logic_error("Infinite measurement on finite simulation!");
+    if (state.sim_type == SimulationType::xDMRG) throw std::logic_error("Infinite measurement on finite simulation!");
+    state.measurements.energy_per_site_mom = energy_per_site_mom(state); //This function defines the variance as well
     return state.measurements.energy_variance_per_site_mom.value();
 }
