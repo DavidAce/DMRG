@@ -17,7 +17,7 @@ option(ENABLE_CCACHE      "Use ccache to speed up compilation"                  
 option(ENABLE_COTIRE      "Use cotire to speed up compilation"                  OFF)
 option(ENABLE_OPENMP      "Use OpenMP"                                          OFF)
 option(USE_MKL            "Use Intel MKL libraries"                             ON )
-
+option(ENABLE_LTO         "Enable link time optimization"                       OFF)
 #################################################################
 ### Set default policies if CMake is new enough               ###
 #################################################################
@@ -283,15 +283,16 @@ endif()
 ##################################################################
 ### Check if we can enable Link Time Optimization              ###
 ##################################################################
-include(CheckIPOSupported)
-check_ipo_supported(RESULT supported OUTPUT error)
-if(supported)
-    message(STATUS "IPO / LTO supported, enabling")
-    set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
-else()
-    message(STATUS "IPO / LTO not supported: <${error}>, will not enable")
+if(ENABLE_LTO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT supported OUTPUT error)
+    if(supported)
+        message(STATUS "IPO / LTO supported, enabling")
+        set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+    else()
+        message(STATUS "IPO / LTO not supported: <${error}>, will not enable")
+    endif()
 endif()
-
 
 
 ##################################################################
