@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__h5table__simulation__status_1_1meta__struct" kind="struct" language="C++" prot="private">
+    <compoundname>class_h5table_simulation_status::meta_struct</compoundname>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1a51b1484ceb24fa45ab010455d848562a" prot="public" static="yes" mutable="no">
+        <type>constexpr hsize_t</type>
+        <definition>constexpr hsize_t class_h5table_simulation_status::meta_struct::NFIELDS</definition>
+        <argsstring></argsstring>
+        <name>NFIELDS</name>
+        <initializer>= 40</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="414" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="414" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1a4c22a0c6f909d06c5a25d0e4e2bcb54c" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_h5table_simulation_status::meta_struct::dst_size</definition>
+        <argsstring></argsstring>
+        <name>dst_size</name>
+        <initializer>= sizeof (<ref refid="structstatus__data" kindref="compound">status_data</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="415" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="415" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1af5aeaf46782b7a5d35d2798e0361adef" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__h5table__simulation__status_1_1meta__struct_1a51b1484ceb24fa45ab010455d848562a" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t,NFIELDS&gt; class_h5table_simulation_status::meta_struct::dst_offsets</definition>
+        <argsstring></argsstring>
+        <name>dst_offsets</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="416" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="416" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1a4ce94af4629c0a7f6d953c767bd84f0c" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__h5table__simulation__status_1_1meta__struct_1a51b1484ceb24fa45ab010455d848562a" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t,NFIELDS&gt; class_h5table_simulation_status::meta_struct::dst_sizes</definition>
+        <argsstring></argsstring>
+        <name>dst_sizes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="461" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="461" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1af1aa948061c2369b9963f996608d9d10" prot="public" static="no" mutable="no">
+        <type>std::array&lt; const char *, <ref refid="structclass__h5table__simulation__status_1_1meta__struct_1a51b1484ceb24fa45ab010455d848562a" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;const char*,NFIELDS&gt; class_h5table_simulation_status::meta_struct::field_names</definition>
+        <argsstring></argsstring>
+        <name>field_names</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="504" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="504" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1ad64b79b48e7a2112d1b0edcc710b30bb" prot="public" static="no" mutable="no">
+        <type>std::array&lt; hid_t, <ref refid="structclass__h5table__simulation__status_1_1meta__struct_1a51b1484ceb24fa45ab010455d848562a" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;hid_t,NFIELDS&gt; class_h5table_simulation_status::meta_struct::field_types</definition>
+        <argsstring></argsstring>
+        <name>field_types</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="548" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="548" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1a268e2bb2c52e8dc4cd6ad9ea5b751ef3" prot="public" static="no" mutable="no">
+        <type>hsize_t</type>
+        <definition>hsize_t class_h5table_simulation_status::meta_struct::chunk_size</definition>
+        <argsstring></argsstring>
+        <name>chunk_size</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="592" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="592" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1ac278a50dc2a9e6a6b93b08c1730c495c" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* class_h5table_simulation_status::meta_struct::fill_data</definition>
+        <argsstring></argsstring>
+        <name>fill_data</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="593" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="593" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__simulation__status_1_1meta__struct_1af87ae00be2273043a21a40a1680a9100" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_h5table_simulation_status::meta_struct::compress</definition>
+        <argsstring></argsstring>
+        <name>compress</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="594" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="594" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="435">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="433">
+        <label>class_h5table_simulation_status::meta_struct</label>
+        <link refid="structclass__h5table__simulation__status_1_1meta__struct"/>
+        <childnode refid="434" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="435" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="436" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="436">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="434">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="413" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="413" bodyend="595"/>
+    <listofallmembers>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1a268e2bb2c52e8dc4cd6ad9ea5b751ef3" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>chunk_size</name></member>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1af87ae00be2273043a21a40a1680a9100" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>compress</name></member>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1af5aeaf46782b7a5d35d2798e0361adef" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>dst_offsets</name></member>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1a4c22a0c6f909d06c5a25d0e4e2bcb54c" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>dst_size</name></member>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1a4ce94af4629c0a7f6d953c767bd84f0c" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>dst_sizes</name></member>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1af1aa948061c2369b9963f996608d9d10" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>field_names</name></member>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1ad64b79b48e7a2112d1b0edcc710b30bb" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>field_types</name></member>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1ac278a50dc2a9e6a6b93b08c1730c495c" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>fill_data</name></member>
+      <member refid="structclass__h5table__simulation__status_1_1meta__struct_1a51b1484ceb24fa45ab010455d848562a" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status::meta_struct</scope><name>NFIELDS</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

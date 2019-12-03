@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__state__finite_1_1_measurements" kind="struct" language="C++" prot="private">
+    <compoundname>class_state_finite::Measurements</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a8a3ce40ce2ad16fd8ce142e9fd395bc8" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; size_t &gt;</type>
+        <definition>std::optional&lt;size_t&gt; class_state_finite::Measurements::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="149" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1ab7709cb1dbc33dd18d4a0b70edaeecf3" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; size_t &gt;</type>
+        <definition>std::optional&lt;size_t&gt; class_state_finite::Measurements::bond_dimension_midchain</definition>
+        <argsstring></argsstring>
+        <name>bond_dimension_midchain</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="150" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a0c8962096f453af0f6fdd0d84608a82c" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; size_t &gt;</type>
+        <definition>std::optional&lt;size_t&gt; class_state_finite::Measurements::bond_dimension_current</definition>
+        <argsstring></argsstring>
+        <name>bond_dimension_current</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="151" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a9997f3e429540d90b27f9064f3cc8836" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; std::vector&lt; size_t &gt; &gt;</type>
+        <definition>std::optional&lt;std::vector&lt;size_t&gt; &gt; class_state_finite::Measurements::bond_dimensions</definition>
+        <argsstring></argsstring>
+        <name>bond_dimensions</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="152" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1aa8b41946188900f582d2b630c2826c19" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::norm</definition>
+        <argsstring></argsstring>
+        <name>norm</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="153" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="153" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a07c37d8d061f8b8dda2e3e567c3077cc" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::energy</definition>
+        <argsstring></argsstring>
+        <name>energy</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="154" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="154" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a11182ed066985fbb788834ac5682616d" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::energy_per_site</definition>
+        <argsstring></argsstring>
+        <name>energy_per_site</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="155" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="155" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1ac09462b4c582e3b3442c870e49b93565" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::energy_variance</definition>
+        <argsstring></argsstring>
+        <name>energy_variance</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="156" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a8385794cdf61efdaf55759ca63cbaeb9" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::energy_variance_per_site</definition>
+        <argsstring></argsstring>
+        <name>energy_variance_per_site</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="157" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a940114d9be5522a2dac0bf516514c9b2" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::spin_component_sx</definition>
+        <argsstring></argsstring>
+        <name>spin_component_sx</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="158" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1ac2607b116025b8caf6b85d34a0bd6762" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::spin_component_sy</definition>
+        <argsstring></argsstring>
+        <name>spin_component_sy</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="159" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1ae4c76c3d5ba105bdeac4fa7d1ecc9cb1" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::spin_component_sz</definition>
+        <argsstring></argsstring>
+        <name>spin_component_sz</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="160" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1ad344d362f1869fb1b766865d9d86e8b4" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; std::vector&lt; double &gt; &gt;</type>
+        <definition>std::optional&lt;std::vector&lt;double&gt; &gt; class_state_finite::Measurements::spin_components</definition>
+        <argsstring></argsstring>
+        <name>spin_components</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="161" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a156eb9e83c52eb8508f2313ac17461ce" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::entanglement_entropy_midchain</definition>
+        <argsstring></argsstring>
+        <name>entanglement_entropy_midchain</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="162" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1a22a42ad587494c414f98d0cc89a863e0" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; double &gt;</type>
+        <definition>std::optional&lt;double&gt; class_state_finite::Measurements::entanglement_entropy_current</definition>
+        <argsstring></argsstring>
+        <name>entanglement_entropy_current</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="163" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__state__finite_1_1_measurements_1ae809709f838bde3545f2200e05c33b56" prot="public" static="no" mutable="no">
+        <type>std::optional&lt; std::vector&lt; double &gt; &gt;</type>
+        <definition>std::optional&lt;std::vector&lt;double&gt; &gt; class_state_finite::Measurements::entanglement_entropies</definition>
+        <argsstring></argsstring>
+        <name>entanglement_entropies</name>
+        <initializer>= {}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="164" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" line="148" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h" bodystart="148" bodyend="165"/>
+    <listofallmembers>
+      <member refid="structclass__state__finite_1_1_measurements_1a0c8962096f453af0f6fdd0d84608a82c" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>bond_dimension_current</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1ab7709cb1dbc33dd18d4a0b70edaeecf3" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>bond_dimension_midchain</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1a9997f3e429540d90b27f9064f3cc8836" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>bond_dimensions</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1a07c37d8d061f8b8dda2e3e567c3077cc" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>energy</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1a11182ed066985fbb788834ac5682616d" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>energy_per_site</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1ac09462b4c582e3b3442c870e49b93565" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>energy_variance</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1a8385794cdf61efdaf55759ca63cbaeb9" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>energy_variance_per_site</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1ae809709f838bde3545f2200e05c33b56" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>entanglement_entropies</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1a22a42ad587494c414f98d0cc89a863e0" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>entanglement_entropy_current</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1a156eb9e83c52eb8508f2313ac17461ce" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>entanglement_entropy_midchain</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1a8a3ce40ce2ad16fd8ce142e9fd395bc8" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>length</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1aa8b41946188900f582d2b630c2826c19" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>norm</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1a940114d9be5522a2dac0bf516514c9b2" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>spin_component_sx</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1ac2607b116025b8caf6b85d34a0bd6762" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>spin_component_sy</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1ae4c76c3d5ba105bdeac4fa7d1ecc9cb1" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>spin_component_sz</name></member>
+      <member refid="structclass__state__finite_1_1_measurements_1ad344d362f1869fb1b766865d9d86e8b4" prot="public" virt="non-virtual"><scope>class_state_finite::Measurements</scope><name>spin_components</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

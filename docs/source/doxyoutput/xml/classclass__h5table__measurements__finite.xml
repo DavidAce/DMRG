@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__h5table__measurements__finite" kind="class" language="C++" prot="public">
+    <compoundname>class_h5table_measurements_finite</compoundname>
+    <includes refid="table__types_8h" local="no">table_types.h</includes>
+    <innerclass refid="structclass__h5table__measurements__finite_1_1data__struct" prot="public">class_h5table_measurements_finite::data_struct</innerclass>
+    <innerclass refid="structclass__h5table__measurements__finite_1_1meta__struct" prot="public">class_h5table_measurements_finite::meta_struct</innerclass>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__h5table__measurements__finite_1a61ced67c866c33c70292b4d2c4057584" prot="public" static="no" mutable="no">
+        <type><ref refid="structclass__h5table__measurements__finite_1_1meta__struct" kindref="compound">meta_struct</ref></type>
+        <definition>meta_struct class_h5table_measurements_finite::meta</definition>
+        <argsstring></argsstring>
+        <name>meta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__measurements__finite_1ab7c95756a147d88db1870660945bb970" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref> &gt;</type>
+        <definition>std::vector&lt;data_struct&gt; class_h5table_measurements_finite::buffer</definition>
+        <argsstring></argsstring>
+        <name>buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="132" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__h5table__measurements__finite_1ac472648c8c208627055f876f3db23a3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_h5table_measurements_finite::class_h5table_measurements_finite</definition>
+        <argsstring>()=default</argsstring>
+        <name>class_h5table_measurements_finite</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="130" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="172">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="170">
+        <label>class_h5table_measurements_finite::meta_struct</label>
+        <link refid="structclass__h5table__measurements__finite_1_1meta__struct"/>
+        <childnode refid="171" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="172" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="173" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="169">
+        <label>class_h5table_measurements_finite::data_struct</label>
+        <link refid="structclass__h5table__measurements__finite_1_1data__struct"/>
+      </node>
+      <node id="173">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="168">
+        <label>std::vector&lt; class_h5table_measurements_finite::data_struct &gt;</label>
+        <childnode refid="169" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="171">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+      <node id="167">
+        <label>class_h5table_measurements_finite</label>
+        <link refid="classclass__h5table__measurements__finite"/>
+        <childnode refid="168" relation="usage">
+          <edgelabel>buffer</edgelabel>
+        </childnode>
+        <childnode refid="170" relation="usage">
+          <edgelabel>meta</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="17" bodyend="134"/>
+    <listofallmembers>
+      <member refid="classclass__h5table__measurements__finite_1ab7c95756a147d88db1870660945bb970" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite</scope><name>buffer</name></member>
+      <member refid="classclass__h5table__measurements__finite_1ac472648c8c208627055f876f3db23a3e" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite</scope><name>class_h5table_measurements_finite</name></member>
+      <member refid="classclass__h5table__measurements__finite_1a61ced67c866c33c70292b4d2c4057584" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite</scope><name>meta</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

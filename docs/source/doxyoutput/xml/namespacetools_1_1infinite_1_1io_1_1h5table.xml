@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1infinite_1_1io_1_1h5table" kind="namespace" language="C++">
+    <compoundname>tools::infinite::io::h5table</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5table_1a213110c4103d864706aaacf12e3fdd41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5table::write_measurements</definition>
+        <argsstring>(const class_state_infinite &amp;state, const class_simulation_status &amp;sim_status, class_h5table_buffer&lt; class_h5table_measurements_infinite &gt; &amp;h5tbuf)</argsstring>
+        <name>write_measurements</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer</ref>&lt; <ref refid="classclass__h5table__measurements__infinite" kindref="compound">class_h5table_measurements_infinite</ref> &gt; &amp;</type>
+          <declname>h5tbuf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="314" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp" bodystart="10" bodyend="36"/>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a306a3be975f75802ed2e06c672c2cb14" compoundref="table__types_8h" startline="141">class_h5table_measurements_infinite::data_struct::step</references>
+        <references refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" compoundref="class__simulation__status_8h" startline="19">status_data::step</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a6bbce31a5a87bd0ee1c113db4c3f75a0" compoundref="table__types_8h" startline="140">class_h5table_measurements_infinite::data_struct::iteration</references>
+        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a7ba3d549fe668399459bb751b2c6e30c" compoundref="table__types_8h" startline="142">class_h5table_measurements_infinite::data_struct::position</references>
+        <references refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" compoundref="class__simulation__status_8h" startline="20">status_data::position</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a3764b19b2597800e8b9248ed8c26ae09" compoundref="table__types_8h" startline="143">class_h5table_measurements_infinite::data_struct::length</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a8d8f690e7fcd7c156d05ae34840c6d18" compoundref="infinite_2measure_8cpp" startline="401" endline="403">tools::infinite::measure::length</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1aeeab0f9924fc94a68b34b3633fa90862" compoundref="table__types_8h" startline="144">class_h5table_measurements_infinite::data_struct::bond_dimension</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1ab864d534e6122d384a82baafa734532c" compoundref="infinite_2measure_8cpp" startline="415" endline="418">tools::infinite::measure::bond_dimension</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a76b7f8c94e3aebbcfa49fb29118dfac8" compoundref="table__types_8h" startline="145">class_h5table_measurements_infinite::data_struct::bond_dimension_limit</references>
+        <references refid="classclass__state__infinite_1adea8436bbf24a92bc9efe65a80e789dd" compoundref="class__state__infinite_8cpp" startline="76" endline="79">class_state_infinite::get_chi_lim</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a38ed5f978cca1ff2cff4eb9098388b7d" compoundref="table__types_8h" startline="146">class_h5table_measurements_infinite::data_struct::bond_dimension_maximum</references>
+        <references refid="classclass__state__infinite_1a45b3aa0536729ca31f1900faf905ea2d" compoundref="class__state__infinite_8cpp" startline="86" endline="89">class_state_infinite::get_chi_max</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a0553a1a0c494ae705b27f2273f92bfdc" compoundref="table__types_8h" startline="147">class_h5table_measurements_infinite::data_struct::entanglement_entropy</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a5f7cd48eec3194c0d02aa53050d28f63" compoundref="infinite_2measure_8cpp" startline="427" endline="436">tools::infinite::measure::entanglement_entropy</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a38b0e6a4f8abf23a184a70995611eea5" compoundref="table__types_8h" startline="148">class_h5table_measurements_infinite::data_struct::norm</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a2c553c8536fb81c5cf371b12e35c8f5d" compoundref="infinite_2measure_8cpp" startline="406" endline="412">tools::infinite::measure::norm</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1af64043890b827a3cbbe3ed79dd9de2f2" compoundref="table__types_8h" startline="149">class_h5table_measurements_infinite::data_struct::energy_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a1c1006d378e8eaef060bab7d68340e53" compoundref="infinite_2measure_8cpp" startline="459" endline="465">tools::infinite::measure::energy_mpo</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1adc4325572a0fbe60d3a2de201a8351b8" compoundref="table__types_8h" startline="150">class_h5table_measurements_infinite::data_struct::energy_per_site_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a92650e1445a298909c2e4180da386e18" compoundref="infinite_2measure_8cpp" startline="468" endline="473">tools::infinite::measure::energy_per_site_mpo</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a0bb7e66c2618dc7387e5b88c72b38098" compoundref="table__types_8h" startline="151">class_h5table_measurements_infinite::data_struct::energy_per_site_ham</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a351ced60a7f3651c4d12eabf0eaa1a38" compoundref="infinite_2measure_8cpp" startline="476" endline="512">tools::infinite::measure::energy_per_site_ham</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a71abb74e457f66c3c0b87b173d301daa" compoundref="table__types_8h" startline="152">class_h5table_measurements_infinite::data_struct::energy_per_site_mom</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a0d8e4c35febdf6d40c078c982f7ee6c0" compoundref="infinite_2measure_8cpp" startline="515" endline="546">tools::infinite::measure::energy_per_site_mom</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a899195efb3c73c6390662b849fc6a43a" compoundref="table__types_8h" startline="153">class_h5table_measurements_infinite::data_struct::energy_variance_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1af2bc70d4c689bf480777d784d1e60dce" compoundref="infinite_2measure_8cpp" startline="579" endline="586">tools::infinite::measure::energy_variance_mpo</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a966da9373b06c18e01da36028649f351" compoundref="table__types_8h" startline="154">class_h5table_measurements_infinite::data_struct::energy_variance_per_site_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a41d9bfca22a24d8d124ec34c0f631607" compoundref="infinite_2measure_8cpp" startline="589" endline="594">tools::infinite::measure::energy_variance_per_site_mpo</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a70a88bf03e6a80f5a94c4575639044a9" compoundref="table__types_8h" startline="155">class_h5table_measurements_infinite::data_struct::energy_variance_per_site_ham</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a387d1103658134b08a09685d778d2548" compoundref="infinite_2measure_8cpp" startline="599" endline="748">tools::infinite::measure::energy_variance_per_site_ham</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a3d33a99aa3ada0ed9e507df26b943e5c" compoundref="table__types_8h" startline="156">class_h5table_measurements_infinite::data_struct::energy_variance_per_site_mom</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1ae39dd84611977e37551bd5587e02fc8a" compoundref="infinite_2measure_8cpp" startline="751" endline="757">tools::infinite::measure::energy_variance_per_site_mom</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1a42cce5abc5acc8b09d63bf886c1e2867" compoundref="table__types_8h" startline="157">class_h5table_measurements_infinite::data_struct::truncation_error</references>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a860d7ed08bbc15df634ab137a7b32eb7" compoundref="infinite_2measure_8cpp" startline="420" endline="423">tools::infinite::measure::truncation_error</references>
+        <references refid="structclass__h5table__measurements__infinite_1_1data__struct_1aa93c858a7eb4ac3f49c0f559278f9d64" compoundref="table__types_8h" startline="158">class_h5table_measurements_infinite::data_struct::wall_time</references>
+        <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
+        <references refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" compoundref="class__simulation__status_8h" startline="34">status_data::phys_time</references>
+        <references refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" compoundref="class__simulation__status_8h" startline="37">status_data::delta_t</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5table_1a124f43c66f0ed9ff5b26249c877fb06b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5table::write_sim_status</definition>
+        <argsstring>(const class_simulation_status &amp;sim_status, class_h5table_buffer&lt; class_h5table_simulation_status &gt; &amp;h5tbuf)</argsstring>
+        <name>write_sim_status</name>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer</ref>&lt; <ref refid="classclass__h5table__simulation__status" kindref="compound">class_h5table_simulation_status</ref> &gt; &amp;</type>
+          <declname>h5tbuf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="315" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp" bodystart="41" bodyend="43"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5table_1a6f7592f678b3f7022bfd237ca0c6ad2e" compoundref="common_2io_2h5pp__tables_8cpp" startline="8" endline="12">tools::common::io::h5table::write_sim_status</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5table_1a0fa7a7b6ff05b58b1c11ac2f036558ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5table::write_profiling</definition>
+        <argsstring>(const class_simulation_status &amp;sim_status, class_h5table_buffer&lt; class_h5table_profiling &gt; &amp;h5tbuf)</argsstring>
+        <name>write_profiling</name>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer</ref>&lt; <ref refid="classclass__h5table__profiling" kindref="compound">class_h5table_profiling</ref> &gt; &amp;</type>
+          <declname>h5tbuf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="316" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp" bodystart="45" bodyend="47"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5table_1adb046c04ba8888dc06e4a0755e9300c9" compoundref="common_2io_2h5pp__tables_8cpp" startline="15" endline="52">tools::common::io::h5table::write_profiling</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="313" column="1"/>
+  </compounddef>
+</doxygen>
