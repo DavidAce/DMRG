@@ -7,12 +7,12 @@ ExternalProject_Add(external_gflags
         GIT_TAG v2.2.2
         GIT_PROGRESS false
         GIT_SHALLOW true
-        PREFIX      ${EXTERNAL_BUILD_DIR}/gflags
-        INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/gflags
+        PREFIX          ${CMAKE_BINARY_DIR}
+        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/gflags
         UPDATE_COMMAND ""
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_CXX_FLAGS:STRING=${extra_flags}
+        -DCMAKE_CXX_FLAGS:STRING="${extra_flags}"
         -DGFLAGS_BUILD_SHARED_LIBS:BOOL=OFF
         -DGFLAGS_BUILD_STATIC_LIBS:BOOL=ON
         -DBUILD_gflags_nothreads_LIBS:BOOL=ON

@@ -1,31 +1,24 @@
 
 find_package(gflags
-        PATHS ${EXTERNAL_INSTALL_DIR}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
+        PATHS ${CMAKE_INSTALL_PREFIX}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
         NO_DEFAULT_PATH)
 
 if(TARGET gflags)
     message(STATUS "gflags found")
-    get_target_property(gflaglib  gflags IMPORTED_LOCATION_RELEASE)
-    set_target_properties(gflags PROPERTIES INTERFACE_LINK_LIBRARIES "${gflaglib}" )
-#    include(cmake-modules/PrintTargetInfo.cmake)
-#    print_target_info(gflags)
+    #Copy the lib to where it belongs: INTERFACE_LINK_LIBRARIES
+    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+    get_target_property(gflaglib  gflags IMPORTED_LOCATION_${BUILD_TYPE})
+    target_link_libraries(gflags INTERFACE ${gflaglib})
 elseif(DOWNLOAD_MISSING)
-    message(STATUS "gflags will be installed into ${EXTERNAL_INSTALL_DIR}/gflags")
-    include(cmake-modules/BuildExternalLibs.cmake)
-    build_external_libs(
-            "gflags"
-            "${EXTERNAL_CONFIG_DIR}"
-            "${EXTERNAL_BUILD_DIR}"
-            "${EXTERNAL_INSTALL_DIR}"
-            ""
-    )
-    find_package(gflags PATHS ${EXTERNAL_INSTALL_DIR}/gflags NO_DEFAULT_PATH REQUIRED)
+    message(STATUS "gflags will be installed into ${EXTERNAL_INSTALL_DIR}")
+    include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
+    build_dependency(gflags "")
+    find_package(gflags PATHS ${CMAKE_INSTALL_PREFIX}/gflags NO_DEFAULT_PATH)
     if(TARGET gflags)
         message(STATUS "gflags installed successfully")
-        get_target_property(gflaglib  gflags IMPORTED_LOCATION_RELEASE)
-        set_target_properties(gflags PROPERTIES INTERFACE_LINK_LIBRARIES "${gflaglib}" )
-#        include(cmake-modules/PrintTargetInfo.cmake)
-#        print_target_info(gflags)
+        #Copy the lib to where it belongs: INTERFACE_LINK_LIBRARIES
+        get_target_property(gflaglib  gflags IMPORTED_LOCATION_${BUILD_TYPE})
+        target_link_libraries(gflags INTERFACE ${gflaglib})
     else()
         message(STATUS "config_result: ${config_result}")
         message(STATUS "build_result: ${build_result}")

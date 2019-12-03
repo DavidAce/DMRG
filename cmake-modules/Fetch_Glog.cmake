@@ -15,6 +15,10 @@ message(STATUS "Searching for glog")
 #        PATHS  ${EXTERNAL_INSTALL_DIR}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
 #        NO_DEFAULT_PATH)
 
+if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+    set(GLOG_LIBSUFFIX d)
+endif()
+
 
 if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
     # For some reason glog imports libunwind.so even though we asked for static libraries.
@@ -22,7 +26,6 @@ if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
     # place "INTERFACE_LINK_LIBRARIES"... so we do this manually
     add_library(glog::glog INTERFACE IMPORTED)
     add_dependencies(glog::glog gflags)
-    get_filename_component(GLOG_LIBRARY_DIR ${GLOG_LIBRARIES} DIRECTORY)
     set_target_properties(glog::glog PROPERTIES INTERFACE_LINK_LIBRARIES ${GLOG_LIBRARIES})
     set_target_properties(glog::glog PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${GLOG_INCLUDE_DIR})
     target_link_libraries(glog::glog INTERFACE gflags Threads::Threads)
@@ -59,7 +62,7 @@ else()
     include(GNUInstallDirs)
     set(GLOG_INCLUDE_DIR ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
     set(GLOG_LIBRARY_DIR ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR})
-    set(GLOG_LIBRARIES   ${GLOG_LIBRARY_DIR}/libglog${CUSTOM_SUFFIX})
+    set(GLOG_LIBRARIES   ${GLOG_LIBRARY_DIR}/libglog${GLOG_LIBSUFFIX}${CUSTOM_SUFFIX})
     set(glog_DIR ${GLOG_LIBRARY_DIR}/cmake/glog)
     add_dependencies(glog::glog external_GLOG gflags)
     target_link_libraries(glog::glog INTERFACE ${GLOG_LIBRARIES} gflags Threads::Threads)

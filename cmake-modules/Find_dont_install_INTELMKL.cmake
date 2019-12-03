@@ -109,9 +109,9 @@ if (MKL_FOUND)
         include(CheckCXXSourceCompiles)
         include(cmake-modules/PrintTargetInfo.cmake)
         include(cmake-modules/getExpandedTarget.cmake)
-        expandTargetLibs(${mkl_target_name} mkl_valid_libs)
-        expandTargetIncs(${mkl_target_name} mkl_valid_incs)
-        expandTargetOpts(${mkl_target_name} mkl_valid_opts)
+        expand_target_libs(${mkl_target_name} mkl_valid_libs)
+        expand_target_incs(${mkl_target_name} mkl_valid_incs)
+        expand_target_opts(${mkl_target_name} mkl_valid_opts)
         set(CMAKE_REQUIRED_LIBRARIES " ${mkl_valid_libs}") # Can be a ;list
         set(CMAKE_REQUIRED_INCLUDES  " ${mkl_valid_incs}") # Can be a ;list
         string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${mkl_valid_opts}") # Needs to be a space-separated list
