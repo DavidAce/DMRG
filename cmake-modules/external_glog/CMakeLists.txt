@@ -7,9 +7,8 @@ ExternalProject_Add(external_glog
         GIT_TAG v0.4.0
         GIT_PROGRESS false
         GIT_SHALLOW true
-        PREFIX      ${EXTERNAL_BUILD_DIR}/glog
-        INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/glog
-        UPDATE_COMMAND ""
+        PREFIX          ${CMAKE_BINARY_DIR}
+        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/glog
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
         -DCMAKE_CXX_FLAGS:STRING=${extra_flags}

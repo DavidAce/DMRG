@@ -303,8 +303,8 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/libs-${cmake_build_type}" CACHE PATH "..." FORCE)
 endif()
 set(EXTERNAL_INSTALL_DIR       ${CMAKE_INSTALL_PREFIX})
-set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-deps)
-set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-deps)
+set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/external-deps)
+set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/external-deps)
 
 
 
@@ -327,9 +327,9 @@ include(cmake-modules/FindLAPACKE.cmake)                    # If MKL is not foun
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # LC++ frontend for arpack-ng
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
-include(cmake-modules/Fetch_Gflags2.cmake)
-include(cmake-modules/Fetch_Glog2.cmake)
-include(cmake-modules/Fetch_Ceres2.cmake)
+include(cmake-modules/Fetch_Gflags.cmake)
+include(cmake-modules/Fetch_Glog.cmake)
+include(cmake-modules/Fetch_Ceres.cmake)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)

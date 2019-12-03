@@ -6,7 +6,7 @@ usage() {
   cat << EOF >&2
 Usage            : $PROGNAME [-option <argument>]
 
--a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | native | (default = sandybridge)
+-a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | native | (default = haswell)
 -b <build type>  : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
                    (Use the same build type you used with build.sh)
 -c               : Clear CMake files before build (delete ./build)
@@ -23,7 +23,7 @@ Usage            : $PROGNAME [-option <argument>]
 -p <path>        : Path to gcc installation (default = )
 
 EXAMPLE:
-./build.sh -s OFF -a native -j 20 -o OFF  -i ON -b Release -c  -g Clang
+./build.sh -s OFF -a native -j 20 -o OFF -i ON -b Release -c -g Clang
 EOF
   exit 1
 }
@@ -33,7 +33,7 @@ target="all"
 build="Release"
 clear_cmake=""
 clear_libs=""
-march="sandybridge"
+march="haswell"
 omp="OFF"
 mkl="OFF"
 shared="OFF"
@@ -73,10 +73,11 @@ fi
 
 if [ "$clear_libs" = true ] ; then
     echo "Clearing downloaded libraries."
-	rm -rf ./libs ./cmake-build-libs
+    build_lowercase=$(echo $build | tr '[:upper:]' '[:lower:]')
+	rm -rf ./libs-$build_lowercase ./build/$build/external-deps
 else
     for lib in "${clear_lib[@]}"; do
-        rm -r ./libs/$lib ./cmake-build-libs/$lib
+        rm -r ./libs-$build_lowercase/$lib ./build/$build/external-deps/$lib
     done
 fi
 

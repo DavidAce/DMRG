@@ -1,72 +1,42 @@
 
-#find_package(glog 0.4 PATHS ${EXTERNAL_INSTALL_DIR}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} NO_DEFAULT_PATH)
-message(STATUS "Searching for glog")
-#find_library(
-#        GLOG_LIBRARIES
-#        NAMES libglog${CUSTOM_SUFFIX}
-#        PATH_SUFFIXES lib lib64
-#        PATHS  ${EXTERNAL_INSTALL_DIR}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
-#        NO_DEFAULT_PATH)
-#
-#find_path(
-#        GLOG_INCLUDE_DIR
-#        NAMES glog/logging.h
-#        PATH_SUFFIXES include glog/include
-#        PATHS  ${EXTERNAL_INSTALL_DIR}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
-#        NO_DEFAULT_PATH)
+function(remove_shared target_name)
+    get_target_property(target_libs ${target_name} INTERFACE_LINK_LIBRARIES)
+    foreach(lib ${target_libs})
+        if(NOT ${lib} MATCHES ".so")
+            list(APPEND static_libs ${lib})
+        endif()
+    endforeach()
+    set_target_properties(${target_name} PROPERTIES INTERFACE_LINK_LIBRARIES "${static_libs}")
+endfunction()
 
-if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-    set(GLOG_LIBSUFFIX d)
-endif()
+find_package(glog 0.4 PATHS ${CMAKE_INSTALL_PREFIX}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} NO_DEFAULT_PATH)
 
 
-if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
-    # For some reason glog imports libunwind.so even though we asked for static libraries.
-    # In addition, libglog.a hides in the property "LOCATION" instead of its rightful
-    # place "INTERFACE_LINK_LIBRARIES"... so we do this manually
-    add_library(glog::glog INTERFACE IMPORTED)
-    add_dependencies(glog::glog gflags)
-    set_target_properties(glog::glog PROPERTIES INTERFACE_LINK_LIBRARIES ${GLOG_LIBRARIES})
-    set_target_properties(glog::glog PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${GLOG_INCLUDE_DIR})
-    target_link_libraries(glog::glog INTERFACE gflags Threads::Threads)
-    message(STATUS "Searching for glog - Success: LIB: ${GLOG_LIBRARIES}")
-    message(STATUS "Searching for glog - Success: INC: ${GLOG_INCLUDE_DIR}")
-    include(cmake-modules/PrintTargetProperties.cmake)
-    print_target_properties(glog::glog)
-else()
-    message(STATUS "Searching for glog - failed")
-    message(STATUS "glog will be installed into ${EXTERNAL_INSTALL_DIR}/glog on first build.")
-    unset(FLAGS CACHE)
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        set(FLAGS "${FLAGS} -stdlib=libstdc++ ${GCC_TOOLCHAIN}")
+if(TARGET glog::glog)
+    message(STATUS "glog found")
+    remove_shared(glog::glog)
+    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+    get_target_property(gloglib  glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
+    target_link_libraries(glog::glog INTERFACE ${gloglib})
+
+elseif(DOWNLOAD_MISSING)
+    message(STATUS "glog will be installed into ${CMAKE_INSTALL_PREFIX}")
+    include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
+    build_dependency(glog "")
+    find_package(glog 0.4 PATHS ${CMAKE_INSTALL_PREFIX}/glog NO_DEFAULT_PATH REQUIRED)
+    if(TARGET glog::glog)
+        message(STATUS "glog installed successfully")
+        remove_shared(glog::glog)
+        string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+        get_target_property(gloglib  glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
+        target_link_libraries(glog::glog INTERFACE ${gloglib})
+
+    else()
+        message(STATUS "config_result: ${config_result}")
+        message(STATUS "build_result: ${build_result}")
+        message(FATAL_ERROR "glog could not be downloaded.")
     endif()
-    include(ExternalProject)
-    ExternalProject_Add(external_GLOG
-            GIT_REPOSITORY https://github.com/google/glog.git
-            GIT_TAG v0.4.0
-            GIT_PROGRESS false
-            GIT_SHALLOW true
-            PREFIX      ${EXTERNAL_BUILD_DIR}/glog
-            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/glog
-            UPDATE_COMMAND ""
-            CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_CXX_FLAGS:STRING=${FLAGS}
-            -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            DEPENDS gflags
-            )
 
-    ExternalProject_Get_Property(external_GLOG INSTALL_DIR)
-    add_library(glog::glog INTERFACE IMPORTED)
-    include(GNUInstallDirs)
-    set(GLOG_INCLUDE_DIR ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
-    set(GLOG_LIBRARY_DIR ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR})
-    set(GLOG_LIBRARIES   ${GLOG_LIBRARY_DIR}/libglog${GLOG_LIBSUFFIX}${CUSTOM_SUFFIX})
-    set(glog_DIR ${GLOG_LIBRARY_DIR}/cmake/glog)
-    add_dependencies(glog::glog external_GLOG gflags)
-    target_link_libraries(glog::glog INTERFACE ${GLOG_LIBRARIES} gflags Threads::Threads)
-    target_include_directories(glog::glog SYSTEM INTERFACE ${GLOG_INCLUDE_DIR})
+else()
+    message(FATAL_ERROR "Dependency glog not found and DOWNLOAD_MISSING is OFF")
 endif()
-
-
