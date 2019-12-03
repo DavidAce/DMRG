@@ -187,6 +187,22 @@ namespace math
         return std::accumulate(in.data() + from, in.data()+to,1,std::multiplies<>());
     }
 
+    /*! \brief Checks if multiple values are equal to each other
+*   \param args any number of values
+*   \return bool, true if all args are equal
+*/
+    template <class... Args>
+    bool all_equal(Args const&... args) {
+        if constexpr (sizeof...(Args) == 0) {
+            return true;
+        } else {
+            return [](auto const& a0, auto const&... rest){
+                return ((a0 == rest) && ...);
+            }(args...);
+        }
+    }
+
+
 }
 
 
