@@ -1,10 +1,10 @@
 
-find_package(h5pp PATHS ${EXTERNAL_INSTALL_DIR}/h5pp $ENV{H5PP_DIR})
+find_package(h5pp PATHS ${CMAKE_INSTALL_PREFIX}/h5pp $ENV{H5PP_DIR})
 
 if(h5pp_FOUND AND TARGET h5pp::h5pp)
     message(STATUS "h5pp found")
 elseif(DOWNLOAD_MISSING)
-    message(STATUS "h5pp will be installed into ${EXTERNAL_INSTALL_DIR}/h5pp")
+    message(STATUS "h5pp will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(h5pp "")
     find_package(h5pp PATHS ${CMAKE_INSTALL_PREFIX}/h5pp $ENV{H5PP_DIR})
