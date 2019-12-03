@@ -52,12 +52,12 @@ Namespaces
 
 - :ref:`namespace_tools__finite__opt`
 
-- :ref:`namespace_tools__finite__opt__internals`
+- :ref:`namespace_tools__finite__opt__internal`
 
 
 Classes
 -------
 
 
-- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1ceres__direct__functor`
+- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor`
 

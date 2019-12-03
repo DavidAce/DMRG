@@ -35,7 +35,7 @@ Includes
 
 - ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
 
-- ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
+- ``state/class_state_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.h`)
 
 - ``tools/finite/opt.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h`)
 

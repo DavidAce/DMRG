@@ -8,97 +8,97 @@
     <includes local="no">memory</includes>
     <includes refid="matrix__product__stl_8h" local="yes">matrix_product_stl.h</includes>
     <incdepgraph>
-      <node id="1180">
+      <node id="1251">
         <label>iomanip</label>
       </node>
-      <node id="1167">
+      <node id="1238">
         <label>Eigen/LU</label>
       </node>
-      <node id="1165">
+      <node id="1236">
         <label>Eigen/Core</label>
       </node>
-      <node id="1178">
+      <node id="1249">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="1179" relation="include">
+        <childnode refid="1250" relation="include">
         </childnode>
-        <childnode refid="1171" relation="include">
+        <childnode refid="1242" relation="include">
         </childnode>
       </node>
-      <node id="1173">
+      <node id="1244">
         <label>map</label>
       </node>
-      <node id="1177">
+      <node id="1248">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="1166">
+      <node id="1237">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="1169">
+      <node id="1240">
         <label>matrix_product_stl.h</label>
         <link refid="matrix__product__stl_8h"/>
-        <childnode refid="1170" relation="include">
+        <childnode refid="1241" relation="include">
         </childnode>
-        <childnode refid="1178" relation="include">
+        <childnode refid="1249" relation="include">
         </childnode>
-        <childnode refid="1171" relation="include">
+        <childnode refid="1242" relation="include">
         </childnode>
-        <childnode refid="1180" relation="include">
+        <childnode refid="1251" relation="include">
         </childnode>
-        <childnode refid="1175" relation="include">
+        <childnode refid="1246" relation="include">
         </childnode>
       </node>
-      <node id="1175">
+      <node id="1246">
         <label>vector</label>
       </node>
-      <node id="1176">
+      <node id="1247">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="1172">
+      <node id="1243">
         <label>array</label>
       </node>
-      <node id="1171">
+      <node id="1242">
         <label>iostream</label>
       </node>
-      <node id="1170">
+      <node id="1241">
         <label>math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1171" relation="include">
+        <childnode refid="1242" relation="include">
         </childnode>
-        <childnode refid="1172" relation="include">
+        <childnode refid="1243" relation="include">
         </childnode>
-        <childnode refid="1173" relation="include">
+        <childnode refid="1244" relation="include">
         </childnode>
-        <childnode refid="1174" relation="include">
+        <childnode refid="1245" relation="include">
         </childnode>
-        <childnode refid="1175" relation="include">
+        <childnode refid="1246" relation="include">
         </childnode>
-        <childnode refid="1176" relation="include">
+        <childnode refid="1247" relation="include">
         </childnode>
-        <childnode refid="1177" relation="include">
+        <childnode refid="1248" relation="include">
         </childnode>
       </node>
-      <node id="1179">
+      <node id="1250">
         <label>chrono</label>
       </node>
-      <node id="1174">
+      <node id="1245">
         <label>complex</label>
       </node>
-      <node id="1164">
+      <node id="1235">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp</label>
         <link refid="matrix__product__stl_8cpp"/>
-        <childnode refid="1165" relation="include">
+        <childnode refid="1236" relation="include">
         </childnode>
-        <childnode refid="1166" relation="include">
+        <childnode refid="1237" relation="include">
         </childnode>
-        <childnode refid="1167" relation="include">
+        <childnode refid="1238" relation="include">
         </childnode>
-        <childnode refid="1168" relation="include">
+        <childnode refid="1239" relation="include">
         </childnode>
-        <childnode refid="1169" relation="include">
+        <childnode refid="1240" relation="include">
         </childnode>
       </node>
-      <node id="1168">
+      <node id="1239">
         <label>memory</label>
       </node>
     </incdepgraph>

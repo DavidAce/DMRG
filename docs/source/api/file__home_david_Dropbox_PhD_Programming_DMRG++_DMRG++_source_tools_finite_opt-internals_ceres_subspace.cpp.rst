@@ -49,11 +49,7 @@ Includes
 
 - ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
 
-- ``spdlog/fmt/bundled/ranges.h``
-
-- ``spdlog/spdlog.h``
-
-- ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
+- ``state/class_state_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.h`)
 
 - ``tools/finite/opt.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h`)
 
@@ -66,17 +62,19 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_ceres__subspace_8cpp_1a6a2bfd25450cd30f4a16b1f164161a1c`
+- :ref:`exhale_function_ceres__subspace_8cpp_1ae7dd60b97be137131ac96a20f8f727ed`
 
-- :ref:`exhale_function_ceres__subspace_8cpp_1ae08f7be68a32274a415a3f1387df45fe`
+- :ref:`exhale_function_ceres__subspace_8cpp_1ac7ad0d99f7728d8a754f0055e8403fad`
 
 - :ref:`exhale_function_ceres__subspace_8cpp_1a6546510de2db2d289e9658b859918b1e`
 
 - :ref:`exhale_function_ceres__subspace_8cpp_1ae54e8776a0d3d3f400685f320d668bb9`
 
+- :ref:`exhale_function_ceres__subspace_8cpp_1aa4a9edd4ac9e5d1b3cbec215a963e325`
+
 - :ref:`exhale_function_ceres__subspace_8cpp_1a033c2cd4ff249b3ce57bcf4f9bebf8b9`
 
-- :ref:`exhale_function_ceres__subspace_8cpp_1ae33f169391344d6f5e1421bb3468f1c0`
+- :ref:`exhale_function_ceres__subspace_8cpp_1a44e4c5ba3e9d3317929786bec5118f38`
 
 
 Typedefs

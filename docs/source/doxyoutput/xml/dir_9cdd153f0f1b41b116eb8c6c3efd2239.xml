@@ -4,6 +4,7 @@
     <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general</compoundname>
     <innerfile refid="class__tic__toc_8cpp">class_tic_toc.cpp</innerfile>
     <innerfile refid="class__tic__toc_8h">class_tic_toc.h</innerfile>
+    <innerfile refid="nmspc__omp_8h">nmspc_omp.h</innerfile>
     <innerfile refid="nmspc__quantum__mechanics_8cpp">nmspc_quantum_mechanics.cpp</innerfile>
     <innerfile refid="nmspc__quantum__mechanics_8h">nmspc_quantum_mechanics.h</innerfile>
     <innerfile refid="nmspc__random__numbers_8cpp">nmspc_random_numbers.cpp</innerfile>

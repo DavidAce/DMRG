@@ -14,14 +14,13 @@ Program Listing for File ceres_direct_functor.h
    // Created by david on 2019-07-15.
    //
    
-   #ifndef DMRG_CERES_DIRECT_FUNCTOR_H
-   #define DMRG_CERES_DIRECT_FUNCTOR_H
+   #pragma once
    
    #include <tools/finite/opt.h>
    #include <general/nmspc_type_check.h>
    
    namespace tools::finite::opt{
-       namespace internals{
+       namespace internal{
    
    
            template<typename Scalar>
@@ -39,8 +38,8 @@ Program Listing for File ceres_direct_functor.h
                void get_Hv   (const VectorType &v) const;
                void get_H2v  (const VectorType &v) const;
            public:
-               EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-               explicit ceres_direct_functor(const class_finite_state & state, const class_simulation_status &sim_status);
+   //            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+               explicit ceres_direct_functor(const class_state_finite & state, const class_simulation_status &sim_status);
                bool Evaluate(const double* v_double_double,
                              double* fx,
                              double* grad_double_double) const override;
@@ -52,5 +51,3 @@ Program Listing for File ceres_direct_functor.h
    
    
    
-   
-   #endif //DMRG_CERES_DIRECT_FUNCTOR_H

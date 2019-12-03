@@ -14,8 +14,8 @@ Program Listing for File nmspc_random_numbers.h
    // Created by david on 2016-07-24.
    //
    
-   #ifndef NMSPC_RANDOM_NUMBERS_H
-   #define NMSPC_RANDOM_NUMBERS_H
+   #pragma once
+   
    #include <random>
    #include <iostream>
    #include <complex>
@@ -30,6 +30,7 @@ Program Listing for File nmspc_random_numbers.h
        extern double  uniform_double_1();
        extern double  uniform_double(const double min, const double max);
        extern std::complex<double>  uniform_complex_1();
+       extern double  normal(const double mean, const double std);
        extern double  log_normal(const double mean, const double std);
        extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata);
        extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata, const int num_choose);
@@ -67,5 +68,3 @@ Program Listing for File nmspc_random_numbers.h
    
    
    }
-   
-   #endif //NMSPC_RANDOM_NUMBERS_H

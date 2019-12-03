@@ -14,8 +14,7 @@ Program Listing for File class_tf_ising.h
    // Created by david on 2018-07-04.
    //
    
-   #ifndef CLASS_TF_ISING_H
-   #define CLASS_TF_ISING_H
+   #pragma once
    
    #include <iostream>
    #include <general/nmspc_tensor_extra.h>
@@ -25,13 +24,13 @@ Program Listing for File class_tf_ising.h
    class class_tf_ising : public class_model_base {
        using Scalar = std::complex<double>;
    private:
-       int    spin_dim            = 0;           
+       int    spin_dim            = 0; 
        double J_coupling          = 0;
        double g_mag_field         = 0;
-       double w_rnd_strength      = 0;           
-       double r_rnd_field         = 0;                            
-       int    num_params          = 7;  //Number of parameters for this model excluding this one.
-   
+       double w_rnd_strength      = 0; 
+       double r_rnd_field         = 0; 
+       int    num_params          = 7; 
+       double r_ptb_field         = 0; 
    public:
    
        class_tf_ising(size_t position_, std::string logName = "ISING");
@@ -41,6 +40,8 @@ Program Listing for File class_tf_ising.h
        void set_hamiltonian(const Eigen::VectorXd & parameters)                                      override;
        void build_mpo()                                                                              override;
        void randomize_hamiltonian()                                                                  override;
+       void perturb_hamiltonian(double amplitude)                                                    override;
+       bool is_perturbed()                                                                const      override;
        Eigen::Tensor<Scalar,4> MPO_reduced_view()                                         const      override;
        Eigen::Tensor<Scalar,4> MPO_reduced_view(double site_energy)                       const      override;
        Eigen::MatrixXcd single_site_hamiltonian(
@@ -61,4 +62,3 @@ Program Listing for File class_tf_ising.h
    
    };
    
-   #endif //CLASS_TF_ISING_H

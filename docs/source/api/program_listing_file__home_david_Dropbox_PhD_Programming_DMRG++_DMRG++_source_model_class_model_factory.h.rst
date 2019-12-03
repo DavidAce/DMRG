@@ -14,8 +14,7 @@ Program Listing for File class_model_factory.h
    // Created by david on 2018-07-04.
    //
    
-   #ifndef CLASS_HAMILTONIAN_FACTORY_H
-   #define CLASS_HAMILTONIAN_FACTORY_H
+   #pragma once
    
    #include <iostream>
    #include <memory>
@@ -38,4 +37,3 @@ Program Listing for File class_model_factory.h
    
    
    
-   #endif //CLASS_HAMILTONIAN_FACTORY_H

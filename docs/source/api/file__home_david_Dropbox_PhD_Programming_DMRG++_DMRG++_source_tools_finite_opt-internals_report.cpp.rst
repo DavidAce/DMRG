@@ -29,6 +29,8 @@ Includes
 --------
 
 
+- ``iomanip``
+
 - ``tools/finite/opt.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h`)
 
 

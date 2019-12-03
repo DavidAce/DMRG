@@ -19,6 +19,8 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1xdmrg_1a3c996295abab807a1da990592432ed3f`
 
+- :ref:`exhale_variable_namespacesettings_1_1xdmrg_1a2b7d25b41fc40be479ab44dc5c530c82`
+
 - :ref:`exhale_variable_namespacesettings_1_1xdmrg_1a7cdc55d1f30671a4ac31f4b4fa70a5e9`
 
 - :ref:`exhale_variable_namespacesettings_1_1xdmrg_1ae6f1e98a3448c4a0da6eb856107ddb52`

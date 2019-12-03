@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="14" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="13" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -32,7 +32,7 @@
 <para>Spin dimension </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="16" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="15" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="17" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -60,7 +60,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="18" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -74,7 +74,7 @@
 <para>Randomness strength. The random field is uniformly distributed in (-w,w) </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="19" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -88,7 +88,7 @@
 <para>Random field value </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="20" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__tf__ising_1a416d980640ab03ae6a6f321c28e02a0f" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -99,7 +99,21 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Number of parameters for this model excluding this one. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_tf_ising::r_ptb_field</definition>
+        <argsstring></argsstring>
+        <name>r_ptb_field</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Perturbation </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="21" bodyend="-1"/>
@@ -126,30 +140,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="17" bodyend="34"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="17" bodyend="34"/>
+        <references refid="classclass__model__base_1aa497c5b51ccea581b9caf8b7d9c1b7a5">class_model_base::MPO_reduced_view</references>
         <references refid="classclass__model__base_1a6a2f96984fa4ce3efec11a5acd2c4fd0" compoundref="class__model__base_8cpp" startline="41" endline="44">class_model_base::class_model_base</references>
-        <references refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" compoundref="class__tf__ising_8h" startline="16">spin_dim</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" compoundref="nmspc__settings_8h" startline="65">settings::model::tf_ising::d</references>
-        <references refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" compoundref="class__tf__ising_8h" startline="17">J_coupling</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a2016f014ef7dd7d70acc301cafab62ca" compoundref="nmspc__settings_8h" startline="62">settings::model::tf_ising::J</references>
-        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="18">g_mag_field</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a7477c13d9b0d7dbace98d21314700688" compoundref="nmspc__settings_8h" startline="63">settings::model::tf_ising::g</references>
-        <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="19">w_rnd_strength</references>
-        <references refid="namespacesettings_1_1model_1_1tf__ising_1a515c4000b86ee03c42022e29c304dba4" compoundref="nmspc__settings_8h" startline="64">settings::model::tf_ising::w</references>
-        <references refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" compoundref="class__model__base_8h" startline="15">class_model_base::extent4</references>
-        <references refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" compoundref="class__model__base_8h" startline="16">class_model_base::extent2</references>
-        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="20">r_rnd_field</references>
+        <references refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" compoundref="class__tf__ising_8h" startline="15">spin_dim</references>
+        <references refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" compoundref="nmspc__settings_8h" startline="70">settings::model::tf_ising::d</references>
+        <references refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" compoundref="class__tf__ising_8h" startline="16">J_coupling</references>
+        <references refid="namespacesettings_1_1model_1_1tf__ising_1a2016f014ef7dd7d70acc301cafab62ca" compoundref="nmspc__settings_8h" startline="67">settings::model::tf_ising::J</references>
+        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="17">g_mag_field</references>
+        <references refid="namespacesettings_1_1model_1_1tf__ising_1a7477c13d9b0d7dbace98d21314700688" compoundref="nmspc__settings_8h" startline="68">settings::model::tf_ising::g</references>
+        <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="18">w_rnd_strength</references>
+        <references refid="namespacesettings_1_1model_1_1tf__ising_1a515c4000b86ee03c42022e29c304dba4" compoundref="nmspc__settings_8h" startline="69">settings::model::tf_ising::w</references>
+        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="19">r_rnd_field</references>
         <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random__numbers_8cpp" startline="31" endline="34">rn::uniform_double</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" compoundref="nmspc__quantum__mechanics_8cpp" startline="57">qm::spinOneHalf::SX</references>
-        <references refid="namespaceqm_1aa34a66facd046cb861f0d3e8f242cf48" compoundref="nmspc__quantum__mechanics_8cpp" startline="17" endline="29">qm::gen_manybody_spin</references>
-        <references refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" compoundref="nmspc__quantum__mechanics_8cpp" startline="58">qm::spinOneHalf::SY</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" compoundref="nmspc__quantum__mechanics_8cpp" startline="39">qm::spinOneHalf::sy</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" compoundref="nmspc__quantum__mechanics_8cpp" startline="59">qm::spinOneHalf::SZ</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
-        <references refid="namespaceqm_1_1spin_one_half_1acfc44d248aa25773edc90c232a54f47f" compoundref="nmspc__quantum__mechanics_8cpp" startline="60">qm::spinOneHalf::II</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" compoundref="nmspc__quantum__mechanics_8cpp" startline="45">qm::spinOneHalf::Id</references>
-        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="25">class_model_base::all_mpo_parameters_have_been_set</references>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="24">class_model_base::all_mpo_parameters_have_been_set</references>
         <references refid="classclass__tf__ising_1a3914c0315a54ca57c352c89c7a91f266" compoundref="class__tf__ising_8cpp" startline="73" endline="98">build_mpo</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a76205d7af37d2f9d5a58d199cb5f8863" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
@@ -172,10 +176,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="37" bodyend="44"/>
-        <references refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" compoundref="class__model__base_8h" startline="19">class_model_base::mpo_internal</references>
-        <references refid="classclass__tf__ising_1a5f3edbf2018d80a7b6cc031ea5b0acf2" compoundref="class__tf__ising_8cpp" startline="46" endline="49">set_hamiltonian</references>
-        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="37" bodyend="44"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a5f3edbf2018d80a7b6cc031ea5b0acf2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -193,8 +194,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="46" bodyend="49"/>
-        <references refid="classclass__tf__ising_1a9574c456a4e394ef3a2fcb7cd99cedc8" compoundref="class__tf__ising_8cpp" startline="57" endline="68">set_hamiltonian</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="46" bodyend="49"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a438c3f145771679ed8e9debe325ef135" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -216,8 +216,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="52" bodyend="54"/>
-        <references refid="classclass__tf__ising_1a9574c456a4e394ef3a2fcb7cd99cedc8" compoundref="class__tf__ising_8cpp" startline="57" endline="68">set_hamiltonian</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="52" bodyend="54"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a9574c456a4e394ef3a2fcb7cd99cedc8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -235,16 +234,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="57" bodyend="68"/>
-        <references refid="classclass__tf__ising_1a416d980640ab03ae6a6f321c28e02a0f" compoundref="class__tf__ising_8h" startline="21">num_params</references>
-        <references refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" compoundref="class__model__base_8h" startline="17">class_model_base::position</references>
-        <references refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" compoundref="class__tf__ising_8h" startline="17">J_coupling</references>
-        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="18">g_mag_field</references>
-        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="20">r_rnd_field</references>
-        <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="19">w_rnd_strength</references>
-        <references refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" compoundref="class__model__base_8h" startline="20">class_model_base::e_reduced</references>
-        <references refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" compoundref="class__tf__ising_8h" startline="16">spin_dim</references>
-        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="25">class_model_base::all_mpo_parameters_have_been_set</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="57" bodyend="68"/>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="24">class_model_base::all_mpo_parameters_have_been_set</references>
         <references refid="classclass__tf__ising_1a3914c0315a54ca57c352c89c7a91f266" compoundref="class__tf__ising_8cpp" startline="73" endline="98">build_mpo</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a3914c0315a54ca57c352c89c7a91f266" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
@@ -261,19 +252,8 @@
 </verbatim> 0<mdash/>H<mdash/>1 | 3 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="73" bodyend="98"/>
-        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="25">class_model_base::all_mpo_parameters_have_been_set</references>
-        <references refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" compoundref="class__model__base_8h" startline="19">class_model_base::mpo_internal</references>
-        <references refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" compoundref="class__tf__ising_8h" startline="16">spin_dim</references>
-        <references refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" compoundref="class__model__base_8h" startline="15">class_model_base::extent4</references>
-        <references refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" compoundref="class__model__base_8h" startline="16">class_model_base::extent2</references>
-        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" compoundref="nmspc__quantum__mechanics_8cpp" startline="45">qm::spinOneHalf::Id</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
-        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="18">g_mag_field</references>
-        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="20">r_rnd_field</references>
-        <references refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
-        <references refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" compoundref="class__tf__ising_8h" startline="17">J_coupling</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="73" bodyend="98"/>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="24">class_model_base::all_mpo_parameters_have_been_set</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a8bc1158637b78a5a2fe28595b667888e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -287,17 +267,46 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="100" bodyend="105"/>
-        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="20">r_rnd_field</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="100" bodyend="105"/>
+        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="19">r_rnd_field</references>
         <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random__numbers_8cpp" startline="31" endline="34">rn::uniform_double</references>
-        <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="19">w_rnd_strength</references>
-        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="25">class_model_base::all_mpo_parameters_have_been_set</references>
-        <references refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" compoundref="class__model__base_8h" startline="19">class_model_base::mpo_internal</references>
-        <references refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" compoundref="class__model__base_8h" startline="15">class_model_base::extent4</references>
-        <references refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" compoundref="class__model__base_8h" startline="16">class_model_base::extent2</references>
-        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
-        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="18">g_mag_field</references>
-        <references refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
+        <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="18">w_rnd_strength</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__tf__ising_1a160460bf80f8dcdae2a803d74eb20f44" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void class_tf_ising::perturb_hamiltonian</definition>
+        <argsstring>(double amplitude) override</argsstring>
+        <name>perturb_hamiltonian</name>
+        <reimplements refid="classclass__model__base_1a923bd3048f1b5c53bfdb831b3da2efe2">perturb_hamiltonian</reimplements>
+        <param>
+          <type>double</type>
+          <declname>amplitude</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="107" bodyend="114"/>
+        <references refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" compoundref="class__tf__ising_8h" startline="21">r_ptb_field</references>
+        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="19">r_rnd_field</references>
+        <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random__numbers_8cpp" startline="31" endline="34">rn::uniform_double</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__tf__ising_1aafdb9149062801e325b7a5a64ccd990f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool class_tf_ising::is_perturbed</definition>
+        <argsstring>() const override</argsstring>
+        <name>is_perturbed</name>
+        <reimplements refid="classclass__model__base_1ac76b63a806bf09e1d7c888f0be4fa7c5">is_perturbed</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="116" bodyend="118"/>
+        <references refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" compoundref="class__tf__ising_8h" startline="21">r_ptb_field</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -311,10 +320,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="107" bodyend="110"/>
-        <references refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" compoundref="class__model__base_8h" startline="20">class_model_base::e_reduced</references>
-        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
-        <references refid="classclass__tf__ising_1a2c1f2691f54c7275ca2b9c4f1ae930ee" compoundref="class__tf__ising_8cpp" startline="112" endline="117">MPO_reduced_view</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="120" bodyend="123"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a2c1f2691f54c7275ca2b9c4f1ae930ee" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>Eigen::Tensor&lt; <ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref>, 4 &gt;</type>
@@ -332,15 +338,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="112" bodyend="117"/>
-        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
-        <references refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" compoundref="class__model__base_8h" startline="15">class_model_base::extent4</references>
-        <references refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" compoundref="class__model__base_8h" startline="16">class_model_base::extent2</references>
-        <references refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" compoundref="nmspc__tensor__extra_8h" startline="200" endline="202">Textra::Matrix_to_Tensor2</references>
-        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="18">g_mag_field</references>
-        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="20">r_rnd_field</references>
-        <references refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" compoundref="nmspc__quantum__mechanics_8cpp" startline="45">qm::spinOneHalf::Id</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="125" bodyend="130"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1ad1d523ab79a7785cafce14c05227a2c9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>Eigen::MatrixXcd</type>
@@ -374,10 +372,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="119" bodyend="130"/>
-        <references refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" compoundref="nmspc__math_8h" startline="34" endline="37">math::mod</references>
-        <references refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" compoundref="class__tf__ising_8h" startline="17">J_coupling</references>
-        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="18">g_mag_field</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="132" bodyend="143"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1af21048663f687817dfd8ff4977ac67d6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
@@ -391,7 +386,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="133" bodyend="133"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="146" bodyend="146"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1aac43f4b1d0a820dff54456bf0ab5462a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>size_t</type>
@@ -405,8 +400,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="135" bodyend="135"/>
-        <references refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" compoundref="class__tf__ising_8h" startline="16">spin_dim</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="148" bodyend="148"/>
+        <references refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" compoundref="class__tf__ising_8h" startline="15">spin_dim</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a70f96b2035dde9965338d31da3d0ce54" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -420,7 +415,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="141" bodyend="152"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="154" bodyend="165"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a47541969c35f18f44ae46bc476ba0807" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -434,14 +429,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="154" bodyend="165"/>
-        <references refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" compoundref="class__model__base_8cpp" startline="52" endline="55">class_model_base::get_position</references>
-        <references refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" compoundref="class__tf__ising_8h" startline="17">J_coupling</references>
-        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="18">g_mag_field</references>
-        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="20">r_rnd_field</references>
-        <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="19">w_rnd_strength</references>
-        <references refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" compoundref="class__model__base_8h" startline="20">class_model_base::e_reduced</references>
-        <references refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" compoundref="class__tf__ising_8h" startline="16">spin_dim</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="167" bodyend="178"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1aadefa2a6540891e38dd2d449d2141056" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>std::vector&lt; std::string &gt;</type>
@@ -455,7 +443,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="168" bodyend="177"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="181" bodyend="190"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1af71d009709fc2566715b5fa00138576d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>std::vector&lt; double &gt;</type>
@@ -469,14 +457,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="197" bodyend="206"/>
-        <references refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" compoundref="class__model__base_8cpp" startline="52" endline="55">class_model_base::get_position</references>
-        <references refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" compoundref="class__tf__ising_8h" startline="17">J_coupling</references>
-        <references refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" compoundref="class__tf__ising_8h" startline="18">g_mag_field</references>
-        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="20">r_rnd_field</references>
-        <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="19">w_rnd_strength</references>
-        <references refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" compoundref="class__model__base_8h" startline="20">class_model_base::e_reduced</references>
-        <references refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" compoundref="class__tf__ising_8h" startline="16">spin_dim</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="210" bodyend="219"/>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1ad98bb3c2c80fd28a07260cde6e32ed26" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
         <type>void</type>
@@ -499,10 +480,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="209" bodyend="226"/>
-        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="25">class_model_base::all_mpo_parameters_have_been_set</references>
-        <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="20">r_rnd_field</references>
-        <references refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" compoundref="class__model__base_8cpp" startline="52" endline="55">class_model_base::get_position</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="222" bodyend="239"/>
+        <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="24">class_model_base::all_mpo_parameters_have_been_set</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -510,30 +489,30 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="289">
+      <node id="288">
         <label>class_model_base</label>
         <link refid="classclass__model__base"/>
       </node>
-      <node id="288">
+      <node id="287">
         <label>class_tf_ising</label>
         <link refid="classclass__tf__ising"/>
-        <childnode refid="289" relation="public-inheritance">
+        <childnode refid="288" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="291">
+      <node id="290">
         <label>class_model_base</label>
         <link refid="classclass__model__base"/>
       </node>
-      <node id="290">
+      <node id="289">
         <label>class_tf_ising</label>
         <link refid="classclass__tf__ising"/>
-        <childnode refid="291" relation="public-inheritance">
+        <childnode refid="290" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="13" bodyend="50"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" bodystart="12" bodyend="51"/>
     <listofallmembers>
       <member refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" prot="public" virt="non-virtual"><scope>class_tf_ising</scope><name>all_mpo_parameters_have_been_set</name></member>
       <member refid="classclass__tf__ising_1a3914c0315a54ca57c352c89c7a91f266" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>build_mpo</name></member>
@@ -549,6 +528,7 @@
       <member refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" prot="public" virt="non-virtual"><scope>class_tf_ising</scope><name>get_position</name></member>
       <member refid="classclass__model__base_1a1d6a8fc02b00f4ee83ebaa3d0332cfee" prot="public" virt="non-virtual"><scope>class_tf_ising</scope><name>get_reduced_energy</name></member>
       <member refid="classclass__tf__ising_1aac43f4b1d0a820dff54456bf0ab5462a" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>get_spin_dimension</name></member>
+      <member refid="classclass__tf__ising_1aafdb9149062801e325b7a5a64ccd990f" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>is_perturbed</name></member>
       <member refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" prot="public" virt="non-virtual"><scope>class_tf_ising</scope><name>isReal</name></member>
       <member refid="classclass__model__base_1a6bfba5c3d319a16c0451509e98df9b0b" prot="public" virt="non-virtual"><scope>class_tf_ising</scope><name>isReduced</name></member>
       <member refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" prot="private" virt="non-virtual"><scope>class_tf_ising</scope><name>J_coupling</name></member>
@@ -559,9 +539,11 @@
       <member refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>MPO_reduced_view</name></member>
       <member refid="classclass__tf__ising_1a2c1f2691f54c7275ca2b9c4f1ae930ee" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>MPO_reduced_view</name></member>
       <member refid="classclass__tf__ising_1a416d980640ab03ae6a6f321c28e02a0f" prot="private" virt="non-virtual"><scope>class_tf_ising</scope><name>num_params</name></member>
+      <member refid="classclass__tf__ising_1a160460bf80f8dcdae2a803d74eb20f44" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>perturb_hamiltonian</name></member>
       <member refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" prot="protected" virt="non-virtual"><scope>class_tf_ising</scope><name>position</name></member>
       <member refid="classclass__tf__ising_1a70f96b2035dde9965338d31da3d0ce54" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>print_parameter_names</name></member>
       <member refid="classclass__tf__ising_1a47541969c35f18f44ae46bc476ba0807" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>print_parameter_values</name></member>
+      <member refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" prot="private" virt="non-virtual"><scope>class_tf_ising</scope><name>r_ptb_field</name></member>
       <member refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" prot="private" virt="non-virtual"><scope>class_tf_ising</scope><name>r_rnd_field</name></member>
       <member refid="classclass__tf__ising_1a8bc1158637b78a5a2fe28595b667888e" prot="public" virt="virtual"><scope>class_tf_ising</scope><name>randomize_hamiltonian</name></member>
       <member refid="classclass__tf__ising_1a5421bd05928ccf1f42c0eb9dcbc2a238" prot="private" virt="non-virtual"><scope>class_tf_ising</scope><name>Scalar</name></member>

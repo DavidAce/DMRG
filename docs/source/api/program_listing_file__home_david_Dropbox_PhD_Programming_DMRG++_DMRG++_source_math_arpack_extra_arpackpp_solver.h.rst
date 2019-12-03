@@ -14,8 +14,8 @@ Program Listing for File arpackpp_solver.h
    // Created by david on 2018-10-30.
    //
    
-   #ifndef CLASS_ARPACKPP_SOLVER_H
-   #define CLASS_ARPACKPP_SOLVER_H
+   #pragma once
+   
    #include <vector>
    #include <general/class_tic_toc.h>
    #include "math/nmspc_eigutils.h"
@@ -166,25 +166,3 @@ Program Listing for File arpackpp_solver.h
    
    };
    
-   
-   
-   
-   
-   
-   
-   
-   
-   //Definitions
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   #endif //CLASS_ARPACKPP_SOLVER_H

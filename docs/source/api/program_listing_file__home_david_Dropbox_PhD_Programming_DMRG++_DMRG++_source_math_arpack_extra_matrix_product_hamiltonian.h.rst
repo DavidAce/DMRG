@@ -14,8 +14,8 @@ Program Listing for File matrix_product_hamiltonian.h
    // Created by david on 2018-10-30.
    //
    
-   #ifndef MATRIX_PRODUCT_HAMILTONIAN_H
-   #define MATRIX_PRODUCT_HAMILTONIAN_H
+   #pragma once
+   
    #include <general/class_tic_toc.h>
    #include <array>
    #include <vector>
@@ -42,7 +42,7 @@ Program Listing for File matrix_product_hamiltonian.h
        std::array<long,4> shape_mpo4;
        eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC;
        eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R;
-   
+       OMP omp;
    public:
    
        DenseHamiltonianProduct(
@@ -50,8 +50,9 @@ Program Listing for File matrix_product_hamiltonian.h
                const Scalar_ *Rblock_,                            
                const Scalar_ *HA_,                                
                const Scalar_ *HB_,                                
-               const std::array<long,4> shape_theta4_,      
-               const std::array<long,4> shape_mpo4_         
+               const std::array<long,4> shape_theta4_,       
+               const std::array<long,4> shape_mpo4_,         
+               const size_t num_threads = 1
        ):                                                   
                Lblock(Lblock_),
                Rblock(Rblock_),
@@ -60,9 +61,14 @@ Program Listing for File matrix_product_hamiltonian.h
                shape_theta4(shape_theta4_),
                shape_theta2({shape_theta4[0] * shape_theta4[1] , shape_theta4[2] * shape_theta4[3]}),
                shape_theta1({shape_theta4[0] * shape_theta4[1] * shape_theta4[2] * shape_theta4[3]}),
-               shape_mpo4(shape_mpo4_)
+               shape_mpo4(shape_mpo4_),
+               omp(num_threads)
        {
            t_mul.set_properties(profile_matrix_product_hamiltonian, 10,"Time multiplying");
+           if(Lblock == nullptr) throw std::runtime_error("Lblock is a nullptr!");
+           if(Rblock == nullptr) throw std::runtime_error("Rblock is a nullptr!");
+           if(HA     == nullptr) throw std::runtime_error("HA is a nullptr!");
+           if(HB     == nullptr) throw std::runtime_error("HB is a nullptr!");
    
        }
    
@@ -96,9 +102,8 @@ Program Listing for File matrix_product_hamiltonian.h
    
    
    
-       //Best yet! The sparcity of the effective hamiltonian (Lblock HA HB Rblock) is about 58% nonzeros.
-       //L have shown this to be the fastest contraction ordering
-       theta_out = Lblock_map
+       //Best yet! I have shown this to be the fastest contraction ordering
+       theta_out.device(omp.dev) = Lblock_map
                .contract(theta_in,    Textra::idx({0},{1}))
                .contract(HA_map ,     Textra::idx({1,2},{0,2}))//  idx({1,2,3},{0,4,5}))
                .contract(HB_map ,     Textra::idx({3,1},{0,2}))//  idx({1,2,3},{0,4,5}))
@@ -167,4 +172,3 @@ Program Listing for File matrix_product_hamiltonian.h
    //};
    
    
-   #endif //MATRIX_PRODUCT_HAMILTONIAN_H

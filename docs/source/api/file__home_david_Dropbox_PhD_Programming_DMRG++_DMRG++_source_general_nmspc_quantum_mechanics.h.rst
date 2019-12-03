@@ -43,11 +43,7 @@ Included By
 -----------
 
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_fDMRG.cpp`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_iTEBD.cpp`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_xDMRG.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.cpp`
 
@@ -55,13 +51,17 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.cpp`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising_normal.cpp`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_debug.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_h5pp.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_io_h5pp.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_io_h5pp_tables.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_measure.cpp`
 
@@ -145,21 +145,21 @@ Variables
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1acfc44d248aa25773edc90c232a54f47f`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a108205fa9b3f65edcb8baca98edd5925`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1ac1296391083d31f641019131926507ad`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a6c647e6a015b60e161400c3fbe4072f5`
 

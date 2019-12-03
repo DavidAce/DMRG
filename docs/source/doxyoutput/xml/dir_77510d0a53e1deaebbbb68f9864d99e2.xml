@@ -9,6 +9,9 @@
     <innerfile refid="ceres__subspace_8cpp">ceres_subspace.cpp</innerfile>
     <innerfile refid="ceres__subspace__functor_8cpp">ceres_subspace_functor.cpp</innerfile>
     <innerfile refid="ceres__subspace__functor_8h">ceres_subspace_functor.h</innerfile>
+    <innerfile refid="ceres__subspace__hamiltonian_8cpp">ceres_subspace_hamiltonian.cpp</innerfile>
+    <innerfile refid="enum__classes_8cpp">enum_classes.cpp</innerfile>
+    <innerfile refid="enum__classes_8h">enum_classes.h</innerfile>
     <innerfile refid="ground__state_8cpp">ground_state.cpp</innerfile>
     <innerfile refid="report_8cpp">report.cpp</innerfile>
     <briefdescription>

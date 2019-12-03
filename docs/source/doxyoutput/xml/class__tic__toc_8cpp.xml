@@ -5,29 +5,29 @@
     <includes refid="class__tic__toc_8h" local="yes">class_tic_toc.h</includes>
     <includes local="no">iomanip</includes>
     <incdepgraph>
-      <node id="579">
+      <node id="545">
         <label>iomanip</label>
       </node>
-      <node id="576">
+      <node id="542">
         <label>class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="577" relation="include">
+        <childnode refid="543" relation="include">
         </childnode>
-        <childnode refid="578" relation="include">
+        <childnode refid="544" relation="include">
         </childnode>
       </node>
-      <node id="575">
+      <node id="541">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp</label>
         <link refid="class__tic__toc_8cpp"/>
-        <childnode refid="576" relation="include">
+        <childnode refid="542" relation="include">
         </childnode>
-        <childnode refid="579" relation="include">
+        <childnode refid="545" relation="include">
         </childnode>
       </node>
-      <node id="578">
+      <node id="544">
         <label>iostream</label>
       </node>
-      <node id="577">
+      <node id="543">
         <label>chrono</label>
       </node>
     </incdepgraph>
@@ -52,11 +52,11 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" line="120" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/class_tic_toc.cpp" bodystart="120" bodyend="127"/>
-        <references refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" compoundref="class__tic__toc_8h" startline="17">class_tic_toc::profiling</references>
-        <references refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" compoundref="class__tic__toc_8h" startline="18">class_tic_toc::print_precision</references>
-        <references refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" compoundref="class__tic__toc_8h" startline="20">class_tic_toc::padding</references>
-        <references refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" compoundref="class__tic__toc_8h" startline="19">class_tic_toc::name</references>
-        <references refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" compoundref="class__tic__toc_8h" startline="26">class_tic_toc::measured_time</references>
+        <references refid="classclass__tic__toc_1aab0c96ca2cf539405047a59062bc1d46" compoundref="class__tic__toc_8h" startline="15">class_tic_toc::profiling</references>
+        <references refid="classclass__tic__toc_1a145479bb69a2a945ecb0b1fd56c16019" compoundref="class__tic__toc_8h" startline="16">class_tic_toc::print_precision</references>
+        <references refid="classclass__tic__toc_1ad24ca3c43008fae9a0c70bf4bfe2f779" compoundref="class__tic__toc_8h" startline="18">class_tic_toc::padding</references>
+        <references refid="classclass__tic__toc_1a23a715898e5c4274888d2fd72d974e01" compoundref="class__tic__toc_8h" startline="17">class_tic_toc::name</references>
+        <references refid="classclass__tic__toc_1af8b1b53d757e6c7d820eb7239f718659" compoundref="class__tic__toc_8h" startline="24">class_tic_toc::measured_time</references>
       </memberdef>
       </sectiondef>
     <briefdescription>

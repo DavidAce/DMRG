@@ -14,9 +14,7 @@ Program Listing for File class_tic_toc.h
    // Created by david on 2016-08-14.
    //
    
-   #ifndef CLASS_TIC_TOC_H
-   #define CLASS_TIC_TOC_H
-   
+   #pragma once
    
    #include <chrono>
    #include <iostream>
@@ -57,5 +55,3 @@ Program Listing for File class_tic_toc.h
        friend std::ostream &operator<<(std::ostream &, const class_tic_toc &);
    };
    
-   
-   #endif //CLASS_TIC_TOC_H

@@ -43,12 +43,6 @@ Included By
 -----------
 
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.cpp`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_finite.cpp`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_fDMRG.cpp`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_xDMRG.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.cpp`
@@ -58,6 +52,8 @@ Included By
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_model_base.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising_normal.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.cpp`
 
@@ -69,9 +65,9 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_ops.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct.cpp`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_infinite_mpo.cpp`
 
 
 
@@ -90,6 +86,8 @@ Functions
 - :ref:`exhale_function_namespacern_1a5d02c31ce3de37df2bfae4737711dc71`
 
 - :ref:`exhale_function_namespacern_1aa64669e6a44143d9262c955f80fe79b8`
+
+- :ref:`exhale_function_namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60`
 
 - :ref:`exhale_function_namespacern_1a9c2f32006765f0cd276cf3296f868255`
 

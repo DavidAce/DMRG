@@ -52,6 +52,11 @@ Program Listing for File nmspc_random_numbers.cpp
        }
    
    
+       double normal(const double mean, const double std){
+           std::normal_distribution<double>  distribution(mean, std);
+           return distribution(rng);
+       }
+   
    
         double log_normal(const double mean, const double std){
            std::lognormal_distribution<double>  distribution(mean, std);

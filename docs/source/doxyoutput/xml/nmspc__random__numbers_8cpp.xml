@@ -4,34 +4,34 @@
     <compoundname>nmspc_random_numbers.cpp</compoundname>
     <includes refid="nmspc__random__numbers_8h" local="yes">nmspc_random_numbers.h</includes>
     <incdepgraph>
-      <node id="686">
+      <node id="731">
         <label>nmspc_random_numbers.h</label>
         <link refid="nmspc__random__numbers_8h"/>
-        <childnode refid="687" relation="include">
+        <childnode refid="732" relation="include">
         </childnode>
-        <childnode refid="688" relation="include">
+        <childnode refid="733" relation="include">
         </childnode>
-        <childnode refid="689" relation="include">
+        <childnode refid="734" relation="include">
         </childnode>
-        <childnode refid="690" relation="include">
+        <childnode refid="735" relation="include">
         </childnode>
       </node>
-      <node id="690">
+      <node id="735">
         <label>Eigen/Core</label>
       </node>
-      <node id="687">
+      <node id="732">
         <label>random</label>
       </node>
-      <node id="688">
+      <node id="733">
         <label>iostream</label>
       </node>
-      <node id="689">
+      <node id="734">
         <label>complex</label>
       </node>
-      <node id="685">
+      <node id="730">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp</label>
         <link refid="nmspc__random__numbers_8cpp"/>
-        <childnode refid="686" relation="include">
+        <childnode refid="731" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -83,41 +83,46 @@
 <codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44" refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" kindref="member">log_normal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mean,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacestd" kindref="compound">std</ref>){</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::lognormal_distribution&lt;double&gt;<sp/><sp/>distribution(mean,<sp/>std);</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>distribution(rng);</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="43" refid="namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60" kindref="member">normal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacemath_1a871f3778bb92deb9570e3bd4a3692439" kindref="member">mean</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacestd" kindref="compound">std</ref>){</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::normal_distribution&lt;double&gt;<sp/><sp/>distribution(mean,<sp/>std);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>distribution(rng);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
 <codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49" refid="namespacern_1a7ace7d5a4b63f8332f590564052ced0e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>ArrayXd<sp/><ref refid="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" kindref="member">random_with_replacement</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ArrayXd<sp/>&amp;<sp/>in){</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vector&lt;double&gt;<sp/>boot;</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>in.derived().size();<sp/>i++){</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>boot.push_back(in(<ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">uniform_integer</ref>(0,(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)(in.size()-1))));</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Eigen::Map&lt;ArrayXd&gt;(boot.data(),boot.size());</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="56" refid="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>ArrayXd<sp/><ref refid="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" kindref="member">random_with_replacement</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ArrayXd<sp/>&amp;<sp/>in,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n){</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(n<sp/>&gt;<sp/>in.size()){cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;n<sp/>too<sp/>large&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>endl;<sp/>exit(1);}</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vector&lt;double&gt;<sp/>boot;</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>n;<sp/>i++){</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>boot.push_back(in(<ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">uniform_integer</ref>(0,(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)(in.size()-1))));</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Eigen::Map&lt;ArrayXd&gt;(boot.data(),boot.size());</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65" refid="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" kindref="member">gaussian_truncated</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lowerLimit,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>upperLimit,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>mean,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacestd" kindref="compound">std</ref>)<sp/>{</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::normal_distribution&lt;double&gt;<sp/>distribution(mean,std);</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ul<sp/>=<sp/>fmax(lowerLimit,<sp/>upperLimit);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ll<sp/>=<sp/>fmin(lowerLimit,<sp/>upperLimit);</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>number;</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">true</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>number<sp/>=<sp/>distribution(rng);</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(number<sp/>&gt;=<sp/>ll<sp/>&amp;&amp;<sp/>number<sp/>&lt;=<sp/>ul)<sp/>{</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>number;</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="77"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="49" refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" kindref="member">log_normal</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacemath_1a871f3778bb92deb9570e3bd4a3692439" kindref="member">mean</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacestd" kindref="compound">std</ref>){</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::lognormal_distribution&lt;double&gt;<sp/><sp/>distribution(mean,<sp/>std);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>distribution(rng);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54" refid="namespacern_1a7ace7d5a4b63f8332f590564052ced0e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>ArrayXd<sp/><ref refid="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" kindref="member">random_with_replacement</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ArrayXd<sp/>&amp;<sp/>in){</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vector&lt;double&gt;<sp/>boot;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>in.derived().size();<sp/>i++){</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>boot.push_back(in(<ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">uniform_integer</ref>(0,(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)(in.size()-1))));</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Eigen::Map&lt;ArrayXd&gt;(boot.data(),boot.size());</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="61" refid="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>ArrayXd<sp/><ref refid="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" kindref="member">random_with_replacement</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ArrayXd<sp/>&amp;<sp/>in,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n){</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(n<sp/>&gt;<sp/>in.size()){cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;n<sp/>too<sp/>large&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>endl;<sp/>exit(1);}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vector&lt;double&gt;<sp/>boot;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>n;<sp/>i++){</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>boot.push_back(in(<ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">uniform_integer</ref>(0,(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)(in.size()-1))));</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Eigen::Map&lt;ArrayXd&gt;(boot.data(),boot.size());</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" kindref="member">gaussian_truncated</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lowerLimit,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>upperLimit,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacemath_1a871f3778bb92deb9570e3bd4a3692439" kindref="member">mean</ref>,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacestd" kindref="compound">std</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::normal_distribution&lt;double&gt;<sp/>distribution(mean,std);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ul<sp/>=<sp/>fmax(lowerLimit,<sp/>upperLimit);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ll<sp/>=<sp/>fmin(lowerLimit,<sp/>upperLimit);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>number;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">true</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>number<sp/>=<sp/>distribution(rng);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(number<sp/>&gt;=<sp/>ll<sp/>&amp;&amp;<sp/>number<sp/>&lt;=<sp/>ul)<sp/>{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>number;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal">}</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp"/>
   </compounddef>

@@ -94,9 +94,13 @@ Program Listing for File class_svd_wrapper_lapacke.cpp
            info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, work.data(), lwork,rwork.data());
        }
    
-       long rank        = (S.array() >= SVDThreshold).count();
-       long nonzero     = (S.array() > 0.0).count();
-       truncation_error = S.normalized().tail(nonzero-rank).squaredNorm();
+       long max_size    =  std::min(S.size(),rank_max);
+       long rank        = (S.head(max_size).array() >= SVDThreshold).count();
+       if(rank == S.size()){
+           truncation_error = 0;
+       }else{
+           truncation_error = S.tail(S.size()-rank).squaredNorm();
+       }
    
        if (rank <= 0
            or not U.leftCols(rank).allFinite()
@@ -104,7 +108,7 @@ Program Listing for File class_svd_wrapper_lapacke.cpp
            or not VT.topRows(rank).allFinite() )
        {
            std::cerr   << "SVD error \n"
-                       << "  SVDThreshold     = " << SVDThreshold << '\n'
+                       << "  svd_threshold     = " << SVDThreshold << '\n'
                        << "  Truncation Error = " << truncation_error << '\n'
                        << "  Rank             = " << rank << '\n'
                        << "  U all finite     : " << std::boolalpha << U.leftCols(rank).allFinite() << '\n'

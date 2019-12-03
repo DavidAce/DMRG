@@ -23,5 +23,7 @@ Files
 -----
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_tools.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_tools_finite.h`
 
 

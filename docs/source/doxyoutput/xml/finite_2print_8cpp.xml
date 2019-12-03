@@ -3,179 +3,215 @@
   <compounddef id="finite_2print_8cpp" kind="file" language="C++">
     <compoundname>print.cpp</compoundname>
     <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
-    <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
+    <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
     <includes refid="class__environment_8h" local="no">state/class_environment.h</includes>
     <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
     <includes local="no">string</includes>
     <includes local="no">iomanip</includes>
     <incdepgraph>
-      <node id="3075">
+      <node id="3660">
+        <label>list</label>
+      </node>
+      <node id="3679">
         <label>iomanip</label>
       </node>
-      <node id="3073">
+      <node id="3678">
         <label>iterator</label>
       </node>
-      <node id="3076">
+      <node id="3672">
+        <label>state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="3657" relation="include">
+        </childnode>
+        <childnode refid="3659" relation="include">
+        </childnode>
+        <childnode refid="3673" relation="include">
+        </childnode>
+        <childnode refid="3674" relation="include">
+        </childnode>
+        <childnode refid="3683" relation="include">
+        </childnode>
+        <childnode refid="3684" relation="include">
+        </childnode>
+        <childnode refid="3670" relation="include">
+        </childnode>
+        <childnode refid="3671" relation="include">
+        </childnode>
+      </node>
+      <node id="3680">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="3077" relation="include">
+        <childnode refid="3681" relation="include">
         </childnode>
-        <childnode refid="3070" relation="include">
+        <childnode refid="3670" relation="include">
         </childnode>
-        <childnode refid="3072" relation="include">
+        <childnode refid="3671" relation="include">
         </childnode>
       </node>
-      <node id="3070">
+      <node id="3670">
         <label>Eigen/Core</label>
       </node>
-      <node id="3068">
+      <node id="3658">
         <label>string</label>
       </node>
-      <node id="3082">
+      <node id="3665">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="3083" relation="include">
+        <childnode refid="3666" relation="include">
         </childnode>
-        <childnode refid="3074" relation="include">
+        <childnode refid="3667" relation="include">
         </childnode>
       </node>
-      <node id="3078">
+      <node id="3662">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="3079" relation="include">
+        <childnode refid="3663" relation="include">
         </childnode>
-        <childnode refid="3080" relation="include">
-        </childnode>
-        <childnode refid="3081" relation="include">
+        <childnode refid="3664" relation="include">
         </childnode>
       </node>
-      <node id="3077">
+      <node id="3681">
         <label>experimental/type_traits</label>
       </node>
-      <node id="3066">
+      <node id="3656">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="3067" relation="include">
+        <childnode refid="3657" relation="include">
         </childnode>
-        <childnode refid="3068" relation="include">
+        <childnode refid="3658" relation="include">
         </childnode>
-        <childnode refid="3069" relation="include">
+        <childnode refid="3659" relation="include">
         </childnode>
-        <childnode refid="3078" relation="include">
+        <childnode refid="3660" relation="include">
         </childnode>
-        <childnode refid="3082" relation="include">
+        <childnode refid="3661" relation="include">
+        </childnode>
+        <childnode refid="3662" relation="include">
+        </childnode>
+        <childnode refid="3665" relation="include">
+        </childnode>
+        <childnode refid="3668" relation="include">
+        </childnode>
+        <childnode refid="3670" relation="include">
+        </childnode>
+        <childnode refid="3671" relation="include">
         </childnode>
       </node>
-      <node id="3072">
+      <node id="3671">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="3065">
+      <node id="3655">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp</label>
         <link refid="finite_2print_8cpp"/>
-        <childnode refid="3066" relation="include">
+        <childnode refid="3656" relation="include">
         </childnode>
-        <childnode refid="3084" relation="include">
+        <childnode refid="3672" relation="include">
         </childnode>
-        <childnode refid="3087" relation="include">
+        <childnode refid="3674" relation="include">
         </childnode>
-        <childnode refid="3069" relation="include">
+        <childnode refid="3675" relation="include">
         </childnode>
-        <childnode refid="3068" relation="include">
+        <childnode refid="3658" relation="include">
         </childnode>
-        <childnode refid="3075" relation="include">
+        <childnode refid="3679" relation="include">
         </childnode>
       </node>
-      <node id="3087">
+      <node id="3674">
         <label>state/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="3067" relation="include">
+        <childnode refid="3657" relation="include">
         </childnode>
-        <childnode refid="3069" relation="include">
+        <childnode refid="3675" relation="include">
         </childnode>
-        <childnode refid="3088" relation="include">
+        <childnode refid="3682" relation="include">
         </childnode>
       </node>
-      <node id="3090">
+      <node id="3664">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="3684">
         <label>model/class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="3067" relation="include">
+        <childnode refid="3657" relation="include">
         </childnode>
-        <childnode refid="3072" relation="include">
+        <childnode refid="3671" relation="include">
         </childnode>
-        <childnode refid="3078" relation="include">
+        <childnode refid="3662" relation="include">
         </childnode>
       </node>
-      <node id="3079">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="3071">
+      <node id="3677">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="3084">
-        <label>state/class_finite_state.h</label>
-        <link refid="class__finite__state_8h"/>
-        <childnode refid="3067" relation="include">
+      <node id="3668">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="3667" relation="include">
         </childnode>
-        <childnode refid="3085" relation="include">
-        </childnode>
-        <childnode refid="3086" relation="include">
-        </childnode>
-        <childnode refid="3069" relation="include">
-        </childnode>
-        <childnode refid="3087" relation="include">
-        </childnode>
-        <childnode refid="3089" relation="include">
-        </childnode>
-        <childnode refid="3090" relation="include">
+        <childnode refid="3669" relation="include">
         </childnode>
       </node>
-      <node id="3086">
+      <node id="3663">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="3683">
+        <label>state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="3659" relation="include">
+        </childnode>
+        <childnode refid="3673" relation="include">
+        </childnode>
+        <childnode refid="3671" relation="include">
+        </childnode>
+      </node>
+      <node id="3676">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="3671" relation="include">
+        </childnode>
+      </node>
+      <node id="3673">
         <label>optional</label>
       </node>
-      <node id="3088">
+      <node id="3661">
+        <label>vector</label>
+      </node>
+      <node id="3682">
         <label>spdlog/fmt/fmt.h</label>
       </node>
-      <node id="3080">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      <node id="3669">
+        <label>sstream</label>
       </node>
-      <node id="3074">
+      <node id="3667">
         <label>iostream</label>
       </node>
-      <node id="3083">
+      <node id="3666">
         <label>chrono</label>
       </node>
-      <node id="3085">
+      <node id="3659">
         <label>complex</label>
       </node>
-      <node id="3069">
+      <node id="3675">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="3070" relation="include">
+        <childnode refid="3676" relation="include">
         </childnode>
-        <childnode refid="3071" relation="include">
+        <childnode refid="3670" relation="include">
         </childnode>
-        <childnode refid="3072" relation="include">
+        <childnode refid="3677" relation="include">
         </childnode>
-        <childnode refid="3073" relation="include">
+        <childnode refid="3671" relation="include">
         </childnode>
-        <childnode refid="3074" relation="include">
+        <childnode refid="3678" relation="include">
         </childnode>
-        <childnode refid="3075" relation="include">
+        <childnode refid="3667" relation="include">
         </childnode>
-        <childnode refid="3076" relation="include">
+        <childnode refid="3679" relation="include">
+        </childnode>
+        <childnode refid="3680" relation="include">
         </childnode>
       </node>
-      <node id="3081">
-        <label>spdlog/sinks/stdout_sinks.h</label>
-      </node>
-      <node id="3067">
+      <node id="3657">
         <label>memory</label>
-      </node>
-      <node id="3089">
-        <label>state/class_vidal_site.h</label>
-        <link refid="class__vidal__site_8h"/>
-        <childnode refid="3069" relation="include">
-        </childnode>
       </node>
     </incdepgraph>
       <sectiondef kind="typedef">
@@ -204,7 +240,7 @@
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__environment_8h" kindref="compound">state/class_environment.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tensor__extra_8h" kindref="compound">general/nmspc_tensor_extra.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;string&gt;</highlight><highlight class="normal"></highlight></codeline>
@@ -213,35 +249,35 @@
 <codeline lineno="13"><highlight class="normal"></highlight></codeline>
 <codeline lineno="14" refid="finite_2print_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
 <codeline lineno="15"><highlight class="normal"></highlight></codeline>
-<codeline lineno="16" refid="namespacetools_1_1finite_1_1print_1a341faeca8b3d2652f5f56eb05e67c958" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1print_1a341faeca8b3d2652f5f56eb05e67c958" kindref="member">tools::finite::print::print_full_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state)<sp/>{</highlight></codeline>
+<codeline lineno="16" refid="namespacetools_1_1finite_1_1print_1a33d2a046452bec782217cacc71a51616" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1print_1a33d2a046452bec782217cacc71a51616" kindref="member">tools::finite::print::print_full_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state)<sp/>{</highlight></codeline>
 <codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>mps<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>){</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>mps<sp/>:<sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>){</highlight></codeline>
 <codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPS<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>mps.get_position()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>:\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>L:\n&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>mps.get_L()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>G:\n&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>mps.get_G()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>M:\n&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>mps.get_M()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>LC:\n&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" kindref="member">MPS_C</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>mps<sp/>:<sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>){</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>LC:\n&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.back().get_LC()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>mps<sp/>:<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>){</highlight></codeline>
 <codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPS<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>mps.get_position()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>:\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>G:\n&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>mps.get_G()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>M:\n&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>mps.get_M()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>L:\n&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>mps.get_L()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="29"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33" refid="namespacetools_1_1finite_1_1print_1ac44b254c32c87bad349477836b2b10f9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1print_1ac44b254c32c87bad349477836b2b10f9" kindref="member">tools::finite::print::print_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="33" refid="namespacetools_1_1finite_1_1print_1a20584ad39f2fc94cc75451fe2f148fd3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1print_1a20584ad39f2fc94cc75451fe2f148fd3" kindref="member">tools::finite::print::print_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state){</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_L<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_R<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_C<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" kindref="member">MPS_C</ref>;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>ENV_L<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" kindref="member">ENV_L</ref>;</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>ENV_R<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" kindref="member">ENV_R</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_L<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_R<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_C<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a971fa45cb1a3df3a0573b52d0c35c2b3" kindref="member">midchain_bond</ref>();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>ENV_L<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a66aea35569db3d887772a81c3bc76db4" kindref="member">ENV_L</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>ENV_R<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a111edccb05479b7ae467372ac6cb8553" kindref="member">ENV_R</ref>;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
 <codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::setprecision(10);</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;State<sp/>length<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" kindref="member">get_length</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;State<sp/>position<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" kindref="member">get_position</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;State<sp/>length<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;State<sp/>position<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" kindref="member">get_position</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Environment<sp/>L<sp/>size<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>ENV_L.size()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Environment<sp/>R<sp/>size<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>ENV_R.size()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
@@ -249,7 +285,7 @@
 <codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::left;</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;it<sp/>:<sp/>MPS_L){</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;L[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(3)<sp/>&lt;&lt;<sp/>i<sp/><sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_L().dimensions()&lt;&lt;<sp/>std::setw(5)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;G[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(3)<sp/>&lt;&lt;<sp/>i<sp/><sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_G().dimensions()&lt;&lt;<sp/>std::setw(5)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>pos:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_position()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;M[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(3)<sp/>&lt;&lt;<sp/>i<sp/><sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_M().dimensions()&lt;&lt;<sp/>std::setw(5)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>pos:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_position()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(envitL<sp/>!=<sp/>ENV_L.end()){std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>ENV_&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>envitL-&gt;side<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>envitL-&gt;block.dimensions()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>pos:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>envitL-&gt;get_position()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>env<sp/>spins:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>envitL++-&gt;sites<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">;}</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(&amp;it<sp/>==<sp/>&amp;MPS_L.back()){</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&lt;---<sp/>Position<sp/>A&quot;</highlight><highlight class="normal">;</highlight></codeline>
@@ -260,7 +296,7 @@
 <codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;L[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(3)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;*&apos;</highlight><highlight class="normal"><sp/><sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>MPS_C.dimensions()<sp/>&lt;&lt;<sp/>std::setw(80)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;&lt;---<sp/>Center&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>envitR<sp/>=<sp/>ENV_R.begin();</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;it<sp/>:<sp/>MPS_R){</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;G[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(3)<sp/>&lt;&lt;<sp/>i<sp/><sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_G().dimensions()<sp/>&lt;&lt;<sp/>std::setw(5)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;M[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(3)<sp/>&lt;&lt;<sp/>i<sp/><sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_M().dimensions()<sp/>&lt;&lt;<sp/>std::setw(5)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;L[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(3)<sp/>&lt;&lt;<sp/>i<sp/><sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_L().dimensions()<sp/>&lt;&lt;<sp/>std::setw(5)<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>pos:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>it.get_position()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>&quot;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(envitR<sp/>!=<sp/>ENV_R.end()){std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>ENV_&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>envitR-&gt;side<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>envitR-&gt;block.dimensions()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>pos:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>envitR-&gt;get_position()<sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>env<sp/>spins:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>envitR++-&gt;sites<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">;}</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(&amp;it<sp/>==<sp/>&amp;MPS_R.front()){</highlight></codeline>
@@ -273,33 +309,33 @@
 <codeline lineno="73"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"></highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76" refid="namespacetools_1_1finite_1_1print_1a5fa332b8e49c0001fcb827d8d8c23001" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1print_1a5fa332b8e49c0001fcb827d8d8c23001" kindref="member">tools::finite::print::print_state_compact</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="76" refid="namespacetools_1_1finite_1_1print_1a1124dc4dbdadf6923c34fe20fc046d6a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1print_1a1124dc4dbdadf6923c34fe20fc046d6a" kindref="member">tools::finite::print::print_state_compact</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state){</highlight></codeline>
 <codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_L<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref>;</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_R<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>;</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_C<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" kindref="member">MPS_C</ref>;</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>ENV_L<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a4cdeeeffc013c85f8cd657b2fd06fe0e" kindref="member">ENV_L</ref>;</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>ENV_R<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1ae95fa8eba5c5f26a8945c5152a9356f5" kindref="member">ENV_R</ref>;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_L<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_R<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPS_C<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a971fa45cb1a3df3a0573b52d0c35c2b3" kindref="member">midchain_bond</ref>();</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>ENV_L<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a66aea35569db3d887772a81c3bc76db4" kindref="member">ENV_L</ref>;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>ENV_R<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a111edccb05479b7ae467372ac6cb8553" kindref="member">ENV_R</ref>;</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
 <codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::setprecision(10);</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;State<sp/>length<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" kindref="member">get_length</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;State<sp/>position<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" kindref="member">get_position</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;State<sp/>length<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;State<sp/>position<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>state.<ref refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" kindref="member">get_position</ref>()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Environment<sp/>L<sp/>size<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>ENV_L.size()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Environment<sp/>R<sp/>size<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>ENV_R.size()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(!ENV_L.empty()){std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;ENV_L[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;std::setw(3)<sp/>&lt;&lt;<sp/>ENV_L.size()-1<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>ENV_L.back().block.dimensions()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>Particles:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>ENV_L.back().sites<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>&lt;---<sp/>Also<sp/>current<sp/>environment<sp/>L&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;}</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(!MPS_L.empty()){std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPS_L[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;std::setw(3)<sp/>&lt;&lt;<sp/>MPS_L.size()-1<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>MPS_L.back().get_G().dimensions()<sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&lt;---<sp/>Also<sp/>current<sp/>iteration<sp/>A&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(!MPS_L.empty()){std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPS_L[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;std::setw(3)<sp/>&lt;&lt;<sp/>MPS_L.size()-1<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>MPS_L.back().get_M().dimensions()<sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&lt;---<sp/>Also<sp/>current<sp/>M&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;}</highlight></codeline>
 <codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;L[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(3)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;*&apos;</highlight><highlight class="normal"><sp/><sp/>&lt;&lt;<sp/><sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>MPS_C.dimensions()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;---<sp/>Center&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(!MPS_R.empty()){std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPS_R[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;std::setw(3)<sp/>&lt;&lt;<sp/>MPS_R.size()-1<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>MPS_R.front().get_G().dimensions()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&lt;---<sp/>Also<sp/>current<sp/>iteration<sp/>B&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(!MPS_R.empty()){std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPS_R[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;std::setw(3)<sp/>&lt;&lt;<sp/>MPS_R.size()-1<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>MPS_R.front().get_M().dimensions()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/>&lt;---<sp/>Also<sp/>current<sp/>M&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl;}</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(!ENV_R.empty()){std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;ENV_R[&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;std::setw(3)<sp/>&lt;&lt;<sp/>ENV_R.size()-1<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>ENV_R.front().block.dimensions()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>Particles:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>ENV_R.front().sites<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/>&lt;---<sp/>Also<sp/>current<sp/>environment<sp/>R&quot;</highlight><highlight class="normal"><sp/><sp/>&lt;&lt;<sp/>std::endl;}</highlight></codeline>
 <codeline lineno="95"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="96"><highlight class="normal"></highlight></codeline>
 <codeline lineno="97"><highlight class="normal"></highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
 <codeline lineno="99"><highlight class="normal"></highlight></codeline>
-<codeline lineno="100" refid="namespacetools_1_1finite_1_1print_1ad0354a382bc0df6493ad41649d496ae2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1print_1ad0354a382bc0df6493ad41649d496ae2" kindref="member">tools::finite::print::print_hamiltonians</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;state)<sp/>{</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPO_L<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" kindref="member">MPO_L</ref>;</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPO_R<sp/><sp/>=<sp/>state.<ref refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" kindref="member">MPO_R</ref>;</highlight></codeline>
+<codeline lineno="100" refid="namespacetools_1_1finite_1_1print_1a8b8e7d219d29756636fc32b0a9667b3a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1print_1a8b8e7d219d29756636fc32b0a9667b3a" kindref="member">tools::finite::print::print_hamiltonians</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state)<sp/>{</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPO_L<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a44837909b23b1dcd7c2f567999ffc25a" kindref="member">MPO_L</ref>;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>MPO_R<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a26c82debe3ef3c9b6dd7ad1b08ecdff4" kindref="member">MPO_R</ref>;</highlight></codeline>
 <codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(MPO_L.empty())<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;MPO_L<sp/>is<sp/>empty.<sp/>Can&apos;t<sp/>print<sp/>hamiltonian&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(MPO_R.empty())<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;MPO_R<sp/>is<sp/>empty.<sp/>Can&apos;t<sp/>print<sp/>hamiltonian&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="105"><highlight class="normal"></highlight></codeline>

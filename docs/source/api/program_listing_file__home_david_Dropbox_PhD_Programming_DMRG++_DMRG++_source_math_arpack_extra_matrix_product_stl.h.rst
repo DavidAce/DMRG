@@ -14,8 +14,8 @@ Program Listing for File matrix_product_stl.h
    // Created by david on 2018-11-16.
    //
    
-   #ifndef MATRIX_PRODUCT_STL_H
-   #define MATRIX_PRODUCT_STL_H
+   #pragma once
+   
    
    
    
@@ -99,13 +99,6 @@ Program Listing for File matrix_product_stl.h
        class_tic_toc t_multax;
    };
    
-   
-   
-   
-   
-   
-   
-   #endif
    
    
    

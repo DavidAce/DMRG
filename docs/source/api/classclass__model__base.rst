@@ -13,6 +13,7 @@ Derived Types
 *************
 
 - ``public class_selfdual_tf_rf_ising`` (:ref:`exhale_class_classclass__selfdual__tf__rf__ising`)
+- ``public class_selfdual_tf_rf_ising_normal`` (:ref:`exhale_class_classclass__selfdual__tf__rf__ising__normal`)
 - ``public class_tf_ising`` (:ref:`exhale_class_classclass__tf__ising`)
 
 

@@ -14,8 +14,8 @@ Program Listing for File class_simulation_status.h
    // Created by david on 2019-02-14.
    //
    
-   #ifndef DMRG_CLASS_SIMULATION_STATUS_H
-   #define DMRG_CLASS_SIMULATION_STATUS_H
+   #pragma once
+   
    
    #include <memory>
    #include <string>
@@ -28,13 +28,13 @@ Program Listing for File class_simulation_status.h
    struct status_data{
        // common variables
        size_t iteration                      = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
-       size_t moves                          = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
        size_t step                           = 0; //How many dmrg steps have been taken (each step may cover multiple sites)
        size_t position                       = 0;
+       size_t moves                          = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
        size_t num_resets                     = 0;
-       long   chi_temp                       = 16;
-       long   chi_max                        = 16;
-       size_t min_sweeps                     = 2 ;
+       long   chi_max                        = 0;
+       long   chi_lim                        = 0;
+       size_t min_sweeps                     = 0 ;
        double energy_min                     = 0;
        double energy_max                     = 0;
        double energy_target                  = 0;
@@ -51,8 +51,10 @@ Program Listing for File class_simulation_status.h
        bool   simulation_has_converged       = false;
        bool   simulation_has_saturated       = false;
        bool   simulation_has_succeeded       = false;
+       bool   simulation_has_got_stuck       = false;
+       size_t simulation_has_stuck_for       = 0;
        bool   simulation_has_to_stop         = false;
-       bool   bond_dimension_has_reached_max = false;
+       bool   chi_lim_has_reached_chi_max    = false;
        bool   entanglement_has_converged     = false;
        bool   entanglement_has_saturated     = false;
        bool   variance_mpo_has_converged     = false;
@@ -77,5 +79,3 @@ Program Listing for File class_simulation_status.h
    };
    
    
-   
-   #endif //DMRG_CLASS_SIMULATION_STATUS_H

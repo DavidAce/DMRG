@@ -255,16 +255,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="62" bodyend="74"/>
-        <references refid="classeigutils_1_1eig_config_1aea3b822d61bb9ea083fb72dd4343bdfd" compoundref="nmspc__eigutils_8h" startline="44">RitzToString</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1">eigutils::eigSetting::LA</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7">eigutils::eigSetting::SA</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::LM</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da4e0d4f6ce30646f5a3f3e2a7422c1c5a">eigutils::eigSetting::SM</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4">eigutils::eigSetting::LR</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0">eigutils::eigSetting::SR</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f">eigutils::eigSetting::LI</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364">eigutils::eigSetting::SI</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44">eigutils::eigSetting::BE</references>
       </memberdef>
       <memberdef kind="function" id="classeigutils_1_1eig_config_1aa911417afd8546ca3dffce231a13f345" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -286,7 +276,6 @@
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1">eigutils::eigSetting::LA</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7">eigutils::eigSetting::SA</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44">eigutils::eigSetting::BE</references>
-        <references refid="classeigutils_1_1eig_config_1aea3b822d61bb9ea083fb72dd4343bdfd" compoundref="nmspc__eigutils_8h" startline="44">RitzToString</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4">eigutils::eigSetting::LR</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0">eigutils::eigSetting::SR</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">eigutils::eigSetting::LM</references>
@@ -295,7 +284,6 @@
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f">eigutils::eigSetting::LI</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364">eigutils::eigSetting::SI</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da4e0d4f6ce30646f5a3f3e2a7422c1c5a">eigutils::eigSetting::SM</references>
-        <references refid="classeigutils_1_1eig_config_1a56c7f45b3dd9b3825098380c2278d3f5" compoundref="nmspc__eigutils_8h" startline="45">ritz_char</references>
         <references refid="classeigutils_1_1eig_config_1a677ba446c2a6b77078bdbf4d5bec2986" compoundref="nmspc__eigutils_8h" startline="42">confOK</references>
       </memberdef>
       </sectiondef>
@@ -304,31 +292,31 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="356">
+      <node id="353">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="357">
+      <node id="354">
         <label>std::complex&lt; double &gt;</label>
       </node>
-      <node id="354">
+      <node id="351">
         <label>std::map&lt; eigSetting::Ritz, std::string &gt;</label>
-        <childnode refid="355" relation="usage">
+        <childnode refid="352" relation="usage">
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="353">
+      <node id="350">
         <label>eigutils::eigConfig</label>
         <link refid="classeigutils_1_1eig_config"/>
-        <childnode refid="354" relation="usage">
+        <childnode refid="351" relation="usage">
           <edgelabel>RitzToString</edgelabel>
         </childnode>
-        <childnode refid="357" relation="usage">
+        <childnode refid="354" relation="usage">
           <edgelabel>sigma</edgelabel>
         </childnode>
       </node>
-      <node id="355">
+      <node id="352">
         <label>std::string</label>
-        <childnode refid="356" relation="public-inheritance">
+        <childnode refid="353" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

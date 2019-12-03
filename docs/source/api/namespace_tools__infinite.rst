@@ -26,9 +26,13 @@ Namespaces
 
 - :ref:`namespace_tools__infinite__debug`
 
+- :ref:`namespace_tools__infinite__env`
+
 - :ref:`namespace_tools__infinite__io`
 
 - :ref:`namespace_tools__infinite__measure`
+
+- :ref:`namespace_tools__infinite__mpo`
 
 - :ref:`namespace_tools__infinite__mps`
 

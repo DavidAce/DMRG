@@ -5,19 +5,6 @@
     <basecompoundref refid="classclass__algorithm__infinite" prot="public" virt="non-virtual">class_algorithm_infinite</basecompoundref>
     <includes refid="class__i_t_e_b_d_8h" local="no">class_iTEBD.h</includes>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="classclass__i_t_e_b_d_1ab71753a63ba4bed6a0bb0f24849b65cc" prot="public" static="no" mutable="no">
-        <type>std::unique_ptr&lt; <ref refid="classclass__hdf5__log" kindref="compound">class_hdf5_log</ref>&lt; <ref refid="classclass__log__tebd" kindref="compound">class_log_tebd</ref> &gt; &gt;</type>
-        <definition>std::unique_ptr&lt;class_hdf5_log&lt;class_log_tebd&gt; &gt; class_iTEBD::log_tebd</definition>
-        <argsstring></argsstring>
-        <name>log_tebd</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="18" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" prot="public" static="no" mutable="no">
         <type>std::vector&lt; Eigen::Tensor&lt; <ref refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" kindref="member">Scalar</ref>, 4 &gt; &gt;</type>
         <definition>std::vector&lt;Eigen::Tensor&lt;Scalar,4&gt; &gt; class_iTEBD::unitary_time_evolving_operators</definition>
@@ -29,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="19" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" prot="public" static="no" mutable="no">
         <type>Eigen::MatrixXcd</type>
@@ -42,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="20" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" prot="public" static="no" mutable="no">
         <type>Eigen::MatrixXcd</type>
@@ -55,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="21" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="20" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -74,25 +61,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="21" bodyend="30"/>
-        <references refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" compoundref="class__algorithm__infinite_8cpp" startline="13" endline="21">class_algorithm_infinite::class_algorithm_infinite</references>
-        <references refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f">iTEBD</references>
-        <references refid="classclass__i_t_e_b_d_1ab71753a63ba4bed6a0bb0f24849b65cc" compoundref="class__i_t_e_b_d_8h" startline="18">log_tebd</references>
-        <references refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" compoundref="class__algorithm__base_8h" startline="38">class_algorithm_base::h5pp_file</references>
-        <references refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" compoundref="class__algorithm__base_8h" startline="42">class_algorithm_base::sim_name</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">class_algorithm_base::sim_status</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="19" bodyend="27"/>
+        <references refid="classclass__i_t_e_b_d_1acdaaf2d282fa4540c38c0f4673de1d5c" compoundref="class__i_t_e_b_d_8cpp" startline="19" endline="27">class_iTEBD</references>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" compoundref="class__simulation__status_8h" startline="37">status_data::delta_t</references>
-        <references refid="namespacesettings_1_1itebd_1afcba9beada5551c3da4c25a8376cd67f" compoundref="nmspc__settings_8h" startline="150">settings::itebd::delta_t0</references>
-        <references refid="namespaceqm_1aa34a66facd046cb861f0d3e8f242cf48" compoundref="nmspc__quantum__mechanics_8cpp" startline="17" endline="29">qm::gen_manybody_spin</references>
-        <references refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" compoundref="nmspc__quantum__mechanics_8cpp" startline="36">qm::spinOneHalf::sx</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" compoundref="nmspc__quantum__mechanics_8cpp" startline="39">qm::spinOneHalf::sy</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" compoundref="nmspc__quantum__mechanics_8cpp" startline="42">qm::spinOneHalf::sz</references>
-        <references refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" compoundref="class__i_t_e_b_d_8h" startline="20">h_evn</references>
-        <references refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" compoundref="class__algorithm__infinite_8h" startline="20">class_algorithm_infinite::state</references>
-        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
-        <references refid="classclass__model__base_1a6c6d9ef43a65fbdb4fba2d01676dd3b3">class_model_base::single_site_hamiltonian</references>
-        <references refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" compoundref="class__i_t_e_b_d_8h" startline="21">h_odd</references>
-        <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
+        <references refid="namespacesettings_1_1itebd_1afcba9beada5551c3da4c25a8376cd67f" compoundref="nmspc__settings_8h" startline="161">settings::itebd::delta_t0</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1ad4b61498097d9490ad7fe048f54972ee" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
@@ -106,23 +79,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="42" bodyend="55"/>
-        <references refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" compoundref="class__algorithm__base_8h" startline="28">class_algorithm_base::log</references>
-        <references refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" compoundref="class__algorithm__base_8h" startline="42">class_algorithm_base::sim_name</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">class_algorithm_base::sim_status</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="39" bodyend="53"/>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
-        <references refid="namespacesettings_1_1itebd_1aba276a9861752d56699fc7de2602908b" compoundref="nmspc__settings_8h" startline="149">settings::itebd::max_steps</references>
+        <references refid="namespacesettings_1_1itebd_1aba276a9861752d56699fc7de2602908b" compoundref="nmspc__settings_8h" startline="160">settings::itebd::max_steps</references>
         <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="39">status_data::simulation_has_converged</references>
-        <references refid="classclass__i_t_e_b_d_1aeef1fb8d197f1d82e767aff331b2e083" compoundref="class__i_t_e_b_d_8cpp" startline="65">single_TEBD_step</references>
-        <references refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" compoundref="class__simulation__status_8h" startline="23">status_data::chi_temp</references>
+        <references refid="classclass__i_t_e_b_d_1a9790a13fe829a9220c1efab6165c6f93" compoundref="class__i_t_e_b_d_8cpp" startline="63">single_TEBD_step</references>
         <references refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" compoundref="class__simulation__status_8h" startline="34">status_data::phys_time</references>
         <references refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" compoundref="class__simulation__status_8h" startline="37">status_data::delta_t</references>
-        <references refid="classclass__algorithm__infinite_1a89dd9b352a0d683981bdbd3e8410225a" compoundref="class__algorithm__infinite_8cpp" startline="155" endline="166">class_algorithm_infinite::write_measurements</references>
-        <references refid="classclass__algorithm__infinite_1a2410f9a94f5e90c9124643dc32412dbf" compoundref="class__algorithm__infinite_8cpp" startline="168" endline="178">class_algorithm_infinite::write_state</references>
-        <references refid="classclass__algorithm__infinite_1a744ceb5312144faad7754a3df2a9011c" compoundref="class__algorithm__infinite_8cpp" startline="181" endline="191">class_algorithm_infinite::write_status</references>
-        <references refid="classclass__i_t_e_b_d_1a60bd820616381dc37b7b2c8d09913eac" compoundref="class__i_t_e_b_d_8cpp" startline="139" endline="148">write_logs</references>
-        <references refid="classclass__algorithm__infinite_1af232e6d037549f0aae338b402aa9c722" compoundref="class__algorithm__infinite_8cpp" startline="263" endline="348">class_algorithm_infinite::print_status_update</references>
-        <references refid="classclass__i_t_e_b_d_1a90fabacf5cc62542140594000e3bdb6b" compoundref="class__i_t_e_b_d_8cpp" startline="85" endline="101">check_convergence</references>
+        <references refid="classclass__i_t_e_b_d_1a90fabacf5cc62542140594000e3bdb6b" compoundref="class__i_t_e_b_d_8cpp" startline="83" endline="99">check_convergence</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1a24f5488296b9c2de7114fb46ba6c5493" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
@@ -136,17 +101,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="34" bodyend="39"/>
-        <references refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" compoundref="class__algorithm__base_8h" startline="78">class_algorithm_base::t_pre</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="31" bodyend="36"/>
+        <references refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" compoundref="class__algorithm__base_8h" startline="77">class_algorithm_base::t_pre</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">class_algorithm_base::sim_status</references>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" compoundref="class__simulation__status_8h" startline="37">status_data::delta_t</references>
-        <references refid="namespacesettings_1_1itebd_1afcba9beada5551c3da4c25a8376cd67f" compoundref="nmspc__settings_8h" startline="150">settings::itebd::delta_t0</references>
-        <references refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" compoundref="class__i_t_e_b_d_8h" startline="19">unitary_time_evolving_operators</references>
-        <references refid="namespaceqm_1_1time_evolution_1a33cd64100e493c77493f03371d1f0ca4" compoundref="nmspc__quantum__mechanics_8cpp" startline="133" endline="150">qm::timeEvolution::get_2site_evolution_gates</references>
-        <references refid="namespacesettings_1_1itebd_1a41cb019340a16c4d308ec3ae6cd473e4" compoundref="nmspc__settings_8h" startline="152">settings::itebd::suzuki_order</references>
-        <references refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" compoundref="class__i_t_e_b_d_8h" startline="20">h_evn</references>
-        <references refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" compoundref="class__i_t_e_b_d_8h" startline="21">h_odd</references>
+        <references refid="namespacesettings_1_1itebd_1afcba9beada5551c3da4c25a8376cd67f" compoundref="nmspc__settings_8h" startline="161">settings::itebd::delta_t0</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1a1425eb617ce226bfcf524b4b5c14bc03" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
@@ -161,42 +121,29 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="58" bodyend="63"/>
-        <references refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" compoundref="class__algorithm__base_8h" startline="80">class_algorithm_base::t_pos</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="56" bodyend="61"/>
+        <references refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" compoundref="class__algorithm__base_8h" startline="79">class_algorithm_base::t_pos</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9" compoundref="class__algorithm__infinite_8cpp" startline="350" endline="416">class_algorithm_infinite::print_status_full</references>
-        <references refid="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" compoundref="class__algorithm__base_8cpp" startline="158" endline="167">class_algorithm_base::print_profiling</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__i_t_e_b_d_1aeef1fb8d197f1d82e767aff331b2e083" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__i_t_e_b_d_1a9790a13fe829a9220c1efab6165c6f93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void class_iTEBD::single_TEBD_step</definition>
-        <argsstring>(long chi_max)</argsstring>
+        <argsstring>()</argsstring>
         <name>single_TEBD_step</name>
-        <param>
-          <type>long</type>
-          <declname>chi_max</declname>
-        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
 <para>infinite Time evolving block decimation.</para>        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="65" bodyend="-1"/>
-        <references refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" compoundref="class__algorithm__base_8h" startline="79">class_algorithm_base::t_run</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="63" bodyend="-1"/>
+        <references refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" compoundref="class__algorithm__base_8h" startline="78">class_algorithm_base::t_run</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" compoundref="class__i_t_e_b_d_8h" startline="19">unitary_time_evolving_operators</references>
-        <references refid="namespacetools_1_1infinite_1_1opt_1a01f9cbbf8842767b70fd56cf45cb5e99" compoundref="infinite_2opt_8cpp" startline="46" endline="63">tools::infinite::opt::time_evolve_theta</references>
-        <references refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" compoundref="class__algorithm__infinite_8h" startline="20">class_algorithm_infinite::state</references>
-        <references refid="namespacetools_1_1infinite_1_1opt_1aaa79eb7dc880942b919161d266af14e5" compoundref="infinite_2opt_8cpp" startline="69" endline="79">tools::infinite::opt::truncate_theta</references>
-        <references refid="namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e" compoundref="nmspc__settings_8h" startline="93">settings::precision::SVDThreshold</references>
-        <references refid="classclass__infinite__state_1a5f401d9832c9520bcd532eee3f198b97" compoundref="class__infinite__state_8cpp" startline="336" endline="338">class_infinite_state::swap_AB</references>
-        <references refid="classclass__infinite__state_1a476ee3b752731ebb1ce99126a230a0fa" compoundref="class__infinite__state_8cpp" startline="313" endline="316">class_infinite_state::unset_measurements</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">class_algorithm_base::sim_status</references>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
-        <references refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" compoundref="class__algorithm__base_8h" startline="77">class_algorithm_base::t_tot</references>
+        <references refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" compoundref="class__algorithm__base_8h" startline="76">class_algorithm_base::t_tot</references>
         <references refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" compoundref="class__tic__toc_8cpp" startline="103" endline="105">class_tic_toc::get_age</references>
         <references refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" compoundref="class__simulation__status_8h" startline="36">status_data::simu_time</references>
         <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
@@ -212,19 +159,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="103" bodyend="112"/>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">class_algorithm_base::sim_status</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="101" bodyend="110"/>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" compoundref="class__simulation__status_8h" startline="37">status_data::delta_t</references>
-        <references refid="namespacesettings_1_1itebd_1a6b6afcf2968c3cb071bc050b4e805085" compoundref="nmspc__settings_8h" startline="151">settings::itebd::delta_tmin</references>
+        <references refid="namespacesettings_1_1itebd_1a6b6afcf2968c3cb071bc050b4e805085" compoundref="nmspc__settings_8h" startline="162">settings::itebd::delta_tmin</references>
         <references refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" compoundref="class__simulation__status_8h" startline="38">status_data::time_step_has_converged</references>
-        <references refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" compoundref="class__simulation__status_8h" startline="43">status_data::bond_dimension_has_reached_max</references>
-        <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="44">status_data::entanglement_has_converged</references>
-        <references refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" compoundref="class__i_t_e_b_d_8h" startline="19">unitary_time_evolving_operators</references>
-        <references refid="namespaceqm_1_1time_evolution_1a33cd64100e493c77493f03371d1f0ca4" compoundref="nmspc__quantum__mechanics_8cpp" startline="133" endline="150">qm::timeEvolution::get_2site_evolution_gates</references>
-        <references refid="namespacesettings_1_1itebd_1a41cb019340a16c4d308ec3ae6cd473e4" compoundref="nmspc__settings_8h" startline="152">settings::itebd::suzuki_order</references>
-        <references refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" compoundref="class__i_t_e_b_d_8h" startline="20">h_evn</references>
-        <references refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" compoundref="class__i_t_e_b_d_8h" startline="21">h_odd</references>
-        <references refid="classclass__algorithm__infinite_1a7cfa931e8444f5aba7bfee278f4a6b58" compoundref="class__algorithm__infinite_8cpp" startline="225" endline="260">class_algorithm_infinite::clear_saturation_status</references>
+        <references refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" compoundref="class__simulation__status_8h" startline="45">status_data::chi_lim_has_reached_chi_max</references>
+        <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="46">status_data::entanglement_has_converged</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1a90fabacf5cc62542140594000e3bdb6b" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
@@ -238,49 +179,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="85" bodyend="101"/>
-        <references refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" compoundref="class__algorithm__base_8h" startline="82">class_algorithm_base::t_con</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="83" bodyend="99"/>
+        <references refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" compoundref="class__algorithm__base_8h" startline="81">class_algorithm_base::t_con</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="classclass__algorithm__infinite_1ad5ddf1d7d7b1184f4874e9db5fed23d9" compoundref="class__algorithm__infinite_8cpp" startline="136" endline="153">class_algorithm_infinite::check_convergence_entg_entropy</references>
-        <references refid="classclass__algorithm__infinite_1ac3374fa48c9c4c2f6b09b9e5b4fd1a8d" compoundref="class__algorithm__infinite_8cpp" startline="97" endline="115">class_algorithm_infinite::check_convergence_variance_ham</references>
-        <references refid="classclass__algorithm__infinite_1aa7c274874ad3e3d0258b2d7850f7867a" compoundref="class__algorithm__infinite_8cpp" startline="117" endline="134">class_algorithm_infinite::check_convergence_variance_mom</references>
-        <references refid="classclass__algorithm__base_1aa8e759aeb0f79b39ac5d8e4c4a3bb18f" compoundref="class__algorithm__base_8cpp" startline="134" endline="151">class_algorithm_base::update_bond_dimension</references>
-        <references refid="classclass__i_t_e_b_d_1ac720b8d492eb8a174c1a3c87ef1e9662" compoundref="class__i_t_e_b_d_8cpp" startline="103" endline="112">check_convergence_time_step</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="44">status_data::entanglement_has_converged</references>
-        <references refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" compoundref="class__simulation__status_8h" startline="48">status_data::variance_ham_has_converged</references>
-        <references refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" compoundref="class__simulation__status_8h" startline="50">status_data::variance_mom_has_converged</references>
-        <references refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" compoundref="class__simulation__status_8h" startline="43">status_data::bond_dimension_has_reached_max</references>
+        <references refid="classclass__i_t_e_b_d_1ac720b8d492eb8a174c1a3c87ef1e9662" compoundref="class__i_t_e_b_d_8cpp" startline="101" endline="110">check_convergence_time_step</references>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
+        <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="46">status_data::entanglement_has_converged</references>
+        <references refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" compoundref="class__simulation__status_8h" startline="50">status_data::variance_ham_has_converged</references>
+        <references refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" compoundref="class__simulation__status_8h" startline="52">status_data::variance_mom_has_converged</references>
+        <references refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" compoundref="class__simulation__status_8h" startline="45">status_data::chi_lim_has_reached_chi_max</references>
         <references refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" compoundref="class__simulation__status_8h" startline="38">status_data::time_step_has_converged</references>
         <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="39">status_data::simulation_has_converged</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__i_t_e_b_d_1a60bd820616381dc37b7b2c8d09913eac" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
-        <type>void</type>
-        <definition>void class_iTEBD::write_logs</definition>
-        <argsstring>(bool force=false) final</argsstring>
-        <name>write_logs</name>
-        <reimplements refid="classclass__algorithm__base_1a881cc8f8ece0220f988663834996a219">write_logs</reimplements>
-        <param>
-          <type>bool</type>
-          <declname>force</declname>
-          <defval>false</defval>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="139" bodyend="148"/>
-        <references refid="namespacesettings_1_1output_1a7db5bd70ef10536983073e97f81d65b3" compoundref="nmspc__settings_8h" startline="41">settings::output::save_logs</references>
-        <references refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" compoundref="nmspc__math_8h" startline="34" endline="37">math::mod</references>
-        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="44">class_algorithm_base::sim_status</references>
-        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
-        <references refid="classclass__i_t_e_b_d_1ad63d1643b1020b0c2192697d558ed783" compoundref="class__i_t_e_b_d_8cpp" startline="154" endline="154">write_freq</references>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
-        <references refid="classclass__algorithm__base_1a40cc086bc611a7284fed3d9a5b5c1bc6" compoundref="class__algorithm__base_8h" startline="40">class_algorithm_base::log_sim_status</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1ab174102e5a66349fb77eea583171b90b" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>bool</type>
@@ -294,8 +204,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="151" bodyend="151"/>
-        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="148">settings::itebd::on</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="140" bodyend="140"/>
+        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="159">settings::itebd::on</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1a2568a7aae71bcd07fc211f167e35abeb" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>long</type>
@@ -309,8 +219,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="152" bodyend="152"/>
-        <references refid="namespacesettings_1_1itebd_1aaca4efb978bd41af4ae870824351b5c6" compoundref="nmspc__settings_8h" startline="153">settings::itebd::chi_max</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="141" bodyend="141"/>
+        <references refid="namespacesettings_1_1itebd_1aaca4efb978bd41af4ae870824351b5c6" compoundref="nmspc__settings_8h" startline="164">settings::itebd::chi_max</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1afe90098dcff03675aa6d7e1a1724262e" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>size_t</type>
@@ -324,7 +234,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="153" bodyend="153"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="142" bodyend="142"/>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1ad63d1643b1020b0c2192697d558ed783" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>size_t</type>
@@ -338,8 +248,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="154" bodyend="154"/>
-        <references refid="namespacesettings_1_1itebd_1a93a0bfc65a4ca0a13df530b4d9c80d11" compoundref="nmspc__settings_8h" startline="156">settings::itebd::write_freq</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="143" bodyend="143"/>
+        <references refid="namespacesettings_1_1itebd_1a93a0bfc65a4ca0a13df530b4d9c80d11" compoundref="nmspc__settings_8h" startline="168">settings::itebd::write_freq</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1a712b186e3c063cb219fb2b2f391e74e9" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>size_t</type>
@@ -353,8 +263,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="155" bodyend="155"/>
-        <references refid="namespacesettings_1_1itebd_1a50559d40426598a6c4b3545a4d551d36" compoundref="nmspc__settings_8h" startline="155">settings::itebd::print_freq</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="144" bodyend="144"/>
+        <references refid="namespacesettings_1_1itebd_1a50559d40426598a6c4b3545a4d551d36" compoundref="nmspc__settings_8h" startline="167">settings::itebd::print_freq</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1a4b9d274c6d8b0f4874e3034a168daeb5" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>bool</type>
@@ -368,8 +278,23 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="156" bodyend="156"/>
-        <references refid="namespacesettings_1_1itebd_1aeeb215c2f571cde123ac0298d61c9941" compoundref="nmspc__settings_8h" startline="154">settings::itebd::chi_grow</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="145" bodyend="145"/>
+        <references refid="namespacesettings_1_1itebd_1aeeb215c2f571cde123ac0298d61c9941" compoundref="nmspc__settings_8h" startline="165">settings::itebd::chi_grow</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_t_e_b_d_1a6d054df08095a61f273de0d6e71aa9e7" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>long</type>
+        <definition>long class_iTEBD::chi_init</definition>
+        <argsstring>() final</argsstring>
+        <name>chi_init</name>
+        <reimplements refid="classclass__algorithm__base_1a43b93d906ce8263b7436c4758231ba5e">chi_init</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="146" bodyend="146"/>
+        <references refid="namespacesettings_1_1itebd_1abe05981d403971bf0d51ddbdc5df4016" compoundref="nmspc__settings_8h" startline="166">settings::itebd::chi_init</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -377,150 +302,99 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="203">
+      <node id="215">
         <label>class_algorithm_infinite</label>
         <link refid="classclass__algorithm__infinite"/>
-        <childnode refid="204" relation="public-inheritance">
+        <childnode refid="216" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="202">
+      <node id="214">
         <label>class_iTEBD</label>
         <link refid="classclass__i_t_e_b_d"/>
-        <childnode refid="203" relation="public-inheritance">
+        <childnode refid="215" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="204">
+      <node id="216">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="216">
+      <node id="228">
         <label>std::vector&lt; Eigen::Tensor&lt; Scalar, 4 &gt; &gt;</label>
       </node>
-      <node id="223">
-        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
-      </node>
-      <node id="206">
+      <node id="218">
         <label>class_algorithm_infinite</label>
         <link refid="classclass__algorithm__infinite"/>
-        <childnode refid="207" relation="public-inheritance">
+        <childnode refid="219" relation="public-inheritance">
         </childnode>
-        <childnode refid="213" relation="usage">
+        <childnode refid="225" relation="usage">
           <edgelabel>S_vec</edgelabel>
           <edgelabel>V_mom_vec</edgelabel>
           <edgelabel>V_mpo_vec</edgelabel>
           <edgelabel>V_ham_vec</edgelabel>
         </childnode>
-        <childnode refid="214" relation="usage">
+        <childnode refid="226" relation="usage">
           <edgelabel>B_ham_vec</edgelabel>
           <edgelabel>BS_vec</edgelabel>
           <edgelabel>B_mom_vec</edgelabel>
           <edgelabel>B_mpo_vec</edgelabel>
         </childnode>
-        <childnode refid="215" relation="usage">
+        <childnode refid="227" relation="usage">
           <edgelabel>X_mom_vec</edgelabel>
           <edgelabel>X_mpo_vec</edgelabel>
           <edgelabel>X_ham_vec</edgelabel>
           <edgelabel>XS_vec</edgelabel>
         </childnode>
       </node>
-      <node id="213">
+      <node id="225">
         <label>std::list&lt; double &gt;</label>
       </node>
-      <node id="219">
-        <label>std::unique_ptr&lt; class_log_tebd &gt;</label>
-        <childnode refid="220" relation="usage">
-          <edgelabel>ptr</edgelabel>
-        </childnode>
-      </node>
-      <node id="225">
-        <label>std::vector&lt; class_log_tebd::data_struct &gt;</label>
-        <childnode refid="226" relation="usage">
-          <edgelabel>elements</edgelabel>
-        </childnode>
-      </node>
-      <node id="221">
-        <label>class_log_tebd::meta_struct</label>
-        <link refid="structclass__log__tebd_1_1meta__struct"/>
-        <childnode refid="222" relation="usage">
-          <edgelabel>field_names</edgelabel>
-        </childnode>
-        <childnode refid="223" relation="usage">
-          <edgelabel>field_types</edgelabel>
-        </childnode>
-        <childnode refid="224" relation="usage">
-          <edgelabel>dst_offsets</edgelabel>
-          <edgelabel>dst_sizes</edgelabel>
-        </childnode>
-      </node>
-      <node id="214">
+      <node id="226">
         <label>std::list&lt; bool &gt;</label>
       </node>
-      <node id="224">
-        <label>std::array&lt; size_t, NFIELDS &gt;</label>
-      </node>
-      <node id="209">
+      <node id="221">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="220">
-        <label>class_log_tebd</label>
-        <link refid="classclass__log__tebd"/>
-        <childnode refid="221" relation="usage">
-          <edgelabel>meta</edgelabel>
-        </childnode>
-        <childnode refid="225" relation="usage">
-          <edgelabel>buffer</edgelabel>
-        </childnode>
-      </node>
-      <node id="215">
+      <node id="227">
         <label>std::list&lt; int &gt;</label>
       </node>
       <node id="217">
-        <label>std::unique_ptr&lt; class_hdf5_log&lt; class_log_tebd &gt; &gt;</label>
-        <childnode refid="218" relation="usage">
-          <edgelabel>ptr</edgelabel>
-        </childnode>
-      </node>
-      <node id="205">
         <label>class_iTEBD</label>
         <link refid="classclass__i_t_e_b_d"/>
-        <childnode refid="206" relation="public-inheritance">
+        <childnode refid="218" relation="public-inheritance">
         </childnode>
-        <childnode refid="216" relation="usage">
+        <childnode refid="228" relation="usage">
           <edgelabel>unitary_time_evolving_operators</edgelabel>
         </childnode>
-        <childnode refid="217" relation="usage">
-          <edgelabel>log_tebd</edgelabel>
-        </childnode>
       </node>
-      <node id="212">
+      <node id="224">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
-        <childnode refid="208" relation="usage">
+        <childnode refid="220" relation="usage">
           <edgelabel>name</edgelabel>
         </childnode>
       </node>
-      <node id="211">
+      <node id="223">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="210">
+      <node id="222">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="211" relation="public-inheritance">
+        <childnode refid="223" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="207">
+      <node id="219">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="208" relation="usage">
+        <childnode refid="220" relation="usage">
           <edgelabel>sim_name</edgelabel>
         </childnode>
-        <childnode refid="210" relation="usage">
+        <childnode refid="222" relation="usage">
           <edgelabel>sim_status</edgelabel>
         </childnode>
-        <childnode refid="212" relation="usage">
+        <childnode refid="224" relation="usage">
           <edgelabel>t_con</edgelabel>
           <edgelabel>t_pos</edgelabel>
           <edgelabel>t_pre</edgelabel>
@@ -529,33 +403,13 @@
           <edgelabel>t_prt</edgelabel>
         </childnode>
       </node>
-      <node id="226">
-        <label>class_log_tebd::data_struct</label>
-        <link refid="structclass__log__tebd_1_1data__struct"/>
-      </node>
-      <node id="222">
-        <label>std::array&lt; const char *, NFIELDS &gt;</label>
-      </node>
-      <node id="218">
-        <label>class_hdf5_log&lt; class_log_tebd &gt;</label>
-        <link refid="classclass__hdf5__log"/>
-        <childnode refid="208" relation="usage">
-          <edgelabel>log_name</edgelabel>
-          <edgelabel>log_path</edgelabel>
-          <edgelabel>logName</edgelabel>
-          <edgelabel>group_name</edgelabel>
-        </childnode>
-        <childnode refid="219" relation="usage">
-          <edgelabel>log_entries</edgelabel>
-        </childnode>
-      </node>
-      <node id="208">
+      <node id="220">
         <label>std::string</label>
-        <childnode refid="209" relation="public-inheritance">
+        <childnode refid="221" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="13" bodyend="38"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" bodystart="13" bodyend="37"/>
     <listofallmembers>
       <member refid="classclass__algorithm__infinite_1acc84655600d7e4028a28ae96bceb6f29" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>B_ham_vec</name></member>
       <member refid="classclass__algorithm__infinite_1a8ec9eca947b8dc09ac496535fc3a0909" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>B_mom_vec</name></member>
@@ -567,23 +421,25 @@
       <member refid="classclass__algorithm__infinite_1ac3374fa48c9c4c2f6b09b9e5b4fd1a8d" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>check_convergence_variance_ham</name></member>
       <member refid="classclass__algorithm__infinite_1aa7c274874ad3e3d0258b2d7850f7867a" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>check_convergence_variance_mom</name></member>
       <member refid="classclass__algorithm__infinite_1ad35ded89a86cc7815ebae568eae20e2e" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>check_convergence_variance_mpo</name></member>
-      <member refid="classclass__algorithm__base_1a68b331d15932f59b05a479d3bbb3a081" prot="protected" virt="non-virtual"><scope>class_iTEBD</scope><name>check_saturation_using_slope</name></member>
+      <member refid="classclass__algorithm__base_1aa374f4bdc5b96a72e96688ac874bfe62" prot="protected" virt="non-virtual"><scope>class_iTEBD</scope><name>check_saturation_using_slope</name></member>
+      <member refid="classclass__algorithm__base_1a6c3102d68422740613902d7d16604f63" prot="protected" virt="non-virtual"><scope>class_iTEBD</scope><name>check_saturation_using_slope2</name></member>
       <member refid="classclass__i_t_e_b_d_1a4b9d274c6d8b0f4874e3034a168daeb5" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>chi_grow</name></member>
+      <member refid="classclass__i_t_e_b_d_1a6d054df08095a61f273de0d6e71aa9e7" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>chi_init</name></member>
       <member refid="classclass__i_t_e_b_d_1a2568a7aae71bcd07fc211f167e35abeb" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>chi_max</name></member>
       <member refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__base_1a790233233d4352402e651a312e7ae76a" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>class_algorithm_base</name></member>
       <member refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>class_algorithm_infinite</name></member>
       <member refid="classclass__i_t_e_b_d_1acdaaf2d282fa4540c38c0f4673de1d5c" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>class_iTEBD</name></member>
       <member refid="classclass__algorithm__infinite_1a7cfa931e8444f5aba7bfee278f4a6b58" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>clear_saturation_status</name></member>
-      <member refid="classclass__algorithm__infinite_1aafc806c6b29040a7273b4e1f163748d7" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>compute_observables</name></member>
+      <member refid="classclass__algorithm__infinite_1af2e3d3e0fdc1584d4f1936ada6972009" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>copy_from_tmp</name></member>
       <member refid="classclass__algorithm__infinite_1a677af8697d8ab608b039313309b38956" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>enlarge_environment</name></member>
       <member refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>h5pp_file</name></member>
+      <member refid="classclass__algorithm__infinite_1aa76cb2d746e2f6efca1b9a9304a0ed02" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>h5tbuf_measurements</name></member>
+      <member refid="classclass__algorithm__base_1ab0712c1f7e09a4ffcac2d8df99bf4b6b" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>h5tbuf_profiling</name></member>
+      <member refid="classclass__algorithm__base_1a068eedc09bbb4355bb691d2aeb48d48d" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>h5tbuf_sim_status</name></member>
       <member refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>h_evn</name></member>
       <member refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>h_odd</name></member>
       <member refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" prot="protected" virt="non-virtual"><scope>class_iTEBD</scope><name>log</name></member>
-      <member refid="classclass__algorithm__base_1ac2191f13b616212908a566262ace8df5" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>log_profiling</name></member>
-      <member refid="classclass__algorithm__base_1a40cc086bc611a7284fed3d9a5b5c1bc6" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>log_sim_status</name></member>
-      <member refid="classclass__i_t_e_b_d_1ab71753a63ba4bed6a0bb0f24849b65cc" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>log_tebd</name></member>
       <member refid="classclass__i_t_e_b_d_1afe90098dcff03675aa6d7e1a1724262e" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>num_sites</name></member>
       <member refid="classclass__i_t_e_b_d_1a712b186e3c063cb219fb2b2f391e74e9" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>print_freq</name></member>
       <member refid="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>print_profiling</name></member>
@@ -604,8 +460,8 @@
       <member refid="classclass__i_t_e_b_d_1ab174102e5a66349fb77eea583171b90b" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>sim_on</name></member>
       <member refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>sim_status</name></member>
       <member refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>sim_type</name></member>
-      <member refid="classclass__i_t_e_b_d_1aeef1fb8d197f1d82e767aff331b2e083" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>single_TEBD_step</name></member>
-      <member refid="classclass__algorithm__infinite_1ae155ce875b5aea3760e34e9712bc3677" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>state</name></member>
+      <member refid="classclass__i_t_e_b_d_1a9790a13fe829a9220c1efab6165c6f93" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>single_TEBD_step</name></member>
+      <member refid="classclass__algorithm__infinite_1a2de10bb21a8ca511c8742a518f69a6e5" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>state</name></member>
       <member refid="classclass__algorithm__base_1af36e30da0595f116629422821e1e4ced" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>stop_reason</name></member>
       <member refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>StopReason</name></member>
       <member refid="classclass__algorithm__infinite_1a3b3bd13802b17fe5cb9600e4dcaabded" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>swap</name></member>
@@ -616,7 +472,7 @@
       <member refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>t_run</name></member>
       <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>t_tot</name></member>
       <member refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>unitary_time_evolving_operators</name></member>
-      <member refid="classclass__algorithm__base_1aa8e759aeb0f79b39ac5d8e4c4a3bb18f" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>update_bond_dimension</name></member>
+      <member refid="classclass__algorithm__infinite_1a93e97af4e20920c9690ff47fe78ddd60" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>update_bond_dimension_limit</name></member>
       <member refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>V_ham_slope</name></member>
       <member refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>V_ham_vec</name></member>
       <member refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>V_mom_slope</name></member>
@@ -624,10 +480,10 @@
       <member refid="classclass__algorithm__infinite_1a2b3decefbdbd9f2e4e7ab1871cbbdff3" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>V_mpo_slope</name></member>
       <member refid="classclass__algorithm__infinite_1a7bbb22b08660d9a233d2b9cd96cabd58" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>V_mpo_vec</name></member>
       <member refid="classclass__i_t_e_b_d_1ad63d1643b1020b0c2192697d558ed783" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_freq</name></member>
-      <member refid="classclass__i_t_e_b_d_1a60bd820616381dc37b7b2c8d09913eac" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_logs</name></member>
-      <member refid="classclass__algorithm__infinite_1a89dd9b352a0d683981bdbd3e8410225a" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_measurements</name></member>
-      <member refid="classclass__algorithm__infinite_1a2410f9a94f5e90c9124643dc32412dbf" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_state</name></member>
-      <member refid="classclass__algorithm__infinite_1a744ceb5312144faad7754a3df2a9011c" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_status</name></member>
+      <member refid="classclass__algorithm__infinite_1a61900694e483f2b95d05fa7591a9f739" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_measurements</name></member>
+      <member refid="classclass__algorithm__infinite_1a9a9b9e19dd91abcc2d7dfdf8ba7c920a" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_profiling</name></member>
+      <member refid="classclass__algorithm__infinite_1a84c74d3e276739573cac8008a935d981" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_sim_status</name></member>
+      <member refid="classclass__algorithm__infinite_1ac427ff8b98e2f6bef7e11e6703b87574" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>write_state</name></member>
       <member refid="classclass__algorithm__infinite_1a8c0ed712a983752bcecc2d645cfd8401" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>X_ham_vec</name></member>
       <member refid="classclass__algorithm__infinite_1a17c4fcff55d7b01560a835ee91ac6d84" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>X_mom_vec</name></member>
       <member refid="classclass__algorithm__infinite_1a8895c39f0050aecc51f56f0b3d650306" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>X_mpo_vec</name></member>

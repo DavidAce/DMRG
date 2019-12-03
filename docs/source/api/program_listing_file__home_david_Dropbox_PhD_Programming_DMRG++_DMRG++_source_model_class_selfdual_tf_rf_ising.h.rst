@@ -14,8 +14,7 @@ Program Listing for File class_selfdual_tf_rf_ising.h
    // Created by david on 2018-07-06.
    //
    
-   #ifndef CLASS_SELFDUAL_TF_ISING_H
-   #define CLASS_SELFDUAL_TF_ISING_H
+   #pragma once
    
    #include <iostream>
    #include <general/nmspc_tensor_extra.h>
@@ -23,7 +22,7 @@ Program Listing for File class_selfdual_tf_rf_ising.h
    #include <iomanip>
    #include "class_model_base.h"
    
-   template<typename log_type> class class_hdf5_log;
+   template<typename log_type> class class_h5table_buffer;
    class class_selfdual_tf_rf_ising_table;
    
    class class_selfdual_tf_rf_ising : public class_model_base {
@@ -40,6 +39,8 @@ Program Listing for File class_selfdual_tf_rf_ising.h
        double h_sigma             = 0;
        double lambda              = 0;
        double delta               = 0;
+       double J_ptb               = 0; //Perturbation
+       double h_ptb               = 0; //Perturbation
        int    num_params = 13;  //Number of parameters for this model excluding this one.
    
    
@@ -59,6 +60,8 @@ Program Listing for File class_selfdual_tf_rf_ising.h
        void set_hamiltonian(const Eigen::VectorXd & parameters)                                     override;
        void build_mpo()                                                                             override;
        void randomize_hamiltonian()                                                                 override;
+       void perturb_hamiltonian(double amplitude)                                                   override;
+       bool is_perturbed()                                                                    const override;
        Eigen::Tensor<Scalar,4> MPO_reduced_view()                                             const override;
        Eigen::Tensor<Scalar,4> MPO_reduced_view(double site_energy)                           const override;
        std::unique_ptr<class_model_base> clone()                                              const override;
@@ -86,4 +89,3 @@ Program Listing for File class_selfdual_tf_rf_ising.h
    
    };
    
-   #endif //DMRG_CLASS_SELFDUAL_TF_ISING_H

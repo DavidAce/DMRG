@@ -3,135 +3,122 @@
   <compounddef id="report_8cpp" kind="file" language="C++">
     <compoundname>report.cpp</compoundname>
     <includes refid="opt_8h" local="no">tools/finite/opt.h</includes>
+    <includes local="no">iomanip</includes>
     <incdepgraph>
-      <node id="2926">
+      <node id="3517">
+        <label>list</label>
+      </node>
+      <node id="3531">
         <label>iomanip</label>
       </node>
-      <node id="2924">
-        <label>iterator</label>
-      </node>
-      <node id="2937">
-        <label>glog/logging.h</label>
-      </node>
-      <node id="2935">
-        <label>LBFGS.h</label>
-      </node>
-      <node id="2936">
+      <node id="3529">
         <label>ceres/ceres.h</label>
       </node>
-      <node id="2927">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2928" relation="include">
-        </childnode>
-        <childnode refid="2921" relation="include">
-        </childnode>
-        <childnode refid="2923" relation="include">
-        </childnode>
-      </node>
-      <node id="2921">
+      <node id="3527">
         <label>Eigen/Core</label>
       </node>
-      <node id="2919">
+      <node id="3515">
         <label>string</label>
       </node>
-      <node id="2933">
+      <node id="3522">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2934" relation="include">
+        <childnode refid="3523" relation="include">
         </childnode>
-        <childnode refid="2925" relation="include">
+        <childnode refid="3524" relation="include">
         </childnode>
       </node>
-      <node id="2915">
+      <node id="3511">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp</label>
         <link refid="report_8cpp"/>
-        <childnode refid="2916" relation="include">
+        <childnode refid="3512" relation="include">
+        </childnode>
+        <childnode refid="3531" relation="include">
         </childnode>
       </node>
-      <node id="2929">
+      <node id="3519">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2930" relation="include">
+        <childnode refid="3520" relation="include">
         </childnode>
-        <childnode refid="2931" relation="include">
-        </childnode>
-        <childnode refid="2932" relation="include">
+        <childnode refid="3521" relation="include">
         </childnode>
       </node>
-      <node id="2928">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="2917">
+      <node id="3513">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="2918" relation="include">
+        <childnode refid="3514" relation="include">
         </childnode>
-        <childnode refid="2919" relation="include">
+        <childnode refid="3515" relation="include">
         </childnode>
-        <childnode refid="2920" relation="include">
+        <childnode refid="3516" relation="include">
         </childnode>
-        <childnode refid="2929" relation="include">
+        <childnode refid="3517" relation="include">
         </childnode>
-        <childnode refid="2933" relation="include">
+        <childnode refid="3518" relation="include">
+        </childnode>
+        <childnode refid="3519" relation="include">
+        </childnode>
+        <childnode refid="3522" relation="include">
+        </childnode>
+        <childnode refid="3525" relation="include">
+        </childnode>
+        <childnode refid="3527" relation="include">
+        </childnode>
+        <childnode refid="3528" relation="include">
         </childnode>
       </node>
-      <node id="2923">
+      <node id="3528">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2930">
-        <label>spdlog/spdlog.h</label>
+      <node id="3521">
+        <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="2922">
-        <label>Eigen/Sparse</label>
+      <node id="3525">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="3524" relation="include">
+        </childnode>
+        <childnode refid="3526" relation="include">
+        </childnode>
       </node>
-      <node id="2916">
+      <node id="3520">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="3530">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="3528" relation="include">
+        </childnode>
+      </node>
+      <node id="3518">
+        <label>vector</label>
+      </node>
+      <node id="3512">
         <label>tools/finite/opt.h</label>
         <link refid="opt_8h"/>
-        <childnode refid="2917" relation="include">
+        <childnode refid="3513" relation="include">
         </childnode>
-        <childnode refid="2933" relation="include">
+        <childnode refid="3522" relation="include">
         </childnode>
-        <childnode refid="2926" relation="include">
+        <childnode refid="3529" relation="include">
         </childnode>
-        <childnode refid="2935" relation="include">
-        </childnode>
-        <childnode refid="2936" relation="include">
-        </childnode>
-        <childnode refid="2937" relation="include">
+        <childnode refid="3530" relation="include">
         </childnode>
       </node>
-      <node id="2931">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      <node id="3526">
+        <label>sstream</label>
       </node>
-      <node id="2925">
+      <node id="3524">
         <label>iostream</label>
       </node>
-      <node id="2934">
+      <node id="3523">
         <label>chrono</label>
       </node>
-      <node id="2920">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2921" relation="include">
-        </childnode>
-        <childnode refid="2922" relation="include">
-        </childnode>
-        <childnode refid="2923" relation="include">
-        </childnode>
-        <childnode refid="2924" relation="include">
-        </childnode>
-        <childnode refid="2925" relation="include">
-        </childnode>
-        <childnode refid="2926" relation="include">
-        </childnode>
-        <childnode refid="2927" relation="include">
-        </childnode>
+      <node id="3516">
+        <label>complex</label>
       </node>
-      <node id="2932">
-        <label>spdlog/sinks/stdout_sinks.h</label>
-      </node>
-      <node id="2918">
+      <node id="3514">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -145,9 +132,9 @@
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight></codeline>
-<codeline lineno="7" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;direct_opt_tuple&gt;<sp/>&amp;opt_log){</highlight></codeline>
-<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7" refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" kindref="member">tools::finite::opt::internal::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;direct_opt_tuple&gt;<sp/>&amp;opt_log){</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
 <codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Algorithm&quot;</highlight><highlight class="normal"></highlight></codeline>
@@ -176,12 +163,12 @@
 <codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
 <codeline lineno="38"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a620c5c854aaf3f75ea58fee57da509e6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;subspc_opt_tuple&gt;<sp/>&amp;opt_log){</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="41" refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a722d9206b6ee1fcdc509586c0f5c2afd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" kindref="member">tools::finite::opt::internal::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;subspc_opt_tuple&gt;<sp/>&amp;opt_log){</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;</highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal">&lt;&lt;<sp/>std::setw(24)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Algorithm&quot;</highlight><highlight class="normal"></highlight></codeline>
@@ -209,14 +196,14 @@
 <codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::setw(20)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::get&lt;8&gt;(item)<sp/>*<sp/>1000<sp/>/<sp/>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal">)std::get&lt;7&gt;(item)</highlight></codeline>
 <codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
 <codeline lineno="72"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"></highlight></codeline>
 <codeline lineno="74"><highlight class="normal"></highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a1ea3179701e726a6a5d58b553f2a2a4f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;eig_tuple&gt;<sp/>&amp;eig_log){</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="76" refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ac8d4282b81c3d70eb3741733c44ea678" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" kindref="member">tools::finite::opt::internal::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;eig_tuple&gt;<sp/>&amp;eig_log){</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>solver_report;</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>solver_report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(12)<sp/>&lt;&lt;<sp/>std::right<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;n<sp/>eigvecs&quot;</highlight><highlight class="normal"></highlight></codeline>
@@ -240,15 +227,15 @@
 <codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>solver_report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::flush;</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(solver_report.str());</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(solver_report.str());</highlight></codeline>
 <codeline lineno="102"><highlight class="normal"></highlight></codeline>
 <codeline lineno="103"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="104"><highlight class="normal"></highlight></codeline>
 <codeline lineno="105"><highlight class="normal"></highlight></codeline>
 <codeline lineno="106"><highlight class="normal"></highlight></codeline>
 <codeline lineno="107"><highlight class="normal"></highlight></codeline>
-<codeline lineno="108" refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1abb21a7520ac89b965ed57e5424154836" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0" kindref="member">tools::finite::opt::internals::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a614f8e368679ab590e9951b6f46245f7" kindref="member">lbfgs_tuple</ref><sp/>lbfgs_log){</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="108" refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a082052a5b98f556e373c29f2c0770e0a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" kindref="member">tools::finite::opt::internal::reports::print_report</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a08cf84da39b831b7544b918673507fca" kindref="member">lbfgs_tuple</ref><sp/>lbfgs_log){</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;level()<sp/>&gt;<sp/>spdlog::level::debug)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>std::stringstream<sp/>report;</highlight></codeline>
 <codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>report</highlight></codeline>
 <codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(3)<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
@@ -277,7 +264,7 @@
 <codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="136"><highlight class="normal"></highlight></codeline>
 <codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>report<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1a68a5becb2c794cab385cbb38d9f0d44a" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(report.str());</highlight></codeline>
 <codeline lineno="139"><highlight class="normal"></highlight></codeline>
 <codeline lineno="140"><highlight class="normal">}</highlight></codeline>
     </programlisting>

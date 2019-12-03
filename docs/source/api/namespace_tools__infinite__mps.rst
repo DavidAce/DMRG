@@ -17,4 +17,6 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1infinite_1_1mps_1a399c3f5d307b0c3644001993edab8290`
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1mps_1a56776b1e99c7db754004afe45a040e8a`
+
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1mps_1a80202ec0d3161bb41d8209c0f717b109`

@@ -117,6 +117,27 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="37" bodyend="40"/>
       </memberdef>
+      <memberdef kind="function" id="namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double rn::normal</definition>
+        <argsstring>(const double mean, const double std)</argsstring>
+        <name>normal</name>
+        <param>
+          <type>const double</type>
+          <declname>mean</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>std</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="43" bodyend="46"/>
+      </memberdef>
       <memberdef kind="function" id="namespacern_1aa64669e6a44143d9262c955f80fe79b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
         <definition>double rn::log_normal</definition>
@@ -136,7 +157,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="44" bodyend="47"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="49" bodyend="52"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1a9c2f32006765f0cd276cf3296f868255" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::ArrayXd</type>
@@ -153,7 +174,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="22" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="23" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1ab1ff96fded7890b771bfee2e40b661d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::ArrayXd</type>
@@ -174,7 +195,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="23" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="24" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1a5d02c31ce3de37df2bfae4737711dc71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -203,7 +224,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="65" bodyend="76"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="70" bodyend="81"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1afa9a8b7b6becd55be568fcf68b56e3dd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -225,7 +246,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" bodystart="27" bodyend="51"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.h" bodystart="28" bodyend="52"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1a7ace7d5a4b63f8332f590564052ced0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>ArrayXd</type>
@@ -242,7 +263,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="49" bodyend="55"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="54" bodyend="60"/>
       </memberdef>
       <memberdef kind="function" id="namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>ArrayXd</type>
@@ -263,7 +284,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="56" bodyend="63"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_random_numbers.cpp" bodystart="61" bodyend="68"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

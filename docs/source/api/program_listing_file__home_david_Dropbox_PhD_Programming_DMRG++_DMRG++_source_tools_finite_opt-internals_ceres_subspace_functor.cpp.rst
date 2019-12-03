@@ -13,32 +13,24 @@ Program Listing for File ceres_subspace_functor.cpp
    //
    // Created by david on 2019-07-15.
    //
-   
+   #include <general/nmspc_omp.h> // For multithreaded computation
    #include "ceres_subspace_functor.h"
-   #include <state/class_finite_state.h>
+   #include <state/class_state_finite.h>
    
-   using namespace tools::finite::opt::internals;
+   using namespace tools::finite::opt::internal;
    
    template<typename Scalar>
-   tools::finite::opt::internals::ceres_subspace_functor<Scalar>::ceres_subspace_functor(
-           const class_finite_state & state,
+   tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_functor(
+           const class_state_finite & state,
            const class_simulation_status & sim_status,
-           const Eigen::MatrixXcd & eigvecs_,
+           const MatrixType & H2_subspace,
            const Eigen::VectorXd  & eigvals_)
            :
            ceres_base_functor(state,sim_status),
-           eigvecs(eigvecs_),
+           H2(H2_subspace),
            eigvals(eigvals_)
    {
-       tools::log->trace("Constructing subspace functor");
-       if constexpr(std::is_same<Scalar,double>::value){
-           H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs).real();
-   //        H2 = (eigvecs.adjoint().real() * state.get_multi_hamiltonian2_matrix().real().template selfadjointView<Eigen::Upper>() * eigvecs.real());
-       }
-       if constexpr(std::is_same<Scalar,std::complex<double>>::value){
-           H2 = state.get_multi_hamiltonian2_subspace_matrix(eigvecs);
-   //        H2 = (eigvecs.adjoint() * state.get_multi_hamiltonian2_matrix().template selfadjointView<Eigen::Upper>() * eigvecs);
-       }
+   
        energy_reduced  = state.get_energy_reduced();
        double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
        tools::log->debug("H_local2 nonzeros: {:.8f} %", sparcity*100);
@@ -49,7 +41,7 @@ Program Listing for File ceres_subspace_functor.cpp
    
    
    template<typename Scalar>
-   bool tools::finite::opt::internals::ceres_subspace_functor<Scalar>::Evaluate(const double* v_double_double,
+   bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(const double* v_double_double,
                                                                                 double* fx,
                                                                                 double* grad_double_double) const
    {
@@ -66,7 +58,7 @@ Program Listing for File ceres_subspace_functor.cpp
    
        Hv  = eigvals.asDiagonal() * v;
        vHv = v.dot(Hv);
-       H2v = H2.template selfadjointView<Eigen::Upper>()*v;
+       H2v  = H2.template selfadjointView<Eigen::Upper>()*v;
        vH2v = v.dot(H2v);
    
    
@@ -85,30 +77,37 @@ Program Listing for File ceres_subspace_functor.cpp
        energy         = std::real(ene + energy_reduced) / length;
        variance       = std::abs(var)  / length;
        norm_offset    = std::abs(vv) - 1.0 ;
-       std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
+       std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.1);
        log10var       = std::log10(variance);
    
        if (fx != nullptr){
            fx[0] = log10var +  norm_func;
        }
    
+       Eigen::Map<VectorType>  grad (reinterpret_cast<Scalar*>(grad_double_double), vecSize);
        if (grad_double_double != nullptr){
            auto vv_1  = std::pow(vv,-1);
            auto var_1 = 1.0/var/std::log(10);
-           Eigen::Map<VectorType>  grad (reinterpret_cast<      Scalar*>(grad_double_double), vecSize);
-           grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))
-                  +  norm_grad * v;
+           grad = var_1 * vv_1 * (H2v - 2.0*ene*Hv - (ene2 - 2.0*ene*ene)*v);
+           if constexpr (std::is_same<Scalar,double>::value){
+               grad *= 2.0;
+           }
+           grad += norm_grad * v;
        }
    
-   //    tools::log->trace("log10 var: {:<24.18f} log10 ene2/L: {:<24.18f} ene/L: {:<24.18f} ene*ene/L/L: {:<24.18f} Energy: {:<24.18f}  SqNorm: {:<24.18f} Norm: {:<24.18f} fx: {:<24.18f}",
+   
+   
+   //    tools::log->trace("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad|_inf: {:<24.18f} SqNorm: {:<24.18f} Norm: {:<24.18f} Norm_func: {:<24.18f} |Norm_grad *v|: {:<24.18f} fx: {:<24.18f}",
    //                      std::log10(std::abs(var)/length),
-   //                      std::log10(std::abs(ene2)/length),
-   //                      std::real(ene)/length,
-   //                      std::real(ene*ene)/length/length,
    //                      std::real(ene + energy_reduced) / length,
+   //                      grad.norm(),
+   //                      grad.cwiseAbs().maxCoeff(),
    //                      vv,
    //                      norm,
+   //                      norm_func,
+   //                      (norm_grad * v).norm(),
    //                      fx[0]);
+   
    
    
        if(std::isnan(log10var) or std::isinf(log10var)){
@@ -129,5 +128,5 @@ Program Listing for File ceres_subspace_functor.cpp
    
    
    
-   template class tools::finite::opt::internals::ceres_subspace_functor<double>;
-   template class tools::finite::opt::internals::ceres_subspace_functor<std::complex<double>>;
+   template class tools::finite::opt::internal::ceres_subspace_functor<double>;
+   template class tools::finite::opt::internal::ceres_subspace_functor<std::complex<double>>;

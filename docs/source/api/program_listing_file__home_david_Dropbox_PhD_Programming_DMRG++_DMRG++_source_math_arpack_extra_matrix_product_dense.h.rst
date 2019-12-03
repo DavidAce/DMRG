@@ -14,8 +14,7 @@ Program Listing for File matrix_product_dense.h
    // Created by david on 2018-05-08.
    //
    
-   #ifndef MATRIX_PRODUCT_DENSE_H
-   #define MATRIX_PRODUCT_DENSE_H
+   #pragma once
    
    #ifdef EIGEN_USE_BLAS
    #define EIGEN_USE_BLAS_SUSPEND
@@ -223,5 +222,3 @@ Program Listing for File matrix_product_dense.h
    #endif
    
    
-   
-   #endif

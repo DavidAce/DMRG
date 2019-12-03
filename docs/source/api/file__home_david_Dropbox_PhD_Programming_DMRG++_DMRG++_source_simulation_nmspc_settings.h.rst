@@ -29,9 +29,9 @@ Includes
 --------
 
 
-- ``string``
+- ``simulation/enums.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_enums.h`)
 
-- ``unordered_set``
+- ``string``
 
 - ``vector``
 
@@ -41,9 +41,11 @@ Included By
 -----------
 
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_finite.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_infinite.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_launcher.cpp`
 
@@ -59,29 +61,43 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.h`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising_normal.h`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising_normal.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.cpp`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_infinite.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_io_h5pp.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_io_h5pp_tmp.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_prof.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_debug.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_h5pp.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_io_h5pp.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_measure.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_mps.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_multisite.cpp`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_base.cpp`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_hamiltonian.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ground_state.cpp`
 
@@ -129,15 +145,6 @@ Namespaces
 - :ref:`namespace_settings__xdmrg`
 
 
-Enums
------
-
-
-- :ref:`exhale_enum_nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921`
-
-- :ref:`exhale_enum_nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ad`
-
-
 Functions
 ---------
 
@@ -157,6 +164,8 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1fdmrg_1a1ec29f5e29fb084816e19eb3200232af`
 
+- :ref:`exhale_variable_namespacesettings_1_1fdmrg_1ac8e8a18f4c1106502d4542691c0738b2`
+
 - :ref:`exhale_variable_namespacesettings_1_1fdmrg_1a591fd10b121c47245c0ededecc4fa238`
 
 - :ref:`exhale_variable_namespacesettings_1_1fdmrg_1a06f9b3649e0f8f8a5b76b5f315f9d4ec`
@@ -175,6 +184,8 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1idmrg_1aa8fbed186f5dc10147472f92cb11cd6f`
 
+- :ref:`exhale_variable_namespacesettings_1_1idmrg_1a5f9290b0a54de4af134cabe9aedb6295`
+
 - :ref:`exhale_variable_namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6`
 
 - :ref:`exhale_variable_namespacesettings_1_1idmrg_1a0b0d73c9584cf669c3b6ef2c148698cd`
@@ -185,11 +196,13 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1idmrg_1a045e93c114bea3cce9b57146f2a7f176`
 
-- :ref:`exhale_variable_namespacesettings_1_1input_1ab6ac8cfb0c1835dde36563f175f36bd7`
+- :ref:`exhale_variable_namespacesettings_1_1input_1a6237bd4c8d635524769d9a47084dad5a`
 
 - :ref:`exhale_variable_namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074`
 
 - :ref:`exhale_variable_namespacesettings_1_1itebd_1aeeb215c2f571cde123ac0298d61c9941`
+
+- :ref:`exhale_variable_namespacesettings_1_1itebd_1abe05981d403971bf0d51ddbdc5df4016`
 
 - :ref:`exhale_variable_namespacesettings_1_1itebd_1aaca4efb978bd41af4ae870824351b5c6`
 
@@ -211,7 +224,11 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b`
 
-- :ref:`exhale_variable_namespacesettings_1_1model_1a3f07da5789dea3088c9f7efaeb8e6ee8`
+- :ref:`exhale_variable_namespacesettings_1_1model_1a2e5a997917989d152d0429c8e430ab63`
+
+- :ref:`exhale_variable_namespacesettings_1_1model_1a776e129070b70bfcdbff48837833a407`
+
+- :ref:`exhale_variable_namespacesettings_1_1model_1ae14bbe9ea2acf3d3905f97a21dc9b7d3`
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1a5b1871176f010ad2de0dc28939d8fa82`
 
@@ -255,6 +272,8 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1output_1a30a0550b22d0bcb105c317a549d7a004`
 
+- :ref:`exhale_variable_namespacesettings_1_1output_1a9e0297c0c7d4d406845f0ae2b8396dd5`
+
 - :ref:`exhale_variable_namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c`
 
 - :ref:`exhale_variable_namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939`
@@ -265,35 +284,47 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a538b01f0a7fe27f48d7980bd7630bd0e`
+- :ref:`exhale_variable_namespacesettings_1_1output_1a006e3b72fb5727906ffe8acbb3b3eb2c`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373`
+- :ref:`exhale_variable_namespacesettings_1_1output_1a3a4473cd67fe51cc676ee77aa267b839`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a83177d10f491bd1482cdca3132e4dfde`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1aa71722ed5e3f817653454c43d4c69d0f`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1aefd3107716333590498c58a6ae754f5d`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1aaa603d6ddeb7a4f8042ece0b5470b740`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a750367d57c28bed6cbe50b368b822d84`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a33fddd896c5264ff17a8d973fec4ba1a`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a78cccff43645d6cdb068d0e1d1fd9ab0`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a12df3196d374b7629dd3e3362b9ab2b8`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a0b26d7fe007f5549a23443d5b6a36336`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1af6b8f17a6552f984d79f29b60e7ce873`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a7d297b83e4dbd5b16f69c16fc7872ee8`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1af5eafba97e3bf482809e5df9ea63f388`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a8161050773e553d9b1e4e416a0289508`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a51eea63ecf95cc1c0f7be3c28d8148c5`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a6d460e3e89da7786ddef877703a4ff54`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a349528cd78e4b1efd43923d71cbd3d45`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1abf702bad979405cc3acd9423af31e4e0`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a08350baa897c7ddaa09c478182e0f818`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1afad83713588045b35c92b4128b4333c7`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1abb0be16f39f773d6453e35d151450191`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a79627ee70c6488a43b5ad3ca27caa92e`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a93837c581447124b3d28278a44786611`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a8144c8c79b510717f340fff464e9a493`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a9d89b844f40c612f7f37d7f0b873382c`
 
-- :ref:`exhale_variable_namespacesettings_1_1precision_1a2d9e7cad0354e0b3b98f9c7acb391d23`
+- :ref:`exhale_variable_namespacesettings_1_1precision_1af3bc93f028d6ab7a5179dd199ae1d500`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a8b543961c8a2df1412bc3ab24e1956cd`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1ad074bc89d66adfe8a255421dc981cdd2`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a0cc3a40383a3e2795dd38b77a6790872`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1af241365d45c25fd1f464b664f358e982`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1ae7fb706e3fd5e6c63bd9ed074313224a`
+
+- :ref:`exhale_variable_namespacesettings_1_1precision_1a49cdd22328092db2e3177579db139c0a`
 
 - :ref:`exhale_variable_namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7`
 
@@ -306,6 +337,8 @@ Variables
 - :ref:`exhale_variable_namespacesettings_1_1threading_1a371a76d1d8c3d06b5f986772f63ae955`
 
 - :ref:`exhale_variable_namespacesettings_1_1xdmrg_1a3c996295abab807a1da990592432ed3f`
+
+- :ref:`exhale_variable_namespacesettings_1_1xdmrg_1a2b7d25b41fc40be479ab44dc5c530c82`
 
 - :ref:`exhale_variable_namespacesettings_1_1xdmrg_1a7cdc55d1f30671a4ac31f4b4fa70a5e9`
 

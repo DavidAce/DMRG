@@ -15,21 +15,21 @@ Program Listing for File ground_state.cpp
    //
    
    #include <tools/finite/opt.h>
-   #include <state/class_finite_state.h>
+   #include <state/class_state_finite.h>
    #include <simulation/nmspc_settings.h>
    #include <math/arpack_extra/matrix_product_hamiltonian.h>
    #include <math/class_eigsolver.h>
    
-   Eigen::Tensor<class_finite_state::Scalar,4> tools::finite::opt::internals::ground_state_optimization(const class_finite_state & state, std::string ritzstring){
+   Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_state_finite & state, std::string ritzstring){
        tools::log->trace("Starting ground state optimization");
        using Scalar = std::complex<double>;
-       using namespace internals;
+       using namespace internal;
        using namespace settings::precision;
        using namespace eigutils::eigSetting;
    
        Ritz ritz = stringToRitz(ritzstring);
-       auto dimsL = state.MPS_L.back().get_G().dimensions();
-       auto dimsR = state.MPS_R.front().get_G().dimensions();
+       auto dimsL = state.MPS_L.back().get_M().dimensions();
+       auto dimsR = state.MPS_R.front().get_M().dimensions();
        std::array<long,4> shape_theta4  = {dimsL[0], dimsL[1], dimsR[0], dimsR[2]};
        std::array<long,4> shape_mpo4    =  state.MPO_L.back()->MPO().dimensions();
    
@@ -41,12 +41,13 @@ Program Listing for File ground_state.cpp
                state.MPO_L.back()->MPO().data(),
                state.MPO_R.front()->MPO().data(),
                shape_theta4,
-               shape_mpo4);
+               shape_mpo4,
+               settings::threading::num_threads_eigen);
    
    
    
        class_eigsolver solver;
-       solver.eigs_dense(matrix,nev,eigMaxNcv,NAN,Form::SYMMETRIC,ritz,Side::R,true,true);
+       solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
    
        auto eigvals           = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
        auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);

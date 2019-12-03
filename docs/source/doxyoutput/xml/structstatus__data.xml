@@ -19,20 +19,6 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="18" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="structstatus__data_1a16d2c55935f9a23c594bce56c1679b31" prot="public" static="no" mutable="no">
-        <type>size_t</type>
-        <definition>size_t status_data::moves</definition>
-        <argsstring></argsstring>
-        <name>moves</name>
-        <initializer>= 0</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="19" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a45e276d6df46dc728b839a192d571be2" prot="public" static="no" mutable="no">
         <type>size_t</type>
         <definition>size_t status_data::step</definition>
@@ -45,13 +31,27 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="20" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" prot="public" static="no" mutable="no">
         <type>size_t</type>
         <definition>size_t status_data::position</definition>
         <argsstring></argsstring>
         <name>position</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structstatus__data_1a16d2c55935f9a23c594bce56c1679b31" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t status_data::moves</definition>
+        <argsstring></argsstring>
+        <name>moves</name>
         <initializer>= 0</initializer>
         <briefdescription>
         </briefdescription>
@@ -75,12 +75,12 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="22" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="structstatus__data_1a394209e7e516250158bc78e854504288" prot="public" static="no" mutable="no">
         <type>long</type>
-        <definition>long status_data::chi_temp</definition>
+        <definition>long status_data::chi_max</definition>
         <argsstring></argsstring>
-        <name>chi_temp</name>
-        <initializer>= 16</initializer>
+        <name>chi_max</name>
+        <initializer>= 0</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -89,12 +89,12 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="23" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="structstatus__data_1a394209e7e516250158bc78e854504288" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="structstatus__data_1ad9cfe0cc4a462c416584066fb9abc28f" prot="public" static="no" mutable="no">
         <type>long</type>
-        <definition>long status_data::chi_max</definition>
+        <definition>long status_data::chi_lim</definition>
         <argsstring></argsstring>
-        <name>chi_max</name>
-        <initializer>= 16</initializer>
+        <name>chi_lim</name>
+        <initializer>= 0</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -108,7 +108,7 @@
         <definition>size_t status_data::min_sweeps</definition>
         <argsstring></argsstring>
         <name>min_sweeps</name>
-        <initializer>= 2</initializer>
+        <initializer>= 0</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -341,6 +341,34 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="41" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="structstatus__data_1ad1888c88421c43a27431329438801788" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool status_data::simulation_has_got_stuck</definition>
+        <argsstring></argsstring>
+        <name>simulation_has_got_stuck</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structstatus__data_1abe15010ddc3fee2d541b521bb23dfdb5" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t status_data::simulation_has_stuck_for</definition>
+        <argsstring></argsstring>
+        <name>simulation_has_stuck_for</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" prot="public" static="no" mutable="no">
         <type>bool</type>
         <definition>bool status_data::simulation_has_to_stop</definition>
@@ -353,13 +381,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="42" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="44" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="structstatus__data_1a563478860bb43be3e9c4a00325372c34" prot="public" static="no" mutable="no">
         <type>bool</type>
-        <definition>bool status_data::bond_dimension_has_reached_max</definition>
+        <definition>bool status_data::chi_lim_has_reached_chi_max</definition>
         <argsstring></argsstring>
-        <name>bond_dimension_has_reached_max</name>
+        <name>chi_lim_has_reached_chi_max</name>
         <initializer>= false</initializer>
         <briefdescription>
         </briefdescription>
@@ -367,7 +395,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="43" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -381,7 +409,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="44" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="46" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -395,7 +423,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="45" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="47" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -409,7 +437,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="46" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="48" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -423,7 +451,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="47" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="49" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -437,7 +465,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="48" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -451,7 +479,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="49" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -465,7 +493,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="50" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -479,7 +507,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="51" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="53" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="53" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -493,7 +521,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="52" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -507,7 +535,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="53" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="53" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1aca462206692cefd191733b5987b27887" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -521,7 +549,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="54" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="56" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structstatus__data_1ab12472ca8a5c1819ae6edb5f21b5a9b9" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -535,7 +563,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="55" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="57" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -543,22 +571,22 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="451">
+      <node id="468">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="452">
+      <node id="469">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="451" relation="public-inheritance">
+        <childnode refid="468" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="16" bodyend="56"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="16" bodyend="58"/>
     <listofallmembers>
-      <member refid="structstatus__data_1af5687f03a5f223cffd3a736a8c78a3e9" prot="public" virt="non-virtual"><scope>status_data</scope><name>bond_dimension_has_reached_max</name></member>
+      <member refid="structstatus__data_1ad9cfe0cc4a462c416584066fb9abc28f" prot="public" virt="non-virtual"><scope>status_data</scope><name>chi_lim</name></member>
+      <member refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" prot="public" virt="non-virtual"><scope>status_data</scope><name>chi_lim_has_reached_chi_max</name></member>
       <member refid="structstatus__data_1a394209e7e516250158bc78e854504288" prot="public" virt="non-virtual"><scope>status_data</scope><name>chi_max</name></member>
-      <member refid="structstatus__data_1a4a0b0a001500ae9bc36b29d068f4103d" prot="public" virt="non-virtual"><scope>status_data</scope><name>chi_temp</name></member>
       <member refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" prot="public" virt="non-virtual"><scope>status_data</scope><name>delta_t</name></member>
       <member refid="structstatus__data_1a2642502c4df9c294eb3d70111e57f9b7" prot="public" virt="non-virtual"><scope>status_data</scope><name>energy_dens</name></member>
       <member refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" prot="public" virt="non-virtual"><scope>status_data</scope><name>energy_dens_target</name></member>
@@ -579,7 +607,9 @@
       <member refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" prot="public" virt="non-virtual"><scope>status_data</scope><name>position</name></member>
       <member refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" prot="public" virt="non-virtual"><scope>status_data</scope><name>simu_time</name></member>
       <member refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" prot="public" virt="non-virtual"><scope>status_data</scope><name>simulation_has_converged</name></member>
+      <member refid="structstatus__data_1ad1888c88421c43a27431329438801788" prot="public" virt="non-virtual"><scope>status_data</scope><name>simulation_has_got_stuck</name></member>
       <member refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" prot="public" virt="non-virtual"><scope>status_data</scope><name>simulation_has_saturated</name></member>
+      <member refid="structstatus__data_1abe15010ddc3fee2d541b521bb23dfdb5" prot="public" virt="non-virtual"><scope>status_data</scope><name>simulation_has_stuck_for</name></member>
       <member refid="structstatus__data_1a682a441660e6bf83604320835ee6c20d" prot="public" virt="non-virtual"><scope>status_data</scope><name>simulation_has_succeeded</name></member>
       <member refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" prot="public" virt="non-virtual"><scope>status_data</scope><name>simulation_has_to_stop</name></member>
       <member refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" prot="public" virt="non-virtual"><scope>status_data</scope><name>step</name></member>

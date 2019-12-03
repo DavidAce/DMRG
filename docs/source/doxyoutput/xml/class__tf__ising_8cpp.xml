@@ -10,203 +10,212 @@
     <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <incdepgraph>
-      <node id="1632">
+      <node id="1762">
         <label>list</label>
       </node>
-      <node id="1629">
+      <node id="1759">
         <label>general/nmspc_random_numbers.h</label>
         <link refid="nmspc__random__numbers_8h"/>
-        <childnode refid="1630" relation="include">
+        <childnode refid="1760" relation="include">
         </childnode>
-        <childnode refid="1611" relation="include">
+        <childnode refid="1741" relation="include">
         </childnode>
-        <childnode refid="1627" relation="include">
+        <childnode refid="1757" relation="include">
         </childnode>
-        <childnode refid="1613" relation="include">
+        <childnode refid="1745" relation="include">
         </childnode>
       </node>
-      <node id="1634">
+      <node id="1764">
         <label>functional</label>
       </node>
-      <node id="1617">
+      <node id="1748">
         <label>iomanip</label>
       </node>
-      <node id="1616">
+      <node id="1747">
         <label>iterator</label>
       </node>
-      <node id="1610">
+      <node id="1740">
         <label>class_tf_ising.h</label>
         <link refid="class__tf__ising_8h"/>
-        <childnode refid="1611" relation="include">
+        <childnode refid="1741" relation="include">
         </childnode>
-        <childnode refid="1612" relation="include">
+        <childnode refid="1742" relation="include">
         </childnode>
-        <childnode refid="1617" relation="include">
+        <childnode refid="1748" relation="include">
         </childnode>
-        <childnode refid="1620" relation="include">
+        <childnode refid="1751" relation="include">
         </childnode>
       </node>
-      <node id="1633">
+      <node id="1763">
         <label>cmath</label>
       </node>
-      <node id="1618">
+      <node id="1749">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1619" relation="include">
+        <childnode refid="1750" relation="include">
         </childnode>
-        <childnode refid="1613" relation="include">
+        <childnode refid="1745" relation="include">
         </childnode>
-        <childnode refid="1615" relation="include">
+        <childnode refid="1744" relation="include">
         </childnode>
       </node>
-      <node id="1636">
+      <node id="1766">
         <label>numeric</label>
       </node>
-      <node id="1613">
+      <node id="1745">
         <label>Eigen/Core</label>
       </node>
-      <node id="1638">
+      <node id="1769">
         <label>string</label>
       </node>
-      <node id="1622">
+      <node id="1753">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="1623" relation="include">
+        <childnode refid="1754" relation="include">
         </childnode>
-        <childnode refid="1624" relation="include">
-        </childnode>
-        <childnode refid="1625" relation="include">
+        <childnode refid="1755" relation="include">
         </childnode>
       </node>
-      <node id="1619">
+      <node id="1750">
         <label>experimental/type_traits</label>
       </node>
-      <node id="1639">
-        <label>unordered_set</label>
-      </node>
-      <node id="1615">
+      <node id="1744">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="1609">
+      <node id="1739">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
         <link refid="class__tf__ising_8cpp"/>
-        <childnode refid="1610" relation="include">
+        <childnode refid="1740" relation="include">
         </childnode>
-        <childnode refid="1612" relation="include">
+        <childnode refid="1742" relation="include">
         </childnode>
-        <childnode refid="1626" relation="include">
+        <childnode refid="1756" relation="include">
         </childnode>
-        <childnode refid="1629" relation="include">
+        <childnode refid="1759" relation="include">
         </childnode>
-        <childnode refid="1617" relation="include">
+        <childnode refid="1748" relation="include">
         </childnode>
-        <childnode refid="1631" relation="include">
+        <childnode refid="1761" relation="include">
         </childnode>
-        <childnode refid="1637" relation="include">
+        <childnode refid="1768" relation="include">
         </childnode>
       </node>
-      <node id="1620">
+      <node id="1755">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="1751">
         <label>class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="1621" relation="include">
+        <childnode refid="1752" relation="include">
         </childnode>
-        <childnode refid="1615" relation="include">
+        <childnode refid="1744" relation="include">
         </childnode>
-        <childnode refid="1622" relation="include">
+        <childnode refid="1753" relation="include">
         </childnode>
       </node>
-      <node id="1623">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="1614">
+      <node id="1746">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="1630">
+      <node id="1760">
         <label>random</label>
       </node>
-      <node id="1631">
+      <node id="1770">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="1754">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="1761">
         <label>math/nmspc_math.h</label>
         <link refid="nmspc__math_8h"/>
-        <childnode refid="1611" relation="include">
+        <childnode refid="1741" relation="include">
         </childnode>
-        <childnode refid="1616" relation="include">
+        <childnode refid="1747" relation="include">
         </childnode>
-        <childnode refid="1628" relation="include">
+        <childnode refid="1758" relation="include">
         </childnode>
-        <childnode refid="1632" relation="include">
+        <childnode refid="1762" relation="include">
         </childnode>
-        <childnode refid="1633" relation="include">
+        <childnode refid="1763" relation="include">
         </childnode>
-        <childnode refid="1634" relation="include">
+        <childnode refid="1764" relation="include">
         </childnode>
-        <childnode refid="1621" relation="include">
+        <childnode refid="1752" relation="include">
         </childnode>
-        <childnode refid="1635" relation="include">
+        <childnode refid="1765" relation="include">
         </childnode>
-        <childnode refid="1636" relation="include">
+        <childnode refid="1766" relation="include">
         </childnode>
-        <childnode refid="1613" relation="include">
+        <childnode refid="1767" relation="include">
+        </childnode>
+        <childnode refid="1745" relation="include">
         </childnode>
       </node>
-      <node id="1628">
+      <node id="1743">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="1744" relation="include">
+        </childnode>
+      </node>
+      <node id="1767">
+        <label>optional</label>
+      </node>
+      <node id="1758">
         <label>vector</label>
       </node>
-      <node id="1624">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="1635">
+      <node id="1765">
         <label>utility</label>
       </node>
-      <node id="1611">
+      <node id="1741">
         <label>iostream</label>
       </node>
-      <node id="1626">
+      <node id="1756">
         <label>general/nmspc_quantum_mechanics.h</label>
         <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="1613" relation="include">
+        <childnode refid="1745" relation="include">
         </childnode>
-        <childnode refid="1615" relation="include">
+        <childnode refid="1744" relation="include">
         </childnode>
-        <childnode refid="1627" relation="include">
+        <childnode refid="1757" relation="include">
         </childnode>
-        <childnode refid="1628" relation="include">
+        <childnode refid="1758" relation="include">
         </childnode>
       </node>
-      <node id="1627">
+      <node id="1757">
         <label>complex</label>
       </node>
-      <node id="1637">
+      <node id="1768">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="1638" relation="include">
+        <childnode refid="1769" relation="include">
         </childnode>
-        <childnode refid="1639" relation="include">
+        <childnode refid="1758" relation="include">
         </childnode>
-        <childnode refid="1628" relation="include">
+        <childnode refid="1770" relation="include">
         </childnode>
       </node>
-      <node id="1612">
+      <node id="1742">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1613" relation="include">
+        <childnode refid="1743" relation="include">
         </childnode>
-        <childnode refid="1614" relation="include">
+        <childnode refid="1745" relation="include">
         </childnode>
-        <childnode refid="1615" relation="include">
+        <childnode refid="1746" relation="include">
         </childnode>
-        <childnode refid="1616" relation="include">
+        <childnode refid="1744" relation="include">
         </childnode>
-        <childnode refid="1611" relation="include">
+        <childnode refid="1747" relation="include">
         </childnode>
-        <childnode refid="1617" relation="include">
+        <childnode refid="1741" relation="include">
         </childnode>
-        <childnode refid="1618" relation="include">
+        <childnode refid="1748" relation="include">
+        </childnode>
+        <childnode refid="1749" relation="include">
         </childnode>
       </node>
-      <node id="1625">
-        <label>spdlog/sinks/stdout_sinks.h</label>
-      </node>
-      <node id="1621">
+      <node id="1752">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -307,140 +316,153 @@
 <codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref>)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Improperly<sp/>built<sp/>MPO:<sp/>Full<sp/>lattice<sp/>parameters<sp/>haven&apos;t<sp/>been<sp/>set<sp/>yet.&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.resize(3,<sp/>3,<sp/><ref refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" kindref="member">spin_dim</ref>,<sp/><ref refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" kindref="member">spin_dim</ref>);</highlight></codeline>
 <codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.setZero();</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{1,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-(<ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref><sp/>+<sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>);</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-<ref refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" kindref="member">J_coupling</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>2,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{1,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref><sp/>+<sp/><ref refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" kindref="member">r_ptb_field</ref><sp/>+<sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-<ref refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" kindref="member">J_coupling</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>2,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(Id);</highlight></codeline>
 <codeline lineno="98"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="99"><highlight class="normal"></highlight></codeline>
 <codeline lineno="100" refid="classclass__tf__ising_1a8bc1158637b78a5a2fe28595b667888e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1a8bc1158637b78a5a2fe28595b667888e" kindref="member">class_tf_ising::randomize_hamiltonian</ref>(){</highlight></codeline>
 <codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref><sp/>=<sp/><ref refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" kindref="member">rn::uniform_double</ref>(-<ref refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" kindref="member">w_rnd_strength</ref>,<ref refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" kindref="member">w_rnd_strength</ref>);</highlight></codeline>
 <codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>or<sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.size()&gt;3){</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-(<ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref>+<ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>);</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref>+<ref refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" kindref="member">r_ptb_field</ref><sp/>+<sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
 <codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="105"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="106"><highlight class="normal"></highlight></codeline>
-<codeline lineno="107" refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" kindref="member">class_tf_ising::MPO_reduced_view</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();}</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" kindref="member">MPO_reduced_view</ref>(<ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref>);</highlight></codeline>
-<codeline lineno="110"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"></highlight></codeline>
-<codeline lineno="112" refid="classclass__tf__ising_1a2c1f2691f54c7275ca2b9c4f1ae930ee" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" kindref="member">class_tf_ising::MPO_reduced_view</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(site_energy<sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();}</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>temp<sp/><sp/>=<sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>temp.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-(<ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref>+<ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/>site_energy<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>temp;</highlight></codeline>
-<codeline lineno="117"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"></highlight></codeline>
-<codeline lineno="119" refid="classclass__tf__ising_1ad1d523ab79a7785cafce14c05227a2c9" refkind="member"><highlight class="normal">Eigen::MatrixXcd<sp/><ref refid="classclass__tf__ising_1ad1d523ab79a7785cafce14c05227a2c9" kindref="member">class_tf_ising::single_site_hamiltonian</ref>(</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" kindref="member">position</ref>,</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sites,</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>,</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>[[maybe_unused]],</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>)</highlight><highlight class="keyword"></highlight></codeline>
-<codeline lineno="125"><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight></codeline>
-<codeline lineno="126"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position,<sp/><sp/><sp/><sp/><sp/>sites);</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position<sp/>+<sp/>1,<sp/>sites);</highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-(<ref refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" kindref="member">J_coupling</ref><sp/>*<sp/>SZ[i]<sp/>*<sp/>SZ[j]<sp/>+<sp/><ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref><sp/>*<sp/>0.5*(SX[i]+SX[j]))<sp/>;</highlight></codeline>
+<codeline lineno="107" refid="classclass__tf__ising_1a160460bf80f8dcdae2a803d74eb20f44" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1a160460bf80f8dcdae2a803d74eb20f44" kindref="member">class_tf_ising::perturb_hamiltonian</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>amplitude){</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" kindref="member">r_ptb_field</ref><sp/><sp/>=<sp/>amplitude<sp/>*<sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref><sp/>*<sp/><ref refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" kindref="member">rn::uniform_double</ref>(-1,1);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>or<sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.size()&gt;3){</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref>+<ref refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" kindref="member">r_ptb_field</ref><sp/>+<sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(amplitude<sp/>==<sp/>0.0<sp/>and<sp/><ref refid="classclass__tf__ising_1aafdb9149062801e325b7a5a64ccd990f" kindref="member">is_perturbed</ref>())</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;MPO(&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(<ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>())<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>Should<sp/>have<sp/>unperturbed!&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="classclass__tf__ising_1aafdb9149062801e325b7a5a64ccd990f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1aafdb9149062801e325b7a5a64ccd990f" kindref="member">class_tf_ising::is_perturbed</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" kindref="member">r_ptb_field</ref><sp/>!=<sp/>0.0;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" kindref="member">class_tf_ising::MPO_reduced_view</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" kindref="member">MPO_reduced_view</ref>(<ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref>);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="classclass__tf__ising_1a2c1f2691f54c7275ca2b9c4f1ae930ee" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__tf__ising_1afc97a928a969f5acb416ec035e4243ac" kindref="member">class_tf_ising::MPO_reduced_view</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(site_energy<sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>temp<sp/><sp/>=<sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>temp.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref><sp/>+<sp/>(<ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref><sp/>+<sp/><ref refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" kindref="member">r_ptb_field</ref>))<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/>site_energy<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>temp;</highlight></codeline>
 <codeline lineno="130"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="131"><highlight class="normal"></highlight></codeline>
-<codeline lineno="132"><highlight class="normal"></highlight></codeline>
-<codeline lineno="133" refid="classclass__tf__ising_1af21048663f687817dfd8ff4977ac67d6" refkind="member"><highlight class="normal">std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__tf__ising_1af21048663f687817dfd8ff4977ac67d6" kindref="member">class_tf_ising::clone</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_tf_ising&gt;(*this);}</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"></highlight></codeline>
-<codeline lineno="135" refid="classclass__tf__ising_1aac43f4b1d0a820dff54456bf0ab5462a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1aac43f4b1d0a820dff54456bf0ab5462a" kindref="member">class_tf_ising::get_spin_dimension</ref>()</highlight><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" kindref="member">spin_dim</ref>;}</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_tf_ising::get_energy_reduced()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>e_reduced;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_tf_ising::get_random_field()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>r_rnd_field;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_tf_ising::get_randomness_strength()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>w_rnd_strength;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="139"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="140"><highlight class="normal"></highlight></codeline>
-<codeline lineno="141" refid="classclass__tf__ising_1a70f96b2035dde9965338d31da3d0ce54" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1a70f96b2035dde9965338d31da3d0ce54" kindref="member">class_tf_ising::print_parameter_names</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPO&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;g&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;r&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;e&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;d&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="152"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="132" refid="classclass__tf__ising_1ad1d523ab79a7785cafce14c05227a2c9" refkind="member"><highlight class="normal">Eigen::MatrixXcd<sp/><ref refid="classclass__tf__ising_1ad1d523ab79a7785cafce14c05227a2c9" kindref="member">class_tf_ising::single_site_hamiltonian</ref>(</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" kindref="member">position</ref>,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sites,</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>,</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>[[maybe_unused]],</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>)</highlight><highlight class="keyword"></highlight></codeline>
+<codeline lineno="138"><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight></codeline>
+<codeline lineno="139"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position,<sp/><sp/><sp/><sp/><sp/>sites);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position<sp/>+<sp/>1,<sp/>sites);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-(<ref refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" kindref="member">J_coupling</ref><sp/>*<sp/>SZ[i]<sp/>*<sp/>SZ[j]<sp/>+<sp/><ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref><sp/>*<sp/>0.5*(SX[i]+SX[j]))<sp/>;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146" refid="classclass__tf__ising_1af21048663f687817dfd8ff4977ac67d6" refkind="member"><highlight class="normal">std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__tf__ising_1af21048663f687817dfd8ff4977ac67d6" kindref="member">class_tf_ising::clone</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_tf_ising&gt;(*this);}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148" refid="classclass__tf__ising_1aac43f4b1d0a820dff54456bf0ab5462a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1aac43f4b1d0a820dff54456bf0ab5462a" kindref="member">class_tf_ising::get_spin_dimension</ref>()</highlight><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" kindref="member">spin_dim</ref>;}</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_tf_ising::get_energy_reduced()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>e_reduced;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_tf_ising::get_random_field()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>r_rnd_field;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_tf_ising::get_randomness_strength()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>w_rnd_strength;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="153"><highlight class="normal"></highlight></codeline>
-<codeline lineno="154" refid="classclass__tf__ising_1a47541969c35f18f44ae46bc476ba0807" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1a47541969c35f18f44ae46bc476ba0807" kindref="member">class_tf_ising::print_parameter_values</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="154" refid="classclass__tf__ising_1a70f96b2035dde9965338d31da3d0ce54" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1a70f96b2035dde9965338d31da3d0ce54" kindref="member">class_tf_ising::print_parameter_names</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout</highlight></codeline>
 <codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>()</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" kindref="member">J_coupling</ref></highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref></highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref></highlight></codeline>
-<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" kindref="member">w_rnd_strength</ref></highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref></highlight></codeline>
-<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" kindref="member">spin_dim</ref></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPO&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;g&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;r&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;w&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;e&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;d&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
 <codeline lineno="165"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="166"><highlight class="normal"></highlight></codeline>
-<codeline lineno="167"><highlight class="normal"></highlight></codeline>
-<codeline lineno="168" refid="classclass__tf__ising_1aadefa2a6540891e38dd2d449d2141056" refkind="member"><highlight class="normal">std::vector&lt;std::string&gt;<sp/><ref refid="classclass__tf__ising_1aadefa2a6540891e38dd2d449d2141056" kindref="member">class_tf_ising::get_parameter_names</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{</highlight><highlight class="stringliteral">&quot;position&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_coupling&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;g_mag_field&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;r_rnd_field&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;w_rnd_strength&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;e_reduced&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;spin_dim&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
-<codeline lineno="177"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="178"><highlight class="normal"></highlight></codeline>
-<codeline lineno="179"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="180"><highlight class="normal"></highlight><highlight class="comment">//std::vector&lt;double&gt;<sp/>class_tf_ising::get_random_parameter_values()<sp/>const<sp/>{</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="181"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>{(double)get_position(),</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="182"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="183"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_rnd,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="184"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_log_mean,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="185"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_log_mean,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="186"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_avg,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="187"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_avg,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_sigma,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="189"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_sigma,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="190"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lambda,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="191"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>delta,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="192"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e_reduced,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="193"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(double)spin_dim</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="194"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>};</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="195"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="196"><highlight class="normal"></highlight></codeline>
-<codeline lineno="197" refid="classclass__tf__ising_1af71d009709fc2566715b5fa00138576d" refkind="member"><highlight class="normal">std::vector&lt;double&gt;<sp/><ref refid="classclass__tf__ising_1af71d009709fc2566715b5fa00138576d" kindref="member">class_tf_ising::get_parameter_values</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{(double)<ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>(),</highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" kindref="member">J_coupling</ref>,</highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref>,</highlight></codeline>
-<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref>,</highlight></codeline>
-<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" kindref="member">w_rnd_strength</ref>,</highlight></codeline>
-<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref>,</highlight></codeline>
-<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(double)<ref refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" kindref="member">spin_dim</ref></highlight></codeline>
-<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
-<codeline lineno="206"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="207"><highlight class="normal"></highlight></codeline>
-<codeline lineno="208"><highlight class="normal"></highlight></codeline>
-<codeline lineno="209" refid="classclass__tf__ising_1ad98bb3c2c80fd28a07260cde6e32ed26" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1ad98bb3c2c80fd28a07260cde6e32ed26" kindref="member">class_tf_ising::set_full_lattice_parameters</ref>([[maybe_unused]]<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>chain_parameters,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>reverse){</highlight></codeline>
-<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>average<sp/>J_rnd<sp/>on<sp/>the<sp/>whole<sp/>state</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>r_rnd_list;</highlight></codeline>
-<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(reverse){</highlight></codeline>
-<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref><sp/>:<sp/>chain_parameters){</highlight></codeline>
-<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>r_rnd_list.emplace_front(<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref>[3]);</highlight></codeline>
-<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref><sp/>:<sp/>chain_parameters){</highlight></codeline>
-<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>r_rnd_list.push_back(<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref>[3]);</highlight></codeline>
-<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="223"><highlight class="normal"></highlight></codeline>
-<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref><sp/><sp/>=<sp/>*std::next(r_rnd_list.begin(),<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>());</highlight></codeline>
-<codeline lineno="225"><highlight class="normal"></highlight></codeline>
-<codeline lineno="226"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="167" refid="classclass__tf__ising_1a47541969c35f18f44ae46bc476ba0807" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1a47541969c35f18f44ae46bc476ba0807" kindref="member">class_tf_ising::print_parameter_values</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>()</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" kindref="member">J_coupling</ref></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" kindref="member">w_rnd_strength</ref></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" kindref="member">spin_dim</ref></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181" refid="classclass__tf__ising_1aadefa2a6540891e38dd2d449d2141056" refkind="member"><highlight class="normal">std::vector&lt;std::string&gt;<sp/><ref refid="classclass__tf__ising_1aadefa2a6540891e38dd2d449d2141056" kindref="member">class_tf_ising::get_parameter_names</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{</highlight><highlight class="stringliteral">&quot;position&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_coupling&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;g_mag_field&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;r_rnd_field&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;w_rnd_strength&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;e_reduced&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;spin_dim&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="190"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight><highlight class="comment">//std::vector&lt;double&gt;<sp/>class_tf_ising::get_random_parameter_values()<sp/>const<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>{(double)get_position(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_rnd,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_log_mean,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_log_mean,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_avg,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_avg,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_sigma,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_sigma,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lambda,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>delta,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e_reduced,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(double)spin_dim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>};</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210" refid="classclass__tf__ising_1af71d009709fc2566715b5fa00138576d" refkind="member"><highlight class="normal">std::vector&lt;double&gt;<sp/><ref refid="classclass__tf__ising_1af71d009709fc2566715b5fa00138576d" kindref="member">class_tf_ising::get_parameter_values</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{(double)<ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>(),</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a93f6149a8edc9151c9d3cd855f2af783" kindref="member">J_coupling</ref>,</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a34f0b22b247fb1f3544bdc64d8d0cc96" kindref="member">g_mag_field</ref>,</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref>,</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" kindref="member">w_rnd_strength</ref>,</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref>,</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(double)<ref refid="classclass__tf__ising_1adea016703597afab96b69746c28eb883" kindref="member">spin_dim</ref></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="219"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="classclass__tf__ising_1ad98bb3c2c80fd28a07260cde6e32ed26" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__tf__ising_1ad98bb3c2c80fd28a07260cde6e32ed26" kindref="member">class_tf_ising::set_full_lattice_parameters</ref>([[maybe_unused]]<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>chain_parameters,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>reverse){</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>average<sp/>J_rnd<sp/>on<sp/>the<sp/>whole<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>r_rnd_list;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(reverse){</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;params<sp/>:<sp/>chain_parameters){</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>r_rnd_list.emplace_front(params[3]);</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;params<sp/>:<sp/>chain_parameters){</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>r_rnd_list.push_back(params[3]);</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" kindref="member">r_rnd_field</ref><sp/><sp/>=<sp/>*std::next(r_rnd_list.begin(),<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>());</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal">}</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp"/>
   </compounddef>

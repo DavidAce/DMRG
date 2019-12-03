@@ -9,8 +9,7 @@
     <includes local="no">vector</includes>
     <includes local="no">spdlog/sinks/stdout_color_sinks.h</includes>
     <includes local="no">spdlog/spdlog.h</includes>
-    <includedby refid="class__algorithm__base_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h</includedby>
-    <includedby refid="class__infinite__state_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h</includedby>
+    <includedby refid="class__state__infinite_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.h</includedby>
     <includedby refid="matrix__product__dense_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</includedby>
     <includedby refid="matrix__product__sparse_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</includedby>
     <includedby refid="matrix__product__stl_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</includedby>
@@ -19,346 +18,262 @@
     <includedby refid="matrix__recast_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</includedby>
     <includedby refid="class__eigsolver_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</includedby>
     <incdepgraph>
-      <node id="1352">
+      <node id="1424">
         <label>map</label>
       </node>
-      <node id="1356">
+      <node id="1428">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="1354">
+      <node id="1426">
         <label>vector</label>
       </node>
-      <node id="1355">
+      <node id="1427">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="1351">
+      <node id="1423">
         <label>array</label>
       </node>
-      <node id="1350">
+      <node id="1422">
         <label>iostream</label>
       </node>
-      <node id="1349">
+      <node id="1421">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1350" relation="include">
+        <childnode refid="1422" relation="include">
         </childnode>
-        <childnode refid="1351" relation="include">
+        <childnode refid="1423" relation="include">
         </childnode>
-        <childnode refid="1352" relation="include">
+        <childnode refid="1424" relation="include">
         </childnode>
-        <childnode refid="1353" relation="include">
+        <childnode refid="1425" relation="include">
         </childnode>
-        <childnode refid="1354" relation="include">
+        <childnode refid="1426" relation="include">
         </childnode>
-        <childnode refid="1355" relation="include">
+        <childnode refid="1427" relation="include">
         </childnode>
-        <childnode refid="1356" relation="include">
+        <childnode refid="1428" relation="include">
         </childnode>
       </node>
-      <node id="1353">
+      <node id="1425">
         <label>complex</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="1364">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
-        <link refid="class__f_d_m_r_g_8cpp"/>
-      </node>
-      <node id="1368">
+      <node id="1431">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
         <link refid="class__algorithm__infinite_8cpp"/>
       </node>
-      <node id="1378">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
-        <link refid="ops_8cpp"/>
-      </node>
-      <node id="1377">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
-        <link refid="finite_2measure_8cpp"/>
-      </node>
-      <node id="1393">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
-        <link refid="finite_2opt_8cpp"/>
-      </node>
-      <node id="1376">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp</label>
-        <link refid="finite_2h5pp_8cpp"/>
-      </node>
-      <node id="1381">
+      <node id="1442">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
         <link refid="infinite_2measure_8cpp"/>
       </node>
-      <node id="1360">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.h</label>
-        <link refid="class__algorithm__finite_8h"/>
-        <childnode refid="1361" relation="include">
-        </childnode>
-        <childnode refid="1362" relation="include">
-        </childnode>
-        <childnode refid="1365" relation="include">
-        </childnode>
-      </node>
-      <node id="1369">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h</label>
-        <link refid="class__i_d_m_r_g_8h"/>
-        <childnode refid="1363" relation="include">
-        </childnode>
-        <childnode refid="1370" relation="include">
-        </childnode>
-      </node>
-      <node id="1379">
+      <node id="1438">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
         <link refid="infinite_2debug_8cpp"/>
       </node>
-      <node id="1374">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
-        <link refid="class__infinite__state_8cpp"/>
+      <node id="1435">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
       </node>
-      <node id="1362">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.h</label>
-        <link refid="class__f_d_m_r_g_8h"/>
-        <childnode refid="1363" relation="include">
-        </childnode>
-        <childnode refid="1364" relation="include">
-        </childnode>
-      </node>
-      <node id="1375">
+      <node id="1436">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
         <link refid="views_8cpp"/>
       </node>
-      <node id="1372">
+      <node id="1440">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
+        <link refid="infinite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="1434">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
         <link refid="class__i_t_e_b_d_8cpp"/>
       </node>
-      <node id="1398">
+      <node id="1459">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</label>
         <link refid="arpackpp__solver_8h"/>
-        <childnode refid="1386" relation="include">
+        <childnode refid="1448" relation="include">
         </childnode>
-        <childnode refid="1389" relation="include">
+        <childnode refid="1451" relation="include">
         </childnode>
       </node>
-      <node id="1385">
+      <node id="1447">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</label>
         <link refid="matrix__product__dense_8h"/>
-        <childnode refid="1386" relation="include">
+        <childnode refid="1448" relation="include">
         </childnode>
-        <childnode refid="1387" relation="include">
+        <childnode refid="1449" relation="include">
         </childnode>
       </node>
-      <node id="1380">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/h5pp.cpp</label>
-        <link refid="infinite_2h5pp_8cpp"/>
+      <node id="1437">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
+        <link refid="finite_2io_2h5pp_8cpp"/>
       </node>
-      <node id="1361">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
-        <link refid="class__algorithm__finite_8cpp"/>
-      </node>
-      <node id="1366">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
-        <link refid="class__x_d_m_r_g_8cpp"/>
-      </node>
-      <node id="1397">
+      <node id="1458">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</label>
         <link refid="matrix__product__hamiltonian_8h"/>
-        <childnode refid="1386" relation="include">
+        <childnode refid="1448" relation="include">
         </childnode>
-        <childnode refid="1374" relation="include">
+        <childnode refid="1435" relation="include">
         </childnode>
-        <childnode refid="1392" relation="include">
+        <childnode refid="1454" relation="include">
         </childnode>
-        <childnode refid="1393" relation="include">
-        </childnode>
-        <childnode refid="1383" relation="include">
+        <childnode refid="1445" relation="include">
         </childnode>
       </node>
-      <node id="1386">
+      <node id="1441">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp</label>
+        <link refid="infinite_2io_2h5pp__tables_8cpp"/>
+      </node>
+      <node id="1448">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
         <link refid="arpackpp__solver_8cpp"/>
       </node>
-      <node id="1395">
+      <node id="1456">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</label>
         <link refid="matrix__product__stl_8h"/>
-        <childnode refid="1386" relation="include">
+        <childnode refid="1448" relation="include">
         </childnode>
-        <childnode refid="1396" relation="include">
+        <childnode refid="1457" relation="include">
         </childnode>
-        <childnode refid="1391" relation="include">
-        </childnode>
-      </node>
-      <node id="1367">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.h</label>
-        <link refid="class__algorithm__infinite_8h"/>
-        <childnode refid="1368" relation="include">
-        </childnode>
-        <childnode refid="1369" relation="include">
-        </childnode>
-        <childnode refid="1371" relation="include">
+        <childnode refid="1453" relation="include">
         </childnode>
       </node>
-      <node id="1363">
+      <node id="1430">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.h</label>
+        <link refid="class__state__infinite_8h"/>
+        <childnode refid="1431" relation="include">
+        </childnode>
+        <childnode refid="1432" relation="include">
+        </childnode>
+        <childnode refid="1433" relation="include">
+        </childnode>
+        <childnode refid="1434" relation="include">
+        </childnode>
+        <childnode refid="1435" relation="include">
+        </childnode>
+        <childnode refid="1436" relation="include">
+        </childnode>
+        <childnode refid="1437" relation="include">
+        </childnode>
+        <childnode refid="1438" relation="include">
+        </childnode>
+        <childnode refid="1439" relation="include">
+        </childnode>
+        <childnode refid="1440" relation="include">
+        </childnode>
+        <childnode refid="1441" relation="include">
+        </childnode>
+        <childnode refid="1442" relation="include">
+        </childnode>
+        <childnode refid="1443" relation="include">
+        </childnode>
+        <childnode refid="1444" relation="include">
+        </childnode>
+        <childnode refid="1445" relation="include">
+        </childnode>
+        <childnode refid="1446" relation="include">
+        </childnode>
+      </node>
+      <node id="1432">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="1358">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h</label>
-        <link refid="class__algorithm__base_8h"/>
-        <childnode refid="1359" relation="include">
-        </childnode>
-        <childnode refid="1360" relation="include">
-        </childnode>
-        <childnode refid="1367" relation="include">
-        </childnode>
-      </node>
-      <node id="1365">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.h</label>
-        <link refid="class__x_d_m_r_g_8h"/>
-        <childnode refid="1363" relation="include">
-        </childnode>
-        <childnode refid="1366" relation="include">
-        </childnode>
-      </node>
-      <node id="1394">
+      <node id="1455">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</label>
         <link refid="matrix__product__sparse_8h"/>
-        <childnode refid="1386" relation="include">
+        <childnode refid="1448" relation="include">
         </childnode>
-        <childnode refid="1387" relation="include">
+        <childnode refid="1449" relation="include">
         </childnode>
-        <childnode refid="1391" relation="include">
+        <childnode refid="1453" relation="include">
         </childnode>
       </node>
-      <node id="1387">
+      <node id="1449">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</label>
         <link refid="matrix__recast_8h"/>
-        <childnode refid="1388" relation="include">
+        <childnode refid="1450" relation="include">
         </childnode>
-        <childnode refid="1389" relation="include">
+        <childnode refid="1451" relation="include">
         </childnode>
       </node>
-      <node id="1388">
+      <node id="1450">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp</label>
         <link refid="matrix__recast_8cpp"/>
       </node>
-      <node id="1382">
+      <node id="1444">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
         <link refid="infinite_2mps_8cpp"/>
       </node>
-      <node id="1371">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h</label>
-        <link refid="class__i_t_e_b_d_8h"/>
-        <childnode refid="1363" relation="include">
-        </childnode>
-        <childnode refid="1372" relation="include">
-        </childnode>
-      </node>
-      <node id="1391">
+      <node id="1453">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
         <link refid="ceres__subspace_8cpp"/>
       </node>
-      <node id="1370">
+      <node id="1439">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
+        <link refid="env_8cpp"/>
+      </node>
+      <node id="1433">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
         <link refid="class__i_d_m_r_g_8cpp"/>
       </node>
-      <node id="1357">
+      <node id="1429">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1358" relation="include">
+        <childnode refid="1430" relation="include">
         </childnode>
-        <childnode refid="1373" relation="include">
+        <childnode refid="1447" relation="include">
         </childnode>
-        <childnode refid="1385" relation="include">
+        <childnode refid="1455" relation="include">
         </childnode>
-        <childnode refid="1394" relation="include">
+        <childnode refid="1456" relation="include">
         </childnode>
-        <childnode refid="1395" relation="include">
+        <childnode refid="1458" relation="include">
         </childnode>
-        <childnode refid="1397" relation="include">
+        <childnode refid="1459" relation="include">
         </childnode>
-        <childnode refid="1398" relation="include">
+        <childnode refid="1449" relation="include">
         </childnode>
-        <childnode refid="1387" relation="include">
-        </childnode>
-        <childnode refid="1389" relation="include">
+        <childnode refid="1451" relation="include">
         </childnode>
       </node>
-      <node id="1390">
+      <node id="1452">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
         <link refid="class__eigsolver_8cpp"/>
       </node>
-      <node id="1359">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
-        <link refid="class__algorithm__base_8cpp"/>
-      </node>
-      <node id="1389">
+      <node id="1451">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
         <link refid="class__eigsolver_8h"/>
-        <childnode refid="1390" relation="include">
+        <childnode refid="1452" relation="include">
         </childnode>
-        <childnode refid="1374" relation="include">
+        <childnode refid="1435" relation="include">
         </childnode>
-        <childnode refid="1375" relation="include">
+        <childnode refid="1436" relation="include">
         </childnode>
-        <childnode refid="1391" relation="include">
+        <childnode refid="1453" relation="include">
         </childnode>
-        <childnode refid="1392" relation="include">
+        <childnode refid="1454" relation="include">
         </childnode>
-        <childnode refid="1393" relation="include">
+        <childnode refid="1442" relation="include">
         </childnode>
-        <childnode refid="1381" relation="include">
-        </childnode>
-        <childnode refid="1383" relation="include">
+        <childnode refid="1445" relation="include">
         </childnode>
       </node>
-      <node id="1384">
+      <node id="1446">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</label>
         <link refid="infinite_2print_8cpp"/>
       </node>
-      <node id="1373">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.h</label>
-        <link refid="class__infinite__state_8h"/>
-        <childnode refid="1368" relation="include">
-        </childnode>
-        <childnode refid="1363" relation="include">
-        </childnode>
-        <childnode refid="1364" relation="include">
-        </childnode>
-        <childnode refid="1370" relation="include">
-        </childnode>
-        <childnode refid="1372" relation="include">
-        </childnode>
-        <childnode refid="1374" relation="include">
-        </childnode>
-        <childnode refid="1375" relation="include">
-        </childnode>
-        <childnode refid="1376" relation="include">
-        </childnode>
-        <childnode refid="1377" relation="include">
-        </childnode>
-        <childnode refid="1378" relation="include">
-        </childnode>
-        <childnode refid="1379" relation="include">
-        </childnode>
-        <childnode refid="1380" relation="include">
-        </childnode>
-        <childnode refid="1381" relation="include">
-        </childnode>
-        <childnode refid="1382" relation="include">
-        </childnode>
-        <childnode refid="1383" relation="include">
-        </childnode>
-        <childnode refid="1384" relation="include">
-        </childnode>
+      <node id="1443">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mpo.cpp</label>
+        <link refid="infinite_2mpo_8cpp"/>
       </node>
-      <node id="1392">
+      <node id="1454">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
         <link refid="ground__state_8cpp"/>
       </node>
-      <node id="1396">
+      <node id="1457">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp</label>
         <link refid="matrix__product__stl_8cpp"/>
       </node>
-      <node id="1383">
+      <node id="1445">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
       </node>
@@ -378,8 +293,8 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-06-07.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NMSPC_EIGUTILS_H</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NMSPC_EIGUTILS_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;array&gt;</highlight><highlight class="normal"></highlight></codeline>
@@ -429,10 +344,10 @@
 <codeline lineno="53" refid="classeigutils_1_1eig_config_1abd0743c40a9b0e27b48f780f76cbaf7c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigSetting::Type</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>type<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">eigSetting::Type::REAL</ref>;</highlight></codeline>
 <codeline lineno="54" refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>compute_eigvecs<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="55" refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>remove_phase<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="56" refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><ref refid="namespacesettings_1_1precision_1a83177d10f491bd1482cdca3132e4dfde" kindref="member">eigThreshold</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1e-12;</highlight></codeline>
-<codeline lineno="57" refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1_1precision_1a538b01f0a7fe27f48d7980bd7630bd0e" kindref="member">eigMaxIter</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2000;</highlight></codeline>
+<codeline lineno="56" refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/>eigThreshold<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1e-12;</highlight></codeline>
+<codeline lineno="57" refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>eigMaxIter<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2000;</highlight></codeline>
 <codeline lineno="58" refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>eigMaxNev<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="59" refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373" kindref="member">eigMaxNcv</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>16;</highlight></codeline>
+<codeline lineno="59" refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>eigMaxNcv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>16;</highlight></codeline>
 <codeline lineno="60" refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::complex&lt;double&gt;<sp/><sp/>sigma<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::numeric_limits&lt;std::complex&lt;double&gt;&gt;::quiet_NaN();<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sigma<sp/>value<sp/>for<sp/>shift-invert<sp/>mode.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
 <codeline lineno="62" refid="classeigutils_1_1eig_config_1a0295a6af70fca7683cbf942a0b9bcc0b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classeigutils_1_1eig_config_1a0295a6af70fca7683cbf942a0b9bcc0b" kindref="member">eigConfig</ref>()<sp/>{</highlight></codeline>
@@ -614,10 +529,6 @@
 <codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="239"><highlight class="normal"></highlight></codeline>
 <codeline lineno="240"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="241"><highlight class="normal"></highlight></codeline>
-<codeline lineno="242"><highlight class="normal"></highlight></codeline>
-<codeline lineno="243"><highlight class="normal"></highlight></codeline>
-<codeline lineno="244"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//NMSPC_EIGUTILS_H</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h"/>
   </compounddef>

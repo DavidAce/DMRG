@@ -39,9 +39,9 @@ Includes
 
 - ``state/class_environment.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_environment.h`)
 
-- ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
-
 - ``state/class_mps_2site.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.h`)
+
+- ``state/class_state_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.h`)
 
 - ``tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`)
 

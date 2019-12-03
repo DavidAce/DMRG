@@ -37,6 +37,8 @@ Includes
 
 - ``class_selfdual_tf_rf_ising.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.h`)
 
+- ``class_selfdual_tf_rf_ising_normal.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising_normal.h`)
+
 - ``class_tf_ising.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.h`)
 
 - ``math/nmspc_math.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_math.h`)

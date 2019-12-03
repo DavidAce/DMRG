@@ -3,7 +3,7 @@
   <compounddef id="mps-internals_8cpp" kind="file" language="C++">
     <compoundname>mps-internals.cpp</compoundname>
     <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
-    <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
+    <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
     <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
     <includes refid="class__environment_8h" local="no">state/class_environment.h</includes>
     <includes refid="nmspc__random__numbers_8h" local="no">general/nmspc_random_numbers.h</includes>
@@ -11,231 +11,265 @@
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <includes local="no">bitset</includes>
     <incdepgraph>
-      <node id="2484">
+      <node id="2944">
+        <label>list</label>
+      </node>
+      <node id="2970">
         <label>general/nmspc_random_numbers.h</label>
         <link refid="nmspc__random__numbers_8h"/>
-        <childnode refid="2485" relation="include">
+        <childnode refid="2971" relation="include">
         </childnode>
-        <childnode refid="2466" relation="include">
+        <childnode refid="2951" relation="include">
         </childnode>
-        <childnode refid="2477" relation="include">
+        <childnode refid="2943" relation="include">
         </childnode>
-        <childnode refid="2462" relation="include">
+        <childnode refid="2954" relation="include">
         </childnode>
       </node>
-      <node id="2467">
+      <node id="2963">
         <label>iomanip</label>
       </node>
-      <node id="2465">
+      <node id="2962">
         <label>iterator</label>
       </node>
-      <node id="2457">
+      <node id="2939">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</label>
         <link refid="mps-internals_8cpp"/>
-        <childnode refid="2458" relation="include">
+        <childnode refid="2940" relation="include">
         </childnode>
-        <childnode refid="2476" relation="include">
+        <childnode refid="2956" relation="include">
         </childnode>
-        <childnode refid="2483" relation="include">
+        <childnode refid="2969" relation="include">
         </childnode>
-        <childnode refid="2479" relation="include">
+        <childnode refid="2958" relation="include">
         </childnode>
-        <childnode refid="2484" relation="include">
+        <childnode refid="2970" relation="include">
         </childnode>
-        <childnode refid="2486" relation="include">
+        <childnode refid="2972" relation="include">
         </childnode>
-        <childnode refid="2488" relation="include">
+        <childnode refid="2973" relation="include">
         </childnode>
-        <childnode refid="2490" relation="include">
+        <childnode refid="2975" relation="include">
         </childnode>
       </node>
-      <node id="2468">
+      <node id="2956">
+        <label>state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="2941" relation="include">
+        </childnode>
+        <childnode refid="2943" relation="include">
+        </childnode>
+        <childnode refid="2957" relation="include">
+        </childnode>
+        <childnode refid="2958" relation="include">
+        </childnode>
+        <childnode refid="2967" relation="include">
+        </childnode>
+        <childnode refid="2968" relation="include">
+        </childnode>
+        <childnode refid="2954" relation="include">
+        </childnode>
+        <childnode refid="2955" relation="include">
+        </childnode>
+      </node>
+      <node id="2964">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2469" relation="include">
+        <childnode refid="2965" relation="include">
         </childnode>
-        <childnode refid="2462" relation="include">
+        <childnode refid="2954" relation="include">
         </childnode>
-        <childnode refid="2464" relation="include">
+        <childnode refid="2955" relation="include">
         </childnode>
       </node>
-      <node id="2462">
+      <node id="2954">
         <label>Eigen/Core</label>
       </node>
-      <node id="2460">
+      <node id="2942">
         <label>string</label>
       </node>
-      <node id="2474">
+      <node id="2949">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2475" relation="include">
+        <childnode refid="2950" relation="include">
         </childnode>
-        <childnode refid="2466" relation="include">
+        <childnode refid="2951" relation="include">
         </childnode>
       </node>
-      <node id="2470">
+      <node id="2946">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2471" relation="include">
+        <childnode refid="2947" relation="include">
         </childnode>
-        <childnode refid="2472" relation="include">
-        </childnode>
-        <childnode refid="2473" relation="include">
+        <childnode refid="2948" relation="include">
         </childnode>
       </node>
-      <node id="2469">
+      <node id="2965">
         <label>experimental/type_traits</label>
       </node>
-      <node id="2458">
+      <node id="2940">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="2459" relation="include">
+        <childnode refid="2941" relation="include">
         </childnode>
-        <childnode refid="2460" relation="include">
+        <childnode refid="2942" relation="include">
         </childnode>
-        <childnode refid="2461" relation="include">
+        <childnode refid="2943" relation="include">
         </childnode>
-        <childnode refid="2470" relation="include">
+        <childnode refid="2944" relation="include">
         </childnode>
-        <childnode refid="2474" relation="include">
+        <childnode refid="2945" relation="include">
+        </childnode>
+        <childnode refid="2946" relation="include">
+        </childnode>
+        <childnode refid="2949" relation="include">
+        </childnode>
+        <childnode refid="2952" relation="include">
+        </childnode>
+        <childnode refid="2954" relation="include">
+        </childnode>
+        <childnode refid="2955" relation="include">
         </childnode>
       </node>
-      <node id="2489">
-        <label>unordered_set</label>
-      </node>
-      <node id="2464">
+      <node id="2955">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2479">
+      <node id="2958">
         <label>state/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="2459" relation="include">
+        <childnode refid="2941" relation="include">
         </childnode>
-        <childnode refid="2461" relation="include">
+        <childnode refid="2959" relation="include">
         </childnode>
-        <childnode refid="2480" relation="include">
+        <childnode refid="2966" relation="include">
         </childnode>
       </node>
-      <node id="2482">
+      <node id="2948">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="2968">
         <label>model/class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="2459" relation="include">
+        <childnode refid="2941" relation="include">
         </childnode>
-        <childnode refid="2464" relation="include">
+        <childnode refid="2955" relation="include">
         </childnode>
-        <childnode refid="2470" relation="include">
+        <childnode refid="2946" relation="include">
         </childnode>
       </node>
-      <node id="2471">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="2463">
+      <node id="2961">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="2485">
+      <node id="2971">
         <label>random</label>
       </node>
-      <node id="2476">
-        <label>state/class_finite_state.h</label>
-        <link refid="class__finite__state_8h"/>
-        <childnode refid="2459" relation="include">
+      <node id="2974">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="2952">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="2951" relation="include">
         </childnode>
-        <childnode refid="2477" relation="include">
-        </childnode>
-        <childnode refid="2478" relation="include">
-        </childnode>
-        <childnode refid="2461" relation="include">
-        </childnode>
-        <childnode refid="2479" relation="include">
-        </childnode>
-        <childnode refid="2481" relation="include">
-        </childnode>
-        <childnode refid="2482" relation="include">
+        <childnode refid="2953" relation="include">
         </childnode>
       </node>
-      <node id="2490">
+      <node id="2947">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="2975">
         <label>bitset</label>
       </node>
-      <node id="2478">
+      <node id="2967">
+        <label>state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="2943" relation="include">
+        </childnode>
+        <childnode refid="2957" relation="include">
+        </childnode>
+        <childnode refid="2955" relation="include">
+        </childnode>
+      </node>
+      <node id="2960">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="2955" relation="include">
+        </childnode>
+      </node>
+      <node id="2957">
         <label>optional</label>
       </node>
-      <node id="2487">
+      <node id="2945">
         <label>vector</label>
       </node>
-      <node id="2480">
+      <node id="2966">
         <label>spdlog/fmt/fmt.h</label>
       </node>
-      <node id="2472">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      <node id="2953">
+        <label>sstream</label>
       </node>
-      <node id="2483">
+      <node id="2969">
         <label>state/class_mps_2site.h</label>
         <link refid="class__mps__2site_8h"/>
-        <childnode refid="2459" relation="include">
+        <childnode refid="2941" relation="include">
         </childnode>
-        <childnode refid="2461" relation="include">
+        <childnode refid="2959" relation="include">
         </childnode>
       </node>
-      <node id="2466">
+      <node id="2951">
         <label>iostream</label>
       </node>
-      <node id="2475">
+      <node id="2950">
         <label>chrono</label>
       </node>
-      <node id="2486">
+      <node id="2972">
         <label>general/nmspc_quantum_mechanics.h</label>
         <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="2462" relation="include">
+        <childnode refid="2954" relation="include">
         </childnode>
-        <childnode refid="2464" relation="include">
+        <childnode refid="2955" relation="include">
         </childnode>
-        <childnode refid="2477" relation="include">
+        <childnode refid="2943" relation="include">
         </childnode>
-        <childnode refid="2487" relation="include">
+        <childnode refid="2945" relation="include">
         </childnode>
       </node>
-      <node id="2477">
+      <node id="2943">
         <label>complex</label>
       </node>
-      <node id="2488">
+      <node id="2973">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="2460" relation="include">
+        <childnode refid="2942" relation="include">
         </childnode>
-        <childnode refid="2489" relation="include">
+        <childnode refid="2945" relation="include">
         </childnode>
-        <childnode refid="2487" relation="include">
+        <childnode refid="2974" relation="include">
         </childnode>
       </node>
-      <node id="2461">
+      <node id="2959">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2462" relation="include">
+        <childnode refid="2960" relation="include">
         </childnode>
-        <childnode refid="2463" relation="include">
+        <childnode refid="2954" relation="include">
         </childnode>
-        <childnode refid="2464" relation="include">
+        <childnode refid="2961" relation="include">
         </childnode>
-        <childnode refid="2465" relation="include">
+        <childnode refid="2955" relation="include">
         </childnode>
-        <childnode refid="2466" relation="include">
+        <childnode refid="2962" relation="include">
         </childnode>
-        <childnode refid="2467" relation="include">
+        <childnode refid="2951" relation="include">
         </childnode>
-        <childnode refid="2468" relation="include">
+        <childnode refid="2963" relation="include">
+        </childnode>
+        <childnode refid="2964" relation="include">
         </childnode>
       </node>
-      <node id="2473">
-        <label>spdlog/sinks/stdout_sinks.h</label>
-      </node>
-      <node id="2459">
+      <node id="2941">
         <label>memory</label>
-      </node>
-      <node id="2481">
-        <label>state/class_vidal_site.h</label>
-        <link refid="class__vidal__site_8h"/>
-        <childnode refid="2461" relation="include">
-        </childnode>
       </node>
     </incdepgraph>
       <sectiondef kind="func">
@@ -313,9 +347,6 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="40" bodyend="49"/>
-        <references refid="namespaceqm_1_1spin_one_half_1a108205fa9b3f65edcb8baca98edd5925" compoundref="nmspc__quantum__mechanics_8cpp" startline="48">qm::spinOneHalf::sx_eigvecs</references>
-        <references refid="namespaceqm_1_1spin_one_half_1ac1296391083d31f641019131926507ad" compoundref="nmspc__quantum__mechanics_8cpp" startline="51">qm::spinOneHalf::sy_eigvecs</references>
-        <references refid="namespaceqm_1_1spin_one_half_1a6c647e6a015b60e161400c3fbe4072f5" compoundref="nmspc__quantum__mechanics_8cpp" startline="54">qm::spinOneHalf::sz_eigvecs</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -328,7 +359,7 @@
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__environment_8h" kindref="compound">state/class_environment.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random__numbers_8h" kindref="compound">general/nmspc_random_numbers.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
@@ -373,7 +404,7 @@
 <codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;get_eigvec<sp/>given<sp/>invalid<sp/>parity<sp/>sector:<sp/>{}<sp/>in<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>parity,sign));</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51" refid="namespacetools_1_1finite_1_1mps_1_1internals_1adf2ea87c51f6ffba7850febca8fad736" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1adf2ea87c51f6ffba7850febca8fad736" kindref="member">tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;parity_sector,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c" kindref="member">seed_state</ref>){</highlight></codeline>
+<codeline lineno="51" refid="namespacetools_1_1finite_1_1mps_1_1internals_1a60bfd7b8237aaaa28149f345cb8bb530" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1a60bfd7b8237aaaa28149f345cb8bb530" kindref="member">tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset</ref>(<ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;parity_sector,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c" kindref="member">seed_state</ref>){</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(seed_state<sp/>&lt;<sp/>0){</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Can&apos;t<sp/>set<sp/>sector<sp/>from<sp/>bitset<sp/>with<sp/>negative<sp/>seed_state:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>seed_state));</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
@@ -384,110 +415,101 @@
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
 <codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>constexpr<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>maxbits<sp/>=<sp/>128;</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(maxbits<sp/>&gt;<sp/>state.<ref refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" kindref="member">get_length</ref>())<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::range_error(</highlight><highlight class="stringliteral">&quot;Max<sp/>supported<sp/>state<sp/>length<sp/>for<sp/>bitset<sp/>is<sp/>128&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(maxbits<sp/>&gt;<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>())<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::range_error(</highlight><highlight class="stringliteral">&quot;Max<sp/>supported<sp/>state<sp/>length<sp/>for<sp/>bitset<sp/>is<sp/>128&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>std::bitset&lt;maxbits&gt;<sp/>bs<sp/>(seed_state);</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>axis<sp/>=<sp/><ref refid="mps-internals_8cpp_1a44f69124ce19c08d8d1652eb95de4b0a" kindref="member">get_axis</ref>(parity_sector);</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sector<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="mps-internals_8cpp_1a4d7b2558f32ed5ab3f01f64eba898120" kindref="member">get_sign</ref>(parity_sector);</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>L<sp/>(1);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>L.setConstant(1);</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>carry_sign<sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsL<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref><sp/>){</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*bs[mpsL.get_position()]<sp/>-<sp/>1;</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>carry_sign<sp/>*=<sp/>sign;</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>G<sp/>=<sp/><ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),2,1,1);</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsL.set_mps(G,L);</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" kindref="member">MPS_C</ref><sp/>=<sp/>L;</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>:<sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref><sp/>){</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*bs[mpsR.get_position()]<sp/>-<sp/>1;</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>carry_sign<sp/>*=<sp/>sign;</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>G<sp/>=<sp/><ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),2,1,1);</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(G,L);</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(sector<sp/>*<sp/>carry_sign<sp/>==<sp/>-1){</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Flip<sp/>the<sp/>last<sp/>spin<sp/>to<sp/>get<sp/>the<sp/>correct<sp/>total<sp/>sign.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>=<sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>.back();</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*bs[mpsR.get_position()]<sp/>-<sp/>1;</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sign<sp/>*=<sp/>-1;</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>G<sp/>=<sp/><ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),2,1,1);</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(G,L);</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="92"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>axis<sp/>=<sp/><ref refid="mps-internals_8cpp_1a44f69124ce19c08d8d1652eb95de4b0a" kindref="member">get_axis</ref>(parity_sector);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sector<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="mps-internals_8cpp_1a4d7b2558f32ed5ab3f01f64eba898120" kindref="member">get_sign</ref>(parity_sector);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>L<sp/>(1);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>L.setConstant(1.0);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>carry_sign<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsL<sp/>:<sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref><sp/>){</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*bs[mpsL.get_position()]<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>carry_sign<sp/>*=<sp/>sign;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsL.set_mps(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),2,1,1),<sp/>L);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.back().set_LC(L);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>:<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref><sp/>){</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*bs[mpsR.get_position()]<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>carry_sign<sp/>*=<sp/>sign;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),2,1,1),<sp/>L);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(sector<sp/>*<sp/>carry_sign<sp/>==<sp/>-1){</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Flip<sp/>the<sp/>last<sp/>spin<sp/>to<sp/>get<sp/>the<sp/>correct<sp/>total<sp/>sign.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>=<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>.back();</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*bs[mpsR.get_position()]<sp/>-<sp/>1;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sign<sp/>*=<sp/>-1;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),2,1,1),<sp/>L);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="namespacetools_1_1finite_1_1mps_1_1internals_1af189a48d013fad458ef1f43290eaf74f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1af189a48d013fad458ef1f43290eaf74f" kindref="member">tools::finite::mps::internals::set_product_state_in_parity_sector_randomly</ref>(<ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;parity_sector){</highlight></codeline>
 <codeline lineno="93"><highlight class="normal"></highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="96" refid="namespacetools_1_1finite_1_1mps_1_1internals_1a9539b0ad2cd27faa6949a335a1852858" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1a9539b0ad2cd27faa6949a335a1852858" kindref="member">tools::finite::mps::internals::set_product_state_in_parity_sector_randomly</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;parity_sector){</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"></highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>L<sp/>(1);</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>axis<sp/>=<sp/><ref refid="mps-internals_8cpp_1a44f69124ce19c08d8d1652eb95de4b0a" kindref="member">get_axis</ref>(parity_sector);</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sector<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="mps-internals_8cpp_1a4d7b2558f32ed5ab3f01f64eba898120" kindref="member">get_sign</ref>(parity_sector);</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>carry_sign<sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>last_sign<sp/><sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"></highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>L.setConstant(1);</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsL<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref><sp/>){</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*<ref refid="namespacern_1ae46f00b1b7922896c9e5c6599ee733e8" kindref="member">rn::uniform_integer_1</ref>()-1;</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>carry_sign<sp/>*=<sp/>sign;</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>G<sp/>=<sp/><ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),<sp/>2,<sp/>1,<sp/>1);</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsL.set_mps(G,L);</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" kindref="member">MPS_C</ref><sp/>=<sp/>L;</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>:<sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref><sp/>){</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*<ref refid="namespacern_1ae46f00b1b7922896c9e5c6599ee733e8" kindref="member">rn::uniform_integer_1</ref>()-1;</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>carry_sign<sp/>*=<sp/>sign;</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>last_sign<sp/>=<sp/>sign;</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>G<sp/>=<sp/><ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,<sp/>sign).normalized(),<sp/>2,<sp/>1,<sp/>1);</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(G,L);</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"></highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(sector<sp/>*<sp/>carry_sign<sp/>==<sp/>-1){</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Flip<sp/>the<sp/>last<sp/>spin<sp/>to<sp/>get<sp/>the<sp/>correct<sp/>total<sp/>sign.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>=<sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref>.back();</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>-last_sign;</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sign<sp/>*=<sp/>-1;</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>G<sp/>=<sp/><ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,<sp/>sign).normalized(),<sp/>2,<sp/>1,<sp/>1);</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(G,L);</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="129"><highlight class="normal"></highlight></codeline>
-<codeline lineno="130"><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"></highlight></codeline>
-<codeline lineno="132" refid="namespacetools_1_1finite_1_1mps_1_1internals_1a56ceb08eccaaac82ba1d16c2aeae0c31" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1a56ceb08eccaaac82ba1d16c2aeae0c31" kindref="member">tools::finite::mps::internals::set_product_state_randomly</ref>(<ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref><sp/>&amp;<sp/>state,</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;parity_sector,</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>use_pauli_eigenstates){</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>ok_parity_sectors<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;+x&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;-x&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;+y&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;-y&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;z&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;+z&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;-z&quot;</highlight><highlight class="normal">};</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>parity_sector_is_defined<sp/>=<sp/>std::find(ok_parity_sectors.begin(),<sp/>ok_parity_sectors.end(),<sp/>parity_sector)<sp/>!=<sp/>ok_parity_sectors.end();</highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector_is_defined<sp/>and<sp/>use_pauli_eigenstates){</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Case<sp/>a)</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1a9539b0ad2cd27faa6949a335a1852858" kindref="member">set_product_state_in_parity_sector_randomly</ref>(state,parity_sector);</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector_is_defined<sp/>and<sp/>not<sp/>use_pauli_eigenstates){</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1a56ceb08eccaaac82ba1d16c2aeae0c31" kindref="member">set_product_state_randomly</ref>(state,</highlight><highlight class="stringliteral">&quot;random&quot;</highlight><highlight class="normal">,</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1ops_1a89b30988a083057d361a7f75a5f1f195" kindref="member">tools::finite::ops::get_projection_to_closest_parity_sector</ref>(state,parity_sector,</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;randomAxis&quot;</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>possibilities<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;z&quot;</highlight><highlight class="normal">};</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>chosen_axis<sp/>=<sp/>possibilities[<ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">rn::uniform_integer</ref>(0,<sp/>2)];</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1a9539b0ad2cd27faa6949a335a1852858" kindref="member">set_product_state_in_parity_sector_randomly</ref>(state,<sp/>chosen_axis);</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;random&quot;</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>L<sp/>(1);</highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L.setConstant(1);</highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsL<sp/>:<sp/>state.<ref refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" kindref="member">MPS_L</ref><sp/>){</highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>G<sp/>=<sp/><ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(Eigen::VectorXcd::Random(2).normalized(),2,1,1);</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsL.set_mps(G,L);</highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" kindref="member">MPS_C</ref><sp/>=<sp/>L;</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>:<sp/>state.<ref refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" kindref="member">MPS_R</ref><sp/>){</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>G<sp/>=<sp/><ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(Eigen::VectorXcd::Random(2).normalized(),2,1,1);</highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(G,L);</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;none&quot;</highlight><highlight class="normal">){</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(R</highlight><highlight class="stringliteral">&quot;(Wrong<sp/>pauli<sp/>string.<sp/>Expected<sp/>one<sp/>of<sp/>(+-)<sp/>&quot;x&quot;,&quot;y&quot;,&quot;z&quot;,<sp/>&quot;randomAxis&quot;,<sp/>&quot;random&quot;<sp/>or<sp/>&quot;none&quot;.<sp/>Got:<sp/>)&quot;<sp/>+<sp/>parity_sector));</highlight></codeline>
-<codeline lineno="163"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="164"><highlight class="stringliteral"></highlight></codeline>
-<codeline lineno="165"><highlight class="stringliteral">}</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>L<sp/>(1);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>axis<sp/>=<sp/><ref refid="mps-internals_8cpp_1a44f69124ce19c08d8d1652eb95de4b0a" kindref="member">get_axis</ref>(parity_sector);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sector<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="mps-internals_8cpp_1a4d7b2558f32ed5ab3f01f64eba898120" kindref="member">get_sign</ref>(parity_sector);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>carry_sign<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>last_sign<sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>L.setConstant(1.0);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsL<sp/>:<sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref><sp/>){</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*<ref refid="namespacern_1ae46f00b1b7922896c9e5c6599ee733e8" kindref="member">rn::uniform_integer_1</ref>()-1;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>carry_sign<sp/>*=<sp/>sign;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsL.set_mps(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),<sp/>2,<sp/>1,<sp/>1),<sp/>L);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.back().set_LC(L);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>:<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref><sp/>){</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>2*<ref refid="namespacern_1ae46f00b1b7922896c9e5c6599ee733e8" kindref="member">rn::uniform_integer_1</ref>()-1;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>carry_sign<sp/>*=<sp/>sign;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>last_sign<sp/>=<sp/>sign;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),<sp/>2,<sp/>1,<sp/>1),<sp/>L);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(sector<sp/>*<sp/>carry_sign<sp/>==<sp/>-1){</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Flip<sp/>the<sp/>last<sp/>spin<sp/>to<sp/>get<sp/>the<sp/>correct<sp/>total<sp/>sign.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>=<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>.back();</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign<sp/>=<sp/>-last_sign;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sign<sp/>*=<sp/>-1;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" kindref="member">get_eigvec</ref>(axis,sign).normalized(),<sp/>2,<sp/>1,<sp/>1),<sp/>L);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="121"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="namespacetools_1_1finite_1_1mps_1_1internals_1ab9f8b31ab128132ea61c593125f70f95" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1ab9f8b31ab128132ea61c593125f70f95" kindref="member">tools::finite::mps::internals::set_product_state_randomly</ref>(<ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;parity_sector,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>use_pauli_eigenstates){</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>ok_parity_sectors<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;+x&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;-x&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;+y&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;-y&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;z&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;+z&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;-z&quot;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>parity_sector_is_defined<sp/>=<sp/>std::find(ok_parity_sectors.begin(),<sp/>ok_parity_sectors.end(),<sp/>parity_sector)<sp/>!=<sp/>ok_parity_sectors.end();</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector_is_defined<sp/>and<sp/>use_pauli_eigenstates){</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Case<sp/>a)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1af189a48d013fad458ef1f43290eaf74f" kindref="member">set_product_state_in_parity_sector_randomly</ref>(state,parity_sector);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector_is_defined<sp/>and<sp/>not<sp/>use_pauli_eigenstates){</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1ab9f8b31ab128132ea61c593125f70f95" kindref="member">set_product_state_randomly</ref>(state,</highlight><highlight class="stringliteral">&quot;random&quot;</highlight><highlight class="normal">,</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">tools::finite::ops::get_projection_to_closest_parity_sector</ref>(state,parity_sector);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;randomAxis&quot;</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>possibilities<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;z&quot;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>chosen_axis<sp/>=<sp/>possibilities[<ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">rn::uniform_integer</ref>(0,<sp/>2)];</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1_1internals_1af189a48d013fad458ef1f43290eaf74f" kindref="member">set_product_state_in_parity_sector_randomly</ref>(state,<sp/>chosen_axis);</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;random&quot;</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>L<sp/>(1);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L.setConstant(1.0);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsL<sp/>:<sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref><sp/>){</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsL.set_mps(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(Eigen::VectorXcd::Random(2).normalized(),<sp/>2,<sp/>1,<sp/>1),<sp/>L);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.back().set_LC(L);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpsR<sp/>:<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref><sp/>){</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpsR.set_mps(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(Eigen::VectorXcd::Random(2).normalized(),<sp/>2,<sp/>1,<sp/>1),<sp/>L);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;none&quot;</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(R</highlight><highlight class="stringliteral">&quot;(Wrong<sp/>pauli<sp/>string.<sp/>Expected<sp/>one<sp/>of<sp/>(+-)<sp/>&quot;x&quot;,&quot;y&quot;,&quot;z&quot;,<sp/>&quot;randomAxis&quot;,<sp/>&quot;random&quot;<sp/>or<sp/>&quot;none&quot;.<sp/>Got:<sp/>)&quot;<sp/>+<sp/>parity_sector));</highlight></codeline>
+<codeline lineno="154"><highlight class="stringliteral"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="155"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="156"><highlight class="stringliteral">}</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp"/>
   </compounddef>

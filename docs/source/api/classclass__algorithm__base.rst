@@ -14,6 +14,7 @@ Nested Types
 ************
 
 - :ref:`exhale_struct_structclass__algorithm__base_1_1_saturation_report`
+- :ref:`exhale_struct_structclass__algorithm__base_1_1_saturation_report2`
 
 
 Inheritance Relationships

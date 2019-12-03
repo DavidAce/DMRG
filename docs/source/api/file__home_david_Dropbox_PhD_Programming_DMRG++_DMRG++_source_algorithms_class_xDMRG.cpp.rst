@@ -31,27 +31,11 @@ Includes
 
 - ``class_xDMRG.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_xDMRG.h`)
 
-- ``general/nmspc_quantum_mechanics.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.h`)
-
 - ``general/nmspc_random_numbers.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`)
-
-- ``general/nmspc_tensor_extra.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_tensor_extra.h`)
-
-- ``h5pp/h5pp.h``
-
-- ``iomanip``
-
-- ``math/nmspc_math.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_math.h`)
 
 - ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
 
-- ``spdlog/fmt/bundled/ranges.h``
-
-- ``spdlog/spdlog.h``
-
-- ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
-
-- ``state/class_mps_2site.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.h`)
+- ``state/class_state_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.h`)
 
 - ``tools/finite/opt.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h`)
 

@@ -17,6 +17,7 @@ Files
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_class_tic_toc.cpp`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_class_tic_toc.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_omp.h`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.cpp`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.h`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.cpp`

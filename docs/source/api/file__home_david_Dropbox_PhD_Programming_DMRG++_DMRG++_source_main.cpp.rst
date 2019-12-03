@@ -31,7 +31,7 @@ Includes
 
 - ``algorithms/class_algorithm_launcher.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_launcher.h`)
 
-- ``experimental/filesystem``
+- ``general/nmspc_omp.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_omp.h`)
 
 - ``general/nmspc_random_numbers.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`)
 
@@ -46,6 +46,8 @@ Includes
 - ``io/nmspc_logger.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_logger.h`)
 
 - ``iostream``
+
+- ``signal.h``
 
 - ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
 
@@ -63,4 +65,6 @@ Functions
 - :ref:`exhale_function_main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97`
 
 - :ref:`exhale_function_main_8cpp_1ae5ad5cbeccaedc03a48d3c7eaa803e79`
+
+- :ref:`exhale_function_main_8cpp_1a89a8322bea357674e81ba9cbdefe0378`
 

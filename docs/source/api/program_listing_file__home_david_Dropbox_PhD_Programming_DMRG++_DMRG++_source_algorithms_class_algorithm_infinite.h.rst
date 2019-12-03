@@ -14,11 +14,12 @@ Program Listing for File class_algorithm_infinite.h
    // Created by david on 2019-06-24.
    //
    
-   #ifndef DMRG_CLASS_ALGORITHM_INFINITE_H
-   #define DMRG_CLASS_ALGORITHM_INFINITE_H
+   #pragma once
+   
    #include <algorithms/class_algorithm_base.h>
    
-   class class_infinite_state;
+   class class_h5table_measurements_infinite;
+   class class_state_infinite;
    
    class class_algorithm_infinite: public class_algorithm_base {
    public:
@@ -29,7 +30,9 @@ Program Listing for File class_algorithm_infinite.h
                std::string sim_name,
                SimulationType sim_type
        );
-       std::shared_ptr<class_infinite_state> state;
+       std::shared_ptr<class_state_infinite> state;
+       // Tables
+       std::shared_ptr<class_h5table_buffer<class_h5table_measurements_infinite>>  h5tbuf_measurements; //Written every iteration
    
    
        virtual void run_simulation()         = 0;
@@ -40,12 +43,16 @@ Program Listing for File class_algorithm_infinite.h
        void enlarge_environment();
        void swap();
        void run()                                                                                  override;
-       void compute_observables()                                                                  final;
-       void clear_saturation_status()                                                              override;
+   //    void compute_observables()                                                                  final;
+       void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
        void reset_to_random_state(const std::string parity_secto = "random", int seed_state = -1)  final;
-       void write_measurements(bool force = false)                                                 final;
-       void write_state(bool force = false)                                                        final;
-       void write_status(bool force = false)                                                       final;
+       void clear_saturation_status()                                                              override;
+   
+       void write_state        (bool result = false)                                               final;
+       void write_measurements (bool result = false)                                               final;
+       void write_sim_status   (bool result = false)                                               final;
+       void write_profiling    (bool result = false)                                               final;
+       void copy_from_tmp      (bool result = false)                                               final;
        void print_status_update()                                                                  final;
        void print_status_full()                                                                    final;
    
@@ -76,6 +83,3 @@ Program Listing for File class_algorithm_infinite.h
        std::list<int>    XS_vec;
        double S_slope = 0;
    };
-   
-   
-   #endif //DMRG_CLASS_ALGORITHM_INFINITE_H

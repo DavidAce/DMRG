@@ -14,33 +14,33 @@ Program Listing for File nmspc_settings.h
    // Created by david on 8/7/17.
    //
    
-   #ifndef DMRG_N_SETTINGS_H
-   #define DMRG_N_SETTINGS_H
-   #include <string>
-   #include <unordered_set>
-   #include <vector>
+   #pragma once
    
+   #include <string>
+   #include <vector>
+   #include <simulation/enums.h>
    class class_settings_reader;
    namespace h5pp{
        class File;
    }
    
-   enum class SimulationType      {iDMRG,fDMRG, xDMRG, iTEBD};
-   enum class StorageLevel:size_t {NONE,LIGHT,NORMAL,FULL};
    
    namespace settings {
        extern void load_from_file(class_settings_reader &indata);
        extern void load_from_hdf5(h5pp::File &h5ppFile);
    
+       // Parameters for OpenMP
+       // Make sure just one of these is > 1 otherwise too many threads
+       // may be spawned inside of already threaded parts.
        namespace threading{
-           inline int num_threads_eigen  = 0;                                                        
-           inline int num_threads_omp    = 0;                                                        
-           inline int num_threads_blas   = 0;                                                        
+           inline int num_threads_eigen  = 1;                                                        
+           inline int num_threads_omp    = 1;                                                        
+           inline int num_threads_blas   = 1;                                                        
        }
    
        namespace input{
-           inline std::string input_file       = "input/input.cfg";
-           inline std::string input_filename   = "input.cfg";
+           inline std::string input_filename = "input/input.cfg";
+           inline std::string input_file_raw;
        }
    
        namespace output {
@@ -50,18 +50,23 @@ Program Listing for File nmspc_settings.h
            inline std::string  create_mode          = "RENAME";                     
            inline std::string  output_filename      = "output/default.h5";          
            inline StorageLevel storage_level        = StorageLevel::NORMAL;         
+           inline bool         use_temp_dir         = true;                         
+           inline size_t       copy_from_temp_freq  = 4;                            
+           inline std::string  temp_dir             = "/scratch/local";             
        }
    
        //Parameters for the model Hamiltonian
        namespace model {
-           inline std::string  model_type     = "tf_ising";                
-           inline int          seed_model      = 1;                         
-           inline int          seed_state     = -1;                        
-           inline bool         use_seed_state_as_enumeration = true;       
-           inline bool         project_when_saturated        = true;       
-           inline bool         use_pauli_eigvecs             = true;       
-           inline std::string  initial_parity_sector = "x";                
-           inline std::string  target_parity_sector  = "x";                
+           inline std::string  model_type                              = "tf_ising";         
+           inline int          seed_model                              = 1;                  
+           inline int          seed_state                              = -1;                 
+           inline bool         use_seed_state_as_enumeration           = true;               
+           inline bool         projection_when_growing_chi             = true;               
+           inline bool         projection_trial_when_stuck             = true;               
+           inline bool         projection_on_every_sweep               = true;               
+           inline bool         use_pauli_eigvecs                       = true;               
+           inline std::string  initial_parity_sector                   = "x";                
+           inline std::string  target_parity_sector                    = "x";                
            //Parameters for the transverse-field Ising model
            namespace tf_ising {
                inline double       J  = 1;                         
@@ -92,21 +97,25 @@ Program Listing for File nmspc_settings.h
    
        //Parmaters that control MPS, eigensolver and SVD precision
        namespace precision {
-           inline size_t   eigMaxIter                   = 1000  ;   
-           inline double   eigThreshold                 = 1e-12 ;   
-           inline size_t   eigMaxNcv                    = 16    ;   
-           inline double   SVDThreshold                 = 1e-8  ;   
-           inline double   VarConvergenceThreshold      = 1e-8  ;   
-           inline double   VarSaturationThreshold       = 1e-4  ;   
-           inline double   EntEntrSaturationThreshold   = 1e-4  ;   
-           inline double   SubspaceQualityFactor        = 1     ;   
-           inline double   MaxSubspaceQuality           = 1e-4  ;   
-           inline size_t   MaxSitesMultiDmrg            = 2     ;   
-           inline size_t   MaxSizeFullDiag              = 2048  ;   
-           inline size_t   MaxSizePartDiag              = 4096  ;   
-           inline size_t   MaxSizeDirect                = 131072;   
-           inline double   MaxNormError                 = 1e-10 ;   
-           inline size_t   MaxResets                    = 4     ;   
+           inline size_t   eig_max_iter                    = 1000  ;   
+           inline double   eig_threshold                   = 1e-12 ;   
+           inline size_t   eig_max_ncv                     = 16    ;   
+           inline double   svd_threshold                   = 1e-10 ;   
+           inline double   variance_convergence_threshold  = 1e-11 ;   
+           inline double   variance_slope_threshold        = 5     ;   
+           inline double   entropy_slope_threshold         = 0.1   ;   
+           inline double   subspace_error_factor           = 1     ;   
+           inline double   max_subspace_error              = 1e-8  ;   
+           inline double   min_subspace_error              = 1e-12 ;   
+           inline size_t   max_sites_multidmrg             = 8     ;   
+           inline size_t   max_size_full_diag              = 2048  ;   
+           inline size_t   min_size_part_diag              = 4096  ;   
+           inline size_t   max_size_direct                 = 131072;   
+           inline double   max_norm_error                  = 1e-10 ;   
+           inline size_t   max_resets                      = 4     ;   
+           inline bool     use_reduced_energy              = true  ;   
+           inline double   overlap_high                    = 0.99;
+           inline double   overlap_cat                     = 0.70710678;
        }
    
        //Parameters controlling iDMRG
@@ -115,6 +124,7 @@ Program Listing for File nmspc_settings.h
            inline size_t max_steps  = 5000;                           
            inline long chi_max      = 8;                              
            inline bool chi_grow     = true;                           
+           inline long chi_init     = 16;                             
            inline size_t print_freq = 1000;                           
            inline size_t write_freq = 100;                            
        }
@@ -126,6 +136,7 @@ Program Listing for File nmspc_settings.h
            inline size_t   min_sweeps   = 4;                            
            inline long     chi_max      = 8;                            
            inline bool     chi_grow     = true;                         
+           inline long     chi_init     = 16;                           
            inline size_t   print_freq   = 100;                          
            inline size_t   write_freq   = 100;                          
            inline bool     store_wavefn = false;                        
@@ -139,6 +150,7 @@ Program Listing for File nmspc_settings.h
            inline size_t   min_sweeps              = 4;                
            inline long     chi_max                 = 16;               
            inline bool     chi_grow                = true;             
+           inline long     chi_init                = 16;               
            inline size_t   print_freq              = 1;                
            inline size_t   write_freq              = 1;                
            inline bool     store_wavefn            = false;            
@@ -155,6 +167,7 @@ Program Listing for File nmspc_settings.h
            inline size_t   suzuki_order = 1;                        
            inline long     chi_max      = 8;                        
            inline bool     chi_grow     = true;                     
+           inline long     chi_init     = 16;                       
            inline size_t   print_freq   = 5000;                     
            inline size_t   write_freq   = 100;                      
        }
@@ -171,4 +184,3 @@ Program Listing for File nmspc_settings.h
            inline bool   timestamp  = false;                
        }
    }
-   #endif //DMRG_N_SETTINGS_H

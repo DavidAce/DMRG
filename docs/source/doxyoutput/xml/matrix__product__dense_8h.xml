@@ -12,161 +12,155 @@
     <includedby refid="arpackpp__solver_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</includedby>
     <includedby refid="matrix__recast_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</includedby>
     <incdepgraph>
-      <node id="1094">
+      <node id="1167">
         <label>iomanip</label>
       </node>
-      <node id="1097">
+      <node id="1170">
         <label>Eigen/LU</label>
       </node>
-      <node id="1095">
+      <node id="1168">
         <label>Eigen/Core</label>
       </node>
-      <node id="1092">
+      <node id="1165">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="1093" relation="include">
+        <childnode refid="1166" relation="include">
         </childnode>
-        <childnode refid="1085" relation="include">
+        <childnode refid="1158" relation="include">
         </childnode>
       </node>
-      <node id="1087">
+      <node id="1160">
         <label>map</label>
       </node>
-      <node id="1083">
+      <node id="1156">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</label>
         <link refid="matrix__product__dense_8h"/>
-        <childnode refid="1084" relation="include">
+        <childnode refid="1157" relation="include">
         </childnode>
-        <childnode refid="1092" relation="include">
+        <childnode refid="1165" relation="include">
         </childnode>
-        <childnode refid="1085" relation="include">
+        <childnode refid="1158" relation="include">
         </childnode>
-        <childnode refid="1094" relation="include">
+        <childnode refid="1167" relation="include">
         </childnode>
-        <childnode refid="1095" relation="include">
+        <childnode refid="1168" relation="include">
         </childnode>
-        <childnode refid="1096" relation="include">
+        <childnode refid="1169" relation="include">
         </childnode>
-        <childnode refid="1097" relation="include">
+        <childnode refid="1170" relation="include">
         </childnode>
       </node>
-      <node id="1091">
+      <node id="1164">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="1089">
+      <node id="1162">
         <label>vector</label>
       </node>
-      <node id="1096">
+      <node id="1169">
         <label>complex.h</label>
       </node>
-      <node id="1090">
+      <node id="1163">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="1086">
+      <node id="1159">
         <label>array</label>
       </node>
-      <node id="1085">
+      <node id="1158">
         <label>iostream</label>
       </node>
-      <node id="1084">
+      <node id="1157">
         <label>math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1085" relation="include">
+        <childnode refid="1158" relation="include">
         </childnode>
-        <childnode refid="1086" relation="include">
+        <childnode refid="1159" relation="include">
         </childnode>
-        <childnode refid="1087" relation="include">
+        <childnode refid="1160" relation="include">
         </childnode>
-        <childnode refid="1088" relation="include">
+        <childnode refid="1161" relation="include">
         </childnode>
-        <childnode refid="1089" relation="include">
+        <childnode refid="1162" relation="include">
         </childnode>
-        <childnode refid="1090" relation="include">
+        <childnode refid="1163" relation="include">
         </childnode>
-        <childnode refid="1091" relation="include">
+        <childnode refid="1164" relation="include">
         </childnode>
       </node>
-      <node id="1093">
+      <node id="1166">
         <label>chrono</label>
       </node>
-      <node id="1088">
+      <node id="1161">
         <label>complex</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="1108">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
-        <link refid="finite_2opt_8cpp"/>
-      </node>
-      <node id="1109">
+      <node id="1181">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
         <link refid="infinite_2measure_8cpp"/>
       </node>
-      <node id="1104">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_infinite_state.cpp</label>
-        <link refid="class__infinite__state_8cpp"/>
+      <node id="1177">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
       </node>
-      <node id="1105">
+      <node id="1178">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
         <link refid="views_8cpp"/>
       </node>
-      <node id="1098">
+      <node id="1171">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</label>
         <link refid="matrix__product__dense_8h"/>
-        <childnode refid="1099" relation="include">
+        <childnode refid="1172" relation="include">
         </childnode>
-        <childnode refid="1100" relation="include">
+        <childnode refid="1173" relation="include">
         </childnode>
       </node>
-      <node id="1099">
+      <node id="1172">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
         <link refid="arpackpp__solver_8cpp"/>
       </node>
-      <node id="1100">
+      <node id="1173">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</label>
         <link refid="matrix__recast_8h"/>
-        <childnode refid="1101" relation="include">
+        <childnode refid="1174" relation="include">
         </childnode>
-        <childnode refid="1102" relation="include">
+        <childnode refid="1175" relation="include">
         </childnode>
       </node>
-      <node id="1101">
+      <node id="1174">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp</label>
         <link refid="matrix__recast_8cpp"/>
       </node>
-      <node id="1106">
+      <node id="1179">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
         <link refid="ceres__subspace_8cpp"/>
       </node>
-      <node id="1103">
+      <node id="1176">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
         <link refid="class__eigsolver_8cpp"/>
       </node>
-      <node id="1102">
+      <node id="1175">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
         <link refid="class__eigsolver_8h"/>
-        <childnode refid="1103" relation="include">
+        <childnode refid="1176" relation="include">
         </childnode>
-        <childnode refid="1104" relation="include">
+        <childnode refid="1177" relation="include">
         </childnode>
-        <childnode refid="1105" relation="include">
+        <childnode refid="1178" relation="include">
         </childnode>
-        <childnode refid="1106" relation="include">
+        <childnode refid="1179" relation="include">
         </childnode>
-        <childnode refid="1107" relation="include">
+        <childnode refid="1180" relation="include">
         </childnode>
-        <childnode refid="1108" relation="include">
+        <childnode refid="1181" relation="include">
         </childnode>
-        <childnode refid="1109" relation="include">
-        </childnode>
-        <childnode refid="1110" relation="include">
+        <childnode refid="1182" relation="include">
         </childnode>
       </node>
-      <node id="1107">
+      <node id="1180">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
         <link refid="ground__state_8cpp"/>
       </node>
-      <node id="1110">
+      <node id="1182">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
       </node>
@@ -182,7 +176,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="25" column="10" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="25" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="24" column="10" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="24" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -194,217 +188,214 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-05-08.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>MATRIX_PRODUCT_DENSE_H</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>MATRIX_PRODUCT_DENSE_H</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
 <codeline lineno="12"><highlight class="normal"></highlight></codeline>
 <codeline lineno="13"><highlight class="normal"></highlight></codeline>
 <codeline lineno="14"><highlight class="normal"></highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__eigutils_8h" kindref="compound">math/nmspc_eigutils.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tic__toc_8h" kindref="compound">general/class_tic_toc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Core&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;complex.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>I</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="23"><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/LU&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="25" refid="matrix__product__dense_8h_1afb69439b6c29dc85f40f2df36cf15d68" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>profile_matrix_product_dense<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__eigutils_8h" kindref="compound">math/nmspc_eigutils.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__tic__toc_8h" kindref="compound">general/class_tic_toc.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Core&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;complex.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>I</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/LU&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="matrix__product__dense_8h_1afb69439b6c29dc85f40f2df36cf15d68" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>profile_matrix_product_dense<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
-<codeline lineno="27"><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar_&gt;</highlight></codeline>
-<codeline lineno="29" refid="class_dense_matrix_product" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct</ref><sp/>{</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="31" refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Scalar_;</highlight></codeline>
-<codeline lineno="32" refid="class_dense_matrix_product_1ab12da907364ef6607ac396bfa9214b63" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>constexpr<sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><ref refid="class_dense_matrix_product_1ab12da907364ef6607ac396bfa9214b63" kindref="member">can_shift</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="35" refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref><sp/><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic,<sp/>Eigen::ColMajor&gt;;</highlight></codeline>
-<codeline lineno="36" refid="class_dense_matrix_product_1ab908741a713be6b2ae160961b1adede6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ab908741a713be6b2ae160961b1adede6" kindref="member">VectorType</ref><sp/><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
-<codeline lineno="37" refid="class_dense_matrix_product_1ab9af4e49816fd5a2a2c67c115938b3eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ab9af4e49816fd5a2a2c67c115938b3eb" kindref="member">VectorTypeT</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,1,Eigen::Dynamic&gt;;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39" refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref><sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>actual<sp/>matrix.<sp/>Given<sp/>matrices<sp/>will<sp/>be<sp/>copied<sp/>into<sp/>this<sp/>one.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="40" refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>linear<sp/>matrix<sp/>dimension</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="41" refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/><ref refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" kindref="member">form</ref>;<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Chooses<sp/>SYMMETRIC<sp/>/<sp/>NONSYMMETRIC<sp/>mode</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="42" refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/><ref refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" kindref="member">side</ref>;<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Chooses<sp/>whether<sp/>to<sp/>find<sp/>(R)ight<sp/>or<sp/>(L)eft<sp/>eigenvectors</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Shift-invert<sp/>mode<sp/>stuff</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="45" refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::PartialPivLU&lt;MatrixType&gt;<sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Object<sp/>for<sp/>dense<sp/>LU<sp/>decomposition<sp/>used<sp/>in<sp/>shift-invert<sp/>mode</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="46" refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" kindref="member">sigmaR</ref><sp/>=<sp/>0.0;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>real<sp/>part<sp/>of<sp/>the<sp/>shift</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="47" refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" kindref="member">sigmaI</ref><sp/>=<sp/>0.0;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>imag<sp/>part<sp/>of<sp/>the<sp/>shift</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="48" refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" kindref="member">readyFactorOp</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Flag<sp/>to<sp/>make<sp/>sure<sp/>LU<sp/>factorization<sp/>has<sp/>occurred</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="49" refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" kindref="member">readyShift</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Flag<sp/>to<sp/>make<sp/>sure</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pointer<sp/>to<sp/>data<sp/>constructor,<sp/>copies<sp/>the<sp/>matrix<sp/>into<sp/>an<sp/>internal<sp/>Eigen<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="53" refid="class_dense_matrix_product_1a3023c288f4bb0c3592d8271dfe8840b1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a3023c288f4bb0c3592d8271dfe8840b1" kindref="member">DenseMatrixProduct</ref>(</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>A_,</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L_,</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref>,</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"></highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>):<sp/>A_matrix(<ref refid="namespace_eigen" kindref="compound">Eigen</ref>::Map&lt;const<sp/><ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref>&gt;(A_,L_,L_)),</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L(L_),<sp/>form(form_),<sp/>side(side_)</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" kindref="member">init_profiling</ref>();</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigen<sp/>type<sp/>constructor.<sp/>Pass<sp/>any<sp/>copy-assignable<sp/>eigen<sp/>type<sp/>into<sp/>an<sp/>internal<sp/>Eigen<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Derived&gt;</highlight></codeline>
-<codeline lineno="67" refid="class_dense_matrix_product_1afb2f97dfadd10b32e548b74ad111f2be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1afb2f97dfadd10b32e548b74ad111f2be" kindref="member">DenseMatrixProduct</ref>(</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::EigenBase&lt;Derived&gt;<sp/>&amp;matrix_,</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref>,</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref>)</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>A_matrix(matrix_),<sp/>L(A_matrix.<ref refid="class_dense_matrix_product_1a1e4b8ba24d25fe97cf0b907f522fd0fa" kindref="member">rows</ref>()),<sp/>form(form_),<sp/>side(side_)</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" kindref="member">init_profiling</ref>();</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Functions<sp/>used<sp/>in<sp/>in<sp/>Arpack++<sp/>solver</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="77" refid="class_dense_matrix_product_1a1e4b8ba24d25fe97cf0b907f522fd0fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a1e4b8ba24d25fe97cf0b907f522fd0fa" kindref="member">rows</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>;};</highlight></codeline>
-<codeline lineno="78" refid="class_dense_matrix_product_1a100a118ede957b274b25e745f07684af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a100a118ede957b274b25e745f07684af" kindref="member">cols</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>;};</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a235aa72984cde1ac849f94cde21c886b" kindref="member">FactorOP</ref>();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>Factors<sp/>(A-sigma*I)<sp/>into<sp/>PLU</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a5e2577a5667b3613012ca67e960d8905" kindref="member">MultOPv</ref>(<ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_out_ptr);<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Computes<sp/>the<sp/>matrix-vector<sp/>product<sp/>x_out<sp/>&lt;-<sp/>inv(A-sigma*I)*x_in.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a7e1b6b2ac1c9589a7f2874b3a432cd14" kindref="member">MultAx</ref><sp/>(<ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_out_ptr);<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Computes<sp/>the<sp/>matrix-vector<sp/>multiplication<sp/>x_out<sp/>&lt;-<sp/>A*x_in.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Various<sp/>utility<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="84" refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" kindref="member">counter</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a1e26abfc612f168f0f093a51d3c3c7f2" kindref="member">print</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="86" refid="class_dense_matrix_product_1a934347fcd26c28423d9e2431e757b039" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a934347fcd26c28423d9e2431e757b039" kindref="member">set_shift</ref>(std::complex&lt;double&gt;<sp/>sigma_)<sp/><sp/><sp/>{</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=std::real(sigma_);sigmaI=std::imag(sigma_)<sp/>;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="87" refid="class_dense_matrix_product_1ac9f90c17c2696cfe51813424c3595d2a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ac9f90c17c2696cfe51813424c3595d2a" kindref="member">set_shift</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma_)<sp/><sp/><sp/>{</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=sigma_,<sp/>sigmaI<sp/>=<sp/>0.0;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="88" refid="class_dense_matrix_product_1a7146679a7151a81d76d98c9f548b64f0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a7146679a7151a81d76d98c9f548b64f0" kindref="member">set_shift</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sigmaR_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sigmaI_){</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=sigmaR_;sigmaI<sp/>=<sp/>sigmaI_<sp/>;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="89" refid="class_dense_matrix_product_1aee7a5a6d8385d9f3e93b7436545792af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1aee7a5a6d8385d9f3e93b7436545792af" kindref="member">set_mode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_){form<sp/>=<sp/>form_;}</highlight></codeline>
-<codeline lineno="90" refid="class_dense_matrix_product_1a9e31474e8d77b8bea829b143f9150587" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a9e31474e8d77b8bea829b143f9150587" kindref="member">set_side</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_){side<sp/>=<sp/>side_;}</highlight></codeline>
-<codeline lineno="91" refid="class_dense_matrix_product_1a0f8ba0cf5aefbc4b1ae46aba7ce9d555" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref><sp/>&amp;<sp/><ref refid="class_dense_matrix_product_1a0f8ba0cf5aefbc4b1ae46aba7ce9d555" kindref="member">get_matrix</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref>;}</highlight></codeline>
-<codeline lineno="92" refid="class_dense_matrix_product_1adcc4faf595432abcb90ac98190cbdab1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>&amp;<ref refid="class_dense_matrix_product_1adcc4faf595432abcb90ac98190cbdab1" kindref="member">get_form</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" kindref="member">form</ref>;}</highlight></codeline>
-<codeline lineno="93" refid="class_dense_matrix_product_1a8507aa6628768a81621bf5eb7692b3e7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>&amp;<ref refid="class_dense_matrix_product_1a8507aa6628768a81621bf5eb7692b3e7" kindref="member">get_side</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" kindref="member">side</ref>;}</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Profiling</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="96" refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" kindref="member">init_profiling</ref>(){</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__dense_8h_1afb69439b6c29dc85f40f2df36cf15d68" kindref="member">profile_matrix_product_dense</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>FactorOp&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" kindref="member">t_multOpv</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__dense_8h_1afb69439b6c29dc85f40f2df36cf15d68" kindref="member">profile_matrix_product_dense</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>MultOpv&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" kindref="member">t_multax</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__dense_8h_1afb69439b6c29dc85f40f2df36cf15d68" kindref="member">profile_matrix_product_dense</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>MultAx&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="101" refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>;</highlight></codeline>
-<codeline lineno="102" refid="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" kindref="member">t_multOpv</ref>;</highlight></codeline>
-<codeline lineno="103" refid="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" kindref="member">t_multax</ref>;</highlight></codeline>
-<codeline lineno="104"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar_&gt;</highlight></codeline>
+<codeline lineno="28" refid="class_dense_matrix_product" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct</ref><sp/>{</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="30" refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Scalar_;</highlight></codeline>
+<codeline lineno="31" refid="class_dense_matrix_product_1ab12da907364ef6607ac396bfa9214b63" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>constexpr<sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><ref refid="class_dense_matrix_product_1ab12da907364ef6607ac396bfa9214b63" kindref="member">can_shift</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="34" refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref><sp/><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic,<sp/>Eigen::ColMajor&gt;;</highlight></codeline>
+<codeline lineno="35" refid="class_dense_matrix_product_1ab908741a713be6b2ae160961b1adede6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ab908741a713be6b2ae160961b1adede6" kindref="member">VectorType</ref><sp/><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
+<codeline lineno="36" refid="class_dense_matrix_product_1ab9af4e49816fd5a2a2c67c115938b3eb" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ab9af4e49816fd5a2a2c67c115938b3eb" kindref="member">VectorTypeT</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,1,Eigen::Dynamic&gt;;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref><sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>actual<sp/>matrix.<sp/>Given<sp/>matrices<sp/>will<sp/>be<sp/>copied<sp/>into<sp/>this<sp/>one.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>linear<sp/>matrix<sp/>dimension</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/><ref refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" kindref="member">form</ref>;<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Chooses<sp/>SYMMETRIC<sp/>/<sp/>NONSYMMETRIC<sp/>mode</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/><ref refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" kindref="member">side</ref>;<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Chooses<sp/>whether<sp/>to<sp/>find<sp/>(R)ight<sp/>or<sp/>(L)eft<sp/>eigenvectors</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Shift-invert<sp/>mode<sp/>stuff</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::PartialPivLU&lt;MatrixType&gt;<sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Object<sp/>for<sp/>dense<sp/>LU<sp/>decomposition<sp/>used<sp/>in<sp/>shift-invert<sp/>mode</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" kindref="member">sigmaR</ref><sp/>=<sp/>0.0;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>real<sp/>part<sp/>of<sp/>the<sp/>shift</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" kindref="member">sigmaI</ref><sp/>=<sp/>0.0;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>imag<sp/>part<sp/>of<sp/>the<sp/>shift</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" kindref="member">readyFactorOp</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Flag<sp/>to<sp/>make<sp/>sure<sp/>LU<sp/>factorization<sp/>has<sp/>occurred</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" kindref="member">readyShift</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Flag<sp/>to<sp/>make<sp/>sure</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Pointer<sp/>to<sp/>data<sp/>constructor,<sp/>copies<sp/>the<sp/>matrix<sp/>into<sp/>an<sp/>internal<sp/>Eigen<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="class_dense_matrix_product_1a3023c288f4bb0c3592d8271dfe8840b1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a3023c288f4bb0c3592d8271dfe8840b1" kindref="member">DenseMatrixProduct</ref>(</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref><sp/>*<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>A_,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L_,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref>,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>):<sp/>A_matrix(<ref refid="namespace_eigen" kindref="compound">Eigen</ref>::Map&lt;const<sp/><ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref>&gt;(A_,L_,L_)),</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L(L_),<sp/>form(form_),<sp/>side(side_)</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" kindref="member">init_profiling</ref>();</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigen<sp/>type<sp/>constructor.<sp/>Pass<sp/>any<sp/>copy-assignable<sp/>eigen<sp/>type<sp/>into<sp/>an<sp/>internal<sp/>Eigen<sp/>matrix.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Derived&gt;</highlight></codeline>
+<codeline lineno="66" refid="class_dense_matrix_product_1afb2f97dfadd10b32e548b74ad111f2be" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1afb2f97dfadd10b32e548b74ad111f2be" kindref="member">DenseMatrixProduct</ref>(</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::EigenBase&lt;Derived&gt;<sp/>&amp;matrix_,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref>,</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref>)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>A_matrix(matrix_),<sp/>L(A_matrix.<ref refid="class_dense_matrix_product_1a1e4b8ba24d25fe97cf0b907f522fd0fa" kindref="member">rows</ref>()),<sp/>form(form_),<sp/>side(side_)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" kindref="member">init_profiling</ref>();</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Functions<sp/>used<sp/>in<sp/>in<sp/>Arpack++<sp/>solver</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="class_dense_matrix_product_1a1e4b8ba24d25fe97cf0b907f522fd0fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a1e4b8ba24d25fe97cf0b907f522fd0fa" kindref="member">rows</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>;};</highlight></codeline>
+<codeline lineno="77" refid="class_dense_matrix_product_1a100a118ede957b274b25e745f07684af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a100a118ede957b274b25e745f07684af" kindref="member">cols</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>;};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a235aa72984cde1ac849f94cde21c886b" kindref="member">FactorOP</ref>();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/>Factors<sp/>(A-sigma*I)<sp/>into<sp/>PLU</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a5e2577a5667b3613012ca67e960d8905" kindref="member">MultOPv</ref>(<ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_out_ptr);<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Computes<sp/>the<sp/>matrix-vector<sp/>product<sp/>x_out<sp/>&lt;-<sp/>inv(A-sigma*I)*x_in.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a7e1b6b2ac1c9589a7f2874b3a432cd14" kindref="member">MultAx</ref><sp/>(<ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_out_ptr);<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Computes<sp/>the<sp/>matrix-vector<sp/>multiplication<sp/>x_out<sp/>&lt;-<sp/>A*x_in.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Various<sp/>utility<sp/>functions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" kindref="member">counter</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a1e26abfc612f168f0f093a51d3c3c7f2" kindref="member">print</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="85" refid="class_dense_matrix_product_1a934347fcd26c28423d9e2431e757b039" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a934347fcd26c28423d9e2431e757b039" kindref="member">set_shift</ref>(std::complex&lt;double&gt;<sp/>sigma_)<sp/><sp/><sp/>{</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=std::real(sigma_);sigmaI=std::imag(sigma_)<sp/>;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="86" refid="class_dense_matrix_product_1ac9f90c17c2696cfe51813424c3595d2a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ac9f90c17c2696cfe51813424c3595d2a" kindref="member">set_shift</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma_)<sp/><sp/><sp/>{</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=sigma_,<sp/>sigmaI<sp/>=<sp/>0.0;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="87" refid="class_dense_matrix_product_1a7146679a7151a81d76d98c9f548b64f0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a7146679a7151a81d76d98c9f548b64f0" kindref="member">set_shift</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sigmaR_,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sigmaI_){</highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(readyShift){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}<sp/>sigmaR=sigmaR_;sigmaI<sp/>=<sp/>sigmaI_<sp/>;readyShift<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="88" refid="class_dense_matrix_product_1aee7a5a6d8385d9f3e93b7436545792af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1aee7a5a6d8385d9f3e93b7436545792af" kindref="member">set_mode</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form_){form<sp/>=<sp/>form_;}</highlight></codeline>
+<codeline lineno="89" refid="class_dense_matrix_product_1a9e31474e8d77b8bea829b143f9150587" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a9e31474e8d77b8bea829b143f9150587" kindref="member">set_side</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side_){side<sp/>=<sp/>side_;}</highlight></codeline>
+<codeline lineno="90" refid="class_dense_matrix_product_1a0f8ba0cf5aefbc4b1ae46aba7ce9d555" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref><sp/>&amp;<sp/><ref refid="class_dense_matrix_product_1a0f8ba0cf5aefbc4b1ae46aba7ce9d555" kindref="member">get_matrix</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref>;}</highlight></codeline>
+<codeline lineno="91" refid="class_dense_matrix_product_1adcc4faf595432abcb90ac98190cbdab1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>&amp;<ref refid="class_dense_matrix_product_1adcc4faf595432abcb90ac98190cbdab1" kindref="member">get_form</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" kindref="member">form</ref>;}</highlight></codeline>
+<codeline lineno="92" refid="class_dense_matrix_product_1a8507aa6628768a81621bf5eb7692b3e7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>&amp;<ref refid="class_dense_matrix_product_1a8507aa6628768a81621bf5eb7692b3e7" kindref="member">get_side</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" kindref="member">side</ref>;}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Profiling</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95" refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" kindref="member">init_profiling</ref>(){</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__dense_8h_1afb69439b6c29dc85f40f2df36cf15d68" kindref="member">profile_matrix_product_dense</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>FactorOp&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" kindref="member">t_multOpv</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__dense_8h_1afb69439b6c29dc85f40f2df36cf15d68" kindref="member">profile_matrix_product_dense</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>MultOpv&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" kindref="member">t_multax</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="matrix__product__dense_8h_1afb69439b6c29dc85f40f2df36cf15d68" kindref="member">profile_matrix_product_dense</ref>,<sp/>5,</highlight><highlight class="stringliteral">&quot;Time<sp/>MultAx&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100" refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>;</highlight></codeline>
+<codeline lineno="101" refid="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" kindref="member">t_multOpv</ref>;</highlight></codeline>
+<codeline lineno="102" refid="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref><sp/><ref refid="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" kindref="member">t_multax</ref>;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
 <codeline lineno="105"><highlight class="normal"></highlight></codeline>
 <codeline lineno="106"><highlight class="normal"></highlight></codeline>
 <codeline lineno="107"><highlight class="normal"></highlight></codeline>
-<codeline lineno="108"><highlight class="normal"></highlight></codeline>
-<codeline lineno="109"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Function<sp/>definitions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Function<sp/>definitions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
 <codeline lineno="110"><highlight class="normal"></highlight></codeline>
 <codeline lineno="111"><highlight class="normal"></highlight></codeline>
-<codeline lineno="112"><highlight class="normal"></highlight></codeline>
-<codeline lineno="113"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="114" refid="class_dense_matrix_product_1a1e26abfc612f168f0f093a51d3c3c7f2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a1e26abfc612f168f0f093a51d3c3c7f2" kindref="member">DenseMatrixProduct&lt;Scalar&gt;::print</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;A_matrix:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="116"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="113" refid="class_dense_matrix_product_1a1e26abfc612f168f0f093a51d3c3c7f2" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a1e26abfc612f168f0f093a51d3c3c7f2" kindref="member">DenseMatrixProduct&lt;Scalar&gt;::print</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;A_matrix:<sp/>\n&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
-<codeline lineno="118"><highlight class="normal"></highlight></codeline>
-<codeline lineno="119"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="120" refid="class_dense_matrix_product_1a235aa72984cde1ac849f94cde21c886b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a235aa72984cde1ac849f94cde21c886b" kindref="member">DenseMatrixProduct&lt;Scalar&gt;::FactorOP</ref>()</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"></highlight></codeline>
-<codeline lineno="122"><highlight class="normal"></highlight><highlight class="comment">/*<sp/><sp/>Partial<sp/>pivot<sp/>LU<sp/>decomposition</highlight></codeline>
-<codeline lineno="123"><highlight class="comment"><sp/>*<sp/><sp/>Factors<sp/>P(A-sigma*I)<sp/>=<sp/>LU</highlight></codeline>
-<codeline lineno="124"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="125"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" kindref="member">readyFactorOp</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Starting<sp/>LU<sp/>\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" kindref="member">readyShift</ref><sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Shift<sp/>value<sp/>sigma<sp/>has<sp/>not<sp/>been<sp/>set.&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref><sp/>sigma;</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,double&gt;::value)</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma<sp/>=<sp/><ref refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" kindref="member">sigmaR</ref>;</highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>.compute(<ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref><sp/>-<sp/><ref refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" kindref="member">sigmaR</ref><sp/>*<sp/>Eigen::MatrixXd::Identity(<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>));</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma<sp/>=<sp/>std::complex&lt;double&gt;(<ref refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" kindref="member">sigmaR</ref>,<ref refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" kindref="member">sigmaI</ref>);</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>.compute(<ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref><sp/>-<sp/>sigma<sp/>*<sp/>Eigen::MatrixXd::Identity(<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>));</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"></highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" kindref="member">readyFactorOp</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Finished<sp/>LU<sp/>\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>LU<sp/>Op<sp/>[ms]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setprecision(3)<sp/>&lt;&lt;<sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">get_last_time_interval</ref>()<sp/>*<sp/>1000<sp/>&lt;&lt;</highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"></highlight></codeline>
-<codeline lineno="148"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="119" refid="class_dense_matrix_product_1a235aa72984cde1ac849f94cde21c886b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a235aa72984cde1ac849f94cde21c886b" kindref="member">DenseMatrixProduct&lt;Scalar&gt;::FactorOP</ref>()</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="comment">/*<sp/><sp/>Partial<sp/>pivot<sp/>LU<sp/>decomposition</highlight></codeline>
+<codeline lineno="122"><highlight class="comment"><sp/>*<sp/><sp/>Factors<sp/>P(A-sigma*I)<sp/>=<sp/>LU</highlight></codeline>
+<codeline lineno="123"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" kindref="member">readyFactorOp</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Starting<sp/>LU<sp/>\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" kindref="member">readyShift</ref><sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Shift<sp/>value<sp/>sigma<sp/>has<sp/>not<sp/>been<sp/>set.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref><sp/>sigma;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,double&gt;::value)</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma<sp/>=<sp/><ref refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" kindref="member">sigmaR</ref>;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>.compute(<ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref><sp/>-<sp/><ref refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" kindref="member">sigmaR</ref><sp/>*<sp/>Eigen::MatrixXd::Identity(<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>));</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sigma<sp/>=<sp/>std::complex&lt;double&gt;(<ref refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" kindref="member">sigmaR</ref>,<ref refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" kindref="member">sigmaI</ref>);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>.compute(<ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref><sp/>-<sp/>sigma<sp/>*<sp/>Eigen::MatrixXd::Identity(<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>));</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" kindref="member">readyFactorOp</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Finished<sp/>LU<sp/>\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Time<sp/>LU<sp/>Op<sp/>[ms]:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setprecision(3)<sp/>&lt;&lt;<sp/><ref refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" kindref="member">t_factorOp</ref>.<ref refid="classclass__tic__toc_1a4ed784d7ebfbe0ccbbc8118bd5e56fae" kindref="member">get_last_time_interval</ref>()<sp/>*<sp/>1000<sp/>&lt;&lt;</highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
 <codeline lineno="149"><highlight class="normal"></highlight></codeline>
 <codeline lineno="150"><highlight class="normal"></highlight></codeline>
 <codeline lineno="151"><highlight class="normal"></highlight></codeline>
-<codeline lineno="152"><highlight class="normal"></highlight></codeline>
-<codeline lineno="153"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="154" refid="class_dense_matrix_product_1a5e2577a5667b3613012ca67e960d8905" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a5e2577a5667b3613012ca67e960d8905" kindref="member">DenseMatrixProduct&lt;Scalar&gt;::MultOPv</ref>(<ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_out_ptr)<sp/>{</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" kindref="member">readyFactorOp</ref><sp/>and<sp/></highlight><highlight class="stringliteral">&quot;FactorOp()<sp/>has<sp/>not<sp/>been<sp/>run<sp/>yet.&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" kindref="member">side</ref>){</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::R:<sp/>{</highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_in<sp/><sp/><sp/><sp/>(x_in_ptr,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out<sp/><sp/><sp/>(x_out_ptr,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out.noalias()<sp/>=<sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>.solve(x_in);</highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::L:<sp/>{</highlight></codeline>
-<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_in<sp/><sp/><sp/><sp/>(x_in_ptr,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out<sp/><sp/><sp/>(x_out_ptr,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out.noalias()<sp/>=<sp/>x_in<sp/>*<sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>.inverse();</highlight></codeline>
-<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" kindref="member">counter</ref>++;</highlight></codeline>
-<codeline lineno="172"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="153" refid="class_dense_matrix_product_1a5e2577a5667b3613012ca67e960d8905" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a5e2577a5667b3613012ca67e960d8905" kindref="member">DenseMatrixProduct&lt;Scalar&gt;::MultOPv</ref>(<ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_in_ptr,<sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_out_ptr)<sp/>{</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" kindref="member">readyFactorOp</ref><sp/>and<sp/></highlight><highlight class="stringliteral">&quot;FactorOp()<sp/>has<sp/>not<sp/>been<sp/>run<sp/>yet.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" kindref="member">side</ref>){</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::R:<sp/>{</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_in<sp/><sp/><sp/><sp/>(x_in_ptr,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out<sp/><sp/><sp/>(x_out_ptr,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out.noalias()<sp/>=<sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>.solve(x_in);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::L:<sp/>{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_in<sp/><sp/><sp/><sp/>(x_in_ptr,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out<sp/><sp/><sp/>(x_out_ptr,<ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_out.noalias()<sp/>=<sp/>x_in<sp/>*<sp/><ref refid="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" kindref="member">lu</ref>.inverse();</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" kindref="member">counter</ref>++;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
 <codeline lineno="173"><highlight class="normal"></highlight></codeline>
 <codeline lineno="174"><highlight class="normal"></highlight></codeline>
 <codeline lineno="175"><highlight class="normal"></highlight></codeline>
-<codeline lineno="176"><highlight class="normal"></highlight></codeline>
-<codeline lineno="177"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="178" refid="class_dense_matrix_product_1a7e1b6b2ac1c9589a7f2874b3a432cd14" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a7e1b6b2ac1c9589a7f2874b3a432cd14" kindref="member">DenseMatrixProduct&lt;Scalar&gt;::MultAx</ref>(<ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_in,<sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_out)<sp/>{</highlight></codeline>
-<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
-<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" kindref="member">form</ref>){</highlight></codeline>
-<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Form::NONSYMMETRIC:</highlight></codeline>
-<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" kindref="member">side</ref>)<sp/>{</highlight></codeline>
-<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::R:<sp/>{</highlight></codeline>
-<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_in<sp/>(x_in,<sp/><sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref><sp/>*<sp/>x_vec_in<sp/>;</highlight></codeline>
-<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::L:<sp/>{</highlight></codeline>
-<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/>x_vec_in(x_in,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/>x_vec_in<sp/>*<sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref>;</highlight></codeline>
-<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Form::SYMMETRIC:<sp/>{</highlight></codeline>
-<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_in(x_in,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref>.template<sp/>selfadjointView&lt;Eigen::Upper&gt;()<sp/>*<sp/>x_vec_in;</highlight></codeline>
-<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" kindref="member">counter</ref>++;</highlight></codeline>
-<codeline lineno="205"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="177" refid="class_dense_matrix_product_1a7e1b6b2ac1c9589a7f2874b3a432cd14" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product_1a7e1b6b2ac1c9589a7f2874b3a432cd14" kindref="member">DenseMatrixProduct&lt;Scalar&gt;::MultAx</ref>(<ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_in,<sp/><ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>*<sp/>x_out)<sp/>{</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" kindref="member">form</ref>){</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Form::NONSYMMETRIC:</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" kindref="member">side</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::R:<sp/>{</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_in<sp/>(x_in,<sp/><sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref><sp/>*<sp/>x_vec_in<sp/>;</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Side::L:<sp/>{</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/>x_vec_in(x_in,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorTypeT&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/>x_vec_in<sp/>*<sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref>;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Form::SYMMETRIC:<sp/>{</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_in(x_in,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/>x_vec_out(x_out,<sp/><ref refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_vec_out.noalias()<sp/>=<sp/><ref refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" kindref="member">A_matrix</ref>.template<sp/>selfadjointView&lt;Eigen::Upper&gt;()<sp/>*<sp/>x_vec_in;</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" kindref="member">counter</ref>++;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"></highlight></codeline>
 <codeline lineno="206"><highlight class="normal"></highlight></codeline>
-<codeline lineno="207"><highlight class="normal"></highlight></codeline>
-<codeline lineno="208"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="209"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="210"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="211"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight><highlight class="preprocessor">#ifdef<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>EIGEN_USE_BLAS</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>EIGEN_USE_BLAS_SUSPEND</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
 <codeline lineno="212"><highlight class="normal"></highlight></codeline>
-<codeline lineno="213"><highlight class="normal"></highlight></codeline>
-<codeline lineno="214"><highlight class="normal"></highlight></codeline>
-<codeline lineno="215"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h"/>
   </compounddef>

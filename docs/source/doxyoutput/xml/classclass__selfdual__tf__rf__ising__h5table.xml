@@ -17,14 +17,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="84" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="83" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="17" bodyend="85"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="16" bodyend="84"/>
     <listofallmembers>
       <member refid="classclass__selfdual__tf__rf__ising__h5table_1ae1db2efca2c7d8d9781c0c8c1520a607" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table</scope><name>class_selfdual_tf_rf_ising_h5table</name></member>
     </listofallmembers>

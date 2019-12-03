@@ -14,8 +14,7 @@ Program Listing for File class_model_base.h
    // Created by david on 2018-07-04.
    //
    
-   #ifndef CLASS_HAMILTONIAN_BASE_H
-   #define CLASS_HAMILTONIAN_BASE_H
+   #pragma once
    
    #include <memory>
    #include <unsupported/Eigen/CXX11/Tensor>
@@ -54,6 +53,8 @@ Program Listing for File class_model_base.h
        virtual void   set_hamiltonian(const Eigen::VectorXd & parameters)                                            = 0;
        virtual void   build_mpo()                                                                                    = 0;
        virtual void   randomize_hamiltonian()                                                                        = 0;
+       virtual void   perturb_hamiltonian(double amplitude)                                                          = 0;
+       virtual bool   is_perturbed()                                                                           const = 0;
        virtual void   print_parameter_names ()                                                                 const = 0;
        virtual void   print_parameter_values()                                                                 const = 0;
        virtual size_t get_spin_dimension()                                                                     const = 0;
@@ -72,4 +73,3 @@ Program Listing for File class_model_base.h
    
    
    
-   #endif //CLASS_HAMILTONIAN_BASE_H
