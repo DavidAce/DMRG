@@ -15,7 +15,7 @@ Program Listing for File mps-internals.cpp
    //
    
    #include <tools/nmspc_tools.h>
-   #include <state/class_finite_state.h>
+   #include <state/class_state_finite.h>
    #include <state/class_mps_2site.h>
    #include <state/class_environment.h>
    #include <general/nmspc_random_numbers.h>
@@ -60,7 +60,7 @@ Program Listing for File mps-internals.cpp
        throw std::runtime_error(fmt::format("get_eigvec given invalid parity sector: {} in {}", parity,sign));
    }
    
-   void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset(class_finite_state & state, const std::string &parity_sector, const int seed_state){
+   void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset(class_state_finite & state, const std::string &parity_sector, const int seed_state){
        if (seed_state < 0){
            throw std::runtime_error(fmt::format("Can't set sector from bitset with negative seed_state: {}", seed_state));
        }
@@ -73,24 +73,21 @@ Program Listing for File mps-internals.cpp
        constexpr int maxbits = 128;
        if (maxbits > state.get_length()) throw std::range_error("Max supported state length for bitset is 128");
        std::bitset<maxbits> bs (seed_state);
-   
        std::string axis = get_axis(parity_sector);
        int sector       = get_sign(parity_sector);
        Eigen::Tensor<Scalar,1> L (1);
-       L.setConstant(1);
+       L.setConstant(1.0);
        int carry_sign = 1;
        for (auto &mpsL : state.MPS_L ){
            int sign = 2*bs[mpsL.get_position()] - 1;
            carry_sign *= sign;
-           auto G = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
-           mpsL.set_mps(G,L);
+           mpsL.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(),2,1,1), L);
        }
-       state.MPS_C = L;
+       state.MPS_L.back().set_LC(L);
        for (auto &mpsR : state.MPS_R ){
            int sign = 2*bs[mpsR.get_position()] - 1;
            carry_sign *= sign;
-           auto G = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
-           mpsR.set_mps(G,L);
+           mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(),2,1,1), L);
        }
    
        if(sector * carry_sign == -1){
@@ -98,14 +95,13 @@ Program Listing for File mps-internals.cpp
            auto &mpsR = state.MPS_R.back();
            int sign = 2*bs[mpsR.get_position()] - 1;
            sign *= -1;
-           auto G = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(),2,1,1);
-           mpsR.set_mps(G,L);
+           mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(),2,1,1), L);
        }
    }
    
    
    
-   void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(class_finite_state & state, const std::string &parity_sector){
+   void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(class_state_finite & state, const std::string &parity_sector){
    
        Eigen::Tensor<Scalar,1> L (1);
        std::string axis = get_axis(parity_sector);
@@ -113,20 +109,18 @@ Program Listing for File mps-internals.cpp
        int carry_sign = 1;
        int last_sign  = 1;
    
-       L.setConstant(1);
+       L.setConstant(1.0);
        for (auto &mpsL : state.MPS_L ){
            int sign = 2*rn::uniform_integer_1()-1;
            carry_sign *= sign;
-           auto G = Textra::Matrix_to_Tensor(get_eigvec(axis,sign).normalized(), 2, 1, 1);
-           mpsL.set_mps(G,L);
+           mpsL.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
        }
-       state.MPS_C = L;
+       state.MPS_L.back().set_LC(L);
        for (auto &mpsR : state.MPS_R ){
            int sign = 2*rn::uniform_integer_1()-1;
            carry_sign *= sign;
            last_sign = sign;
-           auto G = Textra::Matrix_to_Tensor(get_eigvec(axis, sign).normalized(), 2, 1, 1);
-           mpsR.set_mps(G,L);
+           mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
        }
    
        if(sector * carry_sign == -1){
@@ -134,14 +128,13 @@ Program Listing for File mps-internals.cpp
            auto &mpsR = state.MPS_R.back();
            int sign = -last_sign;
            sign *= -1;
-           auto G = Textra::Matrix_to_Tensor(get_eigvec(axis, sign).normalized(), 2, 1, 1);
-           mpsR.set_mps(G,L);
+           mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
        }
    }
    
    
    
-   void tools::finite::mps::internals::set_product_state_randomly(class_finite_state & state,const std::string &parity_sector,bool use_pauli_eigenstates){
+   void tools::finite::mps::internals::set_product_state_randomly(class_state_finite & state, const std::string &parity_sector, bool use_pauli_eigenstates){
        std::vector<std::string> ok_parity_sectors = {"x","+x","-x","y","+y","-y", "z","+z","-z"};
        bool parity_sector_is_defined = std::find(ok_parity_sectors.begin(), ok_parity_sectors.end(), parity_sector) != ok_parity_sectors.end();
        if (parity_sector_is_defined and use_pauli_eigenstates){
@@ -150,7 +143,7 @@ Program Listing for File mps-internals.cpp
        }
        else if (parity_sector_is_defined and not use_pauli_eigenstates){
            set_product_state_randomly(state,"random",false);
-           state = tools::finite::ops::get_projection_to_closest_parity_sector(state,parity_sector,false);
+           state = tools::finite::ops::get_projection_to_closest_parity_sector(state,parity_sector);
        }
        else if (parity_sector == "randomAxis") {
            std::vector<std::string> possibilities = {"x", "y", "z"};
@@ -158,15 +151,13 @@ Program Listing for File mps-internals.cpp
            set_product_state_in_parity_sector_randomly(state, chosen_axis);
        }else if (parity_sector == "random") {
            Eigen::Tensor<Scalar,1> L (1);
-           L.setConstant(1);
+           L.setConstant(1.0);
            for (auto &mpsL : state.MPS_L ){
-               auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
-               mpsL.set_mps(G,L);
+               mpsL.set_mps(Textra::MatrixTensorMap(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L);
            }
-           state.MPS_C = L;
+           state.MPS_L.back().set_LC(L);
            for (auto &mpsR : state.MPS_R ){
-               auto G = Textra::Matrix_to_Tensor(Eigen::VectorXcd::Random(2).normalized(),2,1,1);
-               mpsR.set_mps(G,L);
+               mpsR.set_mps(Textra::MatrixTensorMap(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L);
            }
        }else if (parity_sector == "none"){
            return;

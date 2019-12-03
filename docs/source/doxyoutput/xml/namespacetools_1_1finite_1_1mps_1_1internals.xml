@@ -15,17 +15,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="47" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="54" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1adf2ea87c51f6ffba7850febca8fad736" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1a60bfd7b8237aaaa28149f345cb8bb530" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset</definition>
-        <argsstring>(class_finite_state &amp;state, const std::string &amp;parity_sector, const int seed_state)</argsstring>
+        <argsstring>(class_state_finite &amp;state, const std::string &amp;parity_sector, const int seed_state)</argsstring>
         <name>set_product_state_in_parity_sector_from_bitset</name>
         <param>
-          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -42,24 +42,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="51" bodyend="92"/>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="51" bodyend="88"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
         <references refid="mps-internals_8cpp_1a44f69124ce19c08d8d1652eb95de4b0a" compoundref="mps-internals_8cpp" startline="21" endline="29">get_axis</references>
         <references refid="mps-internals_8cpp_1a4d7b2558f32ed5ab3f01f64eba898120" compoundref="mps-internals_8cpp" startline="15" endline="19">get_sign</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
-        <references refid="namespace_textra_1a9207bc24390fafec44eee851bf9fdee2" compoundref="nmspc__tensor__extra_8h" startline="180" endline="182">Textra::Matrix_to_Tensor</references>
-        <references refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" compoundref="mps-internals_8cpp" startline="40" endline="49">get_eigvec</references>
-        <references refid="classclass__vidal__site_1a1aa23eb9649c1d2297d61d5f9a6863d4" compoundref="class__vidal__site_8cpp" startline="34" endline="34">class_vidal_site::set_mps</references>
-        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1a9539b0ad2cd27faa6949a335a1852858" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1af189a48d013fad458ef1f43290eaf74f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly</definition>
-        <argsstring>(class_finite_state &amp;state, const std::string &amp;parity_sector)</argsstring>
+        <argsstring>(class_state_finite &amp;state, const std::string &amp;parity_sector)</argsstring>
         <name>set_product_state_in_parity_sector_randomly</name>
         <param>
-          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -72,24 +66,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="96" bodyend="128"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="92" bodyend="121"/>
         <references refid="mps-internals_8cpp_1a44f69124ce19c08d8d1652eb95de4b0a" compoundref="mps-internals_8cpp" startline="21" endline="29">get_axis</references>
         <references refid="mps-internals_8cpp_1a4d7b2558f32ed5ab3f01f64eba898120" compoundref="mps-internals_8cpp" startline="15" endline="19">get_sign</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
-        <references refid="namespacern_1ae46f00b1b7922896c9e5c6599ee733e8" compoundref="nmspc__random__numbers_8cpp" startline="16" endline="19">rn::uniform_integer_1</references>
-        <references refid="namespace_textra_1a9207bc24390fafec44eee851bf9fdee2" compoundref="nmspc__tensor__extra_8h" startline="180" endline="182">Textra::Matrix_to_Tensor</references>
-        <references refid="mps-internals_8cpp_1a2ee8e80d836ea726a0a301c6729549a6" compoundref="mps-internals_8cpp" startline="40" endline="49">get_eigvec</references>
-        <references refid="classclass__vidal__site_1a1aa23eb9649c1d2297d61d5f9a6863d4" compoundref="class__vidal__site_8cpp" startline="34" endline="34">class_vidal_site::set_mps</references>
-        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1a56ceb08eccaaac82ba1d16c2aeae0c31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1ab9f8b31ab128132ea61c593125f70f95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::mps::internals::set_product_state_randomly</definition>
-        <argsstring>(class_finite_state &amp;state, const std::string &amp;parity_sector, bool use_pauli_eigenstates)</argsstring>
+        <argsstring>(class_state_finite &amp;state, const std::string &amp;parity_sector, bool use_pauli_eigenstates)</argsstring>
         <name>set_product_state_randomly</name>
         <param>
-          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -106,22 +93,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="132" bodyend="165"/>
-        <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1a9539b0ad2cd27faa6949a335a1852858" compoundref="mps-internals_8cpp" startline="96" endline="128">set_product_state_in_parity_sector_randomly</references>
-        <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1a56ceb08eccaaac82ba1d16c2aeae0c31" compoundref="mps-internals_8cpp" startline="132" endline="165">set_product_state_randomly</references>
-        <references refid="classclass__finite__state_1a31ece922c1df7f6deb83579afb2fcca6" compoundref="class__finite__state_8cpp" startline="23" endline="52">class_finite_state::operator=</references>
-        <references refid="namespacetools_1_1finite_1_1ops_1a51c9c8a97ae2a7775928e6fcb4c805c3" compoundref="ops_8cpp" startline="158" endline="194">tools::finite::ops::get_projection_to_closest_parity_sector</references>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
-        <references refid="namespace_textra_1a9207bc24390fafec44eee851bf9fdee2" compoundref="nmspc__tensor__extra_8h" startline="180" endline="182">Textra::Matrix_to_Tensor</references>
-        <references refid="classclass__vidal__site_1a1aa23eb9649c1d2297d61d5f9a6863d4" compoundref="class__vidal__site_8cpp" startline="34" endline="34">class_vidal_site::set_mps</references>
-        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="125" bodyend="156"/>
+        <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1af189a48d013fad458ef1f43290eaf74f" compoundref="mps-internals_8cpp" startline="92" endline="121">set_product_state_in_parity_sector_randomly</references>
+        <references refid="classclass__state__finite_1acd27402752b06bd245716d2b5a087ba2" compoundref="class__state__finite_8cpp" startline="23" endline="52">class_state_finite::operator=</references>
+        <references refid="namespacetools_1_1finite_1_1ops_1a9b5ed5708bfbf96ee08ab2d863af83b0" compoundref="ops_8cpp" startline="127" endline="163">tools::finite::ops::get_projection_to_closest_parity_sector</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="46" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="53" column="1"/>
   </compounddef>
 </doxygen>

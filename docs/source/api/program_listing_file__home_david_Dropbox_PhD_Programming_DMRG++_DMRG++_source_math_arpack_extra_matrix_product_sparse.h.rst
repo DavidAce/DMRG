@@ -14,8 +14,8 @@ Program Listing for File matrix_product_sparse.h
    // Created by david on 2018-05-08.
    //
    
-   #ifndef MATRIX_PRODUCT_SPARSE_H
-   #define MATRIX_PRODUCT_SPARSE_H
+   #pragma once
+   
    
    #ifdef EIGEN_USE_BLAS
    #define EIGEN_USE_BLAS_SUSPEND
@@ -220,6 +220,3 @@ Program Listing for File matrix_product_sparse.h
    #endif
    
    
-   
-   
-   #endif //

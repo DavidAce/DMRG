@@ -31,23 +31,15 @@ Includes
 
 - ``glog/logging.h``
 
-- ``iomanip``
-
-- ``math/arpack_extra/matrix_product_hamiltonian.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_hamiltonian.h`)
-
-- ``math/class_eigsolver.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_eigsolver.h`)
-
 - ``model/class_model_base.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_model_base.h`)
+
+- ``simulation/class_simulation_status.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_class_simulation_status.h`)
 
 - ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
 
-- ``spdlog/spdlog.h``
-
 - ``sstream``
 
-- ``state/class_environment.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_environment.h`)
-
-- ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
+- ``state/class_state_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.h`)
 
 - ``string``
 

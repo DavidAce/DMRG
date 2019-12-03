@@ -31,14 +31,14 @@ Variables
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a108205fa9b3f65edcb8baca98edd5925`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1ac1296391083d31f641019131926507ad`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a6c647e6a015b60e161400c3fbe4072f5`

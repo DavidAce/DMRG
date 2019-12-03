@@ -17,19 +17,13 @@ Program Listing for File class_algorithm_base.cpp
    #include <fstream>
    #include <complex>
    #include "class_algorithm_base.h"
-   #include <io/class_hdf5_log_buffer.h>
+   #include <io/class_h5table_buffer.h>
    #include <io/nmspc_logger.h>
    #include <tools/nmspc_tools.h>
-   #include <math/nmspc_math.h>
-   #include <general/nmspc_random_numbers.h>
-   #include <io/log_types.h>
    #include <h5pp/h5pp.h>
+   #include <simulation/nmspc_settings.h>
+   #include <math/nmspc_math.h>
    
-   namespace s = settings;
-   using namespace std;
-   using namespace Textra;
-   //using namespace std::complex_literals;
-   //using namespace eigsolver_properties;
    using Scalar = class_algorithm_base::Scalar;
    
    
@@ -47,24 +41,24 @@ Program Listing for File class_algorithm_base.cpp
        log->trace("Constructing class_algorithm_base");
        set_profiling_labels();
        tools::common::profile::init_profiling();
-       log->trace("Constructing log buffers in base");
-       log_profiling  = std::make_unique<class_hdf5_log<class_log_profiling>>        (h5pp_file, sim_name + "/logs", "profiling", sim_name);
-       log_sim_status = std::make_unique<class_hdf5_log<class_log_simulation_status>>(h5pp_file, sim_name + "/logs", "status"   , sim_name);
+       if (settings::output::storage_level >= StorageLevel::NORMAL){
+           log->trace("Constructing table buffers in base");
+           h5tbuf_profiling  = std::make_unique<class_h5table_buffer<class_h5table_profiling>>        (h5pp_file, sim_name + "/journal/profiling");
+           h5tbuf_sim_status = std::make_unique<class_h5table_buffer<class_h5table_simulation_status>>(h5pp_file, sim_name + "/journal/sim_status");
+       }
    
    
-   
-       log->trace("Writing input file");
-       h5pp_file->writeDataset(settings::input::input_file, "common/input_file");
-       h5pp_file->writeDataset(settings::input::input_filename, "common/input_filename");
+       if(h5pp_file) log->trace("Writing input file");
+       if(h5pp_file) h5pp_file->writeDataset(settings::input::input_filename  , "common/input_filename");
+       if(h5pp_file) h5pp_file->writeDataset(settings::input::input_file_raw  , "common/input_file");
    }
-   
    
    
    
    
    class_algorithm_base::SaturationReport
    class_algorithm_base::check_saturation_using_slope(
-           std::list<bool>  & B_vec,
+   //        std::list<bool>  & B_vec,
            std::list<double> &Y_vec,
            std::list<int> &X_vec,
            double new_data,
@@ -77,87 +71,94 @@ Program Listing for File class_algorithm_base.cpp
        if (iter - last_measurement < rate){return report;}
    
        // It's time to check. Insert current numbers
-       B_vec.push_back(false);
+   //    B_vec.push_back(false);
        Y_vec.push_back(new_data);
        X_vec.push_back(iter);
-       unsigned long min_data_points = 4;
+       size_t min_data_points = 2;
        if (Y_vec.size() < min_data_points){return report;}
-   //    [2019-09-04 09:41:16][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.107435, 0.0755767, 0.689875, 0.692682, 0.709075, 0.936858, 0.771467, 0.609487, 0.637618, 0.708048, 0.703904, 0.716228, 0.131454 , 0.0982134, 0.165784, -0}
-   //    [2019-09-04 14:09:38][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.107185, 0.0750735, 0.689648, 0.69319 , 0.705737, 0.764265, 0.71776 , 0.640145, 0.658814, 0.706533, 0.687854, 0.659679, 0.0969757, 0.0707726, 0.14884 , -0}
-   //    [2019-09-04 15:50:25][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.109655, 0.0794533, 0.690183, 0.633393, 0.638498, 0.852765, 0.680258, 0.604823, 0.636992, 0.707849, 0.693525, 0.664779, 0.0980222, 0.191848 , 0.249013, -0} xDMRG Iter: 7     E: 1.1380981061517343    ε: 0.5688  log₁₀ σ²(E): -13.0853826559
-   //    [2019-09-04 16:12:27][xDMRG][  info  ] Entanglement Entropies  = {-0, 0.260162, 0.0767326, 0.691241, 0.693091, 0.704597, 0.744191, 0.683444, 0.603736, 0.63557 , 0.705953, 0.693286, 0.664763, 0.0973455, 0.0711479, 0.149059, -0} xDMRG Iter: 20    E: 0.3989677607237975    ε: 0.5241  log₁₀ σ²(E): -13.0536331913 (svd 1e-10)
+       size_t start_point = 0;
+       double band_size   = 2.0 + 2.0*tolerance;  // Between 2 and  4 standard deviations away
    
-   
-       auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check from last part of the measurements in Y_vec.
-       while (X_vec.size() - check_from < min_data_points and check_from > 0){
-           check_from -=1; //Decrease check from if out of bounds.
+       size_t recent_point   = std::floor(0.75*Y_vec.size());
+       recent_point = std::min(Y_vec.size()-min_data_points , recent_point);
+       double recent_point_std = math::stdev(Y_vec, recent_point); //Computes the standard dev of Y_vec from recent_point to end
+       for(size_t some_point = 0; some_point < Y_vec.size(); some_point++){
+           double some_point_std = math::stdev(Y_vec, some_point); //Computes the standard dev of Y_vec from some_point to end
+           std::string arrow = "";
+           if(some_point_std < band_size * recent_point_std and start_point == 0){
+               start_point = some_point;
+               break;
+           }
        }
-   
-   
-       double n = X_vec.size() - check_from;
-       double numerator = 0.0;
-       double denominator = 0.0;
-   
-   
-       auto x_it = X_vec.begin();
-       auto y_it = Y_vec.begin();
-       std::advance(x_it, check_from);
-       std::advance(y_it, check_from);
-   
-       auto v_end = Y_vec.end();
-       double avgX = accumulate(x_it, X_vec.end(), 0.0) / n;
-       double avgY = accumulate(y_it, Y_vec.end(), 0.0) / n;
-   
-       while(y_it != v_end){
-           numerator   += (*x_it - avgX) * (*y_it - avgY);
-           denominator += (*x_it - avgX) * (*x_it - avgX);
-           y_it++;
-           x_it++;
-   
-       }
-   
-       double slope = std::abs(numerator / denominator) / avgY * 100;
-       slope       = std::isnan(slope) ? 0.0 : slope;
        //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
-       bool has_saturated;
-       if (slope < tolerance){
-           B_vec.back()  = true;
-           has_saturated = true;
-       }else{
-           B_vec.clear();
-           has_saturated = false;
-       }
-       report.has_computed  = true;
-       report.has_saturated = has_saturated;
+       double avgY          = math::mean(Y_vec,start_point);
+       double slope         = math::slope(X_vec,Y_vec,start_point)/avgY * 100 / std::sqrt(Y_vec.size()-start_point); //TODO: Is dividing by sqrt(elems) reasonable?
+       slope                = std::isnan(slope) ? 0.0 : slope;
        report.slope         = slope;
+       report.check_from    = start_point;
        report.avgY          = avgY;
-       report.check_from    = check_from;
+       report.has_computed  = true;
        return report;
    }
    
    
-   void class_algorithm_base::update_bond_dimension(){
-       sim_status.chi_max = chi_max();
-       if(not chi_grow() or sim_status.bond_dimension_has_reached_max or sim_status.chi_temp == chi_max() ){
-           sim_status.chi_temp = chi_max();
-           sim_status.bond_dimension_has_reached_max = true;
+   class_algorithm_base::SaturationReport2
+   class_algorithm_base::check_saturation_using_slope2(
+           std::list<double> &Y_vec,
+           std::list<int>    &X_vec,
+           double new_data,
+           int iter,
+           int rate,
+           double tolerance)
+   {
+       SaturationReport2 report;
+       int last_measurement = X_vec.empty() ? 0 : X_vec.back();
+       if (iter - last_measurement < rate){return report;}
+   
+       // It's time to check. Insert current numbers
+       Y_vec.push_back(new_data);
+       X_vec.push_back(iter);
+       unsigned long data_points = 0;
+       while(data_points <= Y_vec.size()){
+           auto x_it = X_vec.end();
+           auto y_it = Y_vec.end();
+           std::advance(x_it, -data_points);
+           std::advance(y_it, -data_points);
+           if (data_points >= 2){
+               double numerator   = 0.0;
+               double denominator = 0.0;
+               auto v_end = Y_vec.end();
+               double avgX = accumulate(x_it, X_vec.end(), 0.0) / (double)data_points;
+               double avgY = accumulate(y_it, Y_vec.end(), 0.0) / (double)data_points;
+               while(y_it != v_end){
+                   numerator   += (*x_it - avgX) * (*y_it - avgY);
+                   denominator += (*x_it - avgX) * (*x_it - avgX);
+                   y_it++;
+                   x_it++;
+               }
+   
+               double slope = std::abs(numerator / denominator) / avgY * 100;
+               slope        = std::isnan(slope) ? 0.0 : slope;
+   
+               report.has_computed  = true;
+               report.slopes.push_back(slope);
+               report.avgY.push_back(avgY);
+           }
+           if(x_it == X_vec.begin()) break;
+           if(y_it == Y_vec.begin()) break;
+           data_points++;
        }
-       if(not sim_status.simulation_has_converged
-          and sim_status.simulation_has_saturated
-          and sim_status.chi_temp < chi_max()){
-           log->trace("Updating bond dimension");
-           sim_status.chi_temp = std::min(chi_max(), sim_status.chi_temp * 2);
-           log->info("New chi = {}", sim_status.chi_temp);
-           clear_saturation_status();
+   
+       if(report.has_computed){
+   //        auto first_greater_than_tolerance = std::distance(report.slopes.begin(), std::upper_bound(report.slopes.begin(),report.slopes.end(),tolerance));
+           auto first_greater_than_tolerance = std::distance(report.slopes.begin(),
+                   std:: find_if(report.slopes.begin(), report.slopes.end(),[tolerance](const double & x) { return x > tolerance; }));
+           report.saturated_for = first_greater_than_tolerance;
+           report.has_saturated = report.saturated_for > 0;
+           std::reverse(report.slopes.begin(),report.slopes.end()); //Reverse looks better on print
        }
-       if(sim_status.chi_temp == chi_max()){
-           sim_status.bond_dimension_has_reached_max = true;
-       }
+       return report;
    }
-   
-   
-   
-   
    
    
    void class_algorithm_base::print_profiling(){
@@ -174,7 +175,7 @@ Program Listing for File class_algorithm_base.cpp
    
    
    double class_algorithm_base::process_memory_in_mb(std::string name){
-       ifstream filestream("/proc/self/status");
+       std::ifstream filestream("/proc/self/status");
        std::string line;
        while (std::getline(filestream, line)){
            std::istringstream is_line(line);
@@ -204,7 +205,7 @@ Program Listing for File class_algorithm_base.cpp
        t_tot.set_properties(true, precision,"+Total Time              ");
        t_prt.set_properties(on,   precision,"↳ Printing to console    ");
        t_con.set_properties(on,   precision,"↳ Convergence checks     ");
-       t_run.set_properties(on, precision, "↳+Simulation             ");
+       t_run.set_properties(on,   precision, "↳+Simulation             ");
    //    t_obs.set_properties(on,   precision,"↳ Computing observables  ");
    
    //    t_sto.set_properties(on,   precision,"↳ Store to file          ");

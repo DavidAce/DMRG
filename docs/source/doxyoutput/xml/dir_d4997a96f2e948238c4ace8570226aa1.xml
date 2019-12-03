@@ -6,6 +6,8 @@
     <innerdir refid="dir_2fe3fdae92163efbedf1ea30d7b5428d">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite</innerdir>
     <innerdir refid="dir_08283d6d60bf683acfe1f6e5af914fc0">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite</innerdir>
     <innerfile refid="nmspc__tools_8h">nmspc_tools.h</innerfile>
+    <innerfile refid="tools_8h">tools.h</innerfile>
+    <innerfile refid="tools__finite_8h">tools_finite.h</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

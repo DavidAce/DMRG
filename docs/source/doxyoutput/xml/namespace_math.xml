@@ -6,6 +6,6 @@
 <para>Small convenience-type math functions like modulo and numerical integration using GSL. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="21" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="20" column="1"/>
   </compounddef>
 </doxygen>

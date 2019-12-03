@@ -17,14 +17,16 @@ Program Listing for File ceres_base.cpp
    #include <general/class_tic_toc.h>
    #include <simulation/class_simulation_status.h>
    #include <tools/finite/opt.h>
-   #include <state/class_finite_state.h>
+   #include <state/class_state_finite.h>
    #include <ceres/ceres.h>
+   #include <simulation/nmspc_settings.h>
    
-   using namespace tools::finite::opt::internals;
+   using namespace tools::finite::opt::internal;
    
    ceres_base_functor::ceres_base_functor(
-           const class_finite_state & state,
-           const class_simulation_status & sim_status)
+           const class_state_finite & state,
+           const class_simulation_status & sim_status):
+           omp(settings::threading::num_threads_eigen)
    {
        reset_timers();
        length                   = state.get_length();

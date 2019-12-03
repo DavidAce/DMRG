@@ -17,6 +17,12 @@ Namespaces
 ----------
 
 
+- :ref:`namespace_tools__finite__io__h5dset`
+
+- :ref:`namespace_tools__finite__io__h5restore`
+
+- :ref:`namespace_tools__finite__io__h5table`
+
 - :ref:`namespace_tools__finite__io__internals`
 
 
@@ -24,24 +30,24 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1afb211e06dce1c2ddbd2a236aa27c5419`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a7131db8e8279905bf87c91bed48d2237`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a576ea47e947335d4e8a3617d1ca0bc96`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1af70b0f3611654305e87f65d54b42afb3`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a1840be8832f3ba09af99f34fa08eb20c`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1af91bd7a74ba98b9d856b5e7de57f2430`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a5c50ff668b5634e06c5a60f3950b7168`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a37d4179eaa8406e8a1e04c3e691609bc`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a028874bf95ce9fb9ebb89fd13dbb3ce5`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1addfbae844f3db0a0a929cf093e4c7857`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a6adf0e49ba443aa9f545cbc42623805a`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a68ee74b2afe7fe2ab296dbc1e5cb2d3e`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a38e38fba948c40347fda0a17c65763d1`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a922e1d60f12564fc12f9c32c7652890b`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1aa77176fab4588b283c51e28e25d3906b`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a6c5fda74f67d69358c5ff5ae86c599f1`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a5723f7ca65e31340eb7cd9de1c4aab29`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1ac6f85c4daaea9b7d4cc69e1d4c83ebb1`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a4f2b0c2fdea66b2fcf35fe8894e1d587`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a80bf9e47cde868592d18ac55589da2de`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1a0053cc870b91b93f1b84902ec62e6d7e`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1io_1aeb64c163735b326032ffee2c31b0da9c`

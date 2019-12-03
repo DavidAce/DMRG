@@ -21,11 +21,13 @@ Functions
 
 - :ref:`exhale_function_namespacern_1aa64669e6a44143d9262c955f80fe79b8`
 
-- :ref:`exhale_function_namespacern_1a7ace7d5a4b63f8332f590564052ced0e`
+- :ref:`exhale_function_namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60`
 
 - :ref:`exhale_function_namespacern_1a9c2f32006765f0cd276cf3296f868255`
 
 - :ref:`exhale_function_namespacern_1ab1ff96fded7890b771bfee2e40b661d7`
+
+- :ref:`exhale_function_namespacern_1a7ace7d5a4b63f8332f590564052ced0e`
 
 - :ref:`exhale_function_namespacern_1ac0dffdd0e420abeadea4dfc6bdf54c9d`
 

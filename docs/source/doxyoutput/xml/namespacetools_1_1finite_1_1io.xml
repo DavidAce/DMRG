@@ -2,15 +2,18 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="namespacetools_1_1finite_1_1io" kind="namespace" language="C++">
     <compoundname>tools::finite::io</compoundname>
+    <innernamespace refid="namespacetools_1_1finite_1_1io_1_1h5dset">tools::finite::io::h5dset</innernamespace>
+    <innernamespace refid="namespacetools_1_1finite_1_1io_1_1h5restore">tools::finite::io::h5restore</innernamespace>
+    <innernamespace refid="namespacetools_1_1finite_1_1io_1_1h5table">tools::finite::io::h5table</innernamespace>
     <innernamespace refid="namespacetools_1_1finite_1_1io_1_1internals">tools::finite::io::internals</innernamespace>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a5c50ff668b5634e06c5a60f3950b7168" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a37d4179eaa8406e8a1e04c3e691609bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_all_state</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>write_all_state</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -27,30 +30,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="193" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="29" bodyend="50"/>
-        <references refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" compoundref="nmspc__tools_8h" startline="316">tools::common::profile::t_hdf</references>
-        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f">LIGHT</references>
-        <references refid="namespacetools_1_1finite_1_1io_1a6adf0e49ba443aa9f545cbc42623805a" compoundref="finite_2h5pp_8cpp" startline="70" endline="78">write_bond_matrix</references>
-        <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
-        <references refid="namespacetools_1_1finite_1_1io_1a028874bf95ce9fb9ebb89fd13dbb3ce5" compoundref="finite_2h5pp_8cpp" startline="53" endline="67">write_bond_matrices</references>
-        <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adaba7de5bc6888294e5884b024a4c894f1">FULL</references>
-        <references refid="namespacetools_1_1finite_1_1io_1a5723f7ca65e31340eb7cd9de1c4aab29" compoundref="finite_2h5pp_8cpp" startline="80" endline="91">write_full_mps</references>
-        <references refid="namespacetools_1_1finite_1_1io_1aa77176fab4588b283c51e28e25d3906b" compoundref="finite_2h5pp_8cpp" startline="96" endline="109">write_full_mpo</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="91" endline="91">class_finite_state::get_position</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
-        <references refid="namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b" compoundref="nmspc__settings_8h" startline="51">settings::model::model_type</references>
-        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="100" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a028874bf95ce9fb9ebb89fd13dbb3ce5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1addfbae844f3db0a0a929cf093e4c7857" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_bond_matrices</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>write_bond_matrices</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -64,22 +52,18 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Writes down all the &quot;Lambda&quot; bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="194" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="53" bodyend="67"/>
-        <references refid="namespacetools_1_1finite_1_1io_1_1internals_1a63a3e2209f88cb2e2c7cf34f10d28fe4" compoundref="finite_2h5pp_8cpp" startline="21" endline="24">tools::finite::io::internals::make_extendable_dataset</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" compoundref="class__finite__state_8cpp" startline="222" endline="227">class_finite_state::get_L</references>
-        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="146">class_finite_state::truncation_error</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="101" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a6adf0e49ba443aa9f545cbc42623805a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a68ee74b2afe7fe2ab296dbc1e5cb2d3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_bond_matrix</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>write_bond_matrix</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -93,22 +77,18 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Writes down all the &quot;Lambda&quot; bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="195" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="70" bodyend="78"/>
-        <references refid="namespacetools_1_1finite_1_1io_1_1internals_1a63a3e2209f88cb2e2c7cf34f10d28fe4" compoundref="finite_2h5pp_8cpp" startline="21" endline="24">tools::finite::io::internals::make_extendable_dataset</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a2671b50504bd387e8153151fb7556e24" compoundref="class__finite__state_8cpp" startline="222" endline="227">class_finite_state::get_L</references>
-        <references refid="classclass__finite__state_1ac698101229f4b0af09c22a12a45fc5c1" compoundref="class__finite__state_8h" startline="146">class_finite_state::truncation_error</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="102" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a5723f7ca65e31340eb7cd9de1c4aab29" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1ac6f85c4daaea9b7d4cc69e1d4c83ebb1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_full_mps</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>write_full_mps</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -122,22 +102,18 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Writes down the full MPS in &quot;L-G-L-G- LC -G-L-G-L&quot; notation. </para>        </detaileddescription>
+        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="196" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="80" bodyend="91"/>
-        <references refid="namespacetools_1_1finite_1_1io_1_1internals_1a63a3e2209f88cb2e2c7cf34f10d28fe4" compoundref="finite_2h5pp_8cpp" startline="21" endline="24">tools::finite::io::internals::make_extendable_dataset</references>
-        <references refid="namespacetools_1_1finite_1_1io_1a028874bf95ce9fb9ebb89fd13dbb3ce5" compoundref="finite_2h5pp_8cpp" startline="53" endline="67">write_bond_matrices</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a0f966b0ed7c085b399674ca7c67494bd" compoundref="class__finite__state_8cpp" startline="214" endline="216">class_finite_state::get_G</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="103" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1aa77176fab4588b283c51e28e25d3906b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a6c5fda74f67d69358c5ff5ae86c599f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_full_mpo</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>write_full_mpo</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -154,21 +130,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="197" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="96" bodyend="109"/>
-        <references refid="namespacetools_1_1finite_1_1io_1_1internals_1a63a3e2209f88cb2e2c7cf34f10d28fe4" compoundref="finite_2h5pp_8cpp" startline="21" endline="24">tools::finite::io::internals::make_extendable_dataset</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a53311263b0717873d16e1abf02b9b6a7" compoundref="class__finite__state_8cpp" startline="193" endline="205">class_finite_state::get_MPO</references>
-        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
-        <references refid="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b">class_model_base::get_parameter_values</references>
-        <references refid="classclass__model__base_1a2c8ca66dc1a83c1ddb5ea91aec7fe1ed">class_model_base::get_parameter_names</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="104" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a4f2b0c2fdea66b2fcf35fe8894e1d587" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a80bf9e47cde868592d18ac55589da2de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_model</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>write_model</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -185,23 +155,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="198" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="111" bodyend="131"/>
-        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
-        <references refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
-        <references refid="classclass__finite__state_1ae39835ff5932221d63fa83dc679b1ed7" compoundref="class__finite__state_8cpp" startline="90" endline="90">class_finite_state::get_length</references>
-        <references refid="classclass__finite__state_1a53311263b0717873d16e1abf02b9b6a7" compoundref="class__finite__state_8cpp" startline="193" endline="205">class_finite_state::get_MPO</references>
-        <references refid="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b">class_model_base::get_parameter_values</references>
-        <references refid="namespacetools_1_1finite_1_1io_1_1internals_1a63a3e2209f88cb2e2c7cf34f10d28fe4" compoundref="finite_2h5pp_8cpp" startline="21" endline="24">tools::finite::io::internals::make_extendable_dataset</references>
-        <references refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" compoundref="class__finite__state_8h" startline="63">class_finite_state::MPO_L</references>
-        <references refid="classclass__model__base_1a2c8ca66dc1a83c1ddb5ea91aec7fe1ed">class_model_base::get_parameter_names</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="105" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a38e38fba948c40347fda0a17c65763d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a922e1d60f12564fc12f9c32c7652890b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_entanglement</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>write_entanglement</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -218,15 +180,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="199" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="106" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a1840be8832f3ba09af99f34fa08eb20c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1af91bd7a74ba98b9d856b5e7de57f2430" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_all_measurements</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>write_all_measurements</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -243,34 +205,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="200" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="133" bodyend="152"/>
-        <references refid="classclass__finite__state_1a6ae17f6b1115a6e5630beb59cd064ca6" compoundref="class__finite__state_8cpp" startline="547" endline="561">class_finite_state::do_all_measurements</references>
-        <references refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" compoundref="nmspc__tools_8h" startline="316">tools::common::profile::t_hdf</references>
-        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="classclass__finite__state_1acaa20c4b46a3ca61b278d3f9ab026309" compoundref="class__finite__state_8h" startline="165">class_finite_state::measurements</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a318ad377c472789df9713294b59788f1" compoundref="class__finite__state_8h" startline="148">class_finite_state::Measurements::length</references>
-        <references refid="structclass__finite__state_1_1_measurements_1afa6883ebbbbe1bff5f922d499a19aab4" compoundref="class__finite__state_8h" startline="152">class_finite_state::Measurements::norm</references>
-        <references refid="structclass__finite__state_1_1_measurements_1aa65086fe9e146d381d987e1fd2941dc8" compoundref="class__finite__state_8h" startline="151">class_finite_state::Measurements::bond_dimensions</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a729ef146fb2e5c81b355e60cb9522ec0" compoundref="class__finite__state_8h" startline="149">class_finite_state::Measurements::bond_dimension_midchain</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a7cfa40e6d2c88d78e6418094f603603d" compoundref="class__finite__state_8h" startline="153">class_finite_state::Measurements::energy</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a7d515b15cfdd205b7ca1bf6e51ebbd15" compoundref="class__finite__state_8h" startline="154">class_finite_state::Measurements::energy_per_site</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a8b47be757b3751ca9ee49c07a6102324" compoundref="class__finite__state_8h" startline="155">class_finite_state::Measurements::energy_variance_mpo</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a5d9b8e22eb2c5fbb1532ac82658e7157" compoundref="class__finite__state_8h" startline="156">class_finite_state::Measurements::energy_variance_per_site</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a581133f1d7650f3045392243e6b9537c" compoundref="class__finite__state_8h" startline="163">class_finite_state::Measurements::entanglement_entropies</references>
-        <references refid="structclass__finite__state_1_1_measurements_1ae474957f0142cb20d39632a9797087de" compoundref="class__finite__state_8h" startline="161">class_finite_state::Measurements::entanglement_entropy_midchain</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a8b1e7873a5a64430a1adba5dd7e5d3c3" compoundref="class__finite__state_8h" startline="160">class_finite_state::Measurements::spin_components</references>
-        <references refid="structclass__finite__state_1_1_measurements_1ae75dc052623898022331f61e69471206" compoundref="class__finite__state_8h" startline="157">class_finite_state::Measurements::spin_component_sx</references>
-        <references refid="structclass__finite__state_1_1_measurements_1a65c4716cd1cdc1a8e755c45fd4e57ced" compoundref="class__finite__state_8h" startline="158">class_finite_state::Measurements::spin_component_sy</references>
-        <references refid="structclass__finite__state_1_1_measurements_1abcb5fb3c2166b630c67f43e038f69ce0" compoundref="class__finite__state_8h" startline="159">class_finite_state::Measurements::spin_component_sz</references>
-        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="107" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a0053cc870b91b93f1b84902ec62e6d7e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1aeb64c163735b326032ffee2c31b0da9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::write_projection_to_closest_parity_sector</definition>
-        <argsstring>(const class_finite_state &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path, std::string parity_sector, bool keep_bond_dimensions)</argsstring>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path, std::string parity_sector, bool keep_bond_dimensions)</argsstring>
         <name>write_projection_to_closest_parity_sector</name>
         <param>
-          <type>const <ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -295,24 +238,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="201" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="155" bodyend="162"/>
-        <references refid="namespacetools_1_1finite_1_1ops_1a51c9c8a97ae2a7775928e6fcb4c805c3" compoundref="ops_8cpp" startline="158" endline="194">tools::finite::ops::get_projection_to_closest_parity_sector</references>
-        <references refid="classclass__finite__state_1a8f08867b1dd985e0428620b548443213" compoundref="class__finite__state_8cpp" startline="539" endline="541">class_finite_state::unset_measurements</references>
-        <references refid="classclass__finite__state_1abe811f34bf53c45089eb7878f7dccdc4" compoundref="class__finite__state_8cpp" startline="56" endline="71">class_finite_state::do_all_measurements</references>
-        <references refid="namespacetools_1_1finite_1_1io_1a5c50ff668b5634e06c5a60f3950b7168" compoundref="finite_2h5pp_8cpp" startline="29" endline="50">write_all_state</references>
-        <references refid="namespacetools_1_1finite_1_1io_1a1840be8832f3ba09af99f34fa08eb20c" compoundref="finite_2h5pp_8cpp" startline="133" endline="152">write_all_measurements</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="108" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1afb211e06dce1c2ddbd2a236aa27c5419" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a7131db8e8279905bf87c91bed48d2237" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::finite::io::load_from_hdf5</definition>
-        <argsstring>(const h5pp::File &amp;h5ppFile, class_finite_state &amp;state, class_simulation_status &amp;sim_status, const std::string &amp;prefix_path)</argsstring>
+        <argsstring>(const h5pp::File &amp;h5ppFile, class_state_finite &amp;state, class_simulation_status &amp;sim_status, const std::string &amp;prefix_path)</argsstring>
         <name>load_from_hdf5</name>
         <param>
           <type>const h5pp::File &amp;</type>
           <declname>h5ppFile</declname>
         </param>
         <param>
-          <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref> &amp;</type>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -329,17 +267,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="202" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="165" bodyend="175"/>
-        <references refid="namespacetools_1_1common_1_1io_1aac4b3c1baaf7cd9aecf350384d5d1752" compoundref="common_2h5pp_8cpp" startline="53" endline="100">tools::common::io::load_sim_status_from_hdf5</references>
-        <references refid="classclass__finite__state_1a31ece922c1df7f6deb83579afb2fcca6" compoundref="class__finite__state_8cpp" startline="23" endline="52">class_finite_state::operator=</references>
-        <references refid="namespacetools_1_1finite_1_1io_1a576ea47e947335d4e8a3617d1ca0bc96" compoundref="finite_2h5pp_8cpp" startline="177" endline="228">load_state_from_hdf5</references>
-        <references refid="classclass__finite__state_1aecbc8d3c32a92821f4bd8531d6c495b8" compoundref="class__finite__state_8cpp" startline="95" endline="95">class_finite_state::set_sweeps</references>
-        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
-        <references refid="namespacetools_1_1finite_1_1debug_1a8bfed5706f3a25e415f986d5c4bf7b73" compoundref="finite_2debug_8cpp" startline="14" endline="29">tools::finite::debug::check_integrity</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="109" column="1"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a576ea47e947335d4e8a3617d1ca0bc96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type><ref refid="classclass__finite__state" kindref="compound">class_finite_state</ref></type>
-        <definition>class_finite_state tools::finite::io::load_state_from_hdf5</definition>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1af70b0f3611654305e87f65d54b42afb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::io::load_state_from_hdf5</definition>
         <argsstring>(const h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
         <name>load_state_from_hdf5</name>
         <param>
@@ -356,22 +288,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="203" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/h5pp.cpp" bodystart="177" bodyend="228"/>
-        <references refid="classclass__finite__state_1a14b46df5eaca65e179a7e569b96760a1" compoundref="class__finite__state_8h" startline="56">class_finite_state::MPS_L</references>
-        <references refid="classclass__vidal__site_1a5508860d2e60dcc634d89fb0fc86fa53" compoundref="class__vidal__site_8cpp" startline="22" endline="22">class_vidal_site::get_chiR</references>
-        <references refid="classclass__finite__state_1a906a5be3c78240633bc2b41b46a9573e" compoundref="class__finite__state_8h" startline="63">class_finite_state::MPO_L</references>
-        <references refid="classclass__model__factory_1a27e72c08a4f4bf9fedcbeb182248ad4e" compoundref="class__model__factory_8h" startline="18" endline="22">class_model_factory::create_mpo</references>
-        <references refid="classclass__finite__state_1ab218814d43faec51bf410db562b7c68a" compoundref="class__finite__state_8h" startline="57">class_finite_state::MPS_R</references>
-        <references refid="classclass__finite__state_1a33bf7fe5a45f262ffdf1f7b380741c83" compoundref="class__finite__state_8h" startline="64">class_finite_state::MPO_R</references>
-        <references refid="classclass__finite__state_1ab95ffeb138dea0a739dcab7c59c44321" compoundref="class__finite__state_8h" startline="58">class_finite_state::MPS_C</references>
-        <references refid="classclass__finite__state_1a914b197428fdcc43b7571381e3422071" compoundref="class__finite__state_8cpp" startline="91" endline="91">class_finite_state::get_position</references>
-        <references refid="namespacetools_1_1finite_1_1mps_1a39333dfe4f63e99d175302ff77155464" compoundref="finite_2mps_8cpp" startline="80" endline="141">tools::finite::mps::rebuild_environments</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="110" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="189" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="200" column="1"/>
   </compounddef>
 </doxygen>

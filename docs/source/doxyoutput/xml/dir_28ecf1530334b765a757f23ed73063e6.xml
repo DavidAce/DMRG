@@ -4,6 +4,7 @@
     <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation</compoundname>
     <innerfile refid="class__simulation__status_8cpp">class_simulation_status.cpp</innerfile>
     <innerfile refid="class__simulation__status_8h">class_simulation_status.h</innerfile>
+    <innerfile refid="enums_8h">enums.h</innerfile>
     <innerfile refid="nmspc__settings_8cpp">nmspc_settings.cpp</innerfile>
     <innerfile refid="nmspc__settings_8h">nmspc_settings.h</innerfile>
     <briefdescription>

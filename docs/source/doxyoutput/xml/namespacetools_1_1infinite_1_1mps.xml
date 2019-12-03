@@ -3,21 +3,44 @@
   <compounddef id="namespacetools_1_1infinite_1_1mps" kind="namespace" language="C++">
     <compoundname>tools::infinite::mps</compoundname>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1mps_1a399c3f5d307b0c3644001993edab8290" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref></type>
-        <definition>class_infinite_state tools::infinite::mps::set_random_state</definition>
-        <argsstring>(const class_infinite_state &amp;state, std::string parity, int seed_state)</argsstring>
-        <name>set_random_state</name>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1mps_1a56776b1e99c7db754004afe45a040e8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::mps::initialize</definition>
+        <argsstring>(class_state_infinite &amp;state, std::string model_type_str)</argsstring>
+        <name>initialize</name>
         <param>
-          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <type><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
           <type>std::string</type>
+          <declname>model_type_str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="256" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp" bodystart="11" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1mps_1a80202ec0d3161bb41d8209c0f717b109" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref></type>
+        <definition>class_state_infinite tools::infinite::mps::set_random_state</definition>
+        <argsstring>(const class_state_infinite &amp;state, [[maybe_unused]] std::string parity, [[maybe_unused]] int seed_state)</argsstring>
+        <name>set_random_state</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] std::string</type>
           <declname>parity</declname>
         </param>
         <param>
-          <type>int</type>
+          <attributes>[[maybe_unused]</attributes>
+          <type>] int</type>
           <declname>seed_state</declname>
         </param>
         <briefdescription>
@@ -26,13 +49,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="231" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp" bodystart="9" bodyend="12"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="257" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp" bodystart="37" bodyend="40"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="230" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="255" column="1"/>
   </compounddef>
 </doxygen>

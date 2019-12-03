@@ -33,6 +33,8 @@ Includes
 
 - ``io/nmspc_logger.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_logger.h`)
 
+- ``sstream``
+
 
 
 

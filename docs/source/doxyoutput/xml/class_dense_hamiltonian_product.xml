@@ -172,6 +172,19 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="32" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="class_dense_hamiltonian_product_1ab8d679eb960bf5a343756a2d6971436b" prot="private" static="no" mutable="no">
+        <type><ref refid="class_o_m_p" kindref="compound">OMP</ref></type>
+        <definition>OMP DenseHamiltonianProduct&lt; Scalar_ &gt;::omp</definition>
+        <argsstring></argsstring>
+        <name>omp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
       <memberdef kind="variable" id="class_dense_hamiltonian_product_1ae9a15bc851bf9c5371fdbe0c4e765bba" prot="public" static="no" mutable="no">
@@ -186,7 +199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="64" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="70" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_hamiltonian_product_1a12c2de64713899de7c719f5dc23d6e5e" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -199,14 +212,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="72" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="78" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="class_dense_hamiltonian_product_1abf8b47352edf585031603816c47dceab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="class_dense_hamiltonian_product_1acc3a93aceb6ddf3b93a1c6c00d720e87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
         <definition>DenseHamiltonianProduct&lt; Scalar_ &gt;::DenseHamiltonianProduct</definition>
-        <argsstring>(const Scalar_ *Lblock_, const Scalar_ *Rblock_, const Scalar_ *HA_, const Scalar_ *HB_, const std::array&lt; long, 4 &gt; shape_theta4_, const std::array&lt; long, 4 &gt; shape_mpo4_)</argsstring>
+        <argsstring>(const Scalar_ *Lblock_, const Scalar_ *Rblock_, const Scalar_ *HA_, const Scalar_ *HB_, const std::array&lt; long, 4 &gt; shape_theta4_, const std::array&lt; long, 4 &gt; shape_mpo4_, const size_t num_threads=1)</argsstring>
         <name>DenseHamiltonianProduct</name>
         <param>
           <type>const Scalar_ *</type>
@@ -238,19 +251,23 @@
           <declname>shape_mpo4_</declname>
           <briefdescription><para>An array containing the shapes of the MPO </para></briefdescription>
         </param>
+        <param>
+          <type>const size_t</type>
+          <declname>num_threads</declname>
+          <defval>1</defval>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
 <para>&lt; Initializes the custom contraction. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="36" bodyend="55"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="36" bodyend="61"/>
         <references refid="class_dense_hamiltonian_product_1a2115ff08771990813813e39f158c0d91" compoundref="matrix__product__hamiltonian_8h" startline="23">DenseHamiltonianProduct&lt; Scalar_ &gt;::Lblock</references>
         <references refid="class_dense_hamiltonian_product_1a125e8c79aa2e426886853fa9a1797b92" compoundref="matrix__product__hamiltonian_8h" startline="24">DenseHamiltonianProduct&lt; Scalar_ &gt;::Rblock</references>
         <references refid="class_dense_hamiltonian_product_1a68273ca080c90d1ea3b904ebe8454b2e" compoundref="matrix__product__hamiltonian_8h" startline="25">DenseHamiltonianProduct&lt; Scalar_ &gt;::HA</references>
         <references refid="class_dense_hamiltonian_product_1ab118ff027ab372eb9bc77045a708b35f" compoundref="matrix__product__hamiltonian_8h" startline="26">DenseHamiltonianProduct&lt; Scalar_ &gt;::HB</references>
-        <references refid="class_dense_hamiltonian_product_1a854646ea703b88e2b03557a51954cc63" compoundref="matrix__product__hamiltonian_8h" startline="27">DenseHamiltonianProduct&lt; Scalar_ &gt;::shape_theta4</references>
-        <references refid="class_dense_hamiltonian_product_1a712206df161dbc7123ce017a9be099f3" compoundref="matrix__product__hamiltonian_8h" startline="28">DenseHamiltonianProduct&lt; Scalar_ &gt;::shape_theta2</references>
+        <references refid="class_dense_hamiltonian_product_1acc3a93aceb6ddf3b93a1c6c00d720e87" compoundref="matrix__product__hamiltonian_8h" startline="36" endline="61">DenseHamiltonianProduct&lt; Scalar_ &gt;::DenseHamiltonianProduct</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_hamiltonian_product_1aecec01d77a30db2fd058a8b505ab1d42" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -263,8 +280,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="58" bodyend="58"/>
-        <references refid="class_dense_hamiltonian_product_1a118cf397c1ef655e11aa6f4672e1faa1" compoundref="matrix__product__hamiltonian_8h" startline="29">DenseHamiltonianProduct&lt; Scalar_ &gt;::shape_theta1</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="64" bodyend="64"/>
       </memberdef>
       <memberdef kind="function" id="class_dense_hamiltonian_product_1a871b7edb9d3c0ddec8df8be12fb6dc9f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -274,11 +290,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>The &quot;matrix&quot; <formula id="27">$ H $</formula> a has rows = columns = <formula id="28">$d^2 \times \chi_L \times \chi_R $</formula> </para>        </detaileddescription>
+<para>The &quot;matrix&quot; <formula id="29">$ H $</formula> a has rows = columns = <formula id="30">$d^2 \times \chi_L \times \chi_R $</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="59" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="59" bodyend="59"/>
-        <references refid="class_dense_hamiltonian_product_1a118cf397c1ef655e11aa6f4672e1faa1" compoundref="matrix__product__hamiltonian_8h" startline="29">DenseHamiltonianProduct&lt; Scalar_ &gt;::shape_theta1</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="65" bodyend="65"/>
       </memberdef>
       <memberdef kind="function" id="class_dense_hamiltonian_product_1af356d539695d81a15b3aeedecaa500d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -296,20 +311,13 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>The &quot;matrix&quot; <formula id="27">$ H $</formula> a has rows = columns = <formula id="28">$d^2 \times \chi_L \times \chi_R $</formula> </para>        </detaileddescription>
+<para>The &quot;matrix&quot; <formula id="29">$ H $</formula> a has rows = columns = <formula id="30">$d^2 \times \chi_L \times \chi_R $</formula> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="77" bodyend="98"/>
-        <references refid="class_dense_hamiltonian_product_1a12c2de64713899de7c719f5dc23d6e5e" compoundref="matrix__product__hamiltonian_8h" startline="72">DenseHamiltonianProduct&lt; Scalar_ &gt;::t_mul</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="67" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="83" bodyend="103"/>
+        <references refid="class_dense_hamiltonian_product_1a12c2de64713899de7c719f5dc23d6e5e" compoundref="matrix__product__hamiltonian_8h" startline="78">DenseHamiltonianProduct&lt; Scalar_ &gt;::t_mul</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="class_dense_hamiltonian_product_1a2115ff08771990813813e39f158c0d91" compoundref="matrix__product__hamiltonian_8h" startline="23">DenseHamiltonianProduct&lt; Scalar_ &gt;::Lblock</references>
-        <references refid="class_dense_hamiltonian_product_1a854646ea703b88e2b03557a51954cc63" compoundref="matrix__product__hamiltonian_8h" startline="27">DenseHamiltonianProduct&lt; Scalar_ &gt;::shape_theta4</references>
-        <references refid="class_dense_hamiltonian_product_1a900a243819adf2833c6b31e3edfaeea2" compoundref="matrix__product__hamiltonian_8h" startline="30">DenseHamiltonianProduct&lt; Scalar_ &gt;::shape_mpo4</references>
-        <references refid="class_dense_hamiltonian_product_1a125e8c79aa2e426886853fa9a1797b92" compoundref="matrix__product__hamiltonian_8h" startline="24">DenseHamiltonianProduct&lt; Scalar_ &gt;::Rblock</references>
-        <references refid="class_dense_hamiltonian_product_1a68273ca080c90d1ea3b904ebe8454b2e" compoundref="matrix__product__hamiltonian_8h" startline="25">DenseHamiltonianProduct&lt; Scalar_ &gt;::HA</references>
-        <references refid="class_dense_hamiltonian_product_1ab118ff027ab372eb9bc77045a708b35f" compoundref="matrix__product__hamiltonian_8h" startline="26">DenseHamiltonianProduct&lt; Scalar_ &gt;::HB</references>
-        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
-        <references refid="class_dense_hamiltonian_product_1ae9a15bc851bf9c5371fdbe0c4e765bba" compoundref="matrix__product__hamiltonian_8h" startline="64">DenseHamiltonianProduct&lt; Scalar_ &gt;::counter</references>
+        <references refid="class_dense_hamiltonian_product_1ae9a15bc851bf9c5371fdbe0c4e765bba" compoundref="matrix__product__hamiltonian_8h" startline="70">DenseHamiltonianProduct&lt; Scalar_ &gt;::counter</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_hamiltonian_product_1a6e0b89f2fc806189437ba8d2311130e5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
@@ -323,7 +331,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="65" bodyend="65"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="71" bodyend="71"/>
       </memberdef>
       <memberdef kind="function" id="class_dense_hamiltonian_product_1af90c840023a99e77c005f5de1e831fe0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -340,7 +348,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="66" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="66" bodyend="66"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="72" bodyend="72"/>
         <references refid="class_dense_hamiltonian_product_1a6b0880e07d2ae340fd6e062b0a8fcbda" compoundref="matrix__product__hamiltonian_8h" startline="31">DenseHamiltonianProduct&lt; Scalar_ &gt;::form</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_hamiltonian_product_1a9c7a4f5d54d18446920ec4de1af842e2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
@@ -358,7 +366,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="67" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="67" bodyend="67"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="73" bodyend="73"/>
         <references refid="class_dense_hamiltonian_product_1a8539eabd5897f742e86d14ba670c81fe" compoundref="matrix__product__hamiltonian_8h" startline="32">DenseHamiltonianProduct&lt; Scalar_ &gt;::side</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_hamiltonian_product_1abbd102471d7b6a8826d4e306892a0dc3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
@@ -372,7 +380,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="68" bodyend="68"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="74" bodyend="74"/>
         <references refid="class_dense_hamiltonian_product_1a6b0880e07d2ae340fd6e062b0a8fcbda" compoundref="matrix__product__hamiltonian_8h" startline="31">DenseHamiltonianProduct&lt; Scalar_ &gt;::form</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_hamiltonian_product_1a610501eaf540a6e372d7d3b71a67a248" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
@@ -386,7 +394,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="69" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="69" bodyend="69"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="75" bodyend="75"/>
         <references refid="class_dense_hamiltonian_product_1a8539eabd5897f742e86d14ba670c81fe" compoundref="matrix__product__hamiltonian_8h" startline="32">DenseHamiltonianProduct&lt; Scalar_ &gt;::side</references>
       </memberdef>
       </sectiondef>
@@ -395,54 +403,61 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="346">
+      <node id="343">
+        <label>OMP</label>
+        <link refid="class_o_m_p"/>
+      </node>
+      <node id="342">
         <label>std::array&lt; long, 4 &gt;</label>
       </node>
-      <node id="340">
+      <node id="336">
         <label>DenseHamiltonianProduct&lt; Scalar_ &gt;</label>
         <link refid="class_dense_hamiltonian_product"/>
-        <childnode refid="341" relation="usage">
+        <childnode refid="337" relation="usage">
           <edgelabel>shape_theta1</edgelabel>
         </childnode>
-        <childnode refid="342" relation="usage">
+        <childnode refid="338" relation="usage">
           <edgelabel>shape_theta2</edgelabel>
         </childnode>
-        <childnode refid="343" relation="usage">
+        <childnode refid="339" relation="usage">
           <edgelabel>t_mul</edgelabel>
         </childnode>
-        <childnode refid="346" relation="usage">
+        <childnode refid="342" relation="usage">
           <edgelabel>shape_mpo4</edgelabel>
           <edgelabel>shape_theta4</edgelabel>
         </childnode>
-      </node>
-      <node id="345">
-        <label>std::basic_string&lt; char &gt;</label>
-      </node>
-      <node id="343">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-        <childnode refid="344" relation="usage">
-          <edgelabel>name</edgelabel>
+        <childnode refid="343" relation="usage">
+          <edgelabel>omp</edgelabel>
         </childnode>
       </node>
       <node id="341">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="339">
+        <label>class_tic_toc</label>
+        <link refid="classclass__tic__toc"/>
+        <childnode refid="340" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+      </node>
+      <node id="337">
         <label>std::array&lt; long, 1 &gt;</label>
       </node>
-      <node id="342">
+      <node id="338">
         <label>std::array&lt; long, 2 &gt;</label>
       </node>
-      <node id="344">
+      <node id="340">
         <label>std::string</label>
-        <childnode refid="345" relation="public-inheritance">
+        <childnode refid="341" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="18" bodyend="73"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h" bodystart="18" bodyend="79"/>
     <listofallmembers>
       <member refid="class_dense_hamiltonian_product_1a33401eeb9e82ff5cd67d6d0e2420cd37" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>can_shift</name></member>
       <member refid="class_dense_hamiltonian_product_1a871b7edb9d3c0ddec8df8be12fb6dc9f" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>cols</name></member>
       <member refid="class_dense_hamiltonian_product_1ae9a15bc851bf9c5371fdbe0c4e765bba" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>counter</name></member>
-      <member refid="class_dense_hamiltonian_product_1abf8b47352edf585031603816c47dceab" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>DenseHamiltonianProduct</name></member>
+      <member refid="class_dense_hamiltonian_product_1acc3a93aceb6ddf3b93a1c6c00d720e87" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>DenseHamiltonianProduct</name></member>
       <member refid="class_dense_hamiltonian_product_1a6b0880e07d2ae340fd6e062b0a8fcbda" prot="private" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>form</name></member>
       <member refid="class_dense_hamiltonian_product_1abbd102471d7b6a8826d4e306892a0dc3" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>get_form</name></member>
       <member refid="class_dense_hamiltonian_product_1a610501eaf540a6e372d7d3b71a67a248" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>get_side</name></member>
@@ -450,6 +465,7 @@
       <member refid="class_dense_hamiltonian_product_1ab118ff027ab372eb9bc77045a708b35f" prot="private" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>HB</name></member>
       <member refid="class_dense_hamiltonian_product_1a2115ff08771990813813e39f158c0d91" prot="private" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>Lblock</name></member>
       <member refid="class_dense_hamiltonian_product_1af356d539695d81a15b3aeedecaa500d5" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>MultAx</name></member>
+      <member refid="class_dense_hamiltonian_product_1ab8d679eb960bf5a343756a2d6971436b" prot="private" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>omp</name></member>
       <member refid="class_dense_hamiltonian_product_1a6e0b89f2fc806189437ba8d2311130e5" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>print</name></member>
       <member refid="class_dense_hamiltonian_product_1a125e8c79aa2e426886853fa9a1797b92" prot="private" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>Rblock</name></member>
       <member refid="class_dense_hamiltonian_product_1aecec01d77a30db2fd058a8b505ab1d42" prot="public" virt="non-virtual"><scope>DenseHamiltonianProduct</scope><name>rows</name></member>

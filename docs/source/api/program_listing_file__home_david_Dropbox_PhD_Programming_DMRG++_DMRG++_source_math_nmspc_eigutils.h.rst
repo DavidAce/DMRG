@@ -14,8 +14,8 @@ Program Listing for File nmspc_eigutils.h
    // Created by david on 2018-06-07.
    //
    
-   #ifndef NMSPC_EIGUTILS_H
-   #define NMSPC_EIGUTILS_H
+   #pragma once
+   
    
    #include <iostream>
    #include <array>
@@ -250,7 +250,3 @@ Program Listing for File nmspc_eigutils.h
        }
    
    }
-   
-   
-   
-   #endif //NMSPC_EIGUTILS_H

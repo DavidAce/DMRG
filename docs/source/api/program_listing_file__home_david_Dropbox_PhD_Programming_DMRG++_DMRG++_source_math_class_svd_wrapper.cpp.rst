@@ -74,8 +74,15 @@ Program Listing for File class_svd_wrapper.cpp
        Eigen::BDCSVD<MatrixType<Scalar>> SVD;
        SVD.setThreshold(SVDThreshold);
        SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-       long rank = std::min(SVD.rank(),rank_max);
-       truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
+   
+       long max_size =  std::min(SVD.singularValues().size(),rank_max);
+       long rank     = (SVD.singularValues().head(max_size).array() >= SVDThreshold).count();
+       if(rank == SVD.singularValues().size()){
+           truncation_error = 0;
+       }else{
+           truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).squaredNorm();
+       }
+   //    truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
    
        if (SVD.rank() <= 0
        or not SVD.matrixU().leftCols(rank).allFinite()
@@ -83,7 +90,7 @@ Program Listing for File class_svd_wrapper.cpp
        or not SVD.matrixV().leftCols(rank).allFinite() )
        {
            std::cerr   << "SVD error \n"
-                       << "  SVDThreshold     = " << SVDThreshold << '\n'
+                       << "  svd_threshold     = " << SVDThreshold << '\n'
                        << "  Truncation Error = " << truncation_error << '\n'
                        << "  Rank             = " << rank << '\n'
                        << "  U all finite     : " << std::boolalpha << SVD.matrixU().leftCols(rank).allFinite() << '\n'
@@ -111,7 +118,7 @@ Program Listing for File class_svd_wrapper.cpp
    //    std::cout << "Singular values           : " << SVD.singularValues().transpose() << std::endl;
    //    std::cout << "Singular values after norm: " << SVD.singularValues().head(rank).normalized().transpose() << std::endl;
    //    std::cout << "Rank                      : " << rank << std::endl;
-   //    std::cout << "Threshold                 : " << SVDThreshold << std::endl;
+   //    std::cout << "Threshold                 : " << svd_threshold << std::endl;
    //    std::cout << "Truncation error          : " << truncation_error << std::endl;
    
        return std::make_tuple(
@@ -142,7 +149,7 @@ Program Listing for File class_svd_wrapper.cpp
        if (tensor.dimension(0) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(0)");}
        if (tensor.dimension(1) <= 0)  {throw std::runtime_error("pseudo_inverse error: Dimension is zero: tensor.dimension(1)");}
        Eigen::Map<const MatrixType<Scalar>> mat (tensor.data(), tensor.dimension(0), tensor.dimension(1));
-       return Textra::Matrix_to_Tensor2(mat.completeOrthogonalDecomposition().pseudoInverse() );
+       return Textra::MatrixTensorMap(mat.completeOrthogonalDecomposition().pseudoInverse() );
    }
    
    

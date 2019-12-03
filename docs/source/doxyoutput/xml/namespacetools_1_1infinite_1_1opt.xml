@@ -3,13 +3,13 @@
   <compounddef id="namespacetools_1_1infinite_1_1opt" kind="namespace" language="C++">
     <compoundname>tools::infinite::opt</compoundname>
       <sectiondef kind="func">
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1a8bacb86d5099e957f94d72defa8bf830" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1ac6c454fdb5bb47d59e31df4b476e1a76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt;</type>
         <definition>Eigen::Tensor&lt; tools::infinite::Scalar, 4 &gt; tools::infinite::opt::find_ground_state</definition>
-        <argsstring>(const class_infinite_state &amp;state, std::string ritz=&quot;SR&quot;)</argsstring>
+        <argsstring>(const class_state_infinite &amp;state, std::string ritz=&quot;SR&quot;)</argsstring>
         <name>find_ground_state</name>
         <param>
-          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -23,36 +23,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="235" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="17" bodyend="38"/>
-        <references refid="classclass__infinite__state_1a9191239e8e3f068c113645c78a449c10" compoundref="class__infinite__state_8cpp" startline="79" endline="79">class_infinite_state::get_theta</references>
-        <references refid="classclass__infinite__state_1a61e3e8bab7dad9ed30d0d3116647bdf8" compoundref="class__infinite__state_8h" startline="49">class_infinite_state::HA</references>
-        <references refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" compoundref="class__model__base_8cpp" startline="14" endline="20">class_model_base::MPO</references>
-        <references refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" compoundref="nmspc__tools_8h" startline="311">tools::common::profile::t_eig</references>
-        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a4958e75ebe95c52b7432f57a058acf2c" compoundref="nmspc__eigutils_8h" startline="26" endline="37">eigutils::eigSetting::stringToRitz</references>
-        <references refid="class_dense_hamiltonian_product_1abf8b47352edf585031603816c47dceab" compoundref="matrix__product__hamiltonian_8h" startline="36" endline="55">DenseHamiltonianProduct&lt; Scalar_ &gt;::DenseHamiltonianProduct</references>
-        <references refid="classclass__infinite__state_1a389ce27f02d64ec6a20f0ffd233886be" compoundref="class__infinite__state_8h" startline="51">class_infinite_state::Lblock</references>
-        <references refid="classclass__environment_1a1b3e96fea0bbdd34c2e01e9427649fa4" compoundref="class__environment_8h" startline="46">class_environment::block</references>
-        <references refid="classclass__infinite__state_1ae254b9f4f64e690a6670992e737395e4" compoundref="class__infinite__state_8h" startline="52">class_infinite_state::Rblock</references>
-        <references refid="classclass__infinite__state_1a051d4c7938d7720d0eddf2c681d44876" compoundref="class__infinite__state_8h" startline="50">class_infinite_state::HB</references>
-        <references refid="classclass__eigsolver_1ac5612e0c1b83a9dd761c697b88a98fd1" compoundref="class__eigsolver_8h" startline="433" endline="452">class_eigsolver::eigs_dense</references>
-        <references refid="namespacesettings_1_1precision_1a664ffd3ce1a107600bf23892ef519373" compoundref="nmspc__settings_8h" startline="92">settings::precision::eigMaxNcv</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">class_eigsolver::solution</references>
-        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
-        <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
-        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
-        <references refid="classclass__tic__toc_1a47731fce833ea5e35097f50ce0b84b21" compoundref="class__tic__toc_8cpp" startline="50" endline="56">class_tic_toc::print_delta</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="271" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="17" bodyend="39"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1a01f9cbbf8842767b70fd56cf45cb5e99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1ab1dea0b6449610fc4895a574c5285d6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt;</type>
         <definition>Eigen::Tensor&lt; tools::infinite::Scalar, 4 &gt; tools::infinite::opt::time_evolve_theta</definition>
-        <argsstring>(const class_infinite_state &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;U)</argsstring>
+        <argsstring>(const class_state_infinite &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;U)</argsstring>
         <name>time_evolve_theta</name>
         <param>
-          <type>const <ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
           <declname>state</declname>
         </param>
         <param>
@@ -74,30 +53,20 @@
 </verbatim> </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="236" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="46" bodyend="63"/>
-        <references refid="classclass__infinite__state_1a9191239e8e3f068c113645c78a449c10" compoundref="class__infinite__state_8cpp" startline="79" endline="79">class_infinite_state::get_theta</references>
-        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="272" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="47" bodyend="64"/>
       </memberdef>
-      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1aaa79eb7dc880942b919161d266af14e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1adc6d702960bfec9021330f71a99c61c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void tools::infinite::opt::truncate_theta</definition>
-        <argsstring>(Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta, class_infinite_state &amp;state, long chi_, double SVDThreshold)</argsstring>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta, class_state_infinite &amp;state)</argsstring>
         <name>truncate_theta</name>
         <param>
           <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
           <declname>theta</declname>
         </param>
         <param>
-          <type><ref refid="classclass__infinite__state" kindref="compound">class_infinite_state</ref> &amp;</type>
+          <type><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
           <declname>state</declname>
-        </param>
-        <param>
-          <type>long</type>
-          <declname>chi_</declname>
-        </param>
-        <param>
-          <type>double</type>
-          <declname>SVDThreshold</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -105,25 +74,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="237" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="69" bodyend="79"/>
-        <references refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" compoundref="class__svd__wrapper_8cpp" startline="37" endline="39">class_SVD::setThreshold</references>
-        <references refid="classclass___s_v_d_1ae0c7c86a804b2376fb71427298cb651b" compoundref="class__svd__wrapper_8h" startline="181" endline="187">class_SVD::schmidt</references>
-        <references refid="classclass__infinite__state_1a70ea9e6e868a7e78d5505714053ac3a4" compoundref="class__infinite__state_8h" startline="48">class_infinite_state::MPS</references>
-        <references refid="classclass__mps__2site_1a37e5a9c9d4623910c058c446a556be8d" compoundref="class__mps__2site_8h" startline="70">class_mps_2site::truncation_error</references>
-        <references refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" compoundref="class__svd__wrapper_8cpp" startline="33" endline="35">class_SVD::get_truncation_error</references>
-        <references refid="classclass__mps__2site_1a6b006218dc82ec4b80a17903a37cc881" compoundref="class__mps__2site_8h" startline="74">class_mps_2site::LC</references>
-        <references refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" compoundref="nmspc__tensor__extra_8h" startline="131" endline="133">Textra::asDiagonalInversed</references>
-        <references refid="classclass__mps__2site_1a08dacecbeb16571b40bc9872df9a729a" compoundref="class__mps__2site_8h" startline="72">class_mps_2site::MPS_A</references>
-        <references refid="classclass__vidal__site_1af6f034b58f24cd6ede70f37e3a4ab974" compoundref="class__vidal__site_8cpp" startline="12" endline="12">class_vidal_site::get_L</references>
-        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
-        <references refid="classclass__mps__2site_1ae56a70a46b9f19eb9b8cb26cc12dadbd" compoundref="class__mps__2site_8h" startline="73">class_mps_2site::MPS_B</references>
-        <references refid="classclass__vidal__site_1aa0aa4328e28b6c4cdc335fbd044d7537" compoundref="class__vidal__site_8cpp" startline="36" endline="36">class_vidal_site::set_G</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="273" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="70" bodyend="78"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="234" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="270" column="1"/>
   </compounddef>
 </doxygen>

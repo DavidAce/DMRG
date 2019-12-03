@@ -1,82 +1,12 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
-  <compounddef id="classclass__environment__var" kind="class" language="C++" prot="public">
+  <compounddef id="classclass__environment__var" kind="class" language="C++" prot="public" final="yes">
     <compoundname>class_environment_var</compoundname>
+    <basecompoundref refid="classclass__environment__base" prot="public" virt="non-virtual">class_environment_base</basecompoundref>
     <includes refid="class__environment_8h" local="no">class_environment.h</includes>
-      <sectiondef kind="public-type">
-      <memberdef kind="typedef" id="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" prot="public" static="no">
-        <type>std::complex&lt; double &gt;</type>
-        <definition>using class_environment_var::Scalar =  std::complex&lt;double&gt;</definition>
-        <argsstring></argsstring>
-        <name>Scalar</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="73" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="private-attrib">
-      <memberdef kind="variable" id="classclass__environment__var_1aaa0943fb57b67d6f923e26ebcbae5716" prot="private" static="no" mutable="no">
-        <type>std::optional&lt; size_t &gt;</type>
-        <definition>std::optional&lt;size_t&gt; class_environment_var::position</definition>
-        <argsstring></argsstring>
-        <name>position</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="75" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__var_1a9c679cdd1f9487c4cebf8f9050be889e" prot="private" static="no" mutable="no">
-        <type>bool</type>
-        <definition>bool class_environment_var::edge_has_been_set</definition>
-        <argsstring></argsstring>
-        <name>edge_has_been_set</name>
-        <initializer>= false</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="76" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="classclass__environment__var_1a290cc9c8a8a7afe481a5e7a9d06ac6f5" prot="public" static="no" mutable="no">
-        <type>size_t</type>
-        <definition>size_t class_environment_var::sites</definition>
-        <argsstring></argsstring>
-        <name>sites</name>
-        <initializer>= 0</initializer>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Number of particles that have been contracted into this left environment. </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="79" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__environment__var_1a02d289de66235a377e00771303afd817" prot="public" static="no" mutable="no">
-        <type>std::string</type>
-        <definition>std::string class_environment_var::side</definition>
-        <argsstring></argsstring>
-        <name>side</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="80" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" prot="public" static="no" mutable="no">
-        <type>Eigen::Tensor&lt; <ref refid="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <type>Eigen::Tensor&lt; <ref refid="classclass__environment__base_1afe1b16cfa8e487f9257c1512ecc36869" kindref="member">Scalar</ref>, 4 &gt;</type>
         <definition>Eigen::Tensor&lt;Scalar,4&gt; class_environment_var::block</definition>
         <argsstring></argsstring>
         <name>block</name>
@@ -86,21 +16,22 @@
 <para>The environment block. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="81" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="77" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
-      <memberdef kind="function" id="classclass__environment__var_1a6a76e7fd1532df3b5873cb8cc315aa53" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__environment__var_1a6a0cb1ae999870337b6ec1f0428ad3ec" prot="private" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
         <definition>void class_environment_var::enlarge</definition>
-        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;MPS, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;MPO)</argsstring>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;MPS, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;MPO) final</argsstring>
         <name>enlarge</name>
+        <reimplements refid="classclass__environment__base_1a9a1b6ccfa8af554461c48240727e60a5">enlarge</reimplements>
         <param>
-          <type>const Eigen::Tensor&lt; <ref refid="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__environment__base_1afe1b16cfa8e487f9257c1512ecc36869" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
           <declname>MPS</declname>
         </param>
         <param>
-          <type>const Eigen::Tensor&lt; <ref refid="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__environment__base_1afe1b16cfa8e487f9257c1512ecc36869" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
           <declname>MPO</declname>
         </param>
         <briefdescription>
@@ -111,50 +42,26 @@
 <para>&lt; Contracts a site into the block.</para><para><heading level="1">Left environment contraction</heading>
 </para><para>[ ]<ndash/>0 0<ndash/>[LB]<ndash/>1 1<ndash/>[ GA ]<ndash/>2 [ ] | [ ] 0 [ ] [ ] 2 [ ] | [ ]<ndash/>2 0<ndash/>[ M ]<ndash/>1 [ ] | [ ] 3 [ left ] [ ] 2 [ ] | [ ]<ndash/>3 0<ndash/>[ M ]<ndash/>1 [ ] | [ ] 3 [ ] [ ] 0 [ ] | [ ]<ndash/>1 0<ndash/>[LB]<ndash/>1 1<ndash/>[GA conj ]<ndash/>2</para><para><heading level="1">Right environment contraction</heading>
 </para><para>1<ndash/>[ GB ]<ndash/>2 0<ndash/>[LB]<ndash/>1 0<ndash/>[ ] | [ ] 0 [ ] [ ] 2 [ ] | [ ] 0<ndash/>[ M ]<ndash/>1 2<ndash/>[ ] | [ ] 3 [ ] [ right] 2 [ ] | [ ] 0<ndash/>[ M ]<ndash/>1 2<ndash/>[ ] | [ ] 3 [ ] [ ] 0 [ ] | [ ] 1<ndash/>[ GB conj ]<ndash/>2 0<ndash/>[LB]<ndash/>1 1<ndash/>[ ]</para>        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="143" bodyend="211"/>
-        <references refid="classclass__environment__var_1a290cc9c8a8a7afe481a5e7a9d06ac6f5" compoundref="class__environment_8h" startline="79">sites</references>
-        <references refid="classclass__environment__var_1a9c679cdd1f9487c4cebf8f9050be889e" compoundref="class__environment_8h" startline="76">edge_has_been_set</references>
-        <references refid="classclass__environment__var_1ad754b1a86a9a1ea56797f5b961ec1be9" compoundref="class__environment_8cpp" startline="222" endline="229">set_edge_dims</references>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
-        <references refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" compoundref="class__environment_8h" startline="81">block</references>
-        <references refid="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" compoundref="nmspc__tensor__extra_8h" startline="47" endline="56">Textra::idx</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="164" bodyend="232"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="classclass__environment__var_1a3e082be7517d5ab6a6f94f48810077a7" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classclass__environment__var_1a21220c48f56ffb34409795a9a776614f" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
         <definition>class_environment_var::class_environment_var</definition>
-        <argsstring>(std::string side_)</argsstring>
-        <name>class_environment_var</name>
-        <param>
-          <type>std::string</type>
-          <declname>side_</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="82" bodyend="82"/>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__environment__var_1acf4da9698f6dd2a419f30713e2d31034" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type></type>
-        <definition>class_environment_var::class_environment_var</definition>
-        <argsstring>(std::string side_, int mpsDim, int mpoDim)</argsstring>
+        <argsstring>(std::string side_, const class_mps_site &amp;MPS, const class_model_base &amp;MPO)</argsstring>
         <name>class_environment_var</name>
         <param>
           <type>std::string</type>
           <declname>side_</declname>
         </param>
         <param>
-          <type>int</type>
-          <declname>mpsDim</declname>
+          <type>const <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
+          <declname>MPS</declname>
         </param>
         <param>
-          <type>int</type>
-          <declname>mpoDim</declname>
+          <type>const <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &amp;</type>
+          <declname>MPO</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -162,37 +69,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="83" bodyend="90"/>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
-        <references refid="classclass__environment__var_1a4a25e71b32bab765a53fce34af713201" compoundref="class__environment_8cpp" startline="231" endline="248">set_edge_dims</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="26" bodyend="27"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__environment__var_1a8addc8d3aa43f15d738c59d6ca63554b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
-        <type>bool</type>
-        <definition>bool class_environment_var::isReal</definition>
-        <argsstring>() const</argsstring>
-        <name>isReal</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="16" bodyend="18"/>
-        <references refid="namespace_textra_1ae7794bc6f089ffe1c7121692c28c7592" compoundref="nmspc__tensor__extra_8h" startline="299" endline="302">Textra::isReal</references>
-        <references refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" compoundref="class__environment_8h" startline="81">block</references>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__environment__var_1af89a2e8b30958855bb30418f66211a84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_environment_var::enlarge</definition>
-        <argsstring>(const class_vidal_site &amp;MPS, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;MPO)</argsstring>
+      <memberdef kind="function" id="classclass__environment__var_1a466059b941d0dc002707a26fa4678b42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__environment__var" kindref="compound">class_environment_var</ref></type>
+        <definition>class_environment_var class_environment_var::enlarge</definition>
+        <argsstring>(const class_mps_site &amp;MPS, const class_model_base &amp;MPO)</argsstring>
         <name>enlarge</name>
         <param>
-          <type>const <ref refid="classclass__vidal__site" kindref="compound">class_vidal_site</ref> &amp;</type>
+          <type>const <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
           <declname>MPS</declname>
         </param>
         <param>
-          <type>const Eigen::Tensor&lt; <ref refid="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <type>const <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &amp;</type>
           <declname>MPO</declname>
         </param>
         <briefdescription>
@@ -201,25 +90,34 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="133" bodyend="141"/>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
-        <references refid="classclass__environment__var_1a6a76e7fd1532df3b5873cb8cc315aa53" compoundref="class__environment_8cpp" startline="143" endline="211">enlarge</references>
-        <references refid="classclass__vidal__site_1a91fb27d7a9d6bcaad921fc1e683aa438" compoundref="class__vidal__site_8cpp" startline="16" endline="16">class_vidal_site::get_A</references>
-        <references refid="classclass__environment__var_1aaa0943fb57b67d6f923e26ebcbae5716" compoundref="class__environment_8h" startline="75">position</references>
-        <references refid="classclass__vidal__site_1a84dea9ec6b9cf8d8dee09dc8e5168014" compoundref="class__vidal__site_8cpp" startline="27" endline="30">class_vidal_site::get_position</references>
-        <references refid="classclass__vidal__site_1a710f398ba15c49ef822df6eb44b8a41f" compoundref="class__vidal__site_8cpp" startline="17" endline="17">class_vidal_site::get_B</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="143" bodyend="161"/>
       </memberdef>
-      <memberdef kind="function" id="classclass__environment__var_1ac17ea09c6ce1dcd2aa30c204a13be9ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__environment__var_1a446f087b1fbeb5a0939df8f4d6581dd9" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool class_environment_var::isReal</definition>
+        <argsstring>() const final</argsstring>
+        <name>isReal</name>
+        <reimplements refid="classclass__environment__base_1ab553f77dbee51fc59274fbd0eb0f0f32">isReal</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="33" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__environment__var_1a81e49e0656671815f2ef4be12130d3b7" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
         <definition>void class_environment_var::set_edge_dims</definition>
-        <argsstring>(const class_vidal_site &amp;MPS, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;MPO)</argsstring>
+        <argsstring>(const class_mps_site &amp;MPS, const class_model_base &amp;MPO) final</argsstring>
         <name>set_edge_dims</name>
+        <reimplements refid="classclass__environment__base_1ae98db1720d3b0f1925f6bd83eb1724c8">set_edge_dims</reimplements>
         <param>
-          <type>const <ref refid="classclass__vidal__site" kindref="compound">class_vidal_site</ref> &amp;</type>
+          <type>const <ref refid="classclass__mps__site" kindref="compound">class_mps_site</ref> &amp;</type>
           <declname>MPS</declname>
         </param>
         <param>
-          <type>const Eigen::Tensor&lt; <ref refid="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <type>const <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &amp;</type>
           <declname>MPO</declname>
         </param>
         <briefdescription>
@@ -228,133 +126,65 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="213" bodyend="220"/>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
-        <references refid="classclass__environment__var_1a4a25e71b32bab765a53fce34af713201" compoundref="class__environment_8cpp" startline="231" endline="248">set_edge_dims</references>
-        <references refid="classclass__vidal__site_1a874b7bbe0e666637647e5772deaeaa37" compoundref="class__vidal__site_8cpp" startline="21" endline="21">class_vidal_site::get_chiL</references>
-        <references refid="classclass__vidal__site_1a5508860d2e60dcc634d89fb0fc86fa53" compoundref="class__vidal__site_8cpp" startline="22" endline="22">class_vidal_site::get_chiR</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__environment__var_1ad754b1a86a9a1ea56797f5b961ec1be9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_environment_var::set_edge_dims</definition>
-        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;MPS, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;MPO)</argsstring>
-        <name>set_edge_dims</name>
-        <param>
-          <type>const Eigen::Tensor&lt; <ref refid="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
-          <declname>MPS</declname>
-        </param>
-        <param>
-          <type>const Eigen::Tensor&lt; <ref refid="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
-          <declname>MPO</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="222" bodyend="229"/>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
-        <references refid="classclass__environment__var_1a4a25e71b32bab765a53fce34af713201" compoundref="class__environment_8cpp" startline="231" endline="248">set_edge_dims</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__environment__var_1a4a25e71b32bab765a53fce34af713201" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_environment_var::set_edge_dims</definition>
-        <argsstring>(const int mpsDim, const int mpoDim)</argsstring>
-        <name>set_edge_dims</name>
-        <param>
-          <type>const int</type>
-          <declname>mpsDim</declname>
-        </param>
-        <param>
-          <type>const int</type>
-          <declname>mpoDim</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="231" bodyend="248"/>
-        <references refid="classclass__environment__var_1a9c679cdd1f9487c4cebf8f9050be889e" compoundref="class__environment_8h" startline="76">edge_has_been_set</references>
-        <references refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" compoundref="class__environment_8h" startline="81">block</references>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
-        <references refid="classclass__environment__var_1a290cc9c8a8a7afe481a5e7a9d06ac6f5" compoundref="class__environment_8h" startline="79">sites</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__environment__var_1ab1d4b49b27cade1459eb40c1d4c92fe2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_environment_var::set_position</definition>
-        <argsstring>(const size_t position_)</argsstring>
-        <name>set_position</name>
-        <param>
-          <type>const size_t</type>
-          <declname>position_</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="96" bodyend="96"/>
-        <references refid="classclass__environment__var_1aaa0943fb57b67d6f923e26ebcbae5716" compoundref="class__environment_8h" startline="75">position</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__environment__var_1a4f502fb6360204999b2431ba77f6128f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
-        <type>size_t</type>
-        <definition>size_t class_environment_var::get_position</definition>
-        <argsstring>() const</argsstring>
-        <name>get_position</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="97" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="97" bodyend="100"/>
-        <references refid="classclass__environment__var_1aaa0943fb57b67d6f923e26ebcbae5716" compoundref="class__environment_8h" startline="75">position</references>
-        <references refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" compoundref="class__environment_8h" startline="80">side</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp" bodystart="234" bodyend="252"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <collaborationgraph>
-      <node id="114">
+    <inheritancegraph>
+      <node id="122">
+        <label>class_environment_base</label>
+        <link refid="classclass__environment__base"/>
+      </node>
+      <node id="121">
         <label>class_environment_var</label>
         <link refid="classclass__environment__var"/>
-        <childnode refid="115" relation="usage">
+        <childnode refid="122" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="124">
+        <label>class_environment_base</label>
+        <link refid="classclass__environment__base"/>
+        <childnode refid="125" relation="usage">
           <edgelabel>side</edgelabel>
         </childnode>
       </node>
-      <node id="116">
+      <node id="123">
+        <label>class_environment_var</label>
+        <link refid="classclass__environment__var"/>
+        <childnode refid="124" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="126">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="115">
+      <node id="125">
         <label>std::string</label>
-        <childnode refid="116" relation="public-inheritance">
+        <childnode refid="126" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="71" bodyend="100"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.h" bodystart="73" bodyend="83"/>
     <listofallmembers>
       <member refid="classclass__environment__var_1abf95de609b4a669c32ae3258001d4e40" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>block</name></member>
-      <member refid="classclass__environment__var_1a3e082be7517d5ab6a6f94f48810077a7" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>class_environment_var</name></member>
-      <member refid="classclass__environment__var_1acf4da9698f6dd2a419f30713e2d31034" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>class_environment_var</name></member>
-      <member refid="classclass__environment__var_1a9c679cdd1f9487c4cebf8f9050be889e" prot="private" virt="non-virtual"><scope>class_environment_var</scope><name>edge_has_been_set</name></member>
-      <member refid="classclass__environment__var_1a6a76e7fd1532df3b5873cb8cc315aa53" prot="private" virt="non-virtual"><scope>class_environment_var</scope><name>enlarge</name></member>
-      <member refid="classclass__environment__var_1af89a2e8b30958855bb30418f66211a84" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>enlarge</name></member>
-      <member refid="classclass__environment__var_1a4f502fb6360204999b2431ba77f6128f" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>get_position</name></member>
-      <member refid="classclass__environment__var_1a8addc8d3aa43f15d738c59d6ca63554b" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>isReal</name></member>
-      <member refid="classclass__environment__var_1aaa0943fb57b67d6f923e26ebcbae5716" prot="private" virt="non-virtual"><scope>class_environment_var</scope><name>position</name></member>
-      <member refid="classclass__environment__var_1aec8537692f122d5d1eda0f6e9bab544e" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>Scalar</name></member>
-      <member refid="classclass__environment__var_1ac17ea09c6ce1dcd2aa30c204a13be9ec" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>set_edge_dims</name></member>
-      <member refid="classclass__environment__var_1ad754b1a86a9a1ea56797f5b961ec1be9" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>set_edge_dims</name></member>
-      <member refid="classclass__environment__var_1a4a25e71b32bab765a53fce34af713201" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>set_edge_dims</name></member>
-      <member refid="classclass__environment__var_1ab1d4b49b27cade1459eb40c1d4c92fe2" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>set_position</name></member>
-      <member refid="classclass__environment__var_1a02d289de66235a377e00771303afd817" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>side</name></member>
-      <member refid="classclass__environment__var_1a290cc9c8a8a7afe481a5e7a9d06ac6f5" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>sites</name></member>
+      <member refid="classclass__environment__base_1a5cc607caa1a6b27a7e062895e492c48b" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>class_environment_base</name></member>
+      <member refid="classclass__environment__base_1a3079479089f13e7ffa80c0a6f3dabfd6" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>class_environment_base</name></member>
+      <member refid="classclass__environment__var_1a21220c48f56ffb34409795a9a776614f" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>class_environment_var</name></member>
+      <member refid="classclass__environment__base_1a8165b18422cd8617ac314e1ef9bab58f" prot="protected" virt="non-virtual"><scope>class_environment_var</scope><name>edge_has_been_set</name></member>
+      <member refid="classclass__environment__var_1a6a0cb1ae999870337b6ec1f0428ad3ec" prot="private" virt="virtual"><scope>class_environment_var</scope><name>enlarge</name></member>
+      <member refid="classclass__environment__var_1a466059b941d0dc002707a26fa4678b42" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>enlarge</name></member>
+      <member refid="classclass__environment__base_1a966d2435adace9d7e4c200cd99a417df" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>get_position</name></member>
+      <member refid="classclass__environment__var_1a446f087b1fbeb5a0939df8f4d6581dd9" prot="public" virt="virtual"><scope>class_environment_var</scope><name>isReal</name></member>
+      <member refid="classclass__environment__base_1a00ee567faf42eddc12daa27216978a35" prot="protected" virt="non-virtual"><scope>class_environment_var</scope><name>position</name></member>
+      <member refid="classclass__environment__base_1afe1b16cfa8e487f9257c1512ecc36869" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>Scalar</name></member>
+      <member refid="classclass__environment__var_1a81e49e0656671815f2ef4be12130d3b7" prot="public" virt="virtual"><scope>class_environment_var</scope><name>set_edge_dims</name></member>
+      <member refid="classclass__environment__base_1a80f53a699a6d71cb022a79e3162f6b70" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>set_position</name></member>
+      <member refid="classclass__environment__base_1aa57b7beb7f946b0fdcd865469786ecbe" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>side</name></member>
+      <member refid="classclass__environment__base_1acb206cde6a02a2ba83fbb617ee2d9103" prot="public" virt="non-virtual"><scope>class_environment_var</scope><name>sites</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

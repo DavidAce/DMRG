@@ -10,98 +10,106 @@
     <includes refid="nmspc__quantum__mechanics_8h" local="yes">nmspc_quantum_mechanics.h</includes>
     <includes refid="nmspc__tensor__extra_8h" local="yes">nmspc_tensor_extra.h</includes>
     <incdepgraph>
-      <node id="659">
+      <node id="704">
         <label>iomanip</label>
       </node>
-      <node id="657">
+      <node id="702">
         <label>iterator</label>
       </node>
-      <node id="646">
+      <node id="690">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp</label>
         <link refid="nmspc__quantum__mechanics_8cpp"/>
-        <childnode refid="647" relation="include">
+        <childnode refid="691" relation="include">
         </childnode>
-        <childnode refid="648" relation="include">
+        <childnode refid="692" relation="include">
         </childnode>
-        <childnode refid="649" relation="include">
+        <childnode refid="693" relation="include">
         </childnode>
-        <childnode refid="650" relation="include">
+        <childnode refid="694" relation="include">
         </childnode>
-        <childnode refid="651" relation="include">
+        <childnode refid="695" relation="include">
         </childnode>
-        <childnode refid="652" relation="include">
+        <childnode refid="696" relation="include">
         </childnode>
-        <childnode refid="655" relation="include">
+        <childnode refid="699" relation="include">
         </childnode>
       </node>
-      <node id="660">
+      <node id="705">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="661" relation="include">
+        <childnode refid="706" relation="include">
         </childnode>
-        <childnode refid="647" relation="include">
+        <childnode refid="691" relation="include">
         </childnode>
-        <childnode refid="653" relation="include">
+        <childnode refid="697" relation="include">
         </childnode>
       </node>
-      <node id="647">
+      <node id="691">
         <label>Eigen/Core</label>
       </node>
-      <node id="651">
+      <node id="695">
         <label>unsupported/Eigen/MatrixFunctions</label>
       </node>
-      <node id="661">
+      <node id="706">
         <label>experimental/type_traits</label>
       </node>
-      <node id="653">
+      <node id="697">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="656">
+      <node id="701">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="648">
+      <node id="700">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="697" relation="include">
+        </childnode>
+      </node>
+      <node id="692">
         <label>vector</label>
       </node>
-      <node id="649">
+      <node id="693">
         <label>complex.h</label>
       </node>
-      <node id="658">
+      <node id="703">
         <label>iostream</label>
       </node>
-      <node id="652">
+      <node id="696">
         <label>nmspc_quantum_mechanics.h</label>
         <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="647" relation="include">
+        <childnode refid="691" relation="include">
         </childnode>
-        <childnode refid="653" relation="include">
+        <childnode refid="697" relation="include">
         </childnode>
-        <childnode refid="654" relation="include">
+        <childnode refid="698" relation="include">
         </childnode>
-        <childnode refid="648" relation="include">
+        <childnode refid="692" relation="include">
         </childnode>
       </node>
-      <node id="650">
+      <node id="694">
         <label>unsupported/Eigen/KroneckerProduct</label>
       </node>
-      <node id="654">
+      <node id="698">
         <label>complex</label>
       </node>
-      <node id="655">
+      <node id="699">
         <label>nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="647" relation="include">
+        <childnode refid="700" relation="include">
         </childnode>
-        <childnode refid="656" relation="include">
+        <childnode refid="691" relation="include">
         </childnode>
-        <childnode refid="653" relation="include">
+        <childnode refid="701" relation="include">
         </childnode>
-        <childnode refid="657" relation="include">
+        <childnode refid="697" relation="include">
         </childnode>
-        <childnode refid="658" relation="include">
+        <childnode refid="702" relation="include">
         </childnode>
-        <childnode refid="659" relation="include">
+        <childnode refid="703" relation="include">
         </childnode>
-        <childnode refid="660" relation="include">
+        <childnode refid="704" relation="include">
+        </childnode>
+        <childnode refid="705" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -249,7 +257,7 @@
 <codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::Tensor&lt;std::complex&lt;double&gt;<sp/>,4&gt;&gt;<sp/>tensor_vec;</highlight></codeline>
 <codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;m<sp/>:<sp/>matrix_vec){</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tensor_vec.emplace_back(<ref refid="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" kindref="member">Textra::Matrix_to_Tensor</ref>(m,<sp/>2,2,2,2));</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tensor_vec.emplace_back(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(m,<sp/>2,2,2,2));</highlight></codeline>
 <codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>tensor_vec;</highlight></codeline>
 <codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
@@ -284,7 +292,7 @@
 <codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::array&lt;long,<sp/>2&gt;<sp/>extent2<sp/>=<sp/>{spin_dim,<sp/>spin_dim};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
 <codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>MPO(1,<sp/>1,<sp/>spin_dim,<sp/>spin_dim);</highlight></codeline>
 <codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.setZero();</highlight></codeline>
-<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(paulimatrix);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(paulimatrix);</highlight></codeline>
 <codeline lineno="208"><highlight class="normal"></highlight></codeline>
 <codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Create<sp/>compatible<sp/>edges</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>Ledge(1,1,1);<sp/></highlight><highlight class="comment">//<sp/>The<sp/>left<sp/><sp/>edge</highlight><highlight class="normal"></highlight></codeline>
@@ -311,8 +319,8 @@
 <codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::array&lt;long,<sp/>2&gt;<sp/>extent2<sp/>=<sp/>{spin_dim,<sp/>spin_dim};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
 <codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>MPO(2,<sp/>2,<sp/>spin_dim,<sp/>spin_dim);</highlight></codeline>
 <codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.setZero();</highlight></codeline>
-<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(I);</highlight></codeline>
-<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{1,<sp/>1,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(sector<sp/>*<sp/>paulimatrix);</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(I);</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{1,<sp/>1,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(sector<sp/>*<sp/>paulimatrix);</highlight></codeline>
 <codeline lineno="251"><highlight class="normal"></highlight></codeline>
 <codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Create<sp/>compatible<sp/>edges</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>Ledge(1,1,2);<sp/></highlight><highlight class="comment">//<sp/>The<sp/>left<sp/><sp/>edge</highlight><highlight class="normal"></highlight></codeline>
@@ -339,8 +347,8 @@
 <codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::array&lt;long,<sp/>2&gt;<sp/>extent2<sp/>=<sp/>{spin_dim,<sp/>spin_dim};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
 <codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>MPO(2,<sp/>2,<sp/>spin_dim,<sp/>spin_dim);</highlight></codeline>
 <codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.setZero();</highlight></codeline>
-<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(I);</highlight></codeline>
-<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{1,<sp/>1,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(paulimatrix);</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(I);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/>MPO.slice(Eigen::array&lt;long,<sp/>4&gt;{1,<sp/>1,<sp/>0,<sp/>0},<sp/>extent4).reshape(extent2)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(paulimatrix);</highlight></codeline>
 <codeline lineno="295"><highlight class="normal"></highlight></codeline>
 <codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;Eigen::Tensor&lt;Scalar,4&gt;&gt;<sp/>mpos(sites,MPO);</highlight></codeline>
 <codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Create<sp/>compatible<sp/>edges</highlight><highlight class="normal"></highlight></codeline>

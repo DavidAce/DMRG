@@ -16,15 +16,11 @@ Program Listing for File class_fDMRG.cpp
    
    
    #include <iomanip>
-   #include <io/class_hdf5_log_buffer.h>
    #include <simulation/nmspc_settings.h>
-   #include <state/class_infinite_state.h>
-   #include <state/class_finite_state.h>
+   #include <state/class_state_finite.h>
    #include <tools/nmspc_tools.h>
-   #include <math/nmspc_math.h>
-   #include <general/nmspc_quantum_mechanics.h>
-   #include <general/nmspc_random_numbers.h>
-   #include <h5pp/h5pp.h>
+   //#include <math/nmspc_math.h>
+   //#include <h5pp/h5pp.h>
    #include "class_fDMRG.h"
    
    
@@ -34,7 +30,6 @@ Program Listing for File class_fDMRG.cpp
    class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
            : class_algorithm_finite(std::move(h5ppFile_),"fDMRG", SimulationType::fDMRG, settings::fdmrg::num_sites) {
        log->trace("Constructing class_fDMRG");
-       log_dmrg       = std::make_unique<class_hdf5_log<class_log_finite_dmrg_measurements>>        (h5pp_file, sim_name + "/measurements", "simulation_progress", sim_name);
        settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
    }
    
@@ -44,10 +39,11 @@ Program Listing for File class_fDMRG.cpp
        log->info("Starting {} simulation", sim_name);
        while(true) {
            single_DMRG_step("SR");
-           write_measurements();
            write_state();
-           write_status();
-           write_logs();
+           write_measurements();
+           write_sim_status();
+           write_profiling();
+           copy_from_tmp();
            check_convergence();
            print_status_update();
    
@@ -55,11 +51,11 @@ Program Listing for File class_fDMRG.cpp
            // That last state would not get optimized
            if (sim_status.iteration >= settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction())
            {
-               if (sim_status.iteration >= settings::fdmrg::max_sweeps) {stop_reason = StopReason::MAX_STEPS; break;}
+               if (sim_status.iteration >= settings::fdmrg::max_sweeps) {stop_reason = StopReason::MAX_ITERS; break;}
                if (sim_status.simulation_has_converged)                 {stop_reason = StopReason::SUCCEEDED; break;}
                if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
            }
-           update_bond_dimension();
+           update_bond_dimension_limit();
            log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
            sim_status.iteration     = state->get_sweeps();
            sim_status.position      = state->get_position();
@@ -67,7 +63,7 @@ Program Listing for File class_fDMRG.cpp
            sim_status.step++;
        }
        switch(stop_reason){
-           case StopReason::MAX_STEPS : log->info("Finished {} simulation -- reason: MAX_STEPS",sim_name) ;break;
+           case StopReason::MAX_ITERS : log->info("Finished {} simulation -- reason: MAX_ITERS",sim_name) ;break;
            case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED", sim_name) ;break;
            case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
            default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
@@ -85,7 +81,7 @@ Program Listing for File class_fDMRG.cpp
            check_convergence_entg_entropy();
        }
    
-       if (sim_status.iteration <= settings::xdmrg::min_sweeps){
+       if (sim_status.iteration <= settings::fdmrg::min_sweeps){
            clear_saturation_status();
        }
    
@@ -101,7 +97,7 @@ Program Listing for File class_fDMRG.cpp
            sim_status.simulation_has_converged = true;
        }
    
-       if (sim_status.bond_dimension_has_reached_max
+       if (sim_status.chi_lim_has_reached_chi_max
            and (  sim_status.variance_mpo_saturated_for >= max_saturation_iters
                   or sim_status.entanglement_saturated_for >= max_saturation_iters)
                )
@@ -139,6 +135,7 @@ Program Listing for File class_fDMRG.cpp
    size_t class_fDMRG::write_freq(){return settings::fdmrg::write_freq;}
    size_t class_fDMRG::print_freq(){return settings::fdmrg::print_freq;}
    bool   class_fDMRG::chi_grow()  {return settings::fdmrg::chi_grow;}
+   long   class_fDMRG::chi_init()  {return settings::fdmrg::chi_init;}
    bool   class_fDMRG::store_wave_function()  {return settings::fdmrg::store_wavefn;}
    
    

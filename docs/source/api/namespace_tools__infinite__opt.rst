@@ -17,8 +17,8 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1a8bacb86d5099e957f94d72defa8bf830`
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1ac6c454fdb5bb47d59e31df4b476e1a76`
 
-- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1a01f9cbbf8842767b70fd56cf45cb5e99`
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1ab1dea0b6449610fc4895a574c5285d6d`
 
-- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1aaa79eb7dc880942b919161d266af14e5`
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1opt_1adc6d702960bfec9021330f71a99c61c6`

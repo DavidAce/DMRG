@@ -9,6 +9,8 @@
     <innerfile refid="class__model__factory_8h">class_model_factory.h</innerfile>
     <innerfile refid="class__selfdual__tf__rf__ising_8cpp">class_selfdual_tf_rf_ising.cpp</innerfile>
     <innerfile refid="class__selfdual__tf__rf__ising_8h">class_selfdual_tf_rf_ising.h</innerfile>
+    <innerfile refid="class__selfdual__tf__rf__ising__normal_8cpp">class_selfdual_tf_rf_ising_normal.cpp</innerfile>
+    <innerfile refid="class__selfdual__tf__rf__ising__normal_8h">class_selfdual_tf_rf_ising_normal.h</innerfile>
     <innerfile refid="class__tf__ising_8cpp">class_tf_ising.cpp</innerfile>
     <innerfile refid="class__tf__ising_8h">class_tf_ising.h</innerfile>
     <briefdescription>

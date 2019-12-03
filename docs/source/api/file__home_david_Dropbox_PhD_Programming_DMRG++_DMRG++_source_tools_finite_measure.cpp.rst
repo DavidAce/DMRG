@@ -29,23 +29,19 @@ Includes
 --------
 
 
-- ``complex``
-
 - ``general/nmspc_quantum_mechanics.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.h`)
 
 - ``general/nmspc_tensor_extra.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_tensor_extra.h`)
 
 - ``iomanip``
 
-- ``spdlog/spdlog.h``
+- ``simulation/class_simulation_status.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_class_simulation_status.h`)
+
+- ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
 
 - ``state/class_environment.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_environment.h`)
 
-- ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
-
-- ``state/class_infinite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`)
-
-- ``state/class_mps_2site.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.h`)
+- ``state/class_state_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.h`)
 
 - ``tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`)
 
@@ -58,5 +54,5 @@ Typedefs
 --------
 
 
-- :ref:`exhale_typedef_finite_2measure_8cpp_1a1575f7abe28a73c2e85e235426294f8e`
+- :ref:`exhale_typedef_finite_2measure_8cpp_1a09095cf40b0086f4a7eebd622c372c78`
 

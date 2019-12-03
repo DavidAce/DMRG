@@ -7,82 +7,90 @@
     <includes local="no">Eigen/QR</includes>
     <includes refid="class__svd__wrapper_8h" local="no">math/class_svd_wrapper.h</includes>
     <incdepgraph>
-      <node id="1308">
+      <node id="1377">
         <label>math/class_svd_wrapper.h</label>
         <link refid="class__svd__wrapper_8h"/>
-        <childnode refid="1309" relation="include">
+        <childnode refid="1378" relation="include">
         </childnode>
-        <childnode refid="1315" relation="include">
+        <childnode refid="1385" relation="include">
         </childnode>
       </node>
-      <node id="1315">
+      <node id="1385">
         <label>iomanip</label>
       </node>
-      <node id="1313">
+      <node id="1383">
         <label>iterator</label>
       </node>
-      <node id="1307">
+      <node id="1376">
         <label>Eigen/QR</label>
       </node>
-      <node id="1316">
+      <node id="1386">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1317" relation="include">
+        <childnode refid="1387" relation="include">
         </childnode>
-        <childnode refid="1310" relation="include">
+        <childnode refid="1381" relation="include">
         </childnode>
-        <childnode refid="1312" relation="include">
+        <childnode refid="1380" relation="include">
         </childnode>
       </node>
-      <node id="1310">
+      <node id="1381">
         <label>Eigen/Core</label>
       </node>
-      <node id="1317">
+      <node id="1387">
         <label>experimental/type_traits</label>
       </node>
-      <node id="1312">
+      <node id="1380">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="1311">
+      <node id="1382">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="1304">
+      <node id="1379">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="1380" relation="include">
+        </childnode>
+      </node>
+      <node id="1373">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp</label>
         <link refid="class__svd__wrapper_8cpp"/>
-        <childnode refid="1305" relation="include">
+        <childnode refid="1374" relation="include">
         </childnode>
-        <childnode refid="1306" relation="include">
+        <childnode refid="1375" relation="include">
         </childnode>
-        <childnode refid="1307" relation="include">
+        <childnode refid="1376" relation="include">
         </childnode>
-        <childnode refid="1308" relation="include">
+        <childnode refid="1377" relation="include">
         </childnode>
       </node>
-      <node id="1305">
+      <node id="1374">
         <label>complex.h</label>
       </node>
-      <node id="1314">
+      <node id="1384">
         <label>iostream</label>
       </node>
-      <node id="1306">
+      <node id="1375">
         <label>Eigen/SVD</label>
       </node>
-      <node id="1309">
+      <node id="1378">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1310" relation="include">
+        <childnode refid="1379" relation="include">
         </childnode>
-        <childnode refid="1311" relation="include">
+        <childnode refid="1381" relation="include">
         </childnode>
-        <childnode refid="1312" relation="include">
+        <childnode refid="1382" relation="include">
         </childnode>
-        <childnode refid="1313" relation="include">
+        <childnode refid="1380" relation="include">
         </childnode>
-        <childnode refid="1314" relation="include">
+        <childnode refid="1383" relation="include">
         </childnode>
-        <childnode refid="1315" relation="include">
+        <childnode refid="1384" relation="include">
         </childnode>
-        <childnode refid="1316" relation="include">
+        <childnode refid="1385" relation="include">
+        </childnode>
+        <childnode refid="1386" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -98,7 +106,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" line="130" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="130" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" line="137" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp" bodystart="137" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -170,81 +178,88 @@
 <codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::BDCSVD&lt;MatrixType&lt;Scalar&gt;&gt;<sp/>SVD;</highlight></codeline>
 <codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.setThreshold(<ref refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" kindref="member">SVDThreshold</ref>);</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>SVD.compute(mat,<sp/>Eigen::ComputeThinU<sp/>|<sp/>Eigen::ComputeThinV);</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank<sp/>=<sp/>std::min(SVD.rank(),rank_max);</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" kindref="member">truncation_error</ref><sp/>=<sp/>SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(SVD.rank()<sp/>&lt;=<sp/>0</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>or<sp/>not<sp/>SVD.matrixU().leftCols(rank).allFinite()</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>or<sp/>not<sp/>SVD.singularValues().head(rank).allFinite()</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>or<sp/>not<sp/>SVD.matrixV().leftCols(rank).allFinite()<sp/>)</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;SVD<sp/>error<sp/>\n&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>SVDThreshold<sp/><sp/><sp/><sp/><sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" kindref="member">SVDThreshold</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>Truncation<sp/>Error<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>truncation_error<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>Rank<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>rank<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>U<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>SVD.matrixU().leftCols(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>S<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>SVD.singularValues().head(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>V<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>SVD.matrixV().leftCols(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Trying<sp/>SVD<sp/>with<sp/>LAPACKE<sp/>instead<sp/>\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a972e614144e76de88b4495463a491860" kindref="member">do_svd_lapacke</ref>(mat_ptr,<sp/>rows,cols,rank_max);</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;SVD<sp/>error:<sp/><sp/>Erroneous<sp/>results&quot;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"></highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>[U_lapacke,<sp/>S_lapacke,V_lapacke<sp/>,rank_lapacke]<sp/>=<sp/>do_svd_lapacke(mat_ptr,<sp/>rows,cols,rank_max);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="95"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>long<sp/>rank_common<sp/>=<sp/>std::min(rank_lapacke,rank);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="96"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(<sp/>(SVD.singularValues().head(rank_common)<sp/>-<sp/>S_lapacke).array().cwiseAbs().sum()<sp/>&gt;<sp/>1e-12<sp/>){</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="97"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/>&quot;SVD<sp/>Eigen<sp/>-<sp/>Lapacke<sp/>mismatch&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="98"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/>&quot;Eigen&quot;<sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/>&quot;Lapacke&quot;<sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/>&quot;Diff&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>rank_common;<sp/>i++){</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/><sp/>std::setprecision(16)<sp/><sp/>&lt;&lt;<sp/>SVD.singularValues()(i)</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/><sp/>std::setprecision(16)<sp/><sp/>&lt;&lt;<sp/>S_lapacke(i)</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/><sp/>std::setprecision(16)<sp/><sp/>&lt;&lt;<sp/>std::abs(SVD.singularValues()(i)<sp/><sp/>-<sp/>S_lapacke(i))</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="103"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="105"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal"></highlight></codeline>
-<codeline lineno="107"><highlight class="normal"></highlight></codeline>
-<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Singular<sp/>values<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>SVD.singularValues().transpose()<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="109"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Singular<sp/>values<sp/>after<sp/>norm:<sp/>&quot;<sp/>&lt;&lt;<sp/>SVD.singularValues().head(rank).normalized().transpose()<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="110"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Rank<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>rank<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Threshold<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>SVDThreshold<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Truncation<sp/>error<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>truncation_error<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>max_size<sp/>=<sp/><sp/>std::min(SVD.singularValues().size(),rank_max);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank<sp/><sp/><sp/><sp/><sp/>=<sp/>(SVD.singularValues().head(max_size).array()<sp/>&gt;=<sp/><ref refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" kindref="member">SVDThreshold</ref>).count();</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(rank<sp/>==<sp/>SVD.singularValues().size()){</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" kindref="member">truncation_error</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" kindref="member">truncation_error</ref><sp/>=<sp/>SVD.singularValues().tail(SVD.singularValues().size()<sp/>-<sp/>rank).squaredNorm();</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>truncation_error<sp/>=<sp/>SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(SVD.rank()<sp/>&lt;=<sp/>0</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>or<sp/>not<sp/>SVD.matrixU().leftCols(rank).allFinite()</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>or<sp/>not<sp/>SVD.singularValues().head(rank).allFinite()</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>or<sp/>not<sp/>SVD.matrixV().leftCols(rank).allFinite()<sp/>)</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;SVD<sp/>error<sp/>\n&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>svd_threshold<sp/><sp/><sp/><sp/><sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" kindref="member">SVDThreshold</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>Truncation<sp/>Error<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" kindref="member">truncation_error</ref><sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>Rank<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>rank<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>U<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>SVD.matrixU().leftCols(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>S<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>SVD.singularValues().head(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/>V<sp/>all<sp/>finite<sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::boolalpha<sp/>&lt;&lt;<sp/>SVD.matrixV().leftCols(rank).allFinite()<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Trying<sp/>SVD<sp/>with<sp/>LAPACKE<sp/>instead<sp/>\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a972e614144e76de88b4495463a491860" kindref="member">do_svd_lapacke</ref>(mat_ptr,<sp/>rows,cols,rank_max);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;SVD<sp/>error:<sp/><sp/>Erroneous<sp/>results&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>[U_lapacke,<sp/>S_lapacke,V_lapacke<sp/>,rank_lapacke]<sp/>=<sp/>do_svd_lapacke(mat_ptr,<sp/>rows,cols,rank_max);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>long<sp/>rank_common<sp/>=<sp/>std::min(rank_lapacke,rank);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(<sp/>(SVD.singularValues().head(rank_common)<sp/>-<sp/>S_lapacke).array().cwiseAbs().sum()<sp/>&gt;<sp/>1e-12<sp/>){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/>&quot;SVD<sp/>Eigen<sp/>-<sp/>Lapacke<sp/>mismatch&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/>&quot;Eigen&quot;<sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/>&quot;Lapacke&quot;<sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/>&quot;Diff&quot;<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>rank_common;<sp/>i++){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/><sp/>std::setprecision(16)<sp/><sp/>&lt;&lt;<sp/>SVD.singularValues()(i)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/><sp/>std::setprecision(16)<sp/><sp/>&lt;&lt;<sp/>S_lapacke(i)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(48)<sp/>&lt;&lt;<sp/><sp/>std::setprecision(16)<sp/><sp/>&lt;&lt;<sp/>std::abs(SVD.singularValues()(i)<sp/><sp/>-<sp/>S_lapacke(i))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="113"><highlight class="normal"></highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_tuple(</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SVD.matrixU().leftCols(rank),</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SVD.singularValues().head(rank),</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SVD.matrixV().leftCols(rank).adjoint(),</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rank</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
-<codeline lineno="120"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"></highlight></codeline>
-<codeline lineno="124"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>std::tuple&lt;class_SVD::MatrixType&lt;double&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;double&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;double&gt;</ref><sp/>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">class_SVD::do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"></highlight></codeline>
-<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Singular<sp/>values<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>SVD.singularValues().transpose()<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Singular<sp/>values<sp/>after<sp/>norm:<sp/>&quot;<sp/>&lt;&lt;<sp/>SVD.singularValues().head(rank).normalized().transpose()<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Rank<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>rank<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Threshold<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>svd_threshold<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Truncation<sp/>error<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>truncation_error<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_tuple(</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SVD.matrixU().leftCols(rank),</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SVD.singularValues().head(rank),</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SVD.matrixV().leftCols(rank).adjoint(),</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rank</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal"></highlight></codeline>
-<codeline lineno="130" refid="class__svd__wrapper_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" kindref="member">cplx</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
-<codeline lineno="133"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>std::tuple&lt;class_SVD::MatrixType&lt;cplx&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;cplx&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;cplx&gt;</ref><sp/>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">class_SVD::do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" kindref="member">cplx</ref><sp/>*,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="131"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>std::tuple&lt;class_SVD::MatrixType&lt;double&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;double&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;double&gt;</ref><sp/>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">class_SVD::do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
 <codeline lineno="135"><highlight class="normal"></highlight></codeline>
 <codeline lineno="136"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"></highlight></codeline>
-<codeline lineno="139"><highlight class="normal"></highlight></codeline>
-<codeline lineno="140"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="141"><highlight class="normal">Eigen::Tensor&lt;Scalar,<sp/>2&gt;</highlight></codeline>
-<codeline lineno="142" refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" kindref="member">class_SVD::pseudo_inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&amp;tensor){</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tensor.dimension(0)<sp/>&lt;=<sp/>0)<sp/><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;pseudo_inverse<sp/>error:<sp/>Dimension<sp/>is<sp/>zero:<sp/>tensor.dimension(0)&quot;</highlight><highlight class="normal">);}</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tensor.dimension(1)<sp/>&lt;=<sp/>0)<sp/><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;pseudo_inverse<sp/>error:<sp/>Dimension<sp/>is<sp/>zero:<sp/>tensor.dimension(1)&quot;</highlight><highlight class="normal">);}</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>mat<sp/>(tensor.data(),<sp/>tensor.dimension(0),<sp/>tensor.dimension(1));</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(mat.completeOrthogonalDecomposition().pseudoInverse()<sp/>);</highlight></codeline>
-<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"></highlight></codeline>
-<codeline lineno="149"><highlight class="normal"></highlight></codeline>
-<codeline lineno="150"><highlight class="normal"></highlight></codeline>
-<codeline lineno="153"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;double,<sp/>2&gt;<sp/><ref refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" kindref="member">class_SVD::pseudo_inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;double,<sp/>2&gt;<sp/>&amp;tensor);</highlight></codeline>
-<codeline lineno="156"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;cplx,<sp/>2&gt;<sp/><sp/><sp/><ref refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" kindref="member">class_SVD::pseudo_inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;cplx<sp/><sp/>,<sp/>2&gt;<sp/>&amp;tensor);</highlight></codeline>
+<codeline lineno="137" refid="class__svd__wrapper_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" kindref="member">cplx</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="140"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>std::tuple&lt;class_SVD::MatrixType&lt;cplx&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;cplx&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;cplx&gt;</ref><sp/>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">class_SVD::do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class__svd__wrapper_8cpp_1ad9a894aaf835cafae89a187e0e70faf3" kindref="member">cplx</ref><sp/>*,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal">Eigen::Tensor&lt;Scalar,<sp/>2&gt;</highlight></codeline>
+<codeline lineno="149" refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" kindref="member">class_SVD::pseudo_inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&amp;tensor){</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tensor.dimension(0)<sp/>&lt;=<sp/>0)<sp/><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;pseudo_inverse<sp/>error:<sp/>Dimension<sp/>is<sp/>zero:<sp/>tensor.dimension(0)&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(tensor.dimension(1)<sp/>&lt;=<sp/>0)<sp/><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;pseudo_inverse<sp/>error:<sp/>Dimension<sp/>is<sp/>zero:<sp/>tensor.dimension(1)&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>mat<sp/>(tensor.data(),<sp/>tensor.dimension(0),<sp/>tensor.dimension(1));</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(mat.completeOrthogonalDecomposition().pseudoInverse()<sp/>);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;double,<sp/>2&gt;<sp/><ref refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" kindref="member">class_SVD::pseudo_inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;double,<sp/>2&gt;<sp/>&amp;tensor);</highlight></codeline>
+<codeline lineno="163"><highlight class="keyword">template</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;cplx,<sp/>2&gt;<sp/><sp/><sp/><ref refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" kindref="member">class_SVD::pseudo_inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;cplx<sp/><sp/>,<sp/>2&gt;<sp/>&amp;tensor);</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp"/>
   </compounddef>

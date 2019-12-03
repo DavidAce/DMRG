@@ -2,11 +2,12 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="dir_2fe3fdae92163efbedf1ea30d7b5428d" kind="dir">
     <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite</compoundname>
+    <innerdir refid="dir_6955625c2a1e9708d086556c1d3fe65d">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io</innerdir>
     <innerdir refid="dir_77510d0a53e1deaebbbb68f9864d99e2">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals</innerdir>
     <innerfile refid="finite_2debug_8cpp">debug.cpp</innerfile>
-    <innerfile refid="finite_2h5pp_8cpp">h5pp.cpp</innerfile>
     <innerfile refid="finite_2measure_8cpp">measure.cpp</innerfile>
-    <innerfile refid="mpo_8cpp">mpo.cpp</innerfile>
+    <innerfile refid="measure_8h">measure.h</innerfile>
+    <innerfile refid="finite_2mpo_8cpp">mpo.cpp</innerfile>
     <innerfile refid="mps-internals_8cpp">mps-internals.cpp</innerfile>
     <innerfile refid="finite_2mps_8cpp">mps.cpp</innerfile>
     <innerfile refid="multisite_8cpp">multisite.cpp</innerfile>

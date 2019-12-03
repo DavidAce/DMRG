@@ -15,10 +15,10 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Choice of model type: {<ref refid="namespacesettings_1_1model_1_1tf__ising" kindref="compound">tf_ising</ref>, <ref refid="namespacesettings_1_1model_1_1tf__nn__ising" kindref="compound">tf_nn_ising</ref>, <ref refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising" kindref="compound">selfdual_tf_rf_ising</ref>} above </para>        </detaileddescription>
+<para>Choice of model type: {<ref refid="namespacesettings_1_1model_1_1tf__ising" kindref="compound">tf_ising</ref>, <ref refid="namespacesettings_1_1model_1_1tf__nn__ising" kindref="compound">tf_nn_ising</ref>, <ref refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising" kindref="compound">selfdual_tf_rf_ising</ref> selfdual_tf_rf_ising_normal} </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="51" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1a5b1871176f010ad2de0dc28939d8fa82" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -32,7 +32,7 @@
 <para>Main seed for the random number generator. Used for the random fields in the Hamiltonian. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="52" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1a6789d4918ab69cf517e13d77f36bd33c" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -46,7 +46,7 @@
 <para>Seed for generating the initial state. If seed_state &lt; 0, seed_init is used instead </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="53" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="53" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="56" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1abf7a65496d4c38b818f6b1e4e3c8a02f" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -60,21 +60,49 @@
 <para>Use the bit field of seed_state to enumerate initial states in the basis hinted by initial_sector. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="54" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="57" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacesettings_1_1model_1a3f07da5789dea3088c9f7efaeb8e6ee8" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="namespacesettings_1_1model_1ae14bbe9ea2acf3d3905f97a21dc9b7d3" prot="public" static="no" mutable="no">
         <type>bool</type>
-        <definition>bool settings::model::project_when_saturated</definition>
+        <definition>bool settings::model::projection_when_growing_chi</definition>
         <argsstring></argsstring>
-        <name>project_when_saturated</name>
+        <name>projection_when_growing_chi</name>
         <initializer>= true</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Project to target parity sector if saturation occurs before convergence. </para>        </detaileddescription>
+<para>Project to target parity sector when bond dimension is increased (only works if chi_grow == true). </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="55" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1model_1a776e129070b70bfcdbff48837833a407" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::model::projection_trial_when_stuck</definition>
+        <argsstring></argsstring>
+        <name>projection_trial_when_stuck</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Project to target parity sector at each sweep when stuck. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="59" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1model_1a2e5a997917989d152d0429c8e430ab63" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::model::projection_on_every_sweep</definition>
+        <argsstring></argsstring>
+        <name>projection_on_every_sweep</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Project to target parity sector at each sweep. This implies doing it when stuck also. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1a2b2ff3a327a7ba07f22ddbd0b5747631" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -88,7 +116,7 @@
 <para>Use random pauli eigenvectors to initialize spinors in x,y or z </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="56" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="61" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1a1f37947bd102cc62063b30630d798a42" prot="public" static="no" mutable="no">
         <type>std::string</type>
@@ -102,7 +130,7 @@
 <para>Initialize in a global parity sector: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none} </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="57" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="62" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1model_1a8581d610af0717c14566033ed2ab9745" prot="public" static="no" mutable="no">
         <type>std::string</type>
@@ -116,13 +144,13 @@
 <para>Project to in a global parity sector upon saturation: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none} </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="58" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="63" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="50" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="53" column="1"/>
   </compounddef>
 </doxygen>

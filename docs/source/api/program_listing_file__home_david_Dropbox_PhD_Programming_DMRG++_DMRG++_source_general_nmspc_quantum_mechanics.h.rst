@@ -14,8 +14,8 @@ Program Listing for File nmspc_quantum_mechanics.h
    // Created by david on 2018-04-17.
    //
    
-   #ifndef NMSPC_QUANTUM_MECHANICS_H
-   #define NMSPC_QUANTUM_MECHANICS_H
+   #pragma once
+   
    #include <Eigen/Core>
    #include <unsupported/Eigen/CXX11/Tensor>
    #include <complex>
@@ -87,5 +87,4 @@ Program Listing for File nmspc_quantum_mechanics.h
    
    
    }
-   #endif //NMSPC_QUANTUM_MECHANICS_H
    

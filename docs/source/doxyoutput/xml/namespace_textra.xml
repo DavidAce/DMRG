@@ -307,6 +307,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="105" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="105" bodyend="117"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -329,6 +330,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="121" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="121" bodyend="123"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a145b649a880d716e15ad11d43c1d1ce8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -351,6 +353,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="126" bodyend="128"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -373,6 +376,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="131" bodyend="133"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a1eda47ce18fd5ba41628b44b32b6366c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -395,6 +399,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="136" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="136" bodyend="141"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a7cd3712f032a50ee9320fc68312c7c20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -417,6 +422,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="144" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="144" bodyend="147"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -448,6 +454,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="166" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="166" bodyend="176"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a9207bc24390fafec44eee851bf9fdee2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -479,6 +486,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="180" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="180" bodyend="182"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a1a713f14010c8216f87e9f33dcf9ca64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -510,6 +518,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="185" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="185" bodyend="189"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1ac457f29be7f94d9d773b47592c65eef3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -532,6 +541,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="195" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="195" bodyend="197"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -554,6 +564,94 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="200" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="200" bodyend="202"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::MatrixTensorMap</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Eigen::DSizes&lt; long, rank &gt; &amp;dims)</argsstring>
+        <name>MatrixTensorMap</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const Eigen::DSizes&lt; long, rank &gt; &amp;</type>
+          <declname>dims</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="205" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="205" bodyend="212"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a925114f5051837d7bdb2ec05d70ae898" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Dims</declname>
+            <defname>Dims</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::MatrixTensorMap</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Dims... dims)</argsstring>
+        <name>MatrixTensorMap</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const Dims...</type>
+          <declname>dims</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="215" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="215" bodyend="217"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a7f6cc605db982f407d7e147c889138eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::MatrixTensorMap</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix)</argsstring>
+        <name>MatrixTensorMap</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="220" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="220" bodyend="226"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -575,7 +673,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="214" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="214" bodyend="216"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="237" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="237" bodyend="239"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1aee5cae05c29a2d54025c36f444591dcd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -597,7 +696,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="219" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="219" bodyend="221"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="242" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="242" bodyend="244"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1abec7b372b4239eac14573685fae5f2e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -635,40 +735,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="224" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="224" bodyend="226"/>
-      </memberdef>
-      <memberdef kind="function" id="namespace_textra_1a8dfdb8fa19d99af6fcfec8ebacf16235" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <templateparamlist>
-          <param>
-            <type>typename Derived</type>
-          </param>
-          <param>
-            <type>typename sizeType</type>
-          </param>
-        </templateparamlist>
-        <type>auto</type>
-        <definition>auto Textra::Tensor_to_Matrix_Map</definition>
-        <argsstring>(const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;tensor, const sizeType rows, const sizeType cols)</argsstring>
-        <name>Tensor_to_Matrix_Map</name>
-        <param>
-          <type>const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;</type>
-          <declname>tensor</declname>
-        </param>
-        <param>
-          <type>const sizeType</type>
-          <declname>rows</declname>
-        </param>
-        <param>
-          <type>const sizeType</type>
-          <declname>cols</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="229" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="229" bodyend="232"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="247" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="247" bodyend="249"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a01151a1a76f286d61ebc2756991fb17d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -695,7 +763,93 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="235" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="235" bodyend="237"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="252" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="252" bodyend="254"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ac6fcdfc5393a97877b4ff51ea6468caa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+          <param>
+            <type>typename sizeType</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::TensorMatrixMap</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, rank &gt; &amp;tensor, const sizeType rows, const sizeType cols)</argsstring>
+        <name>TensorMatrixMap</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>const sizeType</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const sizeType</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="258" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="258" bodyend="260"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1afc86f382f30bd3b47208f940731f6029" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::TensorMatrixMap</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
+        <name>TensorMatrixMap</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="263" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="263" bodyend="265"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ad5ceb0b38e8e75528105703cd4565833" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::TensorVectorMap</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
+        <name>TensorVectorMap</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="268" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="268" bodyend="270"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a404c21a4f4844edba87cffd8e06536c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -722,7 +876,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="248" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="248" bodyend="253"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="281" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="281" bodyend="286"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a7ccbf9014eef4fc7fab8e2163d721e89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -744,7 +899,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="257" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="257" bodyend="261"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="290" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="290" bodyend="294"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a6ce185ef869dc59048058546aedeb24e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -771,7 +927,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="264" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="264" bodyend="269"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="297" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="297" bodyend="302"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1ab92f06daa8fdd15320f38aa89bfa7894" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -793,7 +950,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="272" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="272" bodyend="276"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="305" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="305" bodyend="309"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a134cee5e3300feee66018395aa0ffa05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -826,7 +984,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="286" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="286" bodyend="295"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="319" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="319" bodyend="328"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1ae7794bc6f089ffe1c7121692c28c7592" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -863,7 +1022,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="299" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="299" bodyend="302"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="332" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="332" bodyend="335"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a34123857104ed8a9c77ce2f6365bda74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -885,7 +1045,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="305" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="305" bodyend="324"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="338" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="338" bodyend="357"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1adf0b0f09052c2cb60ff713691d9f28ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -912,7 +1073,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="329" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="329" bodyend="332"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="362" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="362" bodyend="365"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1af6755d93497c739f4cab661892897c46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -938,7 +1100,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="336" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="336" bodyend="346"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="369" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="369" bodyend="379"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1ae8de771b63d94ce09bc102d204eed693" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -969,7 +1132,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="350" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="350" bodyend="353"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="383" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="383" bodyend="386"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a83480b3f75b0a29f652feb8b2152b475" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1000,7 +1164,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="360" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="360" bodyend="367"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="393" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="393" bodyend="400"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a47079abeb81c780b562da5b9a8d1ff19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1031,7 +1196,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="371" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="371" bodyend="378"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="404" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="404" bodyend="411"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1a9f5d2eac44ffb07d9b83baeb71ed0dda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1057,7 +1223,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="383" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="383" bodyend="390"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="416" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="416" bodyend="423"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       <memberdef kind="function" id="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1083,7 +1250,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="394" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="394" bodyend="401"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="427" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="427" bodyend="434"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
       </memberdef>
       </sectiondef>
     <briefdescription>

@@ -29,15 +29,11 @@ Includes
 --------
 
 
-- ``LBFGS.h``
-
 - ``ceres/ceres.h``
 
 - ``general/class_tic_toc.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_class_tic_toc.h`)
 
-- ``glog/logging.h``
-
-- ``iomanip``
+- ``general/nmspc_omp.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_omp.h`)
 
 - ``tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`)
 
@@ -57,6 +53,8 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace.cpp`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_hamiltonian.cpp`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ground_state.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_report.cpp`
@@ -74,105 +72,125 @@ Namespaces
 
 - :ref:`namespace_tools__finite__opt`
 
-- :ref:`namespace_tools__finite__opt__internals`
+- :ref:`namespace_tools__finite__opt__internal`
 
-- :ref:`namespace_tools__finite__opt__internals__reports`
+- :ref:`namespace_tools__finite__opt__internal__local_hamiltonians`
+
+- :ref:`namespace_tools__finite__opt__internal__reports`
 
 
 Classes
 -------
 
 
-- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internals_1_1ceres__base__functor`
+- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor`
 
 
 Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1ab9f6fa872c8f3136ce5e0d5961a55991`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a3a07b29376c4353abadb1848f43f4a45`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1aeae2ef5c9bb0ae3feff554833673b753`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a02896ebab9e1bc1796bef72046654e05`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a3a33e74e9df3aa34c3ceccfa589c1cf1`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a4d15c2b7a280aba9221f4c4d006872c4`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a2a93afd2f5904978f22caab056cded54`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a72d2d2f8f1c279a2898ec6bb624c5c28`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1aea0b5cf7e49905cefb8efed498ace3d1`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a4c06ba68e3212f27854e1b739aa189f4`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a5db98a373e6e4490cd8d6188135d668a`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a155cb27332a5aaa6703b52f44bbf69e8`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a5e5f35b60b5bed6326c0267e707171c1`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a549885cf1b279a10f29e57018a665b81`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a021eb543fbbd22a97e6ac3b7576ad424`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a1cc46ef0e5c0a5741c9dc7ebcdcbe8cc`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1ab2be6467cfa50f6980f0ec03c74e822e`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1aaea23b2c5c97a47f32d9a90a306ef173`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1ad72bfa3915c398e56d24a3ed7523b47a`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1abf188bdd9eea8846171397cde417e3cf`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1aca0917316fdb1c25975f67000eb40f20`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a377466fe1d96e2eb2e2f9a4399cdfcb0`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1aabae584c7a04a4a84e2dfa13a801340a`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a620c5c854aaf3f75ea58fee57da509e6`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a5fb97f0fc4940f98d5bfd388903296d4`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a1ea3179701e726a6a5d58b553f2a2a4f`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1ac692d6578f7f1a711bfbb7bc574dfc8a`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1abb21a7520ac89b965ed57e5424154836`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a65c79f12aa86f6d45fbf2852b9438377`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a9e8c07dd960d644a8ca197fbbfb0a2bc`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a9c9d1304a8f02c20eef05d824746909c`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1aa374ce62e0b0ce5913af1a8459f689d5`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1acca2f05e2883a3c19622a0d03f8b80fa`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a92f862c7cdbda41609a5681d48bebcec`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a5d7e8c839b6857b387b9ad487be9e7c9`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a712a13efbabdce3004b25a616e0987a3`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a340c941b950ada44c1f420facbb03126`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1abbfb87cc2b3227f29ccc1fb097672dba`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a3958eba0f6f9f8e2f7b79b2bd5050750`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1a531552b5179c5067c04db8c51ede92a6`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internals_1ab89afabb25e65e320b0f548ed17bed3e`
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a722d9206b6ee1fcdc509586c0f5c2afd`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ac8d4282b81c3d70eb3741733c44ea678`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a082052a5b98f556e373c29f2c0770e0a`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a58358f1ac4d7929a0c855269e2231253`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a87b9da9cd1ba3039fcc7259fa221073f`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1aa034824e2451be23c2e4026e76c07afb`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1af916802ba488155e10414012373ad01d`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a812ad853671c4241ba557921938665a6`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a8d74d849646a7145ba9f431f8848242b`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a79ce5fcab0cb78cc92f18b0d9a7e4b5c`
 
 
 Typedefs
 --------
 
 
-- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a16ef65b21697d81e6f5c9a5d0ad4cbef`
+- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a8c5fe9d3bb7ff94200d294bf72d66674`
 
-- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a1b1e34bbc7b531b1addad1633519ebe0`
+- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8cc0fb86f571fb919948fcd4741c4c8`
 
-- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1a614f8e368679ab590e9951b6f46245f7`
+- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a08cf84da39b831b7544b918673507fca`
 
-- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internals_1_1reports_1ae405f2da810c88302cd144b50680f231`
+- :ref:`exhale_typedef_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ab55fa2e5547db1b0676cacd1758b571d`
 
 
 Variables
 ---------
 
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1aba87cf812f7a597539e2d3732d780472`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1af98ed8738849042e8bd79a77c8a783db`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1a419a817e3df33efc2cd5b5db2fd04b43`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1ac4a810933ed04160f1126492b1fa28b1`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1a2249f3765bcb5866af4926949fb36273`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1aa9deb22061716db29d06214ea8e191f2`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1a35ee857d14946312cdb143d4f94055b4`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1aebe49a53524360884a88f314649cc474`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1a50890ed92dde9137470ada59dc2dfb60`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1ae856cf10304d5ce8449925dd9872e077`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1a2aad5071bb18a30cbf97a3c316d3c8c3`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1a1eb4c66a92dba1e18124fc217fad907e`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1aed9abe9539378a8b85014a980566781b`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1a0a0e265e8e5a3891eaee243d1fc1f940`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1a5466c1b6fb9e1f57c103afa587b42f4b`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1afc2d3bd1710a6b8f14a5022bc0d8b088`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1aa2028385e087c3451a181ea561d69358`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1ac94e77e532b573936d9386995cc266f6`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1a7594979f90c385344d5c16bde4dd1c2b`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1aefa36ad7a889fb02b1138b37f1c0eed5`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1abe84b23d57f9096bfa7e5b8ae3bedc52`
 
-- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internals_1aecfa1d57fa771ee1cb7839b9034d9522`
+- :ref:`exhale_variable_namespacetools_1_1finite_1_1opt_1_1internal_1ab60d12bdf772cfeb4f7914c049921a00`
 

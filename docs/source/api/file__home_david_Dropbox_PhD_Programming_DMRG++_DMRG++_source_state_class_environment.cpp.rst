@@ -31,7 +31,9 @@ Includes
 
 - ``class_environment.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_environment.h`)
 
-- ``state/class_vidal_site.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_vidal_site.h`)
+- ``model/class_model_base.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_model_base.h`)
+
+- ``state/class_mps_site.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_site.h`)
 
 
 
@@ -42,5 +44,5 @@ Typedefs
 --------
 
 
-- :ref:`exhale_typedef_class__environment_8cpp_1a17f466522bfcedf8c1869ac7311214f6`
+- :ref:`exhale_typedef_class__environment_8cpp_1ad31512d1303aaa9a829f0f55943cae42`
 

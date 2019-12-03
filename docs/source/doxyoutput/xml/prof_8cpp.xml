@@ -5,127 +5,110 @@
     <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <incdepgraph>
-      <node id="2212">
-        <label>iomanip</label>
+      <node id="2583">
+        <label>list</label>
       </node>
-      <node id="2210">
-        <label>iterator</label>
-      </node>
-      <node id="2213">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2214" relation="include">
-        </childnode>
-        <childnode refid="2207" relation="include">
-        </childnode>
-        <childnode refid="2209" relation="include">
-        </childnode>
-      </node>
-      <node id="2207">
+      <node id="2593">
         <label>Eigen/Core</label>
       </node>
-      <node id="2205">
+      <node id="2581">
         <label>string</label>
       </node>
-      <node id="2219">
+      <node id="2588">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2220" relation="include">
+        <childnode refid="2589" relation="include">
         </childnode>
-        <childnode refid="2211" relation="include">
+        <childnode refid="2590" relation="include">
         </childnode>
       </node>
-      <node id="2215">
+      <node id="2585">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2216" relation="include">
+        <childnode refid="2586" relation="include">
         </childnode>
-        <childnode refid="2217" relation="include">
-        </childnode>
-        <childnode refid="2218" relation="include">
+        <childnode refid="2587" relation="include">
         </childnode>
       </node>
-      <node id="2202">
+      <node id="2578">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/prof.cpp</label>
         <link refid="prof_8cpp"/>
-        <childnode refid="2203" relation="include">
+        <childnode refid="2579" relation="include">
         </childnode>
-        <childnode refid="2221" relation="include">
+        <childnode refid="2595" relation="include">
         </childnode>
       </node>
-      <node id="2214">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="2203">
+      <node id="2579">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="2204" relation="include">
+        <childnode refid="2580" relation="include">
         </childnode>
-        <childnode refid="2205" relation="include">
+        <childnode refid="2581" relation="include">
         </childnode>
-        <childnode refid="2206" relation="include">
+        <childnode refid="2582" relation="include">
         </childnode>
-        <childnode refid="2215" relation="include">
+        <childnode refid="2583" relation="include">
         </childnode>
-        <childnode refid="2219" relation="include">
+        <childnode refid="2584" relation="include">
+        </childnode>
+        <childnode refid="2585" relation="include">
+        </childnode>
+        <childnode refid="2588" relation="include">
+        </childnode>
+        <childnode refid="2591" relation="include">
+        </childnode>
+        <childnode refid="2593" relation="include">
+        </childnode>
+        <childnode refid="2594" relation="include">
         </childnode>
       </node>
-      <node id="2222">
-        <label>unordered_set</label>
-      </node>
-      <node id="2209">
+      <node id="2594">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2216">
-        <label>spdlog/spdlog.h</label>
+      <node id="2587">
+        <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="2208">
-        <label>Eigen/Sparse</label>
+      <node id="2596">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
       </node>
-      <node id="2223">
+      <node id="2591">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="2590" relation="include">
+        </childnode>
+        <childnode refid="2592" relation="include">
+        </childnode>
+      </node>
+      <node id="2586">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="2584">
         <label>vector</label>
       </node>
-      <node id="2217">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      <node id="2592">
+        <label>sstream</label>
       </node>
-      <node id="2211">
+      <node id="2590">
         <label>iostream</label>
       </node>
-      <node id="2220">
+      <node id="2589">
         <label>chrono</label>
       </node>
-      <node id="2221">
+      <node id="2582">
+        <label>complex</label>
+      </node>
+      <node id="2595">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="2205" relation="include">
+        <childnode refid="2581" relation="include">
         </childnode>
-        <childnode refid="2222" relation="include">
+        <childnode refid="2584" relation="include">
         </childnode>
-        <childnode refid="2223" relation="include">
-        </childnode>
-      </node>
-      <node id="2206">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2207" relation="include">
-        </childnode>
-        <childnode refid="2208" relation="include">
-        </childnode>
-        <childnode refid="2209" relation="include">
-        </childnode>
-        <childnode refid="2210" relation="include">
-        </childnode>
-        <childnode refid="2211" relation="include">
-        </childnode>
-        <childnode refid="2212" relation="include">
-        </childnode>
-        <childnode refid="2213" relation="include">
+        <childnode refid="2596" relation="include">
         </childnode>
       </node>
-      <node id="2218">
-        <label>spdlog/sinks/stdout_sinks.h</label>
-      </node>
-      <node id="2204">
+      <node id="2580">
         <label>memory</label>
       </node>
     </incdepgraph>

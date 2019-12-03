@@ -13,9 +13,7 @@ Program Listing for File class_algorithm_launcher.h
    //
    // Created by david on 7/30/17.
    //
-   
-   #ifndef DMRG_CLASS_ALGORITHMS_H
-   #define DMRG_CLASS_ALGORITHMS_H
+   #pragma once
    
    #include <memory>
    #include <spdlog/spdlog.h>
@@ -29,7 +27,7 @@ Program Listing for File class_algorithm_launcher.h
    
    //    std::shared_ptr <class_hdf5_file> output;
        std::shared_ptr<h5pp::File> h5ppFile;
-       std::string hdf5_path;
+   
        class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_);
        class_algorithm_launcher();
    
@@ -39,8 +37,10 @@ Program Listing for File class_algorithm_launcher.h
        void run_xDMRG();
        void run_iTEBD();
    
+   //    static std::string hdf5_temp_path;
+   //    static std::string hdf5_final_path;
+       static void remove_temp_file();
+   
    
    };
    
-   
-   #endif //DMRG_CLASS_ALGORITHMS_H

@@ -8,219 +8,245 @@
     <includes refid="class__model__base_8h" local="yes">class_model_base.h</includes>
     <includes refid="class__hamiltonian__h5tables_8h" local="yes">class_hamiltonian_h5tables.h</includes>
     <includes refid="class__selfdual__tf__rf__ising_8h" local="yes">class_selfdual_tf_rf_ising.h</includes>
+    <includes refid="class__selfdual__tf__rf__ising__normal_8h" local="yes">class_selfdual_tf_rf_ising_normal.h</includes>
     <incdepgraph>
-      <node id="1506">
+      <node id="1576">
         <label>list</label>
       </node>
-      <node id="1527">
+      <node id="1598">
         <label>iomanip</label>
       </node>
-      <node id="1508">
+      <node id="1578">
         <label>functional</label>
       </node>
-      <node id="1504">
+      <node id="1574">
         <label>iterator</label>
       </node>
-      <node id="1524">
+      <node id="1594">
         <label>class_tf_ising.h</label>
         <link refid="class__tf__ising_8h"/>
-        <childnode refid="1503" relation="include">
+        <childnode refid="1573" relation="include">
         </childnode>
-        <childnode refid="1525" relation="include">
+        <childnode refid="1595" relation="include">
         </childnode>
-        <childnode refid="1527" relation="include">
+        <childnode refid="1598" relation="include">
         </childnode>
-        <childnode refid="1514" relation="include">
+        <childnode refid="1585" relation="include">
         </childnode>
       </node>
-      <node id="1507">
+      <node id="1577">
         <label>cmath</label>
       </node>
-      <node id="1528">
+      <node id="1599">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1529" relation="include">
+        <childnode refid="1600" relation="include">
         </childnode>
-        <childnode refid="1512" relation="include">
+        <childnode refid="1583" relation="include">
         </childnode>
-        <childnode refid="1515" relation="include">
+        <childnode refid="1586" relation="include">
         </childnode>
       </node>
-      <node id="1511">
+      <node id="1581">
         <label>numeric</label>
       </node>
-      <node id="1512">
+      <node id="1583">
         <label>Eigen/Core</label>
       </node>
-      <node id="1532">
+      <node id="1603">
         <label>string</label>
       </node>
-      <node id="1523">
+      <node id="1593">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="1520">
+      <node id="1590">
         <label>class_hamiltonian_h5tables.h</label>
         <link refid="class__hamiltonian__h5tables_8h"/>
-        <childnode refid="1505" relation="include">
+        <childnode refid="1575" relation="include">
         </childnode>
-        <childnode refid="1521" relation="include">
+        <childnode refid="1591" relation="include">
         </childnode>
-        <childnode refid="1522" relation="include">
+        <childnode refid="1592" relation="include">
         </childnode>
-        <childnode refid="1523" relation="include">
+        <childnode refid="1593" relation="include">
         </childnode>
       </node>
-      <node id="1516">
+      <node id="1587">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="1517" relation="include">
+        <childnode refid="1588" relation="include">
         </childnode>
-        <childnode refid="1518" relation="include">
-        </childnode>
-        <childnode refid="1519" relation="include">
+        <childnode refid="1589" relation="include">
         </childnode>
       </node>
-      <node id="1529">
+      <node id="1600">
         <label>experimental/type_traits</label>
       </node>
-      <node id="1533">
-        <label>unordered_set</label>
-      </node>
-      <node id="1515">
+      <node id="1586">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="1513">
+      <node id="1584">
         <label>class_model_factory.h</label>
         <link refid="class__model__factory_8h"/>
-        <childnode refid="1503" relation="include">
+        <childnode refid="1573" relation="include">
         </childnode>
-        <childnode refid="1509" relation="include">
+        <childnode refid="1579" relation="include">
         </childnode>
-        <childnode refid="1514" relation="include">
+        <childnode refid="1585" relation="include">
         </childnode>
-        <childnode refid="1520" relation="include">
+        <childnode refid="1590" relation="include">
         </childnode>
       </node>
-      <node id="1530">
+      <node id="1601">
         <label>class_selfdual_tf_rf_ising.h</label>
         <link refid="class__selfdual__tf__rf__ising_8h"/>
-        <childnode refid="1503" relation="include">
+        <childnode refid="1573" relation="include">
         </childnode>
-        <childnode refid="1525" relation="include">
+        <childnode refid="1595" relation="include">
         </childnode>
-        <childnode refid="1531" relation="include">
+        <childnode refid="1602" relation="include">
         </childnode>
-        <childnode refid="1527" relation="include">
+        <childnode refid="1598" relation="include">
         </childnode>
-        <childnode refid="1514" relation="include">
+        <childnode refid="1585" relation="include">
         </childnode>
       </node>
-      <node id="1514">
+      <node id="1589">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="1585">
         <label>class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="1509" relation="include">
+        <childnode refid="1579" relation="include">
         </childnode>
-        <childnode refid="1515" relation="include">
+        <childnode refid="1586" relation="include">
         </childnode>
-        <childnode refid="1516" relation="include">
+        <childnode refid="1587" relation="include">
         </childnode>
       </node>
-      <node id="1517">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="1526">
+      <node id="1597">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="1502">
+      <node id="1604">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="1588">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="1572">
         <label>math/nmspc_math.h</label>
         <link refid="nmspc__math_8h"/>
-        <childnode refid="1503" relation="include">
+        <childnode refid="1573" relation="include">
         </childnode>
-        <childnode refid="1504" relation="include">
+        <childnode refid="1574" relation="include">
         </childnode>
-        <childnode refid="1505" relation="include">
+        <childnode refid="1575" relation="include">
         </childnode>
-        <childnode refid="1506" relation="include">
+        <childnode refid="1576" relation="include">
         </childnode>
-        <childnode refid="1507" relation="include">
+        <childnode refid="1577" relation="include">
         </childnode>
-        <childnode refid="1508" relation="include">
+        <childnode refid="1578" relation="include">
         </childnode>
-        <childnode refid="1509" relation="include">
+        <childnode refid="1579" relation="include">
         </childnode>
-        <childnode refid="1510" relation="include">
+        <childnode refid="1580" relation="include">
         </childnode>
-        <childnode refid="1511" relation="include">
+        <childnode refid="1581" relation="include">
         </childnode>
-        <childnode refid="1512" relation="include">
+        <childnode refid="1582" relation="include">
+        </childnode>
+        <childnode refid="1583" relation="include">
         </childnode>
       </node>
-      <node id="1505">
+      <node id="1596">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="1586" relation="include">
+        </childnode>
+      </node>
+      <node id="1605">
+        <label>class_selfdual_tf_rf_ising_normal.h</label>
+        <link refid="class__selfdual__tf__rf__ising__normal_8h"/>
+        <childnode refid="1573" relation="include">
+        </childnode>
+        <childnode refid="1595" relation="include">
+        </childnode>
+        <childnode refid="1602" relation="include">
+        </childnode>
+        <childnode refid="1598" relation="include">
+        </childnode>
+        <childnode refid="1585" relation="include">
+        </childnode>
+      </node>
+      <node id="1582">
+        <label>optional</label>
+      </node>
+      <node id="1575">
         <label>vector</label>
       </node>
-      <node id="1501">
+      <node id="1571">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</label>
         <link refid="class__model__factory_8cpp"/>
-        <childnode refid="1502" relation="include">
+        <childnode refid="1572" relation="include">
         </childnode>
-        <childnode refid="1513" relation="include">
+        <childnode refid="1584" relation="include">
         </childnode>
-        <childnode refid="1524" relation="include">
+        <childnode refid="1594" relation="include">
         </childnode>
-        <childnode refid="1514" relation="include">
+        <childnode refid="1585" relation="include">
         </childnode>
-        <childnode refid="1520" relation="include">
+        <childnode refid="1590" relation="include">
         </childnode>
-        <childnode refid="1530" relation="include">
+        <childnode refid="1601" relation="include">
+        </childnode>
+        <childnode refid="1605" relation="include">
         </childnode>
       </node>
-      <node id="1518">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="1510">
+      <node id="1580">
         <label>utility</label>
       </node>
-      <node id="1521">
+      <node id="1591">
         <label>array</label>
       </node>
-      <node id="1522">
+      <node id="1592">
         <label>hdf5.h</label>
       </node>
-      <node id="1503">
+      <node id="1573">
         <label>iostream</label>
       </node>
-      <node id="1531">
+      <node id="1602">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="1532" relation="include">
+        <childnode refid="1603" relation="include">
         </childnode>
-        <childnode refid="1533" relation="include">
+        <childnode refid="1575" relation="include">
         </childnode>
-        <childnode refid="1505" relation="include">
+        <childnode refid="1604" relation="include">
         </childnode>
       </node>
-      <node id="1525">
+      <node id="1595">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1512" relation="include">
+        <childnode refid="1596" relation="include">
         </childnode>
-        <childnode refid="1526" relation="include">
+        <childnode refid="1583" relation="include">
         </childnode>
-        <childnode refid="1515" relation="include">
+        <childnode refid="1597" relation="include">
         </childnode>
-        <childnode refid="1504" relation="include">
+        <childnode refid="1586" relation="include">
         </childnode>
-        <childnode refid="1503" relation="include">
+        <childnode refid="1574" relation="include">
         </childnode>
-        <childnode refid="1527" relation="include">
+        <childnode refid="1573" relation="include">
         </childnode>
-        <childnode refid="1528" relation="include">
+        <childnode refid="1598" relation="include">
+        </childnode>
+        <childnode refid="1599" relation="include">
         </childnode>
       </node>
-      <node id="1519">
-        <label>spdlog/sinks/stdout_sinks.h</label>
-      </node>
-      <node id="1509">
+      <node id="1579">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -241,31 +267,35 @@
 <codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__model__base_8h" kindref="compound">class_model_base.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__hamiltonian__h5tables_8h" kindref="compound">class_hamiltonian_h5tables.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__selfdual__tf__rf__ising_8h" kindref="compound">class_selfdual_tf_rf_ising.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="13"><highlight class="normal"></highlight></codeline>
-<codeline lineno="14" refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" refkind="member"><highlight class="normal">std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" kindref="member">class_model_factory::create_mpo</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position,<sp/>std::string<sp/>model_type_str){</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;tf_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_tf_ising&gt;(position,model_type_str);</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;tf_nn_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_tf_ising&gt;(position,model_type_str);</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;selfdual_tf_rf_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_selfdual_tf_rf_ising&gt;(position,model_type_str);</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>model:<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/>+<sp/>model_type_str<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34" refid="classclass__model__factory_1a93f2fd7d6a3172c625cdd332151ace17" refkind="member"><highlight class="normal">std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__model__factory_1a93f2fd7d6a3172c625cdd332151ace17" kindref="member">class_model_factory::clone</ref>(std::unique_ptr&lt;class_model_base&gt;<sp/>other){</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>other-&gt;<ref refid="classclass__model__base_1aa63f907aa0ac70db3a9477ce73c1fdd6" kindref="member">clone</ref>();</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__selfdual__tf__rf__ising__normal_8h" kindref="compound">class_selfdual_tf_rf_ising_normal.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" refkind="member"><highlight class="normal">std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" kindref="member">class_model_factory::create_mpo</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position,<sp/>std::string<sp/>model_type_str){</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;tf_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_tf_ising&gt;(position,model_type_str);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;tf_nn_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_tf_ising&gt;(position,model_type_str);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;selfdual_tf_rf_ising&quot;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_selfdual_tf_rf_ising&gt;(position,model_type_str);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(model_type_str<sp/>==<sp/>std::string(</highlight><highlight class="stringliteral">&quot;selfdual_tf_rf_ising_normal&quot;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_selfdual_tf_rf_ising_normal&gt;(position,model_type_str);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>model:<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/><sp/>+<sp/>model_type_str<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>]&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38" refid="classclass__model__factory_1a93f2fd7d6a3172c625cdd332151ace17" refkind="member"><highlight class="normal">std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__model__factory_1a93f2fd7d6a3172c625cdd332151ace17" kindref="member">class_model_factory::clone</ref>(std::unique_ptr&lt;class_model_base&gt;<sp/>other){</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>other-&gt;<ref refid="classclass__model__base_1aa63f907aa0ac70db3a9477ce73c1fdd6" kindref="member">clone</ref>();</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp"/>
   </compounddef>

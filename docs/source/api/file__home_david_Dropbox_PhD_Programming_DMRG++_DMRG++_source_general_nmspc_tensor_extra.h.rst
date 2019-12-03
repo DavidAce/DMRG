@@ -33,6 +33,8 @@ Includes
 
 - ``Eigen/Sparse``
 
+- ``general/nmspc_omp.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_omp.h`)
+
 - ``general/nmspc_type_check.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_type_check.h`)
 
 - ``iomanip``
@@ -49,19 +51,11 @@ Included By
 -----------
 
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_infinite.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_environment.h`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_vidal_site.h`
-
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.h`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_xDMRG.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.cpp`
 
@@ -75,13 +69,21 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.h`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising_normal.h`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising_normal.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_h5pp.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_site.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_io_h5pp.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_measure.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_multisite.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_ops.cpp`
 
@@ -108,9 +110,9 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespace_textra_1af6755d93497c739f4cab661892897c46`
-
 - :ref:`exhale_function_namespace_textra_1ae8de771b63d94ce09bc102d204eed693`
+
+- :ref:`exhale_function_namespace_textra_1af6755d93497c739f4cab661892897c46`
 
 - :ref:`exhale_function_namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da`
 
@@ -124,9 +126,9 @@ Functions
 
 - :ref:`exhale_function_namespace_textra_1a65a7adf70ca3f05a3635830bd91c5787`
 
-- :ref:`exhale_function_namespace_textra_1ad322c080214d3af95e19d611c077ea76`
-
 - :ref:`exhale_function_namespace_textra_1adb41dcaa749176a53d57268d96efdcc3`
+
+- :ref:`exhale_function_namespace_textra_1ad322c080214d3af95e19d611c077ea76`
 
 - :ref:`exhale_function_namespace_textra_1a134cee5e3300feee66018395aa0ffa05`
 
@@ -142,6 +144,12 @@ Functions
 
 - :ref:`exhale_function_namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748`
 
+- :ref:`exhale_function_namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0`
+
+- :ref:`exhale_function_namespace_textra_1a925114f5051837d7bdb2ec05d70ae898`
+
+- :ref:`exhale_function_namespace_textra_1a7f6cc605db982f407d7e147c889138eb`
+
 - :ref:`exhale_function_namespace_textra_1a83480b3f75b0a29f652feb8b2152b475`
 
 - :ref:`exhale_function_namespace_textra_1a47079abeb81c780b562da5b9a8d1ff19`
@@ -152,9 +160,9 @@ Functions
 
 - :ref:`exhale_function_namespace_textra_1ac89cfa77d023247aabe950ce829f9513`
 
-- :ref:`exhale_function_namespace_textra_1adf0b0f09052c2cb60ff713691d9f28ba`
-
 - :ref:`exhale_function_namespace_textra_1a34123857104ed8a9c77ce2f6365bda74`
+
+- :ref:`exhale_function_namespace_textra_1adf0b0f09052c2cb60ff713691d9f28ba`
 
 - :ref:`exhale_function_namespace_textra_1aee5cae05c29a2d54025c36f444591dcd`
 
@@ -164,7 +172,11 @@ Functions
 
 - :ref:`exhale_function_namespace_textra_1abec7b372b4239eac14573685fae5f2e7`
 
-- :ref:`exhale_function_namespace_textra_1a8dfdb8fa19d99af6fcfec8ebacf16235`
+- :ref:`exhale_function_namespace_textra_1ac6fcdfc5393a97877b4ff51ea6468caa`
+
+- :ref:`exhale_function_namespace_textra_1afc86f382f30bd3b47208f940731f6029`
+
+- :ref:`exhale_function_namespace_textra_1ad5ceb0b38e8e75528105703cd4565833`
 
 - :ref:`exhale_function_namespace_textra_1a6ce185ef869dc59048058546aedeb24e`
 

@@ -3,6 +3,141 @@
   <compounddef id="namespacemath" kind="namespace" language="C++">
     <compoundname>math</compoundname>
       <sectiondef kind="func">
+      <memberdef kind="function" id="namespacemath_1abdbf7f465dfc7caaf3d8bbf5ddc9234c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ContainerType</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void math::check_bounds</definition>
+        <argsstring>(ContainerType &amp;X, std::optional&lt; size_t &gt; start_point=std::nullopt, std::optional&lt; size_t &gt; end_point=std::nullopt)</argsstring>
+        <name>check_bounds</name>
+        <param>
+          <type>ContainerType &amp;</type>
+          <declname>X</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>start_point</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>end_point</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="29" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemath_1a871f3778bb92deb9570e3bd4a3692439" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ContainerType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double math::mean</definition>
+        <argsstring>(ContainerType &amp;X, std::optional&lt; size_t &gt; start_point=std::nullopt, std::optional&lt; size_t &gt; end_point=std::nullopt)</argsstring>
+        <name>mean</name>
+        <param>
+          <type>ContainerType &amp;</type>
+          <declname>X</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>start_point</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>end_point</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="41" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemath_1a1c0284331d1637efe74c375fef296e94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ContainerType</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double math::stdev</definition>
+        <argsstring>(const ContainerType &amp;X, std::optional&lt; size_t &gt; start_point=std::nullopt, std::optional&lt; size_t &gt; end_point=std::nullopt)</argsstring>
+        <name>stdev</name>
+        <param>
+          <type>const ContainerType &amp;</type>
+          <declname>X</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>start_point</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>end_point</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="61" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemath_1abdf99bc627241de5f8ae40af8a73cedb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ContainerType1</type>
+          </param>
+          <param>
+            <type>typename ContainerType2</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double math::slope</definition>
+        <argsstring>(ContainerType1 &amp;X, ContainerType2 &amp;Y, std::optional&lt; size_t &gt; start_point=std::nullopt, std::optional&lt; size_t &gt; end_point=std::nullopt)</argsstring>
+        <name>slope</name>
+        <param>
+          <type>ContainerType1 &amp;</type>
+          <declname>X</declname>
+        </param>
+        <param>
+          <type>ContainerType2 &amp;</type>
+          <declname>Y</declname>
+        </param>
+        <param>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>start_point</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <param>
+          <type>std::optional&lt; size_t &gt;</type>
+          <declname>end_point</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="87" bodyend="119"/>
+      </memberdef>
       <memberdef kind="function" id="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
           <param>
@@ -46,7 +181,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="34" bodyend="37"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="130" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="130" bodyend="133"/>
       </memberdef>
       <memberdef kind="function" id="namespacemath_1a3389e677b639402cc6eaf924f713b398" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -83,7 +218,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="43" bodyend="57"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="139" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="139" bodyend="153"/>
       </memberdef>
       <memberdef kind="function" id="namespacemath_1abdf8a2bf14cace5e0424feb58ad2e5b4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -119,7 +254,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="60" bodyend="64"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="156" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="156" bodyend="160"/>
       </memberdef>
       <memberdef kind="function" id="namespacemath_1aadb857d9d1370dae374e670f1832ca8f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -175,7 +310,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="73" bodyend="79"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="169" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="169" bodyend="175"/>
       </memberdef>
       <memberdef kind="function" id="namespacemath_1a3ce95fbd77bede9bc5f50374c6d0f58e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -234,13 +369,46 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="89" bodyend="92"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="185" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="185" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacemath_1a2f5c50dcbb98a2cb0edad21ec1b0b68c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool math::all_equal</definition>
+        <argsstring>(Args const &amp;... args)</argsstring>
+        <name>all_equal</name>
+        <param>
+          <type>Args const &amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+<para>Checks if multiple values are equal to each other. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>args</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>any number of values </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>bool, true if all args are equal </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="195" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" bodystart="195" bodyend="203"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="27" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h" line="26" column="1"/>
   </compounddef>
 </doxygen>

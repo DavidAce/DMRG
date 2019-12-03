@@ -19,11 +19,12 @@ Program Listing for File main.cpp
    
    #include <iostream>
    #include <h5pp/h5pp.h>
-   #include <experimental/filesystem>
    
    #ifdef _OPENMP
    #include <omp.h>
    #endif
+   #include <general/nmspc_omp.h>
+   
    
    #ifdef OpenBLAS_AVAILABLE
    #include <cblas.h>
@@ -64,8 +65,31 @@ Program Listing for File main.cpp
    }
    
    
+   #include <signal.h>
+   
+   void signal_callback_handler(int signum) {
+       switch(signum){
+           case SIGTERM:  {std::cout  << "Caught SIGTERM" <<std::endl; break;}
+           case SIGKILL:  {std::cout  << "Caught SIGKILL" <<std::endl; break;}
+           case SIGINT :  {std::cout  << "Caught SIGINT"  <<std::endl; break;}
+           case SIGHUP :  {std::cout  << "Caught SIGHUP"  <<std::endl; break;}
+           case SIGQUIT : {std::cout  << "Caught SIGQUIT" <<std::endl; break;}
+       }
+       std::cout << "Exiting" << std::endl << std::flush;
+       std::quick_exit(signum);
+   }
+   
+   
+   
    
    int main(int argc, char* argv[]) {
+       //Register termination codes and what to do in those cases
+       signal(SIGTERM , signal_callback_handler);
+       signal(SIGINT  , signal_callback_handler);
+       signal(SIGKILL , signal_callback_handler);
+       signal(SIGHUP  , signal_callback_handler);
+       signal(SIGQUIT , signal_callback_handler);
+   
        auto log = Logger::setLogger("DMRG",0);
    
        // print current Git status
@@ -85,12 +109,12 @@ Program Listing for File main.cpp
    
            switch(opt){
                case 'i': {
-                   settings::input::input_file = std::string(optarg);
-                   class_settings_reader indata(settings::input::input_file);
+                   settings::input::input_filename = std::string(optarg);
+                   class_settings_reader indata(settings::input::input_filename);
                    if(indata.found_file){
                        settings::load_from_file(indata);
                    }else{
-                       log->critical("Could not find input file: {}", settings::input::input_file);
+                       log->critical("Could not find input file: {}", settings::input::input_filename);
                        exit(1);
                    }
                    continue;
@@ -139,7 +163,6 @@ Program Listing for File main.cpp
    
        if (not load_previous and append_seed and settings::model::seed_model >= 0 ){
            //Append the seed_model to the output filename
-           namespace fs = std::experimental::filesystem;
            fs::path oldFileName = settings::output::output_filename;
            fs::path newFileName = settings::output::output_filename;
            newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_model) + oldFileName.extension().string() );
@@ -148,7 +171,6 @@ Program Listing for File main.cpp
        }
        if (not load_previous and append_seed and settings::model::seed_state >= 0){
            //Append the seed_state to the output filename
-           namespace fs = std::experimental::filesystem;
            fs::path oldFileName = settings::output::output_filename;
            fs::path newFileName = settings::output::output_filename;
            newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_state) + oldFileName.extension().string() );
@@ -181,7 +203,6 @@ Program Listing for File main.cpp
            #endif
    
            #ifdef MKL_AVAILABLE
-               if(settings::threading::num_threads_blas   <= 0){ settings::threading::num_threads_blas   = std::thread::hardware_concurrency(); }
                mkl_set_num_threads(settings::threading::num_threads_blas);
                log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
            #endif

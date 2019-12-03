@@ -6,152 +6,117 @@
     <includedby refid="class__algorithm__launcher_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</includedby>
     <includedby refid="class__i_t_e_b_d_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</includedby>
     <incdepgraph>
-      <node id="477">
+      <node id="461">
         <label>list</label>
       </node>
-      <node id="486">
+      <node id="467">
         <label>string</label>
       </node>
-      <node id="490">
+      <node id="470">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="483">
+      <node id="462">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="484" relation="include">
+        <childnode refid="463" relation="include">
         </childnode>
-        <childnode refid="479" relation="include">
+        <childnode refid="464" relation="include">
         </childnode>
       </node>
-      <node id="474">
+      <node id="458">
         <label>map</label>
       </node>
-      <node id="488">
+      <node id="466">
         <label>simulation/class_simulation_status.h</label>
         <link refid="class__simulation__status_8h"/>
-        <childnode refid="473" relation="include">
+        <childnode refid="457" relation="include">
         </childnode>
-        <childnode refid="486" relation="include">
+        <childnode refid="467" relation="include">
         </childnode>
-        <childnode refid="479" relation="include">
+        <childnode refid="464" relation="include">
         </childnode>
-        <childnode refid="475" relation="include">
+        <childnode refid="459" relation="include">
         </childnode>
-        <childnode refid="480" relation="include">
+        <childnode refid="468" relation="include">
         </childnode>
-        <childnode refid="489" relation="include">
+        <childnode refid="469" relation="include">
         </childnode>
-        <childnode refid="490" relation="include">
+        <childnode refid="470" relation="include">
         </childnode>
       </node>
-      <node id="487">
-        <label>unordered_set</label>
+      <node id="465">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
       </node>
-      <node id="482">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="471">
+      <node id="455">
         <label>class_algorithm_infinite.h</label>
         <link refid="class__algorithm__infinite_8h"/>
-        <childnode refid="472" relation="include">
+        <childnode refid="456" relation="include">
         </childnode>
       </node>
-      <node id="475">
+      <node id="459">
         <label>vector</label>
       </node>
-      <node id="472">
+      <node id="456">
         <label>algorithms/class_algorithm_base.h</label>
         <link refid="class__algorithm__base_8h"/>
-        <childnode refid="473" relation="include">
+        <childnode refid="457" relation="include">
         </childnode>
-        <childnode refid="474" relation="include">
+        <childnode refid="458" relation="include">
         </childnode>
-        <childnode refid="475" relation="include">
+        <childnode refid="459" relation="include">
         </childnode>
-        <childnode refid="476" relation="include">
+        <childnode refid="460" relation="include">
         </childnode>
-        <childnode refid="477" relation="include">
+        <childnode refid="461" relation="include">
         </childnode>
-        <childnode refid="478" relation="include">
+        <childnode refid="462" relation="include">
         </childnode>
-        <childnode refid="483" relation="include">
+        <childnode refid="465" relation="include">
         </childnode>
-        <childnode refid="485" relation="include">
-        </childnode>
-        <childnode refid="488" relation="include">
+        <childnode refid="466" relation="include">
         </childnode>
       </node>
-      <node id="481">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="480">
+      <node id="468">
         <label>array</label>
       </node>
-      <node id="489">
+      <node id="469">
         <label>hdf5.h</label>
       </node>
-      <node id="479">
+      <node id="464">
         <label>iostream</label>
       </node>
-      <node id="470">
+      <node id="454">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h</label>
         <link refid="class__i_t_e_b_d_8h"/>
-        <childnode refid="471" relation="include">
+        <childnode refid="455" relation="include">
         </childnode>
       </node>
-      <node id="478">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="479" relation="include">
-        </childnode>
-        <childnode refid="480" relation="include">
-        </childnode>
-        <childnode refid="474" relation="include">
-        </childnode>
-        <childnode refid="476" relation="include">
-        </childnode>
-        <childnode refid="475" relation="include">
-        </childnode>
-        <childnode refid="481" relation="include">
-        </childnode>
-        <childnode refid="482" relation="include">
-        </childnode>
-      </node>
-      <node id="484">
+      <node id="463">
         <label>chrono</label>
       </node>
-      <node id="476">
+      <node id="460">
         <label>complex</label>
       </node>
-      <node id="485">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="486" relation="include">
-        </childnode>
-        <childnode refid="487" relation="include">
-        </childnode>
-        <childnode refid="475" relation="include">
-        </childnode>
-      </node>
-      <node id="473">
+      <node id="457">
         <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="493">
+      <node id="473">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
         <link refid="class__i_t_e_b_d_8cpp"/>
       </node>
-      <node id="492">
+      <node id="472">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="491">
+      <node id="471">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h</label>
         <link refid="class__i_t_e_b_d_8h"/>
-        <childnode refid="492" relation="include">
+        <childnode refid="472" relation="include">
         </childnode>
-        <childnode refid="493" relation="include">
+        <childnode refid="473" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -165,40 +130,37 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-01-18.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>DMRG_CLASS_IMAGINARY_TEBD_H</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>DMRG_CLASS_IMAGINARY_TEBD_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__algorithm__infinite_8h" kindref="compound">class_algorithm_infinite.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__log__tebd" kindref="compound">class_log_tebd</ref>;</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">class_h5table_tebd;</highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight></codeline>
 <codeline lineno="13" refid="classclass__i_t_e_b_d" refkind="compound"><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__i_t_e_b_d" kindref="compound">class_iTEBD</ref><sp/>:</highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite" kindref="compound">class_algorithm_infinite</ref><sp/>{</highlight></codeline>
 <codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" kindref="member">class_algorithm_infinite::class_algorithm_infinite</ref>;</highlight></codeline>
 <codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1acdaaf2d282fa4540c38c0f4673de1d5c" kindref="member">class_iTEBD</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_);</highlight></codeline>
 <codeline lineno="17"><highlight class="normal"></highlight></codeline>
-<codeline lineno="18" refid="classclass__i_t_e_b_d_1ab71753a63ba4bed6a0bb0f24849b65cc" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::unique_ptr&lt;class_hdf5_log&lt;class_log_tebd&gt;&gt;<sp/><ref refid="classclass__i_t_e_b_d_1ab71753a63ba4bed6a0bb0f24849b65cc" kindref="member">log_tebd</ref>;</highlight></codeline>
-<codeline lineno="19" refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::Tensor&lt;Scalar,4&gt;&gt;<sp/><ref refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" kindref="member">unitary_time_evolving_operators</ref>;</highlight></codeline>
-<codeline lineno="20" refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" kindref="member">h_evn</ref>;</highlight></codeline>
-<codeline lineno="21" refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" kindref="member">h_odd</ref>;</highlight></codeline>
+<codeline lineno="18" refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::Tensor&lt;Scalar,4&gt;&gt;<sp/><ref refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" kindref="member">unitary_time_evolving_operators</ref>;</highlight></codeline>
+<codeline lineno="19" refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" kindref="member">h_evn</ref>;</highlight></codeline>
+<codeline lineno="20" refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" kindref="member">h_odd</ref>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
 <codeline lineno="22"><highlight class="normal"></highlight></codeline>
 <codeline lineno="23"><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"></highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1ad4b61498097d9490ad7fe048f54972ee" kindref="member">run_simulation</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a24f5488296b9c2de7114fb46ba6c5493" kindref="member">run_preprocessing</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a1425eb617ce226bfcf524b4b5c14bc03" kindref="member">run_postprocessing</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1aeef1fb8d197f1d82e767aff331b2e083" kindref="member">single_TEBD_step</ref>(</highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a2568a7aae71bcd07fc211f167e35abeb" kindref="member">chi_max</ref>);</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1ac720b8d492eb8a174c1a3c87ef1e9662" kindref="member">check_convergence_time_step</ref>();</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a90fabacf5cc62542140594000e3bdb6b" kindref="member">check_convergence</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a60bd820616381dc37b7b2c8d09913eac" kindref="member">write_logs</ref>(</highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>force<sp/>=<sp/>false)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d_1ab174102e5a66349fb77eea583171b90b" kindref="member">sim_on</ref><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/>chi_max()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1afe90098dcff03675aa6d7e1a1724262e" kindref="member">num_sites</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1ad63d1643b1020b0c2192697d558ed783" kindref="member">write_freq</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a712b186e3c063cb219fb2b2f391e74e9" kindref="member">print_freq</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d_1a4b9d274c6d8b0f4874e3034a168daeb5" kindref="member">chi_grow</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/>//DMRG_CLASS_IMAGINARY_TEBD_H</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1ad4b61498097d9490ad7fe048f54972ee" kindref="member">run_simulation</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a24f5488296b9c2de7114fb46ba6c5493" kindref="member">run_preprocessing</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a1425eb617ce226bfcf524b4b5c14bc03" kindref="member">run_postprocessing</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a9790a13fe829a9220c1efab6165c6f93" kindref="member">single_TEBD_step</ref>();</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1ac720b8d492eb8a174c1a3c87ef1e9662" kindref="member">check_convergence_time_step</ref>();</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a90fabacf5cc62542140594000e3bdb6b" kindref="member">check_convergence</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d_1ab174102e5a66349fb77eea583171b90b" kindref="member">sim_on</ref><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d_1a2568a7aae71bcd07fc211f167e35abeb" kindref="member">chi_max</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1afe90098dcff03675aa6d7e1a1724262e" kindref="member">num_sites</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1ad63d1643b1020b0c2192697d558ed783" kindref="member">write_freq</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a712b186e3c063cb219fb2b2f391e74e9" kindref="member">print_freq</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d_1a4b9d274c6d8b0f4874e3034a168daeb5" kindref="member">chi_grow</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d_1a6d054df08095a61f273de0d6e71aa9e7" kindref="member">chi_init</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>final;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h"/>
   </compounddef>

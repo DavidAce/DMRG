@@ -32,7 +32,11 @@ Variables
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1a47bbe476211c0ae22d348e80df47193b`
 
-- :ref:`exhale_variable_namespacesettings_1_1model_1a3f07da5789dea3088c9f7efaeb8e6ee8`
+- :ref:`exhale_variable_namespacesettings_1_1model_1a2e5a997917989d152d0429c8e430ab63`
+
+- :ref:`exhale_variable_namespacesettings_1_1model_1a776e129070b70bfcdbff48837833a407`
+
+- :ref:`exhale_variable_namespacesettings_1_1model_1ae14bbe9ea2acf3d3905f97a21dc9b7d3`
 
 - :ref:`exhale_variable_namespacesettings_1_1model_1a5b1871176f010ad2de0dc28939d8fa82`
 

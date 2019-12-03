@@ -56,7 +56,7 @@ Classes
 -------
 
 
-- :ref:`exhale_class_classclass__hdf5__log`
+- :ref:`exhale_class_classclass__h5table__buffer`
 
 - :ref:`exhale_class_classclass__selfdual__tf__rf__ising`
 

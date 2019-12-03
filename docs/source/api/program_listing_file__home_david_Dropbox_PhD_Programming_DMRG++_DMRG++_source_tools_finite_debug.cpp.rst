@@ -17,16 +17,15 @@ Program Listing for File debug.cpp
    #include <iomanip>
    #include <simulation/class_simulation_status.h>
    #include <tools/nmspc_tools.h>
-   #include <state/class_finite_state.h>
+   #include <state/class_state_finite.h>
    #include <general/nmspc_quantum_mechanics.h>
-   #include <spdlog/spdlog.h>
    #include <spdlog/fmt/fmt.h>
    #include <simulation/nmspc_settings.h>
    
-   void tools::finite::debug::check_integrity(const class_finite_state &state)
+   void tools::finite::debug::check_integrity(const class_state_finite &state)
    {
        tools::log->trace("Checking integrity of state");
-       state.unset_measurements();
+       state.clear_measurements();
    
        try{
            check_integrity_of_mps(state);
@@ -37,12 +36,12 @@ Program Listing for File debug.cpp
    //        tools::finite::debug::print_parity_properties(state) ;
            throw std::runtime_error(fmt::format("Check failed: {}", ex.what()));
        }
-       state.unset_measurements();
+       state.clear_measurements();
    }
    
    
    
-   void tools::finite::debug::check_integrity_of_mps(const class_finite_state &state){
+   void tools::finite::debug::check_integrity_of_mps(const class_state_finite &state){
        tools::log->trace("Checking integrity of MPS");
        try{
            tools::common::profile::t_chk.tic();
@@ -62,7 +61,20 @@ Program Listing for File debug.cpp
            if(state.ENV_R.front().sites != state.get_length() - state.get_position() - 2)
                throw std::runtime_error(fmt::format("Mismatch in ENV_R size+1 and length-position: {} != {}", state.ENV_R.front().sites, state.get_length() - state.get_position() - 2));
    
-           using VectorType = const Eigen::Matrix<class_finite_state::Scalar,Eigen::Dynamic,1>;
+           for(size_t pos = 0; pos < state.get_length(); pos++){
+               if(pos != state.get_MPS(pos).get_position())
+                   throw std::runtime_error(fmt::format("Position mismatch {} != {}", pos, state.get_MPS(pos).get_position()));
+               if(state.get_MPS(pos).isCenter()){
+                   if(pos != state.MPS_L.back().get_position())
+                       throw std::runtime_error(fmt::format("Center position mismatch {} != {}", pos, state.MPS_L.back().get_position()));
+                   if(state.MPS_L.back().get_chiR() != state.MPS_L.back().get_LC().dimension(0) )
+                       throw std::runtime_error(fmt::format("Center and left dimension mismatch {} != {}", state.MPS_L.back().get_chiR(), state.MPS_L.back().get_LC().dimension(0)));
+                   if(state.MPS_R.front().get_chiL() != state.MPS_L.back().get_LC().dimension(0) )
+                       throw std::runtime_error(fmt::format("Center and right dimension mismatch {} != {}", state.MPS_L.back().get_chiR(), state.MPS_L.back().get_LC().dimension(0)));
+               }
+           }
+   
+           using VectorType = const Eigen::Matrix<class_state_finite::Scalar,Eigen::Dynamic,1>;
            for (size_t pos = 1; pos < state.get_length(); pos++){
    
                auto & mps_left = state.get_MPS(pos-1);
@@ -71,8 +83,8 @@ Program Listing for File debug.cpp
                auto & mpo_here = state.get_MPO(pos);
    
                // Check for validity
-               if(not Eigen::Map<VectorType>(mps_here.get_G().data(), mps_here.get_G().size()).allFinite()) {
-                   std::cerr << "G: \n" << mps_here.get_G() << std::endl;
+               if(not Eigen::Map<VectorType>(mps_here.get_M().data(), mps_here.get_M().size()).allFinite()) {
+                   std::cerr << "M: \n" << mps_here.get_M() << std::endl;
                    throw std::runtime_error(fmt::format("Inf's or nan's in MPS G @ pos {}", pos));
                }
    
@@ -158,13 +170,6 @@ Program Listing for File debug.cpp
                }
            }
    
-           {
-               //Check center
-               if(state.MPS_C.dimension(0) != state.MPS_L.back().get_chiR())
-                   throw std::runtime_error(fmt::format("Mismatch in center bond matrix dimension: {} != {}",state.MPS_C.dimension(0) , state.MPS_L.back().get_chiR()));
-               if(state.MPS_C.dimension(0) != state.MPS_R.front().get_chiL())
-                   throw std::runtime_error(fmt::format("Mismatch in center bond matrix dimension: {} != {}",state.MPS_C.dimension(0) , state.MPS_R.front().get_chiL()));
-           }
    
            {
                auto mps_it  = state.MPS_R.rbegin();
@@ -235,8 +240,8 @@ Program Listing for File debug.cpp
    
            tools::log->trace("Checking norms");
            auto norm_chain = tools::finite::measure::norm(state);
-           if(std::abs(norm_chain - 1.0) > settings::precision::MaxNormError) {
-               throw std::runtime_error(fmt::format("Norm of state too far from unity: {}",norm_chain));
+           if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) {
+               throw std::runtime_error(fmt::format("Norm of state too far from unity: {:.16f}",norm_chain));
            }
    
        }
@@ -249,7 +254,7 @@ Program Listing for File debug.cpp
    }
    
    
-   void tools::finite::debug::check_integrity_of_mpo(const class_finite_state &state) {
+   void tools::finite::debug::check_integrity_of_mpo(const class_state_finite &state) {
        tools::common::profile::t_chk.tic();
    
        try{
@@ -270,7 +275,7 @@ Program Listing for File debug.cpp
    }
    
    
-   void tools::finite::debug::print_parity_properties(const class_finite_state &state) {
+   void tools::finite::debug::print_parity_properties(const class_state_finite &state) {
        tools::log->debug("Printing parity properties");
    
        tools::log->debug("\tComputing spin components");
@@ -315,7 +320,7 @@ Program Listing for File debug.cpp
    
    
    
-   void tools::finite::debug::check_normalization_routine(const class_finite_state &state){
+   void tools::finite::debug::check_normalization_routine(const class_state_finite &state){
        tools::log->debug("Checking normalization routine");
        tools::log->debug("\t Generating Pauli Identity mpo");
    

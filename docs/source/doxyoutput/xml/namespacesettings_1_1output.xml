@@ -74,11 +74,11 @@
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="45" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" prot="public" static="no" mutable="no">
-        <type><ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ad" kindref="member">StorageLevel</ref></type>
+        <type><ref refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594ad" kindref="member">StorageLevel</ref></type>
         <definition>StorageLevel settings::output::storage_level</definition>
         <argsstring></argsstring>
         <name>storage_level</name>
-        <initializer>= <ref refid="nmspc__settings_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051" kindref="member">StorageLevel::NORMAL</ref></initializer>
+        <initializer>= <ref refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051" kindref="member">StorageLevel::NORMAL</ref></initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
@@ -86,6 +86,48 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1output_1a3a4473cd67fe51cc676ee77aa267b839" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::output::use_temp_dir</definition>
+        <argsstring></argsstring>
+        <name>use_temp_dir</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1output_1a9e0297c0c7d4d406845f0ae2b8396dd5" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::output::copy_from_temp_freq</definition>
+        <argsstring></argsstring>
+        <name>copy_from_temp_freq</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1output_1a006e3b72fb5727906ffe8acbb3b3eb2c" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string settings::output::temp_dir</definition>
+        <argsstring></argsstring>
+        <name>temp_dir</name>
+        <initializer>= &quot;/scratch/local&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="49" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

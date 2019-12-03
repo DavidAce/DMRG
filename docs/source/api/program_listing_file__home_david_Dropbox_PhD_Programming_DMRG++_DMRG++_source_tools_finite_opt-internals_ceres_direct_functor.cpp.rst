@@ -14,34 +14,24 @@ Program Listing for File ceres_direct_functor.cpp
    // Created by david on 2019-07-15.
    //
    
-   #ifdef _OPENMP
-   #include <omp.h>
-   #define EIGEN_USE_THREADS
-   #include <unsupported/Eigen/CXX11/Tensor>
-   Eigen::ThreadPool       tp (Eigen::nbThreads());
-   Eigen::ThreadPoolDevice dev(&tp,Eigen::nbThreads());
-   #else
-   #include <unsupported/Eigen/CXX11/Tensor>
-   Eigen::DefaultDevice dev;
-   #endif
-   
+   #include <general/nmspc_omp.h> // For multithreaded computation
    #include "ceres_direct_functor.h"
-   #include <state/class_finite_state.h>
+   #include <state/class_state_finite.h>
    
    
    
-   using namespace tools::finite::opt::internals;
+   using namespace tools::finite::opt::internal;
    
    template<typename Scalar>
    ceres_direct_functor<Scalar>::ceres_direct_functor(
-           const class_finite_state & state,
+           const class_state_finite & state,
            const class_simulation_status & sim_status)
            : ceres_base_functor(state,sim_status)
    {
-       tools::log->trace("Constructing subspace functor");
+       tools::log->trace("Constructing direct functor");
    
        #ifdef _OPENMP
-           tools::log->trace("Parallelizing with {} threads", omp_get_max_threads());
+           tools::log->trace("Parallelizing with {} threads", omp.num_threads);
        #endif
        tools::log->trace("Generating multi components");
        energy_reduced  = state.get_energy_reduced();
@@ -99,7 +89,6 @@ Program Listing for File ceres_direct_functor.cpp
        Eigen::Map<const VectorType> v (reinterpret_cast<const Scalar*>(v_double_double)   , vecSize);
        vv    = v.squaredNorm();
        norm  = std::sqrt(vv);
-   
        get_H2v(v);
        get_Hv(v);
    
@@ -119,6 +108,10 @@ Program Listing for File ceres_direct_functor.cpp
        ene2             = std::real(ene2) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(ene2);
    
        var             = ene2 - ene*ene;
+   //    tools::log->info("log10var/L = {:<24.18f} + i{:<24.18f} | ene = {:<24.18f} + i {:<24.18f}",
+   //            std::log10(std::abs(std::real(var))/length),  std::log10(std::abs(std::imag(var))/length),
+   //            std::real(ene), std::imag(ene)
+   //            );
        if (std::real(var)  < 0.0 ) tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f}" , counter, std::real(var)  , std::imag(var));
        var             = std::real(var) <  0.0 ? std::abs(var)                          : std::real(var);
        var             = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
@@ -127,31 +120,34 @@ Program Listing for File ceres_direct_functor.cpp
        energy         = std::real(ene + energy_reduced) / length;
        variance       = std::abs(var)/length;
        norm_offset    = std::abs(vv) - 1.0 ;
-       std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
+       std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.1);
        log10var       = std::log10(variance);
    
        if(fx != nullptr){
            fx[0] = log10var + norm_func;
        }
    
+       Eigen::Map<VectorType>  grad (reinterpret_cast<      Scalar*>(grad_double_double), vecSize);
        if (grad_double_double != nullptr){
            auto vv_1  = std::pow(vv,-1);
            auto var_1 = 1.0/var/std::log(10);
-           Eigen::Map<VectorType>  grad (reinterpret_cast<      Scalar*>(grad_double_double), vecSize);
-           grad = var_1 * vv_1 * (H2v  - v  * vH2v - 2.0 * ene * (Hv - v * ene))
-                   +  norm_grad * v;
+           grad = var_1 * vv_1 * (H2v - 2.0*ene*Hv - (ene2 - 2.0*ene*ene)*v);
+           if constexpr (std::is_same<Scalar,double>::value){
+               grad *= 2.0;
+           }
+           grad += norm_grad * v;
        }
    
-   //        tools::log->trace("log10 var: {:<24.18f} log10 ene2/L: {:<24.18f} ene/L: {:<24.18f} ene*ene/L/L: {:<24.18f} Energy: {:<24.18f}  SqNorm: {:<24.18f} Norm: {:<24.18f} fx: {:<24.18f}",
+   //    tools::log->trace("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad|_inf: {:<24.18f} SqNorm: {:<24.18f} Norm: {:<24.18f} Norm_func: {:<24.18f} |Norm_grad *v|: {:<24.18f} fx: {:<24.18f}",
    //                      std::log10(std::abs(var)/length),
-   //                      std::log10(std::abs(ene2)/length),
-   //                      std::real(ene)/length,
-   //                      std::real(ene*ene)/length/length,
    //                      std::real(ene + energy_reduced) / length,
+   //                      grad.norm(),
+   //                      grad.cwiseAbs().maxCoeff(),
    //                      vv,
    //                      norm,
+   //                      norm_func,
+   //                      (norm_grad * v).norm(),
    //                      fx[0]);
-   
    
    
        if(std::isnan(log10var) or std::isinf(log10var)){
@@ -188,7 +184,7 @@ Program Listing for File ceres_direct_functor.cpp
            if (log2chiL > log2chiR){
                if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
                Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-               H2v_tensor.device(dev) =
+               H2v_tensor.device(omp.dev) =
                        theta
                                .contract(env2L, Textra::idx({0}, {0}))
                                .contract(mpo  , Textra::idx({0,3}, {2,0}))
@@ -200,7 +196,7 @@ Program Listing for File ceres_direct_functor.cpp
            else{
                if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
                Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
-               H2v_tensor.device(dev) =
+               H2v_tensor.device(omp.dev) =
                        theta
                                .contract(env2R, Textra::idx({0}, {0}))
                                .contract(mpo  , Textra::idx({0,3}, {2,1}))
@@ -212,7 +208,7 @@ Program Listing for File ceres_direct_functor.cpp
        }else{
            if (print_path) tools::log->trace("get_H2v path: log2spin <= log2chiL + log2chiR");
            Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-           H2v_tensor.device(dev) =
+           H2v_tensor.device(omp.dev) =
                    theta
                            .contract(env2L, Textra::idx({0}, {0}))
                            .contract(mpo  , Textra::idx({0,3}, {2,0}))
@@ -236,7 +232,7 @@ Program Listing for File ceres_direct_functor.cpp
            if (print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
    
            Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-           Hv_tensor.device(dev) =
+           Hv_tensor.device(omp.dev) =
                    theta
                            .contract(envL, Textra::idx({0}, {0}))
                            .contract(mpo , Textra::idx({0,3}, {2,0}))
@@ -246,7 +242,7 @@ Program Listing for File ceres_direct_functor.cpp
            if (print_path) tools::log->trace("get_Hv path: log2chiL <= log2chiR ");
    
            Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
-           Hv_tensor.device(dev) =
+           Hv_tensor.device(omp.dev) =
                    theta
                            .contract(envR, Textra::idx({0}, {0}))
                            .contract(mpo , Textra::idx({0,3}, {2,1}))
@@ -279,8 +275,8 @@ Program Listing for File ceres_direct_functor.cpp
    
    
    
-   template class tools::finite::opt::internals::ceres_direct_functor<double>;
-   template class tools::finite::opt::internals::ceres_direct_functor<std::complex<double>>;
+   template class tools::finite::opt::internal::ceres_direct_functor<double>;
+   template class tools::finite::opt::internal::ceres_direct_functor<std::complex<double>>;
    
    
    

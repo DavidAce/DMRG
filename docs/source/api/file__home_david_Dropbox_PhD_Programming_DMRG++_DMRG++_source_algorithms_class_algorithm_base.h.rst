@@ -37,13 +37,11 @@ Includes
 
 - ``map``
 
-- ``math/nmspc_eigutils.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_eigutils.h`)
-
 - ``memory``
 
 - ``simulation/class_simulation_status.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_class_simulation_status.h`)
 
-- ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
+- ``simulation/enums.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_enums.h`)
 
 - ``vector``
 
@@ -77,7 +75,9 @@ Classes
 
 - :ref:`exhale_struct_structclass__algorithm__base_1_1_saturation_report`
 
+- :ref:`exhale_struct_structclass__algorithm__base_1_1_saturation_report2`
+
 - :ref:`exhale_class_classclass__algorithm__base`
 
-- :ref:`exhale_class_classclass__hdf5__log`
+- :ref:`exhale_class_classclass__h5table__buffer`
 

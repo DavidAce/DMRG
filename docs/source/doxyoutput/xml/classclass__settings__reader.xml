@@ -15,20 +15,34 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="24" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="22" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__settings__reader_1a43b32867215591b8bc13ef2c95164a92" prot="private" static="no" mutable="no">
-        <type>std::ifstream</type>
-        <definition>std::ifstream class_settings_reader::file</definition>
+      <memberdef kind="variable" id="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_settings_reader::file_string</definition>
         <argsstring></argsstring>
-        <name>file</name>
+        <name>file_string</name>
+        <initializer>= &quot;&quot;</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="25" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__settings__reader_1aa62d791d80cc7eb22f662d70fdf7bef6" prot="private" static="no" mutable="no">
+        <type>std::unordered_map&lt; std::string, std::string &gt;</type>
+        <definition>std::unordered_map&lt;std::string,std::string&gt; class_settings_reader::param_map</definition>
+        <argsstring></argsstring>
+        <name>param_map</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="29" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" prot="private" static="no" mutable="no">
         <type>std::shared_ptr&lt; spdlog::logger &gt;</type>
@@ -41,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="32" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="31" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -57,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="34" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="33" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -76,8 +90,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="42" bodyend="56"/>
-        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="32">log</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="81" bodyend="95"/>
+        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="31">log</references>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1a93f74976808279cc9bc3b18fc8d7bf24" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>fs::path</type>
@@ -94,10 +108,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="58" bodyend="92"/>
-        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="32">log</references>
-        <references refid="classclass__settings__reader_1a5f20351bd6291364c36b1d7266b132b7" compoundref="class__settings__reader_8cpp" startline="42" endline="56">check_if_input_file_exists</references>
-        <references refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" compoundref="class__settings__reader_8h" startline="34">found_file</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="97" bodyend="135"/>
+        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="31">log</references>
+        <references refid="classclass__settings__reader_1a5f20351bd6291364c36b1d7266b132b7" compoundref="class__settings__reader_8cpp" startline="81" endline="95">check_if_input_file_exists</references>
+        <references refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" compoundref="class__settings__reader_8h" startline="33">found_file</references>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -114,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="94" bodyend="96"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="137" bodyend="139"/>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1ae6cb87cc813ced19542e083fc4bb1c12" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -131,7 +145,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="98" bodyend="100"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="141" bodyend="143"/>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -148,7 +162,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="102" bodyend="104"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="145" bodyend="147"/>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::string::size_type</type>
@@ -165,7 +179,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="106" bodyend="114"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="149" bodyend="157"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -180,7 +194,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="35" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="34" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1a65edc64ccde3751915c265a4735b4afd" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
         <type></type>
@@ -202,26 +216,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="9" bodyend="21"/>
-        <references refid="classclass__settings__reader_1ac057132487786bb8138b9fa4a8aed1cb" compoundref="class__settings__reader_8h" startline="24">file_path</references>
-        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="32">log</references>
-        <references refid="namespace_logger_1a540e0412286255a5eb899ee37171f39d" compoundref="nmspc__logger_8h" startline="51" endline="63">Logger::setLogger</references>
-        <references refid="classclass__settings__reader_1a93f74976808279cc9bc3b18fc8d7bf24" compoundref="class__settings__reader_8cpp" startline="58" endline="92">find_input_file</references>
-        <references refid="classclass__settings__reader_1a43b32867215591b8bc13ef2c95164a92" compoundref="class__settings__reader_8h" startline="25">file</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="9" bodyend="69"/>
+        <references refid="classclass__settings__reader_1ac057132487786bb8138b9fa4a8aed1cb" compoundref="class__settings__reader_8h" startline="22">file_path</references>
+        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="31">log</references>
+        <references refid="namespace_logger_1a427a7542e5ff63f1596dc0967bd65ab7" compoundref="nmspc__logger_8cpp" startline="54" endline="66">Logger::setLogger</references>
+        <references refid="classclass__settings__reader_1a93f74976808279cc9bc3b18fc8d7bf24" compoundref="class__settings__reader_8cpp" startline="97" endline="135">find_input_file</references>
+        <references refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" compoundref="class__settings__reader_8h" startline="23">file_string</references>
+        <references refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" compoundref="class__settings__reader_8cpp" startline="145" endline="147">is_parameterline</references>
+        <references refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" compoundref="class__settings__reader_8cpp" startline="149" endline="157">find_comment_character</references>
+        <references refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" compoundref="class__settings__reader_8cpp" startline="137" endline="139">remove_spaces</references>
+        <references refid="classclass__settings__reader_1aa62d791d80cc7eb22f662d70fdf7bef6" compoundref="class__settings__reader_8h" startline="29">param_map</references>
       </memberdef>
-      <memberdef kind="function" id="classclass__settings__reader_1a9f9e7f86bac3c84348aa9fbbbfb310dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
-        <definition>std::string class_settings_reader::get_input_file</definition>
+        <definition>std::string class_settings_reader::get_input_file_as_string</definition>
         <argsstring>()</argsstring>
-        <name>get_input_file</name>
+        <name>get_input_file_as_string</name>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="23" bodyend="34"/>
-        <references refid="classclass__settings__reader_1a43b32867215591b8bc13ef2c95164a92" compoundref="class__settings__reader_8h" startline="25">file</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="71" bodyend="73"/>
+        <references refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" compoundref="class__settings__reader_8h" startline="23">file_string</references>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::string</type>
@@ -234,8 +252,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="36" bodyend="38"/>
-        <references refid="classclass__settings__reader_1ac057132487786bb8138b9fa4a8aed1cb" compoundref="class__settings__reader_8h" startline="24">file_path</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp" bodystart="75" bodyend="77"/>
+        <references refid="classclass__settings__reader_1ac057132487786bb8138b9fa4a8aed1cb" compoundref="class__settings__reader_8h" startline="22">file_path</references>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1a8f5b1fc2161627bec71bcc86e2555c66" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -261,9 +279,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="42" bodyend="53"/>
-        <references refid="classclass__settings__reader_1a43b32867215591b8bc13ef2c95164a92" compoundref="class__settings__reader_8h" startline="25">file</references>
-        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="32">log</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="43" bodyend="53"/>
+        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="31">log</references>
       </memberdef>
       <memberdef kind="function" id="classclass__settings__reader_1a733d9b10732167f3ad85b19bab2a445f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -307,12 +324,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="81" bodyend="118"/>
-        <references refid="classclass__settings__reader_1a43b32867215591b8bc13ef2c95164a92" compoundref="class__settings__reader_8h" startline="25">file</references>
-        <references refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" compoundref="class__settings__reader_8cpp" startline="102" endline="104">is_parameterline</references>
-        <references refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" compoundref="class__settings__reader_8cpp" startline="106" endline="114">find_comment_character</references>
-        <references refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" compoundref="class__settings__reader_8cpp" startline="94" endline="96">remove_spaces</references>
-        <references refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" compoundref="class__settings__reader_8h" startline="32">log</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="81" bodyend="131"/>
+        <references refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" compoundref="class__settings__reader_8cpp" startline="137" endline="139">remove_spaces</references>
+        <references refid="classclass__settings__reader_1aa62d791d80cc7eb22f662d70fdf7bef6" compoundref="class__settings__reader_8h" startline="29">param_map</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -320,54 +334,50 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="278">
-        <label>std::basic_ifstream&lt; char &gt;</label>
-        <childnode refid="279" relation="public-inheritance">
+      <node id="254">
+        <label>std::unordered_map&lt; std::string, std::string &gt;</label>
+        <childnode refid="255" relation="usage">
+          <edgelabel>keys</edgelabel>
+          <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="276">
+      <node id="253">
         <label>class_settings_reader</label>
         <link refid="classclass__settings__reader"/>
-        <childnode refid="277" relation="usage">
-          <edgelabel>file</edgelabel>
+        <childnode refid="254" relation="usage">
+          <edgelabel>param_map</edgelabel>
+        </childnode>
+        <childnode refid="255" relation="usage">
+          <edgelabel>file_string</edgelabel>
         </childnode>
       </node>
-      <node id="279">
-        <label>std::basic_istream&lt; Char &gt;</label>
-        <childnode refid="280" relation="public-inheritance">
-        </childnode>
+      <node id="256">
+        <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="280">
-        <label>std::basic_ios&lt; Char &gt;</label>
-        <childnode refid="281" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="281">
-        <label>std::ios_base</label>
-      </node>
-      <node id="277">
-        <label>std::ifstream</label>
-        <childnode refid="278" relation="public-inheritance">
+      <node id="255">
+        <label>std::string</label>
+        <childnode refid="256" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="22" bodyend="119"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h" bodystart="20" bodyend="132"/>
     <listofallmembers>
       <member refid="classclass__settings__reader_1a5f20351bd6291364c36b1d7266b132b7" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>check_if_input_file_exists</name></member>
       <member refid="classclass__settings__reader_1a155b1ac0cd7a8acf0f791c1f09973e7e" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>class_settings_reader</name></member>
       <member refid="classclass__settings__reader_1a65edc64ccde3751915c265a4735b4afd" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>class_settings_reader</name></member>
-      <member refid="classclass__settings__reader_1a43b32867215591b8bc13ef2c95164a92" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>file</name></member>
       <member refid="classclass__settings__reader_1ac057132487786bb8138b9fa4a8aed1cb" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>file_path</name></member>
+      <member refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>file_string</name></member>
       <member refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>find_comment_character</name></member>
       <member refid="classclass__settings__reader_1a93f74976808279cc9bc3b18fc8d7bf24" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>find_input_file</name></member>
       <member refid="classclass__settings__reader_1a8f5b1fc2161627bec71bcc86e2555c66" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>find_parameter</name></member>
       <member refid="classclass__settings__reader_1ac7257f142c4f528b1f865eda20c5ae3d" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>find_parameter</name></member>
       <member refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>found_file</name></member>
-      <member refid="classclass__settings__reader_1a9f9e7f86bac3c84348aa9fbbbfb310dd" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>get_input_file</name></member>
+      <member refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>get_input_file_as_string</name></member>
       <member refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>get_input_filename</name></member>
       <member refid="classclass__settings__reader_1ae6cb87cc813ced19542e083fc4bb1c12" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>has_only_digits</name></member>
       <member refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>is_parameterline</name></member>
       <member refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>log</name></member>
+      <member refid="classclass__settings__reader_1aa62d791d80cc7eb22f662d70fdf7bef6" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>param_map</name></member>
       <member refid="classclass__settings__reader_1a733d9b10732167f3ad85b19bab2a445f" prot="public" virt="non-virtual"><scope>class_settings_reader</scope><name>parse_param</name></member>
       <member refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" prot="private" virt="non-virtual"><scope>class_settings_reader</scope><name>remove_spaces</name></member>
     </listofallmembers>

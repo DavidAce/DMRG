@@ -14,8 +14,8 @@ Program Listing for File matrix_recast.h
    // Created by david on 2018-10-29.
    //
    
-   #ifndef MATRIX_RECAST_H
-   #define MATRIX_RECAST_H
+   #pragma once
+   
    
    #include <complex>
    #include <vector>
@@ -74,4 +74,3 @@ Program Listing for File matrix_recast.h
    };
    
    
-   #endif //MATRIX_RECAST_H

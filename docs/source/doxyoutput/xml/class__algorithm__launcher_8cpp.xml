@@ -4,9 +4,9 @@
     <compoundname>class_algorithm_launcher.cpp</compoundname>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <includes refid="class__algorithm__launcher_8h" local="no">algorithms/class_algorithm_launcher.h</includes>
-    <includes refid="class__infinite__state_8h" local="no">state/class_infinite_state.h</includes>
-    <includes refid="class__finite__state_8h" local="no">state/class_finite_state.h</includes>
-    <includes refid="class__hdf5__log__buffer_8h" local="no">io/class_hdf5_log_buffer.h</includes>
+    <includes refid="class__state__infinite_8h" local="no">state/class_state_infinite.h</includes>
+    <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
+    <includes refid="class__h5table__buffer_8h" local="no">io/class_h5table_buffer.h</includes>
     <includes refid="class__i_d_m_r_g_8h" local="no">algorithms/class_iDMRG.h</includes>
     <includes refid="class__f_d_m_r_g_8h" local="no">algorithms/class_fDMRG.h</includes>
     <includes refid="class__x_d_m_r_g_8h" local="no">algorithms/class_xDMRG.h</includes>
@@ -14,340 +14,356 @@
     <includes local="no">spdlog/spdlog.h</includes>
     <includes local="no">h5pp/h5pp.h</includes>
     <includes local="no">gitversion.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
+    <includes local="no">cstdlib</includes>
     <incdepgraph>
-      <node id="265">
+      <node id="259">
         <label>list</label>
       </node>
-      <node id="240">
+      <node id="232">
         <label>iomanip</label>
       </node>
-      <node id="238">
+      <node id="255">
+        <label>filesystem</label>
+      </node>
+      <node id="230">
         <label>iterator</label>
       </node>
-      <node id="267">
-        <label>class_algorithm_finite.h</label>
-        <link refid="class__algorithm__finite_8h"/>
-        <childnode refid="264" relation="include">
+      <node id="245">
+        <label>state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="221" relation="include">
         </childnode>
-      </node>
-      <node id="262">
-        <label>algorithms/class_iDMRG.h</label>
-        <link refid="class__i_d_m_r_g_8h"/>
-        <childnode refid="263" relation="include">
+        <childnode refid="240" relation="include">
         </childnode>
-      </node>
-      <node id="257">
-        <label>io/class_hdf5_log_buffer.h</label>
-        <link refid="class__hdf5__log__buffer_8h"/>
-        <childnode refid="258" relation="include">
-        </childnode>
-        <childnode refid="259" relation="include">
-        </childnode>
-        <childnode refid="230" relation="include">
-        </childnode>
-        <childnode refid="231" relation="include">
-        </childnode>
-        <childnode refid="260" relation="include">
-        </childnode>
-      </node>
-      <node id="266">
-        <label>algorithms/class_fDMRG.h</label>
-        <link refid="class__f_d_m_r_g_8h"/>
-        <childnode refid="267" relation="include">
-        </childnode>
-      </node>
-      <node id="241">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="242" relation="include">
-        </childnode>
-        <childnode refid="235" relation="include">
-        </childnode>
-        <childnode refid="237" relation="include">
-        </childnode>
-      </node>
-      <node id="235">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="226">
-        <label>string</label>
-      </node>
-      <node id="259">
-        <label>hdf5_hl.h</label>
-      </node>
-      <node id="243">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="244" relation="include">
-        </childnode>
-        <childnode refid="239" relation="include">
-        </childnode>
-      </node>
-      <node id="250">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="231" relation="include">
-        </childnode>
-        <childnode refid="249" relation="include">
-        </childnode>
-        <childnode refid="251" relation="include">
-        </childnode>
-      </node>
-      <node id="247">
-        <label>map</label>
-      </node>
-      <node id="261">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
-        <childnode refid="230" relation="include">
-        </childnode>
-        <childnode refid="226" relation="include">
-        </childnode>
-        <childnode refid="239" relation="include">
-        </childnode>
-        <childnode refid="228" relation="include">
+        <childnode refid="224" relation="include">
         </childnode>
         <childnode refid="246" relation="include">
         </childnode>
+        <childnode refid="248" relation="include">
+        </childnode>
+        <childnode refid="249" relation="include">
+        </childnode>
+        <childnode refid="228" relation="include">
+        </childnode>
+        <childnode refid="227" relation="include">
+        </childnode>
+      </node>
+      <node id="261">
+        <label>class_algorithm_finite.h</label>
+        <link refid="class__algorithm__finite_8h"/>
         <childnode refid="258" relation="include">
         </childnode>
-        <childnode refid="259" relation="include">
+      </node>
+      <node id="256">
+        <label>algorithms/class_iDMRG.h</label>
+        <link refid="class__i_d_m_r_g_8h"/>
+        <childnode refid="257" relation="include">
         </childnode>
       </node>
-      <node id="242">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="227">
-        <label>unordered_set</label>
-      </node>
-      <node id="237">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="229">
-        <label>algorithms/class_algorithm_launcher.h</label>
-        <link refid="class__algorithm__launcher_8h"/>
-        <childnode refid="230" relation="include">
-        </childnode>
-        <childnode refid="231" relation="include">
+      <node id="260">
+        <label>algorithms/class_fDMRG.h</label>
+        <link refid="class__f_d_m_r_g_8h"/>
+        <childnode refid="261" relation="include">
         </childnode>
       </node>
-      <node id="253">
-        <label>state/class_environment.h</label>
-        <link refid="class__environment_8h"/>
-        <childnode refid="230" relation="include">
+      <node id="251">
+        <label>io/table_types.h</label>
+        <link refid="table__types_8h"/>
+        <childnode refid="218" relation="include">
         </childnode>
-        <childnode refid="234" relation="include">
+        <childnode refid="238" relation="include">
+        </childnode>
+        <childnode refid="252" relation="include">
+        </childnode>
+        <childnode refid="253" relation="include">
         </childnode>
         <childnode refid="254" relation="include">
         </childnode>
       </node>
-      <node id="256">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="230" relation="include">
-        </childnode>
-        <childnode refid="237" relation="include">
-        </childnode>
-        <childnode refid="250" relation="include">
-        </childnode>
-      </node>
-      <node id="231">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="236">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="252">
-        <label>state/class_finite_state.h</label>
-        <link refid="class__finite__state_8h"/>
-        <childnode refid="230" relation="include">
-        </childnode>
-        <childnode refid="248" relation="include">
-        </childnode>
-        <childnode refid="233" relation="include">
-        </childnode>
+      <node id="233">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
         <childnode refid="234" relation="include">
         </childnode>
-        <childnode refid="253" relation="include">
+        <childnode refid="228" relation="include">
         </childnode>
-        <childnode refid="255" relation="include">
-        </childnode>
-        <childnode refid="256" relation="include">
+        <childnode refid="227" relation="include">
         </childnode>
       </node>
-      <node id="263">
-        <label>class_algorithm_infinite.h</label>
-        <link refid="class__algorithm__infinite_8h"/>
-        <childnode refid="264" relation="include">
+      <node id="228">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="217">
+        <label>string</label>
+      </node>
+      <node id="253">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="235">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="236" relation="include">
+        </childnode>
+        <childnode refid="231" relation="include">
         </childnode>
       </node>
-      <node id="224">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
-        <link refid="class__algorithm__launcher_8cpp"/>
-        <childnode refid="225" relation="include">
+      <node id="242">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="243" relation="include">
         </childnode>
-        <childnode refid="229" relation="include">
+        <childnode refid="244" relation="include">
         </childnode>
-        <childnode refid="232" relation="include">
+      </node>
+      <node id="239">
+        <label>map</label>
+      </node>
+      <node id="254">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="221" relation="include">
+        </childnode>
+        <childnode refid="217" relation="include">
+        </childnode>
+        <childnode refid="231" relation="include">
+        </childnode>
+        <childnode refid="218" relation="include">
+        </childnode>
+        <childnode refid="238" relation="include">
         </childnode>
         <childnode refid="252" relation="include">
         </childnode>
-        <childnode refid="257" relation="include">
-        </childnode>
-        <childnode refid="262" relation="include">
-        </childnode>
-        <childnode refid="266" relation="include">
-        </childnode>
-        <childnode refid="268" relation="include">
-        </childnode>
-        <childnode refid="269" relation="include">
-        </childnode>
-        <childnode refid="231" relation="include">
-        </childnode>
-        <childnode refid="270" relation="include">
-        </childnode>
-        <childnode refid="271" relation="include">
+        <childnode refid="253" relation="include">
         </childnode>
       </node>
-      <node id="233">
-        <label>optional</label>
+      <node id="234">
+        <label>experimental/type_traits</label>
       </node>
-      <node id="228">
-        <label>vector</label>
-      </node>
-      <node id="254">
-        <label>spdlog/fmt/fmt.h</label>
-      </node>
-      <node id="264">
-        <label>algorithms/class_algorithm_base.h</label>
-        <link refid="class__algorithm__base_8h"/>
-        <childnode refid="230" relation="include">
+      <node id="266">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="221" relation="include">
         </childnode>
-        <childnode refid="247" relation="include">
+        <childnode refid="217" relation="include">
         </childnode>
-        <childnode refid="228" relation="include">
-        </childnode>
-        <childnode refid="248" relation="include">
-        </childnode>
-        <childnode refid="265" relation="include">
-        </childnode>
-        <childnode refid="245" relation="include">
-        </childnode>
-        <childnode refid="243" relation="include">
-        </childnode>
-        <childnode refid="225" relation="include">
-        </childnode>
-        <childnode refid="261" relation="include">
-        </childnode>
-      </node>
-      <node id="268">
-        <label>algorithms/class_xDMRG.h</label>
-        <link refid="class__x_d_m_r_g_8h"/>
-        <childnode refid="267" relation="include">
-        </childnode>
-        <childnode refid="237" relation="include">
-        </childnode>
-        <childnode refid="235" relation="include">
-        </childnode>
-      </node>
-      <node id="271">
-        <label>gitversion.h</label>
-      </node>
-      <node id="249">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="246">
-        <label>array</label>
-      </node>
-      <node id="260">
-        <label>io/log_types.h</label>
-        <link refid="log__types_8h"/>
-        <childnode refid="228" relation="include">
-        </childnode>
-        <childnode refid="246" relation="include">
-        </childnode>
-        <childnode refid="258" relation="include">
+        <childnode refid="240" relation="include">
         </childnode>
         <childnode refid="259" relation="include">
         </childnode>
-        <childnode refid="261" relation="include">
+        <childnode refid="218" relation="include">
         </childnode>
-      </node>
-      <node id="258">
-        <label>hdf5.h</label>
-      </node>
-      <node id="270">
-        <label>h5pp/h5pp.h</label>
-      </node>
-      <node id="239">
-        <label>iostream</label>
-      </node>
-      <node id="269">
-        <label>algorithms/class_iTEBD.h</label>
-        <link refid="class__i_t_e_b_d_8h"/>
-        <childnode refid="263" relation="include">
+        <childnode refid="242" relation="include">
         </childnode>
-      </node>
-      <node id="245">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="239" relation="include">
+        <childnode refid="235" relation="include">
         </childnode>
-        <childnode refid="246" relation="include">
-        </childnode>
-        <childnode refid="247" relation="include">
-        </childnode>
-        <childnode refid="248" relation="include">
+        <childnode refid="267" relation="include">
         </childnode>
         <childnode refid="228" relation="include">
         </childnode>
-        <childnode refid="249" relation="include">
-        </childnode>
-        <childnode refid="231" relation="include">
+        <childnode refid="227" relation="include">
         </childnode>
       </node>
-      <node id="244">
-        <label>chrono</label>
+      <node id="227">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="248">
-        <label>complex</label>
+      <node id="220">
+        <label>algorithms/class_algorithm_launcher.h</label>
+        <link refid="class__algorithm__launcher_8h"/>
+        <childnode refid="221" relation="include">
+        </childnode>
+        <childnode refid="222" relation="include">
+        </childnode>
       </node>
-      <node id="232">
-        <label>state/class_infinite_state.h</label>
-        <link refid="class__infinite__state_8h"/>
-        <childnode refid="230" relation="include">
-        </childnode>
-        <childnode refid="233" relation="include">
-        </childnode>
-        <childnode refid="234" relation="include">
-        </childnode>
-        <childnode refid="243" relation="include">
-        </childnode>
-        <childnode refid="245" relation="include">
+      <node id="246">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="221" relation="include">
         </childnode>
         <childnode refid="225" relation="include">
         </childnode>
-        <childnode refid="250" relation="include">
+        <childnode refid="247" relation="include">
         </childnode>
       </node>
-      <node id="225">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="226" relation="include">
+      <node id="244">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="249">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="221" relation="include">
+        </childnode>
+        <childnode refid="227" relation="include">
+        </childnode>
+        <childnode refid="242" relation="include">
+        </childnode>
+      </node>
+      <node id="222">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="229">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="219">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="267">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="231" relation="include">
+        </childnode>
+        <childnode refid="268" relation="include">
+        </childnode>
+      </node>
+      <node id="243">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="248">
+        <label>state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="240" relation="include">
+        </childnode>
+        <childnode refid="224" relation="include">
+        </childnode>
+        <childnode refid="227" relation="include">
+        </childnode>
+      </node>
+      <node id="226">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="227" relation="include">
+        </childnode>
+      </node>
+      <node id="257">
+        <label>class_algorithm_infinite.h</label>
+        <link refid="class__algorithm__infinite_8h"/>
+        <childnode refid="258" relation="include">
+        </childnode>
+      </node>
+      <node id="223">
+        <label>state/class_state_infinite.h</label>
+        <link refid="class__state__infinite_8h"/>
+        <childnode refid="221" relation="include">
+        </childnode>
+        <childnode refid="224" relation="include">
+        </childnode>
+        <childnode refid="225" relation="include">
+        </childnode>
+        <childnode refid="235" relation="include">
+        </childnode>
+        <childnode refid="237" relation="include">
+        </childnode>
+        <childnode refid="216" relation="include">
+        </childnode>
+        <childnode refid="242" relation="include">
+        </childnode>
+      </node>
+      <node id="215">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
+        <link refid="class__algorithm__launcher_8cpp"/>
+        <childnode refid="216" relation="include">
+        </childnode>
+        <childnode refid="220" relation="include">
+        </childnode>
+        <childnode refid="223" relation="include">
+        </childnode>
+        <childnode refid="245" relation="include">
+        </childnode>
+        <childnode refid="250" relation="include">
+        </childnode>
+        <childnode refid="256" relation="include">
+        </childnode>
+        <childnode refid="260" relation="include">
+        </childnode>
+        <childnode refid="262" relation="include">
+        </childnode>
+        <childnode refid="263" relation="include">
+        </childnode>
+        <childnode refid="222" relation="include">
+        </childnode>
+        <childnode refid="264" relation="include">
+        </childnode>
+        <childnode refid="265" relation="include">
+        </childnode>
+        <childnode refid="266" relation="include">
+        </childnode>
+        <childnode refid="269" relation="include">
+        </childnode>
+      </node>
+      <node id="224">
+        <label>optional</label>
+      </node>
+      <node id="218">
+        <label>vector</label>
+      </node>
+      <node id="247">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="258">
+        <label>algorithms/class_algorithm_base.h</label>
+        <link refid="class__algorithm__base_8h"/>
+        <childnode refid="221" relation="include">
+        </childnode>
+        <childnode refid="239" relation="include">
+        </childnode>
+        <childnode refid="218" relation="include">
+        </childnode>
+        <childnode refid="240" relation="include">
+        </childnode>
+        <childnode refid="259" relation="include">
+        </childnode>
+        <childnode refid="235" relation="include">
+        </childnode>
+        <childnode refid="219" relation="include">
+        </childnode>
+        <childnode refid="254" relation="include">
+        </childnode>
+      </node>
+      <node id="262">
+        <label>algorithms/class_xDMRG.h</label>
+        <link refid="class__x_d_m_r_g_8h"/>
+        <childnode refid="261" relation="include">
         </childnode>
         <childnode refid="227" relation="include">
         </childnode>
         <childnode refid="228" relation="include">
         </childnode>
       </node>
-      <node id="234">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="235" relation="include">
+      <node id="265">
+        <label>gitversion.h</label>
+      </node>
+      <node id="241">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="238">
+        <label>array</label>
+      </node>
+      <node id="268">
+        <label>sstream</label>
+      </node>
+      <node id="252">
+        <label>hdf5.h</label>
+      </node>
+      <node id="264">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="269">
+        <label>cstdlib</label>
+      </node>
+      <node id="231">
+        <label>iostream</label>
+      </node>
+      <node id="263">
+        <label>algorithms/class_iTEBD.h</label>
+        <link refid="class__i_t_e_b_d_8h"/>
+        <childnode refid="257" relation="include">
         </childnode>
-        <childnode refid="236" relation="include">
-        </childnode>
-        <childnode refid="237" relation="include">
+      </node>
+      <node id="237">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="231" relation="include">
         </childnode>
         <childnode refid="238" relation="include">
         </childnode>
@@ -355,22 +371,93 @@
         </childnode>
         <childnode refid="240" relation="include">
         </childnode>
+        <childnode refid="218" relation="include">
+        </childnode>
         <childnode refid="241" relation="include">
         </childnode>
-      </node>
-      <node id="251">
-        <label>spdlog/sinks/stdout_sinks.h</label>
-      </node>
-      <node id="230">
-        <label>memory</label>
-      </node>
-      <node id="255">
-        <label>state/class_vidal_site.h</label>
-        <link refid="class__vidal__site_8h"/>
-        <childnode refid="234" relation="include">
+        <childnode refid="222" relation="include">
         </childnode>
       </node>
+      <node id="236">
+        <label>chrono</label>
+      </node>
+      <node id="250">
+        <label>io/class_h5table_buffer.h</label>
+        <link refid="class__h5table__buffer_8h"/>
+        <childnode refid="221" relation="include">
+        </childnode>
+        <childnode refid="222" relation="include">
+        </childnode>
+        <childnode refid="251" relation="include">
+        </childnode>
+        <childnode refid="255" relation="include">
+        </childnode>
+      </node>
+      <node id="240">
+        <label>complex</label>
+      </node>
+      <node id="216">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="217" relation="include">
+        </childnode>
+        <childnode refid="218" relation="include">
+        </childnode>
+        <childnode refid="219" relation="include">
+        </childnode>
+      </node>
+      <node id="225">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="226" relation="include">
+        </childnode>
+        <childnode refid="228" relation="include">
+        </childnode>
+        <childnode refid="229" relation="include">
+        </childnode>
+        <childnode refid="227" relation="include">
+        </childnode>
+        <childnode refid="230" relation="include">
+        </childnode>
+        <childnode refid="231" relation="include">
+        </childnode>
+        <childnode refid="232" relation="include">
+        </childnode>
+        <childnode refid="233" relation="include">
+        </childnode>
+      </node>
+      <node id="221">
+        <label>memory</label>
+      </node>
     </incdepgraph>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="class__algorithm__launcher_8cpp_1a4ac640d8801dba25099e8a88d33e9800" prot="public" static="yes" mutable="no">
+        <type>std::string</type>
+        <definition>std::string hdf5_temp_path</definition>
+        <argsstring></argsstring>
+        <name>hdf5_temp_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class__algorithm__launcher_8cpp_1a2349ed2085931197c5ede3b93c82fed8" prot="public" static="yes" mutable="no">
+        <type>std::string</type>
+        <definition>std::string hdf5_final_path</definition>
+        <argsstring></argsstring>
+        <name>hdf5_final_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -381,9 +468,9 @@
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__algorithm__launcher_8h" kindref="compound">algorithms/class_algorithm_launcher.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__infinite__state_8h" kindref="compound">state/class_infinite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__finite__state_8h" kindref="compound">state/class_finite_state.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__hdf5__log__buffer_8h" kindref="compound">io/class_hdf5_log_buffer.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__infinite_8h" kindref="compound">state/class_state_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__h5table__buffer_8h" kindref="compound">io/class_h5table_buffer.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__i_d_m_r_g_8h" kindref="compound">algorithms/class_iDMRG.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__f_d_m_r_g_8h" kindref="compound">algorithms/class_fDMRG.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__x_d_m_r_g_8h" kindref="compound">algorithms/class_xDMRG.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
@@ -391,99 +478,129 @@
 <codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;spdlog/spdlog.h&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;gitversion.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="17"><highlight class="normal"></highlight></codeline>
-<codeline lineno="18"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacesettings" kindref="compound">s</ref><sp/>=<sp/><ref refid="namespacesettings" kindref="compound">settings</ref>;</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;cstdlib&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="20"><highlight class="normal"></highlight></codeline>
-<codeline lineno="21" refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" kindref="member">class_algorithm_launcher::setLogger</ref>(std::string<sp/>name){</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(spdlog::get(name)<sp/>==<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref><sp/>=<sp/>spdlog::stdout_color_mt(name);</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;set_pattern(</highlight><highlight class="stringliteral">&quot;[%Y-%m-%d<sp/>%H:%M:%S][%n]%^[%=8l]%$<sp/>%v&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>-&gt;set_level(spdlog::level::trace);</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref><sp/>=<sp/>spdlog::get(name);</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacesettings" kindref="compound">s</ref><sp/>=<sp/><ref refid="namespacesettings" kindref="compound">settings</ref>;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::string<sp/>hdf5_temp_path;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::string<sp/>hdf5_final_path;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="classclass__algorithm__launcher_1af511651b8d8ab5a7af5405256fcc3e50" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1af511651b8d8ab5a7af5405256fcc3e50" kindref="member">class_algorithm_launcher::remove_temp_file</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ab4d70b7a679a8246d3750d1fbe627569" kindref="member">tools::common::io::h5tmp::remove_from_temp</ref>(hdf5_temp_path);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34" refid="classclass__algorithm__launcher_1aea0ae01e042e1117991c4fbc1f7b0a93" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" kindref="member">class_algorithm_launcher::class_algorithm_launcher</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_):h5ppFile(<ref refid="namespacestd" kindref="compound">std</ref>::move(h5ppFile_))</highlight></codeline>
-<codeline lineno="35"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" kindref="member">setLogger</ref>(</highlight><highlight class="stringliteral">&quot;DMRG&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1ac61f1ac1f2836bdd3bdcef6901d7fbba" kindref="member">hdf5_path</ref><sp/>=<sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;getFilePath();</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="41" refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" kindref="member">class_algorithm_launcher::class_algorithm_launcher</ref>()</highlight></codeline>
-<codeline lineno="42"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" kindref="member">setLogger</ref>(</highlight><highlight class="stringliteral">&quot;DMRG&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="33" refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" kindref="member">class_algorithm_launcher::setLogger</ref>(std::string<sp/>name){</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(spdlog::get(name)<sp/>==<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref><sp/>=<sp/>spdlog::stdout_color_mt(name);</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;set_pattern(</highlight><highlight class="stringliteral">&quot;[%Y-%m-%d<sp/>%H:%M:%S][%n]%^[%=8l]%$<sp/>%v&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;set_level(spdlog::level::trace);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref><sp/>=<sp/>spdlog::get(name);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>h5pp::CreateMode<sp/>createMode;</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" kindref="member">settings::output::create_mode</ref><sp/>==<sp/></highlight><highlight class="stringliteral">&quot;TRUNCATE&quot;</highlight><highlight class="normal">)<sp/>createMode<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>h5pp::CreateMode::TRUNCATE;</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" kindref="member">settings::output::create_mode</ref><sp/>==<sp/></highlight><highlight class="stringliteral">&quot;RENAME&quot;</highlight><highlight class="normal">)<sp/>createMode<sp/><sp/><sp/><sp/>=<sp/>h5pp::CreateMode::RENAME;</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" kindref="member">settings::output::create_mode</ref><sp/>==<sp/></highlight><highlight class="stringliteral">&quot;OPEN&quot;</highlight><highlight class="normal">)<sp/>createMode<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>h5pp::CreateMode::OPEN;</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>create<sp/>mode:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" kindref="member">settings::output::create_mode</ref>);}</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref><sp/>=<sp/>std::make_shared&lt;h5pp::File&gt;(</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">settings::output::output_filename</ref>,</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5pp::AccessMode::READWRITE,</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>createMode);</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(createMode<sp/>==<sp/>h5pp::CreateMode::TRUNCATE<sp/>or<sp/>createMode<sp/>==<sp/>h5pp::CreateMode::RENAME){</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Put<sp/>git<sp/>revision<sp/>in<sp/>file<sp/>attribute</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeAttributeToFile(GIT::BRANCH<sp/><sp/><sp/><sp/><sp/><sp/>,<sp/></highlight><highlight class="stringliteral">&quot;GIT<sp/>BRANCH&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeAttributeToFile(GIT::COMMIT_HASH<sp/>,<sp/></highlight><highlight class="stringliteral">&quot;GIT<sp/>COMMIT&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeAttributeToFile(GIT::REVISION<sp/><sp/><sp/><sp/>,<sp/></highlight><highlight class="stringliteral">&quot;GIT<sp/>REVISION&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1ac61f1ac1f2836bdd3bdcef6901d7fbba" kindref="member">hdf5_path</ref><sp/>=<sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;getFilePath();</highlight></codeline>
-<codeline lineno="66"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classclass__algorithm__launcher_1aea0ae01e042e1117991c4fbc1f7b0a93" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" kindref="member">class_algorithm_launcher::class_algorithm_launcher</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_):h5ppFile(<ref refid="namespacestd" kindref="compound">std</ref>::move(h5ppFile_))</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" kindref="member">setLogger</ref>(</highlight><highlight class="stringliteral">&quot;DMRG&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>hdf5_temp_path<sp/><sp/>=<sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;getFilePath();</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/>hdf5_final_path<sp/>=<sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;getFilePath();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="54" refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" kindref="member">class_algorithm_launcher::class_algorithm_launcher</ref>()</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a1fbb0f3e1aa74910993e5924130dce71" kindref="member">setLogger</ref>(</highlight><highlight class="stringliteral">&quot;DMRG&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>std::at_quick_exit(<ref refid="classclass__algorithm__launcher_1af511651b8d8ab5a7af5405256fcc3e50" kindref="member">class_algorithm_launcher::remove_temp_file</ref>);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>==<sp/><ref refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693" kindref="member">StorageLevel::NONE</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>h5pp::CreateMode<sp/>createMode;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" kindref="member">settings::output::create_mode</ref><sp/>==<sp/></highlight><highlight class="stringliteral">&quot;TRUNCATE&quot;</highlight><highlight class="normal">)<sp/>createMode<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>h5pp::CreateMode::TRUNCATE;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" kindref="member">settings::output::create_mode</ref><sp/>==<sp/></highlight><highlight class="stringliteral">&quot;RENAME&quot;</highlight><highlight class="normal">)<sp/>createMode<sp/><sp/><sp/><sp/>=<sp/>h5pp::CreateMode::RENAME;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" kindref="member">settings::output::create_mode</ref><sp/>==<sp/></highlight><highlight class="stringliteral">&quot;OPEN&quot;</highlight><highlight class="normal">)<sp/>createMode<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>h5pp::CreateMode::OPEN;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>create<sp/>mode:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/><ref refid="namespacesettings_1_1output_1a2f70e6494d5aa80ee807b67eeb6ef00c" kindref="member">settings::output::create_mode</ref>);}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
 <codeline lineno="67"><highlight class="normal"></highlight></codeline>
 <codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69" refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" kindref="member">class_algorithm_launcher::run_algorithms</ref>(){</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" kindref="member">run_iDMRG</ref>();</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" kindref="member">run_fDMRG</ref>();</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" kindref="member">run_xDMRG</ref>();</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" kindref="member">run_iTEBD</ref>();</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeDataset(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;/common/finOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;All<sp/>simulations<sp/>finished&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Simulation<sp/>data<sp/>written<sp/>to<sp/>file:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;getFilePath());</highlight></codeline>
-<codeline lineno="77"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1output_1a3a4473cd67fe51cc676ee77aa267b839" kindref="member">settings::output::use_temp_dir</ref>){</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hdf5_temp_path<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ae0178ac04369bbdddf243e45a8f268ae" kindref="member">tools::common::io::h5tmp::set_tmp_prefix</ref>(<ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">settings::output::output_filename</ref>);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" kindref="member">tools::common::io::h5tmp::create_directory</ref>(hdf5_temp_path);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref><sp/>=<sp/>std::make_shared&lt;h5pp::File&gt;(hdf5_temp_path,h5pp::AccessMode::READWRITE,createMode);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" kindref="member">tools::common::io::h5tmp::create_directory</ref>(<ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">settings::output::output_filename</ref>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref><sp/>=<sp/>std::make_shared&lt;h5pp::File&gt;(<ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">settings::output::output_filename</ref>,h5pp::AccessMode::READWRITE,createMode);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>hdf5_final_path<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a4c3d2d889bd2dca9bbfa4ca8558c60be" kindref="member">tools::common::io::h5tmp::unset_tmp_prefix</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;getFilePath());</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80" refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" kindref="member">class_algorithm_launcher::run_iDMRG</ref>(){</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kindref="member">settings::idmrg::on</ref>){</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__i_d_m_r_g" kindref="compound">class_iDMRG</ref><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">iDMRG</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>);</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iDMRG.<ref refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" kindref="member">run</ref>();</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="85"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(createMode<sp/>==<sp/>h5pp::CreateMode::TRUNCATE<sp/>or<sp/>createMode<sp/>==<sp/>h5pp::CreateMode::RENAME){</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Put<sp/>git<sp/>revision<sp/>in<sp/>file<sp/>attribute</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeAttributeToFile(GIT::BRANCH<sp/><sp/><sp/><sp/><sp/><sp/>,<sp/></highlight><highlight class="stringliteral">&quot;GIT<sp/>BRANCH&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeAttributeToFile(GIT::COMMIT_HASH<sp/>,<sp/></highlight><highlight class="stringliteral">&quot;GIT<sp/>COMMIT&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeAttributeToFile(GIT::REVISION<sp/><sp/><sp/><sp/>,<sp/></highlight><highlight class="stringliteral">&quot;GIT<sp/>REVISION&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"></highlight></codeline>
-<codeline lineno="88" refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" kindref="member">class_algorithm_launcher::run_fDMRG</ref>(){</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" kindref="member">settings::fdmrg::on</ref>){</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__f_d_m_r_g" kindref="compound">class_fDMRG</ref><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb" kindref="member">fDMRG</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>);</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fDMRG.<ref refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" kindref="member">run</ref>();</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="93"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="95" refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" kindref="member">class_algorithm_launcher::run_xDMRG</ref>(){</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" kindref="member">settings::xdmrg::on</ref>){</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__x_d_m_r_g" kindref="compound">class_xDMRG</ref><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae" kindref="member">xDMRG</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>);</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>xDMRG.<ref refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" kindref="member">run</ref>();</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="100"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"></highlight></codeline>
-<codeline lineno="102" refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" kindref="member">class_algorithm_launcher::run_iTEBD</ref>(){</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" kindref="member">settings::itebd::on</ref>){</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d" kindref="compound">class_iTEBD</ref><sp/><ref refid="nmspc__settings_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">iTEBD</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>);</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iTEBD.<ref refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" kindref="member">run</ref>();</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" kindref="member">class_algorithm_launcher::run_algorithms</ref>(){</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>)<sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeDataset(</highlight><highlight class="keyword">false</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;/common/finOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" kindref="member">run_iDMRG</ref>();</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" kindref="member">run_fDMRG</ref>();</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" kindref="member">run_xDMRG</ref>();</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" kindref="member">run_iTEBD</ref>();</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>-&gt;writeDataset(</highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;/common/finOK&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a555a0b980c2c3ea1d028bec935f3e43b" kindref="member">tools::common::io::h5tmp::copy_from_tmp</ref>(hdf5_temp_path);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>.reset();</highlight><highlight class="comment">//<sp/>Kill<sp/>the<sp/>file</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ab4d70b7a679a8246d3750d1fbe627569" kindref="member">tools::common::io::h5tmp::remove_from_temp</ref>(hdf5_temp_path);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Simulation<sp/>data<sp/>written<sp/>to<sp/>file:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>hdf5_final_path);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__launcher_1a27f61da659a07fdd1f14c4b0dd2c9b7c" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;All<sp/>simulations<sp/>finished&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="107"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1ab891cf62abe8d222cc78930ce0988d8f" kindref="member">class_algorithm_launcher::run_iDMRG</ref>(){</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" kindref="member">settings::idmrg::on</ref>){</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__i_d_m_r_g" kindref="compound">class_iDMRG</ref><sp/><ref refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9e28dfcb9c190549d7cf8ec4b986ea8f" kindref="member">iDMRG</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iDMRG.<ref refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" kindref="member">run</ref>();</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118" refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1a3ad2ae2cb5075a8701e2b0b9e9413dfb" kindref="member">class_algorithm_launcher::run_fDMRG</ref>(){</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" kindref="member">settings::fdmrg::on</ref>){</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__f_d_m_r_g" kindref="compound">class_fDMRG</ref><sp/><ref refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921a9379cfd2380ced1835394b9fb513ccdb" kindref="member">fDMRG</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fDMRG.<ref refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" kindref="member">run</ref>();</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1af2a3667194b99660d1e3cbc13d07b365" kindref="member">class_algorithm_launcher::run_xDMRG</ref>(){</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" kindref="member">settings::xdmrg::on</ref>){</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__x_d_m_r_g" kindref="compound">class_xDMRG</ref><sp/><ref refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921ab5612e395f07bd6a022360eb707e73ae" kindref="member">xDMRG</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>);</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>xDMRG.<ref refid="classclass__algorithm__finite_1a9bc7b209ddc5b1c246038d33ca327640" kindref="member">run</ref>();</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132" refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__launcher_1afea7448c3b272d9152d8d79b51e50e43" kindref="member">class_algorithm_launcher::run_iTEBD</ref>(){</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" kindref="member">settings::itebd::on</ref>){</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d" kindref="compound">class_iTEBD</ref><sp/><ref refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">iTEBD</ref>(<ref refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" kindref="member">h5ppFile</ref>);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iTEBD.<ref refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" kindref="member">run</ref>();</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp"/>
   </compounddef>

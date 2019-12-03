@@ -13,48 +13,35 @@ Program Listing for File multisite.cpp
    //
    // Created by david on 2019-06-24.
    //
-   
-   
-   
-   #ifdef _OPENMP
-   #include <omp.h>
-   #define EIGEN_USE_THREADS
-   #include <unsupported/Eigen/CXX11/Tensor>
-   Eigen::ThreadPool       tp_multisite (Eigen::nbThreads());
-   Eigen::ThreadPoolDevice dev_multisite(&tp,Eigen::nbThreads());
-   #else
-   #include <unsupported/Eigen/CXX11/Tensor>
-   Eigen::DefaultDevice dev_multisite;
-   #endif
-   
    #include <tools/nmspc_tools.h>
-   #include <state/class_finite_state.h>
+   #include <general/nmspc_tensor_extra.h>
+   #include <general/nmspc_omp.h> // For multithreaded computation
+   #include <state/class_state_finite.h>
    #include <simulation/nmspc_settings.h>
-   #include <spdlog/fmt/bundled/ranges.h>
    
    
-   Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_finite_state &state, const std::list<size_t> &list_of_sites){
+   Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_state_finite &state, const std::list<size_t> &list_of_sites){
        if (list_of_sites.empty()) return  Eigen::DSizes<long,3>{0,0,0};
        Eigen::DSizes<long,3> dimensions;
        int direction = list_of_sites.back() >= list_of_sites.front() ? 1 : -1;
        if (direction == 1){
-           dimensions[1] = state.get_G(list_of_sites.front()).dimension(1);
-           dimensions[2] = state.get_G(list_of_sites.back()) .dimension(2);
+           dimensions[1] = state.get_MPS(list_of_sites.front()).get_M().dimension(1);
+           dimensions[2] = state.get_MPS(list_of_sites.back()) .get_M().dimension(2);
        }
        else{
-           dimensions[1] = state.get_G(list_of_sites.back()) .dimension(1);
-           dimensions[2] = state.get_G(list_of_sites.front()).dimension(2);
+           dimensions[1] = state.get_MPS(list_of_sites.back()) .get_M().dimension(1);
+           dimensions[2] = state.get_MPS(list_of_sites.front()).get_M().dimension(2);
        }
    
        dimensions[0] = 1;
        for (auto & site : list_of_sites){
-           dimensions[0] *= state.get_G(site).dimension(0);
+           dimensions[0] *= state.get_MPS(site).get_M().dimension(0);
        }
        return dimensions;
    }
    
    
-   size_t tools::finite::multisite::get_problem_size(const class_finite_state &state, const std::list<size_t> &list_of_sites){
+   size_t tools::finite::multisite::get_problem_size(const class_state_finite &state, const std::list<size_t> &list_of_sites){
        auto dims = get_dimensions(state,list_of_sites);
        return dims[0]*dims[1]*dims[2];
    }
@@ -62,8 +49,10 @@ Program Listing for File multisite.cpp
    
    
    
-   std::list<size_t> tools::finite::multisite::generate_site_list(class_finite_state &state, const size_t threshold, const size_t max_sites){
-       tools::log->trace("Activating sites. Threshold = {}, Max sites = {}", threshold,max_sites);
+   std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finite &state, const size_t threshold, const size_t max_sites, const size_t min_sites){
+       if(max_sites < min_sites) throw std::runtime_error("generate site list: asked for max sites < min sites");
+       tools::log->trace("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}",
+               state.get_position(), state.get_direction(), threshold,max_sites,min_sites);
        using namespace Textra;
        int    direction = state.get_direction();
        size_t position  = state.get_position();
@@ -77,7 +66,7 @@ Program Listing for File multisite.cpp
            costs.emplace_back(get_problem_size(state,sites));
            position += direction;
        }
-       tools::log->debug("Activation problem sizes: {}", costs);
+       tools::log->trace("Activation problem sizes: {}", costs);
        // Evaluate best cost. Threshold depends on optSpace
        // Case 1: All costs are equal              -> take all sites
        // Case 2: Costs increase indefinitely      -> take until threshold
@@ -87,8 +76,9 @@ Program Listing for File multisite.cpp
        while (true){
            bool allequal = std::all_of(costs.begin(), costs.end(), [costs](size_t c) { return c == costs.front(); });
            auto c = costs.back();
+           if (c <  threshold  and sites.size() == max_sites) {reason = "can't take any more sites"; break;}
            if (c <= threshold  and sites.size() <= max_sites) {reason = "good threshold found: " + std::to_string(c) ;break;}
-           else if (sites.size() <= 2)                        {reason = "at least two sites were kept"; break;}
+           else if (sites.size() <= min_sites)                {reason = "at least " + std::to_string(min_sites) + " sites were kept"; break;}
            else if (allequal and sites.size() <= max_sites)   {reason = "equal costs: " + std::to_string(c); break;}
            else if (sites.size() == 1)                        {throw std::logic_error("At least two sites required!");}
            else if (sites.empty())                            {throw std::logic_error("No sites for a jump");}
@@ -98,14 +88,16 @@ Program Listing for File multisite.cpp
            }
        }
        if (direction == -1){std::reverse(sites.begin(),sites.end());}
-       tools::log->debug("Chosen sites {}. Reason: {}", sites, reason);
+   //    tools::log->debug("Chosen sites {}. Reason: {}", sites, reason);
        state.active_sites = sites;
+       tools::log->debug("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}, Chosen sites {}, Final cost: {}, Reason: {}",
+                        state.get_position(), state.get_direction(), threshold,max_sites,min_sites,sites, costs.back(),reason );
        return sites;
    }
    
    
    using namespace Textra;
-   using Scalar = class_finite_state::Scalar;
+   using Scalar = class_state_finite::Scalar;
    
    
    double tools::finite::measure::multisite::internal::significant_digits(double H2, double E2){
@@ -116,7 +108,14 @@ Program Listing for File multisite.cpp
        return digits = std::floor(max_digits - lost_digits);
    }
    
-   double tools::finite::measure::multisite::energy_minus_energy_reduced(const class_finite_state &state, const Eigen::Tensor<Scalar,3> & multitheta){
+   double tools::finite::measure::multisite::energy_minus_energy_reduced(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
+       // This measures the bare energy as given by the MPO's.
+       // On each MPO the site energy *could* be reduced.
+       // If they are reduced, then
+       //      < H > = E - E_reduced ~ 0
+       // Else
+       //      < H > = E
+   
        tools::common::profile::t_ene.tic();
        auto multimpo   = state.get_multimpo();
        auto & envL     = state.get_ENVL(state.active_sites.front()).block;
@@ -124,10 +123,10 @@ Program Listing for File multisite.cpp
    
        Eigen::Tensor<Scalar, 0>  E =
                envL
-                       .contract(multitheta,                               idx({0},{1}))
-                       .contract(multimpo,                                 idx({2,1},{2,0}))
-                       .contract(multitheta.conjugate(),                   idx({3,0},{0,1}))
-                       .contract(envR,                                     idx({0,2,1},{0,1,2}));
+                       .contract(multitheta,             Textra::idx({0},{1}))
+                       .contract(multimpo,               Textra::idx({2,1},{2,0}))
+                       .contract(multitheta.conjugate(), Textra::idx({3,0},{0,1}))
+                       .contract(envR,                   Textra::idx({0,2,1},{0,1,2}));
        if(abs(imag(E(0))) > 1e-10 ){
            tools::log->critical(fmt::format("Energy has an imaginary part: {:.16f} + i {:.16f}",std::real(E(0)), std::imag(E(0))));
    //        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
@@ -141,29 +140,33 @@ Program Listing for File multisite.cpp
    }
    
    
-   double tools::finite::measure::multisite::energy(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
-       // We want to measure energy accurately always.
-       // Since the state can be reduced, the true energy is always
-       // E + E_reduced
-   //    double e_minus_e_reduced = multisite::energy_minus_energy_reduced(state,multitheta);
-   //    double e_reduced = state.get_energy_reduced();
-   //    tools::log->debug("Energy minus Energy_reduced = {}",e_minus_e_reduced);
-   //    tools::log->debug("Energy_reduced              = {}",e_reduced);
+   double tools::finite::measure::multisite::energy(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
+       // This measures the actual energy of the system regardless of the reduced/non-reduced state of the MPO's
+       // If they are reduced, then
+       //      "Actual energy" = (E - E_reduced) + E_reduced = (~0) + E_reduced = E
+       // Else
+       //      "Actual energy" = (E - E_reduced) + E_reduced = (E)  + 0 = E
+   
        return multisite::energy_minus_energy_reduced(state,multitheta) + state.get_energy_reduced();
    }
    
    
-   double tools::finite::measure::multisite::energy_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+   double tools::finite::measure::multisite::energy_per_site(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
            return multisite::energy(state,multitheta)/state.get_length();
    }
    
    
-   double tools::finite::measure::multisite::energy_variance(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
-       // Depending on whether the state is reduced or not we get different formulas.
-       // Luckily, the variance is independent of offsets.
-       // If the state is not reduced we get Var H = H^2 - E^2 =  H2 - energy*energy
-       // IF the state is reduced we get Var H = (H-E_red) - (E-E_red)^2 = H2 - energy_minus_energy_reduced^2
-   
+   double tools::finite::measure::multisite::energy_variance(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
+       // Depending on whether the mpo's are reduced or not we get different formulas.
+       // If mpo's are reduced:
+       //      Var H = <(H-E_red)^2> - <(H-E_red)>^2 = <H^2> - 2<H>E_red + E_red^2 - (<H> - E_red) ^2
+       //                                            = H2    - 2*E*E_red + E_red^2 - E^2 + 2*E*E_red - E_red^2
+       //                                            = H2    - E^2
+       //      so Var H = <(H-E_red)^2> - energy_minus_energy_reduced^2 = H2 - ~0
+       //      where H2 is computed with reduced mpo's. Note that ~0 is not exactly zero
+       //      because E_red != E necessarily (though they are supposed to be very close)
+       // Else:
+       //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
        tools::common::profile::t_var.tic();
        auto multimpo   = state.get_multimpo();
        auto & env2L    = state.get_ENV2L(state.active_sites.front()).block;
@@ -175,11 +178,12 @@ Program Listing for File multisite.cpp
        size_t log2chiR  = std::log2(dsizes[2]);
        size_t log2spin  = std::log2(dsizes[0]);
        Eigen::Tensor<Scalar, 0> H2;
+       OMP omp(settings::threading::num_threads_eigen);
        if (log2spin > log2chiL + log2chiR){
            if (log2chiL > log2chiR){
    //            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
                Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{1,0,2});
-               H2.device(dev_multisite) =
+               H2.device(omp.dev) =
                        theta
                                .contract(env2L              , Textra::idx({0}, {0}))
                                .contract(multimpo           , Textra::idx({0,3}, {2,0}))
@@ -191,7 +195,7 @@ Program Listing for File multisite.cpp
            else{
    //            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
                Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{2,0,1});
-               H2.device(dev_multisite) =
+               H2.device(omp.dev) =
                        theta
                                .contract(env2R              , Textra::idx({0}, {0}))
                                .contract(multimpo           , Textra::idx({0,3}, {2,1}))
@@ -203,7 +207,7 @@ Program Listing for File multisite.cpp
        }else{
    //        tools::log->trace("H2 path: log2spin <= log2chiL + log2chiR");
            Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{1,0,2});
-           H2.device(dev_multisite) =
+           H2.device(omp.dev) =
                    theta
                            .contract(env2L              , Textra::idx({0}, {0}))
                            .contract(multimpo           , Textra::idx({0,3}, {2,0}))
@@ -236,17 +240,20 @@ Program Listing for File multisite.cpp
        double var = std::abs(H2(0) - E2);
        if (std::isnan(var) or std::isinf(var)) throw std::runtime_error(fmt::format("Variance is invalid: {}", var));
        internal::significant_digits(std::abs(H2(0)),E2);
+       if(var < state.lowest_recorded_variance){
+           state.lowest_recorded_variance = var;
+       }
        return var;
    }
    
    
-   double tools::finite::measure::multisite::energy_variance_per_site(const class_finite_state &state,const Eigen::Tensor<Scalar,3> & multitheta){
+   double tools::finite::measure::multisite::energy_variance_per_site(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
            return multisite::energy_variance(state,multitheta)/state.get_length();
    }
    
    
    
-   double tools::finite::measure::multisite::energy(const class_finite_state &state){
+   double tools::finite::measure::multisite::energy(const class_state_finite &state){
        if (state.measurements.energy)  return state.measurements.energy.value();
        if (state.active_sites.empty()) return tools::finite::measure::energy(state);
        tools::common::profile::t_ene.tic();
@@ -256,7 +263,7 @@ Program Listing for File multisite.cpp
        return state.measurements.energy.value();
    }
    
-   double tools::finite::measure::multisite::energy_per_site(const class_finite_state &state){
+   double tools::finite::measure::multisite::energy_per_site(const class_state_finite &state){
        if (state.measurements.energy_per_site){return state.measurements.energy_per_site.value();}
        else{
            if (state.active_sites.empty()) return tools::finite::measure::energy_per_site(state);
@@ -265,18 +272,18 @@ Program Listing for File multisite.cpp
        }
    }
    
-   double tools::finite::measure::multisite::energy_variance(const class_finite_state &state){
-       if (state.measurements.energy_variance_mpo){return state.measurements.energy_variance_mpo.value();}
+   double tools::finite::measure::multisite::energy_variance(const class_state_finite &state){
+       if (state.measurements.energy_variance){return state.measurements.energy_variance.value();}
        else{
            if (state.active_sites.empty()) return tools::finite::measure::energy_variance(state);
            tools::common::profile::t_var.tic();
            auto theta = state.get_multitheta();
            tools::common::profile::t_var.toc();
-           state.measurements.energy_variance_mpo = multisite::energy_variance(state,theta);
-           return state.measurements.energy_variance_mpo.value();
+           state.measurements.energy_variance = multisite::energy_variance(state, theta);
+           return state.measurements.energy_variance.value();
        }}
    
-   double tools::finite::measure::multisite::energy_variance_per_site(const class_finite_state &state){
+   double tools::finite::measure::multisite::energy_variance_per_site(const class_state_finite &state){
        if (state.measurements.energy_variance_per_site){return state.measurements.energy_variance_per_site.value();}
        else{
            if (state.active_sites.empty()) return tools::finite::measure::energy_variance_per_site(state);

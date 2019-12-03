@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="20" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="19" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="27" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="26" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" prot="public" static="no" mutable="no">
         <type><ref refid="classeigutils_1_1eig_solution" kindref="compound">eigutils::eigSolution</ref></type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="28" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="27" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -64,9 +64,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="36" bodyend="38"/>
-        <references refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" compoundref="class__eigsolver_8h" startline="20">logLevel</references>
-        <references refid="namespaceeigutils_1_1eig_logger_1a82c0e82fa7b658057257b2f08ba028f5" compoundref="nmspc__eigutils_8h" startline="227" endline="236">eigutils::eigLogger::setLogger</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="36" bodyend="38"/>
+        <references refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" compoundref="class__eigsolver_8h" startline="19">logLevel</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a43a1bb3e4ae651d3f09220f37ebe3f4c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -83,8 +82,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="41" bodyend="44"/>
-        <references refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" compoundref="class__eigsolver_8h" startline="20">logLevel</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="41" bodyend="44"/>
+        <references refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" compoundref="class__eigsolver_8h" startline="19">logLevel</references>
         <references refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" compoundref="nmspc__eigutils_8h" startline="217" endline="225">eigutils::eigLogger::setLogLevel</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1acafe1f6f1266723e7bf5bde1f62d7fc4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -106,16 +105,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="131" bodyend="153"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
-        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
-        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
-        <references refid="classclass__eigsolver_1ac947544c9e71d87d20414d8d7f8c99bf" compoundref="class__eigsolver_8cpp" startline="155" endline="194">eig_dsyevd</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="131" bodyend="153"/>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a2dd829066e3d193e9d8c2e39b28c3cf1" compoundref="nmspc__eigutils_8h" startline="180">eigutils::eigSolution::Meta::eigvecs_found</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" compoundref="nmspc__eigutils_8h" startline="179">eigutils::eigSolution::Meta::eigvals_found</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
@@ -123,7 +114,9 @@
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" compoundref="nmspc__eigutils_8h" startline="176">eigutils::eigSolution::Meta::n</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" compoundref="nmspc__eigutils_8h" startline="183">eigutils::eigSolution::Meta::form</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" compoundref="nmspc__eigutils_8h" startline="185">eigutils::eigSolution::Meta::type</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1ac947544c9e71d87d20414d8d7f8c99bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -148,9 +141,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="155" bodyend="194"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="155" bodyend="194"/>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
         <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1afc0929e1929d7bb6d39d2fe800970f5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -172,14 +164,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="198" bodyend="220"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
-        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
-        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
-        <references refid="classclass__eigsolver_1a9afbe8ac403ac5223bfb38884714d994" compoundref="class__eigsolver_8cpp" startline="222" endline="245">eig_zheevd</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="198" bodyend="220"/>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a2dd829066e3d193e9d8c2e39b28c3cf1" compoundref="nmspc__eigutils_8h" startline="180">eigutils::eigSolution::Meta::eigvecs_found</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" compoundref="nmspc__eigutils_8h" startline="179">eigutils::eigSolution::Meta::eigvals_found</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" compoundref="nmspc__eigutils_8h" startline="171">eigutils::eigSolution::Meta::rows</references>
@@ -187,7 +173,9 @@
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" compoundref="nmspc__eigutils_8h" startline="176">eigutils::eigSolution::Meta::n</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" compoundref="nmspc__eigutils_8h" startline="183">eigutils::eigSolution::Meta::form</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" compoundref="nmspc__eigutils_8h" startline="185">eigutils::eigSolution::Meta::type</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a9afbe8ac403ac5223bfb38884714d994" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -212,9 +200,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="222" bodyend="245"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="222" bodyend="245"/>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
         <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a5ec545dca8a27f62e7f4e0f60ed31bd9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -236,16 +223,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="248" bodyend="274"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
-        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
-        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
-        <references refid="classclass__eigsolver_1afd09e2dd48b88512fe618e1e85739ef3" compoundref="class__eigsolver_8cpp" startline="277" endline="340">eig_dgeev</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="248" bodyend="274"/>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a960196b7474cf46ebd6cc5a4a6534a9d" compoundref="nmspc__eigutils_8h" startline="181">eigutils::eigSolution::Meta::eigvecsR_found</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a93bc1042860e2ce9cbf1f2a4f72e2b36" compoundref="nmspc__eigutils_8h" startline="182">eigutils::eigSolution::Meta::eigvecsL_found</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" compoundref="nmspc__eigutils_8h" startline="179">eigutils::eigSolution::Meta::eigvals_found</references>
@@ -254,7 +233,9 @@
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" compoundref="nmspc__eigutils_8h" startline="176">eigutils::eigSolution::Meta::n</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" compoundref="nmspc__eigutils_8h" startline="183">eigutils::eigSolution::Meta::form</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" compoundref="nmspc__eigutils_8h" startline="185">eigutils::eigSolution::Meta::type</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1afd09e2dd48b88512fe618e1e85739ef3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -287,9 +268,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="277" bodyend="340"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="277" bodyend="340"/>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
         <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a319c6451b3f0523c472815f486c4c13c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -311,16 +291,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="344" bodyend="368"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
-        <references refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" compoundref="nmspc__eigutils_8h" startline="163" endline="167">eigutils::eigSolution::get_eigvals</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
-        <references refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" compoundref="nmspc__eigutils_8h" startline="135" endline="147">eigutils::eigSolution::get_eigvecs</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
-        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
-        <references refid="classclass__eigsolver_1ab6f77c16948940ab50b0fc5244696020" compoundref="class__eigsolver_8cpp" startline="373" endline="409">eig_zgeev</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="344" bodyend="368"/>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a960196b7474cf46ebd6cc5a4a6534a9d" compoundref="nmspc__eigutils_8h" startline="181">eigutils::eigSolution::Meta::eigvecsR_found</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a93bc1042860e2ce9cbf1f2a4f72e2b36" compoundref="nmspc__eigutils_8h" startline="182">eigutils::eigSolution::Meta::eigvecsL_found</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" compoundref="nmspc__eigutils_8h" startline="179">eigutils::eigSolution::Meta::eigvals_found</references>
@@ -329,7 +301,9 @@
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" compoundref="nmspc__eigutils_8h" startline="176">eigutils::eigSolution::Meta::n</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" compoundref="nmspc__eigutils_8h" startline="183">eigutils::eigSolution::Meta::form</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" compoundref="nmspc__eigutils_8h" startline="185">eigutils::eigSolution::Meta::type</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1ab6f77c16948940ab50b0fc5244696020" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -362,8 +336,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="373" bodyend="409"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="373" bodyend="409"/>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1aeca3b296dd964ad831ce6ef2dba5ae0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -393,8 +366,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="44" bodyend="69"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="43" bodyend="68"/>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -459,11 +431,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="47" bodyend="100"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="47" bodyend="100"/>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
         <references refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" compoundref="nmspc__eigutils_8h" startline="188" endline="198">eigutils::eigSolution::reset</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
         <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
         <references refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" compoundref="nmspc__eigutils_8h" startline="55">eigutils::eigConfig::remove_phase</references>
         <references refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" compoundref="nmspc__eigutils_8h" startline="58">eigutils::eigConfig::eigMaxNev</references>
@@ -516,11 +487,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="103" bodyend="126"/>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="103" bodyend="126"/>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
         <references refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" compoundref="nmspc__eigutils_8h" startline="188" endline="198">eigutils::eigSolution::reset</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
         <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
         <references refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" compoundref="nmspc__eigutils_8h" startline="55">eigutils::eigConfig::remove_phase</references>
         <references refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" compoundref="nmspc__eigutils_8h" startline="58">eigutils::eigConfig::eigMaxNev</references>
@@ -586,7 +556,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="242" bodyend="247"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="241" bodyend="246"/>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a6ab91202b2b4243b3006f3809999b30f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -640,16 +610,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="257" bodyend="297"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="256" bodyend="296"/>
         <references refid="classclass__eigsolver_1accad92a9cfa34658feba66be21ba8dfe" compoundref="class__eigsolver_8cpp" startline="103" endline="126">eig_init</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
-        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
         <references refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" compoundref="nmspc__eigutils_8h" startline="55">eigutils::eigConfig::remove_phase</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
         <references refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" compoundref="nmspc__eigutils_8h" startline="174">eigutils::eigSolution::Meta::nev</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1ab65d1da0bec23a586edd7c1c2cced3ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -705,7 +674,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="113" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="303" bodyend="345"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="112" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="302" bodyend="344"/>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
@@ -713,9 +682,6 @@
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0459833ba9cad7cfd7bbfe10d7bbbe6e">eigutils::eigSetting::SPARSE</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff">eigutils::eigSetting::DENSE</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
-        <references refid="classarpackpp__solver_1a92aa17bf228c308fbd9211bbe95a512b" compoundref="arpackpp__solver_8cpp" startline="53" endline="84">arpackpp_solver&lt; MatrixType &gt;::eigs</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a05d0c7c938a1c72636b4e6b01bf4d77f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -789,13 +755,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="352" bodyend="382"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="351" bodyend="381"/>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff">eigutils::eigSetting::DENSE</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0459833ba9cad7cfd7bbfe10d7bbbe6e">eigutils::eigSetting::SPARSE</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa2523e0c272cb676c4f59f97828966f78">eigutils::eigSetting::STL</references>
       </memberdef>
@@ -866,13 +832,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="138" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="387" bodyend="407"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="137" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="386" bodyend="406"/>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff">eigutils::eigSetting::DENSE</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a638606b797d7c61ae5ee7e7618eb2cd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -937,13 +903,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="411" bodyend="430"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="151" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="410" bodyend="429"/>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff">eigutils::eigSetting::DENSE</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1ac5612e0c1b83a9dd761c697b88a98fd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1008,13 +974,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="164" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="433" bodyend="452"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="163" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="432" bodyend="451"/>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa2523e0c272cb676c4f59f97828966f78">eigutils::eigSetting::STL</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1addd905f8d89f107a69162874038bc938" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1083,13 +1049,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="177" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="455" bodyend="475"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="176" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="454" bodyend="474"/>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0459833ba9cad7cfd7bbfe10d7bbbe6e">eigutils::eigSetting::SPARSE</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1a3c9525f57b6ed293ae8ab6ba8ead2b27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1154,13 +1120,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="191" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="481" bodyend="500"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="190" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="480" bodyend="499"/>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0459833ba9cad7cfd7bbfe10d7bbbe6e">eigutils::eigSetting::SPARSE</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1aa09d98b6edc6986cf4e905cf2527165f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1229,13 +1195,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="204" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="504" bodyend="524"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="203" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="503" bodyend="523"/>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa2523e0c272cb676c4f59f97828966f78">eigutils::eigSetting::STL</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
       </memberdef>
       <memberdef kind="function" id="classclass__eigsolver_1acefaac774195095f33e1604f04518b22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -1300,13 +1266,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="218" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="530" bodyend="549"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="217" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="529" bodyend="548"/>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa2523e0c272cb676c4f59f97828966f78">eigutils::eigSetting::STL</references>
         <references refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" compoundref="class__eigsolver_8cpp" startline="47" endline="100">eigs_init</references>
-        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="27">solverConf</references>
-        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="28">solution</references>
+        <references refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" compoundref="class__eigsolver_8h" startline="26">solverConf</references>
+        <references refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" compoundref="class__eigsolver_8h" startline="27">solution</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -1387,7 +1353,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="18" bodyend="231"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h" bodystart="17" bodyend="230"/>
     <listofallmembers>
       <member refid="classclass__eigsolver_1a7606b470e00affdbeae96729f4d72efa" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>class_eigsolver</name></member>
       <member refid="classclass__eigsolver_1aa2280aa087a50f16d16ea30f11d1a7d3" prot="public" virt="non-virtual"><scope>class_eigsolver</scope><name>eig</name></member>

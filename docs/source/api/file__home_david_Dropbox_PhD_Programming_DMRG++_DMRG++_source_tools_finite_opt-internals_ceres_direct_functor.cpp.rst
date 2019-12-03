@@ -31,18 +31,11 @@ Includes
 
 - ``ceres_direct_functor.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct_functor.h`)
 
-- ``state/class_finite_state.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_finite_state.h`)
+- ``general/nmspc_omp.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_omp.h`)
 
-- ``unsupported/Eigen/CXX11/Tensor``
-
-
+- ``state/class_state_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.h`)
 
 
 
 
-Variables
----------
-
-
-- :ref:`exhale_variable_ceres__direct__functor_8cpp_1a8a1da9098ec1cc2bf531127462b40e68`
 

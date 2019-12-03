@@ -29,11 +29,9 @@ Includes
 --------
 
 
-- ``spdlog/sinks/stdout_color_sinks.h``
+- ``spdlog/fmt/bundled/ranges.h``
 
-- ``spdlog/sinks/stdout_sinks.h``
-
-- ``spdlog/spdlog.h``
+- ``spdlog/logger.h``
 
 
 
@@ -45,17 +43,23 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_infinite_state.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_infinite.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_model_base.h`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_hdf5_log_buffer.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_h5table_buffer.cpp`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_settings_reader.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_settings_reader.cpp`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_logger.cpp`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_main.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_site.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_tools.h`
 
 
 
@@ -79,7 +83,7 @@ Functions
 
 - :ref:`exhale_function_namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58`
 
-- :ref:`exhale_function_namespace_logger_1a540e0412286255a5eb899ee37171f39d`
+- :ref:`exhale_function_namespace_logger_1a427a7542e5ff63f1596dc0967bd65ab7`
 
 - :ref:`exhale_function_namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09`
 

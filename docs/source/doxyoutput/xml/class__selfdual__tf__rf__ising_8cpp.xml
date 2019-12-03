@@ -10,205 +10,214 @@
     <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <incdepgraph>
-      <node id="1580">
+      <node id="1653">
         <label>list</label>
       </node>
-      <node id="1577">
+      <node id="1650">
         <label>general/nmspc_random_numbers.h</label>
         <link refid="nmspc__random__numbers_8h"/>
-        <childnode refid="1578" relation="include">
+        <childnode refid="1651" relation="include">
         </childnode>
-        <childnode refid="1556" relation="include">
+        <childnode refid="1629" relation="include">
         </childnode>
-        <childnode refid="1576" relation="include">
+        <childnode refid="1649" relation="include">
         </childnode>
-        <childnode refid="1558" relation="include">
+        <childnode refid="1633" relation="include">
         </childnode>
       </node>
-      <node id="1582">
+      <node id="1655">
         <label>functional</label>
       </node>
-      <node id="1562">
+      <node id="1636">
         <label>iomanip</label>
       </node>
-      <node id="1561">
+      <node id="1635">
         <label>iterator</label>
       </node>
-      <node id="1554">
+      <node id="1627">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
         <link refid="class__selfdual__tf__rf__ising_8cpp"/>
-        <childnode refid="1555" relation="include">
+        <childnode refid="1628" relation="include">
         </childnode>
-        <childnode refid="1557" relation="include">
+        <childnode refid="1630" relation="include">
         </childnode>
-        <childnode refid="1575" relation="include">
+        <childnode refid="1648" relation="include">
         </childnode>
-        <childnode refid="1577" relation="include">
+        <childnode refid="1650" relation="include">
         </childnode>
-        <childnode refid="1562" relation="include">
+        <childnode refid="1636" relation="include">
         </childnode>
-        <childnode refid="1579" relation="include">
+        <childnode refid="1652" relation="include">
         </childnode>
-        <childnode refid="1565" relation="include">
+        <childnode refid="1639" relation="include">
         </childnode>
       </node>
-      <node id="1581">
+      <node id="1654">
         <label>cmath</label>
       </node>
-      <node id="1563">
+      <node id="1637">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1564" relation="include">
+        <childnode refid="1638" relation="include">
         </childnode>
-        <childnode refid="1558" relation="include">
+        <childnode refid="1633" relation="include">
         </childnode>
-        <childnode refid="1560" relation="include">
+        <childnode refid="1632" relation="include">
         </childnode>
       </node>
-      <node id="1584">
+      <node id="1657">
         <label>numeric</label>
       </node>
-      <node id="1558">
+      <node id="1633">
         <label>Eigen/Core</label>
       </node>
-      <node id="1566">
+      <node id="1640">
         <label>string</label>
       </node>
-      <node id="1571">
+      <node id="1645">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="1572" relation="include">
+        <childnode refid="1646" relation="include">
         </childnode>
-        <childnode refid="1573" relation="include">
-        </childnode>
-        <childnode refid="1574" relation="include">
+        <childnode refid="1647" relation="include">
         </childnode>
       </node>
-      <node id="1564">
+      <node id="1638">
         <label>experimental/type_traits</label>
       </node>
-      <node id="1567">
-        <label>unordered_set</label>
-      </node>
-      <node id="1560">
+      <node id="1632">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="1555">
+      <node id="1628">
         <label>class_selfdual_tf_rf_ising.h</label>
         <link refid="class__selfdual__tf__rf__ising_8h"/>
-        <childnode refid="1556" relation="include">
+        <childnode refid="1629" relation="include">
         </childnode>
-        <childnode refid="1557" relation="include">
+        <childnode refid="1630" relation="include">
         </childnode>
-        <childnode refid="1565" relation="include">
+        <childnode refid="1639" relation="include">
         </childnode>
-        <childnode refid="1562" relation="include">
+        <childnode refid="1636" relation="include">
         </childnode>
-        <childnode refid="1569" relation="include">
+        <childnode refid="1643" relation="include">
         </childnode>
       </node>
-      <node id="1569">
+      <node id="1647">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="1643">
         <label>class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="1570" relation="include">
+        <childnode refid="1644" relation="include">
         </childnode>
-        <childnode refid="1560" relation="include">
+        <childnode refid="1632" relation="include">
         </childnode>
-        <childnode refid="1571" relation="include">
+        <childnode refid="1645" relation="include">
         </childnode>
       </node>
-      <node id="1572">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="1559">
+      <node id="1634">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="1578">
+      <node id="1651">
         <label>random</label>
       </node>
-      <node id="1579">
+      <node id="1642">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="1646">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="1652">
         <label>math/nmspc_math.h</label>
         <link refid="nmspc__math_8h"/>
-        <childnode refid="1556" relation="include">
+        <childnode refid="1629" relation="include">
         </childnode>
-        <childnode refid="1561" relation="include">
+        <childnode refid="1635" relation="include">
         </childnode>
-        <childnode refid="1568" relation="include">
+        <childnode refid="1641" relation="include">
         </childnode>
-        <childnode refid="1580" relation="include">
+        <childnode refid="1653" relation="include">
         </childnode>
-        <childnode refid="1581" relation="include">
+        <childnode refid="1654" relation="include">
         </childnode>
-        <childnode refid="1582" relation="include">
+        <childnode refid="1655" relation="include">
         </childnode>
-        <childnode refid="1570" relation="include">
+        <childnode refid="1644" relation="include">
         </childnode>
-        <childnode refid="1583" relation="include">
+        <childnode refid="1656" relation="include">
         </childnode>
-        <childnode refid="1584" relation="include">
+        <childnode refid="1657" relation="include">
         </childnode>
-        <childnode refid="1558" relation="include">
+        <childnode refid="1658" relation="include">
+        </childnode>
+        <childnode refid="1633" relation="include">
         </childnode>
       </node>
-      <node id="1568">
+      <node id="1631">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="1632" relation="include">
+        </childnode>
+      </node>
+      <node id="1658">
+        <label>optional</label>
+      </node>
+      <node id="1641">
         <label>vector</label>
       </node>
-      <node id="1573">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="1583">
+      <node id="1656">
         <label>utility</label>
       </node>
-      <node id="1556">
+      <node id="1629">
         <label>iostream</label>
       </node>
-      <node id="1575">
+      <node id="1648">
         <label>general/nmspc_quantum_mechanics.h</label>
         <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="1558" relation="include">
+        <childnode refid="1633" relation="include">
         </childnode>
-        <childnode refid="1560" relation="include">
+        <childnode refid="1632" relation="include">
         </childnode>
-        <childnode refid="1576" relation="include">
+        <childnode refid="1649" relation="include">
         </childnode>
-        <childnode refid="1568" relation="include">
+        <childnode refid="1641" relation="include">
         </childnode>
       </node>
-      <node id="1576">
+      <node id="1649">
         <label>complex</label>
       </node>
-      <node id="1565">
+      <node id="1639">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="1566" relation="include">
+        <childnode refid="1640" relation="include">
         </childnode>
-        <childnode refid="1567" relation="include">
+        <childnode refid="1641" relation="include">
         </childnode>
-        <childnode refid="1568" relation="include">
+        <childnode refid="1642" relation="include">
         </childnode>
       </node>
-      <node id="1557">
+      <node id="1630">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1558" relation="include">
+        <childnode refid="1631" relation="include">
         </childnode>
-        <childnode refid="1559" relation="include">
+        <childnode refid="1633" relation="include">
         </childnode>
-        <childnode refid="1560" relation="include">
+        <childnode refid="1634" relation="include">
         </childnode>
-        <childnode refid="1561" relation="include">
+        <childnode refid="1632" relation="include">
         </childnode>
-        <childnode refid="1556" relation="include">
+        <childnode refid="1635" relation="include">
         </childnode>
-        <childnode refid="1562" relation="include">
+        <childnode refid="1629" relation="include">
         </childnode>
-        <childnode refid="1563" relation="include">
+        <childnode refid="1636" relation="include">
+        </childnode>
+        <childnode refid="1637" relation="include">
         </childnode>
       </node>
-      <node id="1574">
-        <label>spdlog/sinks/stdout_sinks.h</label>
-      </node>
-      <node id="1570">
+      <node id="1644">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -323,191 +332,205 @@
 <codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref>)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Improperly<sp/>built<sp/>MPO:<sp/>Full<sp/>lattice<sp/>parameters<sp/>haven&apos;t<sp/>been<sp/>set<sp/>yet.&quot;</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.resize(5,<sp/>5,<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" kindref="member">spin_dim</ref>,<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" kindref="member">spin_dim</ref>);</highlight></codeline>
 <codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.setZero();</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{1,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(<ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>);</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{3,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-<ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>);</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-<ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>2,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref>*<ref refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" kindref="member">h_avg</ref>)<sp/>*<sp/>sx);</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>3,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref>*<ref refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" kindref="member">J_avg</ref>)<sp/>*<sp/>sz);</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>4,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{0,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{1,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{2,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{3,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(<ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8b82d4c60626ec42bd32174bb806cf51" kindref="member">h_ptb</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9dc30ad710343876ac489c57de4243ab" kindref="member">J_ptb</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>2,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref>*<ref refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" kindref="member">h_avg</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>);</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>3,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref>*<ref refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" kindref="member">J_avg</ref>)<sp/>*<sp/>sz);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>4,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(Id);</highlight></codeline>
 <codeline lineno="118"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="119"><highlight class="normal"></highlight></codeline>
 <codeline lineno="120" refid="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa8e3fcac305f5e7c110f49dafbfc5b57" kindref="member">class_selfdual_tf_rf_ising::randomize_hamiltonian</ref>(){</highlight></codeline>
 <codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" kindref="member">rn::log_normal</ref>(<ref refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" kindref="member">J_log_mean</ref>,<ref refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" kindref="member">J_sigma</ref>);</highlight></codeline>
 <codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacern_1aa64669e6a44143d9262c955f80fe79b8" kindref="member">rn::log_normal</ref>(<ref refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" kindref="member">h_log_mean</ref>,<ref refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" kindref="member">h_sigma</ref>);</highlight></codeline>
 <codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>or<sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.size()&gt;5){</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-<ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref>);</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-<ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8b82d4c60626ec42bd32174bb806cf51" kindref="member">h_ptb</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9dc30ad710343876ac489c57de4243ab" kindref="member">J_ptb</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
 <codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="127"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal"></highlight></codeline>
-<codeline lineno="130" refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">class_selfdual_tf_rf_ising::MPO_reduced_view</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();}</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">MPO_reduced_view</ref>(<ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref>);</highlight></codeline>
-<codeline lineno="133"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"></highlight></codeline>
-<codeline lineno="135" refid="classclass__selfdual__tf__rf__ising_1a6bd63cd4470f37e082715dbf8238ad1c" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">class_selfdual_tf_rf_ising::MPO_reduced_view</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(site_energy<sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();}</highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>temp<sp/><sp/>=<sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>temp.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" kindref="member">Textra::Matrix_to_Tensor2</ref>(-<ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/>site_energy<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>temp;</highlight></codeline>
-<codeline lineno="140"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"></highlight></codeline>
-<codeline lineno="142" refid="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" refkind="member"><highlight class="normal">Eigen::MatrixXcd<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" kindref="member">class_selfdual_tf_rf_ising::single_site_hamiltonian</ref>(</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" kindref="member">position</ref>,</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sites,</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>,</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>[[maybe_unused]],</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>)</highlight><highlight class="keyword"></highlight></codeline>
-<codeline lineno="148"><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight></codeline>
-<codeline lineno="149"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position,<sp/><sp/><sp/><sp/><sp/>sites);</highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position<sp/>+<sp/>1,<sp/>sites);</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>k<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position<sp/>+<sp/>2,<sp/>sites);</highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-<sp/>(<ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/>*<sp/>SZ[i]*SZ[j]<sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref>*0.5*(SX[i]+SX[j])<sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref>*(<ref refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" kindref="member">h_avg</ref><sp/>*<sp/>SX[i]*SX[j]<sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" kindref="member">J_avg</ref>*SZ[i]*SZ[k]));</highlight></codeline>
+<codeline lineno="129" refid="classclass__selfdual__tf__rf__ising_1a64864c924b7b8c0c47d7901a2c9a34c0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a64864c924b7b8c0c47d7901a2c9a34c0" kindref="member">class_selfdual_tf_rf_ising::perturb_hamiltonian</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>amplitude){</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8b82d4c60626ec42bd32174bb806cf51" kindref="member">h_ptb</ref><sp/><sp/>=<sp/>-<sp/>amplitude<sp/>*<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref>;</highlight><highlight class="comment">//*<sp/>rn::uniform_double(0,1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9dc30ad710343876ac489c57de4243ab" kindref="member">J_ptb</ref><sp/><sp/>=<sp/>-<sp/>amplitude<sp/>*<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref>;</highlight><highlight class="comment">//*<sp/>rn::uniform_double(0,1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>or<sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.size()&gt;5){</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(h_rnd<sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8b82d4c60626ec42bd32174bb806cf51" kindref="member">h_ptb</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>1,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(J_rnd<sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9dc30ad710343876ac489c57de4243ab" kindref="member">J_ptb</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(amplitude<sp/>==<sp/>0.0<sp/>and<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a93ac20372d8f96af2c771e3a4328fed8" kindref="member">is_perturbed</ref>())</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;MPO(&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(<ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>())<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;:<sp/>Should<sp/>have<sp/>unperturbed!&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140" refid="classclass__selfdual__tf__rf__ising_1a93ac20372d8f96af2c771e3a4328fed8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a93ac20372d8f96af2c771e3a4328fed8" kindref="member">class_selfdual_tf_rf_ising::is_perturbed</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9dc30ad710343876ac489c57de4243ab" kindref="member">J_ptb</ref><sp/>!=<sp/>0.0<sp/>and<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8b82d4c60626ec42bd32174bb806cf51" kindref="member">h_ptb</ref><sp/>!=<sp/>0.0;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">class_selfdual_tf_rf_ising::MPO_reduced_view</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">MPO_reduced_view</ref>(<ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref>);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149" refid="classclass__selfdual__tf__rf__ising_1a6bd63cd4470f37e082715dbf8238ad1c" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ab4d451da53bcf6203ab82fb9c2a3507d" kindref="member">class_selfdual_tf_rf_ising::MPO_reduced_view</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(site_energy<sp/>==<sp/>0){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>temp<sp/><sp/>=<sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>();</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>temp.slice(Eigen::array&lt;long,<sp/>4&gt;{4,<sp/>0,<sp/>0,<sp/>0},<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>).reshape(<ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>)<sp/>=<sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(-(<ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8b82d4c60626ec42bd32174bb806cf51" kindref="member">h_ptb</ref>)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">sx</ref><sp/>-<sp/>site_energy<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a2cda40cbed549d2f5bcae49e830f8456" kindref="member">Id</ref>);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>temp;</highlight></codeline>
 <codeline lineno="154"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="155"><highlight class="normal"></highlight></codeline>
-<codeline lineno="156"><highlight class="normal"></highlight></codeline>
-<codeline lineno="157" refid="classclass__selfdual__tf__rf__ising_1a318fd570727b3841c009a818dfcd2377" refkind="member"><highlight class="normal">std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a318fd570727b3841c009a818dfcd2377" kindref="member">class_selfdual_tf_rf_ising::clone</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_selfdual_tf_rf_ising&gt;(*this);}</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"></highlight></codeline>
-<codeline lineno="159"><highlight class="normal"></highlight></codeline>
-<codeline lineno="160" refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" kindref="member">class_selfdual_tf_rf_ising::get_spin_dimension</ref>()</highlight><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" kindref="member">spin_dim</ref>;}</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_selfdual_tf_rf_ising::get_energy_reduced()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>e_reduced;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="162"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_selfdual_tf_rf_ising::get_random_field()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>h_rnd;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="163"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_selfdual_tf_rf_ising::get_randomness_strength()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>w_rnd_strength;}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="164"><highlight class="normal"></highlight></codeline>
-<codeline lineno="165"><highlight class="normal"></highlight></codeline>
-<codeline lineno="166" refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" kindref="member">class_selfdual_tf_rf_ising::print_parameter_names</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout</highlight></codeline>
-<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
-<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPO<sp/>#&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J_rnd&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;h_rnd&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J_log_mean&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;h_log_mean&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J_avg&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;h_avg&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J_sigma&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;h_sigma&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;lambda&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;delta&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;e_reduced&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;spin_dim&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="183"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="184"><highlight class="normal"></highlight></codeline>
-<codeline lineno="185" refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" kindref="member">class_selfdual_tf_rf_ising::print_parameter_values</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout</highlight></codeline>
-<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
-<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>()</highlight></codeline>
-<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref></highlight></codeline>
-<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref></highlight></codeline>
-<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" kindref="member">J_log_mean</ref></highlight></codeline>
-<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" kindref="member">h_log_mean</ref></highlight></codeline>
-<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" kindref="member">J_avg</ref></highlight></codeline>
-<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" kindref="member">h_avg</ref></highlight></codeline>
-<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" kindref="member">J_sigma</ref></highlight></codeline>
-<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" kindref="member">h_sigma</ref></highlight></codeline>
-<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref></highlight></codeline>
-<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" kindref="member">delta</ref></highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref></highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" kindref="member">spin_dim</ref></highlight></codeline>
-<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
-<codeline lineno="202"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="203"><highlight class="normal"></highlight></codeline>
-<codeline lineno="204" refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" refkind="member"><highlight class="normal">std::vector&lt;std::string&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" kindref="member">class_selfdual_tf_rf_ising::get_parameter_names</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{</highlight><highlight class="stringliteral">&quot;position&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_rnd&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;h_rnd&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_log_mean&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;h_log_mean&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_avg&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;h_avg&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_sigma&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;h_sigma&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;lambda&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;delta&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;e_reduced&quot;</highlight><highlight class="normal">,</highlight></codeline>
-<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;spin_dim&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
-<codeline lineno="219"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="220"><highlight class="normal"></highlight></codeline>
-<codeline lineno="221"><highlight class="normal"></highlight><highlight class="comment">//std::vector&lt;double&gt;<sp/>class_selfdual_tf_rf_ising::get_random_parameter_values()<sp/>const<sp/>{</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="222"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="223"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>{(double)get_position(),</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="224"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="225"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_rnd,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="226"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_log_mean,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="227"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_log_mean,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="228"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_avg,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="229"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_avg,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="230"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_sigma,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="231"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_sigma,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="232"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lambda,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="233"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>delta,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="234"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e_reduced,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="235"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(double)spin_dim</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="236"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>};</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="237"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="238"><highlight class="normal"></highlight></codeline>
-<codeline lineno="239" refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" refkind="member"><highlight class="normal">std::vector&lt;double&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" kindref="member">class_selfdual_tf_rf_ising::get_parameter_values</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{(double)<ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>(),</highlight></codeline>
-<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref>,</highlight></codeline>
-<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref>,</highlight></codeline>
-<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" kindref="member">J_log_mean</ref>,</highlight></codeline>
-<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" kindref="member">h_log_mean</ref>,</highlight></codeline>
-<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" kindref="member">J_avg</ref>,</highlight></codeline>
-<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" kindref="member">h_avg</ref>,</highlight></codeline>
-<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" kindref="member">J_sigma</ref>,</highlight></codeline>
-<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" kindref="member">h_sigma</ref>,</highlight></codeline>
-<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref>,</highlight></codeline>
-<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" kindref="member">delta</ref>,</highlight></codeline>
-<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref>,</highlight></codeline>
-<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(double)<ref refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" kindref="member">spin_dim</ref></highlight></codeline>
-<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
-<codeline lineno="254"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="255"><highlight class="normal"></highlight></codeline>
-<codeline lineno="256"><highlight class="normal"></highlight></codeline>
-<codeline lineno="257"><highlight class="normal"></highlight></codeline>
-<codeline lineno="258" refid="classclass__selfdual__tf__rf__ising_1aa3a77c6733ee4834834a4ee7ede75067" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa3a77c6733ee4834834a4ee7ede75067" kindref="member">class_selfdual_tf_rf_ising::set_full_lattice_parameters</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>chain_parameters,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>reverse){</highlight></codeline>
-<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>average<sp/>J_rnd<sp/>on<sp/>the<sp/>whole<sp/>state</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>J_rnd_list;</highlight></codeline>
-<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>h_rnd_list;</highlight></codeline>
-<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(reverse){</highlight></codeline>
-<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.emplace_front(0.0);</highlight></codeline>
-<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref><sp/>:<sp/>chain_parameters){</highlight></codeline>
-<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.emplace_front(<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref>[1]);</highlight></codeline>
-<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_rnd_list.emplace_front(<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref>[2]);</highlight></codeline>
-<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.pop_front();</highlight></codeline>
-<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref><sp/>:<sp/>chain_parameters){</highlight></codeline>
-<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.push_back(<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref>[1]);</highlight></codeline>
-<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_rnd_list.push_back(<ref refid="namespacetools_1_1finite_1_1opt_1_1internals_1a874ec8a916fc9382de5e2873bcc70469" kindref="member">params</ref>[2]);</highlight></codeline>
-<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.back()<sp/>=<sp/>0.0;</highlight></codeline>
-<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="277"><highlight class="normal"></highlight></codeline>
-<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/>=<sp/>*std::next(J_rnd_list.begin(),<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>());</highlight></codeline>
-<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/>=<sp/>*std::next(h_rnd_list.begin(),<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>());</highlight></codeline>
-<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>J_rnd_list.pop_back();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Take<sp/>average<sp/>of<sp/>all<sp/>minus<sp/>last</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="281"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>h_rnd_list.pop_back();<sp/>//<sp/>Take<sp/>average<sp/>of<sp/>all</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="282"><highlight class="normal"></highlight></codeline>
-<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>J_rnd_avg<sp/>=<sp/>std::accumulate(J_rnd_list.begin(),J_rnd_list.end(),0.0)/J_rnd_list.size();</highlight></codeline>
-<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>h_rnd_avg<sp/>=<sp/>std::accumulate(h_rnd_list.begin(),h_rnd_list.end(),0.0)/h_rnd_list.size();</highlight></codeline>
-<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a1332645c8b209715ebafa132515d54d1" kindref="member">set_realization_averages</ref>(J_rnd_avg,h_rnd_avg);</highlight></codeline>
-<codeline lineno="286"><highlight class="normal"></highlight></codeline>
-<codeline lineno="287"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="288"><highlight class="normal"></highlight></codeline>
-<codeline lineno="289"><highlight class="normal"></highlight></codeline>
-<codeline lineno="290"><highlight class="normal"></highlight></codeline>
-<codeline lineno="291"><highlight class="normal"></highlight><highlight class="comment">//void<sp/><sp/><sp/>class_selfdual_tf_rf_ising::write_to_hdf5_table(){</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="292"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="293"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156" refid="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" refkind="member"><highlight class="normal">Eigen::MatrixXcd<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a6bc4544f0c87e2c604b4288659d489a2" kindref="member">class_selfdual_tf_rf_ising::single_site_hamiltonian</ref>(</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" kindref="member">position</ref>,</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sites,</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>[[maybe_unused]],</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>)</highlight><highlight class="keyword"></highlight></codeline>
+<codeline lineno="162"><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight></codeline>
+<codeline lineno="163"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position,<sp/><sp/><sp/><sp/><sp/>sites);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position<sp/>+<sp/>1,<sp/>sites);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>k<sp/>=<sp/><ref refid="namespacemath_1a950ba2c26eab3a176711e689337ad0e9" kindref="member">math::mod</ref>(position<sp/>+<sp/>2,<sp/>sites);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-<sp/>(<ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/>*<sp/>SZ[i]*SZ[j]<sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref>*0.5*(SX[i]+SX[j])<sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref>*(<ref refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" kindref="member">h_avg</ref><sp/>*<sp/>SX[i]*SX[j]<sp/>+<sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" kindref="member">J_avg</ref>*SZ[i]*SZ[k]));</highlight></codeline>
+<codeline lineno="168"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="classclass__selfdual__tf__rf__ising_1a318fd570727b3841c009a818dfcd2377" refkind="member"><highlight class="normal">std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a318fd570727b3841c009a818dfcd2377" kindref="member">class_selfdual_tf_rf_ising::clone</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_unique&lt;class_selfdual_tf_rf_ising&gt;(*this);}</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174" refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a424375457f3be4647fb66f5985ae8adf" kindref="member">class_selfdual_tf_rf_ising::get_spin_dimension</ref>()</highlight><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" kindref="member">spin_dim</ref>;}</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_selfdual_tf_rf_ising::get_energy_reduced()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>e_reduced;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_selfdual_tf_rf_ising::get_random_field()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>h_rnd;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="comment">//double<sp/>class_selfdual_tf_rf_ising::get_randomness_strength()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const<sp/>{return<sp/>w_rnd_strength;}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180" refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a54e408f494ed9b3fc1d574aedf40f229" kindref="member">class_selfdual_tf_rf_ising::print_parameter_names</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;MPO<sp/>#&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J_rnd&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;h_rnd&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J_log_mean&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;h_log_mean&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J_avg&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;h_avg&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;J_sigma&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;h_sigma&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;lambda&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;delta&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;e_reduced&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;spin_dim&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="197"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight></codeline>
+<codeline lineno="199" refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a9a689d1f6edfb04ae22b17c961df6643" kindref="member">class_selfdual_tf_rf_ising::print_parameter_values</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setprecision(10)</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>()</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" kindref="member">J_log_mean</ref></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" kindref="member">h_log_mean</ref></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" kindref="member">J_avg</ref></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" kindref="member">h_avg</ref></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" kindref="member">J_sigma</ref></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" kindref="member">h_sigma</ref></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" kindref="member">delta</ref></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::setw(16)<sp/>&lt;&lt;<sp/>std::left<sp/>&lt;&lt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" kindref="member">spin_dim</ref></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="216"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218" refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" refkind="member"><highlight class="normal">std::vector&lt;std::string&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1ac631c6f220a8b20144f8ec5b3261e896" kindref="member">class_selfdual_tf_rf_ising::get_parameter_names</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{</highlight><highlight class="stringliteral">&quot;position&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_rnd&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;h_rnd&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_log_mean&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;h_log_mean&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_avg&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;h_avg&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;J_sigma&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;h_sigma&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;lambda&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;delta&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;e_reduced&quot;</highlight><highlight class="normal">,</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="stringliteral">&quot;spin_dim&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="233"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight><highlight class="comment">//std::vector&lt;double&gt;<sp/>class_selfdual_tf_rf_ising::get_random_parameter_values()<sp/>const<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>{(double)get_position(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_rnd,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_log_mean,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_log_mean,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_avg,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_avg,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_sigma,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_sigma,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lambda,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>delta,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>e_reduced,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(double)spin_dim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>};</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight></codeline>
+<codeline lineno="253" refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" refkind="member"><highlight class="normal">std::vector&lt;double&gt;<sp/><ref refid="classclass__selfdual__tf__rf__ising_1a338763add94ac64aa6a13fc169f609fb" kindref="member">class_selfdual_tf_rf_ising::get_parameter_values</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>{(double)<ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>(),</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref>,</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref>,</highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a8eda3a230c98113f7eba3a26c2014153" kindref="member">J_log_mean</ref>,</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1affec0fd6074a7d5b42b56dc6b96c5208" kindref="member">h_log_mean</ref>,</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa973255ed3e3198bebc5a37aa825e82f" kindref="member">J_avg</ref>,</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a543a138d7943481713233e873d74f1de" kindref="member">h_avg</ref>,</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a5e5417f1e68ba5b5e493bb26f6bfa056" kindref="member">J_sigma</ref>,</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa84606f38bc91c43d07433d584e32c29" kindref="member">h_sigma</ref>,</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1af1cca72df878fd54d738fe7b0ae80dda" kindref="member">lambda</ref>,</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a81cc26af03e873d7429706e7bf93b255" kindref="member">delta</ref>,</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref>,</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(double)<ref refid="classclass__selfdual__tf__rf__ising_1a06d254d5f749d5e0eacc7445e68c916b" kindref="member">spin_dim</ref></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="268"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight></codeline>
+<codeline lineno="272" refid="classclass__selfdual__tf__rf__ising_1aa3a77c6733ee4834834a4ee7ede75067" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__selfdual__tf__rf__ising_1aa3a77c6733ee4834834a4ee7ede75067" kindref="member">class_selfdual_tf_rf_ising::set_full_lattice_parameters</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>chain_parameters,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>reverse){</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>average<sp/>J_rnd<sp/>on<sp/>the<sp/>whole<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>J_rnd_list;</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>h_rnd_list;</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(reverse){</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.emplace_front(0.0);</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;params<sp/>:<sp/>chain_parameters){</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.emplace_front(params[1]);</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_rnd_list.emplace_front(params[2]);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.pop_front();</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;params<sp/>:<sp/>chain_parameters){</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.push_back(params[1]);</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h_rnd_list.push_back(params[2]);</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>J_rnd_list.back()<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a09f7f8d7ab73279fe2c24954baf6aca8" kindref="member">J_rnd</ref><sp/>=<sp/>*std::next(J_rnd_list.begin(),<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>());</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a985f625940605ab6efedaf63500c3fe1" kindref="member">h_rnd</ref><sp/>=<sp/>*std::next(h_rnd_list.begin(),<sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>());</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/>J_rnd_list.pop_back();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Take<sp/>average<sp/>of<sp/>all<sp/>minus<sp/>last</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>h_rnd_list.pop_back();<sp/>//<sp/>Take<sp/>average<sp/>of<sp/>all</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="296"><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>J_rnd_avg<sp/>=<sp/>std::accumulate(J_rnd_list.begin(),J_rnd_list.end(),0.0)/J_rnd_list.size();</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>h_rnd_avg<sp/>=<sp/>std::accumulate(h_rnd_list.begin(),h_rnd_list.end(),0.0)/h_rnd_list.size();</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__selfdual__tf__rf__ising_1a1332645c8b209715ebafa132515d54d1" kindref="member">set_realization_averages</ref>(J_rnd_avg,h_rnd_avg);</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight></codeline>
+<codeline lineno="301"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight><highlight class="comment">//void<sp/><sp/><sp/>class_selfdual_tf_rf_ising::write_to_hdf5_table(){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp"/>
   </compounddef>
