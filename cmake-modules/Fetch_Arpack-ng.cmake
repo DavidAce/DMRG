@@ -54,13 +54,17 @@ else()
     ### Otherwise, passing raw lists results  in only the first element
     ### of the list to be passed.
     ####################################################################
-    get_target_property(BLAS_LIBRARIES      blas    INTERFACE_LINK_LIBRARIES)
-    get_target_property(LAPACK_LIBRARIES    lapack  INTERFACE_LINK_LIBRARIES)
+#    get_target_property(BLAS_LIBRARIES      blas    INTERFACE_LINK_LIBRARIES)
+#    get_target_property(LAPACK_LIBRARIES    lapack  INTERFACE_LINK_LIBRARIES)
+    include(${PROJECT_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
+    expand_target_libs(blas BLAS_LIBRARIES)
+    expand_target_libs(lapack LAPACK_LIBRARIES)
+
     string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES}")
     string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
 #    string (REPLACE ";" "$<SEMICOLON>" FC_LDLAGS_GENERATOR          "${FC_LDLAGS}")
     ####################################################################
-    set(FLAGS "-w -m64 -fPIC")
+    set(ARPACK_FLAGS "-w -m64 -fPIC")
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
@@ -76,8 +80,8 @@ else()
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-            -DCMAKE_C_FLAGS=${FLAGS}
-            -DCMAKE_Fortran_FLAGS=${FLAGS}
+            -DCMAKE_C_FLAGS=${ARPACK_FLAGS}
+            -DCMAKE_Fortran_FLAGS=${ARPACK_FLAGS}
             -DEXAMPLES=ON
             -DCMAKE_BUILD_TYPE=Release
             -DMPI=OFF

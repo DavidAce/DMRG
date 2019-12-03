@@ -13,60 +13,45 @@
     message(STATUS "Ceres will be installed into ${EXTERNAL_INSTALL_DIR}/ceres on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
-
-#    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_GLIBCXX_DEBUG_PEDANTIC -D_GLIBCXX_DEBUG -D_FORTIFY_SOURCE=2")
-#    set(FLAGS "-DEIGEN_MAX_STATIC_ALIGN_BYTES=0 -DNDEBUG -O3 -fstack-protector  -g -fno-omit-frame-pointer -D_FORTIFY_SOURCE=2")
-    unset(FLAGS CACHE)
-    set(FLAGS "${COMMON_OPTIONS} -w")
-    if(CMAKE_BUILD_TYPE MATCHES Debug)
+    if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
         set(CERES_LIBSUFFIX -debug)
-        set(FLAGS "${FLAGS} ${DEBUG_OPTIONS}")
-    elseif(CMAKE_BUILD_TYPE MATCHES Release)
-        set(FLAGS "${FLAGS} ${RELEASE_OPTIONS}")
-    elseif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
-        set(FLAGS "${FLAGS} ${RELWITHDEBINFO_OPTIONS}")
     endif()
-
-
-    ################################
-    ### Compiler-dependent flags ###
-    ################################
-
-
 
     get_target_property(GFLAGS_LIBRARIES    gflags      INTERFACE_LINK_LIBRARIES)
     get_target_property(GFLAGS_INCLUDE_DIR  gflags      INTERFACE_INCLUDE_DIRECTORIES)
     get_target_property(GLOG_LIBRARIES      glog::glog  INTERFACE_LINK_LIBRARIES)
     get_target_property(GLOG_INCLUDE_DIR    glog::glog  INTERFACE_INCLUDE_DIRECTORIES)
 
-#
-#    message(STATUS "ceres flags: ${FLAGS}")
-#    message(STATUS "GFLAGS_LIBRARIES    : ${GFLAGS_LIBRARIES}")
-#    message(STATUS "GFLAGS_INCLUDE_DIR  : ${GFLAGS_INCLUDE_DIR}")
-#    message(STATUS "GLOG_LIBRARIES      : ${GLOG_LIBRARIES}")
-#    message(STATUS "GLOG_INCLUDE_DIR    : ${GLOG_INCLUDE_DIR}")
+    unset(CERES_FLAGS CACHE)
+    unset(CERES_FLAGS)
+    if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+        set(CERES_FLAGS "${CERES_FLAGS} -O0 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2")
+    elseif("${CMAKE_BUILD_TYPE}" MATCHES "RelWithDebInfo")
+        set(CERES_FLAGS "${CERES_FLAGS} -O1 -g -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2")
+    else()
+        set(CERES_FLAGS "${CERES_FLAGS} -O3 -DNDEBUG")
+    endif()
 
-#    set(FLAGS "${FLAGS} -I${GLOG_INCLUDE_DIR} -L${GLOG_LIBRARY_DIR} -I${GFLAGS_INCLUDE_DIR}  -L${GFLAGS_LIBRARY_DIR}")
-#    string (REPLACE ";" " " FLAGS "${FLAGS}")
+    set(CERES_FLAGS "${CERES_FLAGS} -I${GLOG_INCLUDE_DIR} -I${GFLAGS_INCLUDE_DIR} ")
+    string (REPLACE ";" " " CERES_FLAGS "${CERES_FLAGS}")
+    message(STATUS "ceres flags: ${CERES_FLAGS}")
 
     include(ExternalProject)
     ExternalProject_Add(external_CERES
             GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
-            GIT_TAG master
+            GIT_TAG "486d81812e83f9274daaca356153d302c5ba58e0"
             GIT_PROGRESS false
-            GIT_SHALLOW true
-            BUILD_ALWAYS 1
             PREFIX      ${EXTERNAL_BUILD_DIR}/ceres
             INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/ceres
-            UPDATE_COMMAND ""
+#            TEST_COMMAND ${CMAKE_MAKE_PROGRAM} -j test
             CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+            -DCMAKE_CXX_FLAGS:STRING=${CERES_FLAGS}
             -DCMAKE_VERBOSE_MAKEFILE:BOOL=OFF
-            -DBUILD_TESTING:BOOL=ON
+            -DBUILD_TESTING:BOOL=OFF
             -DBUILD_EXAMPLES:BOOL=OFF
-#            -DCMAKE_CXX_FLAGS:STRING=${FLAGS}
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
-#            -DCMAKE_FIND_LIBRARY_SUFFIXES:STRING=${CUSTOM_SUFFIX}
+            -DCMAKE_FIND_LIBRARY_SUFFIXES:STRING=${CUSTOM_SUFFIX}
             -DGFLAGS:BOOL=ON
             -DSUITESPARSE:BOOL=OFF
             -DCXSPARSE:BOOL=OFF

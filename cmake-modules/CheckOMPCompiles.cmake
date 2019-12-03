@@ -41,9 +41,9 @@ endif()
 function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_INCLUDES)
     include(CheckIncludeFileCXX)
     include(cmake-modules/getExpandedTarget.cmake)
-    expandTargetLibs("${REQUIRED_LIBRARIES_UNPARSED}" expanded_libs)
-    expandTargetIncs("${REQUIRED_LIBRARIES_UNPARSED}" expanded_incs)
-    expandTargetOpts("${REQUIRED_LIBRARIES_UNPARSED}" expanded_opts)
+    expand_target_libs("${REQUIRED_LIBRARIES_UNPARSED}" expanded_libs)
+    expand_target_incs("${REQUIRED_LIBRARIES_UNPARSED}" expanded_incs)
+    expand_target_opts("${REQUIRED_LIBRARIES_UNPARSED}" expanded_opts)
     set(CMAKE_REQUIRED_LIBRARIES "${expanded_libs}") # Can be a ;list
     set(CMAKE_REQUIRED_INCLUDES  "${REQUIRED_INCLUDES};${expanded_incs}") # Can be a ;list
     string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${REQUIRED_FLAGS} ${expanded_opts}") # Needs to be a space-separated list

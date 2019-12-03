@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(DMRG++ )
 #enable_language()
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 
@@ -266,8 +266,9 @@ target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:            -O0 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -DNDEBUG  -lprofiler -g  -ftime-report>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:GNU>>:      -lstdc++fs>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:    -stdlib=libstdc++ -lstdc++fs  >)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:    -stdlib=libstdc++ >)
+#target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:GNU>>:      -lstdc++fs>)
+#target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:    -stdlib=libstdc++ -lstdc++fs  >)
 
 #######################################
 ### Compiler-dependent linker flags ###
@@ -302,8 +303,10 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/libs-${cmake_build_type}" CACHE PATH "..." FORCE)
 endif()
 set(EXTERNAL_INSTALL_DIR       ${CMAKE_INSTALL_PREFIX})
-set(EXTERNAL_BUILD_DIR         ${PROJECT_SOURCE_DIR}/cmake-build-libs/${CMAKE_BUILD_TYPE})
-set(EXTERNAL_CONFIG_DIR        ${PROJECT_SOURCE_DIR}/cmake-build-libs/${CMAKE_BUILD_TYPE})
+set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-deps)
+set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-deps)
+
+
 
 
 
@@ -311,31 +314,28 @@ set(EXTERNAL_CONFIG_DIR        ${PROJECT_SOURCE_DIR}/cmake-build-libs/${CMAKE_BU
 ###  Find or fetch all dependencies   ###
 ##########################################
 
+
+
 include(cmake-modules/FindGFortran.cmake)
 
 if(USE_MKL)
     include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 endif()
-#add_subdirectory(cmake-modules/external_h5pp2)
+
 include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/FindLAPACKE.cmake)                    # If MKL is not found openblas will be used instead. Includes lapack.
-#include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
-#include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
-#include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # LC++ frontend for arpack-ng
-#include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
-include(cmake-modules/Fetch_Gflags.cmake)
-include(cmake-modules/Fetch_Glog.cmake)
-#include(cmake-modules/Fetch_Glog2.cmake)
-include(cmake-modules/Fetch_Ceres.cmake)
+include(cmake-modules/Fetch_Gflags2.cmake)
+include(cmake-modules/Fetch_Glog2.cmake)
+include(cmake-modules/Fetch_Ceres2.cmake)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE lapacke)
-#target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp h5pp::deps h5pp::flags)
-target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp h5pp::deps )
+target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp h5pp::deps h5pp::flags)
+#target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp h5pp::deps )
 target_link_libraries(${PROJECT_NAME} PRIVATE ceres)
 
 
