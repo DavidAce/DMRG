@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" kind="class" language="C++" prot="public">
+    <compoundname>tools::finite::opt::internal::ceres_subspace_functor</compoundname>
+    <basecompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" prot="public" virt="non-virtual">tools::finite::opt::internal::ceres_base_functor</basecompoundref>
+    <includes refid="ceres__subspace__functor_8h" local="no">ceres_subspace_functor.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref></type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a58322b24c135d17a9fc7586222854b3d" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::MatrixType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ae6a1bb8d850f369b32ae87e0b9fec44c" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
+        <definition>using tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::VectorType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;</definition>
+        <argsstring></argsstring>
+        <name>VectorType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a20a166fcddb704da3585dc47b9b1f984" prot="private" static="no" mutable="no">
+        <type>const <ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a58322b24c135d17a9fc7586222854b3d" kindref="member">MatrixType</ref> &amp;</type>
+        <definition>const MatrixType&amp; tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::H2</definition>
+        <argsstring></argsstring>
+        <name>H2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a23db6a16a38dbb357b190e32859e60a4" prot="private" static="no" mutable="no">
+        <type>const Eigen::VectorXd &amp;</type>
+        <definition>const Eigen::VectorXd&amp; tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::eigvals</definition>
+        <argsstring></argsstring>
+        <name>eigvals</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab11183279b126fea1dc68437c4adab80" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::ceres_subspace_functor</definition>
+        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status, const MatrixType &amp;H2_subspace_, const Eigen::VectorXd &amp;eigvals_)</argsstring>
+        <name>ceres_subspace_functor</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a58322b24c135d17a9fc7586222854b3d" kindref="member">MatrixType</ref> &amp;</type>
+          <declname>H2_subspace_</declname>
+        </param>
+        <param>
+          <type>const Eigen::VectorXd &amp;</type>
+          <declname>eigvals_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp" bodystart="11" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab5270f12503bb4dbea44929f49d487a6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::Evaluate</definition>
+        <argsstring>(const double *v_double_double, double *fx, double *grad_double_double) const override</argsstring>
+        <name>Evaluate</name>
+        <reimplements refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a5dc23b153b0f3325e5baed46cab730b4">Evaluate</reimplements>
+        <param>
+          <type>const double *</type>
+          <declname>v_double_double</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>fx</declname>
+        </param>
+        <param>
+          <type>double *</type>
+          <declname>grad_double_double</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp" bodystart="32" bodyend="115"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="29">
+        <label>tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor"/>
+        <childnode refid="30" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>tools::finite::opt::internal::ceres_base_functor</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor"/>
+        <childnode refid="31" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>ceres::FirstOrderFunction</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="35">
+        <label>OMP</label>
+        <link refid="class_o_m_p"/>
+      </node>
+      <node id="32">
+        <label>tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor"/>
+        <childnode refid="33" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>tools::finite::opt::internal::ceres_base_functor</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+        <childnode refid="35" relation="usage">
+          <edgelabel>omp</edgelabel>
+        </childnode>
+      </node>
+      <node id="34">
+        <label>ceres::FirstOrderFunction</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="13" bodyend="29"/>
+    <listofallmembers>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a0f438c834a7a3bbf34ac1e6b54ba89f5" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>ceres_base_functor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab11183279b126fea1dc68437c4adab80" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>ceres_subspace_functor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>counter</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a23db6a16a38dbb357b190e32859e60a4" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>eigvals</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad85bda1d5380a029f29d6607102a251a" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_dens</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a05882a554536db051d126643c84c001e" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_lower_bound</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2abddf9d35cbc20bc6d09a8c75f7b262" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_max</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1af34fa855cbe63925bbc540e03f431d42" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_min</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a6fe6619a82ba5ee67d0b0c0b29156924" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_offset</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_reduced</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adfc97b891e838bac78afb3ff0d84bf7f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_target</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1acc91cc97f47890958cdb0d0dc020369a" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_target_dens</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a282a6e155e6f8a24dbad354d3b22f7cc" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_upper_bound</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1b8c8a8b8ec48066ffa648aba869b67e" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_window</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab5270f12503bb4dbea44929f49d487a6" prot="public" virt="virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>Evaluate</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>get_count</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>get_energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>get_norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>get_variance</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a20a166fcddb704da3585dc47b9b1f984" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>H2</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a24904fea2d1697f5807f2c4f4709abc3" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>have_bounds_on_energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a965d326383034f117e0f8dfa26f0ed9c" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>iteration</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>length</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a58322b24c135d17a9fc7586222854b3d" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>MatrixType</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>norm_offset</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>num_parameters</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a07e5673c435676a4c0a93c35c29e39e5" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>NumParameters</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>omp</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>variance</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ae6a1bb8d850f369b32ae87e0b9fec44c" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>VectorType</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

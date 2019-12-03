@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians" kind="namespace" language="C++">
+    <compoundname>tools::finite::opt::internal::local_hamiltonians</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a5d7e8c839b6857b387b9ad487be9e7c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 6 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 6 &gt; tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>get_multi_hamiltonian_tensor</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="9" bodyend="44"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1acca2f05e2883a3c19622a0d03f8b80fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 6 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 6 &gt; tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>get_multi_hamiltonian_squared_tensor</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="46" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a5fb97f0fc4940f98d5bfd388903296d4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::MatrixXcd</type>
+        <definition>Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_matrix</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>get_multi_hamiltonian_matrix</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="86" bodyend="90"/>
+        <references refid="classclass__state__finite_1ad8c573eb29da8ade2a441aba8d77d6f3" compoundref="class__state__finite_8cpp" startline="422" endline="424">class_state_finite::active_problem_size</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1ac692d6578f7f1a711bfbb7bc574dfc8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::MatrixXcd</type>
+        <definition>Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_matrix</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>get_multi_hamiltonian_squared_matrix</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="93" bodyend="97"/>
+        <references refid="classclass__state__finite_1ad8c573eb29da8ade2a441aba8d77d6f3" compoundref="class__state__finite_8cpp" startline="422" endline="424">class_state_finite::active_problem_size</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a65c79f12aa86f6d45fbf2852b9438377" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::MatrixXcd</type>
+        <definition>Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::MatrixXcd &amp;eigvecs)</argsstring>
+        <name>get_multi_hamiltonian_squared_subspace_matrix</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>eigvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="193" bodyend="264"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a9c9d1304a8f02c20eef05d824746909c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::MatrixXcd</type>
+        <definition>Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::MatrixXcd &amp;eigvecs)</argsstring>
+        <name>get_multi_hamiltonian_squared_subspace_matrix_new</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>eigvecs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="100" bodyend="189"/>
+        <references refid="class_o_m_p_1a0f81be91c24a8f9abc4dc1f2fff1feae" compoundref="nmspc__omp_8h" startline="28" endline="30">OMP::OMP</references>
+        <references refid="namespacesettings_1_1threading_1ac01485bfd26c27921bfc55828e1e6dab" compoundref="nmspc__settings_8h" startline="30">settings::threading::num_threads_eigen</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="36" column="1"/>
+  </compounddef>
+</doxygen>

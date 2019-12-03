@@ -1,0 +1,13 @@
+.. _exhale_enum_enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921:
+
+Enum SimulationType
+===================
+
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_enums.h`
+
+
+Enum Documentation
+------------------
+
+
+.. doxygenenum:: SimulationType

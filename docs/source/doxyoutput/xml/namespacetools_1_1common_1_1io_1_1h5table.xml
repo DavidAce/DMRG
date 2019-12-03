@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1common_1_1io_1_1h5table" kind="namespace" language="C++">
+    <compoundname>tools::common::io::h5table</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1a6f7592f678b3f7022bfd237ca0c6ad2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5table::write_sim_status</definition>
+        <argsstring>(const class_simulation_status &amp;sim_status, class_h5table_buffer&lt; class_h5table_simulation_status &gt; &amp;h5tbuf)</argsstring>
+        <name>write_sim_status</name>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer</ref>&lt; <ref refid="classclass__h5table__simulation__status" kindref="compound">class_h5table_simulation_status</ref> &gt; &amp;</type>
+          <declname>h5tbuf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="352" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp" bodystart="8" bodyend="12"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5table_1adb046c04ba8888dc06e4a0755e9300c9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5table::write_profiling</definition>
+        <argsstring>(const class_simulation_status &amp;sim_status, class_h5table_buffer&lt; class_h5table_profiling &gt; &amp;h5tbuf)</argsstring>
+        <name>write_profiling</name>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer</ref>&lt; <ref refid="classclass__h5table__profiling" kindref="compound">class_h5table_profiling</ref> &gt; &amp;</type>
+          <declname>h5tbuf</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="353" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp" bodystart="15" bodyend="52"/>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a61550460037232f85aea0b5142c8d50e" compoundref="table__types_8h" startline="266">class_h5table_profiling::data_struct::step</references>
+        <references refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" compoundref="class__simulation__status_8h" startline="19">status_data::step</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a9dee89364369e9ac2320452b415f82f0" compoundref="table__types_8h" startline="265">class_h5table_profiling::data_struct::iteration</references>
+        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1ae719f215236153e180f0c3101a5315d6" compoundref="table__types_8h" startline="267">class_h5table_profiling::data_struct::position</references>
+        <references refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" compoundref="class__simulation__status_8h" startline="20">status_data::position</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1ae38590e343ae29b7b0d3b802fd59b16c" compoundref="table__types_8h" startline="268">class_h5table_profiling::data_struct::t_tot</references>
+        <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a090cde732c2599e7fa3dbcb874a4bfdc" compoundref="table__types_8h" startline="269">class_h5table_profiling::data_struct::t_run</references>
+        <references refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" compoundref="class__simulation__status_8h" startline="36">status_data::simu_time</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a86da5de35b8f25bdb248dc7408b45223" compoundref="table__types_8h" startline="270">class_h5table_profiling::data_struct::t_eig</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" compoundref="nmspc__tools_8h" startline="373">tools::common::profile::t_eig</references>
+        <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1ace6c6dd4d0601d40e5d577a8bc8c7577" compoundref="table__types_8h" startline="271">class_h5table_profiling::data_struct::t_svd</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" compoundref="nmspc__tools_8h" startline="374">tools::common::profile::t_svd</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1ad987923c3666f4ae567f64ad2b826282" compoundref="table__types_8h" startline="272">class_h5table_profiling::data_struct::t_ene</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="375">tools::common::profile::t_ene</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a39447ddc47e0911ba7f2c6a73d03a096" compoundref="table__types_8h" startline="273">class_h5table_profiling::data_struct::t_var</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="376">tools::common::profile::t_var</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a820fa70372c7db896e971719088fb290" compoundref="table__types_8h" startline="274">class_h5table_profiling::data_struct::t_ent</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" compoundref="nmspc__tools_8h" startline="377">tools::common::profile::t_ent</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1ae6c6515ad685cf3dc7f887fe3a49f0cb" compoundref="table__types_8h" startline="275">class_h5table_profiling::data_struct::t_hdf</references>
+        <references refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" compoundref="nmspc__tools_8h" startline="378">tools::common::profile::t_hdf</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a524b74f45f160338d6f55cc05ed4f571" compoundref="table__types_8h" startline="276">class_h5table_profiling::data_struct::t_prj</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" compoundref="nmspc__tools_8h" startline="379">tools::common::profile::t_prj</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a4dc08271ff837d56e0658e5f8185e6e3" compoundref="table__types_8h" startline="277">class_h5table_profiling::data_struct::t_opt</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" compoundref="nmspc__tools_8h" startline="380">tools::common::profile::t_opt</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a89846cfcad65bfdc8ac4301342c2798f" compoundref="table__types_8h" startline="278">class_h5table_profiling::data_struct::t_chk</references>
+        <references refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" compoundref="nmspc__tools_8h" startline="381">tools::common::profile::t_chk</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a7a391aaf87b799f6d0522437260e55ab" compoundref="table__types_8h" startline="279">class_h5table_profiling::data_struct::t_ene_mpo</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a3efd01089ce7b4d9ba9d61270d55fb71" compoundref="nmspc__tools_8h" startline="382">tools::common::profile::t_ene_mpo</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1aa1aabda4286a23cc939dbf310c581edf" compoundref="table__types_8h" startline="280">class_h5table_profiling::data_struct::t_ene_ham</references>
+        <references refid="namespacetools_1_1common_1_1profile_1abd24d6ad20dc8f1a79c9fe670e839028" compoundref="nmspc__tools_8h" startline="383">tools::common::profile::t_ene_ham</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a9425db5989d606049a07a73cc9c9f242" compoundref="table__types_8h" startline="281">class_h5table_profiling::data_struct::t_ene_mom</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a543972c1667fe8fa09979f5e5b66106f" compoundref="nmspc__tools_8h" startline="384">tools::common::profile::t_ene_mom</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a539f4a5460f234ed827201f22e489dcc" compoundref="table__types_8h" startline="282">class_h5table_profiling::data_struct::t_var_mpo</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a92761da2df9560368517c1572bd86abf" compoundref="nmspc__tools_8h" startline="385">tools::common::profile::t_var_mpo</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a9dcaad0c3eca3ae9bea47f51969fc986" compoundref="table__types_8h" startline="283">class_h5table_profiling::data_struct::t_var_ham</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a5202d5bd6e0d7c97cd09b43b47a9729f" compoundref="nmspc__tools_8h" startline="386">tools::common::profile::t_var_ham</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a4aa0a258d1b05bb8e63b9d19c05283b0" compoundref="table__types_8h" startline="284">class_h5table_profiling::data_struct::t_var_mom</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a35332911ee3232209960797403bf52bb" compoundref="nmspc__tools_8h" startline="387">tools::common::profile::t_var_mom</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1ad43a6190e71324d78b0f8679e594c244" compoundref="table__types_8h" startline="285">class_h5table_profiling::data_struct::t_env</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a80ac2e6a6b2cd1d4f65a794b56deba69" compoundref="table__types_8h" startline="286">class_h5table_profiling::data_struct::t_evo</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1abd50caa1be36525900945a302708cbde" compoundref="table__types_8h" startline="287">class_h5table_profiling::data_struct::t_udt</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a0c9397c69d9ab911761e0d4350c67472" compoundref="table__types_8h" startline="288">class_h5table_profiling::data_struct::t_ste</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1afc92c236f236191e1a7666bdf8d62d55" compoundref="table__types_8h" startline="289">class_h5table_profiling::data_struct::t_prt</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a6d27cc9d1066dbdef69b9b9792cac9fa" compoundref="table__types_8h" startline="290">class_h5table_profiling::data_struct::t_obs</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1a5293908cb5c2f252b4e4d497fcccb61a" compoundref="table__types_8h" startline="291">class_h5table_profiling::data_struct::t_mps</references>
+        <references refid="structclass__h5table__profiling_1_1data__struct_1aa81e8cd67183d330d1b746f054e08817" compoundref="table__types_8h" startline="292">class_h5table_profiling::data_struct::t_chi</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="351" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__h5table__simulation__status" kind="class" language="C++" prot="public">
+    <compoundname>class_h5table_simulation_status</compoundname>
+    <includes refid="table__types_8h" local="no">table_types.h</includes>
+    <innerclass refid="structclass__h5table__simulation__status_1_1meta__struct" prot="private">class_h5table_simulation_status::meta_struct</innerclass>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classclass__h5table__simulation__status_1aef8447b794fdb5c15e799c2350b1b388" prot="public" static="no" mutable="no">
+        <type><ref refid="structclass__h5table__simulation__status_1_1meta__struct" kindref="compound">meta_struct</ref></type>
+        <definition>meta_struct class_h5table_simulation_status::meta</definition>
+        <argsstring></argsstring>
+        <name>meta</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="598" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="598" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__simulation__status_1a13659afe650ebaabf69fae8e2d0dd671" prot="public" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structstatus__data" kindref="compound">status_data</ref> &gt;</type>
+        <definition>std::vector&lt;status_data&gt; class_h5table_simulation_status::buffer</definition>
+        <argsstring></argsstring>
+        <name>buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="599" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="599" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__h5table__simulation__status_1a77a875a7d54e2b2a13f847d639fd6819" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_h5table_simulation_status::class_h5table_simulation_status</definition>
+        <argsstring>()=default</argsstring>
+        <name>class_h5table_simulation_status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="597" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="196">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="192">
+        <label>std::vector&lt; status_data &gt;</label>
+        <childnode refid="193" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="194">
+        <label>class_h5table_simulation_status::meta_struct</label>
+        <link refid="structclass__h5table__simulation__status_1_1meta__struct"/>
+        <childnode refid="195" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="196" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="197" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="191">
+        <label>class_h5table_simulation_status</label>
+        <link refid="classclass__h5table__simulation__status"/>
+        <childnode refid="192" relation="usage">
+          <edgelabel>buffer</edgelabel>
+        </childnode>
+        <childnode refid="194" relation="usage">
+          <edgelabel>meta</edgelabel>
+        </childnode>
+      </node>
+      <node id="197">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="193">
+        <label>status_data</label>
+        <link refid="structstatus__data"/>
+      </node>
+      <node id="195">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="411" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="411" bodyend="600"/>
+    <listofallmembers>
+      <member refid="classclass__h5table__simulation__status_1a13659afe650ebaabf69fae8e2d0dd671" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status</scope><name>buffer</name></member>
+      <member refid="classclass__h5table__simulation__status_1a77a875a7d54e2b2a13f847d639fd6819" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status</scope><name>class_h5table_simulation_status</name></member>
+      <member refid="classclass__h5table__simulation__status_1aef8447b794fdb5c15e799c2350b1b388" prot="public" virt="non-virtual"><scope>class_h5table_simulation_status</scope><name>meta</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

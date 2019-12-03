@@ -1,0 +1,296 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="h5pp__tmp_8cpp" kind="file" language="C++">
+    <compoundname>h5pp_tmp.cpp</compoundname>
+    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
+    <includes local="no">h5pp/h5pp.h</includes>
+    <includes local="no">filesystem</includes>
+    <includes local="no">fstream</includes>
+    <includes local="no">stdlib.h</includes>
+    <incdepgraph>
+      <node id="2562">
+        <label>list</label>
+      </node>
+      <node id="2574">
+        <label>filesystem</label>
+      </node>
+      <node id="2576">
+        <label>stdlib.h</label>
+      </node>
+      <node id="2571">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2556">
+        <label>string</label>
+      </node>
+      <node id="2566">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2567" relation="include">
+        </childnode>
+        <childnode refid="2568" relation="include">
+        </childnode>
+      </node>
+      <node id="2563">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2564" relation="include">
+        </childnode>
+        <childnode refid="2565" relation="include">
+        </childnode>
+      </node>
+      <node id="2559">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2560" relation="include">
+        </childnode>
+        <childnode refid="2556" relation="include">
+        </childnode>
+        <childnode refid="2561" relation="include">
+        </childnode>
+        <childnode refid="2562" relation="include">
+        </childnode>
+        <childnode refid="2557" relation="include">
+        </childnode>
+        <childnode refid="2563" relation="include">
+        </childnode>
+        <childnode refid="2566" relation="include">
+        </childnode>
+        <childnode refid="2569" relation="include">
+        </childnode>
+        <childnode refid="2571" relation="include">
+        </childnode>
+        <childnode refid="2572" relation="include">
+        </childnode>
+      </node>
+      <node id="2572">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2575">
+        <label>fstream</label>
+      </node>
+      <node id="2565">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="2558">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="2569">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="2568" relation="include">
+        </childnode>
+        <childnode refid="2570" relation="include">
+        </childnode>
+      </node>
+      <node id="2564">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="2557">
+        <label>vector</label>
+      </node>
+      <node id="2570">
+        <label>sstream</label>
+      </node>
+      <node id="2554">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp</label>
+        <link refid="h5pp__tmp_8cpp"/>
+        <childnode refid="2555" relation="include">
+        </childnode>
+        <childnode refid="2559" relation="include">
+        </childnode>
+        <childnode refid="2573" relation="include">
+        </childnode>
+        <childnode refid="2574" relation="include">
+        </childnode>
+        <childnode refid="2575" relation="include">
+        </childnode>
+        <childnode refid="2576" relation="include">
+        </childnode>
+      </node>
+      <node id="2573">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="2568">
+        <label>iostream</label>
+      </node>
+      <node id="2567">
+        <label>chrono</label>
+      </node>
+      <node id="2561">
+        <label>complex</label>
+      </node>
+      <node id="2555">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2556" relation="include">
+        </childnode>
+        <childnode refid="2557" relation="include">
+        </childnode>
+        <childnode refid="2558" relation="include">
+        </childnode>
+      </node>
+      <node id="2560">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string get_dirname</definition>
+        <argsstring>()</argsstring>
+        <name>get_dirname</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="12" bodyend="14"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-11-07.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;filesystem&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;fstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fs<sp/>=<sp/>std::filesystem;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" refkind="member"><highlight class="normal">std::string<sp/><ref refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" kindref="member">get_dirname</ref>(){</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;DMRG.&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(getenv(</highlight><highlight class="stringliteral">&quot;USER&quot;</highlight><highlight class="normal">))<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ae0178ac04369bbdddf243e45a8f268ae" refkind="member"><highlight class="normal">std::string<sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ae0178ac04369bbdddf243e45a8f268ae" kindref="member">tools::common::io::h5tmp::set_tmp_prefix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;<ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">output_filename</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/>temp_path;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(<ref refid="namespacesettings_1_1output_1a006e3b72fb5727906ffe8acbb3b3eb2c" kindref="member">settings::output::temp_dir</ref>))</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>temp_path<sp/>=<sp/><ref refid="namespacesettings_1_1output_1a006e3b72fb5727906ffe8acbb3b3eb2c" kindref="member">settings::output::temp_dir</ref>/<sp/>fs::path(<ref refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" kindref="member">get_dirname</ref>());</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>temp_path<sp/>=<sp/>fs::temp_directory_path()<sp/>/<sp/>fs::path(<ref refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" kindref="member">get_dirname</ref>());</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string::size_type<sp/>pos<sp/>=<sp/>output_filename.find(temp_path.string());</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pos<sp/>!=<sp/>std::string::npos){</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">output_filename</ref>;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>h5pp_path1<sp/>=<sp/>fs::absolute(output_filename);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>h5pp_path2<sp/>=<sp/>temp_path<sp/>/<sp/>fs::relative(h5pp_path1,fs::current_path());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>h5pp_path3<sp/>=<sp/>temp_path<sp/>/<sp/>fs::relative(output_filename,fs::current_path());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>h5pp_path4<sp/>=<sp/>temp_path<sp/>/<sp/>output_filename;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>h5pp_path5<sp/>=<sp/>fs::absolute(temp_path<sp/>/<sp/>output_filename);</highlight></codeline>
+<codeline lineno="33"><highlight class="comment"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>h5pp_path7<sp/>=<sp/>fs::relative(temp_path<sp/>/<sp/>output_filename);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;path1:<sp/>&quot;&lt;&lt;<sp/>h5pp_path1<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;path2:<sp/>&quot;&lt;&lt;<sp/>h5pp_path2<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;path3:<sp/>&quot;&lt;&lt;<sp/>h5pp_path3<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;path4:<sp/>&quot;&lt;&lt;<sp/>h5pp_path4<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;path5:<sp/>&quot;&lt;&lt;<sp/>h5pp_path5<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="40"><highlight class="comment"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;path7:<sp/>&quot;&lt;&lt;<sp/>h5pp_path7<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>exit(0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::absolute(temp_path<sp/>/<sp/>output_filename);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a4c3d2d889bd2dca9bbfa4ca8558c60be" refkind="member"><highlight class="normal">std::string<sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a4c3d2d889bd2dca9bbfa4ca8558c60be" kindref="member">tools::common::io::h5tmp::unset_tmp_prefix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;<ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">output_filename</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/>temp_path;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(<ref refid="namespacesettings_1_1output_1a006e3b72fb5727906ffe8acbb3b3eb2c" kindref="member">settings::output::temp_dir</ref>))</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>temp_path<sp/>=<sp/><ref refid="namespacesettings_1_1output_1a006e3b72fb5727906ffe8acbb3b3eb2c" kindref="member">settings::output::temp_dir</ref>/<sp/>fs::path(<ref refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" kindref="member">get_dirname</ref>());</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>temp_path<sp/>=<sp/>fs::temp_directory_path()<sp/>/<sp/>fs::path(<ref refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" kindref="member">get_dirname</ref>());</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string::size_type<sp/>pos<sp/>=<sp/>output_filename.find(temp_path.string());</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pos<sp/>!=<sp/>std::string::npos){</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>new_filename<sp/>=<sp/><ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">output_filename</ref>;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>new_filename.erase(pos,<sp/>temp_path.string().length());</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::current_path()<sp/>/<sp/>fs::path(new_filename);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">output_filename</ref>;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65" refid="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" kindref="member">tools::common::io::h5tmp::create_directory</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;<sp/>path){</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(path.empty())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref><sp/>==<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(spdlog::get(</highlight><highlight class="stringliteral">&quot;DMRG&quot;</highlight><highlight class="normal">)<sp/>==<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">)</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref><sp/>=<sp/>spdlog::default_logger();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref><sp/>=<sp/>spdlog::get(</highlight><highlight class="stringliteral">&quot;DMRG&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/>dir<sp/>=<sp/>fs::absolute(path);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(dir.has_filename()<sp/>and<sp/>dir.has_extension())<sp/>dir<sp/>=<sp/>dir.parent_path();</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(fs::create_directories(dir)){</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Created<sp/>directory:<sp/>{}&quot;</highlight><highlight class="normal">,dir.string());</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Directory<sp/>already<sp/>exists:<sp/>{}&quot;</highlight><highlight class="normal">,dir.string());</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;<sp/>ex){</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Failed<sp/>to<sp/>create<sp/>directory:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(ex.what()));</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a555a0b980c2c3ea1d028bec935f3e43b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a555a0b980c2c3ea1d028bec935f3e43b" kindref="member">tools::common::io::h5tmp::copy_from_tmp</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;<ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">output_filename</ref>){</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(output_filename.empty())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/>target_path<sp/>=<sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a4c3d2d889bd2dca9bbfa4ca8558c60be" kindref="member">unset_tmp_prefix</ref>(output_filename);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/>source_path<sp/>=<sp/><ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">output_filename</ref>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(target_path<sp/>==<sp/>source_path)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/>fs::exists(target_path.parent_path())){</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" kindref="member">tools::common::io::h5tmp::create_directory</ref>(target_path);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(target_path)){</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::ifstream<sp/>target_stream(target_path.string(),<sp/>std::ios_base::binary);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::ifstream<sp/>source_stream(source_path.string(),<sp/>std::ios_base::binary);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::istreambuf_iterator&lt;char&gt;<sp/>isbuf_it;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::equal(isbuf_it(target_stream.rdbuf()),<sp/>isbuf_it(),</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>isbuf_it(source_stream.rdbuf()),<sp/>isbuf_it()))</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Source<sp/>and<sp/>target<sp/>files<sp/>are<sp/>equal...<sp/>Skipping<sp/>copy&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Copying<sp/>hdf5<sp/>file<sp/>to<sp/>target<sp/>path:<sp/>{}<sp/>-&gt;<sp/>{}&quot;</highlight><highlight class="normal">,source_path.string(),<sp/>target_path.string());</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::copy(source_path,<sp/>target_path,<sp/>fs::copy_options::update_existing);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ab4d70b7a679a8246d3750d1fbe627569" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ab4d70b7a679a8246d3750d1fbe627569" kindref="member">tools::common::io::h5tmp::remove_from_temp</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" kindref="member">output_filename</ref>){</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(output_filename.empty())<sp/>{std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Nothing<sp/>to<sp/>delete&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>std::endl<sp/>&lt;&lt;<sp/>std::flush;<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/>temp_path;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(<ref refid="namespacesettings_1_1output_1a006e3b72fb5727906ffe8acbb3b3eb2c" kindref="member">settings::output::temp_dir</ref>))</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>temp_path<sp/>=<sp/><ref refid="namespacesettings_1_1output_1a006e3b72fb5727906ffe8acbb3b3eb2c" kindref="member">settings::output::temp_dir</ref><sp/>/<sp/>fs::path(<ref refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" kindref="member">get_dirname</ref>());</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>temp_path<sp/>=<sp/>fs::temp_directory_path()<sp/>/<sp/>fs::path(<ref refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" kindref="member">get_dirname</ref>());</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string::size_type<sp/>pos<sp/>=<sp/>output_filename.find(temp_path.string());</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pos<sp/>!=<sp/>std::string::npos){</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Path<sp/>points<sp/>to<sp/>the<sp/>temp<sp/>directory!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(output_filename)){</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Deleting<sp/>temporary<sp/>file:<sp/>{}&quot;</highlight><highlight class="normal">,output_filename);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::remove(output_filename);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Nothing<sp/>to<sp/>delete&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Temp<sp/>file<sp/>is<sp/>disabled<sp/>-<sp/>nothing<sp/>to<sp/>delete&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp"/>
+  </compounddef>
+</doxygen>

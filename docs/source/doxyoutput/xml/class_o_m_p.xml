@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class_o_m_p" kind="class" language="C++" prot="public">
+    <compoundname>OMP</compoundname>
+    <includes refid="nmspc__omp_8h" local="no">nmspc_omp.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_o_m_p_1a1214ed3d0993b64a994b78f26fc0caf7" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t OMP::num_threads</definition>
+        <argsstring></argsstring>
+        <name>num_threads</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_omp.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_omp.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" prot="public" static="no" mutable="no">
+        <type>Eigen::DefaultDevice</type>
+        <definition>Eigen::DefaultDevice OMP::dev</definition>
+        <argsstring></argsstring>
+        <name>dev</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_omp.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_omp.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_o_m_p_1a0f81be91c24a8f9abc4dc1f2fff1feae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>OMP::OMP</definition>
+        <argsstring>(size_t num_threads_)</argsstring>
+        <name>OMP</name>
+        <param>
+          <type>size_t</type>
+          <declname>num_threads_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_omp.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_omp.h" bodystart="28" bodyend="30"/>
+        <references refid="class_o_m_p_1a1214ed3d0993b64a994b78f26fc0caf7" compoundref="nmspc__omp_8h" startline="17">num_threads</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_omp.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_omp.h" bodystart="15" bodyend="33"/>
+    <listofallmembers>
+      <member refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" prot="public" virt="non-virtual"><scope>OMP</scope><name>dev</name></member>
+      <member refid="class_o_m_p_1a1214ed3d0993b64a994b78f26fc0caf7" prot="public" virt="non-virtual"><scope>OMP</scope><name>num_threads</name></member>
+      <member refid="class_o_m_p_1a0f81be91c24a8f9abc4dc1f2fff1feae" prot="public" virt="non-virtual"><scope>OMP</scope><name>OMP</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

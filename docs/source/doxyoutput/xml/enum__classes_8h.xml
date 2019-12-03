@@ -1,0 +1,445 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="enum__classes_8h" kind="file" language="C++">
+    <compoundname>enum_classes.h</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">sstream</includes>
+    <includedby refid="nmspc__tools_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h</includedby>
+    <includedby refid="enum__classes_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.cpp</includedby>
+    <incdepgraph>
+      <node id="3407">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="3408" relation="include">
+        </childnode>
+        <childnode refid="3409" relation="include">
+        </childnode>
+      </node>
+      <node id="3409">
+        <label>sstream</label>
+      </node>
+      <node id="3408">
+        <label>iostream</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3416">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
+        <link refid="class__f_d_m_r_g_8cpp"/>
+      </node>
+      <node id="3444">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_tables.cpp</label>
+        <link refid="finite_2io_2h5pp__tables_8cpp"/>
+      </node>
+      <node id="3424">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp</label>
+        <link refid="ceres__direct__functor_8cpp"/>
+      </node>
+      <node id="3414">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
+        <link refid="class__algorithm__infinite_8cpp"/>
+      </node>
+      <node id="3427">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp</label>
+        <link refid="ceres__subspace__functor_8cpp"/>
+      </node>
+      <node id="3447">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</label>
+        <link refid="mps-internals_8cpp"/>
+      </node>
+      <node id="3450">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
+        <link refid="ops_8cpp"/>
+      </node>
+      <node id="3421">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp</label>
+        <link refid="ceres__base_8cpp"/>
+      </node>
+      <node id="3445">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
+        <link refid="finite_2measure_8cpp"/>
+      </node>
+      <node id="3431">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
+        <link refid="finite_2opt_8cpp"/>
+      </node>
+      <node id="3433">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
+        <link refid="class__mps__2site_8cpp"/>
+      </node>
+      <node id="3434">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.cpp</label>
+        <link refid="class__state__finite_8cpp"/>
+      </node>
+      <node id="3456">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="3452">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
+        <link refid="infinite_2debug_8cpp"/>
+      </node>
+      <node id="3437">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp</label>
+        <link refid="common_2io_2h5pp__tables_8cpp"/>
+      </node>
+      <node id="3435">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
+      </node>
+      <node id="3430">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp</label>
+        <link refid="report_8cpp"/>
+      </node>
+      <node id="3439">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/prof.cpp</label>
+        <link refid="prof_8cpp"/>
+      </node>
+      <node id="3440">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="3454">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
+        <link refid="infinite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="3418">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
+        <link refid="class__i_t_e_b_d_8cpp"/>
+      </node>
+      <node id="3411">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="3412" relation="include">
+        </childnode>
+        <childnode refid="3413" relation="include">
+        </childnode>
+        <childnode refid="3414" relation="include">
+        </childnode>
+        <childnode refid="3415" relation="include">
+        </childnode>
+        <childnode refid="3416" relation="include">
+        </childnode>
+        <childnode refid="3417" relation="include">
+        </childnode>
+        <childnode refid="3418" relation="include">
+        </childnode>
+        <childnode refid="3419" relation="include">
+        </childnode>
+        <childnode refid="3420" relation="include">
+        </childnode>
+        <childnode refid="3433" relation="include">
+        </childnode>
+        <childnode refid="3434" relation="include">
+        </childnode>
+        <childnode refid="3435" relation="include">
+        </childnode>
+        <childnode refid="3436" relation="include">
+        </childnode>
+        <childnode refid="3437" relation="include">
+        </childnode>
+        <childnode refid="3438" relation="include">
+        </childnode>
+        <childnode refid="3439" relation="include">
+        </childnode>
+        <childnode refid="3440" relation="include">
+        </childnode>
+        <childnode refid="3441" relation="include">
+        </childnode>
+        <childnode refid="3442" relation="include">
+        </childnode>
+        <childnode refid="3443" relation="include">
+        </childnode>
+        <childnode refid="3444" relation="include">
+        </childnode>
+        <childnode refid="3445" relation="include">
+        </childnode>
+        <childnode refid="3446" relation="include">
+        </childnode>
+        <childnode refid="3447" relation="include">
+        </childnode>
+        <childnode refid="3448" relation="include">
+        </childnode>
+        <childnode refid="3449" relation="include">
+        </childnode>
+        <childnode refid="3450" relation="include">
+        </childnode>
+        <childnode refid="3451" relation="include">
+        </childnode>
+        <childnode refid="3452" relation="include">
+        </childnode>
+        <childnode refid="3453" relation="include">
+        </childnode>
+        <childnode refid="3454" relation="include">
+        </childnode>
+        <childnode refid="3455" relation="include">
+        </childnode>
+        <childnode refid="3456" relation="include">
+        </childnode>
+        <childnode refid="3457" relation="include">
+        </childnode>
+        <childnode refid="3458" relation="include">
+        </childnode>
+        <childnode refid="3459" relation="include">
+        </childnode>
+        <childnode refid="3460" relation="include">
+        </childnode>
+      </node>
+      <node id="3451">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp</label>
+        <link refid="finite_2print_8cpp"/>
+      </node>
+      <node id="3422">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h</label>
+        <link refid="ceres__direct__functor_8h"/>
+        <childnode refid="3423" relation="include">
+        </childnode>
+        <childnode refid="3424" relation="include">
+        </childnode>
+      </node>
+      <node id="3442">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
+        <link refid="finite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="3443">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_restore.cpp</label>
+        <link refid="h5pp__restore_8cpp"/>
+      </node>
+      <node id="3413">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
+        <link refid="class__algorithm__finite_8cpp"/>
+      </node>
+      <node id="3419">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
+        <link refid="class__x_d_m_r_g_8cpp"/>
+      </node>
+      <node id="3455">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp</label>
+        <link refid="infinite_2io_2h5pp__tables_8cpp"/>
+      </node>
+      <node id="3410">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="3411" relation="include">
+        </childnode>
+        <childnode refid="3461" relation="include">
+        </childnode>
+      </node>
+      <node id="3415">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
+        <link refid="class__algorithm__launcher_8cpp"/>
+      </node>
+      <node id="3420">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h</label>
+        <link refid="opt_8h"/>
+        <childnode refid="3419" relation="include">
+        </childnode>
+        <childnode refid="3421" relation="include">
+        </childnode>
+        <childnode refid="3422" relation="include">
+        </childnode>
+        <childnode refid="3425" relation="include">
+        </childnode>
+        <childnode refid="3426" relation="include">
+        </childnode>
+        <childnode refid="3428" relation="include">
+        </childnode>
+        <childnode refid="3429" relation="include">
+        </childnode>
+        <childnode refid="3430" relation="include">
+        </childnode>
+        <childnode refid="3431" relation="include">
+        </childnode>
+        <childnode refid="3432" relation="include">
+        </childnode>
+      </node>
+      <node id="3446">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</label>
+        <link refid="finite_2mpo_8cpp"/>
+      </node>
+      <node id="3428">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp</label>
+        <link refid="ceres__subspace__hamiltonian_8cpp"/>
+      </node>
+      <node id="3423">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp</label>
+        <link refid="ceres__direct_8cpp"/>
+      </node>
+      <node id="3438">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp</label>
+        <link refid="h5pp__tmp_8cpp"/>
+      </node>
+      <node id="3458">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
+        <link refid="infinite_2mps_8cpp"/>
+      </node>
+      <node id="3453">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
+        <link refid="env_8cpp"/>
+      </node>
+      <node id="3426">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
+      </node>
+      <node id="3417">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
+        <link refid="class__i_d_m_r_g_8cpp"/>
+      </node>
+      <node id="3461">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.cpp</label>
+        <link refid="enum__classes_8cpp"/>
+      </node>
+      <node id="3412">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
+        <link refid="class__algorithm__base_8cpp"/>
+      </node>
+      <node id="3425">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h</label>
+        <link refid="ceres__subspace__functor_8h"/>
+        <childnode refid="3426" relation="include">
+        </childnode>
+        <childnode refid="3427" relation="include">
+        </childnode>
+      </node>
+      <node id="3436">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp.cpp</label>
+        <link refid="common_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="3441">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/debug.cpp</label>
+        <link refid="finite_2debug_8cpp"/>
+      </node>
+      <node id="3432">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp</label>
+        <link refid="svd_8cpp"/>
+      </node>
+      <node id="3460">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</label>
+        <link refid="infinite_2print_8cpp"/>
+      </node>
+      <node id="3449">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp</label>
+        <link refid="multisite_8cpp"/>
+      </node>
+      <node id="3457">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mpo.cpp</label>
+        <link refid="infinite_2mpo_8cpp"/>
+      </node>
+      <node id="3429">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
+        <link refid="ground__state_8cpp"/>
+      </node>
+      <node id="3448">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</label>
+        <link refid="finite_2mps_8cpp"/>
+      </node>
+      <node id="3459">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" prot="public">tools::finite::opt::internal::EnumBase</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" prot="public">tools::finite::opt::internal::EnumBase</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1_opt_type" prot="public">tools::finite::opt::OptType</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1_opt_mode" prot="public">tools::finite::opt::OptMode</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1_opt_space" prot="public">tools::finite::opt::OptSpace</innerclass>
+    <innernamespace refid="namespacetools_1_1finite_1_1opt">tools::finite::opt</innernamespace>
+    <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internal">tools::finite::opt::internal</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-10-03.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt" kindref="compound">tools::finite::opt</ref>{</highlight></codeline>
+<codeline lineno="9" refid="namespacetools_1_1finite_1_1opt_1_1internal" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">internal{</highlight></codeline>
+<codeline lineno="10" refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" kindref="member">EnumType</ref><sp/><sp/>{<ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a8cf125b0e31559ba75a9d9b4f818a554" kindref="member">REAL</ref>,<ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a958448d4909b92010c81d52d3e6ad8f1" kindref="member">CPLX</ref>};</highlight></codeline>
+<codeline lineno="11" refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" kindref="member">EnumMode</ref><sp/><sp/>{<ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6afa8c009c8dd4d4f9dde7515c00d5cd4661" kindref="member">OVERLAP</ref>,<ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6aface18bb9a2b22515d0cd36bca6b998bde" kindref="member">VARIANCE</ref>};</highlight></codeline>
+<codeline lineno="12" refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" kindref="member">EnumSpace</ref><sp/>{<ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda75420cb18c5b572ad779b8c95d797cf6" kindref="member">SUBSPACE</ref>,<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda4c5d06b02c97731aaa976179c62dcf76" kindref="member">DIRECT</ref>};</highlight></codeline>
+<codeline lineno="13" refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnumClass&gt;<sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" kindref="compound">EnumBase</ref>;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="15" refid="namespacetools_1_1finite_1_1opt_1ae35515274866257a855a33ab7dc8bb80" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" kindref="member">TYPE</ref><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" kindref="member">internal::EnumType</ref>;</highlight></codeline>
+<codeline lineno="16" refid="namespacetools_1_1finite_1_1opt_1a0b2956d35117c36c11852c2c0a2eee7a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" kindref="member">MODE</ref><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" kindref="member">internal::EnumMode</ref>;</highlight></codeline>
+<codeline lineno="17" refid="namespacetools_1_1finite_1_1opt_1ad00e08ddbb75e97eaf7792bf2146a62a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" kindref="member">SPACE</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" kindref="member">internal::EnumSpace</ref>;</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1_opt_space" kindref="compound">OptSpace</ref>;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref><sp/>;</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1_opt_mode" kindref="compound">OptMode</ref><sp/>;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>EnumClass&gt;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" kindref="compound">tools::finite::opt::internal::EnumBase</ref>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print(std::ostream&amp;<sp/>str)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="30" refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1aac4e872b873faefdc5bef1184688227e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>EnumClass<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1aac4e872b873faefdc5bef1184688227e" kindref="member">option</ref>;</highlight></codeline>
+<codeline lineno="31" refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1afe1c3eb290c37626ec927d322fb5b03c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1afe1c3eb290c37626ec927d322fb5b03c" kindref="member">EnumBase</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>EnumClass<sp/>&amp;enumVal):option(enumVal){};</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1ab815170ca075be9164af300e72dcc479" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>operator=<sp/>(EnumClass<sp/>enumVal){</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>option<sp/>=<sp/>enumVal;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a54253bafd2d611206bb376d751feb2f1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>operator==<sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>EnumClass<sp/>&amp;enumVal)</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>option<sp/>==<sp/>enumVal;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a6dcac3d0e69bfe019f43d463914e7f4c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">friend</highlight><highlight class="normal"><sp/>std::ostream&amp;<sp/>operator&lt;&lt;(std::ostream&amp;<sp/>str,<sp/>const<sp/>EnumBase&lt;EnumClass&gt;<sp/>&amp;base){</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>base.print(str);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>str;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="45" refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a588c655990c13ee77d6d6ba30dafa93a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>[[nodiscard]]<sp/>std::string<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a588c655990c13ee77d6d6ba30dafa93a" kindref="member">str</ref>()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::stringstream<sp/>ss;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ss<sp/>&lt;&lt;<sp/>*</highlight><highlight class="keyword">this</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ss.str();</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a7ef86eb5f970bb0b9ab0738f2a1ac00f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">operator</highlight><highlight class="normal"><sp/>std::string()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>str();</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="classtools_1_1finite_1_1opt_1_1_opt_type" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">tools::finite::opt::OptType</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" kindref="compound">tools::finite::opt::internal::EnumBase</ref>&lt;opt::TYPE&gt;{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1afe1c3eb290c37626ec927d322fb5b03c" kindref="member">EnumBase::EnumBase</ref>;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>EnumBase::operator=;</highlight></codeline>
+<codeline lineno="61" refid="classtools_1_1finite_1_1opt_1_1_opt_type_1a46da620f03fe4ca6f910b1aea6468718" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" kindref="member">opt::TYPE</ref><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a8cf125b0e31559ba75a9d9b4f818a554" kindref="member">REAL</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a8cf125b0e31559ba75a9d9b4f818a554" kindref="member">opt::TYPE::REAL</ref><sp/>;</highlight></codeline>
+<codeline lineno="62" refid="classtools_1_1finite_1_1opt_1_1_opt_type_1af2130e40a3d02d53d4d37937c114e1ba" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" kindref="member">opt::TYPE</ref><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a958448d4909b92010c81d52d3e6ad8f1" kindref="member">CPLX</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a958448d4909b92010c81d52d3e6ad8f1" kindref="member">opt::TYPE::CPLX</ref>;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print(std::ostream&amp;<sp/>str)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="classtools_1_1finite_1_1opt_1_1_opt_mode" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1_opt_mode" kindref="compound">tools::finite::opt::OptMode</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" kindref="compound">tools::finite::opt::internal::EnumBase</ref>&lt;opt::MODE&gt;{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1afe1c3eb290c37626ec927d322fb5b03c" kindref="member">EnumBase::EnumBase</ref>;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>EnumBase::operator=;</highlight></codeline>
+<codeline lineno="72" refid="classtools_1_1finite_1_1opt_1_1_opt_mode_1af6ceddf328f9ada747dd06117ca6ecda" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" kindref="member">opt::MODE</ref><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6afa8c009c8dd4d4f9dde7515c00d5cd4661" kindref="member">OVERLAP</ref><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6afa8c009c8dd4d4f9dde7515c00d5cd4661" kindref="member">opt::MODE::OVERLAP</ref><sp/>;</highlight></codeline>
+<codeline lineno="73" refid="classtools_1_1finite_1_1opt_1_1_opt_mode_1a908ded81e6b1e7cceb47acbba5bd87c0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" kindref="member">opt::MODE</ref><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6aface18bb9a2b22515d0cd36bca6b998bde" kindref="member">VARIANCE</ref><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6aface18bb9a2b22515d0cd36bca6b998bde" kindref="member">opt::MODE::VARIANCE</ref>;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print(std::ostream&amp;<sp/>str)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="classtools_1_1finite_1_1opt_1_1_opt_space" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1_opt_space" kindref="compound">tools::finite::opt::OptSpace</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" kindref="compound">tools::finite::opt::internal::EnumBase</ref>&lt;opt::SPACE&gt;{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1afe1c3eb290c37626ec927d322fb5b03c" kindref="member">EnumBase::EnumBase</ref>;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>EnumBase::operator=;</highlight></codeline>
+<codeline lineno="84" refid="classtools_1_1finite_1_1opt_1_1_opt_space_1a5541ed9df013f646537b516121d579a0" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" kindref="member">opt::SPACE</ref><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda75420cb18c5b572ad779b8c95d797cf6" kindref="member">SUBSPACE</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda75420cb18c5b572ad779b8c95d797cf6" kindref="member">opt::SPACE::SUBSPACE</ref>;</highlight></codeline>
+<codeline lineno="85" refid="classtools_1_1finite_1_1opt_1_1_opt_space_1a06a579869d457c3ac8f2e0585c983593" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>constexpr<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" kindref="member">opt::SPACE</ref><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda4c5d06b02c97731aaa976179c62dcf76" kindref="member">DIRECT</ref><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda4c5d06b02c97731aaa976179c62dcf76" kindref="member">opt::SPACE::DIRECT</ref>;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print(std::ostream&amp;<sp/>str)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h"/>
+  </compounddef>
+</doxygen>

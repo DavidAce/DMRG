@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classtools_1_1finite_1_1opt_1_1_opt_mode" kind="class" language="C++" prot="public">
+    <compoundname>tools::finite::opt::OptMode</compoundname>
+    <basecompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" prot="public" virt="non-virtual">tools::finite::opt::internal::EnumBase&lt; opt::MODE &gt;</basecompoundref>
+    <includes refid="enum__classes_8h" local="no">enum_classes.h</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1_opt_mode_1af6ceddf328f9ada747dd06117ca6ecda" prot="public" static="yes" mutable="no">
+        <type>constexpr <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" kindref="member">opt::MODE</ref></type>
+        <definition>constexpr opt::MODE tools::finite::opt::OptMode::OVERLAP</definition>
+        <argsstring></argsstring>
+        <name>OVERLAP</name>
+        <initializer>= opt::MODE::OVERLAP</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1_opt_mode_1a908ded81e6b1e7cceb47acbba5bd87c0" prot="public" static="yes" mutable="no">
+        <type>constexpr <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" kindref="member">opt::MODE</ref></type>
+        <definition>constexpr opt::MODE tools::finite::opt::OptMode::VARIANCE</definition>
+        <argsstring></argsstring>
+        <name>VARIANCE</name>
+        <initializer>= opt::MODE::VARIANCE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="73" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1_opt_mode_1a823652043858752e5a50dbcce8d08662" prot="private" static="no" const="yes" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::OptMode::print</definition>
+        <argsstring>(std::ostream &amp;str) const final</argsstring>
+        <name>print</name>
+        <reimplements refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1af318d333a73e048c634af53fb30ae83a">print</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.cpp" bodystart="15" bodyend="21"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1a4f7b1f67320c2a2a5788ff7633f2baee" compoundref="finite_2opt_8cpp" startline="82" endline="86">tools::finite::opt::find_ground_state</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6afa8c009c8dd4d4f9dde7515c00d5cd4661">tools::finite::opt::internal::OVERLAP</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6aface18bb9a2b22515d0cd36bca6b998bde">tools::finite::opt::internal::VARIANCE</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="444">
+        <label>tools::finite::opt::OptMode</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1_opt_mode"/>
+        <childnode refid="445" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="445">
+        <label>tools::finite::opt::internal::EnumBase&lt; opt::MODE &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="446">
+        <label>tools::finite::opt::OptMode</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1_opt_mode"/>
+        <childnode refid="447" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="447">
+        <label>tools::finite::opt::internal::EnumBase&lt; opt::MODE &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="68" bodyend="76"/>
+    <listofallmembers>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1afe1c3eb290c37626ec927d322fb5b03c" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptMode</scope><name>EnumBase</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a7ef86eb5f970bb0b9ab0738f2a1ac00f" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptMode</scope><name>operator std::string</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1ab815170ca075be9164af300e72dcc479" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptMode</scope><name>operator=</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a54253bafd2d611206bb376d751feb2f1" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptMode</scope><name>operator==</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1aac4e872b873faefdc5bef1184688227e" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptMode</scope><name>option</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_mode_1af6ceddf328f9ada747dd06117ca6ecda" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptMode</scope><name>OVERLAP</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_mode_1a823652043858752e5a50dbcce8d08662" prot="private" virt="virtual"><scope>tools::finite::opt::OptMode</scope><name>print</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a588c655990c13ee77d6d6ba30dafa93a" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptMode</scope><name>str</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_mode_1a908ded81e6b1e7cceb47acbba5bd87c0" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptMode</scope><name>VARIANCE</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

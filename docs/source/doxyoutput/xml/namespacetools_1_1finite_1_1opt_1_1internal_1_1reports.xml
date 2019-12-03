@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports" kind="namespace" language="C++">
+    <compoundname>tools::finite::opt::internal::reports</compoundname>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a8c5fe9d3bb7ff94200d294bf72d66674" prot="public" static="no">
+        <type>std::tuple&lt; std::string, int, double, std::complex&lt; double &gt;, double, double, int, int, double &gt;</type>
+        <definition>using tools::finite::opt::internal::reports::direct_opt_tuple = typedef std::tuple&lt;std::string,int,double,std::complex&lt;double&gt;,double,double,int,int,double&gt;</definition>
+        <argsstring></argsstring>
+        <name>direct_opt_tuple</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ab55fa2e5547db1b0676cacd1758b571d" prot="public" static="no">
+        <type>std::tuple&lt; std::string, int, double, double, double, double, int, int, double &gt;</type>
+        <definition>using tools::finite::opt::internal::reports::subspc_opt_tuple = typedef std::tuple&lt;std::string,int,double,double,double,double,int,int,double&gt;</definition>
+        <argsstring></argsstring>
+        <name>subspc_opt_tuple</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a08cf84da39b831b7544b918673507fca" prot="public" static="no">
+        <type>std::tuple&lt; double, double, double, double, double &gt;</type>
+        <definition>using tools::finite::opt::internal::reports::lbfgs_tuple = typedef std::tuple&lt;double,double,double,double,double&gt;</definition>
+        <argsstring></argsstring>
+        <name>lbfgs_tuple</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8cc0fb86f571fb919948fcd4741c4c8" prot="public" static="no">
+        <type>std::tuple&lt; int, double, double, double, double, double, double &gt;</type>
+        <definition>using tools::finite::opt::internal::reports::eig_tuple = typedef std::tuple&lt;int,double,double,double,double,double,double&gt;</definition>
+        <argsstring></argsstring>
+        <name>eig_tuple</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::print_report</definition>
+        <argsstring>(const std::vector&lt; direct_opt_tuple &gt; &amp;opt_log)</argsstring>
+        <name>print_report</name>
+        <param>
+          <type>const std::vector&lt; <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a8c5fe9d3bb7ff94200d294bf72d66674" kindref="member">direct_opt_tuple</ref> &gt; &amp;</type>
+          <declname>opt_log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp" bodystart="7" bodyend="38"/>
+        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a722d9206b6ee1fcdc509586c0f5c2afd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::print_report</definition>
+        <argsstring>(const std::vector&lt; subspc_opt_tuple &gt; &amp;opt_log)</argsstring>
+        <name>print_report</name>
+        <param>
+          <type>const std::vector&lt; <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ab55fa2e5547db1b0676cacd1758b571d" kindref="member">subspc_opt_tuple</ref> &gt; &amp;</type>
+          <declname>opt_log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp" bodystart="41" bodyend="72"/>
+        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ac8d4282b81c3d70eb3741733c44ea678" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::print_report</definition>
+        <argsstring>(const std::vector&lt; eig_tuple &gt; &amp;eig_log)</argsstring>
+        <name>print_report</name>
+        <param>
+          <type>const std::vector&lt; <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8cc0fb86f571fb919948fcd4741c4c8" kindref="member">eig_tuple</ref> &gt; &amp;</type>
+          <declname>eig_log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="85" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp" bodystart="76" bodyend="103"/>
+        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a082052a5b98f556e373c29f2c0770e0a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::internal::reports::print_report</definition>
+        <argsstring>(const lbfgs_tuple lbfgs_log)</argsstring>
+        <name>print_report</name>
+        <param>
+          <type>const <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a08cf84da39b831b7544b918673507fca" kindref="member">lbfgs_tuple</ref></type>
+          <declname>lbfgs_log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="86" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp" bodystart="108" bodyend="140"/>
+        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="77" column="1"/>
+  </compounddef>
+</doxygen>
