@@ -18,6 +18,7 @@ option(ENABLE_COTIRE      "Use cotire to speed up compilation"                  
 option(ENABLE_OPENMP      "Use OpenMP"                                          OFF)
 option(USE_MKL            "Use Intel MKL libraries"                             ON )
 option(ENABLE_LTO         "Enable link time optimization"                       OFF)
+
 #################################################################
 ### Set default policies if CMake is new enough               ###
 #################################################################
@@ -240,20 +241,6 @@ endif()
 
 
 
-##############################################
-###  Optional OpenMP support               ###
-###  Note that Clang has some              ###
-###  trouble with static openmp            ###
-###  Also, installing libiomp5 might help  ###
-###  for shared linking.                   ###
-##############################################
-include(cmake-modules/CheckOMPCompiles.cmake)
-if(ENABLE_OPENMP AND TARGET OpenMP)
-    message(STATUS "Enabling OpenMP")
-    target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP)
-else()
-    list(APPEND COMMON_OPTIONS -Wno-unknown-pragmas)
-endif()
 
 
 ###########################################
@@ -277,6 +264,23 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
     target_link_libraries(project-settings INTERFACE  -lstdc++fs)
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     target_link_libraries(project-settings INTERFACE  -stdlib=libstdc++ -lstdc++fs )
+endif()
+
+
+
+###  Optional OpenMP support
+###  Note that Clang has some  trouble with static openmp and that
+###  and that static openmp is not recommended. This tries to enable
+###  static openmp anyway because I find it useful. Installing
+###  libiomp5 might help for shared linking.
+if(ENABLE_OPENMP)
+    include(cmake-modules/FindPackageOpenMP.cmake)
+    find_package_openmp()
+    if(TARGET OpenMP)
+        target_link_libraries(project-settings INTERFACE OpenMP)
+    else()
+        target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
+    endif()
 endif()
 
 
