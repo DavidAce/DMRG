@@ -3,7 +3,7 @@ project(external-ceres)
 include(ExternalProject)
 ExternalProject_Add(external_ceres
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
-        GIT_TAG "848c1f90c0bdd0850f424955650733b273cb8788"
+        GIT_TAG 1.14.0
         GIT_PROGRESS false
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/ceres
