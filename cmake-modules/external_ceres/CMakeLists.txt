@@ -5,6 +5,7 @@ ExternalProject_Add(external_ceres
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
         GIT_TAG "edd54b83e17084b861c012f57c26b3574726b03d"
         GIT_PROGRESS false
+        GIT_SHALLOW true
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/ceres
         #            TEST_COMMAND ${CMAKE_MAKE_PROGRAM} -j test
