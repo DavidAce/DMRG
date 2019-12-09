@@ -1,7 +1,8 @@
 //
 // Created by david on 2019-07-15.
 //
-
+#define EIGEN_DONT_ALIGN_STATICALLY
+#define EIGEN_DONT_VECTORIZE
 #include <general/nmspc_omp.h> // For multithreaded computation
 #include "ceres_direct_functor.h"
 #include <state/class_state_finite.h>

@@ -1,7 +1,8 @@
 //
 // Created by david on 2019-07-15.
 //
-
+#define EIGEN_DONT_ALIGN_STATICALLY
+#define EIGEN_DONT_VECTORIZE
 #include "ceres_subspace_functor.h"
 #include <Eigen/Core>
 #include <iostream>

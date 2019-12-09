@@ -1,6 +1,8 @@
 //
 // Created by david on 2019-03-18.
 //
+#define EIGEN_DONT_ALIGN_STATICALLY
+#define EIGEN_DONT_VECTORIZE
 #include <string>
 #include <tools/finite/opt.h>
 #include <state/class_state_finite.h>

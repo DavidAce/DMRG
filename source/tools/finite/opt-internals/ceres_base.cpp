@@ -1,7 +1,8 @@
 //
 // Created by david on 2019-07-09.
 //
-
+#define EIGEN_DONT_ALIGN_STATICALLY
+#define EIGEN_DONT_VECTORIZE
 #include <general/class_tic_toc.h>
 #include <simulation/class_simulation_status.h>
 #include <tools/finite/opt.h>
