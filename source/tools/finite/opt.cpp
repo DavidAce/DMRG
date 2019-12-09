@@ -2,12 +2,10 @@
 // Created by david on 2019-03-18.
 //
 #include <string>
-#include <sstream>
 #include <tools/finite/opt.h>
 #include <state/class_state_finite.h>
 #include <simulation/class_simulation_status.h>
 #include <model/class_model_base.h>
-#include <simulation/nmspc_settings.h>
 #include <glog/logging.h>
 
 Eigen::Tensor<class_state_finite::Scalar,3>
@@ -77,6 +75,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
         case opt::SPACE::SUBSPACE:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode);
         case opt::SPACE::DIRECT:      return internal::ceres_direct_optimization(state,sim_status, optType);
     }
+    throw std::logic_error("No valid optimization type given");
 }
 
 Eigen::Tensor<std::complex<double>,4> tools::finite::opt::find_ground_state(
