@@ -128,16 +128,14 @@ void SparseMatrixProduct<Scalar>::FactorOP()
 
 {   if(readyFactorOp){return;}
     assert(readyShift and "Shift value sigma has not been set.");
-    Scalar sigma;
     t_factorOp.tic();
     if constexpr(std::is_same<Scalar,double>::value)
     {
-        sigma = sigmaR;
         lu_dense.compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
     }
     else
     {
-        sigma = std::complex<double>(sigmaR,sigmaI);
+        Scalar sigma = std::complex<double>(sigmaR,sigmaI);
         lu_dense.compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     }
 

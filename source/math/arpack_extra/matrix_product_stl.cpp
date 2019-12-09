@@ -51,15 +51,13 @@ void StlMatrixProduct<Scalar>::FactorOP()
     Eigen::Map<const MatrixType<Scalar>> A_matrix (A_ptr,L,L);
     t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");
-    Scalar sigma;
     if constexpr(std::is_same<Scalar,double>::value)
     {
-        sigma = sigmaR;
         lu_real.compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
     }
     else
     {
-        sigma = std::complex<double>(sigmaR,sigmaI);
+        Scalar sigma = std::complex<double>(sigmaR,sigmaI);
         lu_cplx.compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     }
 
