@@ -70,13 +70,13 @@ if [ "$clear_cmake" = true ] ; then
     echo "Clearing CMake files from build."
 	rm -rf ./build
 fi
-
 if [ "$clear_libs" = true ] ; then
     build_lowercase=$(echo $build | tr '[:upper:]' '[:lower:]')
     echo "Clearing downloaded libraries: [ rm -rf ./libs-$build_lowercase ./build/$build/external-deps ]"
 	rm -rf ./libs-$build_lowercase ./build/$build/external-deps
 else
     for lib in "${clear_lib[@]}"; do
+        build_lowercase=$(echo $build | tr '[:upper:]' '[:lower:]')
         echo "Clearing downloaded libraries: [ rm -r ./libs-$build_lowercase/$lib ./build/$build/external-deps/$lib ]"
         rm -r ./libs-$build_lowercase/$lib ./build/$build/external-deps/$lib
     done
