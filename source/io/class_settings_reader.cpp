@@ -8,7 +8,7 @@
 namespace fs = tools::fs;
 
 
-class_settings_reader::class_settings_reader(const fs::path &file_path_,std::string logName): file_path(file_path_) {
+class_settings_reader::class_settings_reader(const std::string &file_path_,std::string logName): file_path(file_path_) {
     log = Logger::setLogger(logName,2,true);
     fs::path found_file =  find_input_file(file_path);
     std::ifstream          file;
