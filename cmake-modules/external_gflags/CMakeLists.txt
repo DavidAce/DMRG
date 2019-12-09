@@ -15,7 +15,6 @@ ExternalProject_Add(external_gflags
         -DGFLAGS_BUILD_SHARED_LIBS:BOOL=OFF
         -DGFLAGS_BUILD_STATIC_LIBS:BOOL=ON
         -DCMAKE_CXX_FLAGS=-fPIC
-        -DBUILD_gflags_nothreads_LIBS:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
         )

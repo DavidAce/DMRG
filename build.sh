@@ -129,7 +129,6 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     fi
 
 elif [[ "$HOSTNAME" == *"raken"* ]];then
-    module load CMake
     if [ "$mkl" = "ON" ] ; then
         module load imkl
     else
