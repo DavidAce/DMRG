@@ -20,7 +20,6 @@ public:
     virtual int NumParameters() const { return 2; }
 };
 
-
 int main(){
     google::InitGoogleLogging("ceres_pthread");
     double parameters[2] = {-1.2, 1.0};
