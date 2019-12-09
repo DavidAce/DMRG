@@ -48,7 +48,7 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long ran
     if (not A.allFinite())      throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if (A.isZero(0))            throw std::runtime_error("SVD error: matrix is all zeros");
 
-    int info   = 0;
+    [[maybe_unused]] int info   = 0;
     int rowsU  = (int) rows;
     int colsU  = (int) std::min(rows,cols);
     int rowsVT = (int) std::min(rows,cols);
