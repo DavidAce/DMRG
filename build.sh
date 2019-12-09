@@ -113,13 +113,13 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     conda activate dmrg
     module load buildenv-gcc/2018a-eb
     module load zlib
-    module load CMake/3.15.2
+#    module load CMake/3.15.2
 #    module load GCCcore
     if [ "$compiler" = "GNU" ] ; then
         export CC=gcc
         export CXX=g++
     elif [ "$compiler" = "Clang" ] ; then
-        module load Clang/8.0.0-GCCcore-8.2.0
+#        module load Clang/8.0.0-GCCcore-8.2.0
         if [ -z "$gcc_toolchain" ] ; then
             gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE
         fi
