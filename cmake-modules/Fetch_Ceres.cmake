@@ -33,7 +33,7 @@ else()
     elseif("${CMAKE_BUILD_TYPE}" MATCHES "RelWithDebInfo")
         set(CERES_FLAGS "${CERES_FLAGS} -O1 -g -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2")
     else()
-        set(CERES_FLAGS "${CERES_FLAGS} -O3 -DNDEBUG")
+        set(CERES_FLAGS "${CERES_FLAGS} -O3 -DNDEBUG -fstack-protector -D_FORTIFY_SOURCE=2")
     endif()
 
     set(CERES_FLAGS "${CERES_FLAGS} -I${GLOG_INCLUDE_DIR} -I${GFLAGS_INCLUDE_DIR} ")

@@ -18,7 +18,7 @@ function(build_dependency dep_name extra_flags)
             RESULT_VARIABLE config_result
     )
 
-    execute_process(COMMAND  ${CMAKE_COMMAND} --build . --target all  --parallel 8
+    execute_process(COMMAND  ${CMAKE_COMMAND} --build . --target all  --parallel
             WORKING_DIRECTORY "${build_dir}"
             RESULT_VARIABLE build_result
     )
