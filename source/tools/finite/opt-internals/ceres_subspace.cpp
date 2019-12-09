@@ -457,7 +457,8 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 
         Eigen::VectorXcd theta_new;
         double overlap_new  = 0;
-        double energy_new,variance_new,norm;
+        double energy_new,variance_new;
+        [[maybe_unused]] double norm;
         // Note that alpha_i = <theta_initial | theta_new_i> is not supposed to be squared!
 //        Eigen::VectorXcd theta_start      = (theta_initial_map.adjoint() * eigvecs).normalized()  ;
         Eigen::VectorXcd theta_start      = (eigvecs.adjoint() * theta_initial_map).normalized()  ;
