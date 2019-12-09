@@ -31,7 +31,7 @@ private:
 public:
     bool found_file = false;
     class_settings_reader() = default;
-    explicit class_settings_reader(const tools::fs::path &file_path_, std::string logName="DMRG");
+    explicit class_settings_reader(const std::string &file_path_, std::string logName="DMRG");
 
     std::string get_input_file_as_string();
     std::string get_input_filename();
