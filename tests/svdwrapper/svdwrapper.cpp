@@ -3,7 +3,7 @@
 
 #include <Eigen/Core>
 #include <h5pp/h5pp.h>
-#include <filesystem>
+#include <io/nmspc_filesystem.h>
 #include <math/class_svd_wrapper.h>
 
 #include <complex>
@@ -19,8 +19,8 @@
 
 
 int main(){
-
-    using reciter = std::filesystem::recursive_directory_iterator;
+    namespace fs = tools::fs;
+    using reciter = fs::recursive_directory_iterator;
     for (auto & item : reciter(std::string(TEST_DIR) + "/testmatrices")){
         std::cout <<  "item: " << item << std::endl;
         h5pp::File file(item.path().string(), h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
