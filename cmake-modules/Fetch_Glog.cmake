@@ -1,5 +1,6 @@
 
 include(cmake-modules/filterTarget.cmake)
+string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 find_package(glog 0.4 PATHS ${CMAKE_INSTALL_PREFIX}/glog $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} NO_DEFAULT_PATH)
 
 
@@ -28,7 +29,6 @@ elseif(DOWNLOAD_MISSING)
     find_package(glog 0.4 PATHS ${CMAKE_INSTALL_PREFIX}/glog NO_DEFAULT_PATH REQUIRED)
     if(TARGET glog::glog)
         message(STATUS "glog installed successfully")
-        string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
         get_target_property(gloglib  glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
         if(gloglib)
             target_link_libraries(glog::glog INTERFACE ${gloglib})
