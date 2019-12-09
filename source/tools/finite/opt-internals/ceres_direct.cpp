@@ -44,7 +44,7 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite
         t_opt->toc();
         opt_log.emplace_back("Initial guess" , theta_initial.size(), energy_initial, std::log10(variance_initial), 1.0, theta_initial_vec.norm(), 0 , 0, t_opt->get_last_time_interval());
     }
-    double energy_new,variance_new,overlap_new;
+    double energy_new = 0,variance_new = 0,overlap_new = 0;
     auto options = ceres_default_options;
 
     ceres::GradientProblemSolver::Summary summary;
