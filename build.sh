@@ -113,7 +113,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     conda activate dmrg
     module load buildenv-gcc/2018a-eb
     module load zlib
-    module load CMake/3.13.3-GCCcore-8.2.0
+    module load CMake/3.15.2
 #    module load GCCcore
     if [ "$compiler" = "GNU" ] ; then
         export CC=gcc
@@ -178,11 +178,12 @@ else
     echo "Running build sequence"
 fi
 
-
-echo ">> cmake -E make_directory build/$build"
-echo ">> cd build/$build"
-echo ">> cmake -DCMAKE_BUILD_TYPE=$build -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../"
-echo ">> cmake --build . --target $target -- -j $make_threads"
+cat << EOF >&2
+    cmake -E make_directory build/$build
+    cd build/$build
+    cmake -DCMAKE_BUILD_TYPE=$build -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake --build . --target $target -- -j $make_threads
+EOF
 
 if [ -z "$dryrun" ] ;then
     cmake -E make_directory build/$build
