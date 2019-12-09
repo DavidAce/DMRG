@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(DMRG++ )
+project(DMRG++ CXX )
 #enable_language()
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -95,11 +95,6 @@ if(MARCH)
     endif()
 endif()
 
-#set(DEBUG_OPTIONS             -O0 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
-#set(RELWITHDEBINFO_OPTIONS    -O1 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
-#set(RELEASE_OPTIONS           -O3 -DNDEBUG )
-#set(PROFILE_OPTIONS           -O3 -DNDEBUG  -lprofiler -g  -ftime-report)
-#
 
 if(ENABLE_CCACHE)
     find_program(CCACHE_FOUND ccache)
@@ -122,52 +117,10 @@ else()
 endif()
 
 
-##########################
-### OS-dependent flags ###
-##########################
-#if(${CMAKE_HOST_APPLE})
-#    list(APPEND COMMON_OPTIONS -mmacosx-version-min=10.13)
-#else()
-#    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
-#endif()
-
-
-################################
-### Compiler-dependent flags ###
-################################
-#if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-#    list(APPEND RELEASE_OPTIONS -fopt-info -fopt-info-missed)
-#    list(APPEND PROFILE_OPTIONS -fopt-info -fopt-info-missed)
-
-
-#elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-#    list(APPEND COMMON_OPTIONS ${GCC_TOOLCHAIN})
-#    list(APPEND COMMON_OPTIONS -stdlib=libstdc++)
-#    list(APPEND PROFILE_OPTIONS  -Rpass-missed="loop|vect" )# -Rpass="loop|vect" -Rpass-analysis="loop|vect")
-#            -Rpass="loop|vect" -Rpass-missed="loop|vect" -Rpass-analysis="loop|vect"
-#            -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-unused-parameter
-#            -Wno-overloaded-virtual -Wno-uninitialized -Wno-unused-local-typedef -Wno-unused-parameter -Wno-ignored-qualifiers -Wno-format-pedantic
-
-#endif()
 
 
 
 
-
-
-################################
-### print current CXX flags  ###
-################################
-#message(STATUS "COMMON CXX flags:  ${COMMON_OPTIONS} ${CMAKE_CXX_FLAGS}")
-#if (CMAKE_BUILD_TYPE STREQUAL "Release")
-#    message(STATUS "RELEASE CXX flags: ${RELEASE_OPTIONS}")
-#elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-#    message(STATUS "RELWITHDEBINFO CXX flags: ${RELWITHDEBINFO_OPTIONS}")
-#elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-#    message(STATUS "DEBUG CXX flags: ${DEBUG_OPTIONS}")
-#elseif(CMAKE_BUILD_TYPE STREQUAL "Profile")
-#    message(STATUS "PROFILE CXX flags: ${PROFILE_OPTIONS}")
-#endif()
 
 
 
@@ -202,43 +155,43 @@ endif()
 ###############################
 ###  Require c++17 support  ###
 ###############################
-#set(CMAKE_CXX_STANDARD 17)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-#set_target_properties(${PROJECT_NAME}
-#        PROPERTIES
-#        CXX_STANDARD 17
-#        CXX_STANDARD_REQUIRED ON
-#        CXX_EXTENSIONS OFF)
 
 
+#######################################################
+###  Check  #include<filesystem> or                 ###
+###  or     #include<experimental/filesystem>       ###
+#######################################################
+include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXFilesystem.cmake)
+CheckCXXFilesystem()
 
-######################################
-###  Check  C++17 compiles         ###
-######################################
-include(cmake-modules/CheckCXX17Compiles.cmake)
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    set(TEST_REQUIRED_FLAGS     "-std=c++17 -lstdc++fs" )
-    set(TEST_REQUIRED_LIBRARIES "")
-    CheckCXX17Compiles("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(TEST_REQUIRED_FLAGS     -std=c++17 -stdlib=libstdc++ -lstdc++fs)
-    set(TEST_REQUIRED_LIBRARIES "")
-    CheckCXX17Compiles("${TEST_REQUIRED_FLAGS}" "${TEST_REQUIRED_LIBRARIES}")
+#######################################################
+###  Check  #include<experimental/type_traits>      ###
+#######################################################
+include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckTypeTraits.cmake)
+CheckTypeTraits()
+
+#######################################################
+###  Check  #include<optional> or                   ###
+###  or     #include<experimental/optional>         ###
+#######################################################
+include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXOptional.cmake)
+CheckCXXOptional()
+
+
+if (NOT TARGET Threads::Threads)
+    ### Adapt pthread for static/dynamic linking
+    ### This is to fix a bug with threads described here:
+    ### https://stackoverflow.com/questions/35116327/when-g-static-link-pthread-cause-segmentation-fault-why
+    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+    set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+    find_package(Threads)
+    include(cmake-modules/PrintTargetProperties.cmake)
+    print_target_properties(Threads::Threads)
+    if(TARGET Threads::Threads AND NOT BUILD_SHARED_LIBS)
+        set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")
+    endif()
 endif()
-
-
-##################################################
-###  Adapt pthread linking for static/dynamic  ###
-##################################################
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG FALSE)
-find_package(Threads REQUIRED)
-if(NOT BUILD_SHARED_LIBS)
-    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive ${CMAKE_THREAD_LIBS_INIT} -Wl,--no-whole-archive")
-endif()
-
-
 
 
 
@@ -253,17 +206,14 @@ target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:            -O0 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3 -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -DNDEBUG  -lprofiler -g  -ftime-report>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:    -stdlib=libstdc++ >)
-#target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:GNU>>:      -lstdc++fs>)
-#target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:Clang>>:    -stdlib=libstdc++ -lstdc++fs  >)
+
 
 #######################################
 ### Compiler-dependent linker flags ###
 #######################################
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    target_link_libraries(project-settings INTERFACE  -lstdc++fs)
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    target_link_libraries(project-settings INTERFACE  -stdlib=libstdc++ -lstdc++fs )
+target_link_libraries(project-settings INTERFACE  -lstdc++fs)
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
+    target_link_libraries(project-settings INTERFACE  -stdlib=libstdc++ )
 endif()
 
 
@@ -282,7 +232,6 @@ if(ENABLE_OPENMP)
         target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
     endif()
 endif()
-
 
 ##################################################################
 ### Check if we can enable Link Time Optimization              ###
@@ -332,18 +281,19 @@ include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not foun
 include(cmake-modules/FindLAPACKE.cmake)                    # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # LC++ frontend for arpack-ng
+include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen3 numerical library
 include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
 include(cmake-modules/Fetch_Gflags.cmake)
 include(cmake-modules/Fetch_Glog.cmake)
 include(cmake-modules/Fetch_Ceres.cmake)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
 target_link_libraries(${PROJECT_NAME} PRIVATE lapacke)
+target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen )
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp h5pp::deps h5pp::flags)
-#target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp h5pp::deps )
 target_link_libraries(${PROJECT_NAME} PRIVATE ceres)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE project-settings) # This needs to go last in case OpenMP is enabled
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 
 ##################################################################
 ### Print summary of CMake configuration                       ###
@@ -358,14 +308,17 @@ print_target_info(lapack)
 print_target_info(lapacke)
 print_target_info(arpack)
 print_target_info(arpack++)
+print_target_info(Eigen3::Eigen)
 print_target_info(h5pp::h5pp)
 print_target_info(h5pp::deps)
 print_target_info(h5pp::flags)
+print_target_info(spdlog::spdlog)
+print_target_info(hdf5::hdf5)
 print_target_info(gflags)
 print_target_info(glog::glog)
 print_target_info(ceres)
-print_target_info(Threads::Threads)
 print_target_info(project-settings)
+print_target_info(Threads::Threads)
 message("=============================================================================")
 message("")
 
@@ -413,23 +366,24 @@ if(ENABLE_TESTS)
     add_subdirectory(tests/file_io        )
     add_subdirectory(tests/eigsolver      )
     add_subdirectory(tests/svdwrapper     )
+    add_subdirectory(tests/eigen_openmp   )
+    add_subdirectory(tests/ceres_pthread  )
 
-#    add_custom_target(TEST-all ALL
-#            DEPENDS TEST-arpack++_simple
-#            DEPENDS TEST-arpack++_mps
-#            DEPENDS TEST-file_io
-#            DEPENDS TEST-eigsolver
-#            DEPENDS TEST-svdwrapper
-#            DEPENDS ${PROJECT_NAME}
-#            )
+    add_custom_target(all-tests ALL
+            DEPENDS test-arpack++_simple
+            DEPENDS test-arpack++_mps
+            DEPENDS test-file_io
+            DEPENDS test-eigsolver
+            DEPENDS test-eigen_openmp
+            DEPENDS test-svdwrapper
+            DEPENDS test-ceres_pthread
+            )
 
-#    add_custom_command(TARGET TEST-all
-#            POST_BUILD
-#            COMMENT "Running Tests"
-#            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-#            DEPENDS arpack++ h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog
-#            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures)
-#
+    add_custom_command(TARGET all-tests
+            POST_BUILD
+            COMMENT "Running Tests"
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures)
 endif()
 
 

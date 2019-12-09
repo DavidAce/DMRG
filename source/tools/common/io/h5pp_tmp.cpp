@@ -4,10 +4,10 @@
 #include <simulation/nmspc_settings.h>
 #include <tools/nmspc_tools.h>
 #include <h5pp/h5pp.h>
-#include <filesystem>
+#include <io/nmspc_filesystem.h>
 #include <fstream>
 #include <stdlib.h>
-namespace fs = std::filesystem;
+namespace fs = tools::fs;
 
 std::string get_dirname(){
     return "DMRG." + std::string(getenv("USER")) + "/";

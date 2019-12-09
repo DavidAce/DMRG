@@ -19,33 +19,29 @@
 
 
 
-function(find_package_hdf5 hdf5_roots HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE_STATIC_LIBRARIES HDF5_PREFER_PARALLEL HDF5_REQUIRED )
+function(find_package_hdf5_internal hdf5_paths HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE_STATIC_LIBRARIES HDF5_PREFER_PARALLEL HDF5_REQUIRED )
 
-    foreach(hdf5_root ${hdf5_roots})
-
+    foreach(hdf5_root ${hdf5_paths})
         unset(HDF5_CXX_COMPILER_EXECUTABLE CACHE)
         unset(HDF5_C_COMPILER_EXECUTABLE   CACHE)
+        unset(HDF5_CXX_COMPILER_EXECUTABLE)
+        unset(HDF5_C_COMPILER_EXECUTABLE  )
         unset(HDF5_FOUND CACHE)
         unset(HDF5_FOUND PARENT_SCOPE)
         set(HDF5_FIND_DEBUG OFF)
         if(HDF5_FIND_DEBUG)
             message(STATUS "Searching for hdf5 execs in ${hdf5_root}" )
         endif()
-        find_file(HDF5_C_COMPILER_EXECUTABLE    NAMES h5cc  PATH_SUFFIXES bin envs/bin dmrg/bin envs/dmrg/bin PATHS ${hdf5_root} )
-        find_file(HDF5_CXX_COMPILER_EXECUTABLE  NAMES h5c++ PATH_SUFFIXES bin envs/bin dmrg/bin envs/dmrg/bin PATHS ${hdf5_root} )
+        set(HDF5_NO_FIND_PACKAGE_CONFIG_FILE ON)
+        find_file(HDF5_C_COMPILER_EXECUTABLE    NAMES h5cc  PATHS ${hdf5_root} PATH_SUFFIXES bin hdf5/bin NO_DEFAULT_PATH)
+        find_file(HDF5_CXX_COMPILER_EXECUTABLE  NAMES h5c++ PATHS ${hdf5_root} PATH_SUFFIXES bin hdf5/bin NO_DEFAULT_PATH)
         if (HDF5_C_COMPILER_EXECUTABLE OR HDF5_CXX_COMPILER_EXECUTABLE)
+
             if(HDF5_FIND_DEBUG)
                 message(STATUS "Searching for hdf5 execs in ${hdf5_root} - Success -- C:  ${HDF5_C_COMPILER_EXECUTABLE}  CXX: ${HDF5_CXX_COMPILER_EXECUTABLE}" )
             endif()
-            set(HDF5_NO_FIND_PACKAGE_CONFIG_FILE ON)
-            find_package(HDF5 ${HDF5_ATLEAST_VERSION} COMPONENTS ${HDF5_MODULES})
-
-#            get_cmake_property(_variableNames VARIABLES)
-#            foreach (_variableName ${_variableNames})
-#                if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5" OR "${_variableName}" MATCHES "h5")
-#                    message(STATUS "${_variableName}=${${_variableName}}")
-#                endif()
-#            endforeach()
+#            enable_language(C)
+            find_package(HDF5 ${HDF5_ATLEAST_VERSION} COMPONENTS  ${HDF5_MODULES} )
             if(HDF5_FOUND)
                 set(ACCEPT_PACKAGE FALSE)
                 if(HDF5_PREFER_PARALLEL AND HDF5_IS_PARALLEL)
@@ -59,12 +55,12 @@ function(find_package_hdf5 hdf5_roots HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE
                 endif()
 
                 if(ACCEPT_PACKAGE)
-                    get_filename_component(hdf5_root "${HDF5_CXX_COMPILER_EXECUTABLE}/../.." ABSOLUTE)
-                    if(NOT hdf5_root)
-                        get_filename_component(hdf5_root "${HDF5_C_COMPILER_EXECUTABLE}/../.." ABSOLUTE)
+                    get_filename_component(HDF5_ROOT "${HDF5_CXX_COMPILER_EXECUTABLE}/../.." ABSOLUTE)
+                    if(NOT HDF5_ROOT)
+                        get_filename_component(HDF5_ROOT "${HDF5_C_COMPILER_EXECUTABLE}/../.." ABSOLUTE)
                     endif()
                     set(HDF5_FOUND                  ${HDF5_FOUND}               PARENT_SCOPE)
-                    set(HDF5_ROOT                   ${hdf5_root}                PARENT_SCOPE)
+                    set(HDF5_ROOT                   ${HDF5_ROOT}                PARENT_SCOPE)
                     set(HDF5_DIR                    ${HDF5_DIR}                 PARENT_SCOPE)
                     set(HDF5_VERSION                ${HDF5_VERSION}             PARENT_SCOPE)
                     set(HDF5_IS_PARALLEL            ${HDF5_IS_PARALLEL}         PARENT_SCOPE)
@@ -92,14 +88,21 @@ function(find_package_hdf5 hdf5_roots HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE
                             ${HDF5_C_LIBRARY}
                             ${HDF5_C_LIBRARY_hdf5}
                             PARENT_SCOPE)
+
+                    # To print all variables, use the code below:
+                    #
+#                    get_cmake_property(_variableNames VARIABLES)
+#                    foreach (_variableName ${_variableNames})
+#                        if("${_variableName}" MATCHES "HDF5" OR "${_variableName}" MATCHES "hdf5")
+#                            message(STATUS "${_variableName}=${${_variableName}}")
+#                        endif()
+#                    endforeach()
+
                     return()
                 endif()
             endif()
         else()
-
-            message(STATUS "Searching for hdf5 execs in ${hdf5_root} - failed:" )
             set(HDF5_FOUND FALSE PARENT_SCOPE)
-#            return()
         endif()
     endforeach()
     if(HDF5_REQUIRED)
@@ -107,63 +110,72 @@ function(find_package_hdf5 hdf5_roots HDF5_MODULES HDF5_ATLEAST_VERSION HDF5_USE
     endif()
 endfunction()
 
-
-if(NOT HDF5_MODULES)
-    set(HDF5_MODULES C CXX HL)
-endif()
-
-
-if(BUILD_SHARED_LIBS)
-    set(HDF5_USE_STATIC_LIBRARIES OFF)
-    set(HDF5_LIBRARY_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-else()
-    set(HDF5_USE_STATIC_LIBRARIES ON)
-    set(HDF5_LIBRARY_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-endif()
-
-if(NOT HDF5_ATLEAST_VERSION)
-    set(HDF5_ATLEAST_VERSION 1.10)
-endif()
-
-if(NOT HDF5_PREFER_PARALLEL)
-    set(HDF5_PREFER_PARALLEL OFF)
-endif()
-
-if (NOT HDF5_REQUIRED)
-    set(HDF5_REQUIRED OFF)
-endif()
-
-set(HDF5_ROOT ${HDF5_ROOT} $ENV{HDF5_ROOT} $ENV{HDF5_DIR} $ENV{EBROOTHDF5} $ENV{HOME}/.conda $ENV{HOME}/anaconda3 $ENV{HOME}/miniconda3 /usr /usr/local)
-
-find_package_hdf5("${HDF5_ROOT}" "${HDF5_MODULES}" "${HDF5_ATLEAST_VERSION}" "${HDF5_USE_STATIC_LIBRARIES}" "${HDF5_PREFER_PARALLEL}" "${HDF5_REQUIRED}")
-
-# To print all variables, use the code below:
-##
-#get_cmake_property(_variableNames VARIABLES)
-#foreach (_variableName ${_variableNames})
-#    string( TOLOWER "${_variableName}" _variableName_low )
-#    if("${_variableName_low}" MATCHES "hdf5" OR "${_variableName_low}" MATCHES "h5")
-#        message(STATUS "${_variableName}=${${_variableName}}")
-#    endif()
-#endforeach()
-
-
-if(HDF5_FOUND)
-    # Add convenience libraries to collect all the hdf5 libraries
-    add_library(hdf5    INTERFACE)
-    add_library(hdf5::hdf5 ALIAS hdf5)
-    target_link_libraries(hdf5
-            INTERFACE
-            ${HDF5_LIBRARIES}
-            $<LINK_ONLY:-ldl -lm -lz>
-            Threads::Threads
-            )
-    target_include_directories(hdf5 SYSTEM INTERFACE  ${HDF5_INCLUDE_DIR})
-    if(HDF5_C_LIBRARY_sz)
-        target_link_libraries(hdf5 INTERFACE $<LINK_ONLY:-lsz>)
-        if (NOT BUILD_SHARED_LIBS)
-            target_link_libraries(hdf5 INTERFACE $<LINK_ONLY: -laec>)
-        endif()
+function(find_package_hdf5)
+    if(NOT HDF5_MODULES)
+        set(HDF5_MODULES C HL)
     endif()
 
-endif()
+
+    if(BUILD_SHARED_LIBS)
+        set(HDF5_USE_STATIC_LIBRARIES OFF)
+        set(HDF5_LIBRARY_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    else()
+        set(HDF5_USE_STATIC_LIBRARIES ON)
+        set(HDF5_LIBRARY_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+    endif()
+
+    if(NOT HDF5_ATLEAST_VERSION)
+        set(HDF5_ATLEAST_VERSION 1.8)
+#        set(HDF5_ATLEAST_VERSION 1.10)
+    endif()
+
+    if(NOT HDF5_PREFER_PARALLEL)
+        set(HDF5_PREFER_PARALLEL OFF)
+    endif()
+
+    if (NOT HDF5_REQUIRED)
+        set(HDF5_REQUIRED OFF)
+    endif()
+
+    list(APPEND HDF5_PATHS ${HDF5_DIR} $ENV{hdf5_DIR} $ENV{HDF5_DIR} ${HDF5_ROOT} ${hdf5_DIR}  $ENV{HDF5_ROOT} $ENV{EBROOTHDF5} /usr /usr/local  ${DIRECTORY_HINTS} ${CMAKE_INSTALL_PREFIX} )
+    if(PREFER_CONDA_LIBS)
+        list(INSERT HDF5_PATHS 0 "${CONDA_HINTS}")
+    endif()
+    find_package_hdf5_internal("${HDF5_PATHS}" "${HDF5_MODULES}" "${HDF5_ATLEAST_VERSION}" "${HDF5_USE_STATIC_LIBRARIES}" "${HDF5_PREFER_PARALLEL}" "${HDF5_REQUIRED}")
+
+    if(HDF5_FOUND)
+
+        # Add convenience libraries to collect all the hdf5 libraries
+        add_library(hdf5::hdf5 IMPORTED INTERFACE)
+        target_link_libraries(hdf5::hdf5
+                INTERFACE
+                ${HDF5_LIBRARIES}
+                $<LINK_ONLY:-lrt -ldl -lm -lz>
+                )
+        target_include_directories(hdf5::hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
+        if(NOT TARGET Threads::Threads)
+            ##################################################################
+            ### Adapt pthread for static/dynamic linking                   ###
+            ##################################################################
+            set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+            set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+            find_package(Threads)
+            if(TARGET Threads::Threads)
+                if(NOT BUILD_SHARED_LIBS)
+                    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")
+                endif()
+            endif()
+        endif()
+        if(TARGET Threads::Threads)
+            target_link_libraries(hdf5::hdf5 INTERFACE  Threads::Threads)
+        endif()
+
+        if(HDF5_C_LIBRARY_sz)
+            target_link_libraries(hdf5::hdf5 INTERFACE $<LINK_ONLY:-lsz>)
+            if (NOT BUILD_SHARED_LIBS)
+                target_link_libraries(hdf5::hdf5 INTERFACE $<LINK_ONLY: -laec>)
+            endif()
+        endif()
+
+    endif()
+endfunction()

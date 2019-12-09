@@ -62,7 +62,7 @@ void class_fDMRG::run_simulation(){
 
 
 void class_fDMRG::check_convergence(){
-    t_con.tic();
+    tools::common::profile::t_con.tic();
 
     if(state->position_is_any_edge()){
         check_convergence_variance();
@@ -108,7 +108,7 @@ void class_fDMRG::check_convergence(){
     }
 
 
-    t_con.toc();
+    tools::common::profile::t_con.toc();
 
 }
 

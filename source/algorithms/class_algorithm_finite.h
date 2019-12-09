@@ -8,7 +8,6 @@
 
 class class_h5table_measurements_finite;
 class class_state_finite;
-class class_h5table_buffer_dynamic;
 
 
 class class_algorithm_finite: public class_algorithm_base {

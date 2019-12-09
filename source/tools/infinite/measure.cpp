@@ -438,7 +438,7 @@ double tools::infinite::measure::entanglement_entropy(const class_state_infinite
 
 double tools::infinite::measure::energy_mpo(const class_state_infinite & state, const Eigen::Tensor<Scalar,4> &theta){
     tools::log->trace("Measuring energy mpo from state");
-    tools::common::profile::t_ene_mpo.tic();
+    tools::common::profile::t_ene.tic();
     Eigen::Tensor<Scalar, 0>  E =
             state.Lblock->block
                     .contract(theta,                                idx({0},{1}))
@@ -451,7 +451,7 @@ double tools::infinite::measure::energy_mpo(const class_state_infinite & state, 
 //        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part");
-    tools::common::profile::t_ene_mpo.toc();
+    tools::common::profile::t_ene.toc();
     return std::real(E(0)) ;
 }
 
@@ -549,7 +549,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_state_infinite 
 double tools::infinite::measure::energy_variance_mpo(const class_state_infinite & state, const Eigen::Tensor<std::complex<double>,4> &theta , double &energy_mpo) {
     if (state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     tools::log->trace("Measuring energy variance mpo from state");
-    tools::common::profile::t_var_mpo.tic();
+    tools::common::profile::t_var.tic();
     Eigen::Tensor<Scalar, 0> H2 =
             state.Lblock2->block
                     .contract(theta              ,               idx({0}  ,{1}))
@@ -559,8 +559,8 @@ double tools::infinite::measure::energy_variance_mpo(const class_state_infinite 
                     .contract(state.HB->MPO(),              idx({4,3},{0,2}))
                     .contract(theta.conjugate()  ,               idx({0,3,5},{1,0,2}))
                     .contract(state.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
-    tools::common::profile::t_var_mpo.toc();
-    if(abs(imag(H2(0))) > 1e-10 ){
+    tools::common::profile::t_var.toc();
+    if(std::abs(std::imag(H2(0))) > 1e-10 ){
         throw std::runtime_error("H2 has an imaginary part: " + std::to_string(std::real(H2(0))) + " + i " + std::to_string(std::imag(H2(0))));
     }
     return std::abs(H2(0) - energy_mpo*energy_mpo);

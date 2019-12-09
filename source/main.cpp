@@ -6,7 +6,7 @@
 #include <algorithms/class_algorithm_launcher.h>
 #include <io/class_settings_reader.h>
 #include <io/nmspc_logger.h>
-
+#include <io/nmspc_filesystem.h>
 #include <iostream>
 #include <h5pp/h5pp.h>
 
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     signal(SIGQUIT , signal_callback_handler);
 
     auto log = Logger::setLogger("DMRG",0);
-
+    using namespace tools;
     // print current Git status
     log->info("Git branch      : {}",GIT::BRANCH);
     log->info("    commit hash : {}",GIT::COMMIT_HASH);

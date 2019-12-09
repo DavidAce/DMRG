@@ -9,7 +9,6 @@
 #include <memory>
 #include <spdlog/spdlog.h>
 #include <io/table_types.h>
-#include <filesystem>
 
 
 //class class_hdf5_file;
@@ -44,7 +43,7 @@ public:
     explicit class_h5table_buffer();
     ~class_h5table_buffer();
     class_h5table_buffer(std::shared_ptr<h5pp::File> h5ppFile_,
-                         std::filesystem::path table_path_,
+                         std::string table_path_,
                          bool mpi_on_ = false  );
 
 

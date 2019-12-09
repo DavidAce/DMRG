@@ -32,7 +32,7 @@ public:
                          std::string sim_name_,
                          SimulationType sim_type_);
     enum class StopReason {SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET} stop_reason;
-    void set_profiling_labels ();
+//    void set_profiling_labels ();
 
     std::shared_ptr<h5pp::File>                                             h5pp_file;
     std::shared_ptr<class_h5table_buffer<class_h5table_profiling>>          h5tbuf_profiling;
@@ -72,13 +72,7 @@ public:
     void print_profiling();
     double process_memory_in_mb(std::string name);
 
-    // Profiling
-    class_tic_toc t_tot;    /*!< Total time */
-    class_tic_toc t_pre;    /*!< Preprocessing time */
-    class_tic_toc t_run;    /*!< Simulation run time */
-    class_tic_toc t_pos;    /*!< Postprocessing time*/
-    class_tic_toc t_prt;    /*!< Printing time */
-    class_tic_toc t_con;    /*!< Convergence checks time */
+
 
 protected:
 

@@ -370,23 +370,29 @@ namespace tools{
 
 
         namespace profile{
-            inline class_tic_toc t_eig;
-            inline class_tic_toc t_svd;
-            inline class_tic_toc t_ene;
-            inline class_tic_toc t_var;
-            inline class_tic_toc t_ent;
-            inline class_tic_toc t_hdf;
-            inline class_tic_toc t_prj;
-            inline class_tic_toc t_opt;
-            inline class_tic_toc t_chk;
-            inline class_tic_toc t_ene_mpo;
+            // Profiling
+            inline class_tic_toc t_tot;        /*!< Total  */
+            inline class_tic_toc t_pre;        /*!< Preprocessing  */
+            inline class_tic_toc t_pos;        /*!< Postprocessing */
+            inline class_tic_toc t_sim;        /*!< Simulation runtime  */
+            inline class_tic_toc t_con;        /*!< Convergence checks */
+            inline class_tic_toc t_eig;        /*!< Eigenvalue decomposition */
+            inline class_tic_toc t_svd;        /*!< SVD decomposition */
+            inline class_tic_toc t_opt;        /*!< Optimization, i.e. Ceres */
+            inline class_tic_toc t_evo;        /*!< Time evolution */
+            inline class_tic_toc t_env;        /*!< Update environments */
+            inline class_tic_toc t_ent;        /*!< Entanglement entropy */
+            inline class_tic_toc t_ene;        /*!< Energy */
+            inline class_tic_toc t_var;        /*!< Variance */
+            inline class_tic_toc t_prj;        /*!< Projections */
+            inline class_tic_toc t_chk;        /*!< Integrity checks/debugging */
+            inline class_tic_toc t_hdf;        /*!< hdf5 -- writing to file */
             inline class_tic_toc t_ene_ham;
             inline class_tic_toc t_ene_mom;
-            inline class_tic_toc t_var_mpo;
             inline class_tic_toc t_var_ham;
             inline class_tic_toc t_var_mom;
 
-            extern void print_profiling(class_tic_toc &t_parent);
+            extern void print_profiling();
             extern void init_profiling();
         }
 

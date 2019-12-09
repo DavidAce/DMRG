@@ -37,8 +37,8 @@ Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground
     class_eigsolver solver;
     solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
 
-    auto eigvals           = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
-    auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
+    [[maybe_unused]] auto eigvals           = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
+    [[maybe_unused]] auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
     t_eig->toc();
 
