@@ -1,11 +1,32 @@
 #include <ceres/ceres.h>
 #include "glog/logging.h"
 
-class Rosenbrock : public ceres::FirstOrderFunction {
+
+class RosenbrockBase : public ceres::FirstOrderFunction {
+private:
+    double param;
 public:
+    explicit RosenbrockBase(double param_):param(param_){
+
+    }
     virtual bool Evaluate(const double* parameters,
                           double* cost,
-                          double* gradient) const {
+                          double* gradient) const = 0;
+
+    virtual int NumParameters() const = 0;
+};
+
+
+template<typename T>
+class Rosenbrock : public RosenbrockBase {
+private:
+    T member;
+    double param2;
+public:
+    explicit Rosenbrock(double param_, double param2_): RosenbrockBase(param_), param2(param2_) {}
+    bool Evaluate(const double* parameters,
+                          double* cost,
+                          double* gradient) const override {
         const double x = parameters[0];
         const double y = parameters[1];
 
@@ -17,7 +38,7 @@ public:
         return true;
     }
 
-    virtual int NumParameters() const { return 2; }
+    int NumParameters() const override { return 2; }
 };
 
 int main(){
@@ -48,7 +69,7 @@ int main(){
 
 
     ceres::GradientProblemSolver::Summary summary;
-    ceres::GradientProblem problem(new Rosenbrock());
+    ceres::GradientProblem problem(new Rosenbrock<double>(2.0,1.0));
     ceres::Solve(options, problem, parameters, &summary);
     std::cout << summary.FullReport() << "\n";
     std::cout << "Initial x: " << -1.2 << " y: " << 1.0 << "\n";
