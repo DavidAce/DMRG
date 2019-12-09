@@ -16,7 +16,7 @@ ExternalProject_Add(external_h5pp
         -DDOWNLOAD_MISSING:BOOL=ON
         -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
         -DAPPEND_LIBSUFFIX:BOOL=ON
-        -DEigen3_DIR:PATH=${EIGEN3_INCLUDE_DIR}
+        -DEigen3_DIR:PATH=${Eigen3_DIR}
         -DEIGEN3_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR}
         -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console, like up-to-date and installing
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

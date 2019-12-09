@@ -1,4 +1,6 @@
 include(cmake-modules/filterTarget.cmake)
+string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+
 find_package(gflags
         PATHS ${CMAKE_INSTALL_PREFIX}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
         NO_DEFAULT_PATH)
@@ -6,7 +8,6 @@ find_package(gflags
 if(TARGET gflags)
     message(STATUS "gflags found")
     #Copy the lib to where it belongs: INTERFACE_LINK_LIBRARIES
-    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
     get_target_property(gflaglib  gflags IMPORTED_LOCATION_${BUILD_TYPE})
     if(gflaglib)
         target_link_libraries(gflags INTERFACE ${gflaglib})
