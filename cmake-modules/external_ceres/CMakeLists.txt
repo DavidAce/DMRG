@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 project(external-ceres)
 include(ExternalProject)
 
-string (REPLACE ";" "$<SEMICOLON>" GLOG_LIBRARIES  "${GLOG_LIBRARIES}")
-string (REPLACE ";" "$<SEMICOLON>" GFLAGS_LIBRARIES  "${GFLAGS_LIBRARIES}")
-
-
 ExternalProject_Add(external_ceres
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
         GIT_TAG "edd54b83e17084b861c012f57c26b3574726b03d"
