@@ -8,6 +8,7 @@ FetchContent_Declare(h5pp
         GIT_REPOSITORY https://github.com/DavidAce/h5pp.git
         GIT_TAG master
         GIT_PROGRESS 1
+        GIT_SHALLOW 1
         PREFIX      ${EXTERNAL_BUILD_DIR}/h5pp
         INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/h5pp
 #        BUILD_ALWAYS OFF

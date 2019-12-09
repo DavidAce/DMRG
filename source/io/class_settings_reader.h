@@ -10,19 +10,18 @@
 #include<string>
 #include <iomanip>
 #include <cctype>
-
-#include <filesystem>
 #include <algorithm>
 #include <io/nmspc_logger.h>
-namespace fs = std::filesystem;
+#include <io/nmspc_filesystem.h>
+
 
 
 class class_settings_reader {
 private:
-    fs::path    file_path;
+    tools::fs::path    file_path;
     std::string file_string = "";
-    bool check_if_input_file_exists(const fs::path &path_to_file);
-    fs::path find_input_file(const fs::path &given_path);
+    bool check_if_input_file_exists(const tools::fs::path &path_to_file);
+    tools::fs::path find_input_file(const tools::fs::path &given_path);
     void remove_spaces(std::string &str);
     bool has_only_digits(const std::string s);
     bool is_parameterline(const std::string s);
@@ -32,7 +31,7 @@ private:
 public:
     bool found_file = false;
     class_settings_reader() = default;
-    explicit class_settings_reader(const fs::path &file_path_, std::string logName="DMRG");
+    explicit class_settings_reader(const tools::fs::path &file_path_, std::string logName="DMRG");
 
     std::string get_input_file_as_string();
     std::string get_input_filename();

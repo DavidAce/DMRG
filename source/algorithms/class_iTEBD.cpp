@@ -29,10 +29,10 @@ class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
 
 
 void class_iTEBD::run_preprocessing() {
-    t_pre.tic();
+    tools::common::profile::t_pre.tic();
     sim_status.delta_t = settings::itebd::delta_t0;
     unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(sim_status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
-    t_pre.toc();
+    tools::common::profile::t_pre.toc();
 }
 
 
@@ -54,10 +54,10 @@ void class_iTEBD::run_simulation()    {
 
 
 void class_iTEBD::run_postprocessing(){
-    t_pos.tic();
+    tools::common::profile::t_pos.tic();
     print_status_full();
-    print_profiling();
-    t_pos.toc();
+    tools::common::profile::t_pos.toc();
+    tools::common::profile::print_profiling();
 }
 
 void class_iTEBD::single_TEBD_step(){
@@ -65,7 +65,7 @@ void class_iTEBD::single_TEBD_step(){
  * \fn single_TEBD_step(class_superblock &state)
  * \brief infinite Time evolving block decimation.
  */
-    t_run.tic();
+    tools::common::profile::t_sim.tic();
     for (auto &U: unitary_time_evolving_operators){
         Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::time_evolve_theta(*state ,U);
         tools::infinite::opt::truncate_theta(theta, *state);
@@ -73,15 +73,15 @@ void class_iTEBD::single_TEBD_step(){
             state->swap_AB();        }
     }
     state->unset_measurements();
-    t_run.toc();
-    sim_status.wall_time = t_tot.get_age();
-    sim_status.simu_time = t_run.get_measured_time();
+    tools::common::profile::t_sim.toc();
+    sim_status.wall_time = tools::common::profile::t_tot.get_age();
+    sim_status.simu_time = tools::common::profile::t_sim.get_measured_time();
 }
 
 
 
 void class_iTEBD::check_convergence(){
-    t_con.tic();
+    tools::common::profile::t_con.tic();
     check_convergence_entg_entropy();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
@@ -95,7 +95,7 @@ void class_iTEBD::check_convergence(){
     {
         sim_status.simulation_has_converged = true;
     }
-    t_con.toc();
+    tools::common::profile::t_con.toc();
 }
 
 void class_iTEBD::check_convergence_time_step(){

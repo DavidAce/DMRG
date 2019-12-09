@@ -4,8 +4,9 @@ project(external-h5pp)
 include(ExternalProject)
 ExternalProject_Add(external_h5pp
         GIT_REPOSITORY https://github.com/DavidAce/h5pp.git
-        GIT_TAG master
+        GIT_TAG v0.4.2
         GIT_PROGRESS 1
+        GIT_SHALLOW 1
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
         TEST_COMMAND ${CMAKE_MAKE_PROGRAM} test

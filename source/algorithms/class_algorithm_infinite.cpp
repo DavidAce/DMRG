@@ -38,30 +38,32 @@ class_algorithm_infinite::class_algorithm_infinite(
 
 void class_algorithm_infinite::run() {
     if (not sim_on()) { return; }
-    t_tot.tic();
+    tools::common::profile::t_tot.tic();
     run_preprocessing();
     run_simulation();
     run_postprocessing();
-    t_tot.toc();
+    tools::common::profile::t_tot.toc();
 }
 
 void class_algorithm_infinite::run_preprocessing() {
-    t_pre.tic();
+    tools::common::profile::t_pre.tic();
     state->set_chi_max(chi_max());
+    sim_status.chi_max = chi_max();
     update_bond_dimension_limit(chi_init());
-    t_pre.toc();
+
+    tools::common::profile::t_pre.toc();
 }
 
 void class_algorithm_infinite::run_postprocessing(){
-    t_pos.tic();
+    tools::common::profile::t_pos.tic();
     write_state(true);
     write_measurements(true);
     write_sim_status(true);
     write_profiling(true);
     copy_from_tmp(true);
     print_status_full();
-    print_profiling();
-    t_pos.toc();
+    tools::common::profile::t_pos.toc();
+    tools::common::profile::print_profiling();
 }
 
 //void class_algorithm_infinite::compute_observables(){
@@ -75,8 +77,6 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
         sim_status.chi_lim = tmp_bond_limit.value();
         return;
     }
-
-
 
     try{
         long chi_lim_now = state->get_chi_lim();
@@ -102,7 +102,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
             if(sim_status.simulation_has_got_stuck){
                 log->debug("Truncation error : {}", state->get_truncation_error());
                 log->debug("Bond dimensions  : {}", tools::infinite::measure::bond_dimension(*state) );
-                if(state->get_truncation_error() > 10*std::pow(settings::precision::svd_threshold, 2) and
+                if(state->get_truncation_error() > std::pow(0.5*settings::precision::svd_threshold, 2) and
                     tools::infinite::measure::bond_dimension(*state) >=state->get_chi_lim() )
                 {
                     //Write final results before updating bond dimension chi
@@ -141,7 +141,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
         throw std::runtime_error(fmt::format("chi_lim is larger than chi_max! {} > {}",state->get_chi_lim() , state->get_chi_max() ));
 
 }
-//
+
 //void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> max_bond_dim){
 //    if(not max_bond_dim.has_value()) {
 //        log->debug("No max bond dim given, setting {}", chi_max());
@@ -416,7 +416,6 @@ void class_algorithm_infinite::print_status_update() {
     if (print_freq() == 0) {return;}
 //    compute_observables();
     using namespace std;
-    t_prt.tic();
     std::stringstream report;
     report << setprecision(16) << fixed << left;
     report << left  << sim_name << " ";
@@ -488,14 +487,13 @@ void class_algorithm_infinite::print_status_update() {
         default: throw std::runtime_error("Wrong simulation type");
     }
     report << left  << "]";
-    report << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << t_tot.get_age() ;
+    report << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << tools::common::profile::t_tot.get_age() ;
     report << left << " Memory [";
     report << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
     report << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
     report << left << "VmPeak: "  << process_memory_in_mb("VmPeak")<< " MB";
     report << left << "]";
     log->info(report.str());
-    t_prt.toc();
 }
 
 void class_algorithm_infinite::print_status_full(){
@@ -503,7 +501,6 @@ void class_algorithm_infinite::print_status_full(){
     state->do_all_measurements();
     using namespace std;
     using namespace tools::infinite::measure;
-    t_prt.tic();
     log->info("--- Final results  --- {} ---", sim_name);
     log->info("Iterations            = {:<16d}"    , sim_status.iteration);
     switch(sim_type){
@@ -565,8 +562,7 @@ void class_algorithm_infinite::print_status_full(){
         default: throw std::runtime_error("Wrong simulation type");
     }
     log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
-    log->info("Time                  = {:<16.16f}" , t_tot.get_age());
+    log->info("Time                  = {:<16.16f}" , tools::common::profile::t_tot.get_age());
     log->info("Peak memory           = {:<6.1f} MB" , process_memory_in_mb("VmPeak"));
-    t_prt.toc();
 }
 

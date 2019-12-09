@@ -112,13 +112,19 @@ if (MKL_FOUND)
         expand_target_libs(${mkl_target_name} mkl_valid_libs)
         expand_target_incs(${mkl_target_name} mkl_valid_incs)
         expand_target_opts(${mkl_target_name} mkl_valid_opts)
+        foreach(opt ${mkl_valid_opts})
+            if(opt AND NOT "${opt}" MATCHES "$") # Cannot have generator expressions
+                list(APPEND CMAKE_REQUIRED_FLAGS ${opt})
+            endif()
+        endforeach()
+
         set(CMAKE_REQUIRED_LIBRARIES " ${mkl_valid_libs}") # Can be a ;list
         set(CMAKE_REQUIRED_INCLUDES  " ${mkl_valid_incs}") # Can be a ;list
-        string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${mkl_valid_opts}") # Needs to be a space-separated list
+        string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${CMAKE_REQUIRED_FLAGS}") # Needs to be a space-separated list
 
-#        message("CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
-#        message("CMAKE_REQUIRED_INCLUDES : ${CMAKE_REQUIRED_INCLUDES}")
-#        message("CMAKE_REQUIRED_FLAGS    : ${CMAKE_REQUIRED_FLAGS}")
+        message("CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
+        message("CMAKE_REQUIRED_INCLUDES : ${CMAKE_REQUIRED_INCLUDES}")
+        message("CMAKE_REQUIRED_FLAGS    : ${CMAKE_REQUIRED_FLAGS}")
         check_cxx_source_compiles("
             #include <mkl.h>
             int main() {

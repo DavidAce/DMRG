@@ -5,6 +5,8 @@
 #include "class_settings_reader.h"
 #include <io/nmspc_logger.h>
 #include <sstream>
+namespace fs = tools::fs;
+
 
 class_settings_reader::class_settings_reader(const fs::path &file_path_,std::string logName): file_path(file_path_) {
     log = Logger::setLogger(logName,2,true);

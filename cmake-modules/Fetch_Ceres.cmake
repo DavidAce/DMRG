@@ -1,16 +1,13 @@
+include(cmake-modules/filterTarget.cmake)
+find_package(Ceres PATHS ${CMAKE_INSTALL_PREFIX}/ceres)
 
-#find_package(Ceres PATHS ${EXTERNAL_INSTALL_DIR}/ceres/lib/cmake/Ceres ${ceres_DIR})
+if(TARGET ceres)
+    message(STATUS "ceres found")
+    remove_shared(ceres)
+    remove_pthread(ceres)
+else()
 
-#if(Ceres_FOUND)
-#    message(STATUS "ceres FOUND IN SYSTEM: ${CERES_ROOT}")
-#    #    get_target_property(CERES_LIBRARY ceres  INTERFACE_LINK_LIBRARIES)
-#    #    set_target_properties(ceres PROPERTIES INTERFACE_LINK_LIBRARIES "")
-#    #    set_target_properties(ceres PROPERTIES INTERFACE_COMPILE_FEATURES "")
-#    #    target_link_libraries(ceres INTERFACE  blas lapack lapacke ${CERES_LIBRARY} Threads::Threads )
-#else()
-
-
-    message(STATUS "Ceres will be installed into ${EXTERNAL_INSTALL_DIR}/ceres on first build.")
+    message(STATUS "Ceres will be installed into ${CMAKE_INSTALL_PREFIX} on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
     if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
@@ -41,12 +38,15 @@
     list(APPEND CERES_CMAKE_OPTIONS  -DGLOG_INCLUDE_DIR:PATH=${GLOG_INCLUDE_DIR})
     list(APPEND CERES_CMAKE_OPTIONS  -DGLOG_LIBRARIES:PATH=${GLOG_LIBRARIES})
 
-    message(STATUS "ceres flags: ${CERES_FLAGS}")
+    message(STATUS "ceres flags  : ${CERES_FLAGS}")
+    message(STATUS "ceres options: ${CERES_CMAKE_OPTIONS}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(ceres "${CERES_CMAKE_OPTIONS}")
     find_package(Ceres PATHS ${CMAKE_INSTALL_PREFIX}/ceres PATH_SUFFIXES REQUIRED)
     if(TARGET ceres)
         message(STATUS "ceres installed successfully")
+        remove_shared(ceres)
+        remove_pthread(ceres)
         string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
         get_target_property(cereslib  ceres IMPORTED_LOCATION_${BUILD_TYPE})
         target_link_libraries(ceres INTERFACE ${cereslib})
@@ -56,4 +56,4 @@
         message(FATAL_ERROR "ceres could not be downloaded.")
     endif()
 
-#endif()
+endif()
