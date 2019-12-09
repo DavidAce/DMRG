@@ -123,8 +123,8 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         if [ -z "$gcc_toolchain" ] ; then
             gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE
         fi
-        export CC=clang
-        export CXX=clang++
+        export CC=clang-9
+        export CXX=clang-cpp
     fi
 
 elif [[ "$HOSTNAME" == *"raken"* ]];then

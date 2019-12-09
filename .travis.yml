@@ -113,40 +113,12 @@ matrix:
         - conda update --yes conda
         - conda install --yes hdf5 hdf5-static eigen
 
-#    - os: osx
-#      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
-#      compiler: gcc-7
-#      env:
-#        - COMPILER_NAME=gcc
-#        - GCC_VERSION=7
-#        - CXX=g++-7
-#        - CC=gcc-7
-#        - FC=gfortran-7
-#        - MPI=mpich
-#        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
-#      before_install:
-#        - brew install gcc@7
-#        - brew link gcc
-#    - os: osx
-#      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
-#      compiler: gcc-8
-#      env:
-#        - COMPILER_NAME=gcc
-#        - GCC_VERSION=8
-#        - CXX=g++-8
-#        - CC=gcc-8
-#        - FC=gfortran-8
-#        - MPI=mpich
-#        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
-#      before_install:
-#        - brew install gcc@8
-#        - brew link gcc
 
 
 before_install:
   - eval "${MATRIX_EVAL}"
 
 script:
-  - ./build.sh -m Debug -j2 -i OFF
+  - ./build.sh   -s OFF  -a native  -j 2  -o OFF  -i ON -b Debug
 
 
