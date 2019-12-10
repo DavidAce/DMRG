@@ -44,38 +44,31 @@ tools::finite::opt::internal::ceres_pedantic_optimization(const class_state_fini
         t_opt->toc();
         opt_log.emplace_back("Initial guess" , theta_initial.size(), energy_initial, std::log10(variance_initial), 1.0, theta_initial_vec.norm(), 0 , 0, t_opt->get_last_time_interval());
     }
-    double energy_new = 0,variance_new = 0,overlap_new = 0;
     auto options = ceres_default_options;
 
     ceres::GradientProblemSolver::Summary summary;
-    int counter,iter;
+    int iter;
     t_opt->tic();
     Eigen::VectorXcd theta_new;
     switch (optType.option){
         case opt::TYPE::CPLX:{
             Eigen::VectorXd  theta_start_cast = Eigen::Map<const Eigen::VectorXd>(reinterpret_cast<const double*> (theta_initial_vec.data()), 2 * theta_initial_vec.size());
-            auto * functor = new ceres_pedantic_functor<std::complex<double>>(state, sim_status);
-            ceres::GradientProblem problem(functor);
+//            auto * functor = new ceres_pedantic_functor<std::complex<double>>(state, sim_status);
+            ceres::GradientProblem problem(new ceres_pedantic_functor<std::complex<double>>(state, sim_status));
+
+//            ceres::GradientProblem problem(functor);
             tools::log->trace("Running L-BFGS");
             ceres::Solve(options, problem, theta_start_cast.data(), &summary);
-
             iter         = (int)summary.iterations.size();
-            counter      = functor->get_count();
-            energy_new   = functor->get_energy() ;
-            variance_new = functor->get_variance();
             theta_new    = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size() / 2).normalized();
             break;
         }
         case opt::TYPE::REAL:{
             Eigen::VectorXd  theta_start_cast = theta_initial_vec.real();
-            auto * functor = new ceres_pedantic_functor<double>(state, sim_status);
-            ceres::GradientProblem problem(functor);
+            ceres::GradientProblem problem(new ceres_pedantic_functor<double>(state, sim_status));
             tools::log->trace("Running L-BFGS");
             ceres::Solve(options, problem, theta_start_cast.data(), &summary);
-            iter        = (int)summary.iterations.size();
-            counter      = functor->get_count();
-            energy_new   = functor->get_energy();
-            variance_new = functor->get_variance();
+            iter         = (int)summary.iterations.size();
             theta_new    = theta_start_cast.normalized().cast<Scalar>();
             break;
         }
@@ -83,11 +76,6 @@ tools::finite::opt::internal::ceres_pedantic_optimization(const class_state_fini
     t_opt->toc();
 
     if (tools::log->level() <= spdlog::level::debug){
-
-//        auto theta_old = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta.data(),theta.size());
-        overlap_new  = std::abs(theta_old_vec.dot(theta_new));
-        opt_log.emplace_back("Ceres L-BFGS", theta_new.size(), energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), iter, counter, t_opt->get_last_time_interval());
-
         // Sanity check
         t_opt->tic();
         auto theta_san      = Textra::MatrixTensorMap(theta_new, state.active_dimensions());

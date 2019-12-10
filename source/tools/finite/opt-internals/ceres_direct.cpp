@@ -1,8 +1,7 @@
 //
 // Created by david on 2019-07-09.
 //
-#define EIGEN_DONT_ALIGN_STATICALLY
-#define EIGEN_DONT_VECTORIZE
+
 #include "ceres_direct_functor.h"
 #include <general/class_tic_toc.h>
 #include <state/class_state_finite.h>
