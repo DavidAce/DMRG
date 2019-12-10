@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#define EIGEN_DONT_VECTORIZE
 
 
 #include <tools/nmspc_tools.h>
