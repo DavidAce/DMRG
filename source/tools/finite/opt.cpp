@@ -73,8 +73,11 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
 
 
     switch (optSpace.option){
+//        case opt::SPACE::SUBSPACE:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode);
+//        case opt::SPACE::DIRECT:      return internal::ceres_direct_optimization(state,sim_status, optType);
+//        case opt::SPACE::PEDANTIC:    return internal::ceres_pedantic_optimization(state,sim_status, optType);
         case opt::SPACE::SUBSPACE:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode);
-        case opt::SPACE::DIRECT:      return internal::ceres_pedantic_optimization(state,sim_status, optType);
+        case opt::SPACE::DIRECT:      return internal::ceres_rosenbrock_optimization(state);
         case opt::SPACE::PEDANTIC:    return internal::ceres_pedantic_optimization(state,sim_status, optType);
     }
     throw std::logic_error("No valid optimization type given");
