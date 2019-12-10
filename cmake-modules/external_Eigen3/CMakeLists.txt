@@ -14,5 +14,5 @@ ExternalProject_Add(external_eigen3
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DCMAKE_CXX_STANDARD=17
         -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=ON
-
+        -DCMAKE_CXX_EXTENSIONS:BOOL=OFF
         )

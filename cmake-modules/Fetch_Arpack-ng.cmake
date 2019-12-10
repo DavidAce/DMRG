@@ -78,6 +78,9 @@ else()
             BUILD_IN_SOURCE 1
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DCMAKE_CXX_STANDARD=17
+            -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=ON
+            -DCMAKE_CXX_EXTENSIONS:BOOL=OFF
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             -DCMAKE_C_FLAGS=${ARPACK_FLAGS}
