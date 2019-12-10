@@ -27,6 +27,13 @@ namespace tools::finite::opt{
                                                                                const Eigen::Tensor<std::complex<double>,3> &theta,
                                                                                const class_simulation_status &sim_status,
                                                                                OptType optType);
+        extern Eigen::Tensor<std::complex<double>,3> ceres_pedantic_optimization(const class_state_finite &state,
+                                                                               const class_simulation_status &sim_status,
+                                                                               OptType optType);
+        extern Eigen::Tensor<std::complex<double>,3> ceres_pedantic_optimization(const class_state_finite &state,
+                                                                               const Eigen::Tensor<std::complex<double>,3> &theta,
+                                                                               const class_simulation_status &sim_status,
+                                                                               OptType optType);
         extern Eigen::Tensor<std::complex<double>,3> ceres_subspace_optimization   (const class_state_finite & state,
                                                                                     const class_simulation_status & sim_status,
                                                                                     OptType optType, OptMode optMode);
