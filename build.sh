@@ -69,7 +69,7 @@ make_threads=8
 
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
-echo "Build Configuration"
+echo "Enabled options:"
 while true;
 do
   case "$1" in
@@ -90,7 +90,7 @@ do
        --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
        --download-missing)          download_missing="ON"           ; echo " * Download missing libs    : ON"      ; shift   ;;
-    --) shift; echo ""; break;;
+    --) shift; break;;
   esac
 done
 
@@ -124,9 +124,7 @@ done
 
 
 
-if [[ "$OSTYPE" == "linux-gnu" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
-    echo "OS: Linux"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
+if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "OS: Mac OSX"
     echo "Checking if gcc-7 compiler is available"
     if brew ls gcc@7 | grep -q 'g++-7'; then
@@ -194,19 +192,10 @@ fi
 
 
 
-echo "Starting Build"
-echo "Compiler        :   $compiler"
-echo "CC              :   $CC"
-echo "CXX             :   $CXX"
-echo "Micro arch.     :   $march"
-echo "Target          :   $build_target"
-echo "Build threads   :   $make_threads"
-echo "Build Type      :   $build_type"
-echo "OpenMP          :   $enable_openmp"
-echo "Intel enable_mkl:   $enable_mkl"
-echo "Shared build    :   $enable_shared"
-echo "gcc toolchain   :   $gcc_toolchain"
-echo "CMake version   :   $(cmake --version) at $(which cmake)"
+echo " * Compiler                 :   $compiler"
+echo " * CC                       :   $CC"
+echo " * CXX                      :   $CXX"
+echo " * CMake version            :   $(cmake --version) at $(which cmake)"
 
 
 if [ -n "$dry_run" ]; then
