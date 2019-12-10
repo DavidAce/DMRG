@@ -9,11 +9,7 @@ public:
     explicit RosenbrockBase(double param_):param(param_){
 
     }
-    virtual bool Evaluate(const double* parameters,
-                          double* cost,
-                          double* gradient) const = 0;
 
-    virtual int NumParameters() const = 0;
 };
 
 

@@ -31,7 +31,7 @@ namespace tools::finite::opt{
             explicit ceres_pedantic_functor(const class_state_finite & state, const class_simulation_status &sim_status);
             bool Evaluate(const double* v_double_double,
                           double* fx,
-                          double* grad_double_double) const override;
+                          double* grad_double_double) const final;
         };
 
     }
