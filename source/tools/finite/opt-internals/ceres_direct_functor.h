@@ -15,6 +15,7 @@ namespace tools::finite::opt{
         class ceres_direct_functor : public ceres_base_functor{
         public:
             EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
         private:
             using ScalarLong   = typename std::conditional<TypeCheck::is_complex<Scalar>(), std::complex<long double>, long double>::type;
             using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
