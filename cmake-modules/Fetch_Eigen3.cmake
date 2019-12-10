@@ -46,7 +46,7 @@ if(TARGET Eigen3::Eigen AND TARGET blas )
         target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
     endif()
 
-    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_DONT_ALIGN_STATICALLY)
+#    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_DONT_ALIGN_STATICALLY)
 #    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_DONT_VECTORIZE)
 endif()
 
