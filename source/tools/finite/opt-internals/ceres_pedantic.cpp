@@ -78,14 +78,15 @@ tools::finite::opt::internal::ceres_pedantic_optimization(const class_state_fini
     if (tools::log->level() <= spdlog::level::debug){
         // Sanity check
         t_opt->tic();
+        double overlap_san  = std::abs(theta_old_vec.dot(theta_new));
         auto theta_san      = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
         double energy_san   = tools::finite::measure::multisite::energy_per_site(state,theta_san);
         double variance_san = tools::finite::measure::multisite::energy_variance_per_site(state,theta_san);
         t_opt->toc();
-        opt_log.emplace_back("Sanity check", theta_san.size(), energy_san, std::log10(variance_san), overlap_new, theta_new.norm(), 0, 0, t_opt->get_last_time_interval());
+        opt_log.emplace_back("Sanity check", theta_san.size(), energy_san, std::log10(variance_san), overlap_san, theta_new.norm(), 0, 0, t_opt->get_last_time_interval());
 
         //double variance_acc = tools::finite::measure::reduced::energy_variance_per_site(state,theta_san);
-        //opt_log.emplace_back("Sanity check (reduced)",theta_san.size(), energy_san, std::log10(variance_acc), overlap_new, theta_initial_vec.norm(), 0,0, t_opt->get_last_time_interval());
+        //opt_log.emplace_back("Sanity check (reduced)",theta_san.size(), energy_san, std::log10(variance_acc), overlap_san, theta_initial_vec.norm(), 0,0, t_opt->get_last_time_interval());
 
 
     }
