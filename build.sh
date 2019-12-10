@@ -1,86 +1,123 @@
+
 #!/bin/bash
 PROGNAME=$0
 
-
 usage() {
   cat << EOF >&2
-Usage            : $PROGNAME [-option <argument>]
+Usage            : $PROGNAME [-option | --option ] <=argument>
 
--a               : Choose microarchitecture for cxx and openblas. | core2 | nehalem | sandybridge | haswell | native | (default = haswell)
--b <build type>  : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
-                   (Use the same build type you used with build.sh)
--c               : Clear CMake files before build (delete ./build)
--d               : Dry run
--g <compiler>    : Compiler        | GNU | Clang | (default = "")
--h               : Help. Shows this text.
--i <ON|OFF>      : Intel MKL use   | ON | OFF | (default = OFF)
--j <num_threads> : Number of threads used by CMake
--l <lib name>    : Clear library before build (i.e. delete ./libs/<lib name> and ./cmake-build-libs/<lib name>)
--L               : Clear all downloaded libraries before build (i.e. delete ./libs and ./cmake-build-libs)
--o <ON|OFF>      : OpenMP use      | ON | OFF | (default = OFF)
--s <ON|OFF>      : Shared libs     | ON | OFF | (default = OFF)
--t <target>      : DMRG++          | all | hdf5_test_target | arpack++_simple_test_target | arpack++_mps_test_target | (default = all)
--p <path>        : Path to gcc installation (default = )
-
+-a | --arch [=arg]              : Choose microarchitecture | core2 | nehalem | sandybridge | haswell | native | (default = haswell)
+-b | --build-type [=arg]        : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
+-c | --clear-cmake              : Clear CMake files before build (delete ./build)
+-d | --dry-run                  : Dry run
+   | --download-missing         : Download missing libraries [ ON | OFF ] (default = OFF)
+-f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
+-g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
+   | --gcc-toolchain [=arg]     : Path to GCC toolchain. Use with Clang if it can't find stdlib (defailt = none)
+-h | --help                     : Help. Shows this text.
+-j | --make-threads [=num]      : Number of threads used by Make build (default = 8)
+-l | --clear-libs [=args]       : Clear libraries in comma separated list 'lib1,lib2...'. "all" deletes all.
+-s | --enable-shared            : Enable shared library linking (default is static)
+   | --enable-openmp            : Enable OpenMP
+   | --enable-mkl               : Enable Intel MKL
+-t | --build-target [=args]     : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
+   | --enable-tests             : Enable CTest tests
 EXAMPLE:
-./build.sh -s OFF -a native -j 20 -o OFF -i ON -b Release -c -g Clang
+./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-missing
 EOF
   exit 1
 }
 
 
-target="all"
-build="Release"
-clear_cmake=""
-clear_libs=""
-march="haswell"
-omp="OFF"
-mkl="OFF"
-shared="OFF"
-compiler=""
+# Execute getopt on the arguments passed to this program, identified by the special character $@
+PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st: \
+                --long "\
+                help\
+                arch:\
+                build-type:\
+                build-target:\
+                clear-cmake\
+                clear-libs:\
+                compiler:\
+                dry-run\
+                enable-tests\
+                enable-shared\
+                gcc-toolchain:\
+                make-threads:\
+                enable-openmp\
+                enable-mkl\
+                download-missing\
+                extra-flags:\
+                "  -- "$@")
 
-while getopts a:b:cdg:hi:j:l:Lo:p:s:t: o; do
-    case $o in
-	    (a) march=$OPTARG;;
-        (b) build=$OPTARG;;
-        (c) clear_cmake="true";;
-        (d) dryrun="true";;
-        (g) compiler=$OPTARG;;
-        (h) usage ;;
-        (j) make_threads=$OPTARG;;
-        (l) clear_lib+=("$OPTARG");;
-        (L) clear_libs="true";;
-        (o) omp=$OPTARG;;
-        (p) gcc_toolchain=--gcc-toolchain=$OPTARG;;
-        (i) mkl=$OPTARG;;
-        (s) shared=$OPTARG;;
-        (t) target=$OPTARG;;
-        (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
-        (*) usage ;;
+#Bad arguments, something has gone wrong with the getopt command.
+if [ $? -ne 0 ]; then exit 1 ; fi
+
+# A little magic, necessary when using getopt.
+eval set -- "$PARSED_OPTIONS"
+
+build_type="Release"
+build_target="all"
+march="haswell"
+enable_shared="OFF"
+download_missing="OFF"
+enable_tests="OFF"
+enable_openmp="OFF"
+enable_mkl="OFF"
+make_threads=8
+
+
+# Now goes through all the options with a case and using shift to analyse 1 argument at a time.
+#$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
+echo "Build Configuration"
+while true;
+do
+  case "$1" in
+    -h|--help)                      usage                                                                       ; shift   ;;
+    -a|--arch)                      march=$2                        ; echo " * Architecture             : $2"      ; shift 2 ;;
+    -b|--build-type)                build_type=$2                   ; echo " * Build type               : $2"      ; shift 2 ;;
+    -c|--clear-cmake)               clear_cmake="ON"                ; echo " * Clear CMake              : ON"      ; shift   ;;
+    -l|--clear-libs)
+            clear_libs=($(echo "$2" | tr ',' ' '))                  ; echo " * Clear libraries          : $2"      ; shift 2 ;;
+    -d|--dry-run)                   dry_run="ON"                    ; echo " * Dry run                  : ON"      ; shift   ;;
+    -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
+    -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
+       --gcc-toolchain)             gcc_toolchain=$2                ; echo " * GCC toolchain            : $2"      ; shift 2 ;;
+    -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
+    -s|--enable-shared)             shared="ON"                     ; echo " * Link shared libraries    : ON"      ; shift   ;;
+       --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
+    -t|--build-target)              build_target=$2                 ; echo " * Build target             : $2"      ; shift 2 ;;
+       --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
+       --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
+       --download-missing)          download_missing="ON"           ; echo " * Download missing libs    : ON"      ; shift   ;;
+    --) shift; echo ""; break;;
   esac
 done
 
-if [ $OPTIND -eq 1 ] ; then
+
+if [ $OPTIND -eq 0 ] ; then
     echo "No flags were passed"; usage ;exit 1;
 fi
 shift "$((OPTIND - 1))"
 
 
-if [ "$clear_cmake" = true ] ; then
+if  [ -n "$clear_cmake" ] ; then
     echo "Clearing CMake files from build."
-	rm -rf ./build
+	rm -rf ./build/$build_type
 fi
-if [ "$clear_libs" = true ] ; then
-    build_lowercase=$(echo $build | tr '[:upper:]' '[:lower:]')
-    echo "Clearing downloaded libraries: [ rm -rf ./libs-$build_lowercase ./build/$build/external-deps ]"
-	rm -rf ./libs-$build_lowercase ./build/$build/external-deps
-else
-    for lib in "${clear_lib[@]}"; do
-        build_lowercase=$(echo $build | tr '[:upper:]' '[:lower:]')
-        echo "Clearing downloaded libraries: [ rm -r ./libs-$build_lowercase/$lib ./build/$build/external-deps/$lib ]"
-        rm -r ./libs-$build_lowercase/$lib ./build/$build/external-deps/$lib
-    done
-fi
+
+build_type_lower=$(echo build_type | tr '[:upper:]' '[:lower:]')
+for lib in "${clear_libs[@]}"; do
+    if [[ "$lib" == "all" ]]; then
+        echo "Clearing all installed libraries"
+        rm -r ./build/$build_type/external-deps/*
+        rm -r ./libs-$build_type_lower/*
+    else
+        echo "Clearing library: $lib"
+        rm -r ./build/$build_type/external-deps/$lib
+        rm -r ./libs-build_type_lower/$lib
+    fi
+done
 
 
 
@@ -129,7 +166,7 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     fi
 
 elif [[ "$HOSTNAME" == *"raken"* ]];then
-    if [ "$mkl" = "ON" ] ; then
+    if [ "$enable_mkl" = "ON" ] ; then
         module load imkl
     else
         module load OpenBLAS
@@ -162,32 +199,32 @@ echo "Compiler        :   $compiler"
 echo "CC              :   $CC"
 echo "CXX             :   $CXX"
 echo "Micro arch.     :   $march"
-echo "Target          :   $target"
+echo "Target          :   $build_target"
 echo "Build threads   :   $make_threads"
-echo "Build Type      :   $build"
-echo "OpenMP          :   $omp"
-echo "Intel MKL       :   $mkl"
-echo "Shared build    :   $shared"
+echo "Build Type      :   $build_type"
+echo "OpenMP          :   $enable_openmp"
+echo "Intel enable_mkl:   $enable_mkl"
+echo "Shared build    :   $enable_shared"
 echo "gcc toolchain   :   $gcc_toolchain"
 echo "CMake version   :   $(cmake --version) at $(which cmake)"
 
 
-if [ -n "$dryrun" ]; then
+if [ -n "$dry_run" ]; then
     echo "Dry run build sequence"
 else
     echo "Running build sequence"
 fi
 
 cat << EOF >&2
-    cmake -E make_directory build/$build
-    cd build/$build
-    cmake -DCMAKE_BUILD_TYPE=$build -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
-    cmake --build . --target $target -- -j $make_threads
+    cmake -E make_directory build/$build_type
+    cd build/$build_type
+    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DMARCH=$march  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake --build . --target $build_target -- -j $make_threads
 EOF
 
-if [ -z "$dryrun" ] ;then
-    cmake -E make_directory build/$build
-    cd build/$build
-    cmake -DCMAKE_BUILD_TYPE=$build -DMARCH=$march  -DUSE_OpenMP=$omp -DUSE_MKL=$mkl -DBUILD_SHARED_LIBS=$shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
-    cmake --build . --target $target -- -j $make_threads
+if [ -z "$dry_run" ] ;then
+    cmake -E make_directory build/$build_type
+    cd build/$build_type
+    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DMARCH=$march  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake --build . --target $build_target -- -j $make_threads
 fi

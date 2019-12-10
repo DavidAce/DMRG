@@ -59,10 +59,6 @@ endfunction()
 
 
 
-
-
-
-
 if (NOT TARGET lapacke)
     # Find from MKL
     if(TARGET mkl)
@@ -88,24 +84,22 @@ if (NOT TARGET lapacke)
     endif()
 endif()
 
+
+
+
 if (NOT TARGET lapacke)
-    if (TARGET lapack)
+    if (TARGET OpenBLAS)
         message(STATUS "Searching for Lapacke in OpenBLAS")
-        get_target_property(LAPACKE_LAPACK_LIBRARY   lapack INTERFACE_LINK_LIBRARIES)
-        get_target_property(LAPACKE_LAPACK_INCLUDE   lapack INTERFACE_INCLUDE_DIRECTORIES)
-        find_path(LAPACKE_INCLUDE_DIR
-                NAMES lapacke.h
-                PATHS ${LAPACKE_LAPACK_INCLUDE}
-                NO_DEFAULT_PATH)
-        if(LAPACKE_LAPACK_LIBRARY AND LAPACKE_LAPACK_INCLUDE)
-            CheckLapackeCompiles(" "   " "  "${LAPACKE_LAPACK_LIBRARY}" "${LAPACKE_INCLUDE_DIR}")
+        get_target_property(LAPACKE_OPENBLAS_LIBRARY   OpenBLAS INTERFACE_LINK_LIBRARIES)
+        get_target_property(LAPACKE_OPENBLAS_INCLUDE   OpenBLAS INTERFACE_INCLUDE_DIRECTORIES)
+        if(LAPACKE_OPENBLAS_LIBRARY AND LAPACKE_OPENBLAS_INCLUDE)
+            CheckLapackeCompiles(" "   " "  "${LAPACKE_OPENBLAS_LIBRARY}" "${LAPACKE_OPENBLAS_INCLUDE}")
         endif()
         if(LAPACKE_COMPILES)
             add_library(lapacke INTERFACE)
-            add_dependencies(lapacke INTERFACE lapack)
-            target_link_libraries(lapacke INTERFACE lapack)
-            target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
-            message(STATUS "Searching for Lapacke in OpenBLAS - Success ${LAPACKE_LAPACK_LIBRARY}")
+            add_dependencies(lapacke INTERFACE OpenBLAS)
+            target_link_libraries(lapacke INTERFACE OpenBLAS)
+            message(STATUS "Searching for Lapacke in OpenBLAS - Success")
             return()
         else()
             message(STATUS "Searching for Lapacke in OpenBLAS - failed")
@@ -113,47 +107,46 @@ if (NOT TARGET lapacke)
     endif()
 endif()
 
+
+
 if (NOT TARGET lapacke)
-    if (TARGET lapack)
-        message(STATUS "Searching for Lapacke in system")
-        find_path(LAPACKE_INCLUDE_DIR
-                NAMES lapacke.h
-                PATHS
-                ${LAPACKE_LAPACK_INCLUDE}
-                $ENV{BLAS_DIR}/include
-                $ENV{HOME}/anaconda3/
-                $ENV{HOME}/anaconda3/include
-                $ENV{HOME}/.conda/include
-                /usr/include
-                /usr/include/x86_64-linux-gnu
-                )
-        find_library(LAPACKE_LIBRARY
-                NAMES liblapacke${CUSTOM_SUFFIX}
-                PATHS
-                $ENV{BLAS_DIR}/lib
-                $ENV{HOME}/.conda/lib
-                $ENV{HOME}/anaconda3/
-                $ENV{HOME}/anaconda3/lib
-                /usr/lib/x86_64-linux-gnu
-                )
-        if(LAPACKE_INCLUDE_DIR OR LAPACKE_LIBRARY)
-            CheckLapackeCompiles(" "   " "  "${LAPACKE_LIBRARY} " "${LAPACKE_INCLUDE_DIR} ")
-        endif()
-        if(LAPACKE_COMPILES)
-            add_library(lapacke INTERFACE)
-            add_dependencies(lapacke INTERFACE lapack)
-            target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY})
-            target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
-            message(STATUS "Searching for Lapacke in system - Success: ${LAPACKE_LIBRARY}")
-            return()
-        else()
-            message(STATUS "Searching for Lapacke in system - failed")
-        endif()
+    message(STATUS "Searching for Lapacke in system")
+    find_path(LAPACKE_INCLUDE_DIR
+            NAMES lapacke.h
+            HINTS ${LAPACKE_DIR} $ENV{CONDA_PREFIX}
+            PATHS
+            ${CMAKE_INSTALL_PREFIX}
+            ${CMAKE_INSTALL_PREFIX}/OpenBLAS
+            $ENV{BLAS_DIR}/include
+            /usr/include
+            /usr/include/x86_64-linux-gnu
+            )
+    find_library(LAPACKE_LIBRARY
+            NAMES liblapacke${CUSTOM_SUFFIX}
+            HINTS ${LAPACKE_DIR} $ENV{CONDA_PREFIX}
+            PATHS
+            $ENV{BLAS_DIR}/lib
+            ${CMAKE_INSTALL_PREFIX}
+            ${CMAKE_INSTALL_PREFIX}/OpenBLAS
+            /usr/lib
+            /usr/local/lib
+            )
+    if(LAPACKE_INCLUDE_DIR OR LAPACKE_LIBRARY)
+        CheckLapackeCompiles(" "   " "  "${LAPACKE_LIBRARY} " "${LAPACKE_INCLUDE_DIR} ")
+    endif()
+    if(LAPACKE_COMPILES)
+        add_library(lapacke INTERFACE IMPORTED)
+        target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY})
+        target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
+        message(STATUS "Searching for Lapacke in system - Success: ${LAPACKE_LIBRARY}")
+        return()
+    else()
+        message(STATUS "Searching for Lapacke in system - failed")
     endif()
 endif()
 
 
 
 if(NOT TARGET lapacke)
-    message(WARNING "Library LAPACKE could not be found.")
+    message(FATAL_ERROR "Library LAPACKE could not be found.")
 endif()

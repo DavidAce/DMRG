@@ -9,15 +9,33 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
+option(PREFER_CONDA_LIBS  "Prefer libraries installed through anaconda"         OFF)
+option(ENABLE_OPENMP      "Use OpenMP"                                          OFF)
+option(ENABLE_MKL         "Enable Intel Math Kernel Library"                    OFF)
+option(ENABLE_LTO         "Enable link time optimization"                       OFF)
+option(DOWNLOAD_MISSING   "Download and install missing dependencies"           OFF )
 option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
+option(BUILD_TESTS        "Builds ctests"                                       OFF)
 option(BUILD_EXAMPLES     "Build examples"                                      OFF)
-option(ENABLE_TESTS       "Enable testing"                                      ON )
-option(DOWNLOAD_MISSING   "Download and install missing dependencies"           ON )
 option(ENABLE_CCACHE      "Use ccache to speed up compilation"                  OFF)
 option(ENABLE_COTIRE      "Use cotire to speed up compilation"                  OFF)
-option(ENABLE_OPENMP      "Use OpenMP"                                          OFF)
-option(USE_MKL            "Use Intel MKL libraries"                             ON )
-option(ENABLE_LTO         "Enable link time optimization"                       OFF)
+
+
+
+message("========================= DMRG++ build options ==============================")
+message(STATUS "CMAKE_INSTALL_PREFIX    : ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "PREFER_CONDA_LIBS       : ${PREFER_CONDA_LIBS}")
+message(STATUS "ENABLE_OPENMP           : ${ENABLE_OPENMP}")
+message(STATUS "ENABLE_MKL              : ${ENABLE_MKL}")
+message(STATUS "ENABLE_LTO              : ${ENABLE_LTO}")
+message(STATUS "DOWNLOAD_MISSING        : ${DOWNLOAD_MISSING}")
+message(STATUS "BUILD_SHARED_LIBS       : ${BUILD_SHARED_LIBS}")
+message(STATUS "BUILD_TESTS             : ${BUILD_TESTS}")
+message(STATUS "BUILD_EXAMPLES          : ${BUILD_EXAMPLES}")
+message(STATUS "ENABLE_CCACHE           : ${ENABLE_CCACHE}")
+message(STATUS "ENABLE_COTIRE           : ${ENABLE_COTIRE}")
+message("=============================================================================")
+
 
 #################################################################
 ### Set default policies if CMake is new enough               ###
@@ -32,8 +50,8 @@ else()
     cmake_policy(SET CMP0067 NEW)
 endif()
 
-
-if(USE_MKL AND NOT MKLROOT)
+# Set MKLROOT if not defined in environment
+if(ENABLE_MKL AND NOT MKLROOT)
     if(DEFINED $ENV{MKLROOT})
         set(MKLROOT $ENV{MKLROOT})
     else()
@@ -57,7 +75,6 @@ include(cmake-modules/gitversion.cmake)
 ### Get operating system properties into a variable            ###
 ##################################################################
 cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
-
 set(GET_OS_INFO_CMD lsb_release -a)
 if(${CMAKE_HOST_APPLE})
     set(GET_OS_INFO_CMD "sw_vers")
@@ -73,22 +90,26 @@ message("===============================")
 
 
 
-###################
-### Setup flags ###
-###################
+###########################
+### Print compiler info ###
+###########################
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+
+
+############################################################
+### Set  the same microarchitecture for c++ and OpenBLAS ###
+############################################################
 
 if(NOT MARCH)
     set(MARCH "native")
 endif()
-
 if(MARCH)
     if (${MARCH} STREQUAL "zen")
-        string(TOUPPER ZEN OPENBLAS_MARCH)
-        string(TOLOWER znver1 CXX_MARCH)
+        string(TOUPPER ${MARCH} OPENBLAS_MARCH)
+        set(CXX_MARCH znver1)
     elseif (${MARCH} STREQUAL "native")
-        set(OPENBLAS_MARCH "haswell")
-        string(TOLOWER ${MARCH} CXX_MARCH)
+        set(OPENBLAS_MARCH HASWELL)
+        set(CXX_MARCH native)
     else()
         string(TOUPPER ${MARCH} OPENBLAS_MARCH)
         string(TOLOWER ${MARCH} CXX_MARCH)
@@ -96,6 +117,10 @@ if(MARCH)
 endif()
 
 
+
+############################################################
+### Enable CCACHE to speed up compilation (may not work) ###
+############################################################
 if(ENABLE_CCACHE)
     find_program(CCACHE_FOUND ccache)
     if(CCACHE_FOUND)
@@ -104,25 +129,6 @@ if(ENABLE_CCACHE)
         set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
     endif(CCACHE_FOUND)
 endif()
-
-#################################
-### Microarch dependent flags ###
-#################################
-# Check supported options here http://man7.org/linux/man-pages/man1/gcc.1.html
-if(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
-    #list(APPEND RELEASE_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
-else()
-    # Set default to whatever sandybridge can manage
-    #list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
-endif()
-
-
-
-
-
-
-
-
 
 
 
@@ -136,25 +142,28 @@ file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "source/*.h")
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
-################################################
-###  Force cmake to find .a library suffixes ###
-################################################
+
+
+########################################################
+###  Force cmake to find .a library suffixes         ###
+###  CMake should be able to handle this for itself  ###
+###  empirically, it is not.                         ###
+########################################################
 if(BUILD_SHARED_LIBS)
     set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
 else()
     set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
+    target_link_libraries  (${PROJECT_NAME} PRIVATE -static)   ### Static linkage
 endif()
 
 
 
 
-
-###############################
-###  Require c++17 support  ###
-###############################
+##############################
+###  Enable c++17 support  ###
+##############################
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 
@@ -181,7 +190,7 @@ CheckCXXOptional()
 
 if (NOT TARGET Threads::Threads)
     ### Adapt pthread for static/dynamic linking
-    ### This is to fix a bug with threads described here:
+    ### This is to fix a segfault bug with threads described here:
     ### https://stackoverflow.com/questions/35116327/when-g-static-link-pthread-cause-segmentation-fault-why
     set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
     set(THREADS_PREFER_PTHREAD_FLAG FALSE)
@@ -199,11 +208,12 @@ endif()
 ###########################################
 add_library(project-settings INTERFACE) # A helper target
 message(STATUS "Using microarchitechture: ${CXX_MARCH}")
-target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-std=c++17  -march=${CXX_MARCH} -mtune=${CXX_MARCH}>)
+target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH}>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:          -O3 -g -DNDEBUG>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:            -O0 -g3  -Wall -Wpedantic -Wextra -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3  -Wall -Wpedantic -Wextra -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:            -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3 -Wpedantic -Wextra -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -g  -DNDEBUG  -lprofiler  -ftime-report>)
+target_compile_features(project-settings INTERFACE cxx_std_17)
 
 
 #######################################
@@ -214,18 +224,13 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
     target_link_libraries(project-settings INTERFACE  -stdlib=libstdc++ )
 endif()
 
-target_compile_features(${PROJECT_NAME}  INTERFACE cxx_std_17)
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED YES
-        CXX_EXTENSIONS NO
-        )
-
-###  Optional OpenMP support
-###  Note that Clang has some  trouble with static openmp and that
-###  and that static openmp is not recommended. This tries to enable
-###  static openmp anyway because I find it useful. Installing
-###  libiomp5 might help for shared linking.
+##############################################################################
+###  Optional OpenMP support                                               ###
+###  Note that Clang has some  trouble with static openmp and that         ###
+###  and that static openmp is not recommended. This tries to enable       ###
+###  static openmp anyway because I find it useful. Installing             ###
+###  libiomp5 might help for shared linking.                               ###
+##############################################################################
 if(ENABLE_OPENMP)
     include(cmake-modules/FindPackageOpenMP.cmake)
     find_package_openmp()
@@ -271,16 +276,12 @@ set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/external-deps)
 ##########################################
 ###  Find or fetch all dependencies   ###
 ##########################################
-
-
-
 include(cmake-modules/FindGFortran.cmake)
-
-if(USE_MKL)
+if(ENABLE_MKL)
     include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 endif()
 
-include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
+include(cmake-modules/Fetch_OpenBLAS2.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/FindLAPACKE.cmake)                    # If MKL is not found openblas will be used instead. Includes lapack.
 include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_Arpackpp.cmake)                 # LC++ frontend for arpack-ng
@@ -307,6 +308,10 @@ message("=======================================================================
 include(cmake-modules/PrintTargetInfo.cmake)
 print_target_info(OpenMP)
 print_target_info(blas)
+print_target_info(lapack)
+print_target_info(lapacke)
+print_target_info(mkl)
+print_target_info(OpenBLAS)
 print_target_info(lapack)
 print_target_info(lapacke)
 print_target_info(arpack)

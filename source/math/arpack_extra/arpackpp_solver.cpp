@@ -2,13 +2,9 @@
 // Created by david on 2018-10-30.
 //
 
-#include "matrix_product_dense.h"
-#include "matrix_product_sparse.h"
-#include "matrix_product_stl.h"
-#include "matrix_product_hamiltonian.h"
 
-#include <general/nmspc_type_check.h>
-#include <algorithm>
+//#include <algorithm>
+#include "arpackpp_solver.h"
 
 #ifdef ARPACKPP_ALTDIR
 #include <arpackpp/arssym.h>
@@ -20,7 +16,12 @@
 #include <arpack++/arscomp.h>
 #endif
 
-#include "arpackpp_solver.h"
+#include "matrix_product_dense.h"
+#include "matrix_product_sparse.h"
+#include "matrix_product_stl.h"
+#include "matrix_product_hamiltonian.h"
+#include <general/nmspc_type_check.h>
+
 
 namespace tc = TypeCheck;
 using namespace eigutils::eigSetting;

@@ -80,7 +80,7 @@ function(find_package_openmp)
         return()
     endif()
 
-    if(USE_MKL AND NOT MKLROOT)
+    if(ENABLE_MKL AND NOT MKLROOT)
         if(DEFINED $ENV{MKLROOT})
             set(MKLROOT $ENV{MKLROOT})
         else()
