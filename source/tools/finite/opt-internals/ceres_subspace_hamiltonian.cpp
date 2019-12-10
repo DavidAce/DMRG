@@ -4,8 +4,8 @@
 
 #include <tools/finite/opt.h>
 #include <state/class_state_finite.h>
-#include <general/nmspc_omp.h>
 #include <simulation/nmspc_settings.h>
+
 Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_state_finite & state){
     auto mpo = state.get_multimpo();
     tools::log->trace("Contracting multisite hamiltonian...");

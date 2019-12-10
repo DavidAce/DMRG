@@ -3,17 +3,21 @@
 //
 
 #pragma once
-
-
+// It is VERY IMPORTANT to set this flag when using CERES
+// For some reason the Eigen destructor starts calling std::free instead of
+// the handmade allocator free in calls inside CERES. I do not know the reason.
+// Setting this flag here or globally helps.
+#define EIGEN_MALLOC_ALREADY_ALIGNED 0
 #include <tools/nmspc_tools.h>
 #include <general/class_tic_toc.h>
-#include <ceres/ceres.h>
 #include <general/nmspc_omp.h>
+#include <ceres/gradient_problem.h>
+#include <ceres/gradient_problem_solver.h>
+
 class class_tic_toc;
 
 
-namespace tools::finite::opt{
-    namespace internal{
+namespace tools::finite::opt::internal{
         extern Eigen::Tensor<std::complex<double>,3> old_subspace_optimization(const class_state_finite &state,
                                                                                const class_simulation_status &sim_status,
                                                                                OptType optType, OptMode optMode);
@@ -24,13 +28,6 @@ namespace tools::finite::opt{
                                                                                const class_simulation_status &sim_status,
                                                                                OptType optType);
         extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_state_finite &state,
-                                                                               const Eigen::Tensor<std::complex<double>,3> &theta,
-                                                                               const class_simulation_status &sim_status,
-                                                                               OptType optType);
-        extern Eigen::Tensor<std::complex<double>,3> ceres_pedantic_optimization(const class_state_finite &state,
-                                                                               const class_simulation_status &sim_status,
-                                                                               OptType optType);
-        extern Eigen::Tensor<std::complex<double>,3> ceres_pedantic_optimization(const class_state_finite &state,
                                                                                const Eigen::Tensor<std::complex<double>,3> &theta,
                                                                                const class_simulation_status &sim_status,
                                                                                OptType optType);
@@ -64,7 +61,6 @@ namespace tools::finite::opt{
         Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
 
 
-//        extern std::complex<double>                    get_subspace_hamiltonian_component();
         inline ceres::GradientProblemSolver::Options ceres_default_options;
 
         inline bool no_state_in_window = false;
@@ -105,35 +101,8 @@ namespace tools::finite::opt{
         inline std::unique_ptr<class_tic_toc> t_vH   =  std::make_unique<class_tic_toc>(true,5,"t_vH  ");
         inline std::unique_ptr<class_tic_toc> t_op   =  std::make_unique<class_tic_toc>(true,5,"t_op  ");
 
-
-//        inline LBFGSpp::LBFGSParam<double> get_params(){
-//            using namespace LBFGSpp;
-//            LBFGSpp::LBFGSParam<double> params;
-//            // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
-//            // I think c1 corresponds to ftol, and c2 corresponds to wolfe
-//            params.max_iterations = 1000;
-//            params.max_linesearch = 80; // Default is 20.
-//            params.m              = 8;     // Default is 6
-//            params.past           = 1;     //
-//            params.epsilon        = 1e-2;  // Default is 1e-5.
-//            params.delta          = 1e-6; // Default is 0.
-//            params.ftol           = 1e-4;  // Default is 1e-4.
-//            params.wolfe          = 0.90;   // Default is 0.9
-//            params.min_step       = 1e-40;
-//            params.max_step       = 1e+40;
-//            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_ARMIJO;
-//            return params;
-//        }
-//
-//        inline auto params = get_params();
-
-
-
-
-
         class ceres_base_functor : public ceres::FirstOrderFunction{
         public:
-            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         protected:
             mutable double variance;
             mutable double energy  ;
@@ -168,5 +137,4 @@ namespace tools::finite::opt{
 
 
     }
-}
 

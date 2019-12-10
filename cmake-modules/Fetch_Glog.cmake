@@ -17,8 +17,8 @@ if(TARGET glog::glog)
         message(FATAL_ERROR "Dependency glog::glog does not have IMPORTED_LOCATION_${BUILD_TYPE}")
     endif()
 
-    include(cmake-modules/PrintTargetProperties.cmake)
-    print_target_properties(glog::glog)
+#    include(cmake-modules/PrintTargetProperties.cmake)
+#    print_target_properties(glog::glog)
 
 
 elseif(DOWNLOAD_MISSING)

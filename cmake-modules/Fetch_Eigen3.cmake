@@ -5,7 +5,7 @@ find_package(Eigen3
         PATH_SUFFIXES Eigen3 eigen3 include/Eigen3 include/eigen3  NO_CMAKE_PACKAGE_REGISTRY NO_DEFAULT_PATH)
 
 if(TARGET Eigen3::Eigen)
-    message(STATUS "Eigen3 found")
+    message(STATUS "Eigen3 found: ")
     target_link_libraries(Eigen3::Eigen INTERFACE -lrt)
 #    include(cmake-modules/PrintTargetProperties.cmake)
 #    print_target_properties(Eigen3::Eigen)
@@ -33,20 +33,24 @@ endif()
 
 
 if(TARGET Eigen3::Eigen AND TARGET blas )
-#    set(EIGEN3_USING_BLAS ON)
-#    if(TARGET mkl)
-#        message(STATUS "Eigen3 will use MKL")
-#        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_MKL_ALL)
-#        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
-#        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_MKL_ALL)
-#        target_include_directories(Eigen3::Eigen INTERFACE ${MKL_INCLUDE_DIR})
-#    else ()
-#        message(STATUS "Eigen3 will use BLAS and LAPACKE")
-#        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_BLAS)
-#        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
-#    endif()
+    set(EIGEN3_USING_BLAS ON)
+    if(TARGET mkl)
+        message(STATUS "Eigen3 will use MKL")
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_MKL_ALL)
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_MKL_ALL)
+        target_include_directories(Eigen3::Eigen INTERFACE ${MKL_INCLUDE_DIR})
+    else ()
+        message(STATUS "Eigen3 will use BLAS and LAPACKE")
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_BLAS)
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
+    endif()
 
-#    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_DONT_ALIGN_STATICALLY)
-#    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_DONT_VECTORIZE)
+    # Use this flag if Ceres is giving you trouble!
+    # For some reason it starts mixing alligned and hand-made aligned malloc and freeing them willy nilly
+    # This flag forces its hand and avoids a segfault in some cases.
+    # target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
+
+
 endif()
 
