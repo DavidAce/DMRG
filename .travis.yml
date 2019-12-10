@@ -119,6 +119,6 @@ before_install:
   - eval "${MATRIX_EVAL}"
 
 script:
-  - ./build.sh  --enable-tests  -a native  -j 2  --enable-openmp  --enable-mkl --build-type=Debug
+  - ./build.sh --download-missing --enable-tests  -a native  -j 2  --enable-openmp  --enable-mkl --build-type=Debug
 
 
