@@ -106,7 +106,6 @@ void class_xDMRG::single_xDMRG_step()
     switch(optSpace.option){
         case  opt::SPACE::SUBSPACE : threshold = settings::precision::min_size_part_diag; break;
         case  opt::SPACE::DIRECT   : threshold = settings::precision::max_size_direct  ; break;
-        case  opt::SPACE::PEDANTIC : threshold = settings::precision::max_size_direct  ; break;
     }
 
     Eigen::Tensor<Scalar,3> theta;

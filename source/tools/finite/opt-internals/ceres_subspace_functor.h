@@ -3,16 +3,12 @@
 //
 
 #pragma once
-
-
 #include <tools/finite/opt.h>
 
-namespace tools::finite::opt{
-    namespace internal{
+
+namespace tools::finite::opt::internal{
         template<typename Scalar>
         class ceres_subspace_functor : public ceres_base_functor{
-        public:
-            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
         private:
             using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
             using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
@@ -28,4 +24,3 @@ namespace tools::finite::opt{
                           double* grad_double_double) const final;
         };
     }
-}

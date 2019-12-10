@@ -5,19 +5,11 @@
 #pragma once
 
 #include <tools/finite/opt.h>
-#include <general/nmspc_type_check.h>
 
-namespace tools::finite::opt{
-    namespace internal{
-
-
+namespace tools::finite::opt::internal{
         template<typename Scalar>
         class ceres_direct_functor : public ceres_base_functor{
-        public:
-            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
         private:
-            using ScalarLong   = typename std::conditional<TypeCheck::is_complex<Scalar>(), std::complex<long double>, long double>::type;
             using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
             using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
             mutable Eigen::Tensor<Scalar,3> Hv_tensor, H2v_tensor;
@@ -36,8 +28,6 @@ namespace tools::finite::opt{
         };
 
     }
-
-}
 
 
 

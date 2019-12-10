@@ -14,7 +14,6 @@
 
 class OMP{
 public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     size_t num_threads;
     #ifdef _OPENMP
     Eigen::ThreadPool       tp;

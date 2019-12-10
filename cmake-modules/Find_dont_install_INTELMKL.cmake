@@ -122,9 +122,9 @@ if (MKL_FOUND)
         set(CMAKE_REQUIRED_INCLUDES  " ${mkl_valid_incs}") # Can be a ;list
         string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${CMAKE_REQUIRED_FLAGS}") # Needs to be a space-separated list
 
-        message("CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
-        message("CMAKE_REQUIRED_INCLUDES : ${CMAKE_REQUIRED_INCLUDES}")
-        message("CMAKE_REQUIRED_FLAGS    : ${CMAKE_REQUIRED_FLAGS}")
+#        message("CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
+#        message("CMAKE_REQUIRED_INCLUDES : ${CMAKE_REQUIRED_INCLUDES}")
+#        message("CMAKE_REQUIRED_FLAGS    : ${CMAKE_REQUIRED_FLAGS}")
         check_cxx_source_compiles("
             #include <mkl.h>
             int main() {

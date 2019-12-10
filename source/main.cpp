@@ -30,7 +30,6 @@
 #endif
 
 #include <thread>
-//#include <unistd.h>
 #include <getopt.h>
 #include <gitversion.h>
 

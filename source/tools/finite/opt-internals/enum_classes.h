@@ -9,7 +9,7 @@ namespace tools::finite::opt{
     namespace internal{
         enum class EnumType  {REAL,CPLX};
         enum class EnumMode  {OVERLAP,VARIANCE};
-        enum class EnumSpace {SUBSPACE, DIRECT,PEDANTIC};
+        enum class EnumSpace {SUBSPACE, DIRECT};
         template <typename EnumClass> class EnumBase;
     }
     using TYPE  = internal::EnumType;
@@ -83,7 +83,6 @@ public:
     using EnumBase::operator=;
     static constexpr opt::SPACE SUBSPACE = opt::SPACE::SUBSPACE;
     static constexpr opt::SPACE DIRECT   = opt::SPACE::DIRECT;
-    static constexpr opt::SPACE PEDANTIC   = opt::SPACE::PEDANTIC;
 private:
     void print(std::ostream& str) const final;
 };
