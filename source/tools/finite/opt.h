@@ -162,12 +162,7 @@ namespace tools::finite::opt{
             double get_energy     () const;
             size_t get_count      () const;
             double get_norm       () const;
-            int    NumParameters  () const;
-            virtual bool Evaluate(const double* v_double_double,
-                                  double* fx,
-                                  double* grad_double_double) const = 0;
-
-
+            int    NumParameters  () const final;
         };
 
 
