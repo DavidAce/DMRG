@@ -62,7 +62,7 @@ else()
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
-            GIT_TAG             master
+            GIT_TAG             2.3.0
             GIT_PROGRESS false
             GIT_SHALLOW true
             PREFIX      ${EXTERNAL_BUILD_DIR}/arpack++

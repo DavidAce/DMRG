@@ -19,7 +19,6 @@
 #include <Eigen/Core>
 #include <complex.h>
 #undef I
-
 #include <Eigen/LU>
 #define profile_matrix_product_dense 1
 

@@ -20,7 +20,7 @@
 # can put it outside. Check with cmake verbose ON that the linking goes through as above.
 #########################
 
-if (USE_MKL)
+if (ENABLE_MKL)
     #    set(MKL_USE_STATIC_LIBS ON)
     set(MKL_MULTI_THREADED ${ENABLE_OPENMP})
     set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason... You need to use the mkl_set_interface_layer(int) to select at runtime, which is not good when building dependencies!
