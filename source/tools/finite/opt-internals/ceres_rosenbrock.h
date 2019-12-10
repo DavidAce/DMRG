@@ -5,7 +5,7 @@
 #pragma once
 #include <tools/finite/opt.h>
 #include "ceres/ceres.h"
-//#include "glog/logging.h"
+
 namespace tools::finite::opt{
     namespace internal {
         class ceres_rosenbrock_functor : public ceres::FirstOrderFunction {
