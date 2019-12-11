@@ -17,8 +17,6 @@ option(DOWNLOAD_MISSING   "Download and install missing dependencies"           
 option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
 option(BUILD_TESTS        "Builds ctests"                                       OFF)
 option(BUILD_EXAMPLES     "Build examples"                                      OFF)
-option(ENABLE_CCACHE      "Use ccache to speed up compilation"                  OFF)
-option(ENABLE_COTIRE      "Use cotire to speed up compilation"                  OFF)
 
 
 
@@ -32,8 +30,6 @@ message(STATUS "DOWNLOAD_MISSING        : ${DOWNLOAD_MISSING}")
 message(STATUS "BUILD_SHARED_LIBS       : ${BUILD_SHARED_LIBS}")
 message(STATUS "BUILD_TESTS             : ${BUILD_TESTS}")
 message(STATUS "BUILD_EXAMPLES          : ${BUILD_EXAMPLES}")
-message(STATUS "ENABLE_CCACHE           : ${ENABLE_CCACHE}")
-message(STATUS "ENABLE_COTIRE           : ${ENABLE_COTIRE}")
 message("=============================================================================")
 
 
@@ -116,19 +112,6 @@ if(MARCH)
     endif()
 endif()
 
-
-
-############################################################
-### Enable CCACHE to speed up compilation (may not work) ###
-############################################################
-if(ENABLE_CCACHE)
-    find_program(CCACHE_FOUND ccache)
-    if(CCACHE_FOUND)
-        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-        set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
-    endif(CCACHE_FOUND)
-endif()
 
 
 
@@ -307,11 +290,9 @@ message("===               DMRG++: SUMMARY OF CMAKE CONFIGURATION               
 message("=============================================================================")
 include(cmake-modules/PrintTargetInfo.cmake)
 print_target_info(OpenMP)
-print_target_info(blas)
-print_target_info(lapack)
-print_target_info(lapacke)
 print_target_info(mkl)
 print_target_info(OpenBLAS)
+print_target_info(blas)
 print_target_info(lapack)
 print_target_info(lapacke)
 print_target_info(arpack)
@@ -331,21 +312,7 @@ message("=======================================================================
 message("")
 
 
-###########################################
-### Use precompiled headers with cotire ###
-###########################################
-if (ENABLE_COTIRE)
-    get_target_property(LAPACKE_DIRS   lapacke         INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(ARPACK++_DIRS  arpack++        INTERFACE_INCLUDE_DIRECTORIES)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-            COTIRE_PREFIX_HEADER_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/source"
-            COTIRE_PREFIX_HEADER_IGNORE_PATH
-            "${LAPACKE_DIRS};${ARPACK++_DIRS}"
-            )
-    include(cmake-modules/cotire.cmake)
-    cotire(${PROJECT_NAME})
 
-endif()
 
 
 
