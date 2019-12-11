@@ -3,17 +3,20 @@
 //
 
 
-//#include <algorithm>
 #include "arpackpp_solver.h"
 
 #if __has_include(<arpackpp/arcomp.h>)
 #include <arpackpp/arcomp.h>
 #include <arpackpp/ardscomp.h>
 #include <arpackpp/ardnsmat.h>
+#include <arpackpp/arsnsym.h>
+#include <arpackpp/arssym.h>
 #elif __has_include(<arpack++/arcomp.h>)
 #include <arpack++/arcomp.h>
 #include <arpack++/ardscomp.h>
 #include <arpack++/ardnsmat.h>
+#include <arpack++/arsnsym.h>
+#include <arpack++/arssym.h>
 #else
 #error Could not include arpack headers correctly
 #endif
@@ -129,6 +132,7 @@ void arpackpp_solver<MatrixType>::eigs_nsym() {
         assert(solverConf.form == Form::NONSYMMETRIC and "ERROR: solverConf not NONSYMMETRIC");
         assert(matrix.get_form() == Form::NONSYMMETRIC and "ERROR: matrix not NONSYMMETRIC");
         if (nev_internal == 1) { nev_internal++; }
+
         ARNonSymStdEig<double, MatrixType> solver(
                 matrix.rows(),
                 nev_internal,
