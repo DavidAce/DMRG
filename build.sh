@@ -22,6 +22,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-mkl               : Enable Intel MKL
 -t | --build-target [=args]     : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
+   | --no-modules               : Disable use of "module load"
 EXAMPLE:
 ./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-missing
 EOF
@@ -47,6 +48,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st: \
                 enable-openmp\
                 enable-mkl\
                 download-missing\
+                no-modules\
                 extra-flags:\
                 "  -- "$@")
 
@@ -65,7 +67,6 @@ enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
 make_threads=8
-
 
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
@@ -90,6 +91,7 @@ do
        --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
        --download-missing)          download_missing="ON"           ; echo " * Download missing libs    : ON"      ; shift   ;;
+       --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
     --) shift; break;;
   esac
 done
@@ -147,43 +149,47 @@ fi
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
     conda activate dmrg
-    module load buildenv-gcc/2018a-eb
-    module load zlib
-#    module load CMake/3.15.2
-#    module load GCCcore
+    if [ -z "$no_module" ]; then
+        module load buildenv-gcc/2018a-eb
+        module load zlib
+        module load GCCcore
+        #    module load CMake/3.15.2
+
+        if [ "$compiler" = "Clang" ] ; then
+        #   module load Clang
+            module load Clang/8.0.0-GCCcore-8.2.0
+            if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
+        fi
+    fi
+
     if [ "$compiler" = "GNU" ] ; then
         export CC=gcc
         export CXX=g++
     elif [ "$compiler" = "Clang" ] ; then
-#        module load Clang/8.0.0-GCCcore-8.2.0
-        if [ -z "$gcc_toolchain" ] ; then
-            gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE
-        fi
-        export CC=clang-9
-        export CXX=clang-cpp
+        export CC=clang
+        export CXX=clang++
     fi
 
 elif [[ "$HOSTNAME" == *"raken"* ]];then
-    if [ "$enable_mkl" = "ON" ] ; then
-        module load imkl
-    else
-        module load OpenBLAS
+    if [ -z "$no_module" ]; then
+        if [ "$enable_mkl" = "ON" ] ; then module load imkl; else module load OpenBLAS; fi
+        module load arpack-ng
+        module load ARPACK++
+        module load HDF5/1.10.5-GCCcore-8.2.0
+        module load Eigen # We want our own patched eigen though.
+        module load CMake
+        module load GCCcore
+        if [ "$compiler" = "Clang" ] ; then
+            module load Clang
+            if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
+        fi
+        module list
     fi
-    module load arpack-ng
-    module load ARPACK++
-    module load HDF5/1.10.5-GCCcore-8.2.0
-#    module load Eigen
-    module load CMake
-    module load GCCcore
-    module list
+
     if [ "$compiler" = "GNU" ] ; then
         export CC=gcc
         export CXX=g++
     elif [ "$compiler" = "Clang" ] ; then
-        module load Clang
-        if [ -z "$gcc_toolchain" ] ; then
-            gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE
-        fi
         export CC=clang
         export CXX=clang++
     fi
