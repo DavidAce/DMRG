@@ -38,14 +38,21 @@ if(NOT TARGET arpack)
     ### Otherwise, passing raw lists results  in only the first element
     ### of the list to be passed.
     ####################################################################
-#    get_target_property(BLAS_LIBRARIES      blas    INTERFACE_LINK_LIBRARIES)
-#    get_target_property(LAPACK_LIBRARIES    lapack  INTERFACE_LINK_LIBRARIES)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
     expand_target_libs(blas BLAS_LIBRARIES)
     expand_target_libs(lapack LAPACK_LIBRARIES)
-
-    string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES}")
-    string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
+    foreach(lib ${BLAS_LIBRARIES})
+        if(NOT ${lib} MATCHES "pthread")
+            list(APPEND BLAS_LIBRARIES_WO_PTHREAD ${lib})
+        endif()
+    endforeach()
+    foreach(lib ${LAPACK_LIBRARIES})
+        if(NOT ${lib} MATCHES "pthread")
+            list(APPEND LAPACK_LIBRARIES_WO_PTHREAD ${lib})
+        endif()
+    endforeach()
+    string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES_WO_PTHREAD}")
+    string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES_WO_PTHREAD}")
     ####################################################################
     set(ARPACK_FLAGS "-w -m64 -fPIC")
     include(ExternalProject)
