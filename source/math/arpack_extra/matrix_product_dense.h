@@ -31,11 +31,11 @@
 #define profile_matrix_product_dense 1
 
 #if defined(_MKL_LAPACK_H_)
-#pragma message _MKL_LAPACK_H_ IS NOT SUPPOSED TO BE DEFINED HERE
+#pragma message("_MKL_LAPACK_H_ IS NOT SUPPOSED TO BE DEFINED HERE")
 #endif
 
 #if defined(LAPACK_H)
-#pragma message LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
+#pragma message("LAPACK IS NOT SUPPOSED TO BE DEFINED HERE")
 #endif
 
 
