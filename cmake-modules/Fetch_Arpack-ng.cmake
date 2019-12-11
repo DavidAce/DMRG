@@ -51,6 +51,9 @@ if(NOT TARGET arpack)
             list(APPEND LAPACK_LIBRARIES_WO_PTHREAD ${lib})
         endif()
     endforeach()
+    list(APPEND BLAS_LIBRARIES_WO_PTHREAD "-Wl,--no-as-needed -lpthread -lm -ldl -Wl,--as-needed")
+    list(APPEND LAPACK_LIBRARIES_WO_PTHREAD "-Wl,--no-as-needed -lpthread -lm -ldl -Wl,--as-needed")
+
     string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES_WO_PTHREAD}")
     string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES_WO_PTHREAD}")
     ####################################################################
