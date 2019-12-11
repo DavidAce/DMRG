@@ -115,7 +115,7 @@ for lib in "${clear_libs[@]}"; do
     else
         echo "Clearing library: $lib"
         rm -r ./build/$build_type/external-deps/$lib
-        rm -r ./libs-build_type_lower/$lib
+        rm -r ./libs-$build_type_lower/$lib
     fi
 done
 
@@ -172,7 +172,7 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
     module load arpack-ng
     module load ARPACK++
     module load HDF5/1.10.5-GCCcore-8.2.0
-    module load Eigen
+#    module load Eigen
     module load CMake
     module load GCCcore
     module list

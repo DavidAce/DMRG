@@ -1,7 +1,7 @@
 # We want to find our own Eigen3 to make sure we patch it properly
 find_package(Eigen3
         HINTS ${CMAKE_INSTALL_PREFIX}/Eigen3
-        PATHS ${CMAKE_INSTALL_PREFIX}/Eigen3
+        PATHS ${CMAKE_INSTALL_PREFIX}/Eigen3  #${EBROOTEIGEN} Need to patch our own Eigen!!
         PATH_SUFFIXES Eigen3 eigen3 include/Eigen3 include/eigen3  NO_CMAKE_PACKAGE_REGISTRY NO_DEFAULT_PATH)
 
 if(TARGET Eigen3::Eigen)
@@ -16,7 +16,7 @@ elseif (DOWNLOAD_MISSING)
     build_dependency(Eigen3 "")
     find_package(Eigen3 3.3.7
             HINTS ${CMAKE_INSTALL_PREFIX}/Eigen3
-            PATHS ${CMAKE_INSTALL_PREFIX}/Eigen3
+            PATHS ${CMAKE_INSTALL_PREFIX}/Eigen3 #${EBROOTEIGEN} Need to patch our own Eigen!!
             PATH_SUFFIXES Eigen3 eigen3 include/Eigen3 include/eigen3  NO_CMAKE_PACKAGE_REGISTRY NO_DEFAULT_PATH)
     if(TARGET Eigen3::Eigen)
         message(STATUS "Eigen3 installed successfully")

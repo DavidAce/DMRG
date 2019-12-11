@@ -3,23 +3,26 @@
 function(CheckLapackeCompiles REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_LIBRARIES_UNPARSED REQUIRED_INCLUDES)
 #    message(STATUS "Checking if lapacke headers are working")
     set(REQUIRED_LIBRARIES)
+    include(cmake-modules/getExpandedTarget.cmake)
     foreach(elem ${REQUIRED_LIBRARIES_UNPARSED})
         if(TARGET ${elem})
-            get_target_property(lib ${elem} INTERFACE_LINK_LIBRARIES)
-            list(APPEND REQUIRED_LIBRARIES ${lib})
+            expand_target_libs(${elem} expanded_libs)
+            list(APPEND REQUIRED_LIBRARIES ${expanded_libs})
         else()
             list(APPEND REQUIRED_LIBRARIES ${elem})
         endif()
     endforeach()
-
-
-    set(LAPACKE_LIBRARY ${LAPACKE_LAPACK_LIBRARY})
     #   Test features
     include(CheckCXXSourceCompiles)
     set(CMAKE_REQUIRED_FLAGS        ${REQUIRED_FLAGS})
     set(CMAKE_REQUIRED_DEFINITIONS  ${REQUIRED_DEFINITIONS})
     set(CMAKE_REQUIRED_LIBRARIES    ${REQUIRED_LIBRARIES})
     set(CMAKE_REQUIRED_INCLUDES     ${REQUIRED_INCLUDES})
+    message(STATUS "LAPACKE TEST COMPILE CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
+    message(STATUS "LAPACKE TEST COMPILE CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
+    message(STATUS "LAPACKE TEST COMPILE CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
+    message(STATUS "LAPACKE TEST COMPILE CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
+
     check_cxx_source_compiles("
         #ifdef MKL_AVAILABLE
         #include <mkl_lapacke.h>
