@@ -6,14 +6,16 @@
 //#include <algorithm>
 #include "arpackpp_solver.h"
 
-#ifdef ARPACKPP_ALTDIR
-#include <arpackpp/arssym.h>
-#include <arpackpp/arsnsym.h>
-#include <arpackpp/arscomp.h>
+#if __has_include(<arpackpp/arcomp.h>)
+#include <arpackpp/arcomp.h>
+#include <arpackpp/ardscomp.h>
+#include <arpackpp/ardnsmat.h>
+#elif __has_include(<arpack++/arcomp.h>)
+#include <arpack++/arcomp.h>
+#include <arpack++/ardscomp.h>
+#include <arpack++/ardnsmat.h>
 #else
-#include <arpack++/arssym.h>
-#include <arpack++/arsnsym.h>
-#include <arpack++/arscomp.h>
+#error Could not include arpack headers correctly
 #endif
 
 #include "matrix_product_dense.h"

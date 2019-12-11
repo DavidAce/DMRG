@@ -1,13 +1,15 @@
 
 #include <complex>
-#ifdef ARPACKPP_ALTDIR
+#if __has_include(<arpackpp/arcomp.h>)
 #include <arpackpp/arcomp.h>
 #include <arpackpp/ardscomp.h>
 #include <arpackpp/ardnsmat.h>
-#else
+#elif __has_include(<arpack++/arcomp.h>)
 #include <arpack++/arcomp.h>
 #include <arpack++/ardscomp.h>
 #include <arpack++/ardnsmat.h>
+#else
+#error Could not include arpack headers correctly
 #endif
 
 
