@@ -41,7 +41,8 @@ if(NOT TARGET arpack)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
     expand_target_libs(blas BLAS_LIBRARIES)
     expand_target_libs(lapack LAPACK_LIBRARIES)
-
+    message("BLAS_LIBRARIES   : ${BLAS_LIBRARIES}")
+    message("LAPACK_LIBRARIES : ${LAPACK_LIBRARIES}")
     string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES}")
     string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
 
