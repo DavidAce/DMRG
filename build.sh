@@ -22,6 +22,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-mkl               : Enable Intel MKL
 -t | --build-target [=args]     : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
+   | --prefer-conda             : Prefer libraries from anaconda
    | --no-modules               : Disable use of "module load"
 EXAMPLE:
 ./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-missing
@@ -49,6 +50,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st: \
                 enable-mkl\
                 download-missing\
                 no-modules\
+                prefer-conda\
                 extra-flags:\
                 "  -- "$@")
 
@@ -67,7 +69,7 @@ enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
 make_threads=8
-
+prefer_conda="OFF"
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
 echo "Enabled options:"
@@ -92,6 +94,7 @@ do
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
        --download-missing)          download_missing="ON"           ; echo " * Download missing libs    : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
+       --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs:    : ON"      ; shift   ;;
     --) shift; break;;
   esac
 done
@@ -213,13 +216,13 @@ fi
 cat << EOF >&2
     cmake -E make_directory build/$build_type
     cd build/$build_type
-    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DMARCH=$march  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
     cmake --build . --target $build_target -- -j $make_threads
 EOF
 
 if [ -z "$dry_run" ] ;then
     cmake -E make_directory build/$build_type
     cd build/$build_type
-    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DMARCH=$march  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
     cmake --build . --target $build_target -- -j $make_threads
 fi
