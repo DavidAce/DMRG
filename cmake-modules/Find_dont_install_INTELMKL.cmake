@@ -30,9 +30,9 @@ if (ENABLE_MKL)
 
     find_package(MKL)
     if (NOT MKL_FOUND)
-        message(WARNING "\
-        Could not find Intel MKL library. Turn off this
-        warning by passing \"-DUSE_MKL:BOOL=OFF\" to CMake.")
+        message(FATAL_ERROR "\
+        Could not find Intel MKL library as requested by
+        passing \"-DENABLE_MKL:BOOL=ON\" to CMake.")
     endif()
 
 endif()
