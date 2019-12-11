@@ -53,15 +53,17 @@ function(find_OpenBLAS)
                 )
         find_path(OpenBLAS_INCLUDE_DIRS
                 NAMES openblas_config.h
+                HINTS
+                    $ENV{CONDA_PREFIX}
+                    ${CMAKE_INSTALL_PREFIX}/OpenBLAS
+                    $ENV{EBROOTOPENBLAS}
                 PATHS
-                ${CMAKE_INSTALL_PREFIX}/OpenBLAS
-                $ENV{EBROOTOPENBLAS}/include
-                $ENV{CONDA_PREFIX}
-                $ENV{BLAS_DIR}/include
-                /usr/include
-                /usr/include/x86_64-linux-gnu
+                    ${CMAKE_INSTALL_PREFIX}/OpenBLAS
+                    $ENV{EBROOTOPENBLAS}/include
+                    $ENV{CONDA_PREFIX}
+                    $ENV{BLAS_DIR}/include
                 PATH_SUFFIXES
-                include OpenBLAS/include blas/include
+                    include openblas openblas/include OpenBLAS OpenBLAS/include blas/include
                 )
         if (OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
             add_library(OpenBLAS INTERFACE IMPORTED)
