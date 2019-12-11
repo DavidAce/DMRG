@@ -4,11 +4,19 @@
 
 #pragma once
 
+//
 #ifdef EIGEN_USE_BLAS
 #define EIGEN_USE_BLAS_SUSPEND
 #undef EIGEN_USE_BLAS
 #endif
-
+#ifdef EIGEN_USE_MKL_ALL
+#define EIGEN_USE_MKL_ALL_SUSPEND
+#undef EIGEN_USE_MKL_ALL
+#endif
+#ifdef EIGEN_USE_LAPACKE_STRICT
+#define EIGEN_USE_LAPACKE_STRICT_SUSPEND
+#undef EIGEN_USE_LAPACKE_STRICT
+#endif
 
 
 
@@ -21,6 +29,15 @@
 #undef I
 #include <Eigen/LU>
 #define profile_matrix_product_dense 1
+
+#if defined(_MKL_LAPACK_H_)
+#pragma message _MKL_LAPACK_H_ IS NOT SUPPOSED TO BE DEFINED HERE
+#endif
+
+#if defined(LAPACK_H)
+#pragma message LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
+#endif
+
 
 
 template <typename Scalar_>
@@ -202,9 +219,18 @@ void DenseMatrixProduct<Scalar>::MultAx(Scalar* x_in, Scalar* x_out) {
 }
 
 
+
 #ifdef EIGEN_USE_BLAS_SUSPEND
 #define EIGEN_USE_BLAS
 #undef EIGEN_USE_BLAS_SUSPEND
 #endif
+#ifdef EIGEN_USE_MKL_ALL_SUSPEND
+#define EIGEN_USE_MKL_ALL
+#undef EIGEN_USE_MKL_ALL_SUSPEND
+#endif
 
+#ifdef EIGEN_USE_LAPACKE_STRICT_SUSPEND
+#define EIGEN_USE_LAPACKE_STRICT
+#undef EIGEN_USE_LAPACKE_STRICT_SUSPEND
+#endif
 

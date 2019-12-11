@@ -13,24 +13,12 @@ option(PREFER_CONDA_LIBS  "Prefer libraries installed through anaconda"         
 option(ENABLE_OPENMP      "Use OpenMP"                                          OFF)
 option(ENABLE_MKL         "Enable Intel Math Kernel Library"                    OFF)
 option(ENABLE_LTO         "Enable link time optimization"                       OFF)
-option(DOWNLOAD_MISSING   "Download and install missing dependencies"           OFF )
+option(DOWNLOAD_MISSING   "Download and install missing dependencies"           OFF)
 option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
 option(BUILD_TESTS        "Builds ctests"                                       OFF)
 option(BUILD_EXAMPLES     "Build examples"                                      OFF)
 
 
-
-message("========================= DMRG++ build options ==============================")
-message(STATUS "CMAKE_INSTALL_PREFIX    : ${CMAKE_INSTALL_PREFIX}")
-message(STATUS "PREFER_CONDA_LIBS       : ${PREFER_CONDA_LIBS}")
-message(STATUS "ENABLE_OPENMP           : ${ENABLE_OPENMP}")
-message(STATUS "ENABLE_MKL              : ${ENABLE_MKL}")
-message(STATUS "ENABLE_LTO              : ${ENABLE_LTO}")
-message(STATUS "DOWNLOAD_MISSING        : ${DOWNLOAD_MISSING}")
-message(STATUS "BUILD_SHARED_LIBS       : ${BUILD_SHARED_LIBS}")
-message(STATUS "BUILD_TESTS             : ${BUILD_TESTS}")
-message(STATUS "BUILD_EXAMPLES          : ${BUILD_EXAMPLES}")
-message("=============================================================================")
 
 
 #################################################################
@@ -238,6 +226,7 @@ if(ENABLE_LTO)
         set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
     else()
         message(STATUS "IPO / LTO not supported: <${error}>, will not enable")
+        set(ENABLE_LTO OFF CACHE)
     endif()
 endif()
 
@@ -296,12 +285,26 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ceres)
 target_link_libraries(${PROJECT_NAME} PRIVATE project-settings) # This needs to go last in case OpenMP is enabled
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 
+
+
+
 ##################################################################
 ### Print summary of CMake configuration                       ###
 ##################################################################
 message("=============================================================================")
 message("===               DMRG++: SUMMARY OF CMAKE CONFIGURATION                  ===")
 message("=============================================================================")
+message(STATUS "CMAKE_INSTALL_PREFIX         : ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "PREFER_CONDA_LIBS            : ${PREFER_CONDA_LIBS}")
+message(STATUS "ENABLE_OPENMP                : ${ENABLE_OPENMP}")
+message(STATUS "ENABLE_MKL                   : ${ENABLE_MKL}")
+message(STATUS "ENABLE_LTO                   : ${ENABLE_LTO}")
+message(STATUS "DOWNLOAD_MISSING             : ${DOWNLOAD_MISSING}")
+message(STATUS "BUILD_SHARED_LIBS            : ${BUILD_SHARED_LIBS}")
+message(STATUS "BUILD_TESTS                  : ${BUILD_TESTS}")
+message(STATUS "BUILD_EXAMPLES               : ${BUILD_EXAMPLES}")
+message("=============================================================================")
+
 include(cmake-modules/PrintTargetInfo.cmake)
 print_target_info(OpenMP)
 print_target_info(mkl)

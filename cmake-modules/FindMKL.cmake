@@ -60,112 +60,118 @@ set (MKL_MODE_VARIANTS ILP LP)
 set (MKL_THREAD_VARIANTS SEQUENTIAL GNUTHREAD INTELTHREAD)
 set (MKL_MPI_VARIANTS NOMPI INTELMPI OPENMPI SGIMPT)
 
-find_path(MKL_ROOT_DIR
-        include/mkl.h
-        PATHS
-        $ENV{MKLDIR}
-        $ENV{MKLROOT}
-        $ENV{MKL_ROOT}
+set(MKL_ROOT_SEARCH_PATHS
+        $ENV{MKL_DIR}  ${MKL_DIR}
+        $ENV{MKLDIR}   ${MKLDIR}
+        $ENV{MKLROOT}  ${MKLROOT}
+        $ENV{MKL_ROOT} ${MKL_ROOT}
+        $ENV{mkl_root} ${mkl_root}
         $ENV{HOME}/intel/mkl
         /opt/intel/mkl
         $ENV{BLAS_DIR}
-        $ENV{MKL_DIR}
-        $ENV{HOME}/.conda
-        $ENV{HOME}/anaconda3
         /usr/lib/x86_64-linux-gnu
         /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
         "Program Files (x86)/Intel/ComposerXE-2011/mkl"
         )
+set(MKL_PATH_SUFFIXES
+        mkl
+        intel/mkl
+
+        )
+
+
+
+find_path(MKL_ROOT_DIR
+        include/mkl.h
+        HINTS ${DIRECTORY_HINTS}
+        PATHS ${MKL_ROOT_SEARCH_PATHS}
+        )
 
 find_path(MKL_INCLUDE_DIR
         mkl.h
-        PATHS
-        ${MKL_ROOT_DIR}/include
-        ${INCLUDE_INSTALL_DIR}
+        HINTS ${MKL_ROOT_DIR}/include
         )
 
 find_path(MKL_FFTW_INCLUDE_DIR
         fftw3.h
+        HINTS ${MKL_ROOT_DIR}/include
         PATH_SUFFIXES fftw
-        PATHS
-        ${MKL_ROOT_DIR}/include
-        ${INCLUDE_INSTALL_DIR}
         NO_DEFAULT_PATH
         )
 
 find_library(MKL_CORE_LIBRARY
         mkl_core
-        PATHS
-        ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-        ${MKL_ROOT_DIR}/lib/
+        HINTS ${MKL_ROOT_DIR}
+        PATH_SUFFIXES
+        lib lib/${MKL_ARCH_DIR}
         )
 
 # Threading libraries
 find_library(MKL_SEQUENTIAL_LIBRARY
         mkl_sequential
-        PATHS
-        ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-        ${MKL_ROOT_DIR}/lib/
+        HINTS ${MKL_ROOT_DIR}
+        PATH_SUFFIXES
+        lib lib/${MKL_ARCH_DIR}
         )
 
 find_library(MKL_INTELTHREAD_LIBRARY
         mkl_intel_thread
-        PATHS
-        ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-        ${MKL_ROOT_DIR}/lib/
+        HINTS ${MKL_ROOT_DIR}
+        PATH_SUFFIXES
+        lib lib/${MKL_ARCH_DIR}
         )
 
 find_library(MKL_GNUTHREAD_LIBRARY
         mkl_gnu_thread
-        PATHS
-        ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-        ${MKL_ROOT_DIR}/lib/
+        HINTS ${MKL_ROOT_DIR}
+        PATH_SUFFIXES
+        lib lib/${MKL_ARCH_DIR}
         )
 
 # Intel Fortran Libraries
 IF("${MKL_ARCH_DIR}" STREQUAL "32")
     find_library(MKL_INTEL_LP_LIBRARY
             mkl_intel
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
 
     find_library(MKL_INTEL_ILP_LIBRARY
             mkl_intel
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
 else()
     find_library(MKL_INTEL_LP_LIBRARY
             mkl_intel_lp64
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
 
     find_library(MKL_INTEL_ILP_LIBRARY
             mkl_intel_ilp64
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
 ENDIF()
 
 # GNU Fortran Libraries
 find_library(MKL_GF_LP_LIBRARY
         mkl_gf_lp64
-        PATHS
-        ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-        ${MKL_ROOT_DIR}/lib/
+        HINTS ${MKL_ROOT_DIR}
+        PATH_SUFFIXES
+        lib lib/${MKL_ARCH_DIR}
         )
 
 find_library(MKL_GF_ILP_LIBRARY
         mkl_gf_ilp64
-        PATHS
-        ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-        ${MKL_ROOT_DIR}/lib/
+        HINTS ${MKL_ROOT_DIR}
+        PATH_SUFFIXES
+        lib lib/${MKL_ARCH_DIR}
         )
 
 
@@ -174,28 +180,28 @@ find_library(MKL_GF_ILP_LIBRARY
 IF("${MKL_ARCH_DIR}" STREQUAL "32")
     find_library(MKL_BLAS_LP_LIBRARY
             mkl_blas
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
     find_library(MKL_BLAS_ILP_LIBRARY
             mkl_blas
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
 ELSE()
     find_library(MKL_BLAS_LP_LIBRARY
             mkl_blas95_lp64
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
     find_library(MKL_BLAS_ILP_LIBRARY
             mkl_blas95_ilp64
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
 
 ENDIF()
@@ -206,28 +212,28 @@ ENDIF()
 IF("${MKL_ARCH_DIR}" STREQUAL "32")
     find_library(MKL_LAPACK_LP_LIBRARY
             mkl_lapack
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
     find_library(MKL_LAPACK_ILP_LIBRARY
             mkl_lapack
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
 ELSE()
     find_library(MKL_LAPACK_LP_LIBRARY
             mkl_lapack95_lp64
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
     find_library(MKL_LAPACK_ILP_LIBRARY
             mkl_lapack95_ilp64
-            PATHS
-            ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-            ${MKL_ROOT_DIR}/lib/
+            HINTS ${MKL_ROOT_DIR}
+            PATH_SUFFIXES
+            lib lib/${MKL_ARCH_DIR}
             )
 
 ENDIF()
@@ -236,9 +242,9 @@ ENDIF()
 # Single shared library
 find_library(MKL_RT_LIBRARY
         mkl_rt
-        PATHS
-        ${MKL_ROOT_DIR}/lib/${MKL_ARCH_DIR}
-        ${MKL_ROOT_DIR}/lib/
+        HINTS ${MKL_ROOT_DIR}
+        PATH_SUFFIXES
+        lib lib/${MKL_ARCH_DIR}
         )
 
 
