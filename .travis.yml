@@ -97,11 +97,9 @@ matrix:
             - gfortran-7
             - libsz2
             - zlibc
-            - libgsl0-dev
             - libopenblas-dev
             - libarpack2-dev
             - libarpack++2-dev
-            - liblapacke
             - liblapacke-dev
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.

@@ -10,12 +10,12 @@ find_OpenBLAS()
 
 # To print all variables, use the code below:
 
-# get_cmake_property(_variableNames VARIABLES)
-# foreach (_variableName ${_variableNames})
-#     if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "blas" OR "${_variableName}" MATCHES "Blas")
-#         message(STATUS "${_variableName}=${${_variableName}}")
-#     endif()
-# endforeach()
+ get_cmake_property(_variableNames VARIABLES)
+ foreach (_variableName ${_variableNames})
+     if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "blas" OR "${_variableName}" MATCHES "Blas")
+         message(STATUS "${_variableName}=${${_variableName}}")
+     endif()
+ endforeach()
 
 if(TARGET OpenBLAS)
     message(STATUS "OpenBLAS found")
