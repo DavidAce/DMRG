@@ -78,7 +78,11 @@ set(MKL_PATH_SUFFIXES
         intel/mkl
 
         )
-
+if(BUILD_SHARED_LIBS)
+    set(MKL_LIB_SUFFIX ${CMAKE_SHARED_MODULE_SUFFIX})
+else()
+    set(MKL_LIB_SUFFIX ${CMAKE_STATIC_MODULE_SUFFIX})
+endif()
 
 
 find_path(MKL_ROOT_DIR
@@ -100,7 +104,7 @@ find_path(MKL_FFTW_INCLUDE_DIR
         )
 
 find_library(MKL_CORE_LIBRARY
-        mkl_core
+        libmkl_core${MKL_LIB_SUFFIX}
         HINTS ${MKL_ROOT_DIR}
         PATH_SUFFIXES
         lib lib/${MKL_ARCH_DIR}
@@ -108,21 +112,21 @@ find_library(MKL_CORE_LIBRARY
 
 # Threading libraries
 find_library(MKL_SEQUENTIAL_LIBRARY
-        mkl_sequential
+        libmkl_sequential${MKL_LIB_SUFFIX}
         HINTS ${MKL_ROOT_DIR}
         PATH_SUFFIXES
         lib lib/${MKL_ARCH_DIR}
         )
 
 find_library(MKL_INTELTHREAD_LIBRARY
-        mkl_intel_thread
+        libmkl_intel_thread${MKL_LIB_SUFFIX}
         HINTS ${MKL_ROOT_DIR}
         PATH_SUFFIXES
         lib lib/${MKL_ARCH_DIR}
         )
 
 find_library(MKL_GNUTHREAD_LIBRARY
-        mkl_gnu_thread
+        libmkl_gnu_thread${MKL_LIB_SUFFIX}
         HINTS ${MKL_ROOT_DIR}
         PATH_SUFFIXES
         lib lib/${MKL_ARCH_DIR}
@@ -131,28 +135,28 @@ find_library(MKL_GNUTHREAD_LIBRARY
 # Intel Fortran Libraries
 IF("${MKL_ARCH_DIR}" STREQUAL "32")
     find_library(MKL_INTEL_LP_LIBRARY
-            mkl_intel
+            libmkl_intel${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
 
     find_library(MKL_INTEL_ILP_LIBRARY
-            mkl_intel
+            libmkl_intel${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
 else()
     find_library(MKL_INTEL_LP_LIBRARY
-            mkl_intel_lp64
+            libmkl_intel_lp64${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
 
     find_library(MKL_INTEL_ILP_LIBRARY
-            mkl_intel_ilp64
+            libmkl_intel_ilp64${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
@@ -161,14 +165,14 @@ ENDIF()
 
 # GNU Fortran Libraries
 find_library(MKL_GF_LP_LIBRARY
-        mkl_gf_lp64
+        libmkl_gf_lp64${MKL_LIB_SUFFIX}
         HINTS ${MKL_ROOT_DIR}
         PATH_SUFFIXES
         lib lib/${MKL_ARCH_DIR}
         )
 
 find_library(MKL_GF_ILP_LIBRARY
-        mkl_gf_ilp64
+        libmkl_gf_ilp64${MKL_LIB_SUFFIX}
         HINTS ${MKL_ROOT_DIR}
         PATH_SUFFIXES
         lib lib/${MKL_ARCH_DIR}
@@ -179,26 +183,26 @@ find_library(MKL_GF_ILP_LIBRARY
 # Blas
 IF("${MKL_ARCH_DIR}" STREQUAL "32")
     find_library(MKL_BLAS_LP_LIBRARY
-            mkl_blas
+            libmkl_blas${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
     find_library(MKL_BLAS_ILP_LIBRARY
-            mkl_blas
+            libmkl_blas${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
 ELSE()
     find_library(MKL_BLAS_LP_LIBRARY
-            mkl_blas95_lp64
+            libmkl_blas95_lp64${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
     find_library(MKL_BLAS_ILP_LIBRARY
-            mkl_blas95_ilp64
+            libmkl_blas95_ilp64${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
@@ -211,26 +215,26 @@ ENDIF()
 # Lapack
 IF("${MKL_ARCH_DIR}" STREQUAL "32")
     find_library(MKL_LAPACK_LP_LIBRARY
-            mkl_lapack
+            libmkl_lapack${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
     find_library(MKL_LAPACK_ILP_LIBRARY
-            mkl_lapack
+            libmkl_lapack${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
 ELSE()
     find_library(MKL_LAPACK_LP_LIBRARY
-            mkl_lapack95_lp64
+            libmkl_lapack95_lp64${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
             )
     find_library(MKL_LAPACK_ILP_LIBRARY
-            mkl_lapack95_ilp64
+            libmkl_lapack95_ilp64${MKL_LIB_SUFFIX}
             HINTS ${MKL_ROOT_DIR}
             PATH_SUFFIXES
             lib lib/${MKL_ARCH_DIR}
@@ -252,7 +256,7 @@ find_library(MKL_RT_LIBRARY
 IF("${MKL_ARCH_DIR}" STREQUAL "32")
     IF(UNIX AND NOT APPLE)
         find_library(MKL_IOMP5_LIBRARY
-                iomp5
+                libiomp5${MKL_LIB_SUFFIX}
                 PATHS
                 ${MKL_ROOT_DIR}/../lib/ia32
                 )
@@ -262,7 +266,7 @@ IF("${MKL_ARCH_DIR}" STREQUAL "32")
 else()
     IF(UNIX AND NOT APPLE)
         find_library(MKL_IOMP5_LIBRARY
-                iomp5
+                libiomp5${MKL_LIB_SUFFIX}
                 PATHS
                 ${MKL_ROOT_DIR}/../lib/intel64
                 )
