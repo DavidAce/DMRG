@@ -2,17 +2,18 @@ function(find_OpenBLAS)
     if(NOT TARGET OpenBLAS)
         message(STATUS "Searching for OpenBLAS config")
         find_package(OpenBLAS 0.3
-                HINTS
-                    ${CMAKE_INSTALL_PREFIX}/OpenBLAS
-                    $ENV{CONDA_PREFIX}
-                    $ENV{EBROOTOPENBLAS}
+                HINTS ${DIRECTORY_HINTS}
                 PATHS
-                    ${CMAKE_INSTALL_PREFIX}/OpenBLAS
                     $ENV{EBROOTOPENBLAS}
-                    $ENV{CONDA_PREFIX}
-                    $ENV{BLAS_DIR}/lib
+                    $ENV{EBROOTBLAS}
+                    $ENV{OpenBLAS_DIR}      ${OpenBLAS_DIR}
+                    $ENV{openblas_DIR}      ${openblas_DIR}
+                    $ENV{BLAS_DIR}          ${BLAS_DIR}
+                    $ENV{blas_DIR}          ${blas_DIR}
+                    $ENV{LAPACKE_DIR}       ${LAPACKE_DIR}
+                    $ENV{lapacke_DIR}       ${lapacke_DIR}
                 PATH_SUFFIXES
-                    lib OpenBLAS/lib
+                    lib OpenBLAS/lib OpenBLAS openblas
                 )
 
         if(OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
@@ -38,30 +39,31 @@ function(find_OpenBLAS)
         message(STATUS "Searching for OpenBLAS lib in system")
         find_library(OpenBLAS_LIBRARIES
                 NAMES libopenblas${CUSTOM_SUFFIX}
-                HINTS
-                    $ENV{CONDA_PREFIX}
-                    ${CMAKE_INSTALL_PREFIX}/OpenBLAS
-                    $ENV{EBROOTOPENBLAS}
+                HINTS ${DIRECTORY_HINTS}
                 PATHS
-                    ${CMAKE_INSTALL_PREFIX}/OpenBLAS
                     $ENV{EBROOTOPENBLAS}
-                    $ENV{CONDA_PREFIX}
-                    $ENV{BLAS_DIR}/lib
+                    $ENV{EBROOTBLAS}
+                    $ENV{OpenBLAS_DIR}      ${OpenBLAS_DIR}
+                    $ENV{openblas_DIR}      ${openblas_DIR}
+                    $ENV{BLAS_DIR}          ${BLAS_DIR}
+                    $ENV{blas_DIR}          ${blas_DIR}
+                    $ENV{LAPACKE_DIR}       ${LAPACKE_DIR}
+                    $ENV{lapacke_DIR}       ${lapacke_DIR}
                 PATH_SUFFIXES
-                lib OpenBLAS/lib
+                    lib openblas/lib OpenBLAS/lib openblas OpenBLAS
 
                 )
         find_path(OpenBLAS_INCLUDE_DIRS
                 NAMES openblas_config.h
-                HINTS
-                    $ENV{CONDA_PREFIX}
-                    ${CMAKE_INSTALL_PREFIX}/OpenBLAS
-                    $ENV{EBROOTOPENBLAS}
+                HINTS ${DIRECTORY_HINTS}
                 PATHS
-                    ${CMAKE_INSTALL_PREFIX}/OpenBLAS
-                    $ENV{EBROOTOPENBLAS}/include
-                    $ENV{CONDA_PREFIX}
-                    $ENV{BLAS_DIR}/include
+                    $ENV{EBROOTOPENBLAS}
+                    $ENV{EBROOTBLAS}
+                    $ENV{OpenBLAS_DIR}    ${OpenBLAS_DIR}
+                    $ENV{openblas_DIR}    ${openblas_DIR}
+                    $ENV{BLAS_DIR}    ${BLAS_DIR}
+                    $ENV{blas_DIR}    ${blas_DIR}
+                    $ENV{LAPACKE_DIR} ${LAPACKE_DIR}
                 PATH_SUFFIXES
                     include openblas openblas/include OpenBLAS OpenBLAS/include blas/include
                 )
