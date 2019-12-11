@@ -94,9 +94,7 @@ endif()
 if (NOT TARGET lapacke)
     if (TARGET OpenBLAS)
         message(STATUS "Searching for Lapacke in OpenBLAS")
-        if(LAPACKE_OPENBLAS_LIBRARY AND LAPACKE_OPENBLAS_INCLUDE)
-            CheckLapackeCompiles("OpenBLAS" "" "" "" "" "OpenBLAS")
-        endif()
+        CheckLapackeCompiles("OpenBLAS" "" "" "" "" "OpenBLAS")
         if(LAPACKE_COMPILES_OpenBLAS)
             add_library(lapacke INTERFACE)
             target_link_libraries(lapacke INTERFACE OpenBLAS)
@@ -138,17 +136,34 @@ if (NOT TARGET lapacke)
                 PATH_SUFFIXES
                     OpenBLAS openblas openblas/lib OpenBLAS/lib lapack lapack/lib blas blas/lib
                 )
-        if(LAPACKE_INCLUDE_DIR OR LAPACKE_LIBRARY)
+        if(LAPACKE_INCLUDE_DIR AND LAPACKE_LIBRARY)
             CheckLapackeCompiles("SYSTEM" " "   " "
                     "${LAPACKE_LIBRARY}"
                     "${LAPACKE_INCLUDE_DIR}"
                     "lapack"
                     )
+        if(NOT LAPACKE_COMPILES_SYSTEM AND LAPACKE_INCLUDE_DIR)
+            CheckLapackeCompiles("SYSTEM" " "   " "
+                    ""
+                    "${LAPACKE_INCLUDE_DIR}"
+                    "lapack"
+                    )
+        if(NOT LAPACKE_COMPILES_SYSTEM AND LAPACKE_LIBRARY)
+            CheckLapackeCompiles("SYSTEM" " "   " "
+                    "${LAPACKE_LIBRARY}"
+                    ""
+                    "lapack"
+                    )
         endif()
         if(LAPACKE_COMPILES_SYSTEM)
             add_library(lapacke INTERFACE IMPORTED)
-            target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY} lapack)
-            target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
+            if(LAPACKE_LIBRARY)
+                target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY} lapack)
+            endif()
+            if(LAPACKE_INCLUDE_DIR)
+                target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
+            endif()
+            target_link_libraries(lapacke INTERFACE lapack)
             message(STATUS "Searching for Lapacke in system - Success: ${LAPACKE_LIBRARY}")
         else()
             message(STATUS "Searching for Lapacke in system - failed")
