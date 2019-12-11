@@ -1,18 +1,20 @@
 
 enable_language(Fortran)
+if(BUILD_SHARED_LIBS)
+    set(GFORTRAN_LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+else()
+    set(GFORTRAN_LIB_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+endif()
 
 if(CMAKE_Fortran_COMPILER)
-    if(BUILD_SHARED_LIBS)
-        execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${CMAKE_SHARED_LIBRARY_SUFFIX}
-                OUTPUT_VARIABLE GFORTRAN_LIB
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                )
-    else()
-        execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${CMAKE_STATIC_LIBRARY_SUFFIX}
-                OUTPUT_VARIABLE GFORTRAN_LIB
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                )
-    endif()
+    execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libgfortran${GFORTRAN_LIB_SUFFIX}
+            OUTPUT_VARIABLE GFORTRAN_LIB
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+    execute_process(COMMAND ${CMAKE_Fortran_COMPILER} -print-file-name=libquadmath${GFORTRAN_LIB_SUFFIX}
+            OUTPUT_VARIABLE QUADMATH_LIB
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
 endif()
 
 if(GFORTRAN_LIB)
@@ -20,19 +22,23 @@ if(GFORTRAN_LIB)
 else()
     # if libgfortran wasn't found at this point, the installation is probably broken
     # Let's try to find the library nonetheless.
-    find_library(GFORTRAN_LIB gfortran)
+    find_library(GFORTRAN_LIB libgfortran${GFORTRAN_LIB_SUFFIX})
 endif()
-
 if (NOT GFORTRAN_LIB)
     message(FATAL_ERROR "gfortran library is required but could not be found")
 endif ()
 
-# also need libquadmath.a
-get_filename_component(GFORTRAN_PATH ${GFORTRAN_LIB} PATH)
-find_library(QUADMATH_LIB NAMES quadmath PATHS ${GFORTRAN_PATH})
+if(QUADMATH_LIB)
+    message(STATUS "Found quadmath library:   ${QUADMATH_LIB}")
+else()
+    # if libgfortran wasn't found at this point, the installation is probably broken
+    # Let's try to find the library nonetheless.
+    find_library(QUADMATH_LIB libquadmath${GFORTRAN_LIB_SUFFIX})
+endif()
 if (NOT QUADMATH_LIB)
-    message (FATAL_ERROR "quadmath could not be found")
+    message(FATAL_ERROR "quadmath library is required but could not be found")
 endif ()
+
 
 if (${CMAKE_HOST_APPLE})
     # also need -lgcc_ext.10.5
@@ -40,7 +46,7 @@ if (${CMAKE_HOST_APPLE})
     if (GCC_EXT_LIB)
         list (APPEND GFORTRAN_LIB ${GCC_EXT_LIB})
     else ()
-        message(STATUS "gcc_ext is required on MAC but could not be found")
+        message(WARNING "gcc_ext is required on MAC but could not be found")
     endif ()
 endif()
 
