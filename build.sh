@@ -111,7 +111,7 @@ if  [ -n "$clear_cmake" ] ; then
 	rm -rf ./build/$build_type
 fi
 
-build_type_lower=$(echo build_type | tr '[:upper:]' '[:lower:]')
+build_type_lower=$(echo $build_type | tr '[:upper:]' '[:lower:]')
 for lib in "${clear_libs[@]}"; do
     if [[ "$lib" == "all" ]]; then
         echo "Clearing all installed libraries"
