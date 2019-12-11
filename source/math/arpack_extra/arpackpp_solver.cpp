@@ -2,6 +2,11 @@
 // Created by david on 2018-10-30.
 //
 
+#if  defined(MKL_AVAILABLE)
+#include <mkl_lapacke.h>
+#elif defined(OpenBLAS_AVAILABLE)
+#include <lapacke.h>
+#endif
 
 #include "arpackpp_solver.h"
 
