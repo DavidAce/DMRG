@@ -142,12 +142,14 @@ if (NOT TARGET lapacke)
                     "${LAPACKE_INCLUDE_DIR}"
                     "lapack"
                     )
+        endif()
         if(NOT LAPACKE_COMPILES_SYSTEM AND LAPACKE_INCLUDE_DIR)
             CheckLapackeCompiles("SYSTEM" " "   " "
                     ""
                     "${LAPACKE_INCLUDE_DIR}"
                     "lapack"
                     )
+        endif()
         if(NOT LAPACKE_COMPILES_SYSTEM AND LAPACKE_LIBRARY)
             CheckLapackeCompiles("SYSTEM" " "   " "
                     "${LAPACKE_LIBRARY}"
