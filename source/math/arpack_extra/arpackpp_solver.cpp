@@ -2,13 +2,22 @@
 // Created by david on 2018-10-30.
 //
 
-#if  defined(MKL_AVAILABLE)
-#include <mkl_lapacke.h>
-#elif defined(OpenBLAS_AVAILABLE)
-#include <lapacke.h>
-#endif
 
 #include "arpackpp_solver.h"
+#include "matrix_product_dense.h"
+#include "matrix_product_sparse.h"
+#include "matrix_product_stl.h"
+#include "matrix_product_hamiltonian.h"
+#include <general/nmspc_type_check.h>
+
+#if defined(_MKL_LAPACK_H_)
+#error MKL_LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
+#endif
+
+#if defined(LAPACK_H)
+#error LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
+#endif
+
 
 #if __has_include(<arpackpp/arcomp.h>)
 #include <arpackpp/arcomp.h>
@@ -26,11 +35,6 @@
 #error Could not include arpack headers correctly
 #endif
 
-#include "matrix_product_dense.h"
-#include "matrix_product_sparse.h"
-#include "matrix_product_stl.h"
-#include "matrix_product_hamiltonian.h"
-#include <general/nmspc_type_check.h>
 
 
 namespace tc = TypeCheck;

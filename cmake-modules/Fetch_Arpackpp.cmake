@@ -5,7 +5,7 @@ include(cmake-modules/FindArpack++.cmake)
 find_Arpackpp()
 
 if (TARGET arpack++)
-    message(STATUS "Arpack++ found:")
+    message(STATUS "Arpack++ found")
 elseif(DOWNLOAD_MISSING)
     message(STATUS "Arpack++ will be installed into ${EXTERNAL_INSTALL_DIR}/arpackpp on first build.")
     include(ExternalProject)
