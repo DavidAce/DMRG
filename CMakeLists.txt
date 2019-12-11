@@ -57,6 +57,9 @@ if(ENABLE_MKL AND NOT MKLROOT)
 endif()
 
 
+
+
+
 ################################################################
 ### Get git version number                                   ###
 ### Generates a header gitversion/gitversion.h               ###
@@ -252,7 +255,18 @@ set(EXTERNAL_INSTALL_DIR       ${CMAKE_INSTALL_PREFIX})
 set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/external-deps)
 set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/external-deps)
 
-
+#################################################################
+### Prepend conda dirs for hints when using find_package      ###
+#################################################################
+if(PREFER_CONDA_LIBS)
+    list(APPEND DIRECTORY_HINTS
+            $ENV{CONDA_PREFIX}
+            $ENV{HOME}/anaconda3
+            $ENV{HOME}/miniconda
+            anaconda3 miniconda
+            )
+endif()
+list(APPEND DIRECTORY_HINTS ${CMAKE_INSTALL_PREFIX})
 
 
 

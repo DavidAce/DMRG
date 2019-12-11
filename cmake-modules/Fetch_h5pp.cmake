@@ -1,5 +1,5 @@
 
-find_package(h5pp PATHS ${CMAKE_INSTALL_PREFIX}/h5pp $ENV{H5PP_DIR})
+find_package(h5pp HINTS ${DIRECTORY_HINTS} PATHS $ENV{H5PP_DIR} ${CMAKE_INSTALL_PREFIX}   PATH_SUFFIXES h5pp)
 
 if(h5pp_FOUND AND TARGET h5pp::h5pp)
     message(STATUS "h5pp found")
@@ -10,7 +10,7 @@ elseif(DOWNLOAD_MISSING)
     list(APPEND H5PP_CMAKE_OPTIONS  -DEigen3_DIR:PATH=${CMAKE_INSTALL_PREFIX}/Eigen3)
     list(APPEND H5PP_CMAKE_OPTIONS  -DEIGEN3_INCLUDE_DIR:PATH=${CMAKE_INSTALL_PREFIX}/Eigen3/include/eigen3)
     build_dependency(h5pp "${H5PP_CMAKE_OPTIONS}")
-    find_package(h5pp PATHS ${CMAKE_INSTALL_PREFIX}/h5pp $ENV{H5PP_DIR})
+    find_package(h5pp HINTS ${DIRECTORY_HINTS} PATHS $ENV{H5PP_DIR} ${CMAKE_INSTALL_PREFIX}  PATH_SUFFIXES h5pp)
     if(h5pp_FOUND AND TARGET h5pp::h5pp)
         message(STATUS "h5pp installed successfully")
     else()

@@ -2,7 +2,9 @@ include(cmake-modules/filterTarget.cmake)
 string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 
 find_package(gflags
-        PATHS ${CMAKE_INSTALL_PREFIX}/gflags $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
+        HINTS ${DIRECTORY_HINTS}
+        PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
+        PATH_SUFFIXES gflags gflags/lib
         NO_DEFAULT_PATH)
 
 if(TARGET gflags)
@@ -20,7 +22,10 @@ elseif(DOWNLOAD_MISSING)
     message(STATUS "gflags will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(gflags "")
-    find_package(gflags HINTS ${CMAKE_INSTALL_PREFIX}/gflags NO_DEFAULT_PATH)
+    find_package(gflags HINTS ${DIRECTORY_HINTS}
+            PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
+            PATH_SUFFIXES gflags gflags/lib
+            NO_DEFAULT_PATH)
     if(TARGET gflags)
         message(STATUS "gflags installed successfully")
         #Copy the lib to where it belongs: INTERFACE_LINK_LIBRARIES

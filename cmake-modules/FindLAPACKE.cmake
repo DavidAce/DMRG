@@ -114,23 +114,29 @@ if (NOT TARGET lapacke)
         message(STATUS "Searching for Lapacke in system")
         find_path(LAPACKE_INCLUDE_DIR
                 NAMES lapacke.h
-                HINTS ${LAPACKE_DIR} $ENV{CONDA_PREFIX}
+                HINTS ${DIRECTORY_HINTS}
                 PATHS
-                ${CMAKE_INSTALL_PREFIX}
-                ${CMAKE_INSTALL_PREFIX}/OpenBLAS
-                $ENV{BLAS_DIR}/include
-                /usr/include
-                /usr/include/x86_64-linux-gnu
+                    $ENV{EBROOTOPENBLAS}
+                    $ENV{EBROOTBLAS}
+                    $ENV{BLAS_DIR}    ${BLAS_DIR}
+                    $ENV{blas_DIR}    ${blas_DIR}
+                    $ENV{LAPACKE_DIR} ${LAPACKE_DIR}
+                    $ENV{lapacke_DIR} ${lapacke_DIR}
+                PATH_SUFFIXES
+                    OpenBLAS openblas openblas/include OpenBLAS/include lapack
                 )
         find_library(LAPACKE_LIBRARY
                 NAMES liblapacke${CUSTOM_SUFFIX}
-                HINTS ${LAPACKE_DIR} $ENV{CONDA_PREFIX}
+                HINTS ${DIRECTORY_HINTS}
                 PATHS
-                $ENV{BLAS_DIR}/lib
-                ${CMAKE_INSTALL_PREFIX}
-                ${CMAKE_INSTALL_PREFIX}/OpenBLAS
-                /usr/lib
-                /usr/local/lib
+                    $ENV{EBROOTOPENBLAS}
+                    $ENV{EBROOTBLAS}
+                    $ENV{BLAS_DIR}    ${BLAS_DIR}
+                    $ENV{blas_DIR}    ${blas_DIR}
+                    $ENV{LAPACKE_DIR} ${LAPACKE_DIR}
+                    $ENV{lapacke_DIR} ${lapacke_DIR}
+                PATH_SUFFIXES
+                    OpenBLAS openblas openblas/lib OpenBLAS/lib lapack lapack/lib blas blas/lib
                 )
         if(LAPACKE_INCLUDE_DIR OR LAPACKE_LIBRARY)
             CheckLapackeCompiles("SYSTEM" " "   " "
