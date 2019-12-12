@@ -216,13 +216,13 @@ fi
 cat << EOF >&2
     cmake -E make_directory build/$build_type
     cd build/$build_type
-    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
     cmake --build . --target $build_target -- -j $make_threads
 EOF
 
 if [ -z "$dry_run" ] ;then
     cmake -E make_directory build/$build_type
     cd build/$build_type
-    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
     cmake --build . --target $build_target -- -j $make_threads
 fi
