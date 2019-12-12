@@ -39,15 +39,16 @@ if(NOT TARGET arpack)
     ### of the list to be passed.
     ####################################################################
     include(${PROJECT_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
-    expand_target_libs(blas BLAS_LIBRARIES)
-    expand_target_libs(lapack LAPACK_LIBRARIES)
-    message("BLAS_LIBRARIES   : ${BLAS_LIBRARIES}")
-    message("LAPACK_LIBRARIES : ${LAPACK_LIBRARIES}")
-    string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES_GENERATOR     "${BLAS_LIBRARIES}")
-    string (REPLACE ";" "$<SEMICOLON>" LAPACK_LIBRARIES_GENERATOR   "${LAPACK_LIBRARIES}")
+    include(${PROJECT_SOURCE_DIR}/cmake-modules/filterTarget.cmake)
+    add_library(arpack-aux-target INTERFACE IMPORTED)
+    target_link_libraries(arpack-aux-target INTERFACE blas lapack)
+    remove_pthread(arpack-aux-target)
+    remove_duplicates(arpack-aux-target)
+    expand_target_libs(arpack-aux-target AUX_LIBRARIES)
+    message("AUX_LIBRARIES   : ${AUX_LIBRARIES}")
+    string (REPLACE ";" "$<SEMICOLON>" AUX_LIBRARIES_GENERATOR     "${AUX_LIBRARIES}")
 
-    message("BLAS_LIBRARIES_GENERATOR   : ${BLAS_LIBRARIES_GENERATOR}")
-    message("LAPACK_LIBRARIES_GENERATOR : ${LAPACK_LIBRARIES_GENERATOR}")
+    message("BLAS_LIBRARIES_GENERATOR   : ${AUX_LIBRARIES_GENERATOR}")
     ####################################################################
     set(ARPACK_FLAGS "-w -m64 -fPIC")
     include(ExternalProject)
@@ -72,8 +73,8 @@ if(NOT TARGET arpack)
             -DMPI=OFF
             -DINTERFACE64=OFF
             -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-            -DBLAS_LIBRARIES=${BLAS_LIBRARIES_GENERATOR}
-            -DLAPACK_LIBRARIES=${LAPACK_LIBRARIES_GENERATOR}
+            -DBLAS_LIBRARIES=${AUX_LIBRARIES_GENERATOR}
+            -DLAPACK_LIBRARIES=${AUX_LIBRARIES_GENERATOR}
             DEPENDS blas lapack gfortran
             )
     ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
