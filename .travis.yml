@@ -1,4 +1,3 @@
-dist: xenial
 sudo: false
 language: generic
 notifications:
@@ -11,15 +10,13 @@ branches:
 matrix:
   fast_finish: true
   include:
-    - os: linux
-      compiler: gcc-7
+    - name: "xenial gcc-7"
+      dist: xenial
+      os: linux
+      compiler: gcc
       env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=7
-        - CC=gcc-7
-        - CXX=g++-7
-        - FC=gfortran-7
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
       cache:
         apt: true
       addons:
@@ -31,15 +28,16 @@ matrix:
             - gcc-7
             - g++-7
             - gfortran-7
-    - os: linux
-      compiler: gcc-8
+
+
+
+    - name: "xenial gcc-8"
+      dist: xenial
+      os: linux
+      compiler: gcc
       env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=8
-        - CC=gcc-8
-        - CXX=g++-8
-        - FC=gfortran-8
         - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
+        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
       cache:
         apt: true
       addons:
@@ -51,15 +49,15 @@ matrix:
             - gcc-8
             - g++-8
             - gfortran-8
-    - os: linux
-      compiler: clang-7
+
+
+    - name: "xenial clang-7"
+      dist: xenial
+      os: linux
+      compiler: clang
       env:
-        - COMPILER_NAME=clang
-        - CXX=clang++-7
-        - CC=clang-7
-        - CLANG_VERSION=7
-        - FC=gfortran-8
         - MATRIX_EVAL="CXX=clang++-7 && CC=clang-7 && FC=gfortran-8"
+        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
       cache:
         apt: true
       addons:
@@ -75,15 +73,14 @@ matrix:
             - libstdc++-8-dev
             - gfortran-8
 
-    - os: linux
-      compiler: gcc-7 (preinstalled libs)
+
+    - name: "xenial gcc-7 (apt libs)"
+      dist: xenial
+      os: linux
+      compiler: gcc
       env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=7
-        - CC=gcc-7
-        - CXX=g++-7
-        - FC=gfortran-7
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
       cache:
         apt: true
       addons:
@@ -101,23 +98,41 @@ matrix:
             - libarpack2-dev
             - libarpack++2-dev
             - liblapacke-dev
-      before_install:
-        # Here we just install Miniconda, which you shouldn't have to change.
-        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-        - chmod +x miniconda.sh
-        - ./miniconda.sh -b -p $HOME/miniconda
-        - export PATH=$HOME/miniconda/bin:$PATH
-        - conda config --add channels conda-forge
-        - conda update --yes conda
-        - conda install --yes hdf5 hdf5-static eigen
+            - libhdf5-dev
+            - libceres-dev
 
+    - name: "xenial gcc-7 (conda libs)"
+        dist: xenial
+        os: linux
+        compiler: gcc
+        env:
+          - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+          - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+        cache:
+          apt: true
+        addons:
+          apt:
+            update: true
+            sources:
+              - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            packages:
+              - gcc-7
+              - g++-7
+              - gfortran-7
+        before_install:
+          # Here we just install Miniconda, which you shouldn't have to change.
+          - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+          - chmod +x miniconda.sh
+          - ./miniconda.sh -b -p $HOME/miniconda
+          - export PATH=$HOME/miniconda/bin:$PATH
+          - conda config --add channels conda-forge
+          - conda update --yes conda
+          - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
 
 before_install:
   - eval "${MATRIX_EVAL}"
 
 script:
-  - ./build.sh --download-missing --enable-tests  -a native  -j 2 --enable-tests --enable-openmp  --enable-mkl --build-type=Debug
-
-
+  - ./build.sh ${FLAGS}
 
