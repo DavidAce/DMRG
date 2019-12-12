@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(test-arpack++_mps)
 
 enable_language(Fortran)
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 add_executable(test-arpack++_mps arpack++_mps.cpp
                             ../../source/math/class_eigsolver.cpp
                             ../../source/math/arpack_extra/arpackpp_solver.cpp
@@ -19,7 +19,7 @@ if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (test-arpack++_mps PRIVATE -static)                                             ### Static linkage
 endif()
 
-target_link_libraries(test-arpack++_mps PRIVATE project-settings)
 target_link_libraries(test-arpack++_mps PRIVATE arpack++ Eigen3::Eigen spdlog::spdlog)
+target_link_libraries(test-arpack++_mps PRIVATE project-settings)
 
 add_test(NAME test-arpack++_mps COMMAND test-arpack++_mps)
