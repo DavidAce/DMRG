@@ -12,6 +12,10 @@
 //#ifndef MKL_Complex16
 //#define MKL_Complex16 std::complex<double>
 //#endif
+
+#define lapack_complex_float  std::complex<float>
+#define lapack_complex_double std::complex<double>
+
 #include <mkl_lapacke.h>
 #ifndef ComplexFloat_
 #define ComplexFloat_  lapack_complex_float
