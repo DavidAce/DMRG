@@ -6,17 +6,17 @@
 #undef I
 
 #ifdef MKL_AVAILABLE
-#ifndef MKL_Complex8
-#define MKL_Complex8 std::complex<float>
-#endif
-#ifndef MKL_Complex16
-#define MKL_Complex16 std::complex<double>
-#endif
+//#ifndef MKL_Complex8
+//#define MKL_Complex8 std::complex<float>
+//#endif
+//#ifndef MKL_Complex16
+//#define MKL_Complex16 std::complex<double>
+//#endif
 #ifndef ComplexFloat_
-#define ComplexFloat_  MKL_Complex8
+#define ComplexFloat_  lapack_complex_float
 #endif
 #ifndef ComplexDouble_
-#define ComplexDouble_ MKL_Complex16
+#define ComplexDouble_ lapack_complex_double
 #endif
 #include <mkl_lapacke.h>
 #else
