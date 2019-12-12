@@ -5,12 +5,14 @@
 //#define HAVE_LAPACK_CONFIG_H
 //#endif
 
+#include <complex.h>
+#undef I
 
-#include <complex>
-
-#ifdef MKL_AVAILABLE
+#define lapack_complex_float  std::complex<float>
+#define lapack_complex_double std::complex<double>
+#if __has_include(<mkl_lapacke.h>)
 #include <mkl_lapacke.h>
-#elif OpenBLAS_AVAILABLE
+#elif __has_include(<lapacke.h>)
 #include <lapacke.h>
 #endif
 

@@ -4,42 +4,18 @@
 
 #include <complex.h>
 #undef I
-
-#ifdef MKL_AVAILABLE
-//#ifndef MKL_Complex8
-//#define MKL_Complex8 std::complex<float>
-//#endif
-//#ifndef MKL_Complex16
-//#define MKL_Complex16 std::complex<double>
-//#endif
-
+#include<complex>
 #define lapack_complex_float  std::complex<float>
 #define lapack_complex_double std::complex<double>
 
+#if __has_include(<mkl_lapacke.h>)
 #include <mkl_lapacke.h>
-#ifndef ComplexFloat_
-#define ComplexFloat_  lapack_complex_float
-#endif
-#ifndef ComplexDouble_
-#define ComplexDouble_ lapack_complex_double
-#endif
-#else
-#define ComplexFloat_  __complex__ float
-#define ComplexDouble_ __complex__ double
+#elif __has_include(<lapacke.h>)
 #include <lapacke.h>
 #endif
 
 #include <math/class_svd_wrapper.h>
 #include <Eigen/Core>
-//
-//template<typename Scalar>
-//
-//std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>,class_SVD::MatrixType<Scalar> , long>
-//do_svd_dgesvd(const Scalar *matrix, int rows, int cols){
-//
-//}
-
-
 
 
 template<typename Scalar>
@@ -77,13 +53,15 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long ran
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
         int lrwork = (int) (5 * std::min(rows,cols));
         VectorType<double> rwork(lrwork);
-        auto Ap  =  reinterpret_cast< ComplexDouble_ *>(A.data());
-        auto Up  =  reinterpret_cast< ComplexDouble_ *>(U.data());
-        auto VTp =  reinterpret_cast< ComplexDouble_ *>(VT.data());
-        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, nullptr, -1,rwork.data());
+        auto Ap      =  reinterpret_cast< lapack_complex_double *>(A.data());
+        auto Up      =  reinterpret_cast< lapack_complex_double *>(U.data());
+        auto VTp     =  reinterpret_cast< lapack_complex_double *>(VT.data());
+        auto Wp_qry  =  reinterpret_cast< lapack_complex_double *>(work.data());
+
+        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp_qry, -1,rwork.data());
         int lwork  = (int) std::real(work(0));
         work.resize(lwork);
-        auto Wp  =  reinterpret_cast< ComplexDouble_ *>(work.data());
+        auto Wp  =  reinterpret_cast< lapack_complex_double *>(work.data());
         info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork,rwork.data());
     }
 
