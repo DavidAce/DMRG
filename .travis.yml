@@ -118,6 +118,6 @@ before_install:
 
 script:
   - ./build.sh --download-missing --enable-tests  -a native  -j 2 --enable-tests --enable-openmp  --enable-mkl --build-type=Debug
-  - ctest
+
 
 
