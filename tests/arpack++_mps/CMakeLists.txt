@@ -23,4 +23,3 @@ target_link_libraries(test-arpack++_mps PRIVATE project-settings)
 target_link_libraries(test-arpack++_mps PRIVATE arpack++ Eigen3::Eigen spdlog::spdlog)
 
 add_test(NAME test-arpack++_mps COMMAND test-arpack++_mps)
-add_dependencies(test-arpack++_mps arpack++ Eigen3::Eigen spdlog::spdlog)

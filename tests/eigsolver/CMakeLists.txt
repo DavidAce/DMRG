@@ -17,8 +17,6 @@ target_compile_definitions(test-eigsolver PRIVATE TEST_MATRIX_DIR="${PROJECT_SOU
 if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (test-eigsolver PRIVATE -static)                                             ### Static linkage
 endif()
-target_link_libraries(test-eigsolver PRIVATE h5pp::h5pp h5pp::deps h5pp::flags lapacke )
+target_link_libraries(test-eigsolver PRIVATE blas lapack lapacke Eigen3::Eigen h5pp::h5pp h5pp::deps h5pp::flags)
 target_link_libraries(test-eigsolver PRIVATE project-settings)
 add_test(NAME test-eigsolver COMMAND test-eigsolver)
-
-add_dependencies(test-eigsolver h5pp::h5pp h5pp::deps h5pp::flags gfortran )
