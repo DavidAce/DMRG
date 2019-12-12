@@ -76,10 +76,11 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long ran
         auto Ap  =  reinterpret_cast< ComplexDouble_ *>(A.data());
         auto Up  =  reinterpret_cast< ComplexDouble_ *>(U.data());
         auto VTp =  reinterpret_cast< ComplexDouble_ *>(VT.data());
-        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, work.data(), -1,rwork.data());
+        auto Wp  =  reinterpret_cast< ComplexDouble_ *>(work.data());
+        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, -1,rwork.data());
         int lwork  = (int) std::real(work(0));
         work.resize(lwork);
-        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, work.data(), lwork,rwork.data());
+        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork,rwork.data());
     }
 
     long max_size    =  std::min(S.size(),rank_max);
