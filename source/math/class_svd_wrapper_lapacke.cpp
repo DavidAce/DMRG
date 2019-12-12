@@ -6,8 +6,22 @@
 #undef I
 
 #ifdef MKL_AVAILABLE
+#ifndef MKL_Complex8
+#define MKL_Complex8 std::complex<float>
+#endif
+#ifndef MKL_Complex16
+#define MKL_Complex16 std::complex<double>
+#endif
+#ifndef ComplexFloat_
+#define ComplexFloat_  MKL_Complex8
+#endif
+#ifndef ComplexDouble_
+#define ComplexDouble_ MKL_Complex16
+#endif
 #include <mkl_lapacke.h>
-#elif OpenBLAS_AVAILABLE
+#else
+#define ComplexFloat_  __complex__ float
+#define ComplexDouble_ __complex__ double
 #include <lapacke.h>
 #endif
 
@@ -34,7 +48,7 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long ran
     if (not A.allFinite())      throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if (A.isZero(0))            throw std::runtime_error("SVD error: matrix is all zeros");
 
-    [[maybe_unused]] int info   = 0;
+    int info   = 0;
     int rowsU  = (int) rows;
     int colsU  = (int) std::min(rows,cols);
     int rowsVT = (int) std::min(rows,cols);
@@ -59,14 +73,13 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long ran
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
         int lrwork = (int) (5 * std::min(rows,cols));
         VectorType<double> rwork(lrwork);
-        auto Ap  =  reinterpret_cast< lapack_complex_double *>(A.data());
-        auto Up  =  reinterpret_cast< lapack_complex_double *>(U.data());
-        auto VTp =  reinterpret_cast< lapack_complex_double *>(VT.data());
-        auto wp  =  reinterpret_cast< lapack_complex_double *>(work.data());
-        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', int(rows),int(cols), Ap, lda, S.data(), Up, ldu, VTp, ldvt, wp, -1,rwork.data());
+        auto Ap  =  reinterpret_cast< ComplexDouble_ *>(A.data());
+        auto Up  =  reinterpret_cast< ComplexDouble_ *>(U.data());
+        auto VTp =  reinterpret_cast< ComplexDouble_ *>(VT.data());
+        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, work.data(), -1,rwork.data());
         int lwork  = (int) std::real(work(0));
         work.resize(lwork);
-        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', int(rows),int(cols), Ap, lda, S.data(), Up, ldu, VTp, ldvt, wp, lwork,rwork.data());
+        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, work.data(), lwork,rwork.data());
     }
 
     long max_size    =  std::min(S.size(),rank_max);
@@ -116,5 +129,4 @@ using cplx = std::complex<double>;
 //! \brief force instantiation of do_svd_lapacke for type 'std::complex<double>'
 template std::tuple<class_SVD::MatrixType<cplx>, class_SVD::VectorType<cplx>,class_SVD::MatrixType<cplx> , long>
 class_SVD::do_svd_lapacke(const cplx *, long, long, long);
-
 
