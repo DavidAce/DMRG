@@ -12,13 +12,9 @@ if (NOT TARGET arpack)
     find_library(ARPACK_LIBRARIES
             NAMES libarpack${CUSTOM_SUFFIX} arpack
             PATH_SUFFIXES lib lib32 lib64 x86_64-linux-gnu lib/x86_64-linux-gnu
-            HINTS
-                $ENV{ARPACK_DIR}
-                ${CMAKE_INSTALL_PREFIX}/arpack-ng
-                $ENV{CONDA_PREFIX}
-            PATHS
-                $ENV{EBROOTARPACKMINNG}
-            PATH_SUFFIXES arpack/lib arpack-ng/lib lib lib32 lib64
+            HINTS ${DIRECTORY_HINTS}
+            PATHS $ENV{EBROOTARPACKMINNG}
+            PATH_SUFFIXES arpack-ng arpack arpack/lib arpack-ng/lib lib lib32 lib64
             )
     if(NOT ARPACK_LIBRARIES)
         message(STATUS "Searching for Arpack-ng - failed")
