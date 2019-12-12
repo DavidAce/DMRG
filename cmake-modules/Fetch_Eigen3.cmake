@@ -44,7 +44,6 @@ if(TARGET Eigen3::Eigen AND TARGET blas )
         target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_BLAS)
         target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
         target_link_libraries         (Eigen3::Eigen INTERFACE blas)
-
     endif()
 
     # Use this flag if Ceres is giving you trouble!

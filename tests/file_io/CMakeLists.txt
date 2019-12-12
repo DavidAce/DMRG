@@ -19,4 +19,3 @@ target_link_libraries(test-file_io PRIVATE h5pp::h5pp h5pp::deps h5pp::flags)
 
 target_link_libraries(test-file_io PRIVATE project-settings)
 add_test(NAME test-file_io COMMAND test-file_io)
-add_dependencies(test-file_io h5pp::h5pp)
