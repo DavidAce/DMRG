@@ -12,13 +12,13 @@
 //#ifndef MKL_Complex16
 //#define MKL_Complex16 std::complex<double>
 //#endif
+#include <mkl_lapacke.h>
 #ifndef ComplexFloat_
 #define ComplexFloat_  lapack_complex_float
 #endif
 #ifndef ComplexDouble_
 #define ComplexDouble_ lapack_complex_double
 #endif
-#include <mkl_lapacke.h>
 #else
 #define ComplexFloat_  __complex__ float
 #define ComplexDouble_ __complex__ double
