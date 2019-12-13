@@ -1,5 +1,5 @@
 sudo: false
-language: generic
+language: cpp
 notifications:
   email: false
 branches:
@@ -15,17 +15,15 @@ matrix:
       os: linux
       compiler: gcc
       env:
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - CXX=g++-7
+        - CC=gcc-7
+        - FC=gfortran-7
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
-      before_install:
-        - eval "${MATRIX_EVAL}"
-      cache:
-        apt: true
       addons:
         apt:
           update: true
           sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            - ubuntu-toolchain-r-test
           packages:
             - gcc-7
             - g++-7
@@ -38,17 +36,15 @@ matrix:
       os: linux
       compiler: gcc
       env:
-        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
+        - CXX=g++-8
+        - CC=gcc-8
+        - FC=gfortran-8
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
-      before_install:
-        - eval "${MATRIX_EVAL}"
-      cache:
-        apt: true
       addons:
         apt:
           update: true
           sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            - ubuntu-toolchain-r-test
           packages:
             - gcc-8
             - g++-8
@@ -60,17 +56,15 @@ matrix:
       os: linux
       compiler: clang
       env:
-        - MATRIX_EVAL="CXX=clang++-7 && CC=clang-7 && FC=gfortran-8"
+        - CXX=clang++-7
+        - CC=clang-7
+        - FC=gfortran-8
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
-      before_install:
-        - eval "${MATRIX_EVAL}"
-      cache:
-        apt: true
       addons:
         apt:
           update: true
           sources:
-            - sourceline:  'ppa:ubuntu-toolchain-r/test'
+            - ubuntu-toolchain-r-test
             - sourceline:  'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main'
               key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
@@ -85,17 +79,15 @@ matrix:
       os: linux
       compiler: gcc
       env:
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - CXX=g++-7
+        - CC=gcc-7
+        - FC=gfortran-7
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
-      before_install:
-        - eval "${MATRIX_EVAL}"
-      cache:
-        apt: true
       addons:
         apt:
           update: true
           sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            - ubuntu-toolchain-r-test
           packages:
             - gcc-7
             - g++-7
@@ -114,15 +106,15 @@ matrix:
       os: linux
       compiler: gcc
       env:
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - CXX=g++-7
+        - CC=gcc-7
+        - FC=gfortran-7
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
-      cache:
-        apt: true
       addons:
         apt:
           update: true
           sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+            - ubuntu-toolchain-r-test
           packages:
             - gcc-7
             - g++-7
