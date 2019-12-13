@@ -10,6 +10,7 @@ ExternalProject_Add(external_ceres
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/ceres
 #        TEST_COMMAND ${CMAKE_MAKE_PROGRAM} -j test
+        CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
         -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
@@ -35,7 +36,7 @@ ExternalProject_Add(external_ceres
         -DLAPACK:BOOL=OFF
         -DEIGENSPARSE:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DCMAKE_INSTALL_MESSAGE=ALWAYS #Avoid unnecessary output to console
+        -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
         -DGFLAGS:BOOL=ON
         -DSUITESPARSE:BOOL=OFF
         -DCXSPARSE:BOOL=OFF

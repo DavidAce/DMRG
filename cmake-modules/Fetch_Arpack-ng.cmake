@@ -51,6 +51,7 @@ if(NOT TARGET arpack)
     ####################################################################
     set(ARPACK_FLAGS "-w -m64 -fPIC")
     include(ExternalProject)
+    include(GNUInstallDirs)
     ExternalProject_Add(external_ARPACK
             GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
 #            GIT_TAG             master
@@ -61,6 +62,7 @@ if(NOT TARGET arpack)
             INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/arpack-ng
             UPDATE_COMMAND ""
             BUILD_IN_SOURCE 1
+            CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -75,9 +77,9 @@ if(NOT TARGET arpack)
             -DBLAS_LIBRARIES=${AUX_LIBRARIES_BLAS_GENERATOR}
             -DLAPACK_LIBRARIES=${AUX_LIBRARIES_LAPACK_GENERATOR}
             DEPENDS blas lapack gfortran
+            BUILD_BYPRODUCTS <INSTALL_DIR>/${CMAKE_INSTALL_LIBDIR}/libarpack${CUSTOM_SUFFIX}
             )
     ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
-    include(GNUInstallDirs)
     set(ARPACK_LIBRARIES ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libarpack${CUSTOM_SUFFIX})
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
     add_library(arpack INTERFACE IMPORTED)
