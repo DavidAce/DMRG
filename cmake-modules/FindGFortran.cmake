@@ -1,5 +1,6 @@
 
-enable_language(Fortran)
+#enable_language(Fortran)
+include(${CMAKE_ROOT}/Modules/CMakeDetermineFortranCompiler.cmake)
 if(BUILD_SHARED_LIBS)
     set(GFORTRAN_LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
 else()

@@ -1,8 +1,9 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 project(DMRG++ CXX )
 #enable_language()
 
 set(CMAKE_VERBOSE_MAKEFILE OFF)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 
@@ -45,8 +46,12 @@ if(ENABLE_MKL AND NOT MKLROOT)
 endif()
 
 
-
-
+################################################################
+### Number of threads for external dependency builds         ###
+################################################################
+if(NOT MAKE_THREADS)
+    set(MAKE_THREADS 1)
+endif()
 
 ################################################################
 ### Get git version number                                   ###
@@ -106,14 +111,10 @@ endif()
 
 
 
-###########################################
-###  Add all source files recursively   ###
-###########################################
-unset(SOURCES CACHE)
-unset(HEADERS CACHE)
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "source/*.cpp")
-file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "source/*.h")
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+################################
+###  Add all source files    ###
+################################
+include(source_list.txt)
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
 
@@ -278,6 +279,7 @@ include(cmake-modules/Fetch_Glog.cmake)
 include(cmake-modules/Fetch_Ceres.cmake)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
+target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
 target_link_libraries(${PROJECT_NAME} PRIVATE lapacke)
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen )
 target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp h5pp::deps h5pp::flags)

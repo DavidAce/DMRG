@@ -2,10 +2,6 @@ function(build_dependency dep_name extra_flags)
     set(build_dir    ${CMAKE_BINARY_DIR}/external-deps/${dep_name})
     set(install_dir  ${CMAKE_INSTALL_PREFIX})
 
-#    message(STATUS "dependency name   : ${dep_name}")
-#    message(STATUS "build_dir         : ${build_dir}")
-#    message(STATUS "install_dir       : ${install_dir}")
-#    message(STATUS "extra_flags       : ${extra_flags}")
     execute_process( COMMAND  ${CMAKE_COMMAND} -E make_directory ${build_dir})
     execute_process(
             COMMAND  ${CMAKE_COMMAND}
@@ -18,7 +14,7 @@ function(build_dependency dep_name extra_flags)
             RESULT_VARIABLE config_result
     )
 
-    execute_process(COMMAND  ${CMAKE_COMMAND} --build . --target all --parallel 8
+    execute_process(COMMAND  ${CMAKE_COMMAND} --build . --target all
             WORKING_DIRECTORY "${build_dir}"
             RESULT_VARIABLE build_result
     )

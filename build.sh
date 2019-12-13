@@ -68,7 +68,7 @@ download_missing="OFF"
 enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
-make_threads=8
+make_threads=1
 prefer_conda="OFF"
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
@@ -198,6 +198,7 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
     fi
 fi
 
+export MAKEFLAGS=-j $make_threads
 
 
 
@@ -205,7 +206,7 @@ echo " * Compiler                 :   $compiler"
 echo " * CC                       :   $CC"
 echo " * CXX                      :   $CXX"
 echo " * CMake version            :   $(cmake --version) at $(which cmake)"
-
+echo " * MAKE threads (ext builds):   $make_threads"
 
 if [ -n "$dry_run" ]; then
     echo "Dry run build sequence"
@@ -216,22 +217,28 @@ fi
 cat << EOF >&2
     cmake -E make_directory build/$build_type
     cd build/$build_type
-    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
-    cmake --build . --target $build_target -- -j $make_threads
+    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march
+          -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared
+          -DGCC_TOOLCHAIN=$gcc_toolchain
+          -G "CodeBlocks - Unix Makefiles"
+           ../../
+    cmake --build . --target $build_target --parallel $make_threads
 EOF
 
 if [ -z "$dry_run" ] ;then
     cmake -E make_directory build/$build_type
     cd build/$build_type
-    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared -DGCC_TOOLCHAIN=$gcc_toolchain  -G "CodeBlocks - Unix Makefiles" ../../
+    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march \
+          -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared \
+          -DGCC_TOOLCHAIN=$gcc_toolchain \
+            -G Ninja \
+           ../../
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
             echo "Exit code: $exit_code"
             exit "$exit_code"
     fi
-
-
-    cmake --build . --target $build_target -- -j $make_threads
+    cmake --build . --target $build_target --parallel $make_threads
 fi
 
 if [ "$enable_tests" = "ON" ] ;then
