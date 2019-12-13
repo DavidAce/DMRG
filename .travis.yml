@@ -17,6 +17,8 @@ matrix:
       env:
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+      before_install:
+        - eval "${MATRIX_EVAL}"
       cache:
         apt: true
       addons:
@@ -38,6 +40,8 @@ matrix:
       env:
         - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+      before_install:
+        - eval "${MATRIX_EVAL}"
       cache:
         apt: true
       addons:
@@ -58,6 +62,8 @@ matrix:
       env:
         - MATRIX_EVAL="CXX=clang++-7 && CC=clang-7 && FC=gfortran-8"
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+      before_install:
+        - eval "${MATRIX_EVAL}"
       cache:
         apt: true
       addons:
@@ -81,6 +87,8 @@ matrix:
       env:
         - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
         - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+      before_install:
+        - eval "${MATRIX_EVAL}"
       cache:
         apt: true
       addons:
@@ -120,6 +128,7 @@ matrix:
             - g++-7
             - gfortran-7
       before_install:
+        - eval "${MATRIX_EVAL}"
         # Here we just install Miniconda, which you shouldn't have to change.
         - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
         - chmod +x miniconda.sh
@@ -128,10 +137,6 @@ matrix:
         - conda config --add channels conda-forge
         - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
-
-
-before_install:
-  - eval "${MATRIX_EVAL}"
 
 script:
   - ./build.sh ${FLAGS}
