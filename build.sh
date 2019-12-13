@@ -203,10 +203,10 @@ export MAKEFLAGS=-j $make_threads
 
 
 echo " * Compiler                 :   $compiler"
+echo " * MAKE threads (ext builds):   $make_threads"
 echo " * CC                       :   $CC"
 echo " * CXX                      :   $CXX"
 echo " * CMake version            :   $(cmake --version) at $(which cmake)"
-echo " * MAKE threads (ext builds):   $make_threads"
 
 if [ -n "$dry_run" ]; then
     echo "Dry run build sequence"
@@ -231,7 +231,7 @@ if [ -z "$dry_run" ] ;then
     cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march \
           -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared \
           -DGCC_TOOLCHAIN=$gcc_toolchain \
-            -G Ninja \
+           -G "CodeBlocks - Unix Makefiles" \
            ../../
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
