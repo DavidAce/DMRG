@@ -102,32 +102,32 @@ matrix:
             - libceres-dev
 
     - name: "xenial gcc-7 (conda libs)"
-        dist: xenial
-        os: linux
-        compiler: gcc
-        env:
-          - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
-          - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
-        cache:
-          apt: true
-        addons:
-          apt:
-            update: true
-            sources:
-              - sourceline: 'ppa:ubuntu-toolchain-r/test'
-            packages:
-              - gcc-7
-              - g++-7
-              - gfortran-7
-        before_install:
-          # Here we just install Miniconda, which you shouldn't have to change.
-          - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-          - chmod +x miniconda.sh
-          - ./miniconda.sh -b -p $HOME/miniconda
-          - export PATH=$HOME/miniconda/bin:$PATH
-          - conda config --add channels conda-forge
-          - conda update --yes conda
-          - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+      dist: xenial
+      os: linux
+      compiler: gcc
+      env:
+        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
+        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+      cache:
+        apt: true
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - gcc-7
+            - g++-7
+            - gfortran-7
+      before_install:
+        # Here we just install Miniconda, which you shouldn't have to change.
+        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - chmod +x miniconda.sh
+        - ./miniconda.sh -b -p $HOME/miniconda
+        - export PATH=$HOME/miniconda/bin:$PATH
+        - conda config --add channels conda-forge
+        - conda update --yes conda
+        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
 
 before_install:
