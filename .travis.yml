@@ -130,6 +130,32 @@ matrix:
         - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas liblapacke ceres-solver
 
+    - name: "bionic gcc conan libs"
+      dist: xenial
+      os: linux
+      compiler: gcc
+      env:
+        - CXX=g++-8
+        - CC=gcc-8
+        - FC=gfortran-8
+        - FLAGS="--download-missing --download-method=conan --enable-tests  -a native  -j 2 --build-type=Debug"
+      before_install:
+        # Install conan
+        - pip install conan
+        # Automatic detection of your arch, compiler, etc.
+        - conan user
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-8
+            - g++-8
+            - gfortran-8
+
+
+
 script:
   - ./build.sh ${FLAGS}
 

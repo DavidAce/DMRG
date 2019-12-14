@@ -11,6 +11,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -c | --clear-cmake              : Clear CMake files before build (delete ./build)
 -d | --dry-run                  : Dry run
    | --download-missing         : Download missing libraries [ ON | OFF ] (default = OFF)
+   | --download-method          : Download libraries using [ manual | conan ] (default = manual)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
 -g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
    | --gcc-toolchain [=arg]     : Path to GCC toolchain. Use with Clang if it can't find stdlib (defailt = none)
@@ -49,6 +50,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st: \
                 enable-openmp\
                 enable-mkl\
                 download-missing\
+                download-method:\
                 no-modules\
                 prefer-conda\
                 extra-flags:\
@@ -65,6 +67,7 @@ build_target="all"
 march="haswell"
 enable_shared="OFF"
 download_missing="OFF"
+download_method="Manual"
 enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
@@ -93,6 +96,7 @@ do
        --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
        --download-missing)          download_missing="ON"           ; echo " * Download missing libs    : ON"      ; shift   ;;
+       --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs:    : ON"      ; shift   ;;
     --) shift; break;;
@@ -124,7 +128,10 @@ for lib in "${clear_libs[@]}"; do
     fi
 done
 
-
+if [[ "$download_method" != *"anual" && "$download_method" != *"onan" ]]; then
+    echo "Download method unsupported: $download_method"
+    exit 1
+fi
 
 
 
@@ -217,8 +224,11 @@ fi
 cat << EOF >&2
     cmake -E make_directory build/$build_type
     cd build/$build_type
-    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march
-          -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared
+    cmake -DCMAKE_BUILD_TYPE=$build_type
+          -DDOWNLOAD_MISSING=$download_missing  -DDOWNLOAD_METHOD=$download_method
+          -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march
+          -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp
+          -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared
           -DGCC_TOOLCHAIN=$gcc_toolchain
           -G "CodeBlocks - Unix Makefiles"
            ../../
@@ -228,8 +238,11 @@ EOF
 if [ -z "$dry_run" ] ;then
     cmake -E make_directory build/$build_type
     cd build/$build_type
-    cmake -DCMAKE_BUILD_TYPE=$build_type -DDOWNLOAD_MISSING=$download_missing -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march \
-          -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared \
+    cmake -DCMAKE_BUILD_TYPE=$build_type \
+          -DDOWNLOAD_MISSING=$download_missing -DDOWNLOAD_METHOD=$download_method \
+          -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march \
+          -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp \
+          -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared \
           -DGCC_TOOLCHAIN=$gcc_toolchain \
            -G "CodeBlocks - Unix Makefiles" \
            ../../

@@ -7,7 +7,7 @@ eigen/3.3.7@conan-dmrg/patched
 spdlog/1.4.2@bincrafters/stable
 ceres-solver/1.14.0@conan-dmrg/stable
 hdf5/1.10.5
-h5pp/0.4.5@conan-dmrg/stable
+h5pp/0.4.6@conan-dmrg/stable
 
 [generators]
 cmake
