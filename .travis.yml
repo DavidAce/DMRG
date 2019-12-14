@@ -120,7 +120,6 @@ matrix:
             - g++-7
             - gfortran-7
       before_install:
-        - eval "${MATRIX_EVAL}"
         # Here we just install Miniconda, which you shouldn't have to change.
         - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
         - chmod +x miniconda.sh
@@ -140,8 +139,15 @@ matrix:
         - FC=gfortran-8
         - FLAGS="--download-missing --download-method=conan --enable-tests  -a native  -j 2 --build-type=Debug"
       before_install:
+        # Here we just install Miniconda, which you shouldn't have to change.
+        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - chmod +x miniconda.sh
+        - ./miniconda.sh -b -p $HOME/miniconda
+        - export PATH=$HOME/miniconda/bin:$PATH
+        - conda config --add channels conda-forge
+        - conda update --yes conda
         # Install conan
-        - pip install conan
+        - conda install --yes  conan arpack arpackpp openblas
         # Automatic detection of your arch, compiler, etc.
         - conan user
       addons:
