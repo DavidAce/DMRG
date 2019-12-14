@@ -24,7 +24,7 @@ option(BUILD_EXAMPLES     "Build examples"                                      
 #################################################################
 ### Make an "enum" for valid download methods                 ###
 #################################################################
-set(VALID_DOWNLOAD_METHODS Hunter Conan Manual None)
+set(VALID_DOWNLOAD_METHODS hunter conan manual none)
 set(DOWNLOAD_METHOD Manual CACHE STRING "Download method for external dependencies")
 set_property(CACHE DOWNLOAD_METHOD  PROPERTY STRINGS ${VALID_DOWNLOAD_METHODS})
 if(NOT DOWNLOAD_METHOD IN_LIST VALID_DOWNLOAD_METHODS)
@@ -277,7 +277,7 @@ include(cmake-modules/Fetch_Arpackpp.cmake)                 # LC++ frontend for 
 
 
 
-if(${DOWNLOAD_METHOD} MATCHES "Manual" )
+if(${DOWNLOAD_METHOD} MATCHES "manual" )
 
     include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen3 numerical library
     include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
@@ -298,7 +298,7 @@ endif()
 ##################################################################
 ### Install conan-modules/conanfile.txt dependencies           ###
 ##################################################################
-if(${DOWNLOAD_METHOD} MATCHES "Conan" )
+if(${DOWNLOAD_METHOD} MATCHES "conan" )
     ### Initialize conan if requested
     ### Note that this is not the same as enabling the conanfile
     ### This simply mean that we use conan to get spdlog/eigen3/h5pp
