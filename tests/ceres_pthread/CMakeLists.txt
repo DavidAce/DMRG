@@ -10,7 +10,12 @@ if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (test-ceres_pthread PRIVATE -static)                                             ### Static linkage
 endif()
 
-target_link_libraries(test-ceres_pthread PRIVATE ceres)
+if(CONAN_TARGETS)
+    target_link_libraries(test-ceres_pthread PRIVATE CONAN_PKG::ceres-solver)
+else()
+    target_link_libraries(test-ceres_pthread PRIVATE ceres)
+endif()
+
 target_link_libraries(test-ceres_pthread PRIVATE project-settings)
 
 add_test(NAME test-ceres_pthread COMMAND test-ceres_pthread)

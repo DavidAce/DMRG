@@ -7,6 +7,7 @@ find_package(Eigen3
 if(TARGET Eigen3::Eigen)
     message(STATUS "Eigen3 found")
     target_link_libraries(Eigen3::Eigen INTERFACE -lrt)
+
 #    include(cmake-modules/PrintTargetProperties.cmake)
 #    print_target_properties(Eigen3::Eigen)
 
@@ -28,7 +29,7 @@ elseif (DOWNLOAD_MISSING)
     endif()
 
 else()
-    message(STATUS "Dependency Eigen3 not found and DOWNLOAD_MISSING is OFF")
+    message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_MISSING is OFF")
 endif()
 
 
@@ -54,3 +55,5 @@ if(TARGET Eigen3::Eigen AND TARGET blas )
 
 endif()
 
+set(EIGEN3_FOUND TRUE)
+set(EIGEN_FOUND TRUE)

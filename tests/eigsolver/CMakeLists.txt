@@ -17,6 +17,13 @@ target_compile_definitions(test-eigsolver PRIVATE TEST_MATRIX_DIR="${PROJECT_SOU
 if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (test-eigsolver PRIVATE -static)                                             ### Static linkage
 endif()
-target_link_libraries(test-eigsolver PRIVATE lapacke Eigen3::Eigen h5pp::h5pp h5pp::deps h5pp::flags)
+
+if(CONAN_TARGETS)
+    target_link_libraries(test-eigsolver PRIVATE CONAN_PKG::Eigen3 CONAN_PKG::h5pp)
+else()
+    target_link_libraries(test-eigsolver PRIVATE Eigen3::Eigen h5pp::h5pp h5pp::deps h5pp::flags )
+endif()
+
+target_link_libraries(test-eigsolver PRIVATE lapacke )
 target_link_libraries(test-eigsolver PRIVATE project-settings)
 add_test(NAME test-eigsolver COMMAND test-eigsolver)

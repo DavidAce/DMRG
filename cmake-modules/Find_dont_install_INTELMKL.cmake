@@ -68,8 +68,7 @@ if (MKL_FOUND)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -ldl -lm)
-    target_link_libraries(mkl INTERFACE Threads::Threads)
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -lpthread -ldl -lm)
     if(TARGET OpenMP)
         target_link_libraries(mkl INTERFACE OpenMP)
     endif()

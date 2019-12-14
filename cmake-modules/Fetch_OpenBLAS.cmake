@@ -188,9 +188,9 @@ endif()
 
 
 
-target_link_libraries(blas INTERFACE ${OpenBLAS_LIBRARY}   -lm -ldl -fPIC Threads::Threads  gfortran)
+target_link_libraries(blas INTERFACE ${OpenBLAS_LIBRARY}   -lm -ldl -lpthread)
 target_include_directories(blas SYSTEM INTERFACE ${OpenBLAS_INCLUDE_DIRS})
-set(FC_LDLAGS Threads::Threads ${GFORTRAN_LIB})
+set(FC_LDLAGS ${GFORTRAN_LIB} -lpthread)
 
 if(OpenBLAS_ENABLE_OPENMP AND TARGET OpenMP)
     target_link_libraries(blas INTERFACE OpenMP)
