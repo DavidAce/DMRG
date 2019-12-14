@@ -1,3 +1,5 @@
+#include <complex.h>
+#undef I
 #include <ceres/ceres.h>
 #include "glog/logging.h"
 #include <general/nmspc_omp.h>
