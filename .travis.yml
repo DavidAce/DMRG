@@ -101,7 +101,7 @@ matrix:
             - libhdf5-dev
             - libceres-dev
 
-    - name: "xenial gcc-7 (conda libs)"
+    - name: "xenial gcc-7 (conda-forge libs)"
       dist: xenial
       os: linux
       compiler: gcc
@@ -128,7 +128,7 @@ matrix:
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda config --add channels conda-forge
         - conda update --yes conda
-        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas liblapacke ceres-solver
 
 script:
   - ./build.sh ${FLAGS}

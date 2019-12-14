@@ -15,7 +15,7 @@ function(find_package_openmp_internal omp_paths omp_names BUILD_SHARED_LIBS )
 
 
       find_path(OpenMP_INCLUDE_DIR NAMES omp.h PATHS ${OpenMP_HEADER_PATHS} ${omp_paths} PATH_SUFFIXES openmp include)
-      list(APPEND OpenMP_LIBRARIES  Threads::Threads -ldl)
+      list(APPEND OpenMP_LIBRARIES  -lpthread -ldl)
       message(STATUS "OpenMP libraries found: ${OpenMP_LIBRARIES}" )
       if(BUILD_SHARED_LIBS)
           check_omp_compiles("${OpenMP_FLAGS}" "${OpenMP_LIBRARIES}" "${OpenMP_INCLUDE_DIR}")
@@ -47,7 +47,7 @@ function(find_package_openmp_internal omp_paths omp_names BUILD_SHARED_LIBS )
       endif()
       #        message("OpenMP_LIBRARIES    : ${OpenMP_LIBRARIES}")
       #        message("OpenMP_INCLUDE_DIR  : ${OpenMP_INCLUDE_DIR}")
-      list(APPEND OpenMP_LIBRARIES Threads::Threads -ldl)
+      list(APPEND OpenMP_LIBRARIES -lpthread -ldl)
       set(OpenMP_FLAGS "-D_OPENMP")
       if(${BUILD_SHARED_LIBS})
           check_omp_compiles("${OpenMP_FLAGS}" "${OpenMP_LIBRARIES}" "${OpenMP_INCLUDE_DIR}")
@@ -60,7 +60,7 @@ function(find_package_openmp_internal omp_paths omp_names BUILD_SHARED_LIBS )
       set(OpenMP_FOUND        TRUE                    PARENT_SCOPE)
       set(ENABLE_OPENMP       TRUE                    PARENT_SCOPE)
       add_library(OpenMP INTERFACE IMPORTED)
-      target_link_libraries(OpenMP INTERFACE ${OpenMP_LIBRARIES} ${OpenMP_FLAGS} Threads::Threads)
+      target_link_libraries(OpenMP INTERFACE ${OpenMP_LIBRARIES} ${OpenMP_FLAGS} -lpthread)
       target_compile_options(OpenMP INTERFACE ${OpenMP_FLAGS})
       target_compile_options(OpenMP INTERFACE ${OpenMP_FLAGS})
       target_include_directories(OpenMP INTERFACE ${OpenMP_INCLUDE_DIR})
@@ -101,17 +101,17 @@ function(find_package_openmp)
 
 
 
-    if (NOT TARGET Threads::Threads)
+#    if (NOT TARGET Threads::Threads)
         ### Adapt pthread for static/dynamic linking
         ### This is to fix a bug with threads described here:
         ### https://stackoverflow.com/questions/35116327/when-g-static-link-pthread-cause-segmentation-fault-why
-        set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-        set(THREADS_PREFER_PTHREAD_FLAG FALSE)
-        find_package(Threads)
-        if(TARGET Threads::Threads AND NOT BUILD_SHARED_LIBS)
-            set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")
-        endif()
-    endif()
+#        set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+#        set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+#        find_package(Threads)
+#        if(TARGET Threads::Threads AND NOT BUILD_SHARED_LIBS)
+#            set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")
+#        endif()
+#    endif()
 
 
 

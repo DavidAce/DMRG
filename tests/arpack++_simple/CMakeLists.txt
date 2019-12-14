@@ -11,6 +11,7 @@ if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (test-arpack++_simple PRIVATE -static)                                             ### Static linkage
 endif()
 
+
 target_link_libraries(test-arpack++_simple PRIVATE arpack++)
 target_link_libraries(test-arpack++_simple PRIVATE project-settings)
 

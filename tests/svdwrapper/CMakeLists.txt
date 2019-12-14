@@ -18,6 +18,11 @@ target_compile_definitions(test-svdwrapper PRIVATE TEST_DIR="${PROJECT_SOURCE_DI
 if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (test-svdwrapper PRIVATE -static)                                             ### Static linkage
 endif()
-target_link_libraries(test-svdwrapper PRIVATE Eigen3::Eigen h5pp::h5pp h5pp::deps h5pp::flags)
+
+if(CONAN_TARGETS)
+    target_link_libraries(test-svdwrapper PRIVATE CONAN_PKG::Eigen3 CONAN_PKG::h5pp)
+else()
+    target_link_libraries(test-svdwrapper PRIVATE Eigen3::Eigen h5pp::h5pp h5pp::deps h5pp::flags )
+endif()
 target_link_libraries(test-svdwrapper PRIVATE project-settings)
 add_test(NAME test-svdwrapper COMMAND test-svdwrapper)
