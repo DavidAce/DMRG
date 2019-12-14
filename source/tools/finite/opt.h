@@ -3,6 +3,12 @@
 //
 
 #pragma once
+// This trick avoids collision between the preprocessor
+// symbol I and a template type size_t I in Eigen getting
+// overridden and causing trouble at compile time.
+#include <complex.h>
+#undef I
+
 // It is VERY IMPORTANT to set this flag when using CERES
 // For some reason the Eigen destructor starts calling std::free instead of
 // the handmade allocator free in calls inside CERES. I do not know the reason.
