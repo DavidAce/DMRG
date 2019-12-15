@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.10)
 project(external-OpenBLAS)
 include(ExternalProject)
-message("LDFLAGS ${LDFLAGS}")
-message("FFLAGS  ${FFLAGS}")
+message(STATUS "LDFLAGS              : ${LDFLAGS}")
+message(STATUS "FFLAGS               : ${FFLAGS}")
+message(STATUS "USE_THREAD           : ${USE_THREAD}")
+message(STATUS "USE_OPENMP           : ${USE_OPENMP}")
+message(STATUS "CMAKE_BINARY_DIR     : ${CMAKE_BINARY_DIR}")
+message(STATUS "CMAKE_INSTALL_PREFIX : ${CMAKE_INSTALL_PREFIX}")
 ExternalProject_Add(external_OpenBLAS
         URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.7.tar.gz
+        URL_MD5  5cd4ff3891b66a59e47af2d14cde4056
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/OpenBLAS
         UPDATE_COMMAND ""
