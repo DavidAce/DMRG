@@ -14,7 +14,7 @@ if(TARGET Eigen3::Eigen)
 elseif (DOWNLOAD_MISSING)
     message(STATUS "Eigen3 will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
-    build_dependency(Eigen3 "")
+    build_dependency(Eigen3 "${CMAKE_INSTALL_PREFIX}" "")
     find_package(Eigen3 3.3.7
             HINTS ${CMAKE_INSTALL_PREFIX}/Eigen3
             PATHS ${CMAKE_INSTALL_PREFIX}/Eigen3 #${EBROOTEIGEN} Need to patch our own Eigen!!

@@ -25,7 +25,7 @@ option(BUILD_EXAMPLES     "Build examples"                                      
 ### Make an "enum" for valid download methods                 ###
 #################################################################
 set(VALID_DOWNLOAD_METHODS hunter conan manual none)
-set(DOWNLOAD_METHOD Manual CACHE STRING "Download method for external dependencies")
+set(DOWNLOAD_METHOD manual CACHE STRING "Download method for external dependencies")
 set_property(CACHE DOWNLOAD_METHOD  PROPERTY STRINGS ${VALID_DOWNLOAD_METHODS})
 if(NOT DOWNLOAD_METHOD IN_LIST VALID_DOWNLOAD_METHODS)
     message(FATAL_ERROR "DOWNLOAD_METHOD must be one of ${VALID_DOWNLOAD_METHODS}")
