@@ -4,10 +4,7 @@ include(ExternalProject)
 message("LDFLAGS ${LDFLAGS}")
 message("FFLAGS  ${FFLAGS}")
 ExternalProject_Add(external_OpenBLAS
-        GIT_REPOSITORY      https://github.com/xianyi/OpenBLAS.git
-        GIT_TAG             v0.3.7
-        GIT_PROGRESS false
-        GIT_SHALLOW true
+        URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.7.tar.gz
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/OpenBLAS
         UPDATE_COMMAND ""
@@ -35,7 +32,8 @@ ExternalProject_Add(external_OpenBLAS
             export LD_LIBRARY_PATH=${GFORTRAN_PATH} &&
             export LDFLAGS=${LDFLAGS} &&
             export FFLAGS=${FFLAGS} &&
-            $(MAKE) TARGET=${TARGET}
+            ${CMAKE_MAKE_PROGRAM} -j
+                    TARGET=${TARGET}
                     DYNAMIC_ARCH=0
                     USE_THREAD=${USE_THREAD}
                     USE_OPENMP=${USE_OPENMP}
@@ -47,5 +45,5 @@ ExternalProject_Add(external_OpenBLAS
                     BINARY=64
                     GEMM_MULTITHREAD_THRESHOLD=32
 
-        INSTALL_COMMAND $(MAKE) PREFIX=<INSTALL_DIR> install
+        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM}  PREFIX=<INSTALL_DIR> install
         )
