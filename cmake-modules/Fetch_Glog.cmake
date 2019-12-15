@@ -29,7 +29,7 @@ elseif(DOWNLOAD_MISSING)
     message(STATUS "glog will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
-    build_dependency(glog "${GLOG_CMAKE_OPTIONS}")
+    build_dependency(glog "${CMAKE_INSTALL_PREFIX}" "${GLOG_CMAKE_OPTIONS}")
     find_package(glog 0.4
             HINTS ${DIRECTORY_HINTS}
             PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}

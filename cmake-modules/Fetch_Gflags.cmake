@@ -21,7 +21,7 @@ if(TARGET gflags)
 elseif(DOWNLOAD_MISSING)
     message(STATUS "gflags will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
-    build_dependency(gflags "")
+    build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")
     find_package(gflags HINTS ${DIRECTORY_HINTS}
             PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR}
             PATH_SUFFIXES gflags gflags/lib
