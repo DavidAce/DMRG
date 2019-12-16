@@ -53,4 +53,7 @@ if(TARGET glog::glog)
     else()
         message(STATUS "Dependency glog does not have IMPORTED_LOCATION_${BUILD_TYPE}/_NOCONFIG")
     endif()
+
+    remove_shared(glog::glog)
+    remove_pthread(glog::glog)
 endif()
