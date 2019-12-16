@@ -206,6 +206,7 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
 fi
 
 export MAKEFLAGS=-j $make_threads
+export CMAKE_BUILD_PARALLEL_LEVEL=$make_threads
 
 
 
