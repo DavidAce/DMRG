@@ -101,8 +101,8 @@ matrix:
             - libhdf5-dev
             - libceres-dev
 
-    - name: "xenial gcc-7 (conda-forge libs)"
-      dist: xenial
+    - name: "bionic gcc-7 (conda-forge libs)"
+      dist: bionic
       os: linux
       compiler: gcc
       env:
@@ -127,7 +127,7 @@ matrix:
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda config --add channels conda-forge
         - conda update --yes conda
-        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas liblapacke ceres-solver
+        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
     - name: "bionic gcc conan libs"
       dist: xenial
@@ -164,8 +164,4 @@ matrix:
 
 script:
   - ./build.sh ${FLAGS}
-after_failure:
-  - cd build/Debug
-  - cat CMakeFiles/CMakeOutput.log
-  - cat CMakeFiles/CMakeError.log
 
