@@ -206,7 +206,7 @@ target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3 -Wpedantic -Wextra -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -g  -DNDEBUG  -lprofiler  -ftime-report>)
 target_compile_features(project-settings INTERFACE cxx_std_17)
-target_link_libraries(project-settings INTERFACE -lrt -lpthread)
+target_link_libraries(project-settings INTERFACE -lrt -Wl,--whole-archive  -lpthread  -Wl,--no-whole-archive)
 
 
 #######################################
@@ -314,7 +314,7 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE project-settings) # This needs to go last in case OpenMP is enabled
 #target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-target_link_libraries(${PROJECT_NAME} PRIVATE  -lrt -Wl,--whole-archive  -lpthread  -Wl,--no-whole-archive)
+#target_link_libraries(${PROJECT_NAME} PRIVATE  )
 
 
 ##################################################################
