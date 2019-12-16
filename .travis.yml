@@ -18,7 +18,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -39,7 +39,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -59,7 +59,7 @@ matrix:
         - CXX=clang++-7
         - CC=clang-7
         - FC=gfortran-8
-        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -82,7 +82,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-missing --enable-tests  -a native  -j 2 --build-type=Debug"
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -109,7 +109,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-missing --prefer-conda --enable-tests  -a native  -j 2 --build-type=Debug"
+        - FLAGS="--download-missing --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -137,7 +137,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-missing --prefer-conda --download-method=conan --enable-tests  -a native  -j 2 --build-type=Debug"
+        - FLAGS="--download-missing --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug"
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
         - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
@@ -147,7 +147,7 @@ matrix:
         - conda config --add channels conda-forge
         - conda update --yes conda
         # Install conan
-        - conda install --yes  conan arpack arpackpp openblas liblapacke
+        - conda install --yes  conan arpack arpackpp openblas
         # Automatic detection of your arch, compiler, etc.
         - conan user
       addons:
