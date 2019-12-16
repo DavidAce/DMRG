@@ -3,6 +3,7 @@ project(external-OpenBLAS)
 include(../GetNumThreads.cmake)
 get_num_threads(NUM_THREADS)
 set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${NUM_THREADS})
+message(STATUS "Building OpenBLAS with ${NUM_THREADS} threads")
 include(ExternalProject)
 
 ExternalProject_Add(external_OpenBLAS
@@ -42,7 +43,7 @@ ExternalProject_Add(external_OpenBLAS
                     USE_OPENMP=${USE_OPENMP}
                     NO_AFFINITY=1
                     NO_WARMUP=1
-                    QUIET_MAKE=1
+                    QUIET_MAKE=0
                     NUM_THREADS=64
                     DEBUG=0
                     BINARY=64

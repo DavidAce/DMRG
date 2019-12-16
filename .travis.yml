@@ -163,5 +163,5 @@ matrix:
 
 
 script:
-  - ./build.sh ${FLAGS}
+  - travis_wait ./build.sh ${FLAGS}
 
