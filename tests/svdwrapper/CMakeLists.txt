@@ -6,7 +6,7 @@ add_executable(test-svdwrapper svdwrapper.cpp
         ${CMAKE_SOURCE_DIR}/source/math/class_svd_wrapper.cpp
         ${CMAKE_SOURCE_DIR}/source/math/class_svd_wrapper_lapacke.cpp)
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 target_include_directories(test-svdwrapper PUBLIC ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(test-svdwrapper PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -24,5 +24,7 @@ if(CONAN_TARGETS)
 else()
     target_link_libraries(test-svdwrapper PRIVATE Eigen3::Eigen h5pp::h5pp h5pp::deps h5pp::flags )
 endif()
+target_link_libraries(test-svdwrapper PRIVATE lapacke)
 target_link_libraries(test-svdwrapper PRIVATE project-settings)
+
 add_test(NAME test-svdwrapper COMMAND test-svdwrapper)
