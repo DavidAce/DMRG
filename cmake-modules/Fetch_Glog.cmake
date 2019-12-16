@@ -13,7 +13,7 @@ find_package(glog 0.4
         PATHS $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} $ENV{CONDA_PREFIX}
         PATH_SUFFIXES glog glog/lib)
 else()
-    message("Skipping search through conda libs because this is a static build")
+    message(STATUS "Skipping search through conda libs because this is a static build")
 endif()
 
 if(TARGET glog::glog)

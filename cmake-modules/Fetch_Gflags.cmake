@@ -11,7 +11,7 @@ if(NOT TARGET gflags AND BUILD_SHARED_LIBS)
             PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR} $ENV{CONDA_PREFIX}
             PATH_SUFFIXES gflags gflags/lib)
 else()
-    message("Skipping search through conda libs because this is a static build")
+    message(STATUS "Skipping search through conda libs because this is a static build")
 endif()
 if(TARGET gflags)
     message(STATUS "gflags found")
