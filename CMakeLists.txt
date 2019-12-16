@@ -177,13 +177,28 @@ CheckCXXOptional()
 #    endif()
 #endif()
 
-
+add_library(project-settings INTERFACE) # A helper target
+##############################################################################
+###  Optional OpenMP support                                               ###
+###  Note that Clang has some  trouble with static openmp and that         ###
+###  and that static openmp is not recommended. This tries to enable       ###
+###  static openmp anyway because I find it useful. Installing             ###
+###  libiomp5 might help for shared linking.                               ###
+##############################################################################
+if(ENABLE_OPENMP)
+    include(cmake-modules/FindOpenMPLibrary.cmake)
+    find_package_openmp()
+    if(TARGET OpenMP)
+        target_link_libraries(project-settings INTERFACE OpenMP)
+    else()
+        target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
+    endif()
+endif()
 
 
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################
-add_library(project-settings INTERFACE) # A helper target
 message(STATUS "Using microarchitechture: ${CXX_MARCH}")
 target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH}>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:          -O3 -g -DNDEBUG>)
@@ -202,22 +217,6 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
     target_link_libraries(project-settings INTERFACE  -stdlib=libstdc++ )
 endif()
 
-##############################################################################
-###  Optional OpenMP support                                               ###
-###  Note that Clang has some  trouble with static openmp and that         ###
-###  and that static openmp is not recommended. This tries to enable       ###
-###  static openmp anyway because I find it useful. Installing             ###
-###  libiomp5 might help for shared linking.                               ###
-##############################################################################
-if(ENABLE_OPENMP)
-    include(cmake-modules/FindOpenMPLibrary.cmake)
-    find_package_openmp()
-    if(TARGET OpenMP)
-        target_link_libraries(project-settings INTERFACE OpenMP)
-    else()
-        target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
-    endif()
-endif()
 
 ##################################################################
 ### Check if we can enable Link Time Optimization              ###
