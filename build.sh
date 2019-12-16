@@ -250,9 +250,17 @@ if [ -z "$dry_run" ] ;then
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
             echo "Exit code: $exit_code"
+            cat CMakeFiles/CMakeOutput.log
+            cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
     cmake --build . --target $build_target --parallel $make_threads
+    if [ "$exit_code" != "0" ]; then
+            echo "Exit code: $exit_code"
+            cat CMakeFiles/CMakeOutput.log
+            cat CMakeFiles/CMakeError.log
+            exit "$exit_code"
+    fi
 fi
 
 if [ "$enable_tests" = "ON" ] ;then

@@ -164,4 +164,8 @@ matrix:
 
 script:
   - ./build.sh ${FLAGS}
+after_failure:
+  - cd build/Debug
+  - cat CMakeFiles/CMakeOutput.log
+  - cat CMakeFiles/CMakeError.log
 
