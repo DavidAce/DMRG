@@ -314,7 +314,7 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE project-settings) # This needs to go last in case OpenMP is enabled
 #target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-target_link_libraries(${PROJECT_NAME} PRIVATE -lrt -lpthread )
+target_link_libraries(${PROJECT_NAME} PRIVATE  -lrt -Wl,--whole-archive  -lpthread  -Wl,--no-whole-archive)
 
 
 ##################################################################

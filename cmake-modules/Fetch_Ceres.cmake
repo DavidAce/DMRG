@@ -13,6 +13,8 @@ if(NOT TARGET ceres AND BUILD_SHARED_LIBS)
             PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES} $ENV{CERES_DIR} $ENV{ceres_DIR} $ENV{CONDA_PREFIX}
             PATH_SUFFIXES ceres ceres/lib
             NO_DEFAULT_PATH)
+else()
+    message(STATUS "Skipping search through conda libs because this is a static build")
 endif()
 
 
