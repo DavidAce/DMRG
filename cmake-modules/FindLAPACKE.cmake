@@ -120,6 +120,7 @@ if (NOT TARGET lapacke)
                     $ENV{blas_DIR}    ${blas_DIR}
                     $ENV{LAPACKE_DIR} ${LAPACKE_DIR}
                     $ENV{lapacke_DIR} ${lapacke_DIR}
+                    $ENV{CONDA_PREFIX}
                 PATH_SUFFIXES
                     OpenBLAS openblas openblas/include OpenBLAS/include lapack
                 )
@@ -133,6 +134,7 @@ if (NOT TARGET lapacke)
                     $ENV{blas_DIR}    ${blas_DIR}
                     $ENV{LAPACKE_DIR} ${LAPACKE_DIR}
                     $ENV{lapacke_DIR} ${lapacke_DIR}
+                    $ENV{CONDA_PREFIX}
                 PATH_SUFFIXES
                     OpenBLAS openblas openblas/lib OpenBLAS/lib lapack lapack/lib blas blas/lib
                 )
@@ -169,6 +171,8 @@ if (NOT TARGET lapacke)
             message(STATUS "Searching for Lapacke in system - Success: ${LAPACKE_LIBRARY}")
         else()
             message(STATUS "Searching for Lapacke in system - failed")
+            message(STATUS "Tried LAPACKE_LIBRARY     : ${LAPACKE_LIBRARY} ")
+            message(STATUS "Tried LAPACKE_INCLUDE_DIR : ${LAPACKE_INCLUDE_DIR} ")
         endif()
     endif()
 endif()
