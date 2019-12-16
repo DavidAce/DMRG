@@ -1,18 +1,23 @@
-include(cmake-modules/filterTarget.cmake)
-string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+
 # Can't use conda here since it only has shared libraries.
 # We also can't use apt-versions since they hardcode usage of Eigen3/Glog/Gflags
 # but we need our own patched Eigen3.
-find_package(Ceres HINTS ${CMAKE_INSTALL_PREFIX}/ceres NO_DEFAULT_PATH)
+find_package(Ceres
+        HINTS $ENV{CERES_DIR} $ENV{ceres_DIR} ${CERES_DIR} ${ceres_DIR} ${CMAKE_INSTALL_PREFIX}/ceres
+        PATH_SUFFIXES ceres ceres/lib
+        NO_DEFAULT_PATH)
+
+if(NOT TARGET ceres AND BUILD_SHARED_LIBS)
+    find_package(Ceres
+            HINTS  ${DIRECTORY_HINTS}
+            PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES} $ENV{CERES_DIR} $ENV{ceres_DIR} $ENV{CONDA_PREFIX}
+            PATH_SUFFIXES ceres ceres/lib
+            NO_DEFAULT_PATH)
+endif()
+
 
 if(TARGET ceres)
     message(STATUS "ceres found")
-    get_target_property(cereslib  ceres IMPORTED_LOCATION_${BUILD_TYPE})
-    target_link_libraries(ceres INTERFACE ${cereslib})
-    target_include_directories(ceres INTERFACE ${CERES_INCLUDE_DIR})
-    remove_shared(ceres)
-    remove_pthread(ceres)
-    target_link_libraries(ceres INTERFACE Eigen3::Eigen glog::glog gflags)
 else()
 
 
@@ -25,9 +30,14 @@ else()
 
     get_target_property(GFLAGS_LIBRARIES    gflags      IMPORTED_LOCATION_${BUILD_TYPE})
     get_target_property(GFLAGS_INCLUDE_DIR  gflags      INTERFACE_INCLUDE_DIRECTORIES)
+    if(NOT GFLAGS_LIBRARIES)
+        get_target_property(GFLAGS_LIBRARIES    gflags      IMPORTED_LOCATION_NOCONFIG)
+    endif()
     get_target_property(GLOG_LIBRARIES      glog::glog  IMPORTED_LOCATION_${BUILD_TYPE})
     get_target_property(GLOG_INCLUDE_DIR    glog::glog  INTERFACE_INCLUDE_DIRECTORIES)
-
+    if(NOT GLOG_LIBRARIES)
+        get_target_property(GLOG_LIBRARIES    glog::glog      IMPORTED_LOCATION_NOCONFIG)
+    endif()
     unset(CERES_FLAGS CACHE)
     unset(CERES_FLAGS)
     if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
@@ -61,16 +71,27 @@ else()
     find_package(Ceres HINTS ${CMAKE_INSTALL_PREFIX}/ceres NO_DEFAULT_PATH)
     if(TARGET ceres)
         message(STATUS "ceres installed successfully")
-        get_target_property(cereslib  ceres IMPORTED_LOCATION_${BUILD_TYPE})
-        target_link_libraries(ceres INTERFACE ${cereslib})
-        target_include_directories(ceres INTERFACE ${CERES_INCLUDE_DIR})
-        remove_shared(ceres)
-        remove_pthread(ceres)
-        target_link_libraries(ceres INTERFACE Eigen3::Eigen glog::glog gflags -lpthread)
     else()
-        message(STATUS "config_result: ${config_result}")
-        message(STATUS "build_result: ${build_result}")
         message(FATAL_ERROR "ceres could not be downloaded.")
     endif()
 
+endif()
+
+
+if(TARGET ceres)
+    include(cmake-modules/filterTarget.cmake)
+    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+    get_target_property(ceres_imported_loc_buildtype  ceres IMPORTED_LOCATION_${BUILD_TYPE})
+    get_target_property(ceres_imported_loc_noconfig  ceres IMPORTED_LOCATION_NOCONFIG)
+    if(ceres_imported_loc_buildtype)
+        target_link_libraries(gflags INTERFACE ${ceres_imported_loc_buildtype})
+    elseif(ceres_imported_loc_noconfig)
+        target_link_libraries(gflags INTERFACE ${ceres_imported_loc_noconfig})
+    else()
+        message(STATUS "Dependency ceres does not have IMPORTED_LOCATION_${BUILD_TYPE}/_NOCONFIG")
+    endif()
+    target_include_directories(ceres INTERFACE ${CERES_INCLUDE_DIR})
+    remove_shared(ceres)
+    remove_pthread(ceres)
+    target_link_libraries(ceres INTERFACE Eigen3::Eigen glog::glog gflags)
 endif()

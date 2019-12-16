@@ -29,8 +29,6 @@ matrix:
             - g++-7
             - gfortran-7
 
-
-
     - name: "xenial gcc-8"
       dist: xenial
       os: linux
@@ -159,6 +157,40 @@ matrix:
         - conda config --add channels conda-forge
         - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+
+
+    - name: "bionic clang-7 (conda-forge libs) (shared)"
+      dist: bionic
+      os: linux
+      compiler: clang
+      env:
+        - CXX=clang++-7
+        - CC=clang-7
+        - FC=gfortran-8
+        - FLAGS="--download-missing --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline:  'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main'
+              key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - llvm-7-dev
+            - clang-7
+            - libstdc++-8-dev
+            - gfortran-8
+      before_install:
+        # Here we just install Miniconda, which you shouldn't have to change.
+        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - chmod +x miniconda.sh
+        - ./miniconda.sh -b -p $HOME/miniconda
+        - export PATH=$HOME/miniconda/bin:$PATH
+        - conda config --add channels conda-forge
+        - conda update --yes conda
+        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+
+
 
 
     - name: "bionic gcc conan libs"

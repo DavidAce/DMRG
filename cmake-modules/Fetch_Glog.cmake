@@ -1,28 +1,23 @@
 
-include(cmake-modules/filterTarget.cmake)
-string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+
+
 find_package(glog 0.4
-        HINTS ${DIRECTORY_HINTS}
-        PATHS $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
+        HINTS $ENV{GLOG_DIR} $ENV{glog_DIR} ${CMAKE_INSTALL_PREFIX}
+        PATHS $ENV{EBROOTGLOG}
         PATH_SUFFIXES glog glog/lib
         NO_DEFAULT_PATH)
 
+if(NOT TARGET glog::glog AND BUILD_SHARED_LIBS)
+find_package(glog 0.4
+        HINTS ${DIRECTORY_HINTS}
+        PATHS $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} $ENV{CONDA_PREFIX}
+        PATH_SUFFIXES glog glog/lib)
+else()
+    message("Skipping search through conda libs because this is a static build")
+endif()
 
 if(TARGET glog::glog)
     message(STATUS "glog found")
-
-    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-    get_target_property(gloglib  glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
-    if(gloglib)
-        target_link_libraries(glog::glog INTERFACE ${gloglib})
-        remove_shared(glog::glog)
-        remove_pthread(glog::glog)
-    else()
-        message(FATAL_ERROR "Dependency glog::glog does not have IMPORTED_LOCATION_${BUILD_TYPE}")
-    endif()
-
-#    include(cmake-modules/PrintTargetProperties.cmake)
-#    print_target_properties(glog::glog)
 
 
 elseif(DOWNLOAD_MISSING)
@@ -31,28 +26,31 @@ elseif(DOWNLOAD_MISSING)
     list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
     build_dependency(glog "${CMAKE_INSTALL_PREFIX}" "${GLOG_CMAKE_OPTIONS}")
     find_package(glog 0.4
-            HINTS ${DIRECTORY_HINTS}
-            PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR}
+            HINTS ${CMAKE_INSTALL_PREFIX}
             PATH_SUFFIXES glog glog/lib
             NO_DEFAULT_PATH)
     if(TARGET glog::glog)
         message(STATUS "glog installed successfully")
-        get_target_property(gloglib  glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
-        if(gloglib)
-            target_link_libraries(glog::glog INTERFACE ${gloglib})
-            remove_shared(glog::glog)
-            remove_pthread(glog::glog)
-        else()
-            message(FATAL_ERROR "Dependency glog::glog does not have IMPORTED_LOCATION_${BUILD_TYPE}")
-        endif()
-#        include(cmake-modules/PrintTargetProperties.cmake)
-#        print_target_properties(glog::glog)
     else()
-        message(STATUS "config_result: ${config_result}")
-        message(STATUS "build_result: ${build_result}")
         message(FATAL_ERROR "glog could not be downloaded.")
     endif()
 
 else()
     message(FATAL_ERROR "Dependency glog not found and DOWNLOAD_MISSING is OFF")
+endif()
+
+
+if(TARGET glog::glog)
+    #Copy the lib to where it belongs: INTERFACE_LINK_LIBRARIES
+    include(cmake-modules/filterTarget.cmake)
+    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+    get_target_property(glog_imported_loc_buildtype   glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
+    get_target_property(glog_imported_loc_noconfig    glog::glog IMPORTED_LOCATION_NOCONFIG)
+    if(glog_imported_loc_buildtype)
+        target_link_libraries(glog::glog INTERFACE ${glog_imported_loc_buildtype})
+    elseif(glog_imported_loc_noconfig)
+        target_link_libraries(glog::glog INTERFACE ${glog_imported_loc_noconfig})
+    else()
+        message(STATUS "Dependency glog does not have IMPORTED_LOCATION_${BUILD_TYPE}/_NOCONFIG")
+    endif()
 endif()
