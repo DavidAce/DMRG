@@ -30,13 +30,13 @@ elseif(DOWNLOAD_MISSING)
 #            ${CMAKE_COMMAND} -E create_symlink <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
             BUILD_COMMAND
             ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
-            DEPENDS arpack lapacke gfortran
+            DEPENDS lapacke arpack gfortran
             )
 
     ExternalProject_Get_Property(external_ARPACK++ INSTALL_DIR)
     add_library(arpack++ INTERFACE)
     add_dependencies(arpack++ external_ARPACK++)
-    target_link_libraries(arpack++ INTERFACE arpack lapacke gfortran)
+    target_link_libraries(arpack++ INTERFACE lapacke arpack gfortran)
     target_include_directories(arpack++ SYSTEM INTERFACE ${INSTALL_DIR}/include)
 else()
     message(STATUS "Dependency Arpack++ not found and DOWNLOAD_MISSING is OFF")
