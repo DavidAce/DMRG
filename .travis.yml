@@ -147,7 +147,7 @@ matrix:
         - conda config --add channels conda-forge
         - conda update --yes conda
         # Install conan
-        - conda install --yes  conan arpack arpackpp openblas
+        - conda install --yes  conan arpack arpackpp openblas liblapacke
         # Automatic detection of your arch, compiler, etc.
         - conan user
       addons:
@@ -163,5 +163,5 @@ matrix:
 
 
 script:
-  - travis_wait ./build.sh ${FLAGS}
+  - ./build.sh ${FLAGS}
 
