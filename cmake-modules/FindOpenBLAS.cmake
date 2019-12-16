@@ -1,15 +1,18 @@
 function(find_OpenBLAS)
     if(NOT TARGET OpenBLAS)
         message(STATUS "Searching for OpenBLAS config")
+        message(STATUS "DIRECTORY_HINTS ${DIRECTORY_HINTS}")
+
         find_package(OpenBLAS 0.3
                 HINTS ${DIRECTORY_HINTS}
                 PATHS
-                    $ENV{EBROOTOPENBLAS}
-                    $ENV{EBROOTBLAS}
                     $ENV{OpenBLAS_DIR}      ${OpenBLAS_DIR}
                     $ENV{openblas_DIR}      ${openblas_DIR}
                     $ENV{BLAS_DIR}          ${BLAS_DIR}
                     $ENV{blas_DIR}          ${blas_DIR}
+                    $ENV{EBROOTOPENBLAS}
+                    $ENV{EBROOTBLAS}
+                    $ENV{CONDA_PREFIX}
                     $ENV{LAPACKE_DIR}       ${LAPACKE_DIR}
                     $ENV{lapacke_DIR}       ${lapacke_DIR}
                 PATH_SUFFIXES
@@ -55,13 +58,15 @@ function(find_OpenBLAS)
                 NAMES openblas_config.h
                 HINTS ${DIRECTORY_HINTS}
                 PATHS
+                    $ENV{OpenBLAS_DIR}      ${OpenBLAS_DIR}
+                    $ENV{openblas_DIR}      ${openblas_DIR}
+                    $ENV{BLAS_DIR}          ${BLAS_DIR}
+                    $ENV{blas_DIR}          ${blas_DIR}
                     $ENV{EBROOTOPENBLAS}
                     $ENV{EBROOTBLAS}
-                    $ENV{OpenBLAS_DIR}    ${OpenBLAS_DIR}
-                    $ENV{openblas_DIR}    ${openblas_DIR}
-                    $ENV{BLAS_DIR}    ${BLAS_DIR}
-                    $ENV{blas_DIR}    ${blas_DIR}
-                    $ENV{LAPACKE_DIR} ${LAPACKE_DIR}
+                    $ENV{CONDA_PREFIX}
+                    $ENV{LAPACKE_DIR}       ${LAPACKE_DIR}
+                    $ENV{lapacke_DIR}       ${lapacke_DIR}
                 PATH_SUFFIXES
                     include openblas openblas/include OpenBLAS OpenBLAS/include blas/include
                 )
