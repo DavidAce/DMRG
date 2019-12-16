@@ -18,6 +18,7 @@ if(NOT BUILD_SHARED_LIBS)
     target_link_libraries  (test-arpack++_mps PRIVATE -static)                                             ### Static linkage
 endif()
 
+target_link_libraries(test-arpack++_mps PRIVATE  arpack++ )
 
 if(CONAN_TARGETS)
     target_link_libraries(test-arpack++_mps PRIVATE ${CONAN_TARGETS})
@@ -25,6 +26,5 @@ else()
     target_link_libraries(test-arpack++_mps PRIVATE Eigen3::Eigen spdlog::spdlog)
 endif()
 
-target_link_libraries(test-arpack++_mps PRIVATE  arpack++ )
 target_link_libraries(test-arpack++_mps PRIVATE  project-settings )
 add_test(NAME test-arpack++_mps COMMAND test-arpack++_mps)
