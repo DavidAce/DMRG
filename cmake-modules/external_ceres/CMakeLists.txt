@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(external-ceres)
+
+include(../GetNumThreads.cmake)
+get_num_threads(NUM_THREADS)
+
 include(ExternalProject)
 
 ExternalProject_Add(external_ceres
@@ -10,6 +14,7 @@ ExternalProject_Add(external_ceres
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/ceres
 #        TEST_COMMAND ${CMAKE_MAKE_PROGRAM} -j test
+        BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} -j ${NUM_THREADS}
         CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
