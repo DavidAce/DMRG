@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
+include(../GetNumThreads.cmake)
+get_num_threads(NUM_THREADS)
+
 project(external-glog)
 
 include(ExternalProject)
@@ -9,6 +12,7 @@ ExternalProject_Add(external_glog
         GIT_SHALLOW true
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/glog
+        BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} -j ${NUM_THREADS}
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
         -DCMAKE_CXX_STANDARD=17

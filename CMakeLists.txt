@@ -69,19 +69,18 @@ include(cmake-modules/gitversion.cmake)
 ##################################################################
 ### Get operating system properties into a variable            ###
 ##################################################################
-cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
-set(GET_OS_INFO_CMD lsb_release -a)
-if(${CMAKE_HOST_APPLE})
-    set(GET_OS_INFO_CMD "sw_vers")
-endif()
-execute_process(COMMAND ${GET_OS_INFO_CMD}
-        OUTPUT_VARIABLE OS_PROPERTIES
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-message("========= DETECTED OS =========")
-message("Hostname: " ${_host_name})
-message("${OS_PROPERTIES}")
+cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
+cmake_host_system_information(RESULT _proc_type   QUERY PROCESSOR_DESCRIPTION)
+cmake_host_system_information(RESULT _os_name     QUERY OS_NAME)
+cmake_host_system_information(RESULT _os_release  QUERY OS_RELEASE)
+cmake_host_system_information(RESULT _os_version  QUERY OS_VERSION)
+cmake_host_system_information(RESULT _os_platform QUERY OS_PLATFORM)
+message("========= HOST INFO =========")
+message("${_host_name}")
+message("${_os_name} ${_os_platform} ${_os_release}")
+message("${_proc_type}")
+message("${_os_version}")
 message("===============================")
-
 
 
 
@@ -358,8 +357,7 @@ print_target_info(glog::glog)
 print_target_info(ceres)
 print_target_info(project-settings)
 print_target_info(Threads::Threads)
-include(cmake-modules/PrintTargetProperties.cmake)
-print_target_properties(Threads::Threads)
+
 
 # Conan targets
 foreach(tgt ${CONAN_TARGETS})

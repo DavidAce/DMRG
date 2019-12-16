@@ -33,13 +33,6 @@ elseif(DOWNLOAD_MISSING)
     list(GET  GFORTRAN_LIBS 0 GFORTRAN_LIB)
     get_filename_component(GFORTRAN_PATH ${GFORTRAN_LIB} DIRECTORY)
 
-#    foreach(lib ${GFORTRAN_LIBS})
-#        if(${lib} MATCHES "fortran")
-#            break()
-#        endif()
-#    endforeach()
-#    string(REPLACE )
-#    string(REPLACE ";" " " GFORTRAN_LIB   "${GFORTRAN_LIB}") # Needs to be a space-separated list
     set(LDFLAGS "-L${GFORTRAN_PATH} ${GFORTRAN_LIBS_SPACE_SEP_STRING}")
     set(FFLAGS  "-O3 -Wno-maybe-uninitialized -Wno-conversion -Wno-unused-but-set-variable -Wno-unused-variable")
     list(APPEND OpenBLAS_CMAKE_OPTIONS  -DGFORTRAN_PATH:PATH=${GFORTRAN_PATH})

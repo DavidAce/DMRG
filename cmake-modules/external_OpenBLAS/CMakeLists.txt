@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(external-OpenBLAS)
+include(../GetNumThreads.cmake)
+get_num_threads(NUM_THREADS)
 include(ExternalProject)
-message(STATUS "LDFLAGS              : ${LDFLAGS}")
-message(STATUS "FFLAGS               : ${FFLAGS}")
-message(STATUS "USE_THREAD           : ${USE_THREAD}")
-message(STATUS "USE_OPENMP           : ${USE_OPENMP}")
-message(STATUS "CMAKE_BINARY_DIR     : ${CMAKE_BINARY_DIR}")
-message(STATUS "CMAKE_INSTALL_PREFIX : ${CMAKE_INSTALL_PREFIX}")
+
 ExternalProject_Add(external_OpenBLAS
         URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.7.tar.gz
         URL_MD5  5cd4ff3891b66a59e47af2d14cde4056
@@ -37,14 +34,14 @@ ExternalProject_Add(external_OpenBLAS
             export LD_LIBRARY_PATH=${GFORTRAN_PATH} &&
             export LDFLAGS=${LDFLAGS} &&
             export FFLAGS=${FFLAGS} &&
-            ${CMAKE_MAKE_PROGRAM} -j
+            ${CMAKE_MAKE_PROGRAM} -j ${NUM_THREADS}
                     TARGET=${TARGET}
                     DYNAMIC_ARCH=0
                     USE_THREAD=${USE_THREAD}
                     USE_OPENMP=${USE_OPENMP}
                     NO_AFFINITY=1
                     NO_WARMUP=1
-                    QUIET_MAKE=0
+                    QUIET_MAKE=1
                     NUM_THREADS=64
                     DEBUG=0
                     BINARY=64
