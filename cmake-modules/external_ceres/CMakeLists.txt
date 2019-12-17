@@ -9,7 +9,7 @@ set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${NUM_THREADS})
 include(ExternalProject)
 ExternalProject_Add(external_ceres
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
-        GIT_TAG "47e784bb4146da52d3b0695877326d60c36ab189"
+        GIT_TAG "edb8322bdabef336db290be1cc557145b6d4bf80"
         GIT_PROGRESS false
         GIT_SHALLOW false
         PREFIX          ${CMAKE_BINARY_DIR}
@@ -46,7 +46,7 @@ ExternalProject_Add(external_ceres
         -DSUITESPARSE:BOOL=OFF
         -DCXSPARSE:BOOL=OFF
         -DSCHUR_SPECIALIZATIONS:BOOL=OFF
-        -DCUSTOM_BLAS:BOOL=ON
+        -DCUSTOM_BLAS:BOOL=OFF
 #        -Dgflags_DIR:PATH=${gflags_DIR}
 #        -DCMAKE_FIND_LIBRARY_SUFFIXES:STRING=${CUSTOM_SUFFIX}
 #        -DEIGEN_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR}

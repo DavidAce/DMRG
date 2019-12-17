@@ -1,13 +1,11 @@
-# Here you can specify desired software packages to be downloaded by conan. This is just an example.
-# To activate reading this file from CMakeLists.txt, enable the setting -DENABLE_CONANFILE
+# Here you can specify desired software packages to be downloaded by conan.
+# To activate reading this file from CMakeLists.txt, enable the setting -DDOWNLOAD_METHOD=conan
 
 
 [requires]
-eigen/3.3.7@conan-dmrg/patched
-spdlog/1.4.2@bincrafters/stable
-ceres-solver/1.14.0@conan-dmrg/stable
-hdf5/1.10.5
-h5pp/0.4.6@conan-dmrg/stable
+ceres-solver/2.0.0@davidace/development
+h5pp/0.4.7@davidace/stable
+eigen/3.3.7@davidace/patched
 
 [generators]
 cmake

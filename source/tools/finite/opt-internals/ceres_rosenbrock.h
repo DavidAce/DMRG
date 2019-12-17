@@ -3,8 +3,8 @@
 //
 
 #pragma once
+
 #include <tools/finite/opt.h>
-#include "ceres/first_order_function.h"
 
 namespace tools::finite::opt::internal {
         class ceres_rosenbrock_functor : public ceres::FirstOrderFunction {

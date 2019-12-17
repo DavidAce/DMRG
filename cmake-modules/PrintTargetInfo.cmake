@@ -42,7 +42,7 @@ function(print_target_info target_name)
         endif()
 
 
-        pad_string(padded_target "20" " " "[${target_name}]" )
+        pad_string(padded_target "30" " " "[${target_name}]" )
         if(INFO_INC)
             message(STATUS "${padded_target} INCLUDE : ${INFO_INC}" )
         endif()

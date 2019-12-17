@@ -26,7 +26,6 @@
 #include <arpackpp/arsnsym.h>
 #include <arpackpp/arssym.h>
 #elif __has_include(<arpack++/arcomp.h>)
-#include <arpack++/arcomp.h>
 #include <arpack++/ardscomp.h>
 #include <arpack++/ardnsmat.h>
 #include <arpack++/arsnsym.h>

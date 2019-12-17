@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(DMRG++ CXX )
 #enable_language()
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
@@ -66,8 +66,9 @@ include(cmake-modules/gitversion.cmake)
 
 
 
+
 ##################################################################
-### Get operating system properties into a variable            ###
+### Print host properties                                      ###
 ##################################################################
 cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
 cmake_host_system_information(RESULT _proc_type   QUERY PROCESSOR_DESCRIPTION)
@@ -177,28 +178,12 @@ CheckCXXOptional()
 #    endif()
 #endif()
 
-add_library(project-settings INTERFACE) # A helper target
-##############################################################################
-###  Optional OpenMP support                                               ###
-###  Note that Clang has some  trouble with static openmp and that         ###
-###  and that static openmp is not recommended. This tries to enable       ###
-###  static openmp anyway because I find it useful. Installing             ###
-###  libiomp5 might help for shared linking.                               ###
-##############################################################################
-if(ENABLE_OPENMP)
-    include(cmake-modules/FindOpenMPLibrary.cmake)
-    find_package_openmp()
-    if(TARGET OpenMP)
-        target_link_libraries(project-settings INTERFACE OpenMP)
-    else()
-        target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
-    endif()
-endif()
 
 
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################
+add_library(project-settings INTERFACE) # A helper target
 message(STATUS "Using microarchitechture: ${CXX_MARCH}")
 target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH}>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:          -O3 -g -DNDEBUG>)
@@ -206,7 +191,6 @@ target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3 -Wpedantic -Wextra -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -g  -DNDEBUG  -lprofiler  -ftime-report>)
 target_compile_features(project-settings INTERFACE cxx_std_17)
-target_link_libraries(project-settings INTERFACE -lrt -Wl,--whole-archive  -lpthread  -Wl,--no-whole-archive)
 
 
 #######################################
@@ -247,6 +231,9 @@ set(EXTERNAL_INSTALL_DIR       ${CMAKE_INSTALL_PREFIX})
 set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/external-deps)
 set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/external-deps)
 
+
+
+
 #################################################################
 ### Prepend conda dirs for hints when using find_package      ###
 #################################################################
@@ -258,64 +245,6 @@ if(PREFER_CONDA_LIBS)
             )
 endif()
 list(APPEND DIRECTORY_HINTS ${CMAKE_INSTALL_PREFIX})
-
-
-##########################################
-###  Find or fetch all dependencies   ###
-##########################################
-include(cmake-modules/FindGFortran.cmake)
-if(ENABLE_MKL)
-    include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-endif()
-
-include(cmake-modules/Fetch_OpenBLAS2.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
-include(cmake-modules/FindLAPACKE.cmake)                    # If MKL is not found openblas will be used instead. Includes lapack.
-include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
-include(cmake-modules/Fetch_Arpackpp.cmake)                 # LC++ frontend for arpack-ng
-
-
-
-if(${DOWNLOAD_METHOD} MATCHES "manual" )
-
-    include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen3 numerical library
-    include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
-    include(cmake-modules/Fetch_Gflags.cmake)
-    include(cmake-modules/Fetch_Glog.cmake)
-    include(cmake-modules/Fetch_Ceres.cmake)
-
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
-    target_link_libraries(${PROJECT_NAME} PRIVATE arpack)
-    target_link_libraries(${PROJECT_NAME} PRIVATE lapacke)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen )
-    target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp h5pp::deps h5pp::flags)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ceres)
-
-endif()
-
-
-##################################################################
-### Install conan-modules/conanfile.txt dependencies           ###
-##################################################################
-if(${DOWNLOAD_METHOD} MATCHES "conan" )
-    ### Initialize conan if requested
-    ### Note that this is not the same as enabling the conanfile
-    ### This simply mean that we use conan to get spdlog/eigen3/h5pp
-    include(cmake-modules/conan/conan.cmake)
-    message(WARNING "Using conanfile is still experimental.\n Manually edit this file if linking fails")
-    include(cmake-modules/conan/conan.cmake)
-    conan_add_remote(NAME conan-dmrg INDEX 1
-            URL http://thinkstation.duckdns.org:8081/artifactory/api/conan/conan-dmrg)
-    conan_cmake_run(CONANFILE cmake-modules/conan/conanfile.txt
-            BASIC_SETUP CMAKE_TARGETS
-            BUILD missing)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${CONAN_TARGETS})
-endif()
-
-
-target_link_libraries(${PROJECT_NAME} PRIVATE project-settings) # This needs to go last in case OpenMP is enabled
-#target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-#target_link_libraries(${PROJECT_NAME} PRIVATE  )
-
 
 ##################################################################
 ### Print summary of CMake configuration                       ###
@@ -334,44 +263,18 @@ message(STATUS "BUILD_TESTS                  : ${BUILD_TESTS}")
 message(STATUS "BUILD_EXAMPLES               : ${BUILD_EXAMPLES}")
 message("=============================================================================")
 
-# "Manual" Targets
+
+###########################################
+### Fetch or find all the dependencies  ###
+###########################################
+if(${DOWNLOAD_METHOD} MATCHES "conan")
+    include(cmake-modules/SetupDependenciesConan.cmake)
+elseif(${DOWNLOAD_METHOD} MATCHES "manual")
+    include(cmake-modules/SetupDependenciesManual.cmake)
+endif()
 include(cmake-modules/PrintTargetInfo.cmake)
-print_target_info(OpenMP)
-print_target_info(mkl)
-print_target_info(OpenBLAS)
-print_target_info(blas)
-print_target_info(lapack)
-print_target_info(lapacke)
-print_target_info(arpack)
-print_target_info(arpack++)
-print_target_info(gfortran)
-print_target_info(h5pp::h5pp)
-print_target_info(h5pp::deps)
-print_target_info(h5pp::flags)
-print_target_info(Eigen3::Eigen)
-print_target_info(spdlog::spdlog)
-print_target_info(hdf5::hdf5)
-print_target_info(gflags)
-print_target_info(glog::glog)
-print_target_info(ceres)
-print_target_info(project-settings)
-print_target_info(Threads::Threads)
-
-
-# Conan targets
-foreach(tgt ${CONAN_TARGETS})
-    print_target_info(${tgt})
-endforeach()
-
-
-
-message("=============================================================================")
-message("")
-
-
-
-
-
+target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)  # Link everything to main project
+print_target_info(${PROJECT_NAME})
 
 ###################
 ### INFORMATION ###

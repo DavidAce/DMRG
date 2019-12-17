@@ -7,13 +7,15 @@ find_package(glog 0.4
         PATH_SUFFIXES glog glog/lib
         NO_DEFAULT_PATH)
 
-if(NOT TARGET glog::glog AND BUILD_SHARED_LIBS)
-find_package(glog 0.4
-        HINTS ${DIRECTORY_HINTS}
-        PATHS $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} $ENV{CONDA_PREFIX}
-        PATH_SUFFIXES glog glog/lib)
-else()
-    message(STATUS "Skipping search through conda libs because this is a static build")
+if(NOT TARGET glog::glog)
+    if(BUILD_SHARED_LIBS)
+        find_package(glog 0.4
+                HINTS ${DIRECTORY_HINTS}
+                PATHS $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} $ENV{CONDA_PREFIX}
+                PATH_SUFFIXES glog glog/lib)
+    else()
+        message(STATUS "Skipping search through conda libs because this is a static build")
+    endif()
 endif()
 
 if(TARGET glog::glog)

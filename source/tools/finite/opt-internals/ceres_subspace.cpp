@@ -3,17 +3,13 @@
 //
 
 #include "ceres_subspace_functor.h"
-#include <Eigen/Core>
 #include <iostream>
 #include <simulation/class_simulation_status.h>
 #include <math/class_eigsolver.h>
 #include <math/arpack_extra/matrix_product_stl.h>
-#include <math/arpack_extra/matrix_product_sparse.h>
-#include <tools/finite/opt.h>
 #include <state/class_state_finite.h>
 #include <simulation/nmspc_settings.h>
 #include <general/nmspc_random_numbers.h>
-#include <ceres/ceres.h>
 
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
