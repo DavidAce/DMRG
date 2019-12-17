@@ -7,8 +7,6 @@
 #include <state/class_state_finite.h>
 #include <simulation/class_simulation_status.h>
 #include <simulation/nmspc_settings.h>
-#include <ceres/ceres.h>
-
 
 
 Eigen::Tensor<class_state_finite::Scalar,3>

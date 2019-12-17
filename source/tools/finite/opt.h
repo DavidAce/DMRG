@@ -17,8 +17,7 @@
 #include <tools/nmspc_tools.h>
 #include <general/class_tic_toc.h>
 #include <general/nmspc_omp.h>
-#include <ceres/gradient_problem.h>
-#include <ceres/gradient_problem_solver.h>
+#include <ceres/ceres.h>
 
 class class_tic_toc;
 

@@ -7,7 +7,7 @@ find_Arpackpp()
 if (TARGET arpack++)
     message(STATUS "Arpack++ found")
 elseif(DOWNLOAD_MISSING)
-    message(STATUS "Arpack++ will be installed into ${EXTERNAL_INSTALL_DIR}/arpackpp on first build.")
+    message(STATUS "Arpack++ will be installed into ${EXTERNAL_INSTALL_DIR}/arpack++ on first build.")
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git

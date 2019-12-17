@@ -1,64 +1,13 @@
-#include <complex.h>
-#undef I
-#include <ceres/ceres.h>
-#include "glog/logging.h"
-#include <general/nmspc_omp.h>
-
-class RosenbrockBase : public ceres::FirstOrderFunction {
-protected:
-    Eigen::MatrixXd H;
-    Eigen::MatrixXd H2;
-    OMP omp;
-public:
-    explicit RosenbrockBase(Eigen::MatrixXd & H_):H(H_), H2(H_*H_){
-
-    }
-    int NumParameters() const final { return H.rows(); }
-
-};
 
 
-template<typename T>
-class Rosenbrock : public RosenbrockBase {
-private:
-    using MatrixType = Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> ;
-    using VectorType = Eigen::Matrix<T,Eigen::Dynamic,1> ;
-public:
-    explicit Rosenbrock(MatrixType &H_): RosenbrockBase(H_){}
-    bool Evaluate(const double* v_ptr,
-                  double* fx,
-                  double* grad_ptr) const final
-    {
-        Eigen::Map<const VectorType>  v    (v_ptr, NumParameters());
-        double vv   = v.squaredNorm();
-        double norm = std::sqrt(vv);
-        VectorType Hv = H*v;
-        VectorType H2v = H2*v;
-        double ene             = v.adjoint()*Hv;
-        double ene2            = v.adjoint()*H2v;
 
-        double var             = std::abs(ene2 - ene);
-        double norm_offset     = std::abs(1-norm);
-        double log10var        = std::log10(var);
-        if(fx != nullptr){
-            fx[0] = log10var + norm_offset;
-        }
-
-        if (grad_ptr != nullptr){
-            Eigen::Map<VectorType>  grad (grad_ptr, NumParameters());
-            auto vv_1  = std::pow(vv,-1);
-            auto var_1 = 1.0/var/std::log(10);
-            grad = var_1 * vv_1 * 2.0*(H2v - 2.0*ene*Hv - (ene2 - 2.0*ene*ene)*v);
-            grad += 2.0*norm_offset * v;
-        }
-        return true;
-    }
-
-};
-
-int main(){
+#include "ceres_pthread.h"
+void opt::SolveRosenbrock(){
     google::InitGoogleLogging("ceres_pthread");
-    ceres::GradientProblemSolver::Options options;
+    ceres::GradientProblemSolver::Summary summary;
+
+    ceres::GradientProblemSolver::Options options = ceres_default_options;
+
     options.line_search_type = ceres::LineSearchType::WOLFE;
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
@@ -84,11 +33,29 @@ int main(){
     Eigen::MatrixXd H(100,100);
     H.setRandom();
     H = H.selfadjointView<Eigen::Upper>();
-    ceres::GradientProblemSolver::Summary summary;
-    ceres::GradientProblem problem(new Rosenbrock<double>(H));
+    Eigen::MatrixXd H2 = H*H;
+
+
+//    auto * functor = new opt::Rosenbrock<double>(H);
+    auto * functor = new opt::Rosenbrock<double>(H,H2);
+    ceres::GradientProblem problem(functor);
     ceres::Solve(options, problem, parameters.data(), &summary);
     std::cout << summary.FullReport() << "\n";
+    int iter  = (int)summary.iterations.size();
 
+    std::cout << "Initial x: " << -1.2 << " y: " << 1.0 << "\n";
+    std::cout << "Final   x: " << parameters[0]
+              << " y: " << parameters[1] << "\n";
+    std::cout << "iterations: " << iter << std::endl;
+    std::cout << "Finished LBFGS after " << summary.total_time_in_seconds << " seconds " << " and " << summary.iterations.size() << " iters " << std::endl;
+    std::cout << "Exit status " << ceres::TerminationTypeToString(summary.termination_type) << std::endl;
+    std::cout << "Message: " << summary.message.c_str() << std::endl;
+}
+
+
+int main(){
+
+    opt::SolveRosenbrock();
     return 0;
 
 }

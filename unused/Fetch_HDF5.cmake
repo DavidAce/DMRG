@@ -1,4 +1,4 @@
-include(${PROJECT_SOURCE_DIR}/cmake-modules/FindPackageHDF5.cmake)
+include(../cmake-modules/FindPackageHDF5.cmake)
 
 if(NOT TARGET hdf5::hdf5)
     find_package_hdf5()
@@ -7,7 +7,7 @@ if(NOT TARGET hdf5::hdf5)
 
     elseif (DOWNLOAD_MISSING)
         message(STATUS "HDF5 will be installed into ${CMAKE_INSTALL_PREFIX}")
-        include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
+        include(../cmake-modules/BuildDependency.cmake)
         build_dependency(hdf5 "")
         set(HDF5_ROOT ${CMAKE_BINARY_DIR}/h5pp-deps-install)
         find_package_hdf5()

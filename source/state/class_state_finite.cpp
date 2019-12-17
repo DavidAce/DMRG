@@ -6,7 +6,7 @@
 #include "class_state_finite.h"
 #include <tools/nmspc_tools.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <spdlog/fmt/bundled/ranges.h>
+
 
 // We need to make a destructor manually for the enclosing class "class_state_finite"
 // that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its

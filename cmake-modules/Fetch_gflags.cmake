@@ -5,13 +5,15 @@ find_package(gflags
         PATH_SUFFIXES gflags gflags/lib
         NO_DEFAULT_PATH)
 
-if(NOT TARGET gflags AND BUILD_SHARED_LIBS)
-    find_package(gflags
-            HINTS ${DIRECTORY_HINTS}
-            PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR} $ENV{CONDA_PREFIX}
-            PATH_SUFFIXES gflags gflags/lib)
-else()
-    message(STATUS "Skipping search through conda libs because this is a static build")
+if(NOT TARGET gflags)
+    if(BUILD_SHARED_LIBS)
+        find_package(gflags
+                HINTS ${DIRECTORY_HINTS}
+                PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTGFLAGS} $ENV{GFLAGS_DIR} $ENV{gflags_DIR} $ENV{CONDA_PREFIX}
+                PATH_SUFFIXES gflags gflags/lib)
+    else()
+        message(STATUS "Skipping search through conda libs because this is a static build")
+    endif()
 endif()
 if(TARGET gflags)
     message(STATUS "gflags found")

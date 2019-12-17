@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(test-ceres_pthread)
-add_executable(test-ceres_pthread ceres_pthread.cpp)
+project(test-ceres_pthread CXX)
+add_executable(test-ceres_pthread ceres_pthread.cpp base.cpp rosenbrock.cpp)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -14,7 +14,9 @@ if(CONAN_TARGETS)
     target_link_libraries(test-ceres_pthread PRIVATE CONAN_PKG::ceres-solver)
 else()
     target_link_libraries(test-ceres_pthread PRIVATE ceres)
+    target_link_libraries(test-ceres_pthread PRIVATE Eigen3::Eigen ) # Put it last in case Eigen wants to use blas
 endif()
+target_compile_features(test-ceres_pthread  PRIVATE cxx_std_17)
 
 target_link_libraries(test-ceres_pthread PRIVATE project-settings)
 

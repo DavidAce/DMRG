@@ -58,27 +58,19 @@ function(find_package_openmp_internal omp_paths omp_names)
 
     if(OMP_COMPILES)
       set(OpenMP_FOUND        TRUE                    PARENT_SCOPE)
-      set(ENABLE_OPENMP       TRUE                    PARENT_SCOPE)
       add_library(OpenMP INTERFACE IMPORTED)
       target_link_libraries(OpenMP INTERFACE ${OpenMP_LIBRARIES})
       target_compile_definitions(OpenMP INTERFACE ${OpenMP_DEFS})
       target_include_directories(OpenMP INTERFACE ${OpenMP_INCLUDE_DIR})
       message(STATUS "Found working OpenMP" )
     else()
-      message(STATUS "Could not compile simle OpenMP program. Setting ENABLE_OPENMP OFF" )
-      set(ENABLE_OPENMP FALSE PARENT_SCOPE)
+      message(STATUS "Could not compile simle OpenMP program." )
       set(OMP_COMPILES FALSE PARENT_SCOPE)
     endif()
 endfunction()
 
 
 function(find_package_openmp)
-
-    if (NOT ENABLE_OPENMP)
-        message(STATUS "OpenMP not enabled")
-        return()
-    endif()
-
     if(ENABLE_MKL AND NOT MKLROOT)
         if(DEFINED $ENV{MKLROOT})
             set(MKLROOT $ENV{MKLROOT})

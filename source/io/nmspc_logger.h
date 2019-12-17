@@ -4,7 +4,12 @@
 
 #pragma once
 #include <spdlog/logger.h>
+#if defined(SPDLOG_FMT_EXTERNAL)
+#include <fmt/ranges.h>
+#else
 #include <spdlog/fmt/bundled/ranges.h>
+#endif
+
 namespace Logger{
     extern void enableTimeStamp(std::shared_ptr<spdlog::logger> &log);
     extern void disableTimeStamp(std::shared_ptr<spdlog::logger> &log);
