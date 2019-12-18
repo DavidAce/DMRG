@@ -63,6 +63,9 @@ else()
     message(WARNING "We need OpenMP when using conan libraries!")
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
+find_package(Threads)
+target_link_libraries(project-settings INTERFACE Threads::Threads)
+
 
 
 include(cmake-modules/PrintTargetInfo.cmake)
@@ -80,4 +83,5 @@ foreach(tgt ${CONAN_TARGETS})
         print_target_info(${tgt})
     endif()
 endforeach()
+print_target_info(OpenMP)
 print_target_info(project-settings)

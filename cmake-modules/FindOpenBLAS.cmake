@@ -45,7 +45,7 @@ function(find_OpenBLAS)
     if(NOT TARGET OpenBLAS)
         message(STATUS "Searching for OpenBLAS lib in system")
         find_library(OpenBLAS_LIBRARIES
-                NAMES libopenblas${CUSTOM_SUFFIX}
+                NAMES libopenblas
                 HINTS ${DIRECTORY_HINTS}
                 PATHS
                     $ENV{EBROOTOPENBLAS}

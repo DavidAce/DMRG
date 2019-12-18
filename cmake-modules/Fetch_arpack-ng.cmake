@@ -1,3 +1,8 @@
+if(BUILD_SHARED_LIBS)
+    set(ARPACK_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+else()
+    set(ARPACK_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+endif()
 
 unset(ARPACK_LIBRARIES)
 find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX}/arpack-ng)
@@ -10,7 +15,7 @@ endif()
 if (NOT TARGET arpack)
     message(STATUS "Searching for Arpack-ng")
     find_library(ARPACK_LIBRARIES
-            NAMES libarpack${CUSTOM_SUFFIX} arpack
+            NAMES libarpack${ARPACK_SUFFIX} arpack
             PATH_SUFFIXES lib lib32 lib64 x86_64-linux-gnu lib/x86_64-linux-gnu
             HINTS ${DIRECTORY_HINTS}
             PATHS $ENV{EBROOTARPACKMINNG}
@@ -77,10 +82,10 @@ if(NOT TARGET arpack)
             -DBLAS_LIBRARIES=${AUX_LIBRARIES_BLAS_GENERATOR}
             -DLAPACK_LIBRARIES=${AUX_LIBRARIES_LAPACK_GENERATOR}
             DEPENDS blas lapack gfortran
-            BUILD_BYPRODUCTS <INSTALL_DIR>/${CMAKE_INSTALL_LIBDIR}/libarpack${CUSTOM_SUFFIX}
+            BUILD_BYPRODUCTS <INSTALL_DIR>/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX}
             )
     ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
-    set(ARPACK_LIBRARIES ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libarpack${CUSTOM_SUFFIX})
+    set(ARPACK_LIBRARIES ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX})
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
     add_library(arpack INTERFACE IMPORTED)
     add_dependencies(arpack external_ARPACK)
