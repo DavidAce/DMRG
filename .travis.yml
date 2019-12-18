@@ -191,7 +191,7 @@ matrix:
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
 
-    - name: "bionic clang-7 conan libs"
+    - name: "bionic clang-7 conan + conda-forge libs"
       dist: xenial
       os: linux
       compiler: clang
@@ -221,7 +221,7 @@ matrix:
         - conda config --add channels conda-forge
         - conda update --yes conda
         # Install conan
-        - conda install --yes  conan arpack arpackpp openblas
+        - conda install --yes  conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
         # Automatic detection of your arch, compiler, etc.
         - conan user
 
