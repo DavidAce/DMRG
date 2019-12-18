@@ -70,12 +70,9 @@ if (MKL_FOUND)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-#    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -ldl -lm)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  pthread -ldl -lm)
-#    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  )
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES})
     if(TARGET OpenMP)
-#        target_link_libraries(mkl INTERFACE OpenMP)
-        target_compile_options(mkl INTERFACE -fopenmp)
+        target_link_libraries(mkl INTERFACE OpenMP)
     endif()
     target_link_libraries(mkl INTERFACE gfortran)
     target_include_directories(mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
@@ -124,7 +121,7 @@ if (MKL_FOUND)
 
         set(CMAKE_REQUIRED_LIBRARIES " ${mkl_valid_libs}") # Can be a ;list
         set(CMAKE_REQUIRED_INCLUDES  " ${mkl_valid_incs}") # Can be a ;list
-        string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${CMAKE_REQUIRED_FLAGS} -fopenmp") # Needs to be a space-separated list
+        string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${CMAKE_REQUIRED_FLAGS}") # Needs to be a space-separated list
 
 #        message("CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
 #        message("CMAKE_REQUIRED_INCLUDES : ${CMAKE_REQUIRED_INCLUDES}")
