@@ -132,6 +132,7 @@ matrix:
       os: linux
       compiler: clang
       env:
+        - FC=gfortran-8
         - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
@@ -157,6 +158,7 @@ matrix:
       os: linux
       compiler: clang
       env:
+        - FC=gfortran-8
         - FLAGS="--download-missing --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
@@ -182,6 +184,7 @@ matrix:
       os: linux
       compiler: clang
       env:
+        - FC=gfortran-8
         - FLAGS="--download-missing --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
