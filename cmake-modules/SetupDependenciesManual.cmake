@@ -1,4 +1,3 @@
-
 ##############################################################################
 ###  Optional OpenMP support                                               ###
 ###  Note that Clang has some  trouble with static openmp and that         ###
@@ -11,7 +10,6 @@ find_package_openmp()
 
 
 
-# These packages are not in conan yet
 include(cmake-modules/FindGFortran.cmake)
 if(ENABLE_MKL)
     include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
@@ -19,7 +17,6 @@ endif()
 if(NOT TARGET blas)
     include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not on openblas will be used instead. Includes lapack.
 endif()
-
 include(cmake-modules/FindLapacke.cmake)                        # Lapacke needed by arpack++
 include(cmake-modules/Fetch_arpack-ng.cmake)                    # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_arpack++.cmake)                     # LC++ frontend for arpack-ng

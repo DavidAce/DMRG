@@ -94,6 +94,10 @@ endif()
 if (NOT TARGET lapacke)
     if (TARGET OpenBLAS)
         message(STATUS "Searching for Lapacke in OpenBLAS")
+        if(LAPACKE_DEBUG)
+            include(cmake-modules/PrintTargetProperties.cmake)
+            print_target_properties(OpenBLAS)
+        endif()
         CheckLapackeCompiles("OpenBLAS" "" "" "" "" "OpenBLAS")
         if(LAPACKE_COMPILES_OpenBLAS)
             add_library(lapacke INTERFACE)
@@ -122,8 +126,7 @@ if (NOT TARGET lapacke)
                     $ENV{lapacke_DIR} ${lapacke_DIR}
                     $ENV{CONDA_PREFIX}
                 PATH_SUFFIXES
-                    OpenBLAS openblas openblas/include OpenBLAS/include lapack
-                )
+                    OpenBLAS openblas openblas/include OpenBLAS/include lapack)
         find_library(LAPACKE_LIBRARY
                 NAMES liblapacke${CUSTOM_SUFFIX}
                 HINTS ${DIRECTORY_HINTS}
