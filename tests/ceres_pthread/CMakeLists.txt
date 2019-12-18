@@ -16,7 +16,6 @@ else()
     target_link_libraries(test-ceres_pthread PRIVATE ceres)
     target_link_libraries(test-ceres_pthread PRIVATE Eigen3::Eigen ) # Put it last in case Eigen wants to use blas
 endif()
-target_compile_features(test-ceres_pthread  PRIVATE cxx_std_17)
 
 target_link_libraries(test-ceres_pthread PRIVATE project-settings)
 

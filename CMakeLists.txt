@@ -128,11 +128,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 ###  empirically, it is not.                         ###
 ########################################################
 if(BUILD_SHARED_LIBS)
-    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX})
 else()
-    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
     target_link_libraries  (${PROJECT_NAME} PRIVATE -static)   ### Static linkage
 endif()
 

@@ -26,7 +26,10 @@ function(find_package_openmp)
                 $ENV{EBROOTIMKL}/../intel/lib/intel64
                 /opt/intel/lib/intel64)
 
-        set(omp_lib_candidates -lgomp -lomp liomp5 ${omp_lib_iomp5})
+        if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+            list(APPEND ${omp_lib_iomp5})
+        endif()
+        list(APPEND omp_lib_candidates -lgomp -lomp -liomp5 ${omp_lib_iomp5})
         foreach(lib ${omp_lib_candidates})
             check_omp_compiles("-D_OPENMP" "-static;${lib};-lpthread;-lrt;-ldl" "")
             if(OMP_COMPILES)
