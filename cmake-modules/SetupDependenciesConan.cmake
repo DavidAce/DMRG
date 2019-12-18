@@ -1,4 +1,3 @@
-
 ##############################################################################
 ###  Optional OpenMP support                                               ###
 ###  Note that Clang has some  trouble with static openmp and that         ###

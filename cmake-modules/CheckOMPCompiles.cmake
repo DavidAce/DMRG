@@ -8,6 +8,10 @@ function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_
     set(CMAKE_REQUIRED_INCLUDES  "${REQUIRED_INCLUDES};${expanded_incs}") # Can be a ;list
     string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${REQUIRED_FLAGS} ${expanded_opts}") # Needs to be a space-separated list
 
+    message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
+    message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
+    message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
+    message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
 
     unset(has_omp_h)
     unset(has_omp_h CACHE)
@@ -19,6 +23,9 @@ function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_
     check_cxx_source_compiles("
             #include <omp.h>
             #include <iostream>
+            #ifndef _OPENMP
+            #error You forgot to define _OPENMP
+            #endif
             int main() {
                 omp_set_num_threads(4);
                 std::cout << \"OMP Threads \" << omp_get_max_threads() << std::endl;
