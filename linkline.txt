@@ -23,3 +23,31 @@ cd /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/tests/cer
 
 cd /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/tests/ceres_pthread && /home/david/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/193.5233.144/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/test-ceres_pthread.dir/link.txt --verbose=1
 /usr/bin/c++    -g   CMakeFiles/test-ceres_pthread.dir/ceres_pthread.cpp.o CMakeFiles/test-ceres_pthread.dir/base.cpp.o CMakeFiles/test-ceres_pthread.dir/rosenbrock.cpp.o  -o ../../bin/test-ceres_pthread -static /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/33b5f41ddee5fb4a2b4c6a4f93cd6f7bc49f23bb/lib/libceres-debug.a /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/61cb88cbb740afca23032d3481642428783190a1/lib/libglogd.a -lm /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/79e66aa115e5255afcc94eaeab8c270afee982bf/lib/libgflags_nothreads_debug.a -lstdc++fs  -lgomp -lpthread -lrt -ldl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ceres_openmp
+cd /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-release/tests/eigen_openmp && /usr/bin/c++  -DLZMA_API_STATIC -DMKL_AVAILABLE -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -D_OPENMP -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-release/gitversion -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source -isystem /home/david/.conan/data/eigen/3.3.7/conan/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include/eigen3 -isystem /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/6278e2a56b027edf8756bf0541f0dedead552e70/include -isystem /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/83111990b0933f80447497774a90b7268a5b20e6/include -isystem /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/include -isystem /home/david/.conan/data/xz_utils/5.2.4/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/include -isystem /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/29256d20ab7e69ca86a716b94fb1f235b128f2a3/include -isystem /home/david/.conan/data/h5pp/0.4.7/davidace/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include -isystem /home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/a113cc3aacc02b2b4d973117c51a2562bf07710b/include -isystem /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/aa4b42a29a137462803bc7c56a64efa1039e98e4/include -isystem /home/david/.conan/data/hdf5/1.10.5/_/_/package/413f063f82173355d6fe0fc126b4a0a5bd930c76/include -isystem /home/david/.conan/data/zlib/1.2.11/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-release/arpack++/include -isystem /opt/intel/mkl/include  -O3 -DNDEBUG   -Wall -march=native -mtune=native -O3 -g -DNDEBUG -m64 -I/opt/intel/mkl/lib/intel64/lp64 -std=gnu++1z -o CMakeFiles/test-eigen_openmp.dir/eigen_openmp.cpp.o -c /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/tests/eigen_openmp/eigen_openmp.cpp
+
+/usr/bin/c++    -O3 -DNDEBUG   CMakeFiles/test-eigen_openmp.dir/eigen_openmp.cpp.o  -o ../../bin/test-eigen_openmp -static -lstdc++fs /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/6278e2a56b027edf8756bf0541f0dedead552e70/lib/libceres.a /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/83111990b0933f80447497774a90b7268a5b20e6/lib/libglog.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-coredump.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-generic.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-ptrace.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-setjmp.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-x86_64.a /home/david/.conan/data/xz_utils/5.2.4/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/lib/liblzma.a -lm /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/29256d20ab7e69ca86a716b94fb1f235b128f2a3/lib/libgflags_nothreads.a /home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/a113cc3aacc02b2b4d973117c51a2562bf07710b/lib/libspdlog.a /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/aa4b42a29a137462803bc7c56a64efa1039e98e4/lib/libfmt.a /home/david/.conan/data/hdf5/1.10.5/_/_/package/413f063f82173355d6fe0fc126b4a0a5bd930c76/lib/libhdf5_hl_cpp.a /home/david/.conan/data/hdf5/1.10.5/_/_/package/413f063f82173355d6fe0fc126b4a0a5bd930c76/lib/libhdf5_hl.a /home/david/.conan/data/hdf5/1.10.5/_/_/package/413f063f82173355d6fe0fc126b4a0a5bd930c76/lib/libhdf5_cpp.a /home/david/.conan/data/hdf5/1.10.5/_/_/package/413f063f82173355d6fe0fc126b4a0a5bd930c76/lib/libhdf5.a -ldl /home/david/.conan/data/zlib/1.2.11/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/lib/libz.a ../../../libs-release/arpack-ng/lib/libarpack.a -Wl,--no-as-needed /opt/intel/mkl/lib/intel64/libmkl_blas95_lp64.a /opt/intel/mkl/lib/intel64/libmkl_lapack95_lp64.a -Wl,--start-group /opt/intel/mkl/lib/intel64/libmkl_gf_lp64.a /opt/intel/mkl/lib/intel64/libmkl_gnu_thread.a /opt/intel/mkl/lib/intel64/libmkl_intel_thread.a /opt/intel/mkl/lib/intel64/libmkl_core.a -Wl,--end-group -lm /usr/lib/gcc/x86_64-linux-gnu/7/libgfortran.a /usr/lib/gcc/x86_64-linux-gnu/7/libquadmath.a -lgomp -lpthread -lrt -ldl
+
+
+

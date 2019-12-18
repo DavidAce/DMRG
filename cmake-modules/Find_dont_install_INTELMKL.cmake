@@ -22,7 +22,9 @@
 
 if (ENABLE_MKL)
     #    set(MKL_USE_STATIC_LIBS ON)
-    set(MKL_MULTI_THREADED ${ENABLE_OPENMP})
+    if(TARGET OpenMP)
+        set(MKL_MULTI_THREADED ON)
+    endif()
     set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason... You need to use the mkl_set_interface_layer(int) to select at runtime, which is not good when building dependencies!
     if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND NOT BUILD_SHARED_LIBS)
         message(WARNING "Disabling single dynamic mkl library\nCan't use MKL_USE_SINGLE_DYNAMIC_LIBRARY and -static simultaneously.")
@@ -68,9 +70,12 @@ if (MKL_FOUND)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl INTERFACE)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -lpthread -ldl -lm)
+#    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  -Wl,--whole-archive -lpthread -Wl,--no-whole-archive -ldl -lm)
+    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  pthread -ldl -lm)
+#    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES}  )
     if(TARGET OpenMP)
-        target_link_libraries(mkl INTERFACE OpenMP)
+#        target_link_libraries(mkl INTERFACE OpenMP)
+        target_compile_options(mkl INTERFACE -fopenmp)
     endif()
     target_link_libraries(mkl INTERFACE gfortran)
     target_include_directories(mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
@@ -119,7 +124,7 @@ if (MKL_FOUND)
 
         set(CMAKE_REQUIRED_LIBRARIES " ${mkl_valid_libs}") # Can be a ;list
         set(CMAKE_REQUIRED_INCLUDES  " ${mkl_valid_incs}") # Can be a ;list
-        string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${CMAKE_REQUIRED_FLAGS}") # Needs to be a space-separated list
+        string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS      "${CMAKE_REQUIRED_FLAGS} -fopenmp") # Needs to be a space-separated list
 
 #        message("CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
 #        message("CMAKE_REQUIRED_INCLUDES : ${CMAKE_REQUIRED_INCLUDES}")

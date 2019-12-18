@@ -86,7 +86,7 @@ function(find_OpenBLAS)
     if(TARGET OpenBLAS)
         message(STATUS "OpenBLAS found: ${OpenBLAS_LIBRARIES}")
         message(STATUS "                ${OpenBLAS_INCLUDE_DIRS}")
-        target_link_libraries(OpenBLAS INTERFACE gfortran -lpthread)
+        target_link_libraries(OpenBLAS INTERFACE gfortran pthread)
         target_compile_definitions(OpenBLAS INTERFACE OpenBLAS_AVAILABLE)
         #For convenience, define these variables
         add_library(blas   INTERFACE IMPORTED)

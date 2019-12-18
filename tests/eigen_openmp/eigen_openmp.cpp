@@ -1,8 +1,3 @@
-#include <iostream>
-#include <complex>
-#include <general/nmspc_omp.h>
-#include <general/nmspc_tensor_extra.h>
-#include <Eigen/Core>
 
 
 #ifdef _OPENMP
@@ -10,11 +5,21 @@
 #include <thread>
 #endif
 
+#ifdef OpenBLAS_AVAILABLE
+#include <cblas.h>
+#include <openblas_config.h>
+#endif
+
 #ifdef MKL_AVAILABLE
 #include <mkl_service.h>
 #include <mkl.h>
 #endif
 
+#include <iostream>
+#include <complex>
+#include <general/nmspc_omp.h>
+#include <general/nmspc_tensor_extra.h>
+#include <Eigen/Core>
 
 
 

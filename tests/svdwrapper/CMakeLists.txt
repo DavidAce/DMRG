@@ -11,20 +11,6 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 target_include_directories(test-svdwrapper PUBLIC ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(test-svdwrapper PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_definitions(test-svdwrapper PRIVATE TEST_DIR="${PROJECT_SOURCE_DIR}")
-
-################################################
-###  Force cmake to find .a library suffixes ###
-################################################
-if(NOT BUILD_SHARED_LIBS)
-    target_link_libraries  (test-svdwrapper PRIVATE -static)                                             ### Static linkage
-endif()
-
-if(CONAN_TARGETS)
-    target_link_libraries(test-svdwrapper PRIVATE CONAN_PKG::Eigen3 CONAN_PKG::h5pp)
-else()
-    target_link_libraries(test-svdwrapper PRIVATE Eigen3::Eigen h5pp::h5pp h5pp::deps h5pp::flags )
-endif()
-target_link_libraries(test-svdwrapper PRIVATE lapacke)
 target_link_libraries(test-svdwrapper PRIVATE project-settings)
 
 add_test(NAME test-svdwrapper COMMAND test-svdwrapper)
