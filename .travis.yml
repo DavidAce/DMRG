@@ -133,6 +133,14 @@ matrix:
       compiler: clang
       env:
         - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libstdc++-8-dev
+            - gfortran-8
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
         - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
@@ -150,6 +158,14 @@ matrix:
       compiler: clang
       env:
         - FLAGS="--download-missing --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libstdc++-8-dev
+            - gfortran-8
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
         - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
@@ -167,6 +183,14 @@ matrix:
       compiler: clang
       env:
         - FLAGS="--download-missing --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libstdc++-8-dev
+            - gfortran-8
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
         - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
