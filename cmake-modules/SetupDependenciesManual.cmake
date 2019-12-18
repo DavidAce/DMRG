@@ -34,11 +34,14 @@ target_link_libraries(project-settings INTERFACE ceres)
 target_link_libraries(project-settings INTERFACE h5pp::h5pp h5pp::deps h5pp::flags)
 target_link_libraries(project-settings INTERFACE arpack++)
 target_link_libraries(project-settings INTERFACE Eigen3::Eigen) # Put it last in case Eigen wants to use blas
+
 if(TARGET OpenMP)
     target_link_libraries(project-settings INTERFACE OpenMP)
 else()
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
+
+
 target_link_libraries(project-settings INTERFACE  -Wl,--whole-archive  pthread -Wl,--no-whole-archive -lrt -ldl)
 
 

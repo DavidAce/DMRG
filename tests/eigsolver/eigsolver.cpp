@@ -1,24 +1,25 @@
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+#include <general/nmspc_omp.h>
 
+
+#ifdef OpenBLAS_AVAILABLE
+#include <cblas.h>
+#include <openblas_config.h>
+#endif
+
+
+#ifdef MKL_AVAILABLE
+#include <mkl_service.h>
+#include <mkl.h>
+#endif
+
+#include <thread>
 #include <complex>
-
-
 #include <Eigen/Core>
 #include <h5pp/h5pp.h>
 #include <math/class_eigsolver.h>
-
-
-#ifdef _OPENMP
-#include <omp.h>
-#include <thread>
-#endif
-
-#ifdef MKL_AVAILABLE
-#include <mkl_lapacke.h>
-#include <mkl_service.h>
-#include <mkl.h>
-#else
-#include <lapacke.h>
-#endif
 
 
 
