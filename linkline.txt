@@ -1,223 +1,25 @@
-/usr/bin/c++    -O3 -DNDEBUG 
-  
-   /algorithms/class_algorithm_base.cpp.o
-   /algorithms/class_algorithm_finite.cpp.o
-   /algorithms/class_algorithm_infinite.cpp.o
-   /algorithms/class_algorithm_launcher.cpp.o 
-   /algorithms/class_fDMRG.cpp.o
-   /algorithms/class_iDMRG.cpp.o
-   /algorithms/class_iTEBD.cpp.o
-   /algorithms/class_xDMRG.cpp.o
-   /general/class_tic_toc.cpp.o /general/nmspc_quantum_mechanics.cpp.o /general/nmspc_random_numbers.cpp.o
-   /io/class_h5table_buffer.cpp.o /io/class_settings_reader.cpp.o /io/nmspc_logger.cpp.o /main.cpp.o
-   /math/arpack_extra/arpackpp_solver.cpp.o /math/arpack_extra/matrix_product_stl.cpp.o /math/arpack_extra/matrix_recast.cpp.o
-   /math/class_eigsolver.cpp.o /math/class_svd_wrapper.cpp.o /math/class_svd_wrapper_lapacke.cpp.o
-   /model/class_model_base.cpp.o /model/class_model_factory.cpp.o /model/class_selfdual_tf_rf_ising.cpp.o
-   /model/class_selfdual_tf_rf_ising_normal.cpp.o /model/class_tf_ising.cpp.o /simulation/class_simulation_status.cpp.o
-   /simulation/nmspc_settings.cpp.o /state/class_environment.cpp.o /state/class_mps_2site.cpp.o /state/class_mps_site.cpp.o
-   /state/class_state_finite.cpp.o /state/class_state_infinite.cpp.o /tools/common/io/h5pp.cpp.o
-   /tools/common/io/h5pp_tables.cpp.o /tools/common/io/h5pp_tmp.cpp.o /tools/common/prof.cpp.o /tools/common/views.cpp.o
-   /tools/finite/debug.cpp.o /tools/finite/io/h5pp.cpp.o /tools/finite/io/h5pp_restore.cpp.o /tools/finite/io/h5pp_tables.cpp.o
-   /tools/finite/measure.cpp.o /tools/finite/mpo.cpp.o /tools/finite/mps-internals.cpp.o /tools/finite/mps.cpp.o
-   /tools/finite/multisite.cpp.o /tools/finite/ops.cpp.o /tools/finite/opt-internals/ceres_base.cpp.o
-   /tools/finite/opt-internals/ceres_direct.cpp.o /tools/finite/opt-internals/ceres_direct_functor.cpp.o
-   /tools/finite/opt-internals/ceres_rosenbrock.cpp.o /tools/finite/opt-internals/ceres_subspace.cpp.o
-   /tools/finite/opt-internals/ceres_subspace_functor.cpp.o /tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp.o
-   /tools/finite/opt-internals/enum_classes.cpp.o /tools/finite/opt-internals/ground_state.cpp.o /tools/finite/opt-internals/report.cpp.o
-   /tools/finite/opt.cpp.o /tools/finite/print.cpp.o /tools/finite/svd.cpp.o /tools/infinite/debug.cpp.o /tools/infinite/env.cpp.o
-   /tools/infinite/io/h5pp.cpp.o /tools/infinite/io/h5pp_tables.cpp.o /tools/infinite/measure.cpp.o /tools/infinite/mpo.cpp.o
-   /tools/infinite/mps.cpp.o /tools/infinite/opt.cpp.o /tools/infinite/print.cpp.o  -o DMRG++
-   -static
-   libarpack.a
-   libopenblas.a
-   libgfortran.a
-   libquadmath.a
-   libceres.a
-   libglog.a
-   libunwind.a
-   libunwind-coredump.a
-   libunwind-generic.a
-   libunwind-ptrace.a
-   libunwind-setjmp.a
-   libunwind-x86_64.a
-   liblzma.a
-   -lm
-   libgflags_nothreads.a
-   -lpthread
-   libspdlog.a
-   libfmt.a
-   libhdf5_hl_cpp.a
-   libhdf5_hl.a
-   libhdf5_cpp.a
-   libhdf5.a
-   libz.a
-   -ldl -lstdc++fs
-    /usr/lib/gcc/x86_64-linux-gnu/7/libgomp.a
-    -lpthread -ldl
+
+# Manual
+/usr/bin/c++  -DEIGEN_MALLOC_ALREADY_ALIGNED=0 -DEIGEN_USE_BLAS -DEIGEN_USE_LAPACKE_STRICT -DGFLAGS_DLL_DECLARE_FLAG="" -DGFLAGS_DLL_DEFINE_FLAG="" -DGFLAGS_IS_A_DLL=0 -DGOOGLE_GLOG_DLL_DECL="" -DOpenBLAS_AVAILABLE -DSPDLOG_COMPILED_LIB -D_OPENMP -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/gitversion -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/ceres/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/Eigen3/include/eigen3 -isystem /home/david/anaconda3/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/glog/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/gflags/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/h5pp/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/spdlog/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/hdf5/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/arpack++/include  -g   -Wall -march=native -mtune=native -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -std=gnu++1z -o CMakeFiles/test-ceres_pthread.dir/ceres_pthread.cpp.o -c /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/tests/ceres_pthread/ceres_pthread.cpp
 
 
+/usr/bin/c++  -g   CMakeFiles/test-ceres_pthread.dir/ceres_pthread.cpp.o CMakeFiles/test-ceres_pthread.dir/base.cpp.o CMakeFiles/test-ceres_pthread.dir/rosenbrock.cpp.o  -o test-ceres_pthread -static ../../../libs-debug/ceres/lib/libceres-debug.a ../../../libs-debug/ceres/lib/libceres-debug.a ../../../libs-debug/glog/lib/libglogd.a ../../../libs-debug/glog/lib/libglogd.a ../../../libs-debug/gflags/lib/libgflags_nothreads_debug.a ../../../libs-debug/gflags/lib/libgflags_nothreads_debug.a ../../../libs-debug/ceres/lib/libceres-debug.a ../../../libs-debug/spdlog/lib/libspdlog.a ../../../libs-debug/hdf5/lib/libhdf5_hl.a ../../../libs-debug/hdf5/lib/libhdf5.a -lz -lm -lstdc++fs ../../../libs-debug/arpack-ng/lib/libarpack.a /home/david/anaconda3/lib/libopenblas.a /usr/lib/gcc/x86_64-linux-gnu/7/libgfortran.a /usr/lib/gcc/x86_64-linux-gnu/7/libquadmath.a -lgomp -lrt -ldl -Wl,--whole-archive -lpthread -Wl,--no-whole-archive
 
 
+# conan
 
-/usr/bin/c++    -O3 -DNDEBUG   /ceres_pthread.cpp.o  -o ../../bin/test-ceres_pthread
--static
-development2/package/991801623290a38ac0f9cebc3b28efdbf80163e7/lib/libceres.a
-libglog.a
-libunwind.a
-libunwind-coredump.a
-libunwind-generic.a
-libunwind-ptrace.a
-libunwind-setjmp.a
-libunwind-x86_64.a
-liblzma.a
--lpthread -lm
-libgflags_nothreads.a
--lstdc++fs libgomp.a
--lpthread -ldl
+/usr/bin/c++  -DLZMA_API_STATIC -DOpenBLAS_AVAILABLE -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -D_OPENMP -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/gitversion -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source -isystem /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/33b5f41ddee5fb4a2b4c6a4f93cd6f7bc49f23bb/include -isystem /home/david/.conan/data/eigen/3.3.7/conan/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include/eigen3 -isystem /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/61cb88cbb740afca23032d3481642428783190a1/include -isystem /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/9dbc2dd7b85e082b10eb7aa53a24d25ccda1fda5/include -isystem /home/david/.conan/data/xz_utils/5.2.4/_/_/package/db2ca884c9793e0b0fb54ec3f846326d1addacc8/include -isystem /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/79e66aa115e5255afcc94eaeab8c270afee982bf/include -isystem /home/david/.conan/data/h5pp/0.4.7/davidace/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include -isystem /home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/e79d06d3eb96a851113589601aefad4c6b2c5f52/include -isystem /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/467844f290ff4af1df60720f1607bc6095cf829c/include -isystem /home/david/.conan/data/hdf5/1.10.5/_/_/package/e311de4ef19826c5784afc4942829ff6237fcadb/include -isystem /home/david/.conan/data/zlib/1.2.11/_/_/package/db2ca884c9793e0b0fb54ec3f846326d1addacc8/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/arpack++/include -isystem /home/david/anaconda3/include  -g   -Wall -march=native -mtune=native -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2 -std=gnu++1z -o CMakeFiles/test-ceres_pthread.dir/rosenbrock.cpp.o -c /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/tests/ceres_pthread/rosenbrock.cpp
 
 
+/usr/bin/c++    -g   CMakeFiles/test-ceres_pthread.dir/ceres_pthread.cpp.o CMakeFiles/test-ceres_pthread.dir/base.cpp.o CMakeFiles/test-ceres_pthread.dir/rosenbrock.cpp.o  -o ../../bin/test-ceres_pthread -static /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/33b5f41ddee5fb4a2b4c6a4f93cd6f7bc49f23bb/lib/libceres-debug.a /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/61cb88cbb740afca23032d3481642428783190a1/lib/libglogd.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/9dbc2dd7b85e082b10eb7aa53a24d25ccda1fda5/lib/libunwind.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/9dbc2dd7b85e082b10eb7aa53a24d25ccda1fda5/lib/libunwind-coredump.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/9dbc2dd7b85e082b10eb7aa53a24d25ccda1fda5/lib/libunwind-generic.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/9dbc2dd7b85e082b10eb7aa53a24d25ccda1fda5/lib/libunwind-ptrace.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/9dbc2dd7b85e082b10eb7aa53a24d25ccda1fda5/lib/libunwind-setjmp.a /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/9dbc2dd7b85e082b10eb7aa53a24d25ccda1fda5/lib/libunwind-x86_64.a /home/david/.conan/data/xz_utils/5.2.4/_/_/package/db2ca884c9793e0b0fb54ec3f846326d1addacc8/lib/liblzma.a -lm /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/79e66aa115e5255afcc94eaeab8c270afee982bf/lib/libgflags_nothreads_debug.a -lstdc++fs /home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/e79d06d3eb96a851113589601aefad4c6b2c5f52/lib/libspdlogd.a /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/467844f290ff4af1df60720f1607bc6095cf829c/lib/libfmtd.a /home/david/.conan/data/hdf5/1.10.5/_/_/package/e311de4ef19826c5784afc4942829ff6237fcadb/lib/libhdf5_hl_cpp.a /home/david/.conan/data/hdf5/1.10.5/_/_/package/e311de4ef19826c5784afc4942829ff6237fcadb/lib/libhdf5_hl.a /home/david/.conan/data/hdf5/1.10.5/_/_/package/e311de4ef19826c5784afc4942829ff6237fcadb/lib/libhdf5_cpp.a /home/david/.conan/data/hdf5/1.10.5/_/_/package/e311de4ef19826c5784afc4942829ff6237fcadb/lib/libhdf5.a -ldl /home/david/.conan/data/zlib/1.2.11/_/_/package/db2ca884c9793e0b0fb54ec3f846326d1addacc8/lib/libz.a ../../../libs-debug/arpack-ng/lib/libarpack.a /home/david/anaconda3/lib/libopenblas.a /usr/lib/gcc/x86_64-linux-gnu/7/libgfortran.a /usr/lib/gcc/x86_64-linux-gnu/7/libquadmath.a -lgomp -lpthread -lrt -ldl -lpthread
 
 
+# Modified
 
-# Compile line rosenbrock
-/usr/bin/c++  -DLZMA_API_STATIC -DOpenBLAS_AVAILABLE -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-release/gitversion -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-release/arpack++/include -isystem /home/david/anaconda3/include -isystem /home/david/.conan/data/ceres-solver/2.0.0/davidace/development2/package/991801623290a38ac0f9cebc3b28efdbf80163e7/include -isystem /home/david/.conan/data/eigen/3.3.7/davidace/patched/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include/eigen3 -isystem /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/f88fa6a7e3b49ffca753c2acbc3bbfd29113ae9f/include -isystem /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/include -isystem /home/david/.conan/data/xz_utils/5.2.4/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/include -isystem /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/00c98caa4d6671605623f39dba94f8a482c5f538/include -isystem /home/david/.conan/data/h5pp/0.4.7/davidace/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include -isystem /home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/c0fb34b00d4c04a33793ba290326808d0fd5de33/include -isystem /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/66c5327ebdcecae0a01a863939964495fa019a06/include -isystem /home/david/.conan/data/hdf5/1.10.5/_/_/package/d1d93931f0a5aab8450858e1d6eae88ac6c39f6d/include -isystem /home/david/.conan/data/zlib/1.2.11/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/include  -O3 -DNDEBUG   -Wall -march=native -mtune=native -O3 -g -DNDEBUG -std=gnu++1z -o CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ceres_rosenbrock.cpp.o -c /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.cpp
-# Link line rosenbrock
-/usr/bin/c++  -v  -O3 -DNDEBUG   CMakeFiles/DMRG++.dir/source/algorithms/class_algorithm_base.cpp.o \
-CMakeFiles/DMRG++.dir/source/algorithms/class_algorithm_finite.cpp.o \
-CMakeFiles/DMRG++.dir/source/algorithms/class_algorithm_infinite.cpp.o \
-CMakeFiles/DMRG++.dir/source/algorithms/class_algorithm_launcher.cpp.o \
-CMakeFiles/DMRG++.dir/source/algorithms/class_fDMRG.cpp.o \
-CMakeFiles/DMRG++.dir/source/algorithms/class_iDMRG.cpp.o \
-CMakeFiles/DMRG++.dir/source/algorithms/class_iTEBD.cpp.o \
-CMakeFiles/DMRG++.dir/source/algorithms/class_xDMRG.cpp.o \
-CMakeFiles/DMRG++.dir/source/general/class_tic_toc.cpp.o \
-CMakeFiles/DMRG++.dir/source/general/nmspc_quantum_mechanics.cpp.o \
-CMakeFiles/DMRG++.dir/source/general/nmspc_random_numbers.cpp.o \
-CMakeFiles/DMRG++.dir/source/io/class_h5table_buffer.cpp.o \
-CMakeFiles/DMRG++.dir/source/io/class_settings_reader.cpp.o \
-CMakeFiles/DMRG++.dir/source/io/nmspc_logger.cpp.o \
-CMakeFiles/DMRG++.dir/source/main.cpp.o \
-CMakeFiles/DMRG++.dir/source/math/arpack_extra/arpackpp_solver.cpp.o \
-CMakeFiles/DMRG++.dir/source/math/arpack_extra/matrix_product_stl.cpp.o \
-CMakeFiles/DMRG++.dir/source/math/arpack_extra/matrix_recast.cpp.o \
-CMakeFiles/DMRG++.dir/source/math/class_eigsolver.cpp.o \
-CMakeFiles/DMRG++.dir/source/math/class_svd_wrapper.cpp.o \
-CMakeFiles/DMRG++.dir/source/math/class_svd_wrapper_lapacke.cpp.o \
-CMakeFiles/DMRG++.dir/source/model/class_model_base.cpp.o \
-CMakeFiles/DMRG++.dir/source/model/class_model_factory.cpp.o \
-CMakeFiles/DMRG++.dir/source/model/class_selfdual_tf_rf_ising.cpp.o \
-CMakeFiles/DMRG++.dir/source/model/class_selfdual_tf_rf_ising_normal.cpp.o \
-CMakeFiles/DMRG++.dir/source/model/class_tf_ising.cpp.o \
-CMakeFiles/DMRG++.dir/source/simulation/class_simulation_status.cpp.o \
-CMakeFiles/DMRG++.dir/source/simulation/nmspc_settings.cpp.o \
-CMakeFiles/DMRG++.dir/source/state/class_environment.cpp.o \
-CMakeFiles/DMRG++.dir/source/state/class_mps_2site.cpp.o \
-CMakeFiles/DMRG++.dir/source/state/class_mps_site.cpp.o \
-CMakeFiles/DMRG++.dir/source/state/class_state_finite.cpp.o \
-CMakeFiles/DMRG++.dir/source/state/class_state_infinite.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/common/io/h5pp.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/common/io/h5pp_tables.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/common/io/h5pp_tmp.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/common/prof.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/common/views.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/debug.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/io/h5pp.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/io/h5pp_restore.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/io/h5pp_tables.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/measure.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/mpo.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/mps-internals.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/mps.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/multisite.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/ops.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ceres_base.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ceres_direct.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ceres_direct_functor.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ceres_rosenbrock.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ceres_subspace.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ceres_subspace_functor.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/enum_classes.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/ground_state.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt-internals/report.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/opt.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/print.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/finite/svd.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/debug.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/env.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/io/h5pp.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/io/h5pp_tables.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/measure.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/mpo.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/mps.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/opt.cpp.o \
-CMakeFiles/DMRG++.dir/source/tools/infinite/print.cpp.o \
-  -o DMRG++ -static \
-  -Wl,--start-group \
-../libs-release/arpack-ng/lib/libarpack.a \
-/home/david/anaconda3/lib/libopenblas.a \
-/usr/lib/gcc/x86_64-linux-gnu/7/libgfortran.a \
-/usr/lib/gcc/x86_64-linux-gnu/7/libquadmath.a \
-/home/david/.conan/data/ceres-solver/2.0.0/davidace/development2/package/991801623290a38ac0f9cebc3b28efdbf80163e7/lib/libceres.a \
-/home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/f88fa6a7e3b49ffca753c2acbc3bbfd29113ae9f/lib/libglog.a \
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind.a \
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-coredump.a \
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-generic.a \
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-ptrace.a \
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-setjmp.a \
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-x86_64.a \
-/home/david/.conan/data/xz_utils/5.2.4/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/lib/liblzma.a \
--lm \
-/home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/00c98caa4d6671605623f39dba94f8a482c5f538/lib/libgflags_nothreads.a \
--lpthread \
-/home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/c0fb34b00d4c04a33793ba290326808d0fd5de33/lib/libspdlog.a \
-/home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/66c5327ebdcecae0a01a863939964495fa019a06/lib/libfmt.a \
-/home/david/.conan/data/hdf5/1.10.5/_/_/package/d1d93931f0a5aab8450858e1d6eae88ac6c39f6d/lib/libhdf5_hl_cpp.a \
-/home/david/.conan/data/hdf5/1.10.5/_/_/package/d1d93931f0a5aab8450858e1d6eae88ac6c39f6d/lib/libhdf5_hl.a \
-/home/david/.conan/data/hdf5/1.10.5/_/_/package/d1d93931f0a5aab8450858e1d6eae88ac6c39f6d/lib/libhdf5_cpp.a \
-/home/david/.conan/data/hdf5/1.10.5/_/_/package/d1d93931f0a5aab8450858e1d6eae88ac6c39f6d/lib/libhdf5.a \
-/home/david/.conan/data/zlib/1.2.11/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/lib/libz.a \
--ldl \
--lstdc++fs \
-/usr/lib/gcc/x86_64-linux-gnu/7/libgomp.a \
--lpthread \
--ldl \
--Wl,--end-group
+cd /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/tests/ceres_pthread && /usr/bin/c++  -DOpenBLAS_AVAILABLE -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -D_OPENMP -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/gitversion -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source -isystem /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/33b5f41ddee5fb4a2b4c6a4f93cd6f7bc49f23bb/include -isystem /home/david/.conan/data/eigen/3.3.7/conan/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include/eigen3 -isystem /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/61cb88cbb740afca23032d3481642428783190a1/include  -isystem /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/79e66aa115e5255afcc94eaeab8c270afee982bf/include -isystem /home/david/.conan/data/h5pp/0.4.7/davidace/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include -isystem /home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/e79d06d3eb96a851113589601aefad4c6b2c5f52/include -isystem /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/467844f290ff4af1df60720f1607bc6095cf829c/include -isystem /home/david/.conan/data/hdf5/1.10.5/_/_/package/e311de4ef19826c5784afc4942829ff6237fcadb/include -isystem /home/david/.conan/data/zlib/1.2.11/_/_/package/db2ca884c9793e0b0fb54ec3f846326d1addacc8/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/arpack++/include -isystem /home/david/anaconda3/include  -g   -Wall -march=native -mtune=native -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2 -std=gnu++1z -o CMakeFiles/test-ceres_pthread.dir/ceres_pthread.cpp.o -c /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/tests/ceres_pthread/ceres_pthread.cpp
+cd /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/tests/ceres_pthread && /usr/bin/c++  -DOpenBLAS_AVAILABLE -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -D_OPENMP -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/gitversion -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source -isystem /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/33b5f41ddee5fb4a2b4c6a4f93cd6f7bc49f23bb/include -isystem /home/david/.conan/data/eigen/3.3.7/conan/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include/eigen3 -isystem /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/61cb88cbb740afca23032d3481642428783190a1/include  -isystem /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/79e66aa115e5255afcc94eaeab8c270afee982bf/include -isystem /home/david/.conan/data/h5pp/0.4.7/davidace/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include -isystem /home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/e79d06d3eb96a851113589601aefad4c6b2c5f52/include -isystem /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/467844f290ff4af1df60720f1607bc6095cf829c/include -isystem /home/david/.conan/data/hdf5/1.10.5/_/_/package/e311de4ef19826c5784afc4942829ff6237fcadb/include -isystem /home/david/.conan/data/zlib/1.2.11/_/_/package/db2ca884c9793e0b0fb54ec3f846326d1addacc8/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/arpack++/include -isystem /home/david/anaconda3/include  -g   -Wall -march=native -mtune=native -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2 -std=gnu++1z -o CMakeFiles/test-ceres_pthread.dir/base.cpp.o -c /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/tests/ceres_pthread/base.cpp
+cd /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/tests/ceres_pthread && /usr/bin/c++  -DOpenBLAS_AVAILABLE -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -D_OPENMP -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/gitversion -I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source -isystem /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/33b5f41ddee5fb4a2b4c6a4f93cd6f7bc49f23bb/include -isystem /home/david/.conan/data/eigen/3.3.7/conan/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include/eigen3 -isystem /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/61cb88cbb740afca23032d3481642428783190a1/include  -isystem /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/79e66aa115e5255afcc94eaeab8c270afee982bf/include -isystem /home/david/.conan/data/h5pp/0.4.7/davidace/stable/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include -isystem /home/david/.conan/data/spdlog/1.4.2/bincrafters/stable/package/e79d06d3eb96a851113589601aefad4c6b2c5f52/include -isystem /home/david/.conan/data/fmt/6.0.0/bincrafters/stable/package/467844f290ff4af1df60720f1607bc6095cf829c/include -isystem /home/david/.conan/data/hdf5/1.10.5/_/_/package/e311de4ef19826c5784afc4942829ff6237fcadb/include -isystem /home/david/.conan/data/zlib/1.2.11/_/_/package/db2ca884c9793e0b0fb54ec3f846326d1addacc8/include -isystem /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/libs-debug/arpack++/include -isystem /home/david/anaconda3/include  -g   -Wall -march=native -mtune=native -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2 -std=gnu++1z -o CMakeFiles/test-ceres_pthread.dir/rosenbrock.cpp.o -c /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/tests/ceres_pthread/rosenbrock.cpp
 
 
-# Compile line test-ceres_pthread
-cd /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-release/tests/ceres_pthread && /usr/bin/c++
--DLZMA_API_STATIC
--I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-release/gitversion
--I/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source
--isystem /home/david/.conan/data/ceres-solver/2.0.0/davidace/development2/package/991801623290a38ac0f9cebc3b28efdbf80163e7/include
--isystem /home/david/.conan/data/eigen/3.3.7/davidace/patched/package/5ab84d6acfe1f23c4fae0ab88f26e3a396351ac9/include/eigen3
--isystem /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/f88fa6a7e3b49ffca753c2acbc3bbfd29113ae9f/include
--isystem /home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/include
--isystem /home/david/.conan/data/xz_utils/5.2.4/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/include
--isystem /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/00c98caa4d6671605623f39dba94f8a482c5f538/include
--O3 -DNDEBUG   -Wall -march=native -mtune=native -O3 -g -DNDEBUG -std=gnu++1z
--o CMakeFiles/test-ceres_pthread.dir/ceres_pthread.cpp.o
--c /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/tests/ceres_pthread/ceres_pthread.cpp
-
-# Link line test-ceres_pthread
-/usr/bin/c++    -O3 -DNDEBUG
-CMakeFiles/test-ceres_pthread.dir/ceres_pthread.cpp.o
--o ../../bin/test-ceres_pthread
--static
-/home/david/.conan/data/ceres-solver/2.0.0/davidace/development2/package/991801623290a38ac0f9cebc3b28efdbf80163e7/lib/libceres.a
-/home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/f88fa6a7e3b49ffca753c2acbc3bbfd29113ae9f/lib/libglog.a
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind.a
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-coredump.a
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-generic.a
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-ptrace.a
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-setjmp.a
-/home/david/.conan/data/libunwind/1.3.1/bincrafters/stable/package/bd803753563993002d34af5de35b3c1d24ec2fd2/lib/libunwind-x86_64.a
-/home/david/.conan/data/xz_utils/5.2.4/_/_/package/d50a0d523d98c15bb147b18fa7d203887c38be8b/lib/liblzma.a
--lpthread
--lm
-/home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/00c98caa4d6671605623f39dba94f8a482c5f538/lib/libgflags_nothreads.a
--lstdc++fs
-/usr/lib/gcc/x86_64-linux-gnu/7/libgomp.a
--lpthread
--ldl
+cd /home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/cmake-build-debug/tests/ceres_pthread && /home/david/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/193.5233.144/bin/cmake/linux/bin/cmake -E cmake_link_script CMakeFiles/test-ceres_pthread.dir/link.txt --verbose=1
+/usr/bin/c++    -g   CMakeFiles/test-ceres_pthread.dir/ceres_pthread.cpp.o CMakeFiles/test-ceres_pthread.dir/base.cpp.o CMakeFiles/test-ceres_pthread.dir/rosenbrock.cpp.o  -o ../../bin/test-ceres_pthread -static /home/david/.conan/data/ceres-solver/2.0.0/davidace/development/package/33b5f41ddee5fb4a2b4c6a4f93cd6f7bc49f23bb/lib/libceres-debug.a /home/david/.conan/data/glog/0.4.0/bincrafters/stable/package/61cb88cbb740afca23032d3481642428783190a1/lib/libglogd.a -lm /home/david/.conan/data/gflags/2.2.2/bincrafters/stable/package/79e66aa115e5255afcc94eaeab8c270afee982bf/lib/libgflags_nothreads_debug.a -lstdc++fs  -lgomp -lpthread -lrt -ldl

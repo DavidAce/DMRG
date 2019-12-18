@@ -2,11 +2,13 @@
 // Created by david on 2019-12-17.
 //
 #pragma once
+//#define EIGEN_MALLOC_ALREADY_ALIGNED 0
+
 #include <complex.h>
 #undef I
 #include <ceres/ceres.h>
 #include <glog/logging.h>
-#include <general/nmspc_omp.h>
+//#include <general/nmspc_omp.h>
 
 namespace opt{
     void SolveRosenbrock();
@@ -19,7 +21,7 @@ namespace opt{
         Eigen::MatrixXd H2;
         mutable double variance;
         mutable double energy  ;
-        OMP omp;
+//        OMP omp;
     public:
 //        explicit RosenbrockBase(Eigen::MatrixXd & H_);
         explicit RosenbrockBase(const Eigen::MatrixXd & H_, const Eigen::MatrixXd & H2_);
