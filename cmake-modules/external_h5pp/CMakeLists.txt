@@ -26,6 +26,7 @@ ExternalProject_Add(external_h5pp
         -Dhdf5_DIR:PATH=${hdf5_DIR}
         -DEigen3_DIR:PATH=${Eigen3_DIR}
         -DEIGEN3_INCLUDE_DIR:PATH=${EIGEN3_INCLUDE_DIR}
+        -DPREFER_CONDA_LIBS:BOOL=${PREFER_CONDA_LIBS}
         -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console, like up-to-date and installing
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         )

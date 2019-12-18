@@ -133,7 +133,7 @@ matrix:
       compiler: clang
       env:
         - FC=gfortran-8
-        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-missing --prefer-conda --download-method=manual --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -180,7 +180,7 @@ matrix:
 
 
     - name: "bionic clang conan + conda-forge libs"
-      dist: xenial
+      dist: bionic
       os: linux
       compiler: clang
       env:
