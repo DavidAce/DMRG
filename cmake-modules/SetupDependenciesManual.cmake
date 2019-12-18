@@ -39,7 +39,7 @@ if(TARGET OpenMP)
 else()
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
-target_link_libraries(project-settings INTERFACE -lrt -Wl,--whole-archive  -lpthread  -Wl,--no-whole-archive)
+target_link_libraries(project-settings INTERFACE  -Wl,--whole-archive  pthread -Wl,--no-whole-archive -lrt -ldl)
 
 
 

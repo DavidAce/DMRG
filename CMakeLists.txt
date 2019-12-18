@@ -121,6 +121,7 @@ include(source_list.txt)
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
 
+add_library(project-settings INTERFACE) # A helper target
 
 ########################################################
 ###  Force cmake to find .a library suffixes         ###
@@ -131,7 +132,7 @@ if(BUILD_SHARED_LIBS)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX})
 else()
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -static)   ### Static linkage
+    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
 endif()
 
 
@@ -181,7 +182,6 @@ CheckCXXOptional()
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################
-add_library(project-settings INTERFACE) # A helper target
 message(STATUS "Using microarchitechture: ${CXX_MARCH}")
 target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH}>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:          -O3 -g -DNDEBUG>)

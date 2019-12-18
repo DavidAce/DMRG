@@ -1,4 +1,12 @@
-
+##############################################################################
+###  Optional OpenMP support                                               ###
+###  Note that Clang has some  trouble with static openmp and that         ###
+###  and that static openmp is not recommended. This tries to enable       ###
+###  static openmp anyway because I find it useful. Installing             ###
+###  libiomp5 might help for shared linking.                               ###
+##############################################################################
+include(cmake-modules/FindOpenMPLibrary.cmake)
+find_package_openmp()
 
 # These packages are not in conan yet
 include(cmake-modules/FindGFortran.cmake)
@@ -40,7 +48,10 @@ conan_cmake_run(CONANFILE cmake-modules/conan/conanfile.txt
 
 
 
-
+#include(cmake-modules/filterTarget.cmake)
+#foreach(tgt ${CONAN_TARGETS})
+#    remove_pthread(${tgt})
+#endforeach()
 
 ##################################################################
 ### Link all the things!                                       ###
@@ -49,15 +60,7 @@ target_link_libraries(project-settings INTERFACE CONAN_PKG::ceres-solver)
 target_link_libraries(project-settings INTERFACE CONAN_PKG::h5pp)
 target_link_libraries(project-settings INTERFACE CONAN_PKG::Eigen3)
 target_link_libraries(project-settings INTERFACE arpack++)
-##############################################################################
-###  Optional OpenMP support                                               ###
-###  Note that Clang has some  trouble with static openmp and that         ###
-###  and that static openmp is not recommended. This tries to enable       ###
-###  static openmp anyway because I find it useful. Installing             ###
-###  libiomp5 might help for shared linking.                               ###
-##############################################################################
-include(cmake-modules/FindOpenMPLibrary.cmake)
-find_package_openmp()
+
 
 if(TARGET OpenMP)
     target_link_libraries(project-settings INTERFACE OpenMP)
@@ -66,8 +69,7 @@ else()
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
 
-#find_package(Threads)
-target_link_libraries(project-settings INTERFACE pthread)
+target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
 
 include(cmake-modules/PrintTargetInfo.cmake)
 print_target_info(arpack++)
