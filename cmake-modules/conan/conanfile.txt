@@ -5,7 +5,7 @@
 [requires]
 ceres-solver/2.0.0@davidace/development
 h5pp/0.4.7@davidace/stable
-eigen/3.3.7@davidace/patched
+#eigen/3.3.7@davidace/patched
 
 [generators]
 cmake

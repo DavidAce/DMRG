@@ -49,7 +49,7 @@ if(TARGET Eigen3::Eigen AND TARGET blas )
     # Use this flag if Ceres is giving you trouble!
     # For some reason it starts mixing alligned and hand-made aligned malloc and freeing them willy nilly
     # This flag forces its hand and avoids a segfault in some cases.
-    # target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
+    #     target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
 
 
 endif()
