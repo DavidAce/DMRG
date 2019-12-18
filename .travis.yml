@@ -140,7 +140,7 @@ matrix:
         - ./miniconda.sh -b -p $HOME/miniconda
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda config --add channels conda-forge
-#        - conda update --yes conda
+        - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
 
@@ -157,7 +157,7 @@ matrix:
         - ./miniconda.sh -b -p $HOME/miniconda
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda config --add channels conda-forge
-#        - conda update --yes conda
+        - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
 
@@ -174,7 +174,7 @@ matrix:
         - ./miniconda.sh -b -p $HOME/miniconda
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda config --add channels conda-forge
-#        - conda update --yes conda
+        - conda update --yes conda
         # Install conan
         - conda install --yes  conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
         # Automatic detection of your arch, compiler, etc.
