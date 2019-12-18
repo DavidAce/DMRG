@@ -6,11 +6,6 @@ find_package(Eigen3
 
 if(TARGET Eigen3::Eigen)
     message(STATUS "Eigen3 found")
-    target_link_libraries(Eigen3::Eigen INTERFACE -lrt)
-
-#    include(cmake-modules/PrintTargetProperties.cmake)
-#    print_target_properties(Eigen3::Eigen)
-
 elseif (DOWNLOAD_MISSING)
     message(STATUS "Eigen3 will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
@@ -47,12 +42,10 @@ if(TARGET Eigen3::Eigen AND TARGET blas )
     endif()
 
     # Use this flag if Ceres is giving you trouble!
-    # For some reason it starts mixing alligned and hand-made aligned malloc and freeing them willy nilly
+    # For some reason it starts mixing aligned and hand-made aligned malloc and freeing them willy nilly
     # This flag forces its hand and avoids a segfault in some cases.
-    #     target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
+    #    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
 
 
 endif()
 
-set(EIGEN3_FOUND TRUE)
-set(EIGEN_FOUND TRUE)
