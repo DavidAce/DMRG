@@ -39,7 +39,7 @@ elseif(DOWNLOAD_MISSING)
     target_link_libraries(arpack++ INTERFACE lapacke arpack blas lapack gfortran)
     target_include_directories(arpack++ SYSTEM INTERFACE ${INSTALL_DIR}/include)
 else()
-    message(STATUS "Dependency Arpack++ not found and DOWNLOAD_MISSING is OFF")
+    message(FATAL_ERROR "Dependency Arpack++ not found and DOWNLOAD_MISSING is OFF")
 endif()
 
 

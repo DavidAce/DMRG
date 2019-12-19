@@ -4,7 +4,7 @@ project(test-file_io)
 add_executable(test-file_io file_io.cpp
         ../../source/general/nmspc_tensor_extra.h
         )
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 target_include_directories(test-file_io PUBLIC ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(test-file_io PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

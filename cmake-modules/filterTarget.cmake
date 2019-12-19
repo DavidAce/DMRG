@@ -1,11 +1,13 @@
 
 function(remove_shared target_name)
     get_target_property(target_libs ${target_name} INTERFACE_LINK_LIBRARIES)
-    foreach(lib ${target_libs})
-        if(NOT ${lib} MATCHES ".so")
-            list(APPEND static_libs ${lib})
-        endif()
-    endforeach()
+    if(target_libs)
+        foreach(lib ${target_libs})
+            if(NOT ${lib} MATCHES ".so")
+                list(APPEND static_libs ${lib})
+            endif()
+        endforeach()
+    endif()
     set_target_properties(${target_name} PROPERTIES INTERFACE_LINK_LIBRARIES "${static_libs}")
 endfunction()
 

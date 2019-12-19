@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(DMRG++ CXX )
 #enable_language()
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
@@ -123,14 +123,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC source)
 
 add_library(project-settings INTERFACE) # A helper target
 
-########################################################
-###  Force cmake to find .a library suffixes         ###
-###  CMake should be able to handle this for itself  ###
-###  empirically, it is not.                         ###
-########################################################
-if(BUILD_SHARED_LIBS)
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_SHARED_LIBRARY_SUFFIX})
-else()
+##################################################################
+###  Force cmake to find .a library suffixes on static builds  ###
+##################################################################
+if(NOT BUILD_SHARED_LIBS)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
     target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
 endif()

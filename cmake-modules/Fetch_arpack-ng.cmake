@@ -1,10 +1,3 @@
-if(BUILD_SHARED_LIBS)
-    set(ARPACK_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-else()
-    set(ARPACK_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-endif()
-
-unset(ARPACK_LIBRARIES)
 find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX}/arpack-ng)
 if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
     add_library(arpack INTERFACE IMPORTED)
@@ -13,18 +6,17 @@ if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
 endif()
 
 if (NOT TARGET arpack)
-    message(STATUS "Searching for Arpack-ng")
+    message(STATUS "Searching for arpack-ng in system")
     find_library(ARPACK_LIBRARIES
-            NAMES libarpack${ARPACK_SUFFIX} arpack
-            PATH_SUFFIXES lib lib32 lib64 x86_64-linux-gnu lib/x86_64-linux-gnu
+            NAMES arpack
             HINTS ${DIRECTORY_HINTS}
             PATHS $ENV{EBROOTARPACKMINNG}
-            PATH_SUFFIXES arpack-ng arpack arpack/lib arpack-ng/lib lib lib32 lib64
+            PATH_SUFFIXES arpack-ng arpack arpack/lib arpack-ng/lib
             )
     if(NOT ARPACK_LIBRARIES)
-        message(STATUS "Searching for Arpack-ng - failed")
+        message(STATUS "Searching for arpack-ng - failed")
     else()
-        message(STATUS "Searching for Arpack-ng - Success: ${ARPACK_LIBRARIES}")
+        message(STATUS "Searching for arpack-ng - Success: ${ARPACK_LIBRARIES}")
         add_library(arpack INTERFACE IMPORTED)
         target_link_libraries(arpack INTERFACE ${ARPACK_LIBRARIES} blas lapack gfortran)
     endif()
@@ -33,6 +25,11 @@ endif()
 
 if(NOT TARGET arpack)
     message(STATUS "Arpack-ng will be installed into ${CMAKE_INSTALL_PREFIX}/arpack-ng")
+    if(BUILD_SHARED_LIBS)
+        set(ARPACK_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    else()
+        set(ARPACK_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
+    endif()
 
     #####################################################################
     ### Prepare lists with generator expressions, replacing all semicolons.

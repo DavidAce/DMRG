@@ -45,7 +45,7 @@ function(find_OpenBLAS)
     if(NOT TARGET OpenBLAS)
         message(STATUS "Searching for OpenBLAS lib in system")
         find_library(OpenBLAS_LIBRARIES
-                NAMES libopenblas
+                NAMES openblas
                 HINTS ${DIRECTORY_HINTS}
                 PATHS
                     $ENV{EBROOTOPENBLAS}
@@ -73,6 +73,7 @@ function(find_OpenBLAS)
                     $ENV{CONDA_PREFIX}
                     $ENV{LAPACKE_DIR}       ${LAPACKE_DIR}
                     $ENV{lapacke_DIR}       ${lapacke_DIR}
+                    /usr /usr/local
                 PATH_SUFFIXES
                     include openblas openblas/include OpenBLAS OpenBLAS/include blas/include
                 )

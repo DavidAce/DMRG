@@ -1,9 +1,8 @@
 
-find_package(gflags
+find_package(gflags COMPONENTS nothreads_static
         HINTS $ENV{GFLAGS_DIR} $ENV{gflags_DIR} ${CMAKE_INSTALL_PREFIX}
         PATHS $ENV{EBROOTGFLAGS}
-        PATH_SUFFIXES gflags gflags/lib
-        NO_DEFAULT_PATH)
+        PATH_SUFFIXES gflags gflags/lib)
 
 if(NOT TARGET gflags)
     if(BUILD_SHARED_LIBS)
@@ -38,17 +37,19 @@ endif()
 
 if(TARGET gflags)
     #Copy the lib to where it belongs: INTERFACE_LINK_LIBRARIES
-    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+#    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
     include(cmake-modules/filterTarget.cmake)
-    get_target_property(gflags_imported_loc_buildtype   gflags IMPORTED_LOCATION_${BUILD_TYPE})
-    get_target_property(gflags_imported_loc_noconfig    gflags IMPORTED_LOCATION_NOCONFIG)
-    if(gflags_imported_loc_buildtype)
-        target_link_libraries(gflags INTERFACE ${gflags_imported_loc_buildtype})
-    elseif(gflags_imported_loc_noconfig)
-        target_link_libraries(gflags INTERFACE ${gflags_imported_loc_noconfig})
-    else()
-        message(STATUS "Dependency gflags does not have IMPORTED_LOCATION_${BUILD_TYPE}/_NOCONFIG")
-    endif()
+#    get_target_property(gflags_imported_loc_buildtype   gflags IMPORTED_LOCATION_${BUILD_TYPE})
+#    get_target_property(gflags_imported_loc_noconfig    gflags IMPORTED_LOCATION_NOCONFIG)
+#    if(gflags_imported_loc_buildtype)
+#        message(STATUS "Moving IMPORTED_LOCATION_${BUILD_TYPE} [${gflags_imported_loc_buildtype}] \n"
+#                "-- into INTERFACE_LINK_LIBRARIES" )
+#        target_link_libraries(gflags INTERFACE ${gflags_imported_loc_buildtype})
+#    elseif(gflags_imported_loc_noconfig)
+#        target_link_libraries(gflags INTERFACE ${gflags_imported_loc_noconfig})
+#    else()
+#        message(STATUS "Dependency gflags does not have IMPORTED_LOCATION_${BUILD_TYPE}/_NOCONFIG")
+#    endif()
     remove_shared(gflags)
     remove_pthread(gflags)
 endif()
