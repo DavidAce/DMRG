@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(test-arpack++_mps)
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 add_executable(test-arpack++_mps arpack++_mps.cpp
                             ../../source/math/class_eigsolver.cpp
                             ../../source/math/arpack_extra/arpackpp_solver.cpp

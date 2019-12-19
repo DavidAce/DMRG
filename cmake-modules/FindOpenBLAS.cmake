@@ -2,19 +2,12 @@ function(find_OpenBLAS)
     if(NOT TARGET OpenBLAS)
         message(STATUS "Searching for OpenBLAS config")
         message(STATUS "DIRECTORY_HINTS ${DIRECTORY_HINTS}")
-
         find_package(OpenBLAS 0.3
-                HINTS ${DIRECTORY_HINTS}
+                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
                 PATHS
-                    $ENV{OpenBLAS_DIR}      ${OpenBLAS_DIR}
-                    $ENV{openblas_DIR}      ${openblas_DIR}
-                    $ENV{BLAS_DIR}          ${BLAS_DIR}
-                    $ENV{blas_DIR}          ${blas_DIR}
-                    $ENV{EBROOTOPENBLAS}
                     $ENV{EBROOTBLAS}
-                    $ENV{CONDA_PREFIX}
-                    $ENV{LAPACKE_DIR}       ${LAPACKE_DIR}
-                    $ENV{lapacke_DIR}       ${lapacke_DIR}
+                    $ENV{BLAS_DIR}
+                    $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
                     lib OpenBLAS/lib OpenBLAS openblas
                 )
@@ -31,11 +24,13 @@ function(find_OpenBLAS)
                     message(STATUS "Could not find OpenBLAS library with correct suffix (i.e. static/shared as requested): ${OpenBLAS_LIBRARIES}")
                 endif()
             endif()
-
-            add_library(OpenBLAS INTERFACE IMPORTED)
-            target_link_libraries(OpenBLAS INTERFACE ${OpenBLAS_LIBRARIES})
-            target_include_directories(OpenBLAS INTERFACE ${OpenBLAS_INCLUDE_DIRS})
-
+            if(NOT TARGET OpenBLAS)
+                add_library(OpenBLAS ${LINK_TYPE} IMPORTED)
+                set_target_properties(OpenBLAS PROPERTIES
+                        IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}"
+                        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${OpenBLAS_INCLUDE_DIRS}"
+                        INTERFACE_COMPILE_DEFINITIONS "OpenBLAS_AVAILABLE")
+            endif()
         endif()
     endif()
 
@@ -46,49 +41,45 @@ function(find_OpenBLAS)
         message(STATUS "Searching for OpenBLAS lib in system")
         find_library(OpenBLAS_LIBRARIES
                 NAMES openblas
-                HINTS ${DIRECTORY_HINTS}
+                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
                 PATHS
-                    $ENV{EBROOTOPENBLAS}
-                    $ENV{EBROOTBLAS}
-                    $ENV{OpenBLAS_DIR}      ${OpenBLAS_DIR}
-                    $ENV{openblas_DIR}      ${openblas_DIR}
-                    $ENV{BLAS_DIR}          ${BLAS_DIR}
-                    $ENV{blas_DIR}          ${blas_DIR}
-                    $ENV{LAPACKE_DIR}       ${LAPACKE_DIR}
-                    $ENV{lapacke_DIR}       ${lapacke_DIR}
+                $ENV{EBROOTBLAS}
+                ${CONDA_HINTS}
+                $ENV{BLAS_DIR}
+                $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
                     lib openblas/lib OpenBLAS/lib openblas OpenBLAS
 
                 )
         find_path(OpenBLAS_INCLUDE_DIRS
                 NAMES openblas_config.h
-                HINTS ${DIRECTORY_HINTS}
+                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
                 PATHS
-                    $ENV{OpenBLAS_DIR}      ${OpenBLAS_DIR}
-                    $ENV{openblas_DIR}      ${openblas_DIR}
-                    $ENV{BLAS_DIR}          ${BLAS_DIR}
-                    $ENV{blas_DIR}          ${blas_DIR}
-                    $ENV{EBROOTOPENBLAS}
                     $ENV{EBROOTBLAS}
-                    $ENV{CONDA_PREFIX}
-                    $ENV{LAPACKE_DIR}       ${LAPACKE_DIR}
-                    $ENV{lapacke_DIR}       ${lapacke_DIR}
-                    /usr /usr/local
+                    $ENV{BLAS_DIR}
+                    $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
                     include openblas openblas/include OpenBLAS OpenBLAS/include blas/include
                 )
         if (OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
-            add_library(OpenBLAS INTERFACE IMPORTED)
-            target_link_libraries(OpenBLAS INTERFACE ${OpenBLAS_LIBRARIES})
-            target_include_directories(OpenBLAS INTERFACE ${OpenBLAS_INCLUDE_DIRS})
+#            add_library(OpenBLAS INTERFACE IMPORTED)
+#            target_link_libraries(OpenBLAS INTERFACE ${OpenBLAS_LIBRARIES})
+#            target_include_directories(OpenBLAS INTERFACE ${OpenBLAS_INCLUDE_DIRS})
+            add_library(OpenBLAS STATIC IMPORTED)
+            set_target_properties(OpenBLAS PROPERTIES
+                    IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}"
+                    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${OpenBLAS_INCLUDE_DIRS}"
+                    INTERFACE_COMPILE_DEFINITIONS "OpenBLAS_AVAILABLE"
+                    )
+
         endif()
     endif()
 
     if(TARGET OpenBLAS)
         message(STATUS "OpenBLAS found: ${OpenBLAS_LIBRARIES}")
         message(STATUS "                ${OpenBLAS_INCLUDE_DIRS}")
+
         target_link_libraries(OpenBLAS INTERFACE gfortran pthread)
-        target_compile_definitions(OpenBLAS INTERFACE OpenBLAS_AVAILABLE)
         #For convenience, define these variables
         add_library(blas   INTERFACE IMPORTED)
         add_library(lapack INTERFACE IMPORTED)

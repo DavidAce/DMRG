@@ -116,60 +116,53 @@ if (NOT TARGET lapacke)
         message(STATUS "Searching for Lapacke in system")
         find_path(LAPACKE_INCLUDE_DIR
                 NAMES lapacke.h
-                HINTS ${DIRECTORY_HINTS}
-                PATHS
-                    $ENV{EBROOTOPENBLAS}
-                    $ENV{EBROOTBLAS}
-                    $ENV{BLAS_DIR}    ${BLAS_DIR}
-                    $ENV{blas_DIR}    ${blas_DIR}
-                    $ENV{LAPACKE_DIR} ${LAPACKE_DIR}
-                    $ENV{lapacke_DIR} ${lapacke_DIR}
-                    $ENV{CONDA_PREFIX}
+                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
+                PATHS $ENV{EBROOTBLAS} $ENV{BLAS_DIR} $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
                     OpenBLAS openblas openblas/include OpenBLAS/include lapack)
         find_library(LAPACKE_LIBRARY
                 NAMES lapacke
-                HINTS ${DIRECTORY_HINTS}
-                PATHS
-                    $ENV{EBROOTOPENBLAS}
-                    $ENV{EBROOTBLAS}
-                    $ENV{BLAS_DIR}    ${BLAS_DIR}
-                    $ENV{blas_DIR}    ${blas_DIR}
-                    $ENV{LAPACKE_DIR} ${LAPACKE_DIR}
-                    $ENV{lapacke_DIR} ${lapacke_DIR}
-                    $ENV{CONDA_PREFIX}
+                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
+                PATHS $ENV{EBROOTBLAS} $ENV{BLAS_DIR} $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
                     OpenBLAS openblas openblas/lib OpenBLAS/lib lapack lapack/lib blas blas/lib
                 )
         if(LAPACKE_INCLUDE_DIR AND LAPACKE_LIBRARY)
-            CheckLapackeCompiles("SYSTEM" " "   " "
+            CheckLapackeCompiles("lib_header" " "   " "
                     "${LAPACKE_LIBRARY}"
                     "${LAPACKE_INCLUDE_DIR}"
                     "lapack"
                     )
-        endif()
-        if(NOT LAPACKE_COMPILES_SYSTEM AND LAPACKE_INCLUDE_DIR)
-            CheckLapackeCompiles("SYSTEM" " "   " "
-                    ""
-                    "${LAPACKE_INCLUDE_DIR}"
-                    "lapack"
-                    )
-        endif()
-        if(NOT LAPACKE_COMPILES_SYSTEM AND LAPACKE_LIBRARY)
-            CheckLapackeCompiles("SYSTEM" " "   " "
-                    "${LAPACKE_LIBRARY}"
-                    ""
-                    "lapack"
-                    )
-        endif()
-        if(LAPACKE_COMPILES_SYSTEM)
-            add_library(lapacke INTERFACE IMPORTED)
-            if(LAPACKE_LIBRARY)
-                target_link_libraries(lapacke INTERFACE ${LAPACKE_LIBRARY})
+            if(LAPACKE_COMPILES_lib_header)
+                add_library(lapacke ${LINK_TYPE} IMPORTED)
+                set_target_properties(lapacke PROPERTIES
+                        IMPORTED_LOCATION                    "${LAPACKE_LIBRARY}"
+                        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${LAPACKE_INCLUDE_DIR}")
             endif()
-            if(LAPACKE_INCLUDE_DIR)
+        endif()
+        if(NOT TARGET lapacke AND LAPACKE_INCLUDE_DIR)
+            CheckLapackeCompiles("header" " "   " "
+                    ""
+                    "${LAPACKE_INCLUDE_DIR}"
+                    "lapack"
+                    )
+            if(LAPACKE_COMPILES_header)
+                add_library(lapacke INTERFACE)
                 target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
             endif()
+        endif()
+        if(NOT TARGET lapacke AND LAPACKE_LIBRARY)
+            CheckLapackeCompiles("lib" " "   " "
+                    "${LAPACKE_LIBRARY}"
+                    ""
+                    "lapack"
+                    )
+            if(LAPACKE_COMPILES_lib)
+                add_library(lapacke ${LINK_TYPE} IMPORTED)
+                set_target_properties(lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
+            endif()
+        endif()
+        if(TARGET lapacke)
             target_link_libraries(lapacke INTERFACE blas lapack gfortran)
             message(STATUS "Searching for Lapacke in system - Success: ${LAPACKE_LIBRARY}")
         else()

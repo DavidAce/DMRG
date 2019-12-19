@@ -53,7 +53,7 @@ conan_cmake_run(CONANFILE cmake-modules/conan/conanfile.txt
 target_link_libraries(project-settings INTERFACE CONAN_PKG::ceres-solver)
 target_link_libraries(project-settings INTERFACE CONAN_PKG::h5pp)
 target_link_libraries(project-settings INTERFACE CONAN_PKG::Eigen3)
-target_link_libraries(project-settings INTERFACE arpack++)
+target_link_libraries(project-settings INTERFACE arpack++) # Last to use blas
 
 
 if(TARGET OpenMP)

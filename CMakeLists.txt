@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(DMRG++ CXX )
 #enable_language()
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
@@ -126,7 +126,10 @@ add_library(project-settings INTERFACE) # A helper target
 ##################################################################
 ###  Force cmake to find .a library suffixes on static builds  ###
 ##################################################################
-if(NOT BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
+    set(LINK_TYPE SHARED)
+else()
+    set(LINK_TYPE STATIC)
     set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
     target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
 endif()
@@ -232,13 +235,12 @@ set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/external-deps)
 ### Prepend conda dirs for hints when using find_package      ###
 #################################################################
 if(PREFER_CONDA_LIBS)
-    list(APPEND DIRECTORY_HINTS
+    list(APPEND CONDA_HINTS
             $ENV{CONDA_PREFIX}
             $ENV{HOME}/anaconda3
             $ENV{HOME}/miniconda
             )
 endif()
-list(APPEND DIRECTORY_HINTS ${CMAKE_INSTALL_PREFIX})
 
 ##################################################################
 ### Print summary of CMake configuration                       ###
@@ -298,7 +300,7 @@ if(ENABLE_TESTS)
     add_subdirectory(tests/eigen_openmp   )
     add_subdirectory(tests/ceres_pthread  )
 
-    add_custom_target(all-tests ALL
+    add_custom_target(all-tests
             DEPENDS test-arpack++_simple
             DEPENDS test-arpack++_mps
             DEPENDS test-file_io

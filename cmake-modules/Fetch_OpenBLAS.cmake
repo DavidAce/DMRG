@@ -18,7 +18,7 @@ find_OpenBLAS()
 # endforeach()
 
 if(TARGET OpenBLAS)
-    message(STATUS "OpenBLAS found")
+#    message(STATUS "OpenBLAS found")
 
 elseif(DOWNLOAD_MISSING)
     message(STATUS "OpenBLAS will be installed into ${CMAKE_INSTALL_PREFIX}/OpenBLAS")

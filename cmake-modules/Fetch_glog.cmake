@@ -1,17 +1,18 @@
 
+# Glog should only look in conda on shared builds!
+set(GLOG_HINTS $ENV{EBROOTGLOG} ${CMAKE_INSTALL_PREFIX} )
+if(BUILD_SHARED_LIBS)
+    list(APPEND GLOG_HINTS ${CONDA_HINTS})
+endif()
 
-
-find_package(glog 0.4
-        HINTS $ENV{GLOG_DIR} $ENV{glog_DIR} ${CMAKE_INSTALL_PREFIX}
-        PATHS $ENV{EBROOTGLOG}
-        PATH_SUFFIXES glog glog/lib)
+find_package(glog 0.4 HINTS ${GLOG_HINTS} PATH_SUFFIXES glog glog/lib)
 
 if(NOT TARGET glog::glog)
-    find_library(GLOG_LIBRARIES     glog           HINTS $ENV{GLOG_DIR} $ENV{glog_DIR} ${CMAKE_INSTALL_PREFIX} ${DIRECTORY_HINTS})
-    find_path   (GLOG_INCLUDE_DIR   glog/logging.h HINTS $ENV{GLOG_DIR} $ENV{glog_DIR} ${CMAKE_INSTALL_PREFIX} ${DIRECTORY_HINTS})
+    message(STATUS "Looking for glog in system")
+    find_library(GLOG_LIBRARIES     glog           HINTS ${GLOG_HINTS})
+    find_path   (GLOG_INCLUDE_DIR   glog/logging.h HINTS ${GLOG_HINTS})
     if (GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
-        add_library(glog::glog UNKNOWN IMPORTED)
-        string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+        add_library(glog::glog ${LINK_TYPE} IMPORTED)
         set_target_properties(glog::glog PROPERTIES
                 IMPORTED_LOCATION                    "${GLOG_LIBRARIES}"
                 INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}")
@@ -19,23 +20,7 @@ if(NOT TARGET glog::glog)
         message(STATUS "Found system glog: Don't forget to also install and link to libraries unwind and lzma")
     endif()
 endif()
-
-
-
-if(NOT TARGET glog::glog)
-    if(BUILD_SHARED_LIBS)
-        find_package(glog 0.4
-                HINTS ${DIRECTORY_HINTS}
-                PATHS $ENV{EBROOTGLOG} $ENV{GLOG_DIR} $ENV{glog_DIR} $ENV{CONDA_PREFIX}
-                PATH_SUFFIXES glog glog/lib)
-    else()
-        message(STATUS "Skipping search through conda libs because this is a static build")
-    endif()
-endif()
-
 if(TARGET glog::glog)
-    message(STATUS "glog found")
-
 
 elseif(DOWNLOAD_MISSING)
     message(STATUS "glog will be installed into ${CMAKE_INSTALL_PREFIX}")
@@ -59,6 +44,12 @@ endif()
 
 if(TARGET glog::glog)
     include(cmake-modules/filterTarget.cmake)
-    remove_shared(glog::glog)
+#    remove_shared(glog::glog)
     remove_pthread_shallow(glog::glog)
+    get_target_property(GLOG_TYPE glog::glog TYPE)
+    if(NOT GLOG_TYPE MATCHES "${LINK_TYPE}")
+        include(cmake-modules/PrintTargetProperties.cmake)
+        print_target_properties(glog::glog)
+        message(FATAL_ERROR "Found shared glog library on a static build!")
+    endif()
 endif()
