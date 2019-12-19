@@ -21,13 +21,11 @@ else()
     if(TARGET Eigen3::Eigen)
         message(STATUS "Eigen3 installed successfully")
     else()
-        message(STATUS "cfg_result: ${cfg_result}")
-        message(STATUS "bld_result: ${bld_result}")
         message(FATAL_ERROR "Eigen3 could not be downloaded.")
     endif()
 
 #else()
-    message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_MISSING is OFF")
+#    message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_MISSING is OFF")
 endif()
 
 

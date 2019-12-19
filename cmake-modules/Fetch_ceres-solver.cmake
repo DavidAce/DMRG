@@ -21,10 +21,7 @@ endif()
 
 if(TARGET ceres)
     message(STATUS "ceres found")
-#elseif(DOWNLOAD_MISSING)
-elseif(TRUE)
-
-
+elseif(DOWNLOAD_MISSING)
     message(STATUS "Ceres will be installed into ${CMAKE_INSTALL_PREFIX} on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
