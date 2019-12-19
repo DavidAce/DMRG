@@ -1,7 +1,9 @@
+
+#include <thread>
+#include <complex>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <general/nmspc_omp.h>
 
 
 #ifdef OpenBLAS_AVAILABLE
@@ -15,8 +17,16 @@
 #include <mkl.h>
 #endif
 
-#include <thread>
-#include <complex>
+#define lapack_complex_float  std::complex<float>
+#define lapack_complex_double std::complex<double>
+#if __has_include(<mkl_lapacke.h>)
+#include <mkl_lapacke.h>
+#elif __has_include(<lapacke.h>)
+#include <lapacke.h>
+#endif
+
+
+#include <general/nmspc_omp.h>
 #include <Eigen/Core>
 #include <h5pp/h5pp.h>
 #include <math/class_eigsolver.h>
