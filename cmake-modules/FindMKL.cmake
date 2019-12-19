@@ -84,7 +84,7 @@ endif()
 
 find_path(MKL_ROOT_DIR
         include/mkl.h
-        HINTS ${DIRECTORY_HINTS}
+        HINTS ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS}
         PATHS ${MKL_ROOT_SEARCH_PATHS}
         )
 if(MKL_ROOT_DIR)

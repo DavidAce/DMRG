@@ -88,11 +88,10 @@ function(find_Arpackpp)
         message(STATUS "Searching for Arpack++ header-only in system")
         find_path(ARPACKPP_INCLUDE_DIR
                 NAMES arpack++/ardsnsym.h arpackpp/ardsnsym.h
-                HINTS ${DIRECTORY_HINTS}
-                PATHS
-                    ${CMAKE_INSTALL_PREFIX}
-                    $ENV{EBROOTARPACKPLUSPLUS}
-                    $ENV{ARPACKPP_DIR}
+                HINTS ${CMAKE_INSTALL_PREFIX}
+                        $ENV{EBROOTARPACKPLUSPLUS}
+                        $ENV{ARPACKPP_DIR}
+
                 PATH_SUFFIXES
                     arpack++/include/arpack++
                     arpackpp/include/arpackpp
@@ -118,8 +117,7 @@ function(find_Arpackpp)
         message(STATUS "Searching for Arpack++ lib in system")
         find_library(ARPACKPP_LIBRARIES
                 NAMES arpackpp arpack++ libarpack2++ libarpack++ libarpackpp
-                HINTS ${DIRECTORY_HINTS}
-                PATHS
+                HINTS
                     ${CMAKE_INSTALL_PREFIX}
                     $ENV{EBROOTARPACKPLUSPLUS}
                     $ENV{ARPACKPP_DIR}
@@ -127,8 +125,7 @@ function(find_Arpackpp)
                 )
         find_path(ARPACKPP_INCLUDE_DIR
                 NAMES ardsnsym.h
-                HINTS ${DIRECTORY_HINTS}
-                PATHS
+                HINTS
                     ${CMAKE_INSTALL_PREFIX}
                     $ENV{EBROOTARPACKPLUSPLUS}
                     $ENV{ARPACKPP_DIR}

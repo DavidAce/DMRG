@@ -1,7 +1,6 @@
 function(find_OpenBLAS)
     if(NOT TARGET OpenBLAS)
         message(STATUS "Searching for OpenBLAS config")
-        message(STATUS "DIRECTORY_HINTS ${DIRECTORY_HINTS}")
         find_package(OpenBLAS 0.3
                 HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
                 PATHS
