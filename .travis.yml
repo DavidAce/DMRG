@@ -73,6 +73,7 @@ matrix:
 
 
     - name: "xenial gcc-7 (apt libs)"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: xenial
       os: linux
       compiler: gcc
@@ -99,7 +100,38 @@ matrix:
             - libhdf5-dev
             - libceres-dev
 
+    - name: "bionic gcc-8 (apt libs)"
+      dist: bionic
+      os: linux
+      compiler: gcc
+      env:
+        - CXX=g++-8
+        - CC=gcc-8
+        - FC=gfortran-8
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-8
+            - g++-8
+            - gfortran-8
+            - libsz2
+            - zlibc
+            - libopenblas-dev
+            - libarpack2-dev
+            - libarpack++2-dev
+            - liblapacke-dev
+            - libhdf5-dev
+            - libspdlog-dev
+            - libgflags-dev
+            - libgoogle-glog-dev
+            - libceres-dev
+
     - name: "bionic gcc-7 (conda-forge libs)"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: gcc
@@ -128,6 +160,7 @@ matrix:
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
     - name: "bionic clang-7 (conda-forge libs)"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: clang
@@ -154,6 +187,7 @@ matrix:
 
 
     - name: "bionic clang (conda-forge libs) (shared)"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: clang
@@ -180,6 +214,7 @@ matrix:
 
 
     - name: "bionic clang conan + conda-forge libs"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: clang

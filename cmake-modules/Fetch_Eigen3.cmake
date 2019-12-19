@@ -6,7 +6,11 @@ find_package(Eigen3
 
 if(TARGET Eigen3::Eigen)
     message(STATUS "Eigen3 found")
-elseif (DOWNLOAD_MISSING)
+else()
+    if(NOT DOWNLOAD_MISSING)
+        message(WARNING "Eigen3 will be downloaded anyway because we need a patched version, "
+                "which isn't available through any systems package manager")
+    endif()
     message(STATUS "Eigen3 will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(Eigen3 "${CMAKE_INSTALL_PREFIX}" "")
@@ -22,7 +26,7 @@ elseif (DOWNLOAD_MISSING)
         message(FATAL_ERROR "Eigen3 could not be downloaded.")
     endif()
 
-else()
+#else()
     message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_MISSING is OFF")
 endif()
 

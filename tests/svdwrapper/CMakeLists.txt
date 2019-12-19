@@ -6,7 +6,7 @@ add_executable(test-svdwrapper svdwrapper.cpp
         ${CMAKE_SOURCE_DIR}/source/math/class_svd_wrapper.cpp
         ${CMAKE_SOURCE_DIR}/source/math/class_svd_wrapper_lapacke.cpp)
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 target_include_directories(test-svdwrapper PUBLIC ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(test-svdwrapper PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

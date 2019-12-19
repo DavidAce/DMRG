@@ -4,8 +4,24 @@
 find_package(glog 0.4
         HINTS $ENV{GLOG_DIR} $ENV{glog_DIR} ${CMAKE_INSTALL_PREFIX}
         PATHS $ENV{EBROOTGLOG}
-        PATH_SUFFIXES glog glog/lib
-        NO_DEFAULT_PATH)
+        PATH_SUFFIXES glog glog/lib)
+
+if(NOT TARGET glog::glog)
+    find_library(GLOG_LIBRARIES     glog           HINTS $ENV{GLOG_DIR} $ENV{glog_DIR} ${CMAKE_INSTALL_PREFIX} ${DIRECTORY_HINTS})
+    find_path   (GLOG_INCLUDE_DIR   glog/logging.h HINTS $ENV{GLOG_DIR} $ENV{glog_DIR} ${CMAKE_INSTALL_PREFIX} ${DIRECTORY_HINTS})
+    if (GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
+        add_library(glog::glog UNKNOWN IMPORTED)
+        string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+        set_target_properties(glog::glog PROPERTIES
+                IMPORTED_LOCATION_${BUILD_TYPE} "${GLOG_LIBRARIES}"
+                IMPORTED_LINK_INTERFACE_LIBRARIES "gcc_eh;unwind;lzma"
+                INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}")
+#        target_link_libraries(glog::glog INTERFACE gcc_eh unwind lzma)
+        message(STATUS "Found system glog: Don't forget to also install and link to libraries unwind and lzma")
+    endif()
+endif()
+
+
 
 if(NOT TARGET glog::glog)
     if(BUILD_SHARED_LIBS)
@@ -44,18 +60,18 @@ endif()
 
 if(TARGET glog::glog)
     #Copy the lib to where it belongs: INTERFACE_LINK_LIBRARIES
-    include(cmake-modules/filterTarget.cmake)
-    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-    get_target_property(glog_imported_loc_buildtype   glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
-    get_target_property(glog_imported_loc_noconfig    glog::glog IMPORTED_LOCATION_NOCONFIG)
-    if(glog_imported_loc_buildtype)
-        target_link_libraries(glog::glog INTERFACE ${glog_imported_loc_buildtype})
-    elseif(glog_imported_loc_noconfig)
-        target_link_libraries(glog::glog INTERFACE ${glog_imported_loc_noconfig})
-    else()
-        message(STATUS "Dependency glog does not have IMPORTED_LOCATION_${BUILD_TYPE}/_NOCONFIG")
-    endif()
+#    include(cmake-modules/filterTarget.cmake)
+#    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+#    get_target_property(glog_imported_loc_buildtype   glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
+#    get_target_property(glog_imported_loc_noconfig    glog::glog IMPORTED_LOCATION_NOCONFIG)
+#    if(glog_imported_loc_buildtype)
+#        target_link_libraries(glog::glog INTERFACE ${glog_imported_loc_buildtype})
+#    elseif(glog_imported_loc_noconfig)
+#        target_link_libraries(glog::glog INTERFACE ${glog_imported_loc_noconfig})
+#    else()
+#        message(STATUS "Dependency glog does not have IMPORTED_LOCATION_${BUILD_TYPE}/_NOCONFIG")
+#    endif()
+#    remove_shared(glog::glog)
+#    remove_pthread(glog::glog)
 
-    remove_shared(glog::glog)
-    remove_pthread(glog::glog)
 endif()

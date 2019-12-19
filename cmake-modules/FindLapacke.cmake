@@ -128,7 +128,7 @@ if (NOT TARGET lapacke)
                 PATH_SUFFIXES
                     OpenBLAS openblas openblas/include OpenBLAS/include lapack)
         find_library(LAPACKE_LIBRARY
-                NAMES liblapacke
+                NAMES lapacke
                 HINTS ${DIRECTORY_HINTS}
                 PATHS
                     $ENV{EBROOTOPENBLAS}
