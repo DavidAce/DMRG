@@ -129,6 +129,8 @@ matrix:
             - libgflags-dev
             - libgoogle-glog-dev
             - libceres-dev
+            - libunwind-dev
+            - lzma
 
     - name: "bionic gcc-7 (conda-forge libs)"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
