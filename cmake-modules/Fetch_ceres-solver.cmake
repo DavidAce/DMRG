@@ -1,11 +1,23 @@
 
-# Can't use conda/apt here since they only have shared libraries.
+# Can't use conda here since they only have shared libraries.
 # We also can't use apt-versions since they hardcode usage of Eigen3/Glog/Gflags
 # but we need our own patched Eigen3.
 find_package(Ceres
-        HINTS $ENV{CERES_DIR} $ENV{ceres_DIR} ${CERES_DIR} ${ceres_DIR} ${CMAKE_INSTALL_PREFIX}/ceres
+        HINTS ${CMAKE_INSTALL_PREFIX}
         PATH_SUFFIXES ceres ceres/lib
         NO_DEFAULT_PATH)
+
+if(NOT TARGET ceres)
+    message(STATUS "Looking for glog in system")
+    find_library(CERES_LIBRARIES     ceres           HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
+    find_path   (CERES_INCLUDE_DIR   ceres/ceres.h   HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
+    if (CERES_LIBRARIES AND CERES_INCLUDE_DIR)
+        add_library(ceres ${LINK_TYPE} IMPORTED)
+        set_target_properties(ceres PROPERTIES
+                IMPORTED_LOCATION                    "${CERES_LIBRARIES}"
+                INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${CERES_INCLUDE_DIR}")
+    endif()
+endif()
 
 if(NOT TARGET ceres)
     if(BUILD_SHARED_LIBS)

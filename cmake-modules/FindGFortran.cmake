@@ -52,5 +52,10 @@ if (${CMAKE_HOST_APPLE})
 endif()
 
 
-add_library(gfortran INTERFACE IMPORTED)
-target_link_libraries(gfortran INTERFACE ${GFORTRAN_LIB}  ${QUADMATH_LIB} )
+add_library(gfortran_lib ${LINK_TYPE} IMPORTED)
+add_library(quadmath_lib ${LINK_TYPE} IMPORTED)
+set_target_properties(quadmath_lib PROPERTIES IMPORTED_LOCATION "${QUADMATH_LIB}")
+set_target_properties(gfortran_lib PROPERTIES IMPORTED_LOCATION "${GFORTRAN_LIB}" INTERFACE_LINK_LIBRARIES quadmath_lib)
+
+add_library(gfortran INTERFACE)
+target_link_libraries(gfortran INTERFACE quadmath_lib gfortran_lib)

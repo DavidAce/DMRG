@@ -32,8 +32,8 @@ include(cmake-modules/Fetch_ceres-solver.cmake)                 # ceres-solver (
 ##################################################################
 target_link_libraries(project-settings INTERFACE ceres)
 target_link_libraries(project-settings INTERFACE h5pp::h5pp h5pp::deps h5pp::flags)
-target_link_libraries(project-settings INTERFACE arpack++)
 target_link_libraries(project-settings INTERFACE Eigen3::Eigen) # Put it last in case Eigen wants to use blas
+target_link_libraries(project-settings INTERFACE arpack++)
 
 if(TARGET OpenMP)
     target_link_libraries(project-settings INTERFACE OpenMP)

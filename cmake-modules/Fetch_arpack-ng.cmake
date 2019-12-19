@@ -1,8 +1,11 @@
 find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX}/arpack-ng)
 if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
-    add_library(arpack INTERFACE IMPORTED)
-    target_link_libraries(arpack INTERFACE ${arpack_ng_LIBRARIES} blas lapack gfortran)
-    target_include_directories(arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
+    add_library(arpack ${LINK_TYPE} IMPORTED)
+    set_target_properties(arpack PROPERTIES
+            IMPORTED_LOCATION                    "${arpack_ng_LIBRARIES}"
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${arpack_ng_INCLUDE_DIRS}")
+    target_link_libraries(arpack INTERFACE blas lapack gfortran)
+
 endif()
 
 if (NOT TARGET arpack)
@@ -17,8 +20,9 @@ if (NOT TARGET arpack)
         message(STATUS "Searching for arpack-ng - failed")
     else()
         message(STATUS "Searching for arpack-ng - Success: ${ARPACK_LIBRARIES}")
-        add_library(arpack INTERFACE IMPORTED)
-        target_link_libraries(arpack INTERFACE ${ARPACK_LIBRARIES} blas lapack gfortran)
+        add_library(arpack ${LINK_TYPE} IMPORTED)
+        set_target_properties(arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
+        target_link_libraries(arpack INTERFACE blas lapack gfortran)
     endif()
 endif()
 
@@ -39,16 +43,10 @@ if(NOT TARGET arpack)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/filterTarget.cmake)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/PrintTargetInfo.cmake)
-    add_library(arpack-aux-blas INTERFACE)
-    add_library(arpack-aux-lapack INTERFACE)
-    target_link_libraries(arpack-aux-blas   INTERFACE blas)
-    target_link_libraries(arpack-aux-lapack INTERFACE lapack)
-    expand_target_libs(arpack-aux-blas   AUX_LIBRARIES_BLAS)
-    expand_target_libs(arpack-aux-lapack AUX_LIBRARIES_LAPACK)
-    list(REMOVE_DUPLICATES AUX_LIBRARIES_BLAS)
-    list(REMOVE_DUPLICATES AUX_LIBRARIES_LAPACK)
-    string (REPLACE ";" "$<SEMICOLON>" AUX_LIBRARIES_BLAS_GENERATOR     "${AUX_LIBRARIES_BLAS}")
-    string (REPLACE ";" "$<SEMICOLON>" AUX_LIBRARIES_LAPACK_GENERATOR   "${AUX_LIBRARIES_LAPACK}")
+    expand_target_libs(blas    EXPANDED_BLAS)
+    expand_target_libs(lapack  EXPANDED_LAPACK)
+    string (REPLACE ";" "$<SEMICOLON>" EXPANDED_BLAS_GENERATOR      "${EXPANDED_BLAS}")
+    string (REPLACE ";" "$<SEMICOLON>" EXPANDED_LAPACK_GENERATOR    "${EXPANDED_LAPACK}")
 
     ####################################################################
     set(ARPACK_FLAGS "-w -m64 -fPIC")
@@ -76,16 +74,19 @@ if(NOT TARGET arpack)
             -DMPI=OFF
             -DINTERFACE64=OFF
             -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-            -DBLAS_LIBRARIES=${AUX_LIBRARIES_BLAS_GENERATOR}
-            -DLAPACK_LIBRARIES=${AUX_LIBRARIES_LAPACK_GENERATOR}
+            -DBLAS_LIBRARIES=${EXPANDED_BLAS_GENERATOR}
+            -DLAPACK_LIBRARIES=${EXPANDED_LAPACK_GENERATOR}
             DEPENDS blas lapack gfortran
             BUILD_BYPRODUCTS <INSTALL_DIR>/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX}
             )
     ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
     set(ARPACK_LIBRARIES ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX})
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
-    add_library(arpack INTERFACE IMPORTED)
+
     add_dependencies(arpack external_ARPACK)
-    target_link_libraries(arpack INTERFACE  ${ARPACK_LIBRARIES} blas lapack gfortran)
-    target_include_directories(arpack SYSTEM INTERFACE  ${ARPACK_INCLUDE_DIRS})
+    add_library(arpack ${LINK_TYPE} IMPORTED)
+    set_target_properties(arpack PROPERTIES
+            IMPORTED_LOCATION                    "${ARPACK_LIBRARIES}"
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}")
+    target_link_libraries(arpack INTERFACE blas lapack gfortran)
 endif()
