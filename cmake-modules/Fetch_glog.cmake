@@ -59,19 +59,7 @@ endif()
 
 
 if(TARGET glog::glog)
-    #Copy the lib to where it belongs: INTERFACE_LINK_LIBRARIES
-#    include(cmake-modules/filterTarget.cmake)
-#    string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-#    get_target_property(glog_imported_loc_buildtype   glog::glog IMPORTED_LOCATION_${BUILD_TYPE})
-#    get_target_property(glog_imported_loc_noconfig    glog::glog IMPORTED_LOCATION_NOCONFIG)
-#    if(glog_imported_loc_buildtype)
-#        target_link_libraries(glog::glog INTERFACE ${glog_imported_loc_buildtype})
-#    elseif(glog_imported_loc_noconfig)
-#        target_link_libraries(glog::glog INTERFACE ${glog_imported_loc_noconfig})
-#    else()
-#        message(STATUS "Dependency glog does not have IMPORTED_LOCATION_${BUILD_TYPE}/_NOCONFIG")
-#    endif()
-#    remove_shared(glog::glog)
-#    remove_pthread(glog::glog)
-
+    include(cmake-modules/filterTarget.cmake)
+    remove_shared(glog::glog)
+    remove_pthread(glog::glog)
 endif()
