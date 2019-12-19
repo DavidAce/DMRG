@@ -12,8 +12,7 @@ if (NOT TARGET arpack)
     message(STATUS "Searching for arpack-ng in system")
     find_library(ARPACK_LIBRARIES
             NAMES arpack
-            HINTS ${DIRECTORY_HINTS}
-            PATHS $ENV{EBROOTARPACKMINNG}
+            HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTARPACKMINNG}
             PATH_SUFFIXES arpack-ng arpack arpack/lib arpack-ng/lib
             )
     if(NOT ARPACK_LIBRARIES)

@@ -22,12 +22,8 @@ endif()
 if(NOT TARGET ceres)
     if(BUILD_SHARED_LIBS)
     find_package(Ceres
-            HINTS  ${DIRECTORY_HINTS}
-            PATHS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES} $ENV{CERES_DIR} $ENV{ceres_DIR} $ENV{CONDA_PREFIX}
+            HINTS  ${CMAKE_INSTALL_PREFIX}  $ENV{EBROOTCERES} $ENV{CONDA_PREFIX}
             PATH_SUFFIXES ceres ceres/lib)
-#            NO_DEFAULT_PATH)
-    else()
-        message(STATUS "Skipping search through conda libs because this is a static build")
     endif()
 endif()
 
