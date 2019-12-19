@@ -47,12 +47,6 @@ conan_cmake_run(CONANFILE cmake-modules/conan/conanfile.txt
         BUILD missing)
 
 
-
-#include(cmake-modules/filterTarget.cmake)
-#foreach(tgt ${CONAN_TARGETS})
-#    remove_pthread(${tgt})
-#endforeach()
-
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
