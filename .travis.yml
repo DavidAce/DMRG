@@ -23,7 +23,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - gcc-7
             - g++-7
@@ -42,7 +42,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - gcc-8
             - g++-8
@@ -62,7 +62,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
             - sourceline:  'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main'
               key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
@@ -86,7 +86,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - gcc-7
             - g++-7
@@ -113,7 +113,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - gcc-8
             - g++-8
@@ -144,7 +144,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - gcc-7
             - g++-7
@@ -171,7 +171,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - libstdc++-8-dev
             - gfortran-8
@@ -198,7 +198,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - libstdc++-8-dev
             - gfortran-8
@@ -225,7 +225,7 @@ matrix:
         apt:
           update: true
           sources:
-            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
           packages:
             - libstdc++-8-dev
             - gfortran-8
