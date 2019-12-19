@@ -13,7 +13,7 @@ if(NOT TARGET glog::glog)
         add_library(glog::glog UNKNOWN IMPORTED)
         string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
         set_target_properties(glog::glog PROPERTIES
-                IMPORTED_LOCATION_${BUILD_TYPE} "${GLOG_LIBRARIES}"
+                IMPORTED_LOCATION                    "${GLOG_LIBRARIES}"
                 INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}")
         target_link_libraries(glog::glog INTERFACE gcc_eh unwind lzma)
         message(STATUS "Found system glog: Don't forget to also install and link to libraries unwind and lzma")
