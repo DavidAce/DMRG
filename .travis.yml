@@ -206,6 +206,7 @@ matrix:
         - conda install --yes  conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
         # Automatic detection of your arch, compiler, etc.
         - conan user
+        - conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
 
 
 
