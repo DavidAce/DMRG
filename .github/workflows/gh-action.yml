@@ -9,6 +9,7 @@ jobs:
 
     env:
       CMAKE_GENERATOR: "CodeBlocks - Unix Makefiles"
+      FC: gfortran
 
     strategy:
       fail-fast: false
@@ -72,14 +73,17 @@ jobs:
           fi
           sudo apt-get update
           if [ "${{ matrix.compiler }}" = "gcc" ]; then
-            sudo apt-get install -y g++-${{ matrix.version }} g++-${{ matrix.version }}-multilib ${{ matrix.apt }}
+            sudo apt-get install -y g++-${{ matrix.version }} g++-${{ matrix.version }}-multilib gfortran ${{ matrix.apt }}
             echo "::set-env name=CC::gcc-${{ matrix.version }}"
             echo "::set-env name=CXX::g++-${{ matrix.version }}"
           else
-            sudo apt-get install -y clang-${{ matrix.version }} g++-multilib ${{ matrix.apt }}
+            sudo apt-get install -y clang-${{ matrix.version }} g++-multilib gfortran ${{ matrix.apt }}
             echo "::set-env name=CC::clang-${{ matrix.version }}"
             echo "::set-env name=CXX::clang++-${{ matrix.version }}"
           fi
+          echo "::set-env name=FC::gfortran"
+
+          
           if [ "${{ matrix.sources }}" = *"conda"* ]; then
             wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
             chmod +x miniconda.sh
