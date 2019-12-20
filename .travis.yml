@@ -98,7 +98,12 @@ matrix:
             - libarpack++2-dev
             - liblapacke-dev
             - libhdf5-dev
+            - libspdlog-dev
+            - libgflags-dev
+            - libgoogle-glog-dev
             - libceres-dev
+            - libunwind-dev
+            - lzma
 
     - name: "bionic gcc-8 (apt libs)"
       dist: bionic
