@@ -1,6 +1,12 @@
 name: C/C++ CI
 
-on: [push]
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the master branch
+  push:
+    branches:
+      - master
+      - multisite_dmrg
 # INSPIRATION https://github.com/onqtam/doctest/pull/285/files/875052e18cf5f5f0b9176e59f847b6205f3efb78#
 jobs:
   ci:
