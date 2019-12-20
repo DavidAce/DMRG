@@ -23,7 +23,7 @@ jobs:
             compiler: gcc
             version: "8"
             flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
-            apt: gcc-8 g++-8 gfortran-8 libsz2 zlibc libopenblas-dev libarpack2-dev libarpack++2-dev liblapacke-dev libhdf5-dev libspdlog-dev libgflags-dev libgoogle-glog-dev libceres-dev libunwind-dev lzma
+            apt: gcc-8 g++-8 gfortran-8 libsz2 zlibc libopenblas-dev libarpack2-dev libarpack++2-dev liblapacke-dev libhdf5-dev libspdlog-dev libgflags-dev libgoogle-glog-dev libceres-dev libunwind-dev lzma libaec-dev
           
           - name: ubuntu-18.04-gcc-9
             os: ubuntu-18.04
