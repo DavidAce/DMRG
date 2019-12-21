@@ -106,9 +106,9 @@ jobs:
             conda config --add channels conda-forge
             conda install --yes ${{ matrix.conda }}
           fi
-          if [ "${{ matrix.sources }}" = *"conan"* ] ; then
-            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg --insert
+          if [[ "${{ matrix.sources }}" == *"conan"* ]]; then
             conan user
+            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
           fi
       - name: Install (Windows)
         if: runner.os == 'Windows'
