@@ -128,15 +128,9 @@ jobs:
           }
           # Scoop modifies the PATH so we make the modified PATH global.
           echo "::set-env name=PATH::$env:PATH"
-      - name: Configure
-        run: |
-          cmake -E make_directory build/Debug
-          cd build/Debug
-          cmake -DCMAKE_BUILD_TYPE=Debug ${{ matrix.flags }} -G "CodeBlocks - Unix Makefiles" ../../
       - name: Build
-        run: |
-          cd build/Debug
-          cmake --build . --target all
+        run: | 
+          ./build.sh ${{ matrix.flags }}
       - name: Test
         run: |
           cd build/Debug
