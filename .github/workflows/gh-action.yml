@@ -23,13 +23,14 @@ jobs:
       matrix:
         # Github Actions requires a single row to be added to the build matrix.
         # See https://help.github.com/en/articles/workflow-syntax-for-github-actions.
-        name: [ubuntu-18.04-gcc-8,ubuntu-18.04-gcc-9-conan,ubuntu-18.04-clang-8,ubuntu-18.04-clang-9, ubuntu-18.04-clang-9-conda, ubuntu-18.04-clang-9-conan] # windows-2019-clang,windows-2019-gcc
+        name: [ubuntu-18.04-gcc-8-apt,ubuntu-18.04-gcc-9-conan,ubuntu-18.04-clang-8,ubuntu-18.04-clang-9, ubuntu-18.04-clang-9-conda, ubuntu-18.04-clang-9-conan] # windows-2019-clang,windows-2019-gcc
         include:
-          - name: ubuntu-18.04-gcc-8
+          - name: ubuntu-18.04-gcc-8-apt
             os: ubuntu-18.04
             compiler: gcc
             version: "8"
             flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
+            sources: apt
             apt: gcc-8 g++-8 gfortran-8 libsz2 zlibc libopenblas-dev libarpack2-dev libarpack++2-dev liblapacke-dev libhdf5-dev libspdlog-dev libgflags-dev libgoogle-glog-dev libceres-dev libunwind-dev lzma libaec-dev
           
           - name: ubuntu-18.04-gcc-9-conan
@@ -106,8 +107,8 @@ jobs:
             conda install --yes ${{ matrix.conda }}
           fi
           if [ "${{ matrix.sources }}" = *"conan"* ] ; then
+            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg --insert
             conan user
-            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg 
           fi
       - name: Install (Windows)
         if: runner.os == 'Windows'

@@ -2,10 +2,10 @@
 # Can't use conda here since they only have shared libraries.
 # We also can't use apt-versions since they hardcode usage of Eigen3/Glog/Gflags
 # but we need our own patched Eigen3.
-find_package(Ceres
-        HINTS ${CMAKE_INSTALL_PREFIX}
-        PATH_SUFFIXES ceres ceres/lib
-        NO_DEFAULT_PATH)
+#find_package(Ceres
+#        HINTS ${CMAKE_INSTALL_PREFIX}
+#        PATH_SUFFIXES ceres ceres/lib
+#        NO_DEFAULT_PATH)
 
 if(NOT TARGET ceres)
     message(STATUS "Looking for glog in system")
@@ -15,7 +15,31 @@ if(NOT TARGET ceres)
         add_library(ceres ${LINK_TYPE} IMPORTED)
         set_target_properties(ceres PROPERTIES IMPORTED_LOCATION "${CERES_LIBRARIES}")
         target_include_directories(ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
+        find_library(SUITESPARSE_LIBRARIES      suitesparse suitesparseconfig       HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
+        find_path   (SUITESPARSE_INCLUDE_DIR    suitesparse/SuiteSparse_config.h    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
+        if(SUITESPARSE_LIBRARIES AND SUITESPARSE_INCLUDE_DIR )
+            add_library(suitesparse ${LINK_TYPE} IMPORTED)
+            set_target_properties(suitesparse PROPERTIES IMPORTED_LOCATION "${SUITESPARSE_LIBRARIES}")
+            target_include_directories(suitesparse SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
+            set(suitesparse_dep_libs cholmod colamd ccolamd amd camd metis metis_static cxsparse)
+            foreach(dep ${suitesparse_dep_libs})
+                string(TOUPPER ${dep} DEP)
+                find_library(${DEP}_LIBRARIES ${dep} HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOT${DEP}})
+                message("DEP ${DEP}")
+                if(${DEP}_LIBRARIES)
+                    add_library(${dep} ${LINK_TYPE} IMPORTED)
+                    set_target_properties(${dep} PROPERTIES IMPORTED_LOCATION "${${DEP}_LIBRARIES}")
+                    message(dep ${dep})
+                    message("${DEP}_LIBRARIES ${${DEP}_LIBRARIES}")
+                    target_link_libraries(ceres INTERFACE ${dep})
+                endif()
+            endforeach()
+            target_link_libraries(ceres INTERFACE suitesparse)
+#            include(cmake-modules/PrintTargetInfo.cmake)
+#            print_target_info(suitesparse)
+        endif()
     endif()
+
 endif()
 
 if(NOT TARGET ceres)
