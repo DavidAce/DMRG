@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(DMRG++ CXX )
 #enable_language()
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
