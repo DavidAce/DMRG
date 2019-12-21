@@ -1,4 +1,6 @@
 
+include(cmake-modules/CheckCeresCompiles.cmake)
+
 # Can't use conda here since they only have shared libraries.
 # We also can't use apt-versions since they hardcode usage of Eigen3/Glog/Gflags
 # but we need our own patched Eigen3.
@@ -57,6 +59,8 @@
 #            endforeach()
 #            target_include_directories(ceres::ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
 #            target_include_directories(ceres::ceres SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
+#             target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags Eigen3::Eigen)
+
 #        endif()
 #    endif()
 #endif()
@@ -142,8 +146,8 @@ if(TARGET ceres AND NOT TARGET ceres::ceres )
     #Remove any shared libraries like unwind etc which pollute into static builds
     include(cmake-modules/filterTarget.cmake)
     if(NOT BUILD_SHARED_LIBS)
-        remove_shared (ceres)
-        remove_pthread_shallow(ceres)
+#        remove_shared (ceres)
+#        remove_pthread_shallow(ceres)
     endif()
     # Copy gflags to gflags::gflags to follow proper naming convention
     include(cmake-modules/CopyTarget.cmake)
@@ -152,5 +156,18 @@ endif()
 
 
 if(TARGET ceres::ceres)
-    target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags Eigen3::Eigen)
+    target_link_libraries(ceres::ceres INTERFACE glog::glog;gflags::gflags;Eigen3::Eigen;pthread)
+    include(cmake-modules/filterTarget.cmake)
+    if(NOT BUILD_SHARED_LIBS)
+        remove_pthread_shallow(ceres::ceres)
+        remove_shared(ceres::ceres)
+    endif()
+
+    check_ceres_compiles("target" "${CERES_FLAGS}" "" "" "" "ceres::ceres")
+    if(NOT CERES_COMPILES_target)
+        include(cmake-modules/PrintTargetProperties.cmake)
+        print_target_properties(ceres::ceres)
+        file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
+        message(FATAL_ERROR "Could not compile simple ceres program:\n ${ERROR_LOG}")
+    endif()
 endif()

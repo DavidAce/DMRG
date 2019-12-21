@@ -32,9 +32,13 @@ function(expand_target_libs target_names expanded_list)
     if(NOT ${expanded_list})
         set(${expanded_list} "${scoped_list}" PARENT_SCOPE)
     else()
+        # This way retains the order of link libraries (i.e. the last occurance is kept)
         set(filtered_list "${scoped_list};${${expanded_list}}")
+        list(REVERSE "filtered_list")
         list(REMOVE_DUPLICATES "filtered_list")
+        list(REVERSE "filtered_list")
         set(${expanded_list} "${filtered_list}" PARENT_SCOPE)
+
     endif()
 endfunction()
 
