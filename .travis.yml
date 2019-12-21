@@ -254,5 +254,5 @@ matrix:
 
 
 script:
-  - ./build.sh ${FLAGS}
+  - ./build.sh --verbose ${FLAGS}
 
