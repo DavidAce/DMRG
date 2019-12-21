@@ -66,7 +66,7 @@ jobs:
             os: ubuntu-18.04
             compiler: clang
             version: "9"
-            sources: conda conda
+            sources: conda conan
             conda: conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
             flags: --download-missing --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug
           #- name: windows-2019-clang
