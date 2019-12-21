@@ -29,18 +29,18 @@ else()
 endif()
 
 
-if(TARGET Eigen3::Eigen AND TARGET blas )
+if(TARGET Eigen3::Eigen AND TARGET blas::blas )
     set(EIGEN3_USING_BLAS ON)
-    if(TARGET mkl)
+    if(TARGET mkl::mkl)
         message(STATUS "Eigen3 will use MKL")
         target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_MKL_ALL)
         target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
-        target_link_libraries         (Eigen3::Eigen INTERFACE mkl)
+        target_link_libraries         (Eigen3::Eigen INTERFACE mkl::mkl)
     else ()
         message(STATUS "Eigen3 will use BLAS and LAPACKE")
         target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_BLAS)
         target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
-        target_link_libraries         (Eigen3::Eigen INTERFACE blas)
+        target_link_libraries         (Eigen3::Eigen INTERFACE blas::blas)
     endif()
 
     # Use this flag if Ceres is giving you trouble!

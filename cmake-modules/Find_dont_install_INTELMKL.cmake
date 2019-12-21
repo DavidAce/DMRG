@@ -69,26 +69,27 @@ if (MKL_FOUND)
     #    add_definitions(-DMKL_VERBOSE -DMKL_Complex8=std::complex<float> -DMKL_Complex16=std::complex<double>)
 
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
-    add_library(mkl INTERFACE)
-    target_link_libraries(mkl INTERFACE ${MKL_LIBRARIES})
+    add_library(mkl::mkl INTERFACE IMPORTED)
+    target_link_libraries(mkl::mkl INTERFACE ${MKL_LIBRARIES})
     if(TARGET OpenMP)
-        target_link_libraries(mkl INTERFACE OpenMP)
+        target_link_libraries(mkl::mkl INTERFACE OpenMP)
     endif()
-    target_link_libraries(mkl INTERFACE gfortran)
-    target_include_directories(mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
-    target_compile_options(mkl INTERFACE ${MKL_FLAGS})
-    set_target_properties(mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
+    target_link_libraries(mkl::mkl INTERFACE gfortran::gfortran)
+    target_include_directories(mkl::mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
+    target_compile_options(mkl::mkl INTERFACE ${MKL_FLAGS})
+    set_target_properties(mkl::mkl PROPERTIES INTERFACE_LINK_DIRECTORIES  "${MKL_ROOT_DIR}/lib/intel64")
     # BLAS and LAPACK are included in the MKL.
-    set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
-    set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
-    set(FC_LDLAGS -lm -ldl ${GFORTRAN_LIB}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
+#    set(BLAS_LIBRARIES   ${MKL_LIBRARIES})
+#    set(LAPACK_LIBRARIES ${MKL_LIBRARIES})
+#    set(FC_LDLAGS -lm -ldl ${GFORTRAN_LIB}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
     #    set(FC_LDLAGS -lm -ldl  -fPIC ${PTHREAD_LIBRARY}) #This one is needed if any sub projects wants to link its own stuff using MKL. For instance, arpack-ng.
 
 
     # Make the rest of the build structure aware of blas and lapack included in MKL.
-    add_library(blas ALIAS mkl)
-    add_library(lapack ALIAS mkl)
-    #    add_library(lapacke ALIAS mkl)
+    add_library(blas::blas          INTERFACE IMPORTED)
+    add_library(lapack::lapack      INTERFACE IMPORTED)
+    target_link_libraries(blas::blas        INTERFACE mkl::mkl)
+    target_link_libraries(lapack::lapack    INTERFACE mkl::mkl)
 
     message("")
     message("============================ MKL SUMMARY ===================================")
@@ -162,25 +163,14 @@ if (MKL_FOUND)
     endfunction()
 
 
-    check_mkl_compiles(mkl)
+    check_mkl_compiles(mkl::mkl)
 
 endif()
 
 
-#
-#get_cmake_property(_variableNames VARIABLES)
-#foreach (_variableName ${_variableNames})
-#    if("${_variableName}" MATCHES "BLAS"
-#            OR "${_variableName}" MATCHES "blas"
-#            OR "${_variableName}" MATCHES "LAPACK"
-#            OR "${_variableName}" MATCHES "lapack")
-#        message(STATUS "${_variableName}=${${_variableName}}")
-#    endif()
-#endforeach()
-
 #    get_cmake_property(_variableNames VARIABLES)
 #    foreach (_variableName ${_variableNames})
-#        if("${_variableName}" MATCHES "MKL" OR "${_variableName}" MATCHES "mkl")
+#        if("${_variableName}" MATCHES "MKL|mkl")
 #            message(STATUS "${_variableName}=${${_variableName}}")
 #        endif()
 #    endforeach()

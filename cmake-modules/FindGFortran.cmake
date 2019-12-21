@@ -57,5 +57,5 @@ add_library(quadmath_lib ${LINK_TYPE} IMPORTED)
 set_target_properties(quadmath_lib PROPERTIES IMPORTED_LOCATION "${QUADMATH_LIB}")
 set_target_properties(gfortran_lib PROPERTIES IMPORTED_LOCATION "${GFORTRAN_LIB}" INTERFACE_LINK_LIBRARIES quadmath_lib)
 
-add_library(gfortran INTERFACE)
-target_link_libraries(gfortran INTERFACE quadmath_lib gfortran_lib)
+add_library(gfortran::gfortran IMPORTED INTERFACE)
+target_link_libraries(gfortran::gfortran INTERFACE quadmath_lib gfortran_lib)

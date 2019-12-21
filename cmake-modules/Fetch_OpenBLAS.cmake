@@ -1,6 +1,6 @@
 
 # If the INTEL MKL library has already been loaded, skip the rest.
-if(TARGET mkl)
+if(TARGET mkl::mkl)
     return()
 endif()
 
@@ -17,7 +17,7 @@ find_OpenBLAS()
 #     endif()
 # endforeach()
 
-if(TARGET OpenBLAS)
+if(TARGET openblas::openblas)
 #    message(STATUS "OpenBLAS found")
 
 elseif(DOWNLOAD_MISSING)
@@ -29,7 +29,7 @@ elseif(DOWNLOAD_MISSING)
         set(OpenBLAS_ENABLE_OPENMP 0) # Openmp doesnt work on clang it seems
     endif()
     include(cmake-modules/getExpandedTarget.cmake)
-    expand_target_libs(gfortran GFORTRAN_LIBS)
+    expand_target_libs(gfortran::gfortran GFORTRAN_LIBS)
     list(FILTER GFORTRAN_LIBS INCLUDE REGEX "gfortran|quadmath")
     list(JOIN GFORTRAN_LIBS " " GFORTRAN_LIBS_SPACE_SEP_STRING)
     list(GET  GFORTRAN_LIBS 0 GFORTRAN_LIB)
@@ -46,7 +46,7 @@ elseif(DOWNLOAD_MISSING)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(OpenBLAS "${CMAKE_INSTALL_PREFIX}" "${OpenBLAS_CMAKE_OPTIONS}")
     find_OpenBLAS()
-    if(TARGET OpenBLAS)
+    if(TARGET openblas::openblas)
         message(STATUS "OpenBLAS installed successfully")
     else()
         message(FATAL_ERROR "OpenBLAS could not be downloaded.")

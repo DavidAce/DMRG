@@ -4,7 +4,7 @@
 include(cmake-modules/FindArpack++.cmake)
 find_Arpackpp()
 
-if (TARGET arpack++)
+if (TARGET arpack::arpack++)
     message(STATUS "Arpack++ found")
 elseif(DOWNLOAD_MISSING)
     message(STATUS "Arpack++ will be installed into ${EXTERNAL_INSTALL_DIR}/arpack++ on first build.")
@@ -30,14 +30,14 @@ elseif(DOWNLOAD_MISSING)
 #            ${CMAKE_COMMAND} -E create_symlink <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
             BUILD_COMMAND
             ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
-            DEPENDS lapacke arpack gfortran
+            DEPENDS lapacke::lapacke arpack::arpack gfortran::gfortran
             )
 
     ExternalProject_Get_Property(external_ARPACK++ INSTALL_DIR)
-    add_library(arpack++ INTERFACE)
-    add_dependencies(arpack++ external_ARPACK++)
-    target_link_libraries(arpack++ INTERFACE lapacke arpack)
-    target_include_directories(arpack++ SYSTEM INTERFACE ${INSTALL_DIR}/include)
+    add_library(arpack::arpack++ IMPORTED INTERFACE)
+    target_link_libraries(arpack::arpack++ INTERFACE lapacke::lapacke arpack::arpack)
+    target_include_directories(arpack::arpack++ SYSTEM INTERFACE ${INSTALL_DIR}/include)
+    add_dependencies(arpack::arpack++ external_ARPACK++)
 else()
     message(FATAL_ERROR "Dependency Arpack++ not found and DOWNLOAD_MISSING is OFF")
 endif()

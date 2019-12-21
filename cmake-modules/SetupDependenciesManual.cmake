@@ -14,7 +14,7 @@ include(cmake-modules/FindGFortran.cmake)
 if(ENABLE_MKL)
     include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 endif()
-if(NOT TARGET blas)
+if(NOT TARGET blas::blas)
     include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not on openblas will be used instead. Includes lapack.
 endif()
 include(cmake-modules/FindLapacke.cmake)                        # Lapacke needed by arpack++
@@ -30,10 +30,10 @@ include(cmake-modules/Fetch_ceres-solver.cmake)                 # ceres-solver (
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
-target_link_libraries(project-settings INTERFACE ceres)
+target_link_libraries(project-settings INTERFACE ceres::ceres)
 target_link_libraries(project-settings INTERFACE h5pp::h5pp h5pp::deps h5pp::flags)
 target_link_libraries(project-settings INTERFACE Eigen3::Eigen) # Put it last in case Eigen wants to use blas
-target_link_libraries(project-settings INTERFACE arpack++)
+target_link_libraries(project-settings INTERFACE arpack::arpack++)
 
 if(TARGET OpenMP)
     target_link_libraries(project-settings INTERFACE OpenMP)
@@ -47,7 +47,7 @@ target_link_libraries(project-settings INTERFACE  -Wl,--whole-archive  pthread -
 
 
 include(cmake-modules/PrintTargetInfo.cmake)
-print_target_info(ceres)
+print_target_info(ceres::ceres)
 print_target_info(gflags)
 print_target_info(glog::glog)
 print_target_info(h5pp::h5pp)
@@ -56,14 +56,14 @@ print_target_info(h5pp::flags)
 print_target_info(spdlog::spdlog)
 print_target_info(hdf5::hdf5)
 print_target_info(Eigen3::Eigen)
-print_target_info(arpack++)
-print_target_info(arpack)
-print_target_info(lapack)
-print_target_info(blas)
-print_target_info(lapacke)
-print_target_info(mkl)
-print_target_info(OpenBLAS)
-print_target_info(gfortran)
+print_target_info(arpack::arpack++)
+print_target_info(arpack::arpack)
+print_target_info(lapack::lapack)
+print_target_info(blas::blas)
+print_target_info(lapacke::lapacke)
+print_target_info(mkl::mkl)
+print_target_info(openblas::openblas)
+print_target_info(gfortran::gfortran)
 print_target_info(Threads::Threads)
 print_target_info(OpenMP)
 print_target_info(project-settings)
