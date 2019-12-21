@@ -55,6 +55,13 @@ if(TARGET glog::glog)
         remove_shared(glog::glog)
     endif()
 
+    # Modernize
+    get_property(imp_loc_set TARGET glog::glog PROPERTY IMPORTED_LOCATION SET) # Returns a boolean if set
+    get_property(loc_set     TARGET glog::glog PROPERTY LOCATION SET) # Returns a boolean if set
+    if(loc_set AND NOT imp_loc_set)
+        get_target_property(imp_loc glog::glog LOCATION)
+        set_target_properties(glog::glog PROPERTIES IMPORTED_LOCATION ${imp_loc})
+    endif()
     if(TARGET gflags::gflags)
         target_link_libraries(glog::glog INTERFACE gflags::gflags)
     endif()
