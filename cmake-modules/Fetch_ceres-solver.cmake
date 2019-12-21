@@ -2,44 +2,54 @@
 # Can't use conda here since they only have shared libraries.
 # We also can't use apt-versions since they hardcode usage of Eigen3/Glog/Gflags
 # but we need our own patched Eigen3.
-#find_package(Ceres
-#        HINTS ${CMAKE_INSTALL_PREFIX}
-#        PATH_SUFFIXES ceres ceres/lib
-#        NO_DEFAULT_PATH)
-
+find_package(Ceres
+        HINTS ${CMAKE_INSTALL_PREFIX}
+        PATH_SUFFIXES ceres ceres/lib
+        NO_DEFAULT_PATH)
+# TODO: make sure you uncomment above before pushing
 if(NOT TARGET ceres)
-    message(STATUS "Looking for glog in system")
-    find_library(CERES_LIBRARIES     ceres           HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
-    find_path   (CERES_INCLUDE_DIR   ceres/ceres.h   HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
-    if (CERES_LIBRARIES AND CERES_INCLUDE_DIR)
-        add_library(ceres ${LINK_TYPE} IMPORTED)
-        set_target_properties(ceres PROPERTIES IMPORTED_LOCATION "${CERES_LIBRARIES}")
-        target_include_directories(ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
-        find_library(SUITESPARSE_LIBRARIES      suitesparse suitesparseconfig       HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
-        find_path   (SUITESPARSE_INCLUDE_DIR    suitesparse/SuiteSparse_config.h    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
-        if(SUITESPARSE_LIBRARIES AND SUITESPARSE_INCLUDE_DIR )
-            add_library(suitesparse ${LINK_TYPE} IMPORTED)
-            set_target_properties(suitesparse PROPERTIES IMPORTED_LOCATION "${SUITESPARSE_LIBRARIES}")
-            target_include_directories(suitesparse SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
-            set(suitesparse_dep_libs cholmod colamd ccolamd amd camd metis metis_static cxsparse)
-            foreach(dep ${suitesparse_dep_libs})
-                string(TOUPPER ${dep} DEP)
-                find_library(${DEP}_LIBRARIES ${dep} HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOT${DEP}})
-                message("DEP ${DEP}")
-                if(${DEP}_LIBRARIES)
-                    add_library(${dep} ${LINK_TYPE} IMPORTED)
-                    set_target_properties(${dep} PROPERTIES IMPORTED_LOCATION "${${DEP}_LIBRARIES}")
-                    message(dep ${dep})
-                    message("${DEP}_LIBRARIES ${${DEP}_LIBRARIES}")
-                    target_link_libraries(ceres INTERFACE ${dep})
+    message(STATUS "Looking for ceres in system")
+    find_path   (CERES_INCLUDE_DIR        NAMES  ceres/ceres.h                       HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
+    find_path   (SUITESPARSE_INCLUDE_DIR  NAMES  suitesparse/SuiteSparse_config.h    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
+    if(CERES_INCLUDE_DIR AND SUITESPARSE_INCLUDE_DIR)
+        # We may have a chance at finding Ceres in the system
+        find_library(CERES_LIB                NAMES ceres                            HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
+        find_library(SUITESPARSE_LIB          NAMES suitesparse suitesparseconfig    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
+        find_library(CXSPARSE_LIB             NAMES cxsparse                         HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCXSPARSE})
+        find_library(METIS_LIB                NAMES metis metis_static               HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTMETIS})
+        find_library(CHOLMOD_LIB              NAMES cholmod                          HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCHOLMOD})
+        find_library(COLAMD_LIB               NAMES colamd                           HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCOLAMD})
+        find_library(CCOLAMD_LIB              NAMES ccolamd                          HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCCOLAMD})
+        find_library(AMD_LIB                  NAMES amd                              HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTAMD})
+        find_library(CAMD_LIB                 NAMES camd                             HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCAMD})
+        # Make sure this is the correct linking order
+        set(ceres_lib_names ceres suitesparse cholmod colamd ccolamd amd camd metis cxsparse)
+        # Check that all libs are present before going forward with defining targets
+        foreach(lib ${ceres_lib_names})
+            string(TOUPPER ${lib} LIB)
+            message("${LIB}_LIB: ${${LIB}_LIB}")
+            if(NOT EXISTS "${${LIB}_LIB}")
+                set(CERES_MISSING_LIBS TRUE)
+                message(STATUS "Missing Ceres dependency in system: ${lib}")
+            endif()
+        endforeach()
+        if(NOT CERES_MISSING_LIBS)
+            # Now we are confident all libraries are in the system. Note that metis (static) is not available on bionic
+            # which is why we do this
+            foreach(lib ${ceres_lib_names})
+                string(TOUPPER ${lib} LIB)
+                if(EXISTS "${${LIB}_LIB}")
+                    add_library(${lib} ${LINK_TYPE} IMPORTED)
+                    set_target_properties(${lib} PROPERTIES IMPORTED_LOCATION "${${LIB}_LIB}")
+                    if(NOT "${lib}" MATCHES "ceres")
+                        target_link_libraries(ceres INTERFACE ${lib})
+                    endif()
                 endif()
             endforeach()
-            target_link_libraries(ceres INTERFACE suitesparse)
-#            include(cmake-modules/PrintTargetInfo.cmake)
-#            print_target_info(suitesparse)
+            target_include_directories(ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
+            target_include_directories(ceres SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
         endif()
     endif()
-
 endif()
 
 if(NOT TARGET ceres)
