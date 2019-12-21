@@ -13,9 +13,8 @@ if(NOT TARGET glog::glog)
     find_path   (GLOG_INCLUDE_DIR   glog/logging.h HINTS ${GLOG_HINTS})
     if (GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
         add_library(glog::glog ${LINK_TYPE} IMPORTED)
-        set_target_properties(glog::glog PROPERTIES
-                IMPORTED_LOCATION                    "${GLOG_LIBRARIES}"
-                INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${GLOG_INCLUDE_DIR}")
+        set_target_properties(glog::glog PROPERTIES IMPORTED_LOCATION "${GLOG_LIBRARIES}")
+        target_include_directories(glog::glog SYSTEM INTERFACE ${GLOG_INCLUDE_DIR})
         target_link_libraries(glog::glog INTERFACE gcc_eh unwind lzma)
         message(STATUS "Found system glog: Don't forget to also install and link to libraries unwind and lzma")
     endif()

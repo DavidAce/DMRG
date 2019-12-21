@@ -13,9 +13,8 @@ if(NOT TARGET ceres)
     find_path   (CERES_INCLUDE_DIR   ceres/ceres.h   HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
     if (CERES_LIBRARIES AND CERES_INCLUDE_DIR)
         add_library(ceres ${LINK_TYPE} IMPORTED)
-        set_target_properties(ceres PROPERTIES
-                IMPORTED_LOCATION                    "${CERES_LIBRARIES}"
-                INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${CERES_INCLUDE_DIR}")
+        set_target_properties(ceres PROPERTIES IMPORTED_LOCATION "${CERES_LIBRARIES}")
+        target_include_directories(ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
     endif()
 endif()
 

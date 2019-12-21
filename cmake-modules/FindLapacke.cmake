@@ -135,9 +135,8 @@ if (NOT TARGET lapacke)
                     )
             if(LAPACKE_COMPILES_lib_header)
                 add_library(lapacke ${LINK_TYPE} IMPORTED)
-                set_target_properties(lapacke PROPERTIES
-                        IMPORTED_LOCATION                    "${LAPACKE_LIBRARY}"
-                        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${LAPACKE_INCLUDE_DIR}")
+                set_target_properties(lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
+                target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
             endif()
         endif()
         if(NOT TARGET lapacke AND LAPACKE_INCLUDE_DIR)

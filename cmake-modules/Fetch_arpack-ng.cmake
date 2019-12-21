@@ -1,9 +1,8 @@
 find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX}/arpack-ng)
 if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
     add_library(arpack ${LINK_TYPE} IMPORTED)
-    set_target_properties(arpack PROPERTIES
-            IMPORTED_LOCATION                    "${arpack_ng_LIBRARIES}"
-            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${arpack_ng_INCLUDE_DIRS}")
+    set_target_properties(arpack PROPERTIES IMPORTED_LOCATION "${arpack_ng_LIBRARIES}")
+    target_include_directories(arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
     target_link_libraries(arpack INTERFACE blas lapack gfortran)
 
 endif()
@@ -83,9 +82,8 @@ if(NOT TARGET arpack)
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
 
     add_library(arpack ${LINK_TYPE} IMPORTED)
-    set_target_properties(arpack PROPERTIES
-            IMPORTED_LOCATION                    "${ARPACK_LIBRARIES}"
-            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}")
+    set_target_properties(arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
+    target_include_directories(arpack SYSTEM INTERFACE ${ARPACK_INCLUDE_DIRS})
     target_link_libraries(arpack INTERFACE blas lapack gfortran)
     add_dependencies(arpack external_ARPACK)
 endif()

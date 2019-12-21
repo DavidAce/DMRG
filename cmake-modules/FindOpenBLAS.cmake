@@ -27,8 +27,9 @@ function(find_OpenBLAS)
                 add_library(OpenBLAS ${LINK_TYPE} IMPORTED)
                 set_target_properties(OpenBLAS PROPERTIES
                         IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}"
-                        INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${OpenBLAS_INCLUDE_DIRS}"
                         INTERFACE_COMPILE_DEFINITIONS "OpenBLAS_AVAILABLE")
+                target_include_directories(OpenBLAS SYSTEM INTERFACE ${OpenBLAS_INCLUDE_DIRS})
+
             endif()
         endif()
     endif()
@@ -67,9 +68,9 @@ function(find_OpenBLAS)
             add_library(OpenBLAS STATIC IMPORTED)
             set_target_properties(OpenBLAS PROPERTIES
                     IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}"
-                    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${OpenBLAS_INCLUDE_DIRS}"
-                    INTERFACE_COMPILE_DEFINITIONS "OpenBLAS_AVAILABLE"
-                    )
+                    INTERFACE_COMPILE_DEFINITIONS "OpenBLAS_AVAILABLE")
+            target_include_directories(OpenBLAS SYSTEM INTERFACE ${OpenBLAS_INCLUDE_DIRS})
+
 
         endif()
     endif()
