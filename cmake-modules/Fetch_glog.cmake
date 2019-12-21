@@ -42,13 +42,21 @@ endif()
 
 
 if(TARGET glog::glog)
-    include(cmake-modules/filterTarget.cmake)
-#    remove_shared(glog::glog)
-    remove_pthread_shallow(glog::glog)
     get_target_property(GLOG_TYPE glog::glog TYPE)
     if(NOT GLOG_TYPE MATCHES "${LINK_TYPE}")
         include(cmake-modules/PrintTargetProperties.cmake)
         print_target_properties(glog::glog)
         message(FATAL_ERROR "Found shared glog library on a static build!")
     endif()
+
+    include(cmake-modules/filterTarget.cmake)
+    if(NOT BUILD_SHARED_LIBS)
+        remove_pthread_shallow(glog::glog)
+        remove_shared(glog::glog)
+    endif()
+
+    if(TARGET gflags::gflags)
+        target_link_libraries(glog::glog INTERFACE gflags::gflags)
+    endif()
+
 endif()
