@@ -25,7 +25,6 @@ function(CheckArpackppCompiles TAG REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_
 
 
     #   Test features
-    include(CheckCXXSourceCompiles)
     set(CMAKE_REQUIRED_FLAGS        ${REQUIRED_FLAGS})
     set(CMAKE_REQUIRED_DEFINITIONS  ${REQUIRED_DEFINITIONS})
     set(CMAKE_REQUIRED_LIBRARIES    ${REQUIRED_LIBRARIES})
@@ -34,7 +33,7 @@ function(CheckArpackppCompiles TAG REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_
     message(STATUS "ARPACK++ TEST COMPILE CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
     message(STATUS "ARPACK++ TEST COMPILE CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
     message(STATUS "ARPACK++ TEST COMPILE CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
-
+    include(CheckCXXSourceCompiles)
     check_cxx_source_compiles("
         #include <complex>
         #if __has_include(<arpackpp/arcomp.h>)

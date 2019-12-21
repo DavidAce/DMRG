@@ -1,5 +1,6 @@
+include(cmake-modules/CheckGlogCompiles.cmake)
 
-# Glog should only look in conda on shared builds!
+    # Glog should only look in conda on shared builds!
 set(GLOG_HINTS $ENV{EBROOTGLOG} ${CMAKE_INSTALL_PREFIX} )
 if(BUILD_SHARED_LIBS)
     list(APPEND GLOG_HINTS ${CONDA_HINTS})
@@ -7,11 +8,13 @@ endif()
 
 find_package(glog 0.4 HINTS ${GLOG_HINTS} PATH_SUFFIXES glog glog/lib)
 
+
 if(NOT TARGET glog::glog)
     message(STATUS "Looking for glog in system")
     find_library(GLOG_LIBRARIES     glog           HINTS ${GLOG_HINTS})
     find_path   (GLOG_INCLUDE_DIR   glog/logging.h HINTS ${GLOG_HINTS})
-    if (GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
+    check_glog_compiles("lib_header" "" "" "${GLOG_LIBRARIES}" "${GLOG_INCLUDE_DIR}" "gflags::gflags")
+    if (GLOG_COMPILES_lib_header)
         add_library(glog::glog ${LINK_TYPE} IMPORTED)
         set_target_properties(glog::glog PROPERTIES IMPORTED_LOCATION "${GLOG_LIBRARIES}")
         target_include_directories(glog::glog SYSTEM INTERFACE ${GLOG_INCLUDE_DIR})
@@ -19,8 +22,9 @@ if(NOT TARGET glog::glog)
         message(STATUS "Found system glog: Don't forget to also install and link to libraries unwind and lzma")
     endif()
 endif()
-if(TARGET glog::glog)
 
+
+if(TARGET glog::glog)
 elseif(DOWNLOAD_MISSING)
     message(STATUS "glog will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
@@ -65,5 +69,10 @@ if(TARGET glog::glog)
     if(TARGET gflags::gflags)
         target_link_libraries(glog::glog INTERFACE gflags::gflags)
     endif()
-
+    check_glog_compiles("target" "-std=c++17" "" "" "" "glog::glog")
+    if(NOT GLOG_COMPILES_target)
+        include(cmake-modules/PrintTargetProperties.cmake)
+        print_target_properties(glog::glog)
+        message(FATAL_ERROR "Could not compile a simple glog program")
+    endif()
 endif()
