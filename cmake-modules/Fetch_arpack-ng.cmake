@@ -82,10 +82,10 @@ if(NOT TARGET arpack)
     set(ARPACK_LIBRARIES ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX})
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
 
-    add_dependencies(arpack external_ARPACK)
     add_library(arpack ${LINK_TYPE} IMPORTED)
     set_target_properties(arpack PROPERTIES
             IMPORTED_LOCATION                    "${ARPACK_LIBRARIES}"
             INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${ARPACK_INCLUDE_DIRS}")
     target_link_libraries(arpack INTERFACE blas lapack gfortran)
+    add_dependencies(arpack external_ARPACK)
 endif()
