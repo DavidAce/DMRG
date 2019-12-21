@@ -48,7 +48,7 @@ target_link_libraries(project-settings INTERFACE  -Wl,--whole-archive  pthread -
 
 include(cmake-modules/PrintTargetInfo.cmake)
 print_target_info(ceres::ceres)
-print_target_info(gflags)
+print_target_info(gflags::gflags)
 print_target_info(glog::glog)
 print_target_info(h5pp::h5pp)
 print_target_info(h5pp::deps)

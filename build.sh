@@ -25,6 +25,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --enable-tests             : Enable CTest tests
    | --prefer-conda             : Prefer libraries from anaconda
    | --no-modules               : Disable use of "module load"
+-v | --verbose                  : Verbose makefiles
 EXAMPLE:
 ./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-missing
 EOF
@@ -33,7 +34,7 @@ EOF
 
 
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st: \
+PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st:v \
                 --long "\
                 help\
                 arch:\
@@ -53,6 +54,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st: \
                 download-method:\
                 no-modules\
                 prefer-conda\
+                verbose\
                 extra-flags:\
                 "  -- "$@")
 
@@ -73,6 +75,7 @@ enable_openmp="OFF"
 enable_mkl="OFF"
 make_threads=1
 prefer_conda="OFF"
+verbose="OFF"
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
 echo "Enabled options:"
@@ -99,6 +102,7 @@ do
        --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs:    : ON"      ; shift   ;;
+    -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles        : ON"      ; shift   ;;
     --) shift; break;;
   esac
 done
@@ -226,6 +230,7 @@ cat << EOF >&2
     cmake -E make_directory build/$build_type
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type
+          -DCMAKE_VERBOSE_MAKEFILE=$verbose
           -DDOWNLOAD_MISSING=$download_missing  -DDOWNLOAD_METHOD=$download_method
           -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march
           -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp
@@ -240,6 +245,7 @@ if [ -z "$dry_run" ] ;then
     cmake -E make_directory build/$build_type
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type \
+          -DCMAKE_VERBOSE_MAKEFILE=$verbose \
           -DDOWNLOAD_MISSING=$download_missing -DDOWNLOAD_METHOD=$download_method \
           -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march \
           -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp \
@@ -262,7 +268,11 @@ if [ -z "$dry_run" ] ;then
 fi
 
 if [ "$enable_tests" = "ON" ] ;then
-    ctest
+    if [[ "$build_target" == *"test-"* ]]; then
+        ./build/$build_type/tests/$build_target
+    else
+       ctest
+    fi
 fi
 
 exit_code=$?

@@ -40,4 +40,10 @@ if(TARGET gflags)
         message(FATAL_ERROR "Found shared gflags library on a static build!")
     endif()
 
+    if(NOT TARGET gflags::gflags)
+        # Copy gflags to gflags::gflags to follow proper naming convention
+        include(cmake-modules/CopyTarget.cmake)
+        copy_target(gflags::gflags gflags)
+    endif()
+
 endif()
