@@ -1,13 +1,13 @@
 find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX}/arpack-ng)
 if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
-    add_library(arpack ${LINK_TYPE} IMPORTED)
-    set_target_properties(arpack PROPERTIES IMPORTED_LOCATION "${arpack_ng_LIBRARIES}")
-    target_include_directories(arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
-    target_link_libraries(arpack INTERFACE blas lapack gfortran)
+    add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
+    set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${arpack_ng_LIBRARIES}")
+    target_include_directories(arpack::arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
+    target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack gfortran::gfortran)
 
 endif()
 
-if (NOT TARGET arpack)
+if (NOT TARGET arpack::arpack)
     message(STATUS "Searching for arpack-ng in system")
     find_library(ARPACK_LIBRARIES
             NAMES arpack
@@ -18,14 +18,22 @@ if (NOT TARGET arpack)
         message(STATUS "Searching for arpack-ng - failed")
     else()
         message(STATUS "Searching for arpack-ng - Success: ${ARPACK_LIBRARIES}")
-        add_library(arpack ${LINK_TYPE} IMPORTED)
-        set_target_properties(arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
-        target_link_libraries(arpack INTERFACE blas lapack gfortran)
+        add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
+        set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
+        target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack  gfortran::gfortran)
+        if("${ARPACK_LIBRARIES}" MATCHES "usr" AND BUILD_SHARED_LIBS)
+            target_link_libraries(arpack::arpack INTERFACE lapacke openblas )
+            message(WARNING "Found arpack-ng in system as shared library. "
+                            "Make sure to use correct libraries libblas.so.3 and liblapack.so.3 "
+                            "by using \n"
+                            "sudo update-alternatives --config libblas.so.3-x86_64-linux-gnu \n"
+                            "sudo update-alternatives --config liblapack.so.3-x86_64-linux-gnu ")
+        endif()
     endif()
 endif()
 
 
-if(NOT TARGET arpack)
+if(NOT TARGET arpack::arpack)
     message(STATUS "Arpack-ng will be installed into ${CMAKE_INSTALL_PREFIX}/arpack-ng")
     if(BUILD_SHARED_LIBS)
         set(ARPACK_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
@@ -41,8 +49,8 @@ if(NOT TARGET arpack)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/filterTarget.cmake)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/PrintTargetInfo.cmake)
-    expand_target_libs(blas    EXPANDED_BLAS)
-    expand_target_libs(lapack  EXPANDED_LAPACK)
+    expand_target_libs(blas::blas       EXPANDED_BLAS)
+    expand_target_libs(lapack::lapack   EXPANDED_LAPACK)
     string (REPLACE ";" "$<SEMICOLON>" EXPANDED_BLAS_GENERATOR      "${EXPANDED_BLAS}")
     string (REPLACE ";" "$<SEMICOLON>" EXPANDED_LAPACK_GENERATOR    "${EXPANDED_LAPACK}")
 
@@ -74,16 +82,16 @@ if(NOT TARGET arpack)
             -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
             -DBLAS_LIBRARIES=${EXPANDED_BLAS_GENERATOR}
             -DLAPACK_LIBRARIES=${EXPANDED_LAPACK_GENERATOR}
-            DEPENDS blas lapack gfortran
+            DEPENDS blas::blas lapack::lapack gfortran::gfortran
             BUILD_BYPRODUCTS <INSTALL_DIR>/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX}
             )
     ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
     set(ARPACK_LIBRARIES ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX})
     set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
 
-    add_library(arpack ${LINK_TYPE} IMPORTED)
-    set_target_properties(arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
-    target_include_directories(arpack SYSTEM INTERFACE ${ARPACK_INCLUDE_DIRS})
-    target_link_libraries(arpack INTERFACE blas lapack gfortran)
-    add_dependencies(arpack external_ARPACK)
+    add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
+    set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
+    target_include_directories(arpack::arpack SYSTEM INTERFACE ${ARPACK_INCLUDE_DIRS})
+    target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack gfortran::gfortran)
+    add_dependencies(arpack::arpack external_ARPACK)
 endif()

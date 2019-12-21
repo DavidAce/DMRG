@@ -69,18 +69,18 @@ endfunction()
 
 
 
-if (NOT TARGET lapacke)
+if (NOT TARGET lapacke::lapacke)
     # Find from MKL
-    if(TARGET mkl)
+    if(TARGET mkl::mkl)
         # Try finding lapacke in MKL library
         message(STATUS "Searching for Lapacke in Intel MKL.")
         if(MKL_INCLUDE_DIR)
-            CheckLapackeCompiles("MKL" ""  "-DMKL_AVAILABLE"  "" "" "mkl")
+            CheckLapackeCompiles("MKL" ""  "-DMKL_AVAILABLE"  "" "" "mkl::mkl")
         endif()
 
         if(LAPACKE_COMPILES_MKL)
-            add_library(lapacke INTERFACE)
-            target_link_libraries(lapacke INTERFACE mkl)
+            add_library(lapacke::lapacke INTERFACE)
+            target_link_libraries(lapacke INTERFACE mkl::mkl)
             message(STATUS "Searching for Lapacke in Intel MKL - Success")
         else()
             message(STATUS "Searching for Lapacke in Intel MKL - failed")
@@ -91,17 +91,17 @@ endif()
 
 
 
-if (NOT TARGET lapacke)
-    if (TARGET OpenBLAS)
+if (NOT TARGET lapacke::lapacke)
+    if (TARGET openblas::openblas)
         message(STATUS "Searching for Lapacke in OpenBLAS")
         if(LAPACKE_DEBUG)
             include(cmake-modules/PrintTargetProperties.cmake)
-            print_target_properties(OpenBLAS)
+            print_target_properties(openblas::openblas)
         endif()
-        CheckLapackeCompiles("OpenBLAS" "" "" "" "" "OpenBLAS")
+        CheckLapackeCompiles("OpenBLAS" "" "" "" "" "openblas::openblas")
         if(LAPACKE_COMPILES_OpenBLAS)
-            add_library(lapacke INTERFACE)
-            target_link_libraries(lapacke INTERFACE OpenBLAS)
+            add_library(lapacke::lapacke INTERFACE IMPORTED)
+            target_link_libraries(lapacke::lapacke INTERFACE openblas::openblas)
             message(STATUS "Searching for Lapacke in OpenBLAS - Success")
         else()
             message(STATUS "Searching for Lapacke in OpenBLAS - failed")
@@ -111,8 +111,8 @@ endif()
 
 
 
-if (NOT TARGET lapacke)
-    if(TARGET lapack)
+if (NOT TARGET lapacke::lapacke)
+    if(TARGET lapack::lapack)
         message(STATUS "Searching for Lapacke in system")
         find_path(LAPACKE_INCLUDE_DIR
                 NAMES lapacke.h
@@ -131,38 +131,38 @@ if (NOT TARGET lapacke)
             CheckLapackeCompiles("lib_header" " "   " "
                     "${LAPACKE_LIBRARY}"
                     "${LAPACKE_INCLUDE_DIR}"
-                    "lapack"
+                    "lapack::lapack"
                     )
             if(LAPACKE_COMPILES_lib_header)
-                add_library(lapacke ${LINK_TYPE} IMPORTED)
-                set_target_properties(lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
-                target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
+                add_library(lapacke::lapacke ${LINK_TYPE} IMPORTED)
+                set_target_properties(lapacke::lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
+                target_include_directories(lapacke::lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
             endif()
         endif()
         if(NOT TARGET lapacke AND LAPACKE_INCLUDE_DIR)
             CheckLapackeCompiles("header" " "   " "
                     ""
                     "${LAPACKE_INCLUDE_DIR}"
-                    "lapack"
+                    "lapack::lapack"
                     )
             if(LAPACKE_COMPILES_header)
                 add_library(lapacke INTERFACE)
                 target_include_directories(lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
             endif()
         endif()
-        if(NOT TARGET lapacke AND LAPACKE_LIBRARY)
+        if(NOT TARGET lapacke::lapacke AND LAPACKE_LIBRARY)
             CheckLapackeCompiles("lib" " "   " "
                     "${LAPACKE_LIBRARY}"
                     ""
-                    "lapack"
+                    "lapack::lapack"
                     )
             if(LAPACKE_COMPILES_lib)
-                add_library(lapacke ${LINK_TYPE} IMPORTED)
+                add_library(lapacke::lapacke ${LINK_TYPE} IMPORTED)
                 set_target_properties(lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
             endif()
         endif()
-        if(TARGET lapacke)
-            target_link_libraries(lapacke INTERFACE blas lapack gfortran)
+        if(TARGET lapacke::lapacke)
+            target_link_libraries(lapacke INTERFACE blas::blas lapack::lapack gfortran::gfortran)
             message(STATUS "Searching for Lapacke in system - Success: ${LAPACKE_LIBRARY}")
         else()
             message(STATUS "Searching for Lapacke in system - failed")
@@ -174,6 +174,6 @@ endif()
 
 
 
-if(NOT TARGET lapacke)
+if(NOT TARGET lapacke::lapacke)
     message(FATAL_ERROR "Library LAPACKE could not be found.")
 endif()

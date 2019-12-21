@@ -13,7 +13,7 @@ include(cmake-modules/FindGFortran.cmake)
 if(ENABLE_MKL)
     include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 endif()
-if(NOT TARGET blas)
+if(NOT TARGET blas::blas)
     include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not on openblas will be used instead. Includes lapack.
 endif()
 include(cmake-modules/FindLapacke.cmake)                        # Lapacke needed by arpack++
@@ -53,7 +53,7 @@ conan_cmake_run(CONANFILE cmake-modules/conan/conanfile.txt
 target_link_libraries(project-settings INTERFACE CONAN_PKG::ceres-solver)
 target_link_libraries(project-settings INTERFACE CONAN_PKG::h5pp)
 target_link_libraries(project-settings INTERFACE CONAN_PKG::Eigen3)
-target_link_libraries(project-settings INTERFACE arpack++) # Last to use blas
+target_link_libraries(project-settings INTERFACE arpack::arpack++) # Last to use blas
 
 
 if(TARGET OpenMP)
@@ -66,19 +66,19 @@ endif()
 target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
 
 include(cmake-modules/PrintTargetInfo.cmake)
-print_target_info(arpack++)
-print_target_info(arpack)
-print_target_info(lapack)
-print_target_info(blas)
-print_target_info(lapacke)
-print_target_info(mkl)
-print_target_info(OpenBLAS)
-print_target_info(gfortran)
+print_target_info(arpack::arpack++)
+print_target_info(arpack::arpack)
+print_target_info(lapack::lapack)
+print_target_info(blas::blas)
+print_target_info(lapacke::lapacke)
+
 # Conan targets
 foreach(tgt ${CONAN_TARGETS})
-    if(NOT "${tgt}" MATCHES "Eigen|h5pp|ceres|arpack")
-        print_target_info(${tgt})
-    endif()
+    print_target_info(${tgt})
 endforeach()
 print_target_info(OpenMP)
+print_target_info(mkl::mkl)
+print_target_info(openblas::openblas)
+print_target_info(gfortran::gfortran)
+print_target_info(Threads::Threads)
 print_target_info(project-settings)
