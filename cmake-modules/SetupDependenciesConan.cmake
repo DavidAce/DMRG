@@ -32,9 +32,9 @@ include(cmake-modules/Fetch_arpack++.cmake)                     # LC++ frontend 
 find_program (
         CONAN_COMMAND
         conan
-        HINTS $ENV{CONAN_PREFIX}
-        PATHS $ENV{CONAN_PREFIX}/envs/dmrg $ENV{HOME}/anaconda3/envs/dmrg
-        PATH_SUFFIXES bin
+        HINTS $ENV{CONAN_PREFIX} $ENV{CONDA_PREFIX}
+        PATHS $ENV{HOME}/anaconda3 $ENV{HOME}/miniconda $ENV{HOME}/.conda
+        PATH_SUFFIXES bin envs/dmrg/bin
 )
 include(cmake-modules/conan/conan.cmake)
 conan_add_remote(NAME conan-dmrg INDEX 1

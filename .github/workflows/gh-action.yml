@@ -23,7 +23,7 @@ jobs:
       matrix:
         # Github Actions requires a single row to be added to the build matrix.
         # See https://help.github.com/en/articles/workflow-syntax-for-github-actions.
-        name: [ubuntu-18.04-gcc-8,ubuntu-18.04-gcc-9,ubuntu-18.04-clang-8,ubuntu-18.04-clang-9, ubuntu-18.04-clang-9-conda] # windows-2019-clang,windows-2019-gcc
+        name: [ubuntu-18.04-gcc-8,ubuntu-18.04-gcc-9-conan,ubuntu-18.04-clang-8,ubuntu-18.04-clang-9, ubuntu-18.04-clang-9-conda, ubuntu-18.04-clang-9-conan] # windows-2019-clang,windows-2019-gcc
         include:
           - name: ubuntu-18.04-gcc-8
             os: ubuntu-18.04
@@ -32,7 +32,7 @@ jobs:
             flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
             apt: gcc-8 g++-8 gfortran-8 libsz2 zlibc libopenblas-dev libarpack2-dev libarpack++2-dev liblapacke-dev libhdf5-dev libspdlog-dev libgflags-dev libgoogle-glog-dev libceres-dev libunwind-dev lzma libaec-dev
           
-          - name: ubuntu-18.04-gcc-9
+          - name: ubuntu-18.04-gcc-9-conan
             os: ubuntu-18.04
             compiler: gcc
             version: "9"
@@ -44,14 +44,14 @@ jobs:
             os: ubuntu-18.04
             compiler: clang
             version: "8"
-            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
+            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug -j 2
 
 
           - name: ubuntu-18.04-clang-9
             os: ubuntu-18.04
             compiler: clang
             version: "9"
-            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
+            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug -j 2
 
           - name: ubuntu-18.04-clang-9-conda
             os: ubuntu-18.04
@@ -59,9 +59,15 @@ jobs:
             version: "9"
             sources: conda
             conda: hdf5 hdf5-static eigen spdlog
-            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
-          
-          
+            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug -j 2
+
+          - name: ubuntu-18.04-clang-9-conan
+            os: ubuntu-18.04
+            compiler: clang
+            version: "9"
+            sources: conda conda
+            conda: conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+            flags: --download-missing --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug
           #- name: windows-2019-clang
           #  os: windows-2019
           #  compiler: clang
