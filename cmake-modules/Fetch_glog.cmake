@@ -5,19 +5,19 @@ include(cmake-modules/CheckGlogCompiles.cmake)
 # Yes, it's a mess. Here we add targets if they are present in the system
 # If not, we hope for the best making dummy targets.
 
+# ... Additionally, if only lzma is linked we get this weird error when linking ceres:
+#       undefined reference to
+#       `ceres::GradientProblemSolver::Summary::Summary()'
+# This could also be caused by using openblas from anaconda on Clang builds.
+# In any case the above error is more likely on Clang.
+
 find_package(Unwind) # If found defines target unwind::unwind
-if(NOT TARGET unwind::unwind)
-    add_library(unwind::unwind INTERFACE IMPORTED) #dummy
-endif()
 find_library(LZMA_LIB NAMES lzma)
-if(LZMA_LIB)
-    add_library(lzma::lzma ${LINK_TYPE} IMPORTED)
-    set_target_properties(lzma::lzma PROPERTIES IMPORTED_LOCATION "${LZMA_LIB}")
-else()
-    add_library(lzma::lzma INTERFACE IMPORTED) #dummy
+find_library(GCC_EH_LIB NAMES gcc_eh)
+add_library(unwind::full ${LINK_TYPE} IMPORTED)
+if(TARGET unwind::unwind AND LZMA_LIB AND GCC_EH_LIB)
+    target_link_libraries(unwind::full INTERFACE ${GCC_EH_LIB} unwind::unwind ${LZMA_LIB})
 endif()
-
-
 
 # Glog should only look in conda on shared builds! Conda does not give us the static version
 set(GLOG_HINTS $ENV{EBROOTGLOG} ${CMAKE_INSTALL_PREFIX} )
@@ -31,7 +31,9 @@ if(NOT TARGET glog::glog)
     message(STATUS "Looking for glog in system")
     find_library(GLOG_LIBRARIES     glog           HINTS ${GLOG_HINTS})
     find_path   (GLOG_INCLUDE_DIR   glog/logging.h HINTS ${GLOG_HINTS})
-    check_glog_compiles("lib_header" "" "" "${GLOG_LIBRARIES};gcc_eh;unwind::unwind;lzma::lzma;gflags::gflags;pthread" "${GLOG_INCLUDE_DIR}" "")
+    if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
+        check_glog_compiles("lib_header" "" "" "${GLOG_LIBRARIES};unwind::full;gflags::gflags;pthread" "${GLOG_INCLUDE_DIR}" "")
+    endif()
     if (GLOG_COMPILES_lib_header)
         add_library(glog::glog ${LINK_TYPE} IMPORTED)
         set_target_properties(glog::glog PROPERTIES IMPORTED_LOCATION "${GLOG_LIBRARIES}")
@@ -73,7 +75,7 @@ if(TARGET glog::glog)
 
     include(cmake-modules/TargetFilters.cmake)
     remove_library_shallow(glog::glog "Threads::Threads|pthread|unwind|gflags")
-    target_link_libraries(glog::glog INTERFACE gcc_eh unwind::unwind lzma::lzma gflags::gflags pthread )
+    target_link_libraries(glog::glog INTERFACE unwind::full gflags::gflags pthread )
 
     # Modernize
     get_property(imp_loc_set TARGET glog::glog PROPERTY IMPORTED_LOCATION SET) # Returns a boolean if set
