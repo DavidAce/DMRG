@@ -14,7 +14,7 @@ include(cmake-modules/CheckGlogCompiles.cmake)
 find_package(Unwind) # If found defines target unwind::unwind
 find_library(LZMA_LIB NAMES lzma)
 find_library(GCC_EH_LIB NAMES gcc_eh)
-add_library(unwind::full ${LINK_TYPE} IMPORTED)
+add_library(unwind::full INTERFACE IMPORTED)
 if(TARGET unwind::unwind AND LZMA_LIB AND GCC_EH_LIB)
     target_link_libraries(unwind::full INTERFACE gcc_eh unwind::unwind lzma)
 endif()
