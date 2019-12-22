@@ -34,7 +34,7 @@ elseif(DOWNLOAD_MISSING)
             )
 
     ExternalProject_Get_Property(external_ARPACK++ INSTALL_DIR)
-    add_library(arpack::arpack++ IMPORTED INTERFACE)
+    add_library(arpack::arpack++ INTERFACE IMPORTED)
     target_link_libraries(arpack::arpack++ INTERFACE lapacke::lapacke arpack::arpack)
     target_include_directories(arpack::arpack++ SYSTEM INTERFACE ${INSTALL_DIR}/include)
     add_dependencies(arpack::arpack++ external_ARPACK++)

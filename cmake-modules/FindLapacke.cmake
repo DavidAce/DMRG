@@ -79,7 +79,7 @@ if (NOT TARGET lapacke::lapacke)
         endif()
 
         if(LAPACKE_COMPILES_MKL)
-            add_library(lapacke::lapacke INTERFACE)
+            add_library(lapacke::lapacke INTERFACE IMPORTED)
             target_link_libraries(lapacke::lapacke INTERFACE mkl::mkl)
             message(STATUS "Searching for Lapacke in Intel MKL - Success")
         else()
