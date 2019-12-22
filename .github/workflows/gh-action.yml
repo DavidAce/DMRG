@@ -137,7 +137,7 @@ jobs:
           echo "::set-env name=PATH::$env:PATH"
       - name: Build
         run: | 
-          ./build.sh ${{ matrix.flags }}
+          ./build.sh --verbose ${{ matrix.flags }}
       - name: Test
         run: |
           cd build/Debug

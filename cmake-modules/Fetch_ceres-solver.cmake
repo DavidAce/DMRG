@@ -176,7 +176,8 @@ endif()
 
 
 if(TARGET ceres::ceres)
-    target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags gcc_eh unwind lzma Eigen3::Eigen pthread )
+    target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags Eigen3::Eigen pthread )
+
     if(TARGET openmp::openmp)
         target_link_libraries(ceres::ceres INTERFACE openmp::openmp )
     endif()
