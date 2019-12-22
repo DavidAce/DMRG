@@ -2,22 +2,12 @@
 include(cmake-modules/CheckCeresCompiles.cmake)
 
 # Can't use conda here since they only have shared libraries.
-# We also can't use apt-versions since they hardcode usage of Eigen3/Glog/Gflags
-# but we need our own patched Eigen3.
+# Can't use config-mode on anaconda either since they have weird requirements
+# on predefined targets for gflags and glog. Therefore -> NO_DEFAULT_PATH
 find_package(Ceres
         HINTS ${CMAKE_INSTALL_PREFIX}
         PATH_SUFFIXES ceres ceres/lib
         NO_DEFAULT_PATH)
-
-
-if(NOT TARGET ceres)
-    # We can't use config mode to find system ceres when doing static builds -- it injects filthy shared libs!
-    if(BUILD_SHARED_LIBS)
-        find_package(Ceres
-                HINTS  ${CMAKE_INSTALL_PREFIX}  $ENV{EBROOTCERES} $ENV{CONDA_PREFIX}
-                PATH_SUFFIXES ceres ceres/lib)
-    endif()
-endif()
 
 if(NOT TARGET ceres)
     message(STATUS "Looking for ceres in system")
