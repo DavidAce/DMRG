@@ -1,49 +1,105 @@
+
+
 function(expand_target_libs target_names expanded_list)
-    set(scoped_list)
-    foreach(target_name ${target_names})
-        if(TARGET ${target_name})
-            get_target_property(target_type  ${target_name} TYPE)
-            if(NOT "${target_type}" MATCHES "INTERFACE")
-                get_target_property(imported_lib  ${target_name} IMPORTED_LOCATION)
-                if(imported_lib)
-                    list(APPEND scoped_list ${imported_lib})
-                else()
-#                    message(STATUS "Trouble with imported lib ${target_name}: ${imported_lib}")
-                endif()
+    foreach(lib ${target_names})
+#        message("Checking if ${lib} is a target")
+        if(TARGET ${lib})
+            unset(interface_libs)
+            unset(imported_lib)
+#            message("Expanding target ${lib}")
+            get_target_property(lib_type  ${lib} TYPE)
+            if(NOT "${lib_type}" MATCHES "INTERFACE")
+                get_target_property(imported_lib  ${lib} IMPORTED_LOCATION)
             endif()
-            get_target_property(target_libs  ${target_name} INTERFACE_LINK_LIBRARIES)
-#            message("Iterating through: ${target_libs}")
-            foreach(lib ${target_libs})
-                if(TARGET ${lib})
-                    expand_target_libs(${lib} ${expanded_list})
-                elseif (lib)
-                    list(APPEND scoped_list ${lib})
-                else()
-#                    message(STATUS "Trouble with interface lib ${target_name}: ${lib}")
-                endif()
-            endforeach()
-        else()
-            list(APPEND scoped_list ${target_name})
+            get_target_property(interface_libs  ${lib} INTERFACE_LINK_LIBRARIES)
+            # Now we have all the libs in the target "lib".
+            # The imported lib is obviously not a target, but interface_libs may contain
+            # many other targets. That's ok, for now we only do one level of expansion.
+            if(imported_lib)
+                list(APPEND target_expanded_${lib}  ${imported_lib})
+            endif()
+            if(interface_libs)
+                list(APPEND target_expanded_${lib}  ${interface_libs})
+            endif()
+            list(APPEND target_expanded ${lib})
+#            message("Expanded target ${lib} into ${target_expanded_${lib}}")
         endif()
     endforeach()
-    #            message("Current scoped_list: ${scoped_list}")
-    #            message("Current ${expanded_list}: ${${expanded_list}}")
-    #            message("Returning:  ${scoped_list};${${expanded_list}}")
-    if(NOT ${expanded_list})
-        set(${expanded_list} "${scoped_list}" PARENT_SCOPE)
-    else()
-        # This way retains the order of link libraries (i.e. the last occurance is kept)
-        set(filtered_list "${scoped_list};${${expanded_list}}")
-        list(REVERSE "filtered_list")
-        list(REMOVE_DUPLICATES "filtered_list")
-        list(REVERSE "filtered_list")
-        set(${expanded_list} "${filtered_list}" PARENT_SCOPE)
 
-    endif()
+    set(target_names_expanded ${target_names})
+    foreach(lib ${target_expanded})
+        list(TRANSFORM target_names_expanded REPLACE "${lib}" "${target_expanded_${lib}}")
+    endforeach()
+
+    # Now we do the recursion.
+    # If there are any targets left in target_names_expanded, we call expand_target_libs again
+    # Note that nothing actually happens in the following two "foreach" if there are no targets left
+    foreach(lib ${target_names_expanded})
+        if(TARGET ${lib})
+            expand_target_libs(${lib} recursed_libs)
+            set(target_recursed_${lib} ${recursed_libs})
+            list(APPEND target_recursed ${lib})
+        endif()
+    endforeach()
+
+    foreach(lib ${target_recursed})
+        list(TRANSFORM target_names_expanded REPLACE "${lib}" "${target_recursed_${lib}}")
+    endforeach()
+
+    # Remove duplicates in a way that retains linking order, i.e. keep last occurrence
+    list(REVERSE "target_names_expanded")
+    list(REMOVE_DUPLICATES "target_names_expanded")
+    list(REVERSE "target_names_expanded")
+    # Return the expanded targets
+    set(${expanded_list} ${target_names_expanded} PARENT_SCOPE)
 endfunction()
 
 
+function(expand_target_libs_interface_only target_names expanded_list)
+    foreach(lib ${target_names})
+#        message("Checking if ${lib} is a target")
+        if(TARGET ${lib})
+            unset(interface_libs)
+            unset(imported_lib)
+#            message("Expanding target ${lib}")
+            get_target_property(interface_libs  ${lib} INTERFACE_LINK_LIBRARIES)
+            # Now we have all the libs in the target "lib".
+            # interface_libs may contain many other targets. That's ok, for now we only do one level of expansion.
+            if(interface_libs)
+                list(APPEND target_expanded_${lib}  ${interface_libs})
+            endif()
+            list(APPEND target_expanded ${lib})
+#            message("Expanded target ${lib} into ${target_expanded_${lib}}")
+        endif()
+    endforeach()
 
+    set(target_names_expanded ${target_names})
+    foreach(lib ${target_expanded})
+        list(TRANSFORM target_names_expanded REPLACE "${lib}" "${target_expanded_${lib}}")
+    endforeach()
+
+    # Now we do the recursion.
+    # If there are any targets left in target_names_expanded, we call expand_target_libs again
+    # Note that nothing actually happens in the following two "foreach" if there are no targets left
+    foreach(lib ${target_names_expanded})
+        if(TARGET ${lib})
+            expand_target_libs(${lib} recursed_libs)
+            set(target_recursed_${lib} ${recursed_libs})
+            list(APPEND target_recursed ${lib})
+        endif()
+    endforeach()
+
+    foreach(lib ${target_recursed})
+        list(TRANSFORM target_names_expanded REPLACE "${lib}" "${target_recursed_${lib}}")
+    endforeach()
+
+    # Remove duplicates in a way that retains linking order, i.e. keep last occurrence
+    list(REVERSE "target_names_expanded")
+    list(REMOVE_DUPLICATES "target_names_expanded")
+    list(REVERSE "target_names_expanded")
+    # Return the expanded targets
+    set(${expanded_list} ${target_names_expanded} PARENT_SCOPE)
+endfunction()
 
 function(expand_target_incs target_names expanded_list)
     foreach(target_name ${target_names})

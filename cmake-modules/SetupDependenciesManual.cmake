@@ -35,8 +35,8 @@ target_link_libraries(project-settings INTERFACE h5pp::h5pp h5pp::deps h5pp::fla
 target_link_libraries(project-settings INTERFACE Eigen3::Eigen) # Put it last in case Eigen wants to use blas
 target_link_libraries(project-settings INTERFACE arpack::arpack++)
 
-if(TARGET OpenMP)
-    target_link_libraries(project-settings INTERFACE OpenMP)
+if(TARGET openmp::openmp)
+    target_link_libraries(project-settings INTERFACE openmp::openmp)
 else()
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
@@ -65,7 +65,7 @@ print_target_info(mkl::mkl)
 print_target_info(openblas::openblas)
 print_target_info(gfortran::gfortran)
 print_target_info(Threads::Threads)
-print_target_info(OpenMP)
+print_target_info(openmp::openmp)
 print_target_info(project-settings)
 
 

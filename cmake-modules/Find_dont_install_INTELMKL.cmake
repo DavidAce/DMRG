@@ -22,7 +22,7 @@
 
 if (ENABLE_MKL)
     #    set(MKL_USE_STATIC_LIBS ON)
-    if(TARGET OpenMP)
+    if(TARGET openmp::openmp)
         set(MKL_MULTI_THREADED ON)
     endif()
     set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason... You need to use the mkl_set_interface_layer(int) to select at runtime, which is not good when building dependencies!
@@ -71,8 +71,8 @@ if (MKL_FOUND)
     # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
     add_library(mkl::mkl INTERFACE IMPORTED)
     target_link_libraries(mkl::mkl INTERFACE ${MKL_LIBRARIES})
-    if(TARGET OpenMP)
-        target_link_libraries(mkl::mkl INTERFACE OpenMP)
+    if(TARGET openmp::openmp)
+        target_link_libraries(mkl::mkl INTERFACE openmp::openmp)
     endif()
     target_link_libraries(mkl::mkl INTERFACE gfortran::gfortran)
     target_include_directories(mkl::mkl SYSTEM INTERFACE ${MKL_INCLUDE_DIR})
