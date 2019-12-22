@@ -52,7 +52,7 @@ ExternalProject_Add(external_ceres
         -DSUITESPARSE:BOOL=OFF
         -DCXSPARSE:BOOL=OFF
         -DSCHUR_SPECIALIZATIONS:BOOL=OFF
-        -DCUSTOM_BLAS:BOOL=OFF
+        -DCUSTOM_BLAS:BOOL=ON
 
 
 #        -Dgflags_DIR:PATH=${gflags_DIR}

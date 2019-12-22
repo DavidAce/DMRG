@@ -1,14 +1,30 @@
 function(find_OpenBLAS)
+
+    # We can't use openblas from conda when compiling with Clang.
+    # We seem to be able to use the one from apt though, so we add /usr to
+    # the hints.
+    # This means we are more likely to build it from source on Clang.
+    if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+        set(OPENBLAS_HINTS /usr   $ENV{EBROOTOPENBLAS})
+#        set(OPENBLAS_HINTS /usr ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS})
+        set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
+    else()
+        set(OPENBLAS_HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS})
+    endif()
+
+
+
     if(NOT TARGET openblas::openblas)
         message(STATUS "Searching for OpenBLAS config")
         find_package(OpenBLAS 0.3
-                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
+                HINTS ${OPENBLAS_HINTS}
                 PATHS
                     $ENV{EBROOTBLAS}
                     $ENV{BLAS_DIR}
                     $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
-                    lib OpenBLAS/lib OpenBLAS openblas
+                    lib OpenBLAS/lib OpenBLAS openblas lib/x86_64-linux-gnu
+                ${NO_DEFAULT_PATH}
                 )
 
         if(OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
@@ -41,15 +57,14 @@ function(find_OpenBLAS)
         message(STATUS "Searching for OpenBLAS in system")
         find_library(OpenBLAS_LIBRARIES
                 NAMES openblas
-                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
+                HINTS ${OPENBLAS_HINTS}
                 PATHS
                 $ENV{EBROOTBLAS}
-                ${CONDA_HINTS}
                 $ENV{BLAS_DIR}
                 $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
-                    lib openblas/lib OpenBLAS/lib openblas OpenBLAS
-
+                    lib openblas/lib OpenBLAS/lib openblas OpenBLAS lib/x86_64-linux-gnu
+                ${NO_DEFAULT_PATH}
                 )
         find_path(OpenBLAS_INCLUDE_DIRS
                 NAMES openblas_config.h
@@ -59,7 +74,7 @@ function(find_OpenBLAS)
                     $ENV{BLAS_DIR}
                     $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
-                    include openblas openblas/include OpenBLAS OpenBLAS/include blas/include
+                    include openblas openblas/include OpenBLAS OpenBLAS/include blas/include include/x86_64-linux-gnu
                 )
         if (OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
             add_library(openblas::openblas STATIC IMPORTED)
