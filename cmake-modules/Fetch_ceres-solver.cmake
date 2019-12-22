@@ -143,7 +143,7 @@ if(TARGET ceres AND NOT TARGET ceres::ceres )
     #   - using "-lpthread" instead of "pthread"
 
     get_target_property(CERES_TYPE ceres TYPE)
-    if(NOT CERES_TYPE MATCHES "${LINK_TYPE}")
+    if(CERES_TYPE MATCHES "SHARED" AND NOT BUILD_SHARED_LIBS)
         include(cmake-modules/PrintTargetProperties.cmake)
         print_target_properties(ceres)
         message(FATAL_ERROR "Found shared ceres library on a static build!")

@@ -67,7 +67,7 @@ endif()
 
 if(TARGET glog::glog)
     get_target_property(GLOG_TYPE glog::glog TYPE)
-    if(NOT GLOG_TYPE MATCHES "${LINK_TYPE}")
+    if(GLOG_TYPE MATCHES "SHARED" AND NOT BUILD_SHARED_LIBS)
         include(cmake-modules/PrintTargetProperties.cmake)
         print_target_properties(glog::glog)
         message(FATAL_ERROR "Found shared glog library on a static build!")
