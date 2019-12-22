@@ -19,13 +19,12 @@ endif()
 
 
 
-# Glog should only look in conda on shared builds!
+# Glog should only look in conda on shared builds! Conda does not give us the static version
 set(GLOG_HINTS $ENV{EBROOTGLOG} ${CMAKE_INSTALL_PREFIX} )
 if(BUILD_SHARED_LIBS)
     list(APPEND GLOG_HINTS ${CONDA_HINTS})
 endif()
-
-find_package(glog 0.4 HINTS ${GLOG_HINTS} PATH_SUFFIXES glog glog/lib NO_CMAKE_PACKAGE_REGISTRY)
+find_package(glog 0.4 HINTS ${GLOG_HINTS} PATH_SUFFIXES glog glog/lib NO_DEFAULT_PATH)
 
 
 if(NOT TARGET glog::glog)
