@@ -163,19 +163,6 @@ include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXOptional.cmake)
 CheckCXXOptional()
 
 
-#if (NOT TARGET Threads::Threads)
-    ### Adapt pthread for static/dynamic linking
-    ### This is to fix a segfault bug with threads described here:
-    ### https://stackoverflow.com/questions/35116327/when-g-static-link-pthread-cause-segmentation-fault-why
-#    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-#    set(THREADS_PREFER_PTHREAD_FLAG FALSE)
-#    find_package(Threads)
-#    if(TARGET Threads::Threads AND NOT BUILD_SHARED_LIBS)
-#        set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")
-#    endif()
-#endif()
-
-
 
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
@@ -257,6 +244,21 @@ message(STATUS "BUILD_SHARED_LIBS            : ${BUILD_SHARED_LIBS}")
 message(STATUS "BUILD_TESTS                  : ${BUILD_TESTS}")
 message(STATUS "BUILD_EXAMPLES               : ${BUILD_EXAMPLES}")
 message("=============================================================================")
+
+
+##################################################################
+### Preempt Threads::Threads                                   ###
+### It's looked for in dependencies, so we make it right       ###
+### before it's done wrong, i.e. with pthread instead of       ###
+### -lpthread.                                     ###
+##################################################################
+if(NOT TARGET Threads::Threads)
+    set(CMAKE_THREAD_PREFER_PTHREAD FALSE)
+    set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+    find_package(Threads)
+    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES pthread)
+endif()
+
 
 
 ###########################################
