@@ -47,7 +47,7 @@ if(NOT TARGET arpack::arpack)
     ### of the list to be passed.
     ####################################################################
     include(${PROJECT_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
-    include(${PROJECT_SOURCE_DIR}/cmake-modules/filterTarget.cmake)
+    include(${PROJECT_SOURCE_DIR}/cmake-modules/TargetFilters.cmake)
     include(${PROJECT_SOURCE_DIR}/cmake-modules/PrintTargetInfo.cmake)
     expand_target_libs(blas::blas       EXPANDED_BLAS)
     expand_target_libs(lapack::lapack   EXPANDED_LAPACK)

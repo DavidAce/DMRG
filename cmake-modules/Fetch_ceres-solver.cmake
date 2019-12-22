@@ -62,8 +62,6 @@ if(NOT TARGET ceres)
             endforeach()
             target_include_directories(ceres::ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
             target_include_directories(ceres::ceres SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
-#            target_link_libraries(ceres::ceres INTERFACE glog::glog gflags::gflags Eigen3::Eigen)
-
         endif()
     endif()
 endif()
@@ -171,7 +169,7 @@ if(TARGET ceres AND NOT TARGET ceres::ceres )
     endif()
 
 
-    # Copy gflags to gflags::gflags to follow proper naming convention
+    # Copy ceres to ceres::ceres to follow proper naming convention
     include(cmake-modules/CopyTarget.cmake)
     copy_target(ceres::ceres ceres)
 endif()
