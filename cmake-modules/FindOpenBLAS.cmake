@@ -5,8 +5,7 @@ function(find_OpenBLAS)
     # the hints.
     # This means we are more likely to build it from source on Clang.
     if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-        set(OPENBLAS_HINTS /usr   $ENV{EBROOTOPENBLAS})
-#        set(OPENBLAS_HINTS /usr ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS})
+        set(OPENBLAS_HINTS /usr ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS})
         set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
     else()
         set(OPENBLAS_HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS})
@@ -68,13 +67,14 @@ function(find_OpenBLAS)
                 )
         find_path(OpenBLAS_INCLUDE_DIRS
                 NAMES openblas_config.h
-                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
+                HINTS ${OPENBLAS_HINTS}
                 PATHS
                     $ENV{EBROOTBLAS}
                     $ENV{BLAS_DIR}
                     $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
                     include openblas openblas/include OpenBLAS OpenBLAS/include blas/include include/x86_64-linux-gnu
+                ${NO_DEFAULT_PATH}
                 )
         if (OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
             add_library(openblas::openblas STATIC IMPORTED)
