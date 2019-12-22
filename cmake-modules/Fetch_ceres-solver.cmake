@@ -152,7 +152,7 @@ if(TARGET ceres AND NOT TARGET ceres::ceres )
     #Remove any shared libraries like unwind etc which pollute static builds
     # As a matter of fact... just relink it entirely
     include(cmake-modules/TargetFilters.cmake)
-    remove_library_shallow(ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|unwind|glog|gflags")
+    remove_library_shallow(ceres "gcc_eh|unwind|lzma|Threads::Threads|pthread|glog|gflags")
 
 #    if(NOT BUILD_SHARED_LIBS)
 #    include(cmake-modules/TargetFilters.cmake)
