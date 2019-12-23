@@ -5,7 +5,7 @@
 #include "class_selfdual_tf_rf_ising_normal.h"
 #include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <general/nmspc_random_numbers.h>
+#include <math/nmspc_random.h>
 #include <iomanip>
 #include <math/nmspc_math.h>
 #include <simulation/nmspc_settings.h>

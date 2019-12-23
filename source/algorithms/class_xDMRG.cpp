@@ -7,7 +7,7 @@
 #include <state/class_state_finite.h>
 #include <tools/nmspc_tools.h>
 #include <tools/finite/opt.h>
-#include <general/nmspc_random_numbers.h>
+#include <math/nmspc_random.h>
 #include "class_xDMRG.h"
 
 
