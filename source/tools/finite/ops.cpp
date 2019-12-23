@@ -137,7 +137,7 @@ class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector(c
     else if (parity_sector == "-z") {return get_projection_to_parity_sector(state, qm::spinOneHalf::sz,-1);}
     else if (parity_sector == "randomAxis"){
         std::vector<std::string> possibilities = {"x","y","z"};
-        std::string chosen_axis = possibilities[rn::uniform_integer(0,2)];
+        std::string chosen_axis = possibilities[rn::uniform_integer_box(0, 2)];
         get_projection_to_closest_parity_sector(state, chosen_axis);
     }
     else if (parity_sector == "random"){

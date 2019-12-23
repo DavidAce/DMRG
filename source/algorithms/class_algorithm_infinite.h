@@ -33,7 +33,8 @@ public:
     void run()                                                                                  override;
 //    void compute_observables()                                                                  final;
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
-    void reset_to_random_state(const std::string parity_secto = "random", int seed_state = -1)  final;
+    void reset_to_random_state(const std::string & parity_sector = "random")                    final;
+    void reset_to_initial_state()                                                               final;
     void clear_saturation_status()                                                              override;
 
     void write_state        (bool result = false)                                               final;

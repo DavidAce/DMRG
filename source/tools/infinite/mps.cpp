@@ -34,7 +34,7 @@ void tools::infinite::mps::initialize  (class_state_infinite & state, std::strin
 
 
 
-class_state_infinite tools::infinite::mps::set_random_state(const class_state_infinite & state, [[maybe_unused]] std::string parity, [[maybe_unused]]  int seed_state){
+class_state_infinite tools::infinite::mps::set_random_state(const class_state_infinite & state, [[maybe_unused]] std::string parity){
     throw std::runtime_error("You need to implement set random state for infinite state");
     return state;
 }

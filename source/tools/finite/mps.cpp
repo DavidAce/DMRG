@@ -31,10 +31,10 @@ void tools::finite::mps::initialize(class_state_finite &state, const size_t leng
 
 
 
-void tools::finite::mps::randomize(class_state_finite &state, const std::string &parity_sector, int seed_state, bool use_pauli_eigenstates, bool enumeration)
+void tools::finite::mps::randomize(class_state_finite &state, const std::string &parity_sector, long state_number, bool use_pauli_eigenstates)
 /*!
  * There are many ways to randomize an initial product state state, based on the
- * arguments (parity_sector,seed_state,use_pauli_eigenstates, enumeration) = (string,int,true/false,true/false).
+ * arguments (parity_sector,state_number,use_pauli_eigenstates) = (string,long,true/false).
  * Let "+-sector" mean one of {"x","+x","-x","y","+y","-y", "z","+z","-z"}.
 
         a) ("+-sector"  ,+- ,t,f)   Set spinors to a random sequence of eigenvectors (up/down) of either
@@ -64,13 +64,8 @@ void tools::finite::mps::randomize(class_state_finite &state, const std::string 
     state.clear_cache();
     state.tag_all_sites_have_been_updated(false);
 
-    if(seed_state >= 0 and internals::seed_state_unused){
-        rn::seed(seed_state);
-        internals::seed_state_unused = false;
-    }
-
-    if   (enumeration)
-         internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, seed_state);
+    if   (state_number >= 0)
+         internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, state_number);
     else internals::set_product_state_randomly(state, parity_sector, use_pauli_eigenstates);
     tools::finite::mps::rebuild_environments(state);
 }

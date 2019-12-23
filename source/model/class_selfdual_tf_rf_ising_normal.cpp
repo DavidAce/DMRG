@@ -127,8 +127,8 @@ void class_selfdual_tf_rf_ising_normal::randomize_hamiltonian(){
 }
 
 void class_selfdual_tf_rf_ising_normal::perturb_hamiltonian(double amplitude){
-    h_ptb  = - amplitude * h_rnd;//* rn::uniform_double(0,1);
-    J_ptb  = - amplitude * J_rnd;//* rn::uniform_double(0,1);
+    h_ptb  = - amplitude * h_rnd;//* rn::uniform_double_box(0,1);
+    J_ptb  = - amplitude * J_rnd;//* rn::uniform_double_box(0,1);
     if(all_mpo_parameters_have_been_set or mpo_internal.size()>5){
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - e_reduced * Id);
         mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(J_rnd + J_ptb) * sz);

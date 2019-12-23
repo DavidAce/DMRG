@@ -27,8 +27,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
-    tools::finite::mpo::randomize(*state,settings::model::seed_model);
-    tools::finite::mps::randomize(*state,settings::model::initial_parity_sector,settings::model::seed_state);
+    tools::finite::mpo::randomize(*state);
+    tools::finite::mps::randomize(*state,settings::model::initial_parity_sector,settings::model::state_number);
     tools::finite::mps::rebuild_environments(*state);
 
     tools::finite::debug::check_integrity(*state);
@@ -275,18 +275,26 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
 
 
 
-void class_algorithm_finite::reset_to_random_state(const std::string parity_sector, int seed_state) {
-    log->trace("Resetting MPS to random product state in parity sector: {} with seed {}", parity_sector,seed_state);
+void class_algorithm_finite::reset_to_initial_state() {
+    log->trace("Resetting MPS to initial product state in parity sector: {}, state number {}",
+               settings::model::initial_parity_sector,settings::model::state_number, settings::model::use_pauli_eigvecs);
     if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
-    // Randomize state
-    tools::finite::mps::randomize(*state,parity_sector,seed_state, settings::model::use_pauli_eigvecs, settings::model::use_seed_state_as_enumeration);
-//    tools::finite::mps::project_to_closest_parity_sector(*state, parity_sector);
+    // Initialize state
+    tools::finite::mps::randomize(*state, settings::model::initial_parity_sector,settings::model::state_number, settings::model::use_pauli_eigvecs);
     clear_saturation_status();
     state->lowest_recorded_variance = 1;
     sim_status.iteration = state->reset_sweeps();
-
 }
 
+void class_algorithm_finite::reset_to_random_state(const std::string & parity_sector) {
+    log->trace("Resetting MPS to random product state in parity sector: {}", parity_sector);
+    if (state->get_length() != (size_t)num_sites()) throw std::range_error("System size mismatch");
+    // Randomize state
+    tools::finite::mps::randomize(*state, parity_sector,-1, settings::model::use_pauli_eigvecs);
+    clear_saturation_status();
+    state->lowest_recorded_variance = 1;
+    sim_status.iteration = state->reset_sweeps();
+}
 
 
 

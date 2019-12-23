@@ -32,7 +32,7 @@ int get_elem(const std::string & parity_sector){
     int sign = get_sign(parity_sector);
     if (sign == 1 ) return 0;
     if (sign == -1) return 1;
-    if (sign == 0 ) return rn::uniform_integer_1();
+    if (sign == 0 ) return rn::uniform_integer_01();
     throw std::runtime_error("Invalid sign in get_elem.");
 }
 
@@ -48,34 +48,42 @@ Eigen::Vector2cd get_eigvec(const std::string & parity, const int sign){
     throw std::runtime_error(fmt::format("get_eigvec given invalid parity sector: {} in {}", parity,sign));
 }
 
-void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset(class_state_finite & state, const std::string &parity_sector, const int seed_state){
-    if (seed_state < 0){
-        throw std::runtime_error(fmt::format("Can't set sector from bitset with negative seed_state: {}", seed_state));
+void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset(class_state_finite & state, const std::string &parity_sector, const long state_number){
+    if (state_number < 0){
+        throw std::runtime_error(fmt::format("Can't set sector from bitset with negative state number: {}", state_number));
     }
     std::vector<std::string> ok_parity_sectors = {"x","+x","-x","y","+y","-y", "z","+z","-z"};
     bool parity_sector_is_defined = std::find(ok_parity_sectors.begin(), ok_parity_sectors.end(), parity_sector) != ok_parity_sectors.end();
     if (not parity_sector_is_defined)
-        throw std::logic_error(fmt::format("Can't use seed_state as enumeration when parity_sector is not well defined. Got: {}", parity_sector));
+        throw std::logic_error(fmt::format("Can't use bitfield of state_number {} to set product state in sector [{}]. Choose one of (+-) x,y or z.",state_number, parity_sector));
 
 
-    constexpr int maxbits = 128;
-    if (maxbits > state.get_length()) throw std::range_error("Max supported state length for bitset is 128");
-    std::bitset<maxbits> bs (seed_state);
+    constexpr long maxbits = 128;
+    if (maxbits < state.get_length()) throw std::range_error("Max supported state length for bitset is 128");
+    std::bitset<maxbits> bs (state_number);
+    std::vector<int>  bs_vec;
+    std::vector<std::string> ud_vec;
+    for(int i = 0; i < state.get_length() ; i++ ) bs_vec.emplace_back(bs[i]) ;
     std::string axis = get_axis(parity_sector);
     int sector       = get_sign(parity_sector);
     Eigen::Tensor<Scalar,1> L (1);
     L.setConstant(1.0);
+    tools::log->info("Initializing state from bitfield of state number {} with eigvecs of σ{} in sector {}: {}", state_number, axis,sector, bs_vec);
     int carry_sign = 1;
     for (auto &mpsL : state.MPS_L ){
         int sign = 2*bs[mpsL.get_position()] - 1;
         carry_sign *= sign;
         mpsL.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(),2,1,1), L);
+        std::string arrow = sign < 0 ? "↓" : "↑";
+        ud_vec.emplace_back(arrow);
     }
     state.MPS_L.back().set_LC(L);
     for (auto &mpsR : state.MPS_R ){
         int sign = 2*bs[mpsR.get_position()] - 1;
         carry_sign *= sign;
         mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(),2,1,1), L);
+        std::string arrow = sign < 0 ? "↓" : "↑";
+        ud_vec.emplace_back(arrow);
     }
 
     if(sector * carry_sign == -1){
@@ -84,7 +92,11 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
         int sign = 2*bs[mpsR.get_position()] - 1;
         sign *= -1;
         mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(),2,1,1), L);
+        std::string arrow = sign < 0 ? "↓" : "↑";
+        ud_vec.back() = arrow;
     }
+    tools::log->info("Initialized  state from bitfield of state number {} with eigvecs of σ{} in sector {}: {}", state_number, axis,carry_sign, ud_vec);
+
 }
 
 
@@ -99,13 +111,13 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
 
     L.setConstant(1.0);
     for (auto &mpsL : state.MPS_L ){
-        int sign = 2*rn::uniform_integer_1()-1;
+        int sign = 2* rn::uniform_integer_01() - 1;
         carry_sign *= sign;
         mpsL.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
     }
     state.MPS_L.back().set_LC(L);
     for (auto &mpsR : state.MPS_R ){
-        int sign = 2*rn::uniform_integer_1()-1;
+        int sign = 2* rn::uniform_integer_01() - 1;
         carry_sign *= sign;
         last_sign = sign;
         mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
@@ -135,7 +147,7 @@ void tools::finite::mps::internals::set_product_state_randomly(class_state_finit
     }
     else if (parity_sector == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
-        std::string chosen_axis = possibilities[rn::uniform_integer(0, 2)];
+        std::string chosen_axis = possibilities[rn::uniform_integer_box(0, 2)];
         set_product_state_in_parity_sector_randomly(state, chosen_axis);
     }else if (parity_sector == "random") {
         Eigen::Tensor<Scalar,1> L (1);

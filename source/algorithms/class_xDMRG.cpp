@@ -30,8 +30,14 @@ void class_xDMRG::run_preprocessing() {
     state->set_chi_max(chi_max());
     sim_status.chi_max = chi_max();
     update_bond_dimension_limit(chi_init());
-    tools::finite::mps::internals::seed_state_unused = true;
-    reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
+    if(settings::model::state_number >= 0){
+        reset_to_initial_state();
+    }else{
+        reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
+    }
+    auto spin_components = tools::finite::measure::spin_components(*state);
+    log->info("Initial spin components: {}", spin_components);
+
     tools::common::profile::t_pre.toc();
     log->info("Finished {} preprocessing", sim_name);
 }

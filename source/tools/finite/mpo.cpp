@@ -19,14 +19,9 @@ void tools::finite::mpo::initialize(class_state_finite & state, const size_t len
 }
 
 
-void tools::finite::mpo::randomize(class_state_finite &state, int seed_model) {
+void tools::finite::mpo::randomize(class_state_finite &state) {
     tools::log->trace("Setting random fields in MPO's");
-    if (seed_model >= 0){
-        rn::seed(seed_model);
-    }
     std::vector<std::vector<double>> all_params;
-
-
 
     for (auto &mpo : state.MPO_L){
         mpo->randomize_hamiltonian();
@@ -36,8 +31,6 @@ void tools::finite::mpo::randomize(class_state_finite &state, int seed_model) {
         mpo->randomize_hamiltonian();
         all_params.push_back(mpo->get_parameter_values());
     }
-
-    //
 
     for (auto &mpo : state.MPO_L){
         mpo->set_full_lattice_parameters(all_params,false);

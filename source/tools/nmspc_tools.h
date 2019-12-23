@@ -44,24 +44,22 @@ namespace tools{
         using Scalar = std::complex<double>;
         namespace mps {
             extern void initialize                          (class_state_finite & state, size_t length);
-            extern void randomize                           (class_state_finite &state, const std::string &parity_sector = "random", int seed_state = -1, bool use_pauli_eigenstates = false, bool enumeration =  false);
+            extern void randomize                           (class_state_finite &state, const std::string &parity_sector, const long state_number, const bool use_pauli_eigenstates = false);
             extern void normalize                           (class_state_finite & state, const std::optional<size_t> chi_lim = std::nullopt);
             extern void rebuild_environments                (class_state_finite & state);
             extern int  move_center_point                   (class_state_finite & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
             extern void project_to_closest_parity_sector    (class_state_finite & state, std::string paulistring);
 
             namespace internals{
-                inline bool seed_state_unused = true;
-                extern void set_product_state_in_parity_sector_from_bitset(class_state_finite & state, const std::string &parity_sector, const int seed_state);
+                extern void set_product_state_in_parity_sector_from_bitset(class_state_finite & state, const std::string &parity_sector, const long state_number);
                 extern void set_product_state_in_parity_sector_randomly(class_state_finite & state, const std::string &parity_sector);
                 extern void set_product_state_randomly(class_state_finite & state, const std::string &parity_sector, bool use_pauli_eigenstates);
             }
-
         }
 
         namespace mpo {
             extern void initialize                 (class_state_finite & state, size_t length, std::string model_type);
-            extern void randomize                  (class_state_finite & state, int seed_state = -1);
+            extern void randomize                  (class_state_finite & state);
             extern void reduce_mpo_energy          (class_state_finite & state);
             extern void reduce_mpo_energy_multi    (class_state_finite & state);
             extern void reduce_mpo_energy_2site    (class_state_finite & state);
@@ -254,7 +252,7 @@ namespace tools{
 
         namespace mps{
             extern void initialize                          (class_state_infinite & state, std::string model_type_str);
-            extern class_state_infinite set_random_state    (const class_state_infinite & state, [[maybe_unused]]  std::string parity, [[maybe_unused]] int seed_state);
+            extern class_state_infinite set_random_state    (const class_state_infinite & state, [[maybe_unused]]  std::string parity);
         }
 
         namespace env{
@@ -263,9 +261,8 @@ namespace tools{
         }
 
         namespace mpo{
-            extern void initialize                          (class_state_infinite & state, std::string model_type_str);
-            extern void randomize                           (class_state_infinite &state, int seed_model);
-
+            extern void initialize                          (class_state_infinite & state, const  std::string & model_type_str);
+            extern void randomize                           (class_state_infinite &state);
             }
         namespace opt{
             extern Eigen::Tensor<Scalar,4> find_ground_state(const class_state_infinite & state, std::string ritz = "SR");

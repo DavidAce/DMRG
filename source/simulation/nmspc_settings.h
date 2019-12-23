@@ -52,9 +52,8 @@ namespace settings {
     //Parameters for the model Hamiltonian
     namespace model {
         inline std::string  model_type                              = "tf_ising";         /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising selfdual_tf_rf_ising_normal}  */
-        inline int          seed_model                              = 1;                  /*!< Main seed for the random number generator. Used for the random fields in the Hamiltonian. */
-        inline int          seed_state                              = -1;                 /*!< Seed for generating the initial state. If seed_state < 0, seed_init is used instead  */
-        inline bool         use_seed_state_as_enumeration           = true;               /*!< Use the bit field of seed_state to enumerate initial states in the basis hinted by initial_sector.  */
+        inline long         seed                                    = 1;                  /*!< Main seed for the random number generator. */
+        inline long         state_number                            = -1;                 /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Only positive state numbers are used */
         inline bool         projection_when_growing_chi             = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
         inline bool         projection_trial_when_stuck             = true;               /*!< Project to target parity sector at each sweep when stuck. */
         inline bool         projection_on_every_sweep               = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
