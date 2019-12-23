@@ -44,8 +44,8 @@ NOTE                        : Order of argument matters. In particular, set seed
 -h                          : Help. Shows this text.
 -i <input file>             : Full or relative path of the input file that configures the simulation (default = input.cfg)
 -l                          : Enables loading from the given output file (i.e., from a previous simulation)
--r <seed rng>               : Positive number that seeds the random number generator, used for model params (default = 1)
--s <seed state>             : Positive number that seed the initial state. Negative is unused (default -1)
+-r <seed>                   : Positive number that seeds the random number generator (default = 1)
+-s <state number>           : Positive number whose bitfield sets the initial product state. Negative is unused (default -1)
 -o <output file>            : Full or relative path to the output file (output)
 -x                          : Do not append seed to the output filename.
 
@@ -115,19 +115,18 @@ int main(int argc, char* argv[]) {
             }
             case 'l': load_previous = true; continue;
             case 'r': {
-                int seed_init = (int) std::strtol(optarg,nullptr,10);
-                if(seed_init >= 0){
-                    log->info("Replacing model::seed_model {} -> {}", settings::model::seed_model, seed_init);
-                    settings::model::seed_model = seed_init;
-
+                long seed = std::strtol(optarg,nullptr,10);
+                if(seed >= 0){
+                    log->info("Replacing model::seed_model {} -> {}", settings::model::seed, seed);
+                    settings::model::seed = seed;
                 }
                 continue;
             }
             case 's': {
-                int seed_state = (int) std::strtol(optarg,nullptr,10);
-                if(seed_state >= 0) {
-                    log->info("Replacing model::seed_state {} -> {}", settings::model::seed_state,seed_state);
-                    settings::model::seed_state = seed_state;
+                long state_number =  std::strtol(optarg,nullptr,10);
+                if(state_number >= 0) {
+                    log->info("Replacing model::seed_state {} -> {}", settings::model::state_number,state_number);
+                    settings::model::state_number = state_number;
                 }
                 continue;
             }
@@ -155,19 +154,19 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (not load_previous and append_seed and settings::model::seed_model >= 0 ){
+    if (not load_previous and append_seed and settings::model::seed >= 0 ){
         //Append the seed_model to the output filename
         fs::path oldFileName = settings::output::output_filename;
         fs::path newFileName = settings::output::output_filename;
-        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_model) + oldFileName.extension().string() );
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed) + oldFileName.extension().string() );
         settings::output::output_filename = newFileName.string();
         log->info("Appended model::seed_model to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
     }
-    if (not load_previous and append_seed and settings::model::seed_state >= 0){
+    if (not load_previous and append_seed and settings::model::state_number >= 0){
         //Append the seed_state to the output filename
         fs::path oldFileName = settings::output::output_filename;
         fs::path newFileName = settings::output::output_filename;
-        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::seed_state) + oldFileName.extension().string() );
+        newFileName.replace_filename(oldFileName.stem().string() + "_" + std::to_string(settings::model::state_number) + oldFileName.extension().string() );
         settings::output::output_filename = newFileName.string();
         log->info("Appended model::seed_state to output filename: [{}] --> [{}]",oldFileName.string(), newFileName.string());
     }
@@ -177,9 +176,9 @@ int main(int argc, char* argv[]) {
 
 
     #ifdef _OPENMP
-        if(settings::threading::num_threads_omp   <= 0) { settings::threading::num_threads_omp   = std::thread::hardware_concurrency(); }
-        if(settings::threading::num_threads_eigen <= 0) { settings::threading::num_threads_eigen = std::thread::hardware_concurrency(); }
-        if(settings::threading::num_threads_blas  <= 0) { settings::threading::num_threads_blas  = std::thread::hardware_concurrency(); }
+        if(settings::threading::num_threads_omp   <= 0) { settings::threading::num_threads_omp   = (int)std::thread::hardware_concurrency(); }
+        if(settings::threading::num_threads_eigen <= 0) { settings::threading::num_threads_eigen = (int)std::thread::hardware_concurrency(); }
+        if(settings::threading::num_threads_blas  <= 0) { settings::threading::num_threads_blas  = (int)std::thread::hardware_concurrency(); }
 
         omp_set_num_threads(settings::threading::num_threads_omp);
         Eigen::setNbThreads(settings::threading::num_threads_eigen);
@@ -212,8 +211,10 @@ int main(int argc, char* argv[]) {
 
 
 
-    // Seed only this once (This also takes care of srand used by Eigen
-    rn::seed(settings::model::seed_model);
+    // Seed with random::device initially (This also takes care of srand used by Eigen)
+    // Note that we re-seed if a seed_model or seed_state is given also.
+    // This is to make reproducible simulations
+    rn::seed(settings::model::seed);
 
 
     //Initialize the algorithm class

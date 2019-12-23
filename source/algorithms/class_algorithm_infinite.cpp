@@ -21,7 +21,7 @@ class_algorithm_infinite::class_algorithm_infinite(
     state->set_chi_lim(2); //Can't call chi_init() <-- it's a pure virtual function
     tools::infinite::mpo::initialize(*state, settings::model::model_type);
     tools::infinite::mps::initialize(*state, settings::model::model_type);
-    tools::infinite::mpo::randomize(*state,settings::model::seed_model);
+    tools::infinite::mpo::randomize(*state);
     tools::infinite::env::initialize(*state);
     tools::infinite::debug::check_integrity(*state);
 
@@ -190,12 +190,21 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
 
 
 
-void class_algorithm_infinite::reset_to_random_state(const std::string parity, int seed_state) {
+void class_algorithm_infinite::reset_to_initial_state() {
     log->trace("Resetting MPS to random product state");
     sim_status.iteration = 0;
 
     // Randomize state
-    *state = tools::infinite::mps::set_random_state(*state,parity, seed_state);
+    *state = tools::infinite::mps::set_random_state(*state,settings::model::initial_parity_sector);
+    clear_saturation_status();
+}
+
+void class_algorithm_infinite::reset_to_random_state(const std::string &parity) {
+    log->trace("Resetting MPS to random product state");
+    sim_status.iteration = 0;
+
+    // Randomize state
+    *state = tools::infinite::mps::set_random_state(*state,parity);
     clear_saturation_status();
 }
 

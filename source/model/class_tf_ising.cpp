@@ -22,7 +22,7 @@ class_tf_ising::class_tf_ising(size_t position_, std::string logName): class_mod
 
     extent4     = {1, 1, spin_dim, spin_dim};
     extent2     = {spin_dim, spin_dim};
-    r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
+    r_rnd_field = rn::uniform_double_box(-w_rnd_strength, w_rnd_strength);
 
     qm::spinOneHalf::SX = qm::gen_manybody_spin(sx, 2);
     qm::spinOneHalf::SY = qm::gen_manybody_spin(sy, 2);
@@ -98,14 +98,14 @@ void class_tf_ising::build_mpo()
 }
 
 void class_tf_ising::randomize_hamiltonian(){
-    r_rnd_field = rn::uniform_double(-w_rnd_strength,w_rnd_strength);
+    r_rnd_field = rn::uniform_double_box(-w_rnd_strength, w_rnd_strength);
     if(all_mpo_parameters_have_been_set or mpo_internal.size()>3){
         mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field+r_ptb_field + r_rnd_field) * sx - e_reduced * Id);
     }
 }
 
 void class_tf_ising::perturb_hamiltonian(double amplitude){
-    r_ptb_field  = amplitude * r_rnd_field * rn::uniform_double(-1,1);
+    r_ptb_field  = amplitude * r_rnd_field * rn::uniform_double_box(-1, 1);
     if(all_mpo_parameters_have_been_set or mpo_internal.size()>3){
         mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(g_mag_field+r_ptb_field + r_rnd_field) * sx - e_reduced * Id);
     }
