@@ -9,7 +9,7 @@
 #include <math/arpack_extra/matrix_product_stl.h>
 #include <state/class_state_finite.h>
 #include <simulation/nmspc_settings.h>
-#include <general/nmspc_random_numbers.h>
+#include <math/nmspc_random.h>
 
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
