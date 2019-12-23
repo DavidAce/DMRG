@@ -8,10 +8,17 @@
 #include <iostream>
 #include <complex>
 #include <Eigen/Core>
+#include "pcg/pcg_random.hpp"
+
 
 namespace rn{
     //Random functions
-    extern std::mt19937 rng;
+//    extern std::mt19937 rng;
+
+
+    // Make a random number engine
+    extern pcg32 rng;
+
     extern void seed(unsigned long n);
     extern int uniform_integer_1();
     extern int uniform_integer(const int min, const int max);
