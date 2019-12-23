@@ -24,29 +24,29 @@
 ---
 ## Installation
 ### Quick start
-- Git clone and build with `./build.sh`.
-- Run with `./run.sh` after setting your options in `./input/input.cfg`.
-- Profit from `./output/output.h5`.
+- Git clone and build with `./build.sh` (see options with `./build.sh --help`).
+- Run with `./build/Release/DMRG++ -i input/input.cfg` after setting your options in `input/input.cfg`.
+- Profit from `output/output.h5`.
 
 ### Build
 Git clone or copy & extract the project into a folder of your choosing.
 **Make sure there are no spaces in your path!**.
 
 The project can be built with a single command from a unix terminal.
-Simply launch the script `.\build.sh` found in the root folder to trigger a CMake build.
+Simply launch the script `build.sh` found in the root folder to trigger a CMake build.
 
-The script takes optional arguments, run `.\build.sh --help` to learn more.
+The script takes optional arguments, run `build.sh --help` to learn more.
 
 CMake will check for dependencies in the host system. If not found, it will download and install these automatically to a folder `libs` in the project root (see *Optional Requirements* below).
-If the dependencies are successfully found or installed, the project is built and an executable is generated in `./build/Release/DMRG++`.
+If the dependencies are successfully found or installed, the project is built and an executable is generated in `build/Release/DMRG++`.
 
 ### Usage
-The input configuration file `input/input.cfg` controls the properties of the simulation. `DMRG++` admits custom input files from command-line arguments, e.g. `./DMRG++ -i ../CustomFolder/custom.cfg`.
+The input configuration file `input/input.cfg` controls the properties of the simulation. `DMRG++` admits custom input files from command-line arguments, e.g. `DMRG++ -i ../CustomFolder/custom.cfg`.
 
 If no configuration file is given as argument, the default is to look for a configuration file located in `input/input.cfg` relative to the project root folder.
 
 #### Configuration file
-The default configuration file in `./input/input.cfg` contains run-time instructions for DMRG++. Here you can choose the type of simulation, type of model, model parameters,
+The default configuration file in `input/input.cfg` contains run-time instructions for DMRG++. Here you can choose the type of simulation, type of model, model parameters,
 system size, precision as well as settings for profiling, data storage and console verbosity. Read the comments in the file to learn more.
 
 #### Models
@@ -56,7 +56,7 @@ Once implemented, the model is selected using the input configuration file in `i
 
 #### Output file
 After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration file `./input/input.cfg`.
-By default this should be in `.output/output.h5`. This file will contain values like the final energies, entanglement entropies, entanglement spectrums and
+By default this should be in `output/output.h5`. This file will contain values like the final energies, entanglement entropies, entanglement spectrums and
 optionally the final state in MPS form.
 
 To view the data you can use any hdf5-viewer, such as HDFCompass.
