@@ -372,23 +372,29 @@ Program Listing for File nmspc_tools.h
    
    
            namespace profile{
-               inline class_tic_toc t_eig;
-               inline class_tic_toc t_svd;
-               inline class_tic_toc t_ene;
-               inline class_tic_toc t_var;
-               inline class_tic_toc t_ent;
-               inline class_tic_toc t_hdf;
-               inline class_tic_toc t_prj;
-               inline class_tic_toc t_opt;
-               inline class_tic_toc t_chk;
-               inline class_tic_toc t_ene_mpo;
+               // Profiling
+               inline class_tic_toc t_tot;        
+               inline class_tic_toc t_pre;        
+               inline class_tic_toc t_pos;        
+               inline class_tic_toc t_sim;        
+               inline class_tic_toc t_con;        
+               inline class_tic_toc t_eig;        
+               inline class_tic_toc t_svd;        
+               inline class_tic_toc t_opt;        
+               inline class_tic_toc t_evo;        
+               inline class_tic_toc t_env;        
+               inline class_tic_toc t_ent;        
+               inline class_tic_toc t_ene;        
+               inline class_tic_toc t_var;        
+               inline class_tic_toc t_prj;        
+               inline class_tic_toc t_chk;        
+               inline class_tic_toc t_hdf;        
                inline class_tic_toc t_ene_ham;
                inline class_tic_toc t_ene_mom;
-               inline class_tic_toc t_var_mpo;
                inline class_tic_toc t_var_ham;
                inline class_tic_toc t_var_mom;
    
-               extern void print_profiling(class_tic_toc &t_parent);
+               extern void print_profiling();
                extern void init_profiling();
            }
    

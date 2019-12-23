@@ -29,29 +29,21 @@ Includes
 --------
 
 
-- ``Eigen/Core``
-
-- ``ceres/ceres.h``
-
 - ``ceres_subspace_functor.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_functor.h`)
 
-- ``general/nmspc_random_numbers.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`)
-
 - ``iostream``
-
-- ``math/arpack_extra/matrix_product_sparse.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_sparse.h`)
 
 - ``math/arpack_extra/matrix_product_stl.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_stl.h`)
 
 - ``math/class_eigsolver.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_eigsolver.h`)
+
+- ``math/nmspc_random.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.h`)
 
 - ``simulation/class_simulation_status.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_class_simulation_status.h`)
 
 - ``simulation/nmspc_settings.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_simulation_nmspc_settings.h`)
 
 - ``state/class_state_finite.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_finite.h`)
-
-- ``tools/finite/opt.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h`)
 
 
 

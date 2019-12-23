@@ -5,134 +5,135 @@
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
     <includes local="no">h5pp/h5pp.h</includes>
-    <includes local="no">filesystem</includes>
+    <includes refid="nmspc__filesystem_8h" local="no">io/nmspc_filesystem.h</includes>
     <includes local="no">fstream</includes>
     <includes local="no">stdlib.h</includes>
     <incdepgraph>
-      <node id="2562">
+      <node id="2818">
         <label>list</label>
       </node>
-      <node id="2574">
-        <label>filesystem</label>
+      <node id="2830">
+        <label>io/nmspc_filesystem.h</label>
+        <link refid="nmspc__filesystem_8h"/>
       </node>
-      <node id="2576">
+      <node id="2832">
         <label>stdlib.h</label>
       </node>
-      <node id="2571">
+      <node id="2827">
         <label>Eigen/Core</label>
       </node>
-      <node id="2556">
+      <node id="2812">
         <label>string</label>
       </node>
-      <node id="2566">
+      <node id="2822">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2567" relation="include">
+        <childnode refid="2823" relation="include">
         </childnode>
-        <childnode refid="2568" relation="include">
+        <childnode refid="2824" relation="include">
         </childnode>
       </node>
-      <node id="2563">
+      <node id="2819">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2564" relation="include">
+        <childnode refid="2820" relation="include">
         </childnode>
-        <childnode refid="2565" relation="include">
+        <childnode refid="2821" relation="include">
         </childnode>
       </node>
-      <node id="2559">
+      <node id="2815">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="2560" relation="include">
+        <childnode refid="2816" relation="include">
         </childnode>
-        <childnode refid="2556" relation="include">
+        <childnode refid="2812" relation="include">
         </childnode>
-        <childnode refid="2561" relation="include">
+        <childnode refid="2817" relation="include">
         </childnode>
-        <childnode refid="2562" relation="include">
+        <childnode refid="2818" relation="include">
         </childnode>
-        <childnode refid="2557" relation="include">
+        <childnode refid="2813" relation="include">
         </childnode>
-        <childnode refid="2563" relation="include">
+        <childnode refid="2819" relation="include">
         </childnode>
-        <childnode refid="2566" relation="include">
+        <childnode refid="2822" relation="include">
         </childnode>
-        <childnode refid="2569" relation="include">
+        <childnode refid="2825" relation="include">
         </childnode>
-        <childnode refid="2571" relation="include">
+        <childnode refid="2827" relation="include">
         </childnode>
-        <childnode refid="2572" relation="include">
+        <childnode refid="2828" relation="include">
         </childnode>
       </node>
-      <node id="2572">
+      <node id="2828">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2575">
+      <node id="2831">
         <label>fstream</label>
       </node>
-      <node id="2565">
+      <node id="2821">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="2558">
+      <node id="2814">
         <label>simulation/enums.h</label>
         <link refid="enums_8h"/>
       </node>
-      <node id="2569">
+      <node id="2825">
         <label>tools/finite/opt-internals/enum_classes.h</label>
         <link refid="enum__classes_8h"/>
-        <childnode refid="2568" relation="include">
+        <childnode refid="2824" relation="include">
         </childnode>
-        <childnode refid="2570" relation="include">
+        <childnode refid="2826" relation="include">
         </childnode>
       </node>
-      <node id="2564">
+      <node id="2820">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="2557">
+      <node id="2813">
         <label>vector</label>
       </node>
-      <node id="2570">
+      <node id="2826">
         <label>sstream</label>
       </node>
-      <node id="2554">
+      <node id="2810">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp</label>
         <link refid="h5pp__tmp_8cpp"/>
-        <childnode refid="2555" relation="include">
+        <childnode refid="2811" relation="include">
         </childnode>
-        <childnode refid="2559" relation="include">
+        <childnode refid="2815" relation="include">
         </childnode>
-        <childnode refid="2573" relation="include">
+        <childnode refid="2829" relation="include">
         </childnode>
-        <childnode refid="2574" relation="include">
+        <childnode refid="2830" relation="include">
         </childnode>
-        <childnode refid="2575" relation="include">
+        <childnode refid="2831" relation="include">
         </childnode>
-        <childnode refid="2576" relation="include">
+        <childnode refid="2832" relation="include">
         </childnode>
       </node>
-      <node id="2573">
+      <node id="2829">
         <label>h5pp/h5pp.h</label>
       </node>
-      <node id="2568">
+      <node id="2824">
         <label>iostream</label>
       </node>
-      <node id="2567">
+      <node id="2823">
         <label>chrono</label>
       </node>
-      <node id="2561">
+      <node id="2817">
         <label>complex</label>
       </node>
-      <node id="2555">
+      <node id="2811">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="2556" relation="include">
+        <childnode refid="2812" relation="include">
         </childnode>
-        <childnode refid="2557" relation="include">
+        <childnode refid="2813" relation="include">
         </childnode>
-        <childnode refid="2558" relation="include">
+        <childnode refid="2814" relation="include">
         </childnode>
       </node>
-      <node id="2560">
+      <node id="2816">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -162,10 +163,10 @@
 <codeline lineno="4"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;filesystem&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__filesystem_8h" kindref="compound">io/nmspc_filesystem.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;fstream&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;stdlib.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fs<sp/>=<sp/>std::filesystem;</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fs<sp/>=<sp/>tools::fs;</highlight></codeline>
 <codeline lineno="11"><highlight class="normal"></highlight></codeline>
 <codeline lineno="12" refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" refkind="member"><highlight class="normal">std::string<sp/><ref refid="h5pp__tmp_8cpp_1a44b2159a61825073639701bf8f1d9683" kindref="member">get_dirname</ref>(){</highlight></codeline>
 <codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="stringliteral">&quot;DMRG.&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(getenv(</highlight><highlight class="stringliteral">&quot;USER&quot;</highlight><highlight class="normal">))<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/&quot;</highlight><highlight class="normal">;</highlight></codeline>

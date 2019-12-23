@@ -102,7 +102,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="31" bodyend="36"/>
-        <references refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" compoundref="class__algorithm__base_8h" startline="77">class_algorithm_base::t_pre</references>
+        <references refid="namespacetools_1_1common_1_1profile_1aa2fa0044907366bfc5a6e76acfcd5718" compoundref="nmspc__tools_8h" startline="375">tools::common::profile::t_pre</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" compoundref="class__simulation__status_8h" startline="37">status_data::delta_t</references>
@@ -122,9 +122,10 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="56" bodyend="61"/>
-        <references refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" compoundref="class__algorithm__base_8h" startline="79">class_algorithm_base::t_pos</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a5cbadb8724693e3d427289c9ea35e904" compoundref="nmspc__tools_8h" startline="376">tools::common::profile::t_pos</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ae901a49d98722e40c314bef9a595bdc7" compoundref="prof_8cpp" startline="11" endline="34">tools::common::profile::print_profiling</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_t_e_b_d_1a9790a13fe829a9220c1efab6165c6f93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -138,12 +139,12 @@
         <inbodydescription>
 <para>infinite Time evolving block decimation.</para>        </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="63" bodyend="-1"/>
-        <references refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" compoundref="class__algorithm__base_8h" startline="78">class_algorithm_base::t_run</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a7aabb154fe5863b121e1d7dc47ab5765" compoundref="nmspc__tools_8h" startline="377">tools::common::profile::t_sim</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
         <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
-        <references refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" compoundref="class__algorithm__base_8h" startline="76">class_algorithm_base::t_tot</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a2846b1d2fefe653f9fe80c92bc846be3" compoundref="nmspc__tools_8h" startline="374">tools::common::profile::t_tot</references>
         <references refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" compoundref="class__tic__toc_8cpp" startline="103" endline="105">class_tic_toc::get_age</references>
         <references refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" compoundref="class__simulation__status_8h" startline="36">status_data::simu_time</references>
         <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
@@ -180,7 +181,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp" bodystart="83" bodyend="99"/>
-        <references refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" compoundref="class__algorithm__base_8h" startline="81">class_algorithm_base::t_con</references>
+        <references refid="namespacetools_1_1common_1_1profile_1ab2944237031c9b3b95d776604b107f76" compoundref="nmspc__tools_8h" startline="378">tools::common::profile::t_con</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__i_t_e_b_d_1ac720b8d492eb8a174c1a3c87ef1e9662" compoundref="class__i_t_e_b_d_8cpp" startline="101" endline="110">check_convergence_time_step</references>
         <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
@@ -302,19 +303,19 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="215">
+      <node id="216">
         <label>class_algorithm_infinite</label>
         <link refid="classclass__algorithm__infinite"/>
+        <childnode refid="217" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="215">
+        <label>class_iTEBD</label>
+        <link refid="classclass__i_t_e_b_d"/>
         <childnode refid="216" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="214">
-        <label>class_iTEBD</label>
-        <link refid="classclass__i_t_e_b_d"/>
-        <childnode refid="215" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="216">
+      <node id="217">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
@@ -323,10 +324,10 @@
       <node id="228">
         <label>std::vector&lt; Eigen::Tensor&lt; Scalar, 4 &gt; &gt;</label>
       </node>
-      <node id="218">
+      <node id="219">
         <label>class_algorithm_infinite</label>
         <link refid="classclass__algorithm__infinite"/>
-        <childnode refid="219" relation="public-inheritance">
+        <childnode refid="220" relation="public-inheritance">
         </childnode>
         <childnode refid="225" relation="usage">
           <edgelabel>S_vec</edgelabel>
@@ -353,59 +354,44 @@
       <node id="226">
         <label>std::list&lt; bool &gt;</label>
       </node>
-      <node id="221">
+      <node id="222">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
       <node id="227">
         <label>std::list&lt; int &gt;</label>
       </node>
-      <node id="217">
+      <node id="218">
         <label>class_iTEBD</label>
         <link refid="classclass__i_t_e_b_d"/>
-        <childnode refid="218" relation="public-inheritance">
+        <childnode refid="219" relation="public-inheritance">
         </childnode>
         <childnode refid="228" relation="usage">
           <edgelabel>unitary_time_evolving_operators</edgelabel>
         </childnode>
       </node>
       <node id="224">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-        <childnode refid="220" relation="usage">
-          <edgelabel>name</edgelabel>
-        </childnode>
-      </node>
-      <node id="223">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="222">
+      <node id="223">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="223" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="219">
-        <label>class_algorithm_base</label>
-        <link refid="classclass__algorithm__base"/>
-        <childnode refid="220" relation="usage">
-          <edgelabel>sim_name</edgelabel>
-        </childnode>
-        <childnode refid="222" relation="usage">
-          <edgelabel>sim_status</edgelabel>
-        </childnode>
-        <childnode refid="224" relation="usage">
-          <edgelabel>t_con</edgelabel>
-          <edgelabel>t_pos</edgelabel>
-          <edgelabel>t_pre</edgelabel>
-          <edgelabel>t_tot</edgelabel>
-          <edgelabel>t_run</edgelabel>
-          <edgelabel>t_prt</edgelabel>
+        <childnode refid="224" relation="public-inheritance">
         </childnode>
       </node>
       <node id="220">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+        <childnode refid="221" relation="usage">
+          <edgelabel>sim_name</edgelabel>
+        </childnode>
+        <childnode refid="223" relation="usage">
+          <edgelabel>sim_status</edgelabel>
+        </childnode>
+      </node>
+      <node id="221">
         <label>std::string</label>
-        <childnode refid="221" relation="public-inheritance">
+        <childnode refid="222" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
@@ -455,7 +441,6 @@
       <member refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>S_slope</name></member>
       <member refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>S_vec</name></member>
       <member refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>Scalar</name></member>
-      <member refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>set_profiling_labels</name></member>
       <member refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>sim_name</name></member>
       <member refid="classclass__i_t_e_b_d_1ab174102e5a66349fb77eea583171b90b" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>sim_on</name></member>
       <member refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>sim_status</name></member>
@@ -465,12 +450,6 @@
       <member refid="classclass__algorithm__base_1af36e30da0595f116629422821e1e4ced" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>stop_reason</name></member>
       <member refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>StopReason</name></member>
       <member refid="classclass__algorithm__infinite_1a3b3bd13802b17fe5cb9600e4dcaabded" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>swap</name></member>
-      <member refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>t_con</name></member>
-      <member refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>t_pos</name></member>
-      <member refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>t_pre</name></member>
-      <member refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>t_prt</name></member>
-      <member refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>t_run</name></member>
-      <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>t_tot</name></member>
       <member refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>unitary_time_evolving_operators</name></member>
       <member refid="classclass__algorithm__infinite_1a93e97af4e20920c9690ff47fe78ddd60" prot="public" virt="virtual"><scope>class_iTEBD</scope><name>update_bond_dimension_limit</name></member>
       <member refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" prot="public" virt="non-virtual"><scope>class_iTEBD</scope><name>V_ham_slope</name></member>

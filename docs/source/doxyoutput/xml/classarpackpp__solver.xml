@@ -169,10 +169,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="89" bodyend="120"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="103" bodyend="134"/>
+        <references refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" compoundref="arpackpp__solver_8h" startline="50">arpackpp_solver&lt; MatrixType &gt;::matrix</references>
+        <references refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" compoundref="arpackpp__solver_8h" startline="18">arpackpp_solver&lt; MatrixType &gt;::nev_internal</references>
         <references refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" compoundref="arpackpp__solver_8h" startline="51">arpackpp_solver&lt; MatrixType &gt;::solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a56c7f45b3dd9b3825098380c2278d3f5" compoundref="nmspc__eigutils_8h" startline="45">eigutils::eigConfig::ritz_char</references>
+        <references refid="classarpackpp__solver_1a3fe93dd1d54ed4470bf02086073c4719" compoundref="arpackpp__solver_8h" startline="19">arpackpp_solver&lt; MatrixType &gt;::ncv_internal</references>
+        <references refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" compoundref="nmspc__eigutils_8h" startline="56">eigutils::eigConfig::eigThreshold</references>
+        <references refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" compoundref="nmspc__eigutils_8h" startline="57">eigutils::eigConfig::eigMaxIter</references>
+        <references refid="classarpackpp__solver_1a6e42ece99fa48eac5ed8c43d4c8c2073" compoundref="arpackpp__solver_8h" startline="53">arpackpp_solver&lt; MatrixType &gt;::residual</references>
         <references refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" compoundref="nmspc__eigutils_8h" startline="50">eigutils::eigConfig::shift</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a88559a0cfd8250c9d65970cc145c92d4">eigutils::eigSetting::OFF</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a90651ebea9a35ec4e018c8157492e17c">eigutils::eigSetting::ON</references>
+        <references refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" compoundref="nmspc__eigutils_8h" startline="60">eigutils::eigConfig::sigma</references>
+        <references refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" compoundref="nmspc__eigutils_8h" startline="58">eigutils::eigConfig::eigMaxNev</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
       </memberdef>
       <memberdef kind="function" id="classarpackpp__solver_1a60dbd5270412446a65535676157777b6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -185,13 +197,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="124" bodyend="162"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="138" bodyend="177"/>
         <references refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" compoundref="arpackpp__solver_8h" startline="18">arpackpp_solver&lt; MatrixType &gt;::nev_internal</references>
+        <references refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" compoundref="arpackpp__solver_8h" startline="50">arpackpp_solver&lt; MatrixType &gt;::matrix</references>
         <references refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" compoundref="arpackpp__solver_8h" startline="51">arpackpp_solver&lt; MatrixType &gt;::solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a56c7f45b3dd9b3825098380c2278d3f5" compoundref="nmspc__eigutils_8h" startline="45">eigutils::eigConfig::ritz_char</references>
+        <references refid="classarpackpp__solver_1a3fe93dd1d54ed4470bf02086073c4719" compoundref="arpackpp__solver_8h" startline="19">arpackpp_solver&lt; MatrixType &gt;::ncv_internal</references>
+        <references refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" compoundref="nmspc__eigutils_8h" startline="56">eigutils::eigConfig::eigThreshold</references>
+        <references refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" compoundref="nmspc__eigutils_8h" startline="57">eigutils::eigConfig::eigMaxIter</references>
+        <references refid="classarpackpp__solver_1a6e42ece99fa48eac5ed8c43d4c8c2073" compoundref="arpackpp__solver_8h" startline="53">arpackpp_solver&lt; MatrixType &gt;::residual</references>
         <references refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" compoundref="nmspc__eigutils_8h" startline="50">eigutils::eigConfig::shift</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a88559a0cfd8250c9d65970cc145c92d4">eigutils::eigSetting::OFF</references>
-        <references refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" compoundref="arpackpp__solver_8h" startline="50">arpackpp_solver&lt; MatrixType &gt;::matrix</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a90651ebea9a35ec4e018c8157492e17c">eigutils::eigSetting::ON</references>
+        <references refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" compoundref="nmspc__eigutils_8h" startline="60">eigutils::eigConfig::sigma</references>
+        <references refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" compoundref="nmspc__eigutils_8h" startline="58">eigutils::eigConfig::eigMaxNev</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554">eigutils::eigSetting::REAL</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
       </memberdef>
       <memberdef kind="function" id="classarpackpp__solver_1adb0f7c699775ac4218b9b6e51ffd1729" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -204,13 +227,23 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="169" bodyend="208"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="184" bodyend="223"/>
+        <references refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" compoundref="arpackpp__solver_8h" startline="50">arpackpp_solver&lt; MatrixType &gt;::matrix</references>
+        <references refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" compoundref="arpackpp__solver_8h" startline="18">arpackpp_solver&lt; MatrixType &gt;::nev_internal</references>
         <references refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" compoundref="arpackpp__solver_8h" startline="51">arpackpp_solver&lt; MatrixType &gt;::solverConf</references>
+        <references refid="classeigutils_1_1eig_config_1a56c7f45b3dd9b3825098380c2278d3f5" compoundref="nmspc__eigutils_8h" startline="45">eigutils::eigConfig::ritz_char</references>
+        <references refid="classarpackpp__solver_1a3fe93dd1d54ed4470bf02086073c4719" compoundref="arpackpp__solver_8h" startline="19">arpackpp_solver&lt; MatrixType &gt;::ncv_internal</references>
+        <references refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" compoundref="nmspc__eigutils_8h" startline="56">eigutils::eigConfig::eigThreshold</references>
+        <references refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" compoundref="nmspc__eigutils_8h" startline="57">eigutils::eigConfig::eigMaxIter</references>
+        <references refid="classarpackpp__solver_1a6e42ece99fa48eac5ed8c43d4c8c2073" compoundref="arpackpp__solver_8h" startline="53">arpackpp_solver&lt; MatrixType &gt;::residual</references>
         <references refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" compoundref="nmspc__eigutils_8h" startline="50">eigutils::eigConfig::shift</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a88559a0cfd8250c9d65970cc145c92d4">eigutils::eigSetting::OFF</references>
-        <references refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" compoundref="arpackpp__solver_8h" startline="50">arpackpp_solver&lt; MatrixType &gt;::matrix</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a90651ebea9a35ec4e018c8157492e17c">eigutils::eigSetting::ON</references>
+        <references refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" compoundref="nmspc__eigutils_8h" startline="60">eigutils::eigConfig::sigma</references>
+        <references refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" compoundref="nmspc__eigutils_8h" startline="58">eigutils::eigConfig::eigMaxNev</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1">eigutils::eigSetting::CPLX</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
       </memberdef>
@@ -227,7 +260,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="53" bodyend="84"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="67" bodyend="98"/>
         <references refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" compoundref="arpackpp__solver_8h" startline="52">arpackpp_solver&lt; MatrixType &gt;::solution</references>
         <references refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" compoundref="nmspc__eigutils_8h" startline="188" endline="198">eigutils::eigSolution::reset</references>
         <references refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" compoundref="arpackpp__solver_8h" startline="18">arpackpp_solver&lt; MatrixType &gt;::nev_internal</references>
@@ -269,7 +302,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="215" bodyend="240"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="230" bodyend="255"/>
         <references refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" compoundref="arpackpp__solver_8h" startline="51">arpackpp_solver&lt; MatrixType &gt;::solverConf</references>
         <references refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" compoundref="nmspc__eigutils_8h" startline="54">eigutils::eigConfig::compute_eigvecs</references>
         <references refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" compoundref="arpackpp__solver_8h" startline="52">arpackpp_solver&lt; MatrixType &gt;::solution</references>
@@ -312,7 +345,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="30" bodyend="47"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp" bodystart="44" bodyend="61"/>
         <references refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" compoundref="arpackpp__solver_8h" startline="50">arpackpp_solver&lt; MatrixType &gt;::matrix</references>
         <references refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" compoundref="arpackpp__solver_8h" startline="51">arpackpp_solver&lt; MatrixType &gt;::solverConf</references>
         <references refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" compoundref="arpackpp__solver_8h" startline="52">arpackpp_solver&lt; MatrixType &gt;::solution</references>
@@ -352,6 +385,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h" bodystart="63" bodyend="88"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
       </memberdef>
       <memberdef kind="function" id="classarpackpp__solver_1a4e4113c4cad99d2a1e236b2e2485cb10" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>

@@ -15,29 +15,24 @@ Program Listing for File ceres_subspace_functor.h
    //
    
    #pragma once
-   
-   
    #include <tools/finite/opt.h>
    
-   namespace tools::finite::opt{
-       namespace internal{
+   
+   namespace tools::finite::opt::internal{
            template<typename Scalar>
            class ceres_subspace_functor : public ceres_base_functor{
            private:
                using MatrixType = Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>;
                using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
-   //            const Eigen::MatrixXcd &eigvecs;
                const MatrixType       &H2;
                const Eigen::VectorXd  &eigvals;
            public:
-   //            EIGEN_MAKE_ALIGNED_OPERATOR_NEW
                explicit ceres_subspace_functor(const class_state_finite & state,
                                                const class_simulation_status & sim_status,
                                                const MatrixType & H2_subspace_,
                                                const Eigen::VectorXd  & eigvals_);
                bool Evaluate(const double* v_double_double,
                              double* fx,
-                             double* grad_double_double) const override;
+                             double* grad_double_double) const final;
            };
        }
-   }

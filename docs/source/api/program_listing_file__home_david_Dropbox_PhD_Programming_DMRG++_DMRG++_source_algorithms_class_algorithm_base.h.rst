@@ -44,7 +44,7 @@ Program Listing for File class_algorithm_base.h
                             std::string sim_name_,
                             SimulationType sim_type_);
        enum class StopReason {SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET} stop_reason;
-       void set_profiling_labels ();
+   //    void set_profiling_labels ();
    
        std::shared_ptr<h5pp::File>                                             h5pp_file;
        std::shared_ptr<class_h5table_buffer<class_h5table_profiling>>          h5tbuf_profiling;
@@ -84,13 +84,8 @@ Program Listing for File class_algorithm_base.h
        void print_profiling();
        double process_memory_in_mb(std::string name);
    
-       // Profiling
-       class_tic_toc t_tot;    
-       class_tic_toc t_pre;    
-       class_tic_toc t_run;    
-       class_tic_toc t_pos;    
-       class_tic_toc t_prt;    
-       class_tic_toc t_con;    
+   
+   
    protected:
    
    

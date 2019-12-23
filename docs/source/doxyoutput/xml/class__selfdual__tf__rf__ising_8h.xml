@@ -10,139 +10,139 @@
     <includedby refid="class__model__factory_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</includedby>
     <includedby refid="class__selfdual__tf__rf__ising_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</includedby>
     <incdepgraph>
-      <node id="1668">
+      <node id="1875">
         <label>iomanip</label>
       </node>
-      <node id="1667">
+      <node id="1874">
         <label>iterator</label>
       </node>
-      <node id="1669">
+      <node id="1876">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1670" relation="include">
+        <childnode refid="1877" relation="include">
         </childnode>
-        <childnode refid="1665" relation="include">
+        <childnode refid="1872" relation="include">
         </childnode>
-        <childnode refid="1664" relation="include">
+        <childnode refid="1871" relation="include">
         </childnode>
       </node>
-      <node id="1665">
+      <node id="1872">
         <label>Eigen/Core</label>
       </node>
-      <node id="1672">
+      <node id="1879">
         <label>string</label>
       </node>
-      <node id="1677">
+      <node id="1884">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="1678" relation="include">
+        <childnode refid="1885" relation="include">
         </childnode>
-        <childnode refid="1679" relation="include">
+        <childnode refid="1886" relation="include">
         </childnode>
       </node>
-      <node id="1670">
+      <node id="1877">
         <label>experimental/type_traits</label>
       </node>
-      <node id="1664">
+      <node id="1871">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="1660">
+      <node id="1867">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</label>
         <link refid="class__selfdual__tf__rf__ising_8h"/>
-        <childnode refid="1661" relation="include">
+        <childnode refid="1868" relation="include">
         </childnode>
-        <childnode refid="1662" relation="include">
+        <childnode refid="1869" relation="include">
         </childnode>
-        <childnode refid="1671" relation="include">
+        <childnode refid="1878" relation="include">
         </childnode>
-        <childnode refid="1668" relation="include">
+        <childnode refid="1875" relation="include">
         </childnode>
-        <childnode refid="1675" relation="include">
+        <childnode refid="1882" relation="include">
         </childnode>
       </node>
-      <node id="1679">
+      <node id="1886">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="1675">
+      <node id="1882">
         <label>class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="1676" relation="include">
+        <childnode refid="1883" relation="include">
         </childnode>
-        <childnode refid="1664" relation="include">
+        <childnode refid="1871" relation="include">
         </childnode>
-        <childnode refid="1677" relation="include">
+        <childnode refid="1884" relation="include">
         </childnode>
       </node>
-      <node id="1666">
+      <node id="1873">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="1674">
+      <node id="1881">
         <label>simulation/enums.h</label>
         <link refid="enums_8h"/>
       </node>
-      <node id="1678">
+      <node id="1885">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="1663">
+      <node id="1870">
         <label>general/nmspc_omp.h</label>
         <link refid="nmspc__omp_8h"/>
-        <childnode refid="1664" relation="include">
+        <childnode refid="1871" relation="include">
         </childnode>
       </node>
-      <node id="1673">
+      <node id="1880">
         <label>vector</label>
       </node>
-      <node id="1661">
+      <node id="1868">
         <label>iostream</label>
       </node>
-      <node id="1671">
+      <node id="1878">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="1672" relation="include">
+        <childnode refid="1879" relation="include">
         </childnode>
-        <childnode refid="1673" relation="include">
+        <childnode refid="1880" relation="include">
         </childnode>
-        <childnode refid="1674" relation="include">
+        <childnode refid="1881" relation="include">
         </childnode>
       </node>
-      <node id="1662">
+      <node id="1869">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1663" relation="include">
+        <childnode refid="1870" relation="include">
         </childnode>
-        <childnode refid="1665" relation="include">
+        <childnode refid="1872" relation="include">
         </childnode>
-        <childnode refid="1666" relation="include">
+        <childnode refid="1873" relation="include">
         </childnode>
-        <childnode refid="1664" relation="include">
+        <childnode refid="1871" relation="include">
         </childnode>
-        <childnode refid="1667" relation="include">
+        <childnode refid="1874" relation="include">
         </childnode>
-        <childnode refid="1661" relation="include">
+        <childnode refid="1868" relation="include">
         </childnode>
-        <childnode refid="1668" relation="include">
+        <childnode refid="1875" relation="include">
         </childnode>
-        <childnode refid="1669" relation="include">
+        <childnode refid="1876" relation="include">
         </childnode>
       </node>
-      <node id="1676">
+      <node id="1883">
         <label>memory</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="1682">
+      <node id="1889">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
         <link refid="class__selfdual__tf__rf__ising_8cpp"/>
       </node>
-      <node id="1680">
+      <node id="1887">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</label>
         <link refid="class__selfdual__tf__rf__ising_8h"/>
-        <childnode refid="1681" relation="include">
+        <childnode refid="1888" relation="include">
         </childnode>
-        <childnode refid="1682" relation="include">
+        <childnode refid="1889" relation="include">
         </childnode>
       </node>
-      <node id="1681">
+      <node id="1888">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</label>
         <link refid="class__model__factory_8cpp"/>
       </node>

@@ -14,25 +14,39 @@ Program Listing for File arpackpp_solver.cpp
    // Created by david on 2018-10-30.
    //
    
+   
+   #include "arpackpp_solver.h"
    #include "matrix_product_dense.h"
    #include "matrix_product_sparse.h"
    #include "matrix_product_stl.h"
    #include "matrix_product_hamiltonian.h"
-   
    #include <general/nmspc_type_check.h>
-   #include <algorithm>
    
-   #ifdef ARPACKPP_ALTDIR
-   #include <arpackpp/arssym.h>
-   #include <arpackpp/arsnsym.h>
-   #include <arpackpp/arscomp.h>
-   #else
-   #include <arpack++/arssym.h>
-   #include <arpack++/arsnsym.h>
-   #include <arpack++/arscomp.h>
+   #if defined(_MKL_LAPACK_H_)
+   #error MKL_LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
    #endif
    
-   #include "arpackpp_solver.h"
+   #if defined(LAPACK_H)
+   #error LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
+   #endif
+   
+   
+   #if __has_include(<arpackpp/arcomp.h>)
+   #include <arpackpp/arcomp.h>
+   #include <arpackpp/ardscomp.h>
+   #include <arpackpp/ardnsmat.h>
+   #include <arpackpp/arsnsym.h>
+   #include <arpackpp/arssym.h>
+   #elif __has_include(<arpack++/arcomp.h>)
+   #include <arpack++/ardscomp.h>
+   #include <arpack++/ardnsmat.h>
+   #include <arpack++/arsnsym.h>
+   #include <arpack++/arssym.h>
+   #else
+   #error Could not include arpack headers correctly
+   #endif
+   
+   
    
    namespace tc = TypeCheck;
    using namespace eigutils::eigSetting;
@@ -138,6 +152,7 @@ Program Listing for File arpackpp_solver.cpp
            assert(solverConf.form == Form::NONSYMMETRIC and "ERROR: solverConf not NONSYMMETRIC");
            assert(matrix.get_form() == Form::NONSYMMETRIC and "ERROR: matrix not NONSYMMETRIC");
            if (nev_internal == 1) { nev_internal++; }
+   
            ARNonSymStdEig<double, MatrixType> solver(
                    matrix.rows(),
                    nev_internal,

@@ -19,7 +19,7 @@ Program Listing for File class_xDMRG.cpp
    #include <state/class_state_finite.h>
    #include <tools/nmspc_tools.h>
    #include <tools/finite/opt.h>
-   #include <general/nmspc_random_numbers.h>
+   #include <math/nmspc_random.h>
    #include "class_xDMRG.h"
    
    
@@ -35,7 +35,7 @@ Program Listing for File class_xDMRG.cpp
    void class_xDMRG::run_preprocessing() {
        log->info("Running {} preprocessing", sim_name);
        class_algorithm_finite::run_preprocessing();
-       t_pre.tic();
+       tools::common::profile::t_pre.tic();
        sim_status.energy_dens_target = settings::xdmrg::energy_density_target;
        sim_status.energy_dens_window = settings::xdmrg::energy_density_window;
        find_energy_range();
@@ -44,13 +44,7 @@ Program Listing for File class_xDMRG.cpp
        update_bond_dimension_limit(chi_init());
        tools::finite::mps::internals::seed_state_unused = true;
        reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
-   //    for (size_t i = 0; i < rn::uniform_integer(0,state->get_length()) ; i++){
-   //        move_center_point();
-   //    }
-   //    reset_to_random_state_in_energy_window("random",false, "Initializing");
-   //    inflate_initial_state();
-   
-       t_pre.toc();
+       tools::common::profile::t_pre.toc();
        log->info("Finished {} preprocessing", sim_name);
    }
    
@@ -106,14 +100,8 @@ Program Listing for File class_xDMRG.cpp
    {
        using namespace tools::finite;
    
-       t_run.tic();
+       tools::common::profile::t_sim.tic();
        log->trace("Starting single xDMRG step");
-   //  log->debug("Variance accurate check before xDMRG step: {:.16f}", std::log10(measure::accurate::energy_variance_per_site(*state)));
-   
-   //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-   //    auto optMode  = sim_status.iteration  < 2  ?  opt::OptMode::OVERLAP : opt::OptMode::VARIANCE;
-   
-   //    auto optMode    = opt::OptMode(opt::MODE::VARIANCE); //TODO: This should be OVERLAP, i'm just testing
        auto optMode    = opt::OptMode(opt::MODE::OVERLAP);
        auto optSpace   = opt::OptSpace(opt::SPACE::DIRECT);
        auto optType    = opt::OptType(opt::TYPE::CPLX);
@@ -254,15 +242,15 @@ Program Listing for File class_xDMRG.cpp
    
    
    
-       t_run.toc();
-       sim_status.wall_time = t_tot.get_age();
-       sim_status.simu_time = t_run.get_measured_time();
+       tools::common::profile::t_sim.toc();
+       sim_status.wall_time = tools::common::profile::t_tot.get_age();
+       sim_status.simu_time = tools::common::profile::t_sim.get_measured_time();
    
    }
    
    
    void class_xDMRG::check_convergence(){
-       t_con.tic();
+       tools::common::profile::t_con.tic();
        if(state->position_is_any_edge()){
            check_convergence_variance();
            check_convergence_entg_entropy();
@@ -356,7 +344,7 @@ Program Listing for File class_xDMRG.cpp
    
    
    
-       t_con.toc();
+       tools::common::profile::t_con.toc();
    }
    
    void class_xDMRG::try_projection(){

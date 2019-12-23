@@ -40,7 +40,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="234" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/debug.cpp" bodystart="32" bodyend="242"/>
-        <references refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" compoundref="nmspc__tools_8h" startline="381">tools::common::profile::t_chk</references>
+        <references refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" compoundref="nmspc__tools_8h" startline="388">tools::common::profile::t_chk</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
         <references refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" compoundref="class__state__finite_8cpp" startline="211" endline="223">class_state_finite::get_MPS</references>
@@ -67,7 +67,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="235" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/debug.cpp" bodystart="245" bodyend="263"/>
-        <references refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" compoundref="nmspc__tools_8h" startline="381">tools::common::profile::t_chk</references>
+        <references refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" compoundref="nmspc__tools_8h" startline="388">tools::common::profile::t_chk</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>

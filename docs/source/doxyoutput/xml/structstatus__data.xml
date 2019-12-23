@@ -571,14 +571,14 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="468">
+      <node id="523">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="469">
+      <node id="524">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="468" relation="public-inheritance">
+        <childnode refid="523" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

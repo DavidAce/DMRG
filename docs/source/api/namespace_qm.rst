@@ -19,9 +19,9 @@ Namespaces
 
 - :ref:`namespace_qm__mpo`
 
-- :ref:`namespace_qm__spinOne`
-
 - :ref:`namespace_qm__SpinOne`
+
+- :ref:`namespace_qm__spinOne`
 
 - :ref:`namespace_qm__spinOneHalf`
 

@@ -29,24 +29,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="380">
+      <node id="409">
         <label>std::true_type</label>
       </node>
-      <node id="379">
+      <node id="408">
         <label>TypeCheck::is_eigen_matrix&lt; Eigen::Matrix&lt; T, rows, cols, StorageOrder &gt; &gt;</label>
         <link refid="struct_type_check_1_1is__eigen__matrix_3_01_eigen_1_1_matrix_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4"/>
-        <childnode refid="380" relation="public-inheritance">
+        <childnode refid="409" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="382">
+      <node id="411">
         <label>std::true_type</label>
       </node>
-      <node id="381">
+      <node id="410">
         <label>TypeCheck::is_eigen_matrix&lt; Eigen::Matrix&lt; T, rows, cols, StorageOrder &gt; &gt;</label>
         <link refid="struct_type_check_1_1is__eigen__matrix_3_01_eigen_1_1_matrix_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4"/>
-        <childnode refid="382" relation="public-inheritance">
+        <childnode refid="411" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

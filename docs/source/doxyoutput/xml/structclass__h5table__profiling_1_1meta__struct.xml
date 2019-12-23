@@ -231,25 +231,25 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="430">
+      <node id="458">
         <label>std::array&lt; hid_t, NFIELDS &gt;</label>
       </node>
-      <node id="431">
+      <node id="459">
         <label>std::array&lt; size_t, NFIELDS &gt;</label>
       </node>
-      <node id="429">
+      <node id="457">
         <label>std::array&lt; const char *, NFIELDS &gt;</label>
       </node>
-      <node id="428">
+      <node id="456">
         <label>class_h5table_profiling::meta_struct</label>
         <link refid="structclass__h5table__profiling_1_1meta__struct"/>
-        <childnode refid="429" relation="usage">
+        <childnode refid="457" relation="usage">
           <edgelabel>field_names</edgelabel>
         </childnode>
-        <childnode refid="430" relation="usage">
+        <childnode refid="458" relation="usage">
           <edgelabel>field_types</edgelabel>
         </childnode>
-        <childnode refid="431" relation="usage">
+        <childnode refid="459" relation="usage">
           <edgelabel>dst_offsets</edgelabel>
           <edgelabel>dst_sizes</edgelabel>
         </childnode>

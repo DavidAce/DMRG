@@ -110,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" bodystart="43" bodyend="115"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" bodystart="23" bodyend="98"/>
       </memberdef>
       <memberdef kind="function" id="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -631,7 +631,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" line="122" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp" line="105" column="1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

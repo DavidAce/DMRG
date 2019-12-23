@@ -16,244 +16,250 @@
     <includedby refid="infinite_2mps_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</includedby>
     <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</includedby>
     <incdepgraph>
-      <node id="2116">
+      <node id="2373">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2113">
+      <node id="2370">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h</label>
         <link refid="class__mps__site_8h"/>
-        <childnode refid="2114" relation="include">
+        <childnode refid="2371" relation="include">
         </childnode>
-        <childnode refid="2115" relation="include">
+        <childnode refid="2372" relation="include">
         </childnode>
-        <childnode refid="2116" relation="include">
+        <childnode refid="2373" relation="include">
         </childnode>
       </node>
-      <node id="2115">
+      <node id="2372">
         <label>optional</label>
       </node>
-      <node id="2114">
+      <node id="2371">
         <label>complex</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="2121">
+      <node id="2378">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
         <link refid="class__f_d_m_r_g_8cpp"/>
       </node>
-      <node id="2128">
+      <node id="2385">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_tables.cpp</label>
         <link refid="finite_2io_2h5pp__tables_8cpp"/>
       </node>
-      <node id="2137">
+      <node id="2394">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp</label>
         <link refid="ceres__direct__functor_8cpp"/>
       </node>
-      <node id="2139">
+      <node id="2397">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp</label>
         <link refid="ceres__subspace__functor_8cpp"/>
       </node>
-      <node id="2131">
+      <node id="2388">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</label>
         <link refid="mps-internals_8cpp"/>
       </node>
-      <node id="2134">
+      <node id="2391">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
         <link refid="ops_8cpp"/>
       </node>
-      <node id="2118">
+      <node id="2375">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h</label>
         <link refid="class__state__finite_8h"/>
-        <childnode refid="2119" relation="include">
+        <childnode refid="2376" relation="include">
         </childnode>
-        <childnode refid="2120" relation="include">
+        <childnode refid="2377" relation="include">
         </childnode>
-        <childnode refid="2121" relation="include">
+        <childnode refid="2378" relation="include">
         </childnode>
-        <childnode refid="2122" relation="include">
+        <childnode refid="2379" relation="include">
         </childnode>
-        <childnode refid="2123" relation="include">
+        <childnode refid="2380" relation="include">
         </childnode>
-        <childnode refid="2124" relation="include">
+        <childnode refid="2381" relation="include">
         </childnode>
-        <childnode refid="2125" relation="include">
+        <childnode refid="2382" relation="include">
         </childnode>
-        <childnode refid="2126" relation="include">
+        <childnode refid="2383" relation="include">
         </childnode>
-        <childnode refid="2127" relation="include">
+        <childnode refid="2384" relation="include">
         </childnode>
-        <childnode refid="2128" relation="include">
+        <childnode refid="2385" relation="include">
         </childnode>
-        <childnode refid="2129" relation="include">
+        <childnode refid="2386" relation="include">
         </childnode>
-        <childnode refid="2130" relation="include">
+        <childnode refid="2387" relation="include">
         </childnode>
-        <childnode refid="2131" relation="include">
+        <childnode refid="2388" relation="include">
         </childnode>
-        <childnode refid="2132" relation="include">
+        <childnode refid="2389" relation="include">
         </childnode>
-        <childnode refid="2133" relation="include">
+        <childnode refid="2390" relation="include">
         </childnode>
-        <childnode refid="2134" relation="include">
+        <childnode refid="2391" relation="include">
         </childnode>
-        <childnode refid="2135" relation="include">
+        <childnode refid="2392" relation="include">
         </childnode>
-        <childnode refid="2136" relation="include">
+        <childnode refid="2393" relation="include">
         </childnode>
-        <childnode refid="2137" relation="include">
+        <childnode refid="2394" relation="include">
         </childnode>
-        <childnode refid="2138" relation="include">
+        <childnode refid="2395" relation="include">
         </childnode>
-        <childnode refid="2139" relation="include">
+        <childnode refid="2396" relation="include">
         </childnode>
-        <childnode refid="2140" relation="include">
+        <childnode refid="2397" relation="include">
         </childnode>
-        <childnode refid="2141" relation="include">
+        <childnode refid="2398" relation="include">
         </childnode>
-        <childnode refid="2142" relation="include">
+        <childnode refid="2399" relation="include">
         </childnode>
-        <childnode refid="2143" relation="include">
+        <childnode refid="2400" relation="include">
         </childnode>
-        <childnode refid="2144" relation="include">
+        <childnode refid="2401" relation="include">
+        </childnode>
+        <childnode refid="2402" relation="include">
         </childnode>
       </node>
-      <node id="2135">
+      <node id="2392">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp</label>
         <link refid="ceres__base_8cpp"/>
       </node>
-      <node id="2129">
+      <node id="2386">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
         <link refid="finite_2measure_8cpp"/>
       </node>
-      <node id="2142">
+      <node id="2400">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
         <link refid="finite_2opt_8cpp"/>
       </node>
-      <node id="2146">
+      <node id="2404">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
         <link refid="class__mps__2site_8cpp"/>
       </node>
-      <node id="2123">
+      <node id="2380">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.cpp</label>
         <link refid="class__state__finite_8cpp"/>
       </node>
-      <node id="2151">
+      <node id="2409">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
         <link refid="infinite_2measure_8cpp"/>
       </node>
-      <node id="2148">
+      <node id="2406">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
         <link refid="class__state__infinite_8cpp"/>
       </node>
-      <node id="2124">
+      <node id="2381">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
         <link refid="views_8cpp"/>
       </node>
-      <node id="2150">
+      <node id="2408">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
         <link refid="infinite_2io_2h5pp_8cpp"/>
       </node>
-      <node id="2143">
+      <node id="2401">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp</label>
         <link refid="finite_2print_8cpp"/>
       </node>
-      <node id="2126">
+      <node id="2383">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
         <link refid="finite_2io_2h5pp_8cpp"/>
       </node>
-      <node id="2127">
+      <node id="2384">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_restore.cpp</label>
         <link refid="h5pp__restore_8cpp"/>
       </node>
-      <node id="2119">
+      <node id="2376">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
         <link refid="class__algorithm__finite_8cpp"/>
       </node>
-      <node id="2145">
+      <node id="2403">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp</label>
         <link refid="class__environment_8cpp"/>
       </node>
-      <node id="2122">
+      <node id="2379">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
         <link refid="class__x_d_m_r_g_8cpp"/>
       </node>
-      <node id="2117">
+      <node id="2374">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h</label>
         <link refid="class__mps__site_8h"/>
-        <childnode refid="2118" relation="include">
+        <childnode refid="2375" relation="include">
         </childnode>
-        <childnode refid="2145" relation="include">
+        <childnode refid="2403" relation="include">
         </childnode>
-        <childnode refid="2146" relation="include">
+        <childnode refid="2404" relation="include">
         </childnode>
-        <childnode refid="2147" relation="include">
+        <childnode refid="2405" relation="include">
         </childnode>
-        <childnode refid="2148" relation="include">
+        <childnode refid="2406" relation="include">
         </childnode>
-        <childnode refid="2149" relation="include">
+        <childnode refid="2407" relation="include">
         </childnode>
-        <childnode refid="2150" relation="include">
+        <childnode refid="2408" relation="include">
         </childnode>
-        <childnode refid="2151" relation="include">
+        <childnode refid="2409" relation="include">
         </childnode>
-        <childnode refid="2152" relation="include">
+        <childnode refid="2410" relation="include">
         </childnode>
-        <childnode refid="2153" relation="include">
+        <childnode refid="2411" relation="include">
         </childnode>
       </node>
-      <node id="2120">
+      <node id="2377">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="2130">
+      <node id="2387">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</label>
         <link refid="finite_2mpo_8cpp"/>
       </node>
-      <node id="2140">
+      <node id="2398">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp</label>
         <link refid="ceres__subspace__hamiltonian_8cpp"/>
       </node>
-      <node id="2136">
+      <node id="2395">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.cpp</label>
+        <link refid="ceres__rosenbrock_8cpp"/>
+      </node>
+      <node id="2393">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp</label>
         <link refid="ceres__direct_8cpp"/>
       </node>
-      <node id="2152">
+      <node id="2410">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
         <link refid="infinite_2mps_8cpp"/>
       </node>
-      <node id="2149">
+      <node id="2407">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
         <link refid="env_8cpp"/>
       </node>
-      <node id="2138">
+      <node id="2396">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
         <link refid="ceres__subspace_8cpp"/>
       </node>
-      <node id="2125">
+      <node id="2382">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/debug.cpp</label>
         <link refid="finite_2debug_8cpp"/>
       </node>
-      <node id="2144">
+      <node id="2402">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp</label>
         <link refid="svd_8cpp"/>
       </node>
-      <node id="2133">
+      <node id="2390">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp</label>
         <link refid="multisite_8cpp"/>
       </node>
-      <node id="2141">
+      <node id="2399">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
         <link refid="ground__state_8cpp"/>
       </node>
-      <node id="2147">
+      <node id="2405">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp</label>
         <link refid="class__mps__site_8cpp"/>
       </node>
-      <node id="2132">
+      <node id="2389">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</label>
         <link refid="finite_2mps_8cpp"/>
       </node>
-      <node id="2153">
+      <node id="2411">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
       </node>

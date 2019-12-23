@@ -17,7 +17,7 @@ Program Listing for File class_model_base.cpp
    #include "class_model_base.h"
    #include <general/nmspc_tensor_extra.h>
    #include <general/nmspc_quantum_mechanics.h>
-   #include <general/nmspc_random_numbers.h>
+   #include <math/nmspc_random.h>
    #include <iomanip>
    
    using namespace qm;

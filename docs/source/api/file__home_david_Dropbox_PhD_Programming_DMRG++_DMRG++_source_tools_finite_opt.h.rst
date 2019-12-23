@@ -31,6 +31,8 @@ Includes
 
 - ``ceres/ceres.h``
 
+- ``complex.h``
+
 - ``general/class_tic_toc.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_class_tic_toc.h`)
 
 - ``general/nmspc_omp.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_omp.h`)
@@ -49,9 +51,9 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct_functor.h`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_functor.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_rosenbrock.h`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_functor.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_subspace_hamiltonian.cpp`
 
@@ -61,16 +63,12 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.cpp`
 
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_svd.cpp`
-
 
 
 
 Namespaces
 ----------
 
-
-- :ref:`namespace_tools__finite__opt`
 
 - :ref:`namespace_tools__finite__opt__internal`
 
@@ -93,6 +91,8 @@ Functions
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1aeae2ef5c9bb0ae3feff554833673b753`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a42ead97c9c959ca369fcb8193acf8f8d`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a3a33e74e9df3aa34c3ceccfa589c1cf1`
 
@@ -130,13 +130,13 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a3958eba0f6f9f8e2f7b79b2bd5050750`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c`
-
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a722d9206b6ee1fcdc509586c0f5c2afd`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ac8d4282b81c3d70eb3741733c44ea678`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a082052a5b98f556e373c29f2c0770e0a`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a58358f1ac4d7929a0c855269e2231253`
 
@@ -151,6 +151,13 @@ Functions
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a8d74d849646a7145ba9f431f8848242b`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a79ce5fcab0cb78cc92f18b0d9a7e4b5c`
+
+
+Defines
+-------
+
+
+- :ref:`exhale_define_opt_8h_1a6f5fa4c5ab61f4a2ee704758ea65ac9c`
 
 
 Typedefs

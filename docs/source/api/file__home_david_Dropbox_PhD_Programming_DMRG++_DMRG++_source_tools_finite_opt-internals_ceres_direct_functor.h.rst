@@ -29,8 +29,6 @@ Includes
 --------
 
 
-- ``general/nmspc_type_check.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_type_check.h`)
-
 - ``tools/finite/opt.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h`)
 
 
@@ -49,8 +47,6 @@ Included By
 Namespaces
 ----------
 
-
-- :ref:`namespace_tools__finite__opt`
 
 - :ref:`namespace_tools__finite__opt__internal`
 

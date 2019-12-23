@@ -29,7 +29,7 @@ Includes
 --------
 
 
-- ``general/nmspc_random_numbers.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`)
+- ``math/nmspc_random.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.h`)
 
 - ``model/class_model_base.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_model_base.h`)
 

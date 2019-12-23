@@ -105,7 +105,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="220" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_tables.cpp" bodystart="41" bodyend="43"/>
-        <references refid="namespacetools_1_1common_1_1io_1_1h5table_1adb046c04ba8888dc06e4a0755e9300c9" compoundref="common_2io_2h5pp__tables_8cpp" startline="15" endline="52">tools::common::io::h5table::write_profiling</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5table_1adb046c04ba8888dc06e4a0755e9300c9" compoundref="common_2io_2h5pp__tables_8cpp" startline="15" endline="55">tools::common::io::h5table::write_profiling</references>
       </memberdef>
       </sectiondef>
     <briefdescription>

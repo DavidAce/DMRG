@@ -6,89 +6,90 @@
     <includes refid="class__settings__reader_8h" local="no">io/class_settings_reader.h</includes>
     <includes local="no">h5pp/h5pp.h</includes>
     <incdepgraph>
-      <node id="1897">
+      <node id="2137">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp</label>
         <link refid="nmspc__settings_8cpp"/>
-        <childnode refid="1898" relation="include">
+        <childnode refid="2138" relation="include">
         </childnode>
-        <childnode refid="1902" relation="include">
+        <childnode refid="2142" relation="include">
         </childnode>
-        <childnode refid="1912" relation="include">
+        <childnode refid="2152" relation="include">
         </childnode>
       </node>
-      <node id="1905">
+      <node id="2151">
+        <label>io/nmspc_filesystem.h</label>
+        <link refid="nmspc__filesystem_8h"/>
+      </node>
+      <node id="2145">
         <label>iomanip</label>
       </node>
-      <node id="1902">
+      <node id="2142">
         <label>io/class_settings_reader.h</label>
         <link refid="class__settings__reader_8h"/>
-        <childnode refid="1903" relation="include">
+        <childnode refid="2143" relation="include">
         </childnode>
-        <childnode refid="1904" relation="include">
+        <childnode refid="2144" relation="include">
         </childnode>
-        <childnode refid="1899" relation="include">
+        <childnode refid="2139" relation="include">
         </childnode>
-        <childnode refid="1905" relation="include">
+        <childnode refid="2145" relation="include">
         </childnode>
-        <childnode refid="1906" relation="include">
+        <childnode refid="2146" relation="include">
         </childnode>
-        <childnode refid="1907" relation="include">
+        <childnode refid="2147" relation="include">
         </childnode>
-        <childnode refid="1908" relation="include">
+        <childnode refid="2148" relation="include">
         </childnode>
-        <childnode refid="1909" relation="include">
+        <childnode refid="2151" relation="include">
         </childnode>
       </node>
-      <node id="1907">
-        <label>filesystem</label>
-      </node>
-      <node id="1899">
+      <node id="2139">
         <label>string</label>
       </node>
-      <node id="1909">
+      <node id="2148">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="1910" relation="include">
+        <childnode refid="2149" relation="include">
         </childnode>
-        <childnode refid="1911" relation="include">
+        <childnode refid="2150" relation="include">
         </childnode>
       </node>
-      <node id="1904">
+      <node id="2144">
         <label>fstream</label>
       </node>
-      <node id="1911">
+      <node id="2150">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="1901">
+      <node id="2141">
         <label>simulation/enums.h</label>
         <link refid="enums_8h"/>
       </node>
-      <node id="1910">
+      <node id="2149">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="1900">
+      <node id="2140">
         <label>vector</label>
       </node>
-      <node id="1912">
+      <node id="2152">
         <label>h5pp/h5pp.h</label>
       </node>
-      <node id="1906">
+      <node id="2146">
         <label>cctype</label>
       </node>
-      <node id="1903">
+      <node id="2143">
         <label>iostream</label>
       </node>
-      <node id="1898">
+      <node id="2138">
         <label>nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="1899" relation="include">
+        <childnode refid="2139" relation="include">
         </childnode>
-        <childnode refid="1900" relation="include">
+        <childnode refid="2140" relation="include">
         </childnode>
-        <childnode refid="1901" relation="include">
+        <childnode refid="2141" relation="include">
         </childnode>
       </node>
-      <node id="1908">
+      <node id="2147">
         <label>algorithm</label>
       </node>
     </incdepgraph>

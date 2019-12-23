@@ -6,6 +6,7 @@
     <innerfile refid="class__h5table__buffer_8h">class_h5table_buffer.h</innerfile>
     <innerfile refid="class__settings__reader_8cpp">class_settings_reader.cpp</innerfile>
     <innerfile refid="class__settings__reader_8h">class_settings_reader.h</innerfile>
+    <innerfile refid="nmspc__filesystem_8h">nmspc_filesystem.h</innerfile>
     <innerfile refid="nmspc__logger_8cpp">nmspc_logger.cpp</innerfile>
     <innerfile refid="nmspc__logger_8h">nmspc_logger.h</innerfile>
     <innerfile refid="table__types_8h">table_types.h</innerfile>

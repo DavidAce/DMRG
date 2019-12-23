@@ -6,264 +6,259 @@
     <includes refid="class__h5table__buffer_8h" local="no">io/class_h5table_buffer.h</includes>
     <includes refid="class__state__infinite_8h" local="no">state/class_state_infinite.h</includes>
     <incdepgraph>
-      <node id="2519">
+      <node id="2776">
         <label>list</label>
       </node>
-      <node id="2545">
+      <node id="2801">
         <label>iomanip</label>
       </node>
-      <node id="2538">
-        <label>filesystem</label>
-      </node>
-      <node id="2544">
+      <node id="2800">
         <label>iterator</label>
       </node>
-      <node id="2533">
+      <node id="2790">
         <label>io/table_types.h</label>
         <link refid="table__types_8h"/>
-        <childnode refid="2520" relation="include">
+        <childnode refid="2777" relation="include">
         </childnode>
-        <childnode refid="2534" relation="include">
+        <childnode refid="2791" relation="include">
         </childnode>
-        <childnode refid="2535" relation="include">
+        <childnode refid="2792" relation="include">
         </childnode>
-        <childnode refid="2536" relation="include">
+        <childnode refid="2793" relation="include">
         </childnode>
-        <childnode refid="2537" relation="include">
+        <childnode refid="2794" relation="include">
         </childnode>
       </node>
-      <node id="2546">
+      <node id="2802">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2547" relation="include">
+        <childnode refid="2803" relation="include">
         </childnode>
-        <childnode refid="2529" relation="include">
+        <childnode refid="2786" relation="include">
         </childnode>
-        <childnode refid="2530" relation="include">
+        <childnode refid="2787" relation="include">
         </childnode>
       </node>
-      <node id="2529">
+      <node id="2786">
         <label>Eigen/Core</label>
       </node>
-      <node id="2517">
+      <node id="2774">
         <label>string</label>
       </node>
-      <node id="2536">
+      <node id="2793">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="2524">
+      <node id="2781">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2525" relation="include">
+        <childnode refid="2782" relation="include">
         </childnode>
-        <childnode refid="2526" relation="include">
+        <childnode refid="2783" relation="include">
         </childnode>
       </node>
-      <node id="2521">
+      <node id="2778">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2522" relation="include">
+        <childnode refid="2779" relation="include">
         </childnode>
-        <childnode refid="2523" relation="include">
+        <childnode refid="2780" relation="include">
         </childnode>
       </node>
-      <node id="2549">
+      <node id="2805">
         <label>map</label>
       </node>
-      <node id="2537">
+      <node id="2794">
         <label>simulation/class_simulation_status.h</label>
         <link refid="class__simulation__status_8h"/>
-        <childnode refid="2516" relation="include">
+        <childnode refid="2773" relation="include">
         </childnode>
-        <childnode refid="2517" relation="include">
+        <childnode refid="2774" relation="include">
         </childnode>
-        <childnode refid="2526" relation="include">
+        <childnode refid="2783" relation="include">
         </childnode>
-        <childnode refid="2520" relation="include">
+        <childnode refid="2777" relation="include">
         </childnode>
-        <childnode refid="2534" relation="include">
+        <childnode refid="2791" relation="include">
         </childnode>
-        <childnode refid="2535" relation="include">
+        <childnode refid="2792" relation="include">
         </childnode>
-        <childnode refid="2536" relation="include">
+        <childnode refid="2793" relation="include">
         </childnode>
       </node>
-      <node id="2547">
+      <node id="2803">
         <label>experimental/type_traits</label>
       </node>
-      <node id="2515">
+      <node id="2772">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="2516" relation="include">
+        <childnode refid="2773" relation="include">
         </childnode>
-        <childnode refid="2517" relation="include">
+        <childnode refid="2774" relation="include">
         </childnode>
-        <childnode refid="2518" relation="include">
+        <childnode refid="2775" relation="include">
         </childnode>
-        <childnode refid="2519" relation="include">
+        <childnode refid="2776" relation="include">
         </childnode>
-        <childnode refid="2520" relation="include">
+        <childnode refid="2777" relation="include">
         </childnode>
-        <childnode refid="2521" relation="include">
+        <childnode refid="2778" relation="include">
         </childnode>
-        <childnode refid="2524" relation="include">
+        <childnode refid="2781" relation="include">
         </childnode>
-        <childnode refid="2527" relation="include">
+        <childnode refid="2784" relation="include">
         </childnode>
-        <childnode refid="2529" relation="include">
+        <childnode refid="2786" relation="include">
         </childnode>
-        <childnode refid="2530" relation="include">
+        <childnode refid="2787" relation="include">
         </childnode>
       </node>
-      <node id="2530">
+      <node id="2787">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2523">
+      <node id="2780">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="2532">
+      <node id="2789">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="2514">
+      <node id="2771">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp</label>
         <link refid="infinite_2io_2h5pp__tables_8cpp"/>
-        <childnode refid="2515" relation="include">
+        <childnode refid="2772" relation="include">
         </childnode>
-        <childnode refid="2531" relation="include">
+        <childnode refid="2788" relation="include">
         </childnode>
-        <childnode refid="2539" relation="include">
+        <childnode refid="2795" relation="include">
         </childnode>
       </node>
-      <node id="2543">
+      <node id="2799">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="2552">
+      <node id="2808">
         <label>simulation/enums.h</label>
         <link refid="enums_8h"/>
       </node>
-      <node id="2527">
+      <node id="2784">
         <label>tools/finite/opt-internals/enum_classes.h</label>
         <link refid="enum__classes_8h"/>
-        <childnode refid="2526" relation="include">
+        <childnode refid="2783" relation="include">
         </childnode>
-        <childnode refid="2528" relation="include">
+        <childnode refid="2785" relation="include">
         </childnode>
       </node>
-      <node id="2522">
+      <node id="2779">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="2542">
+      <node id="2798">
         <label>general/nmspc_omp.h</label>
         <link refid="nmspc__omp_8h"/>
-        <childnode refid="2530" relation="include">
+        <childnode refid="2787" relation="include">
         </childnode>
       </node>
-      <node id="2539">
+      <node id="2795">
         <label>state/class_state_infinite.h</label>
         <link refid="class__state__infinite_8h"/>
-        <childnode refid="2516" relation="include">
+        <childnode refid="2773" relation="include">
         </childnode>
-        <childnode refid="2540" relation="include">
+        <childnode refid="2796" relation="include">
         </childnode>
-        <childnode refid="2541" relation="include">
+        <childnode refid="2797" relation="include">
         </childnode>
-        <childnode refid="2524" relation="include">
+        <childnode refid="2781" relation="include">
         </childnode>
-        <childnode refid="2548" relation="include">
+        <childnode refid="2804" relation="include">
         </childnode>
-        <childnode refid="2551" relation="include">
+        <childnode refid="2807" relation="include">
         </childnode>
-        <childnode refid="2521" relation="include">
+        <childnode refid="2778" relation="include">
         </childnode>
       </node>
-      <node id="2540">
+      <node id="2796">
         <label>optional</label>
       </node>
-      <node id="2520">
+      <node id="2777">
         <label>vector</label>
       </node>
-      <node id="2550">
+      <node id="2806">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="2534">
+      <node id="2791">
         <label>array</label>
       </node>
-      <node id="2528">
+      <node id="2785">
         <label>sstream</label>
       </node>
-      <node id="2535">
+      <node id="2792">
         <label>hdf5.h</label>
       </node>
-      <node id="2526">
+      <node id="2783">
         <label>iostream</label>
       </node>
-      <node id="2548">
+      <node id="2804">
         <label>math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="2526" relation="include">
+        <childnode refid="2783" relation="include">
         </childnode>
-        <childnode refid="2534" relation="include">
+        <childnode refid="2791" relation="include">
         </childnode>
-        <childnode refid="2549" relation="include">
+        <childnode refid="2805" relation="include">
         </childnode>
-        <childnode refid="2518" relation="include">
+        <childnode refid="2775" relation="include">
         </childnode>
-        <childnode refid="2520" relation="include">
+        <childnode refid="2777" relation="include">
         </childnode>
-        <childnode refid="2550" relation="include">
+        <childnode refid="2806" relation="include">
         </childnode>
-        <childnode refid="2532" relation="include">
+        <childnode refid="2789" relation="include">
         </childnode>
       </node>
-      <node id="2525">
+      <node id="2782">
         <label>chrono</label>
       </node>
-      <node id="2531">
+      <node id="2788">
         <label>io/class_h5table_buffer.h</label>
         <link refid="class__h5table__buffer_8h"/>
-        <childnode refid="2516" relation="include">
+        <childnode refid="2773" relation="include">
         </childnode>
-        <childnode refid="2532" relation="include">
+        <childnode refid="2789" relation="include">
         </childnode>
-        <childnode refid="2533" relation="include">
-        </childnode>
-        <childnode refid="2538" relation="include">
+        <childnode refid="2790" relation="include">
         </childnode>
       </node>
-      <node id="2518">
+      <node id="2775">
         <label>complex</label>
       </node>
-      <node id="2551">
+      <node id="2807">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="2517" relation="include">
+        <childnode refid="2774" relation="include">
         </childnode>
-        <childnode refid="2520" relation="include">
+        <childnode refid="2777" relation="include">
         </childnode>
-        <childnode refid="2552" relation="include">
+        <childnode refid="2808" relation="include">
         </childnode>
       </node>
-      <node id="2541">
+      <node id="2797">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2542" relation="include">
+        <childnode refid="2798" relation="include">
         </childnode>
-        <childnode refid="2529" relation="include">
+        <childnode refid="2786" relation="include">
         </childnode>
-        <childnode refid="2543" relation="include">
+        <childnode refid="2799" relation="include">
         </childnode>
-        <childnode refid="2530" relation="include">
+        <childnode refid="2787" relation="include">
         </childnode>
-        <childnode refid="2544" relation="include">
+        <childnode refid="2800" relation="include">
         </childnode>
-        <childnode refid="2526" relation="include">
+        <childnode refid="2783" relation="include">
         </childnode>
-        <childnode refid="2545" relation="include">
+        <childnode refid="2801" relation="include">
         </childnode>
-        <childnode refid="2546" relation="include">
+        <childnode refid="2802" relation="include">
         </childnode>
       </node>
-      <node id="2516">
+      <node id="2773">
         <label>memory</label>
       </node>
     </incdepgraph>

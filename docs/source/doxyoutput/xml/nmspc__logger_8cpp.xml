@@ -7,39 +7,39 @@
     <includes local="no">spdlog/sinks/stdout_color_sinks.h</includes>
     <includes local="no">spdlog/sinks/stdout_sinks.h</includes>
     <incdepgraph>
-      <node id="967">
+      <node id="961">
         <label>nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="968" relation="include">
+        <childnode refid="962" relation="include">
         </childnode>
-        <childnode refid="969" relation="include">
+        <childnode refid="963" relation="include">
         </childnode>
       </node>
-      <node id="969">
+      <node id="963">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="970">
+      <node id="964">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="968">
+      <node id="962">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="971">
+      <node id="965">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="966">
+      <node id="960">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp</label>
         <link refid="nmspc__logger_8cpp"/>
-        <childnode refid="967" relation="include">
+        <childnode refid="961" relation="include">
         </childnode>
-        <childnode refid="970" relation="include">
+        <childnode refid="964" relation="include">
         </childnode>
-        <childnode refid="971" relation="include">
+        <childnode refid="965" relation="include">
         </childnode>
-        <childnode refid="972" relation="include">
+        <childnode refid="966" relation="include">
         </childnode>
       </node>
-      <node id="972">
+      <node id="966">
         <label>spdlog/sinks/stdout_sinks.h</label>
       </node>
     </incdepgraph>

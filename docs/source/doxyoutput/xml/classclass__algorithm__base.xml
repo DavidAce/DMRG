@@ -167,84 +167,6 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="43" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
-        <definition>class_tic_toc class_algorithm_base::t_tot</definition>
-        <argsstring></argsstring>
-        <name>t_tot</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Total time </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="76" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
-        <definition>class_tic_toc class_algorithm_base::t_pre</definition>
-        <argsstring></argsstring>
-        <name>t_pre</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Preprocessing time </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="77" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
-        <definition>class_tic_toc class_algorithm_base::t_run</definition>
-        <argsstring></argsstring>
-        <name>t_run</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Simulation run time </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="78" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
-        <definition>class_tic_toc class_algorithm_base::t_pos</definition>
-        <argsstring></argsstring>
-        <name>t_pos</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Postprocessing time </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="79" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
-        <definition>class_tic_toc class_algorithm_base::t_prt</definition>
-        <argsstring></argsstring>
-        <name>t_prt</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Printing time </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="80" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" prot="public" static="no" mutable="no">
-        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
-        <definition>class_tic_toc class_algorithm_base::t_con</definition>
-        <argsstring></argsstring>
-        <name>t_con</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-<para>Convergence checks time </para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="81" bodyend="-1"/>
-      </memberdef>
       </sectiondef>
       <sectiondef kind="public-static-attrib">
       <memberdef kind="variable" id="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" prot="public" static="yes" mutable="no">
@@ -299,26 +221,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="20" bodyend="42"/>
-        <references refid="classclass__algorithm__base_1a790233233d4352402e651a312e7ae76a" compoundref="class__algorithm__base_8cpp" startline="20" endline="42">class_algorithm_base</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="20" bodyend="41"/>
+        <references refid="classclass__algorithm__base_1a790233233d4352402e651a312e7ae76a" compoundref="class__algorithm__base_8cpp" startline="20" endline="41">class_algorithm_base</references>
         <references refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" compoundref="class__algorithm__base_8h" startline="42">sim_type</references>
-        <references refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" compoundref="class__algorithm__base_8cpp" startline="207" endline="225">set_profiling_labels</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a46720fc1d130729b6d90f91492d5c94d" compoundref="prof_8cpp" startline="35" endline="51">tools::common::profile::init_profiling</references>
+        <references refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" compoundref="class__algorithm__base_8h" startline="27">log</references>
+        <references refid="namespace_logger_1a427a7542e5ff63f1596dc0967bd65ab7" compoundref="nmspc__logger_8cpp" startline="54" endline="66">Logger::setLogger</references>
+        <references refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" compoundref="class__algorithm__base_8h" startline="41">sim_name</references>
+        <references refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" compoundref="nmspc__settings_8h" startline="180">settings::console::verbosity</references>
+        <references refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" compoundref="nmspc__settings_8h" startline="181">settings::console::timestamp</references>
+        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a46720fc1d130729b6d90f91492d5c94d" compoundref="prof_8cpp" startline="37" endline="60">tools::common::profile::init_profiling</references>
         <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
         <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
-      </memberdef>
-      <memberdef kind="function" id="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>void</type>
-        <definition>void class_algorithm_base::set_profiling_labels</definition>
-        <argsstring>()</argsstring>
-        <name>set_profiling_labels</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="207" bodyend="225"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
         <type>void</type>
@@ -672,14 +586,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="168" bodyend="177"/>
-        <references refid="namespacesettings_1_1profiling_1abc2a7232a0529e490a87f5b7b4a22aa7" compoundref="nmspc__settings_8h" startline="175">settings::profiling::on</references>
-        <references refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" compoundref="class__algorithm__base_8h" startline="76">t_tot</references>
-        <references refid="classclass__tic__toc_1a49634b133c98800736dbe2229bcb1322" compoundref="class__tic__toc_8cpp" startline="67" endline="75">class_tic_toc::print_time_w_percent</references>
-        <references refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" compoundref="class__algorithm__base_8h" startline="78">t_run</references>
-        <references refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" compoundref="class__algorithm__base_8h" startline="80">t_prt</references>
-        <references refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" compoundref="class__algorithm__base_8h" startline="81">t_con</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a1d6b9c4356a502dd2eec25b27f80919c" compoundref="prof_8cpp" startline="11" endline="32">tools::common::profile::print_profiling</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="72" column="1"/>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -696,7 +603,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="181" bodyend="205"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="168" bodyend="192"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="protected-func">
@@ -735,11 +642,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="102" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="48" bodyend="97"/>
-        <references refid="structclass__algorithm__base_1_1_saturation_report_1afd0e69afe481ee46381ef8fb70c54790" compoundref="class__algorithm__base_8h" startline="90">class_algorithm_base::SaturationReport::slope</references>
-        <references refid="structclass__algorithm__base_1_1_saturation_report_1a6f46317eb8a3f9753516ad64892d5db0" compoundref="class__algorithm__base_8h" startline="89">class_algorithm_base::SaturationReport::check_from</references>
-        <references refid="structclass__algorithm__base_1_1_saturation_report_1a0754af6aec19aa9590b7a6cbc62d3c6e" compoundref="class__algorithm__base_8h" startline="91">class_algorithm_base::SaturationReport::avgY</references>
-        <references refid="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" compoundref="class__algorithm__base_8h" startline="88">class_algorithm_base::SaturationReport::has_computed</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="47" bodyend="96"/>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1afd0e69afe481ee46381ef8fb70c54790" compoundref="class__algorithm__base_8h" startline="84">class_algorithm_base::SaturationReport::slope</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a6f46317eb8a3f9753516ad64892d5db0" compoundref="class__algorithm__base_8h" startline="83">class_algorithm_base::SaturationReport::check_from</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a0754af6aec19aa9590b7a6cbc62d3c6e" compoundref="class__algorithm__base_8h" startline="85">class_algorithm_base::SaturationReport::avgY</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" compoundref="class__algorithm__base_8h" startline="82">class_algorithm_base::SaturationReport::has_computed</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__base_1a6c3102d68422740613902d7d16604f63" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="structclass__algorithm__base_1_1_saturation_report2" kindref="compound">SaturationReport2</ref></type>
@@ -776,10 +683,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="110" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="101" bodyend="165"/>
-        <references refid="structclass__algorithm__base_1_1_saturation_report2_1a12c65482378a58e30d65ca13ba6a3147" compoundref="class__algorithm__base_8h" startline="94">class_algorithm_base::SaturationReport2::has_computed</references>
-        <references refid="structclass__algorithm__base_1_1_saturation_report2_1a0e2895558c091aeb89dd8a25d9e706df" compoundref="class__algorithm__base_8h" startline="95">class_algorithm_base::SaturationReport2::has_saturated</references>
-        <references refid="structclass__algorithm__base_1_1_saturation_report2_1a98406c00070782a5fd10488a8f6e5de5" compoundref="class__algorithm__base_8h" startline="96">class_algorithm_base::SaturationReport2::saturated_for</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="100" bodyend="164"/>
+        <references refid="structclass__algorithm__base_1_1_saturation_report2_1a12c65482378a58e30d65ca13ba6a3147" compoundref="class__algorithm__base_8h" startline="88">class_algorithm_base::SaturationReport2::has_computed</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report2_1a0e2895558c091aeb89dd8a25d9e706df" compoundref="class__algorithm__base_8h" startline="89">class_algorithm_base::SaturationReport2::has_saturated</references>
+        <references refid="structclass__algorithm__base_1_1_saturation_report2_1a98406c00070782a5fd10488a8f6e5de5" compoundref="class__algorithm__base_8h" startline="90">class_algorithm_base::SaturationReport2::saturated_for</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -787,93 +694,78 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="38">
+      <node id="44">
         <label>class_fDMRG</label>
         <link refid="classclass__f_d_m_r_g"/>
-        <childnode refid="37" relation="public-inheritance">
+        <childnode refid="43" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="40">
+      <node id="46">
         <label>class_algorithm_infinite</label>
         <link refid="classclass__algorithm__infinite"/>
-        <childnode refid="36" relation="public-inheritance">
+        <childnode refid="42" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="39">
+      <node id="45">
         <label>class_xDMRG</label>
         <link refid="classclass__x_d_m_r_g"/>
-        <childnode refid="37" relation="public-inheritance">
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>class_iTEBD</label>
+        <link refid="classclass__i_t_e_b_d"/>
+        <childnode refid="46" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>class_algorithm_finite</label>
+        <link refid="classclass__algorithm__finite"/>
+        <childnode refid="42" relation="public-inheritance">
         </childnode>
       </node>
       <node id="42">
-        <label>class_iTEBD</label>
-        <link refid="classclass__i_t_e_b_d"/>
-        <childnode refid="40" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="37">
-        <label>class_algorithm_finite</label>
-        <link refid="classclass__algorithm__finite"/>
-        <childnode refid="36" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="36">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
-      <node id="41">
+      <node id="47">
         <label>class_iDMRG</label>
         <link refid="classclass__i_d_m_r_g"/>
-        <childnode refid="40" relation="public-inheritance">
+        <childnode refid="46" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="45">
+      <node id="51">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="48">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-        <childnode refid="44" relation="usage">
-          <edgelabel>name</edgelabel>
-        </childnode>
-      </node>
-      <node id="47">
+      <node id="53">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="46">
+      <node id="52">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="47" relation="public-inheritance">
+        <childnode refid="53" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="43">
+      <node id="49">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="44" relation="usage">
+        <childnode refid="50" relation="usage">
           <edgelabel>sim_name</edgelabel>
         </childnode>
-        <childnode refid="46" relation="usage">
+        <childnode refid="52" relation="usage">
           <edgelabel>sim_status</edgelabel>
         </childnode>
-        <childnode refid="48" relation="usage">
-          <edgelabel>t_con</edgelabel>
-          <edgelabel>t_pos</edgelabel>
-          <edgelabel>t_pre</edgelabel>
-          <edgelabel>t_tot</edgelabel>
-          <edgelabel>t_run</edgelabel>
-          <edgelabel>t_prt</edgelabel>
-        </childnode>
       </node>
-      <node id="44">
+      <node id="50">
         <label>std::string</label>
-        <childnode refid="45" relation="public-inheritance">
+        <childnode refid="51" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="25" bodyend="119"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="25" bodyend="113"/>
     <listofallmembers>
       <member refid="classclass__algorithm__base_1a6d37e1472c3e74f8e50a11c71a8b03ee" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>check_convergence</name></member>
       <member refid="classclass__algorithm__base_1aa374f4bdc5b96a72e96688ac874bfe62" prot="protected" virt="non-virtual"><scope>class_algorithm_base</scope><name>check_saturation_using_slope</name></member>
@@ -899,19 +791,12 @@
       <member refid="classclass__algorithm__base_1a4db893602692d81b4cce5e197b5a5238" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>reset_to_random_state</name></member>
       <member refid="classclass__algorithm__base_1a41b199782e43aeaccf607b8191c3a027" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>run</name></member>
       <member refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>Scalar</name></member>
-      <member refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>set_profiling_labels</name></member>
       <member refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>sim_name</name></member>
       <member refid="classclass__algorithm__base_1ae08aa4b8e9bbd286c9ec76f15553a037" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>sim_on</name></member>
       <member refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>sim_status</name></member>
       <member refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>sim_type</name></member>
       <member refid="classclass__algorithm__base_1af36e30da0595f116629422821e1e4ced" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>stop_reason</name></member>
       <member refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>StopReason</name></member>
-      <member refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_con</name></member>
-      <member refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_pos</name></member>
-      <member refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_pre</name></member>
-      <member refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_prt</name></member>
-      <member refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_run</name></member>
-      <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" virt="non-virtual"><scope>class_algorithm_base</scope><name>t_tot</name></member>
       <member refid="classclass__algorithm__base_1a9a60e6393090895c4960d04b83621c62" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>update_bond_dimension_limit</name></member>
       <member refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>write_freq</name></member>
       <member refid="classclass__algorithm__base_1a6ad92368ba8eb1bd460926505b09285c" prot="public" virt="pure-virtual"><scope>class_algorithm_base</scope><name>write_measurements</name></member>

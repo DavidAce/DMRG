@@ -255,7 +255,7 @@
         <references refid="namespacesettings_1_1model_1_1selfdual__tf__rf__ising_1af8e672e8d9eb0861b3c5419103906a9e" compoundref="nmspc__settings_8h" startline="88">settings::model::selfdual_tf_rf_ising::lambda</references>
         <references refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" compoundref="class__model__base_8h" startline="19">class_model_base::e_reduced</references>
         <references refid="classclass__selfdual__tf__rf__ising__normal_1a22c3ba2b2df43bd7490d0f3f680af21a" compoundref="class__selfdual__tf__rf__ising__normal_8h" startline="20">J_rnd</references>
-        <references refid="namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60" compoundref="nmspc__random__numbers_8cpp" startline="43" endline="46">rn::normal</references>
+        <references refid="namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60" compoundref="nmspc__random_8cpp" startline="58" endline="61">rn::normal</references>
         <references refid="classclass__selfdual__tf__rf__ising__normal_1ab0a03632e519a0d7fa83cf5f3a26b6da" compoundref="class__selfdual__tf__rf__ising__normal_8h" startline="21">h_rnd</references>
         <references refid="classclass__selfdual__tf__rf__ising__normal_1ac22080176f11f30ff324b7f26eb3b1f9" compoundref="class__selfdual__tf__rf__ising__normal_8h" startline="29">delta</references>
       </memberdef>
@@ -425,7 +425,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.cpp" bodystart="120" bodyend="127"/>
         <references refid="classclass__selfdual__tf__rf__ising__normal_1a22c3ba2b2df43bd7490d0f3f680af21a" compoundref="class__selfdual__tf__rf__ising__normal_8h" startline="20">J_rnd</references>
-        <references refid="namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60" compoundref="nmspc__random__numbers_8cpp" startline="43" endline="46">rn::normal</references>
+        <references refid="namespacern_1a8e7d038cca542f61a74fc3a51ccd0b60" compoundref="nmspc__random_8cpp" startline="58" endline="61">rn::normal</references>
         <references refid="classclass__selfdual__tf__rf__ising__normal_1a884831bdec63ad25c43a59560d86fea3" compoundref="class__selfdual__tf__rf__ising__normal_8h" startline="22">J_log_mean</references>
         <references refid="classclass__selfdual__tf__rf__ising__normal_1a39d9cf30e6dda63490c13ad7d38d85c3" compoundref="class__selfdual__tf__rf__ising__normal_8h" startline="26">J_sigma</references>
         <references refid="classclass__selfdual__tf__rf__ising__normal_1ab0a03632e519a0d7fa83cf5f3a26b6da" compoundref="class__selfdual__tf__rf__ising__normal_8h" startline="21">h_rnd</references>

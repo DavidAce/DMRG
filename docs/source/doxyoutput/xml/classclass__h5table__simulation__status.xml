@@ -52,47 +52,47 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="196">
+      <node id="198">
         <label>std::array&lt; hid_t, NFIELDS &gt;</label>
       </node>
-      <node id="192">
+      <node id="194">
         <label>std::vector&lt; status_data &gt;</label>
-        <childnode refid="193" relation="usage">
+        <childnode refid="195" relation="usage">
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="194">
+      <node id="196">
         <label>class_h5table_simulation_status::meta_struct</label>
         <link refid="structclass__h5table__simulation__status_1_1meta__struct"/>
-        <childnode refid="195" relation="usage">
+        <childnode refid="197" relation="usage">
           <edgelabel>field_names</edgelabel>
         </childnode>
-        <childnode refid="196" relation="usage">
+        <childnode refid="198" relation="usage">
           <edgelabel>field_types</edgelabel>
         </childnode>
-        <childnode refid="197" relation="usage">
+        <childnode refid="199" relation="usage">
           <edgelabel>dst_offsets</edgelabel>
           <edgelabel>dst_sizes</edgelabel>
         </childnode>
       </node>
-      <node id="191">
+      <node id="193">
         <label>class_h5table_simulation_status</label>
         <link refid="classclass__h5table__simulation__status"/>
-        <childnode refid="192" relation="usage">
+        <childnode refid="194" relation="usage">
           <edgelabel>buffer</edgelabel>
         </childnode>
-        <childnode refid="194" relation="usage">
+        <childnode refid="196" relation="usage">
           <edgelabel>meta</edgelabel>
         </childnode>
       </node>
-      <node id="197">
+      <node id="199">
         <label>std::array&lt; size_t, NFIELDS &gt;</label>
       </node>
-      <node id="193">
+      <node id="195">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="195">
+      <node id="197">
         <label>std::array&lt; const char *, NFIELDS &gt;</label>
       </node>
     </collaborationgraph>

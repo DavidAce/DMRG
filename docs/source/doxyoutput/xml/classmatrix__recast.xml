@@ -326,22 +326,22 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="410">
+      <node id="439">
         <label>std::vector&lt; Scalar &gt;</label>
-        <childnode refid="409" relation="usage">
+        <childnode refid="438" relation="usage">
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="409">
+      <node id="438">
         <label>std::complex</label>
       </node>
-      <node id="408">
+      <node id="437">
         <label>matrix_recast&lt; Scalar &gt;</label>
         <link refid="classmatrix__recast"/>
-        <childnode refid="409" relation="usage">
+        <childnode refid="438" relation="usage">
           <edgelabel>matrix_ptr</edgelabel>
         </childnode>
-        <childnode refid="410" relation="usage">
+        <childnode refid="439" relation="usage">
           <edgelabel>matrix_pruned</edgelabel>
         </childnode>
       </node>

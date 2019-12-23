@@ -33,9 +33,9 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a9b5ed5708bfbf96ee08ab2d863af83b0`
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a1e55a3a926b49d79f414952721cec301`
-
 - :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a1e55a3a926b49d79f414952721cec301`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1ops_1a6d8dab3f6e8c90533c7ee5b9cf5f02f4`
 

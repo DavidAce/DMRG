@@ -213,27 +213,27 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="420">
+      <node id="473">
         <label>std::array&lt; hid_t, NFIELDS &gt;</label>
       </node>
-      <node id="418">
+      <node id="471">
         <label>class_h5table_measurements_finite::meta_struct</label>
         <link refid="structclass__h5table__measurements__finite_1_1meta__struct"/>
-        <childnode refid="419" relation="usage">
+        <childnode refid="472" relation="usage">
           <edgelabel>field_names</edgelabel>
         </childnode>
-        <childnode refid="420" relation="usage">
+        <childnode refid="473" relation="usage">
           <edgelabel>field_types</edgelabel>
         </childnode>
-        <childnode refid="421" relation="usage">
+        <childnode refid="474" relation="usage">
           <edgelabel>dst_offsets</edgelabel>
           <edgelabel>dst_sizes</edgelabel>
         </childnode>
       </node>
-      <node id="421">
+      <node id="474">
         <label>std::array&lt; size_t, NFIELDS &gt;</label>
       </node>
-      <node id="419">
+      <node id="472">
         <label>std::array&lt; const char *, NFIELDS &gt;</label>
       </node>
     </collaborationgraph>

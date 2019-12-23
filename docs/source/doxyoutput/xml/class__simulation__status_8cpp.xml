@@ -4,49 +4,49 @@
     <compoundname>class_simulation_status.cpp</compoundname>
     <includes refid="class__simulation__status_8h" local="yes">class_simulation_status.h</includes>
     <incdepgraph>
-      <node id="1791">
+      <node id="2032">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp</label>
         <link refid="class__simulation__status_8cpp"/>
-        <childnode refid="1792" relation="include">
+        <childnode refid="2033" relation="include">
         </childnode>
       </node>
-      <node id="1794">
+      <node id="2035">
         <label>string</label>
       </node>
-      <node id="1799">
+      <node id="2040">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="1792">
+      <node id="2033">
         <label>class_simulation_status.h</label>
         <link refid="class__simulation__status_8h"/>
-        <childnode refid="1793" relation="include">
+        <childnode refid="2034" relation="include">
         </childnode>
-        <childnode refid="1794" relation="include">
+        <childnode refid="2035" relation="include">
         </childnode>
-        <childnode refid="1795" relation="include">
+        <childnode refid="2036" relation="include">
         </childnode>
-        <childnode refid="1796" relation="include">
+        <childnode refid="2037" relation="include">
         </childnode>
-        <childnode refid="1797" relation="include">
+        <childnode refid="2038" relation="include">
         </childnode>
-        <childnode refid="1798" relation="include">
+        <childnode refid="2039" relation="include">
         </childnode>
-        <childnode refid="1799" relation="include">
+        <childnode refid="2040" relation="include">
         </childnode>
       </node>
-      <node id="1796">
+      <node id="2037">
         <label>vector</label>
       </node>
-      <node id="1797">
+      <node id="2038">
         <label>array</label>
       </node>
-      <node id="1798">
+      <node id="2039">
         <label>hdf5.h</label>
       </node>
-      <node id="1795">
+      <node id="2036">
         <label>iostream</label>
       </node>
-      <node id="1793">
+      <node id="2034">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -71,6 +71,46 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp" bodystart="18" bodyend="61"/>
+        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
+        <references refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" compoundref="class__simulation__status_8h" startline="19">status_data::step</references>
+        <references refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" compoundref="class__simulation__status_8h" startline="20">status_data::position</references>
+        <references refid="structstatus__data_1a16d2c55935f9a23c594bce56c1679b31" compoundref="class__simulation__status_8h" startline="21">status_data::moves</references>
+        <references refid="structstatus__data_1aa32e29bb9c8addcaf8f6591ae3030975" compoundref="class__simulation__status_8h" startline="22">status_data::num_resets</references>
+        <references refid="structstatus__data_1a394209e7e516250158bc78e854504288" compoundref="class__simulation__status_8h" startline="23">status_data::chi_max</references>
+        <references refid="structstatus__data_1ad9cfe0cc4a462c416584066fb9abc28f" compoundref="class__simulation__status_8h" startline="24">status_data::chi_lim</references>
+        <references refid="structstatus__data_1a93ca2d10ef209ccd644ff5f5d9efabf5" compoundref="class__simulation__status_8h" startline="25">status_data::min_sweeps</references>
+        <references refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" compoundref="class__simulation__status_8h" startline="26">status_data::energy_min</references>
+        <references refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" compoundref="class__simulation__status_8h" startline="27">status_data::energy_max</references>
+        <references refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" compoundref="class__simulation__status_8h" startline="28">status_data::energy_target</references>
+        <references refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" compoundref="class__simulation__status_8h" startline="29">status_data::energy_ubound</references>
+        <references refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" compoundref="class__simulation__status_8h" startline="30">status_data::energy_lbound</references>
+        <references refid="structstatus__data_1a2642502c4df9c294eb3d70111e57f9b7" compoundref="class__simulation__status_8h" startline="31">status_data::energy_dens</references>
+        <references refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" compoundref="class__simulation__status_8h" startline="32">status_data::energy_dens_target</references>
+        <references refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" compoundref="class__simulation__status_8h" startline="33">status_data::energy_dens_window</references>
+        <references refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" compoundref="class__simulation__status_8h" startline="34">status_data::phys_time</references>
+        <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
+        <references refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" compoundref="class__simulation__status_8h" startline="36">status_data::simu_time</references>
+        <references refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" compoundref="class__simulation__status_8h" startline="37">status_data::delta_t</references>
+        <references refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" compoundref="class__simulation__status_8h" startline="38">status_data::time_step_has_converged</references>
+        <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="39">status_data::simulation_has_converged</references>
+        <references refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" compoundref="class__simulation__status_8h" startline="40">status_data::simulation_has_saturated</references>
+        <references refid="structstatus__data_1a682a441660e6bf83604320835ee6c20d" compoundref="class__simulation__status_8h" startline="41">status_data::simulation_has_succeeded</references>
+        <references refid="structstatus__data_1ad1888c88421c43a27431329438801788" compoundref="class__simulation__status_8h" startline="42">status_data::simulation_has_got_stuck</references>
+        <references refid="structstatus__data_1abe15010ddc3fee2d541b521bb23dfdb5" compoundref="class__simulation__status_8h" startline="43">status_data::simulation_has_stuck_for</references>
+        <references refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" compoundref="class__simulation__status_8h" startline="44">status_data::simulation_has_to_stop</references>
+        <references refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" compoundref="class__simulation__status_8h" startline="45">status_data::chi_lim_has_reached_chi_max</references>
+        <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="46">status_data::entanglement_has_converged</references>
+        <references refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" compoundref="class__simulation__status_8h" startline="47">status_data::entanglement_has_saturated</references>
+        <references refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" compoundref="class__simulation__status_8h" startline="48">status_data::variance_mpo_has_converged</references>
+        <references refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" compoundref="class__simulation__status_8h" startline="49">status_data::variance_mpo_has_saturated</references>
+        <references refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" compoundref="class__simulation__status_8h" startline="50">status_data::variance_ham_has_converged</references>
+        <references refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" compoundref="class__simulation__status_8h" startline="51">status_data::variance_ham_has_saturated</references>
+        <references refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" compoundref="class__simulation__status_8h" startline="52">status_data::variance_mom_has_converged</references>
+        <references refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" compoundref="class__simulation__status_8h" startline="53">status_data::variance_mom_has_saturated</references>
+        <references refid="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" compoundref="class__simulation__status_8h" startline="54">status_data::entanglement_saturated_for</references>
+        <references refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" compoundref="class__simulation__status_8h" startline="55">status_data::variance_mpo_saturated_for</references>
+        <references refid="structstatus__data_1aca462206692cefd191733b5987b27887" compoundref="class__simulation__status_8h" startline="56">status_data::variance_ham_saturated_for</references>
+        <references refid="structstatus__data_1ab12472ca8a5c1819ae6edb5f21b5a9b9" compoundref="class__simulation__status_8h" startline="57">status_data::variance_mom_saturated_for</references>
       </memberdef>
       </sectiondef>
     <briefdescription>

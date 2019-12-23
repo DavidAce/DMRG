@@ -54,13 +54,13 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="366">
+      <node id="391">
         <label>T</label>
       </node>
-      <node id="365">
+      <node id="390">
         <label>Textra::idx_dim_pair&lt; T &gt;</label>
         <link refid="struct_textra_1_1idx__dim__pair"/>
-        <childnode refid="366" relation="usage">
+        <childnode refid="391" relation="usage">
           <edgelabel>idxA</edgelabel>
           <edgelabel>idxB</edgelabel>
           <edgelabel>dimB</edgelabel>

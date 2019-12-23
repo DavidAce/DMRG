@@ -52,7 +52,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.cpp" bodystart="7" bodyend="13"/>
-        <references refid="namespacetools_1_1finite_1_1opt_1a4f7b1f67320c2a2a5788ff7633f2baee" compoundref="finite_2opt_8cpp" startline="82" endline="86">tools::finite::opt::find_ground_state</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1a4f7b1f67320c2a2a5788ff7633f2baee" compoundref="finite_2opt_8cpp" startline="84" endline="88">tools::finite::opt::find_ground_state</references>
         <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a8cf125b0e31559ba75a9d9b4f818a554">tools::finite::opt::internal::REAL</references>
         <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a958448d4909b92010c81d52d3e6ad8f1">tools::finite::opt::internal::CPLX</references>
       </memberdef>
@@ -62,26 +62,26 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="453">
+      <node id="494">
         <label>tools::finite::opt::internal::EnumBase&lt; opt::TYPE &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
       </node>
-      <node id="452">
+      <node id="493">
         <label>tools::finite::opt::OptType</label>
         <link refid="classtools_1_1finite_1_1opt_1_1_opt_type"/>
-        <childnode refid="453" relation="public-inheritance">
+        <childnode refid="494" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="455">
+      <node id="496">
         <label>tools::finite::opt::internal::EnumBase&lt; opt::TYPE &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
       </node>
-      <node id="454">
+      <node id="495">
         <label>tools::finite::opt::OptType</label>
         <link refid="classtools_1_1finite_1_1opt_1_1_opt_type"/>
-        <childnode refid="455" relation="public-inheritance">
+        <childnode refid="496" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

@@ -31,9 +31,7 @@ Includes
 
 - ``class_eigsolver.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_eigsolver.h`)
 
-- ``complex``
-
-- ``lapacke.h``
+- ``complex.h``
 
 
 
@@ -44,7 +42,7 @@ Defines
 -------
 
 
-- :ref:`exhale_define_class__eigsolver_8cpp_1adabc2c82eff51faaacfd546de1ea7517`
+- :ref:`exhale_define_class__eigsolver_8cpp_1ad3fccfa336e6375f856b0ea83fb28343`
 
-- :ref:`exhale_define_class__eigsolver_8cpp_1a404df1e14fa7e09eeb60537486932fb0`
+- :ref:`exhale_define_class__eigsolver_8cpp_1ae50371d798dfe647fd2db629ba774a8a`
 

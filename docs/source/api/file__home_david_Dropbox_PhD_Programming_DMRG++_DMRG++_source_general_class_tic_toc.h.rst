@@ -49,6 +49,8 @@ Included By
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_class_tic_toc.cpp`
 
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_arpackpp_solver.h`
+
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_dense.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_sparse.h`
@@ -56,8 +58,6 @@ Included By
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_stl.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_matrix_product_hamiltonian.h`
-
-- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_arpackpp_solver.h`
 
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_base.cpp`
 

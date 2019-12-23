@@ -13,13 +13,12 @@ Program Listing for File opt.cpp
    //
    // Created by david on 2019-03-18.
    //
+   
    #include <string>
-   #include <sstream>
    #include <tools/finite/opt.h>
    #include <state/class_state_finite.h>
    #include <simulation/class_simulation_status.h>
    #include <model/class_model_base.h>
-   #include <simulation/nmspc_settings.h>
    #include <glog/logging.h>
    
    Eigen::Tensor<class_state_finite::Scalar,3>
@@ -88,7 +87,10 @@ Program Listing for File opt.cpp
        switch (optSpace.option){
            case opt::SPACE::SUBSPACE:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode);
            case opt::SPACE::DIRECT:      return internal::ceres_direct_optimization(state,sim_status, optType);
+   //        case opt::SPACE::SUBSPACE:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode);
+   //        case opt::SPACE::DIRECT:      return internal::ceres_rosenbrock_optimization(state);
        }
+       throw std::logic_error("No valid optimization type given");
    }
    
    Eigen::Tensor<std::complex<double>,4> tools::finite::opt::find_ground_state(
@@ -112,42 +114,6 @@ Program Listing for File opt.cpp
        t_vH  ->reset();
        t_op  ->reset();
    }
-   
-   
-   
-   //
-   //template<typename Scalar>
-   //tools::finite::opt::internal::MultiComponents<Scalar>::MultiComponents(const class_state_finite & state){
-   //    tools::log->trace("Generating multi components");
-   //    if constexpr (std::is_same<Scalar,double>::value){
-   //        mpo                          = state.get_multimpo().real();
-   //        auto & envL_cplx  = state.get_ENVL(state.active_sites.front());
-   //        auto & envR_cplx  = state.get_ENVR(state.active_sites.back());
-   //        auto & env2L_cplx = state.get_ENV2L(state.active_sites.front());
-   //        auto & env2R_cplx = state.get_ENV2R(state.active_sites.back());
-   //
-   //        envL  = envL_cplx.block.real();         envR  = envR_cplx.block.real();
-   //        env2L = env2L_cplx.block.real();        env2R = env2R_cplx.block.real();
-   //    }
-   //
-   //    if constexpr (std::is_same<Scalar,std::complex<double>>::value){
-   //        mpo                          = state.get_multimpo();
-   //        auto & envL_cplx  = state.get_ENVL(state.active_sites.front());
-   //        auto & envR_cplx  = state.get_ENVR(state.active_sites.back());
-   //        auto & env2L_cplx = state.get_ENV2L(state.active_sites.front());
-   //        auto & env2R_cplx = state.get_ENV2R(state.active_sites.back());
-   //        envL  = envL_cplx.block;         envR  = envR_cplx.block;
-   //        env2L = env2L_cplx.block;        env2R = env2R_cplx.block;
-   //    }
-   //
-   //
-   //
-   //    dsizes        = state.active_dimensions();
-   //    tools::log->trace("Finished building multicomponents");
-   //}
-   //
-   //template struct tools::finite::opt::internal::MultiComponents<double>;
-   //template struct tools::finite::opt::internal::MultiComponents<std::complex<double>>;
    
    
    double tools::finite::opt::internal::windowed_func_abs(double x,double window){

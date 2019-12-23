@@ -13,343 +13,338 @@
     <includes local="no">h5pp/h5pp.h</includes>
     <includes refid="class__i_t_e_b_d_8h" local="yes">class_iTEBD.h</includes>
     <incdepgraph>
-      <node id="444">
+      <node id="436">
         <label>list</label>
       </node>
-      <node id="408">
+      <node id="401">
         <label>iomanip</label>
       </node>
-      <node id="420">
-        <label>filesystem</label>
-      </node>
-      <node id="430">
+      <node id="422">
         <label>iterator</label>
       </node>
-      <node id="412">
+      <node id="405">
         <label>io/table_types.h</label>
         <link refid="table__types_8h"/>
-        <childnode refid="413" relation="include">
+        <childnode refid="406" relation="include">
         </childnode>
-        <childnode refid="414" relation="include">
+        <childnode refid="407" relation="include">
         </childnode>
-        <childnode refid="415" relation="include">
-        </childnode>
-        <childnode refid="416" relation="include">
-        </childnode>
-        <childnode refid="417" relation="include">
-        </childnode>
-      </node>
-      <node id="431">
-        <label>general/nmspc_type_check.h</label>
-        <link refid="nmspc__type__check_8h"/>
-        <childnode refid="432" relation="include">
-        </childnode>
-        <childnode refid="428" relation="include">
-        </childnode>
-        <childnode refid="427" relation="include">
-        </childnode>
-      </node>
-      <node id="428">
-        <label>Eigen/Core</label>
-      </node>
-      <node id="418">
-        <label>string</label>
-      </node>
-      <node id="416">
-        <label>hdf5_hl.h</label>
-      </node>
-      <node id="433">
-        <label>general/class_tic_toc.h</label>
-        <link refid="class__tic__toc_8h"/>
-        <childnode refid="434" relation="include">
-        </childnode>
-        <childnode refid="419" relation="include">
-        </childnode>
-      </node>
-      <node id="439">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="440" relation="include">
-        </childnode>
-        <childnode refid="441" relation="include">
-        </childnode>
-      </node>
-      <node id="436">
-        <label>map</label>
-      </node>
-      <node id="417">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
-        <childnode refid="410" relation="include">
-        </childnode>
-        <childnode refid="418" relation="include">
-        </childnode>
-        <childnode refid="419" relation="include">
-        </childnode>
-        <childnode refid="413" relation="include">
-        </childnode>
-        <childnode refid="414" relation="include">
-        </childnode>
-        <childnode refid="415" relation="include">
-        </childnode>
-        <childnode refid="416" relation="include">
-        </childnode>
-      </node>
-      <node id="407">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
-        <link refid="class__i_t_e_b_d_8cpp"/>
         <childnode refid="408" relation="include">
         </childnode>
         <childnode refid="409" relation="include">
         </childnode>
-        <childnode refid="421" relation="include">
-        </childnode>
-        <childnode refid="423" relation="include">
-        </childnode>
-        <childnode refid="442" relation="include">
-        </childnode>
-        <childnode refid="443" relation="include">
-        </childnode>
-        <childnode refid="447" relation="include">
-        </childnode>
-        <childnode refid="448" relation="include">
-        </childnode>
-        <childnode refid="449" relation="include">
-        </childnode>
-        <childnode refid="450" relation="include">
-        </childnode>
-      </node>
-      <node id="432">
-        <label>experimental/type_traits</label>
-      </node>
-      <node id="443">
-        <label>tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
         <childnode refid="410" relation="include">
-        </childnode>
-        <childnode refid="418" relation="include">
-        </childnode>
-        <childnode refid="437" relation="include">
-        </childnode>
-        <childnode refid="444" relation="include">
-        </childnode>
-        <childnode refid="413" relation="include">
-        </childnode>
-        <childnode refid="439" relation="include">
-        </childnode>
-        <childnode refid="433" relation="include">
-        </childnode>
-        <childnode refid="445" relation="include">
-        </childnode>
-        <childnode refid="428" relation="include">
-        </childnode>
-        <childnode refid="427" relation="include">
-        </childnode>
-      </node>
-      <node id="427">
-        <label>unsupported/Eigen/CXX11/Tensor</label>
-      </node>
-      <node id="441">
-        <label>spdlog/fmt/bundled/ranges.h</label>
-      </node>
-      <node id="447">
-        <label>model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="410" relation="include">
-        </childnode>
-        <childnode refid="427" relation="include">
-        </childnode>
-        <childnode refid="439" relation="include">
-        </childnode>
-      </node>
-      <node id="411">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="429">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="422">
-        <label>simulation/enums.h</label>
-        <link refid="enums_8h"/>
-      </node>
-      <node id="445">
-        <label>tools/finite/opt-internals/enum_classes.h</label>
-        <link refid="enum__classes_8h"/>
-        <childnode refid="419" relation="include">
-        </childnode>
-        <childnode refid="446" relation="include">
-        </childnode>
-      </node>
-      <node id="440">
-        <label>spdlog/logger.h</label>
-      </node>
-      <node id="426">
-        <label>general/nmspc_omp.h</label>
-        <link refid="nmspc__omp_8h"/>
-        <childnode refid="427" relation="include">
-        </childnode>
-      </node>
-      <node id="451">
-        <label>class_algorithm_infinite.h</label>
-        <link refid="class__algorithm__infinite_8h"/>
-        <childnode refid="452" relation="include">
         </childnode>
       </node>
       <node id="423">
-        <label>state/class_state_infinite.h</label>
-        <link refid="class__state__infinite_8h"/>
-        <childnode refid="410" relation="include">
-        </childnode>
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
         <childnode refid="424" relation="include">
         </childnode>
-        <childnode refid="425" relation="include">
+        <childnode refid="420" relation="include">
         </childnode>
-        <childnode refid="433" relation="include">
-        </childnode>
-        <childnode refid="435" relation="include">
-        </childnode>
-        <childnode refid="421" relation="include">
-        </childnode>
-        <childnode refid="439" relation="include">
-        </childnode>
-      </node>
-      <node id="424">
-        <label>optional</label>
-      </node>
-      <node id="413">
-        <label>vector</label>
-      </node>
-      <node id="452">
-        <label>algorithms/class_algorithm_base.h</label>
-        <link refid="class__algorithm__base_8h"/>
-        <childnode refid="410" relation="include">
-        </childnode>
-        <childnode refid="436" relation="include">
-        </childnode>
-        <childnode refid="413" relation="include">
-        </childnode>
-        <childnode refid="437" relation="include">
-        </childnode>
-        <childnode refid="444" relation="include">
-        </childnode>
-        <childnode refid="433" relation="include">
-        </childnode>
-        <childnode refid="422" relation="include">
-        </childnode>
-        <childnode refid="417" relation="include">
-        </childnode>
-      </node>
-      <node id="438">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="414">
-        <label>array</label>
-      </node>
-      <node id="446">
-        <label>sstream</label>
-      </node>
-      <node id="442">
-        <label>state/class_mps_2site.h</label>
-        <link refid="class__mps__2site_8h"/>
-        <childnode refid="410" relation="include">
-        </childnode>
-        <childnode refid="425" relation="include">
-        </childnode>
-      </node>
-      <node id="415">
-        <label>hdf5.h</label>
-      </node>
-      <node id="449">
-        <label>h5pp/h5pp.h</label>
-      </node>
-      <node id="419">
-        <label>iostream</label>
-      </node>
-      <node id="450">
-        <label>class_iTEBD.h</label>
-        <link refid="class__i_t_e_b_d_8h"/>
-        <childnode refid="451" relation="include">
-        </childnode>
-      </node>
-      <node id="435">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
         <childnode refid="419" relation="include">
         </childnode>
-        <childnode refid="414" relation="include">
-        </childnode>
-        <childnode refid="436" relation="include">
-        </childnode>
-        <childnode refid="437" relation="include">
-        </childnode>
-        <childnode refid="413" relation="include">
-        </childnode>
-        <childnode refid="438" relation="include">
-        </childnode>
-        <childnode refid="411" relation="include">
-        </childnode>
       </node>
-      <node id="434">
-        <label>chrono</label>
+      <node id="420">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="411">
+        <label>string</label>
       </node>
       <node id="409">
-        <label>io/class_h5table_buffer.h</label>
-        <link refid="class__h5table__buffer_8h"/>
-        <childnode refid="410" relation="include">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="425">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="426" relation="include">
+        </childnode>
+        <childnode refid="412" relation="include">
+        </childnode>
+      </node>
+      <node id="431">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="432" relation="include">
+        </childnode>
+        <childnode refid="433" relation="include">
+        </childnode>
+      </node>
+      <node id="428">
+        <label>map</label>
+      </node>
+      <node id="410">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="403" relation="include">
         </childnode>
         <childnode refid="411" relation="include">
         </childnode>
         <childnode refid="412" relation="include">
         </childnode>
-        <childnode refid="420" relation="include">
+        <childnode refid="406" relation="include">
+        </childnode>
+        <childnode refid="407" relation="include">
+        </childnode>
+        <childnode refid="408" relation="include">
+        </childnode>
+        <childnode refid="409" relation="include">
         </childnode>
       </node>
-      <node id="448">
-        <label>general/nmspc_quantum_mechanics.h</label>
-        <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="428" relation="include">
+      <node id="400">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
+        <link refid="class__i_t_e_b_d_8cpp"/>
+        <childnode refid="401" relation="include">
         </childnode>
-        <childnode refid="427" relation="include">
+        <childnode refid="402" relation="include">
+        </childnode>
+        <childnode refid="413" relation="include">
+        </childnode>
+        <childnode refid="415" relation="include">
+        </childnode>
+        <childnode refid="434" relation="include">
+        </childnode>
+        <childnode refid="435" relation="include">
+        </childnode>
+        <childnode refid="439" relation="include">
+        </childnode>
+        <childnode refid="440" relation="include">
+        </childnode>
+        <childnode refid="441" relation="include">
+        </childnode>
+        <childnode refid="442" relation="include">
+        </childnode>
+      </node>
+      <node id="424">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="435">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="403" relation="include">
+        </childnode>
+        <childnode refid="411" relation="include">
+        </childnode>
+        <childnode refid="429" relation="include">
+        </childnode>
+        <childnode refid="436" relation="include">
+        </childnode>
+        <childnode refid="406" relation="include">
+        </childnode>
+        <childnode refid="431" relation="include">
+        </childnode>
+        <childnode refid="425" relation="include">
         </childnode>
         <childnode refid="437" relation="include">
         </childnode>
-        <childnode refid="413" relation="include">
+        <childnode refid="420" relation="include">
+        </childnode>
+        <childnode refid="419" relation="include">
         </childnode>
       </node>
-      <node id="437">
-        <label>complex</label>
+      <node id="419">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="433">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="439">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="403" relation="include">
+        </childnode>
+        <childnode refid="419" relation="include">
+        </childnode>
+        <childnode refid="431" relation="include">
+        </childnode>
+      </node>
+      <node id="404">
+        <label>spdlog/spdlog.h</label>
       </node>
       <node id="421">
-        <label>simulation/nmspc_settings.h</label>
-        <link refid="nmspc__settings_8h"/>
-        <childnode refid="418" relation="include">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="414">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="437">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="412" relation="include">
+        </childnode>
+        <childnode refid="438" relation="include">
+        </childnode>
+      </node>
+      <node id="432">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="418">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="419" relation="include">
+        </childnode>
+      </node>
+      <node id="443">
+        <label>class_algorithm_infinite.h</label>
+        <link refid="class__algorithm__infinite_8h"/>
+        <childnode refid="444" relation="include">
+        </childnode>
+      </node>
+      <node id="415">
+        <label>state/class_state_infinite.h</label>
+        <link refid="class__state__infinite_8h"/>
+        <childnode refid="403" relation="include">
+        </childnode>
+        <childnode refid="416" relation="include">
+        </childnode>
+        <childnode refid="417" relation="include">
+        </childnode>
+        <childnode refid="425" relation="include">
+        </childnode>
+        <childnode refid="427" relation="include">
         </childnode>
         <childnode refid="413" relation="include">
         </childnode>
-        <childnode refid="422" relation="include">
+        <childnode refid="431" relation="include">
         </childnode>
       </node>
-      <node id="425">
-        <label>general/nmspc_tensor_extra.h</label>
-        <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="426" relation="include">
+      <node id="416">
+        <label>optional</label>
+      </node>
+      <node id="406">
+        <label>vector</label>
+      </node>
+      <node id="444">
+        <label>algorithms/class_algorithm_base.h</label>
+        <link refid="class__algorithm__base_8h"/>
+        <childnode refid="403" relation="include">
+        </childnode>
+        <childnode refid="428" relation="include">
+        </childnode>
+        <childnode refid="406" relation="include">
+        </childnode>
+        <childnode refid="429" relation="include">
+        </childnode>
+        <childnode refid="436" relation="include">
+        </childnode>
+        <childnode refid="425" relation="include">
+        </childnode>
+        <childnode refid="414" relation="include">
+        </childnode>
+        <childnode refid="410" relation="include">
+        </childnode>
+      </node>
+      <node id="430">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="407">
+        <label>array</label>
+      </node>
+      <node id="438">
+        <label>sstream</label>
+      </node>
+      <node id="434">
+        <label>state/class_mps_2site.h</label>
+        <link refid="class__mps__2site_8h"/>
+        <childnode refid="403" relation="include">
+        </childnode>
+        <childnode refid="417" relation="include">
+        </childnode>
+      </node>
+      <node id="408">
+        <label>hdf5.h</label>
+      </node>
+      <node id="441">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="412">
+        <label>iostream</label>
+      </node>
+      <node id="442">
+        <label>class_iTEBD.h</label>
+        <link refid="class__i_t_e_b_d_8h"/>
+        <childnode refid="443" relation="include">
+        </childnode>
+      </node>
+      <node id="427">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="412" relation="include">
+        </childnode>
+        <childnode refid="407" relation="include">
         </childnode>
         <childnode refid="428" relation="include">
         </childnode>
         <childnode refid="429" relation="include">
         </childnode>
-        <childnode refid="427" relation="include">
+        <childnode refid="406" relation="include">
         </childnode>
         <childnode refid="430" relation="include">
         </childnode>
-        <childnode refid="419" relation="include">
-        </childnode>
-        <childnode refid="408" relation="include">
-        </childnode>
-        <childnode refid="431" relation="include">
+        <childnode refid="404" relation="include">
         </childnode>
       </node>
-      <node id="410">
+      <node id="426">
+        <label>chrono</label>
+      </node>
+      <node id="402">
+        <label>io/class_h5table_buffer.h</label>
+        <link refid="class__h5table__buffer_8h"/>
+        <childnode refid="403" relation="include">
+        </childnode>
+        <childnode refid="404" relation="include">
+        </childnode>
+        <childnode refid="405" relation="include">
+        </childnode>
+      </node>
+      <node id="440">
+        <label>general/nmspc_quantum_mechanics.h</label>
+        <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="420" relation="include">
+        </childnode>
+        <childnode refid="419" relation="include">
+        </childnode>
+        <childnode refid="429" relation="include">
+        </childnode>
+        <childnode refid="406" relation="include">
+        </childnode>
+      </node>
+      <node id="429">
+        <label>complex</label>
+      </node>
+      <node id="413">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="411" relation="include">
+        </childnode>
+        <childnode refid="406" relation="include">
+        </childnode>
+        <childnode refid="414" relation="include">
+        </childnode>
+      </node>
+      <node id="417">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="418" relation="include">
+        </childnode>
+        <childnode refid="420" relation="include">
+        </childnode>
+        <childnode refid="421" relation="include">
+        </childnode>
+        <childnode refid="419" relation="include">
+        </childnode>
+        <childnode refid="422" relation="include">
+        </childnode>
+        <childnode refid="412" relation="include">
+        </childnode>
+        <childnode refid="401" relation="include">
+        </childnode>
+        <childnode refid="423" relation="include">
+        </childnode>
+      </node>
+      <node id="403">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -389,10 +384,10 @@
 <codeline lineno="29"><highlight class="normal"></highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31" refid="classclass__i_t_e_b_d_1a24f5488296b9c2de7114fb46ba6c5493" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a24f5488296b9c2de7114fb46ba6c5493" kindref="member">class_iTEBD::run_preprocessing</ref>()<sp/>{</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" kindref="member">t_pre</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1aa2fa0044907366bfc5a6e76acfcd5718" kindref="member">tools::common::profile::t_pre</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" kindref="member">delta_t</ref><sp/>=<sp/><ref refid="namespacesettings_1_1itebd_1afcba9beada5551c3da4c25a8376cd67f" kindref="member">settings::itebd::delta_t0</ref>;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" kindref="member">unitary_time_evolving_operators</ref><sp/>=<sp/><ref refid="namespaceqm_1_1time_evolution_1a33cd64100e493c77493f03371d1f0ca4" kindref="member">qm::timeEvolution::get_2site_evolution_gates</ref>(<ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" kindref="member">delta_t</ref>,<sp/><ref refid="namespacesettings_1_1itebd_1a41cb019340a16c4d308ec3ae6cd473e4" kindref="member">settings::itebd::suzuki_order</ref>,<sp/><ref refid="classclass__i_t_e_b_d_1a54f1d97cb354bf6f92ea13c95eae6e49" kindref="member">h_evn</ref>,<sp/><ref refid="classclass__i_t_e_b_d_1aed4f4857b8a21fcc15c782d6299c3be2" kindref="member">h_odd</ref>);</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" kindref="member">t_pre</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1aa2fa0044907366bfc5a6e76acfcd5718" kindref="member">tools::common::profile::t_pre</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
@@ -414,14 +409,14 @@
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56" refid="classclass__i_t_e_b_d_1a1425eb617ce226bfcf524b4b5c14bc03" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a1425eb617ce226bfcf524b4b5c14bc03" kindref="member">class_iTEBD::run_postprocessing</ref>(){</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" kindref="member">t_pos</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a5cbadb8724693e3d427289c9ea35e904" kindref="member">tools::common::profile::t_pos</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9" kindref="member">print_status_full</ref>();</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" kindref="member">print_profiling</ref>();</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" kindref="member">t_pos</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a5cbadb8724693e3d427289c9ea35e904" kindref="member">tools::common::profile::t_pos</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ae901a49d98722e40c314bef9a595bdc7" kindref="member">tools::common::profile::print_profiling</ref>();</highlight></codeline>
 <codeline lineno="61"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>
 <codeline lineno="63" refid="classclass__i_t_e_b_d_1a9790a13fe829a9220c1efab6165c6f93" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a9790a13fe829a9220c1efab6165c6f93" kindref="member">class_iTEBD::single_TEBD_step</ref>(){</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" kindref="member">t_run</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a7aabb154fe5863b121e1d7dc47ab5765" kindref="member">tools::common::profile::t_sim</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;U:<sp/><ref refid="classclass__i_t_e_b_d_1aaca1dfa05e0bea3b69265fd09713817f" kindref="member">unitary_time_evolving_operators</ref>){</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/><ref refid="namespacetools_1_1infinite_1_1opt_1ab1dea0b6449610fc4895a574c5285d6d" kindref="member">tools::infinite::opt::time_evolve_theta</ref>(*<ref refid="classclass__algorithm__infinite_1a2de10bb21a8ca511c8742a518f69a6e5" kindref="member">state</ref><sp/>,U);</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1opt_1adc6d702960bfec9021330f71a99c61c6" kindref="member">tools::infinite::opt::truncate_theta</ref>(theta,<sp/>*<ref refid="classclass__algorithm__infinite_1a2de10bb21a8ca511c8742a518f69a6e5" kindref="member">state</ref>);</highlight></codeline>
@@ -429,15 +424,15 @@
 <codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a2de10bb21a8ca511c8742a518f69a6e5" kindref="member">state</ref>-&gt;swap_AB();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1a2de10bb21a8ca511c8742a518f69a6e5" kindref="member">state</ref>-&gt;unset_measurements();</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" kindref="member">t_run</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" kindref="member">wall_time</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" kindref="member">t_tot</ref>.<ref refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" kindref="member">get_age</ref>();</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" kindref="member">simu_time</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" kindref="member">t_run</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a7aabb154fe5863b121e1d7dc47ab5765" kindref="member">tools::common::profile::t_sim</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" kindref="member">wall_time</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a2846b1d2fefe653f9fe80c92bc846be3" kindref="member">tools::common::profile::t_tot</ref>.<ref refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" kindref="member">get_age</ref>();</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" kindref="member">simu_time</ref><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a7aabb154fe5863b121e1d7dc47ab5765" kindref="member">tools::common::profile::t_sim</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
 <codeline lineno="79"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
 <codeline lineno="81"><highlight class="normal"></highlight></codeline>
 <codeline lineno="82"><highlight class="normal"></highlight></codeline>
 <codeline lineno="83" refid="classclass__i_t_e_b_d_1a90fabacf5cc62542140594000e3bdb6b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1a90fabacf5cc62542140594000e3bdb6b" kindref="member">class_iTEBD::check_convergence</ref>(){</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" kindref="member">t_con</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab2944237031c9b3b95d776604b107f76" kindref="member">tools::common::profile::t_con</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ad5ddf1d7d7b1184f4874e9db5fed23d9" kindref="member">check_convergence_entg_entropy</ref>();</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1ac3374fa48c9c4c2f6b09b9e5b4fd1a8d" kindref="member">check_convergence_variance_ham</ref>();</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__infinite_1aa7c274874ad3e3d0258b2d7850f7867a" kindref="member">check_convergence_variance_mom</ref>();</highlight></codeline>
@@ -451,7 +446,7 @@
 <codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
 <codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" kindref="member">sim_status</ref>.<ref refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" kindref="member">simulation_has_converged</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" kindref="member">t_con</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1ab2944237031c9b3b95d776604b107f76" kindref="member">tools::common::profile::t_con</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
 <codeline lineno="99"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="100"><highlight class="normal"></highlight></codeline>
 <codeline lineno="101" refid="classclass__i_t_e_b_d_1ac720b8d492eb8a174c1a3c87ef1e9662" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__i_t_e_b_d_1ac720b8d492eb8a174c1a3c87ef1e9662" kindref="member">class_iTEBD::check_convergence_time_step</ref>(){</highlight></codeline>

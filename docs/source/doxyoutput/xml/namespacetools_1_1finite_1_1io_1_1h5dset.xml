@@ -28,7 +28,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="206" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp" bodystart="28" bodyend="48"/>
-        <references refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" compoundref="nmspc__tools_8h" startline="378">tools::common::profile::t_hdf</references>
+        <references refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" compoundref="nmspc__tools_8h" startline="389">tools::common::profile::t_hdf</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
         <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f">LIGHT</references>
@@ -203,7 +203,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="212" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp" bodystart="133" bodyend="155"/>
         <references refid="classclass__state__finite_1a98fccd07a3361d5d9e432e4817f92715" compoundref="class__state__finite_8cpp" startline="535" endline="551">class_state_finite::do_all_measurements</references>
-        <references refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" compoundref="nmspc__tools_8h" startline="378">tools::common::profile::t_hdf</references>
+        <references refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" compoundref="nmspc__tools_8h" startline="389">tools::common::profile::t_hdf</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>

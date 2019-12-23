@@ -133,27 +133,27 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="435">
+      <node id="463">
         <label>std::array&lt; hid_t, NFIELDS &gt;</label>
       </node>
-      <node id="433">
+      <node id="461">
         <label>class_h5table_simulation_status::meta_struct</label>
         <link refid="structclass__h5table__simulation__status_1_1meta__struct"/>
-        <childnode refid="434" relation="usage">
+        <childnode refid="462" relation="usage">
           <edgelabel>field_names</edgelabel>
         </childnode>
-        <childnode refid="435" relation="usage">
+        <childnode refid="463" relation="usage">
           <edgelabel>field_types</edgelabel>
         </childnode>
-        <childnode refid="436" relation="usage">
+        <childnode refid="464" relation="usage">
           <edgelabel>dst_offsets</edgelabel>
           <edgelabel>dst_sizes</edgelabel>
         </childnode>
       </node>
-      <node id="436">
+      <node id="464">
         <label>std::array&lt; size_t, NFIELDS &gt;</label>
       </node>
-      <node id="434">
+      <node id="462">
         <label>std::array&lt; const char *, NFIELDS &gt;</label>
       </node>
     </collaborationgraph>

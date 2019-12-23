@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classpcg__detail_1_1oneseq__stream" kind="class" language="C++" prot="public">
+    <compoundname>pcg_detail::oneseq_stream</compoundname>
+    <basecompoundref refid="structpcg__detail_1_1default__increment" prot="public" virt="non-virtual">pcg_detail::default_increment&lt; itype &gt;</basecompoundref>
+    <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename itype</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classpcg__detail_1_1oneseq__stream_1a718864759089a4ff2e2950fd3b40debe" prot="public" static="no">
+        <type>itype</type>
+        <definition>typedef itype pcg_detail::oneseq_stream&lt; itype &gt;::state_type</definition>
+        <argsstring></argsstring>
+        <name>state_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="265" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="265" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-static-attrib">
+      <memberdef kind="variable" id="classpcg__detail_1_1oneseq__stream_1ac15eabd5d288cd794e5b74af6c927336" prot="protected" static="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool pcg_detail::oneseq_stream&lt; itype &gt;::is_mcg</definition>
+        <argsstring></argsstring>
+        <name>is_mcg</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="256" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="256" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classpcg__detail_1_1oneseq__stream_1abacdb579b5a3930ab4143c2fc01aa73b" prot="public" static="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool pcg_detail::oneseq_stream&lt; itype &gt;::can_specify_stream</definition>
+        <argsstring></argsstring>
+        <name>can_specify_stream</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="272" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="272" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classpcg__detail_1_1oneseq__stream_1a12107cf1c4f41caf6f3fc1366e7edf0d" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void pcg_detail::oneseq_stream&lt; itype &gt;::set_stream</definition>
+        <argsstring>(...)</argsstring>
+        <name>set_stream</name>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="259" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="259" bodyend="262"/>
+      </memberdef>
+      <memberdef kind="function" id="classpcg__detail_1_1oneseq__stream_1a3bd1152cb63171e71ef739d44bd392fa" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>constexpr</type>
+        <definition>constexpr pcg_detail::oneseq_stream&lt; itype &gt;::oneseq_stream</definition>
+        <argsstring>()=default</argsstring>
+        <name>oneseq_stream</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="280" column="1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classpcg__detail_1_1oneseq__stream_1a4cd0f9d49faf542f139bed6a0cdf6722" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr itype</type>
+        <definition>static constexpr itype pcg_detail::oneseq_stream&lt; itype &gt;::stream</definition>
+        <argsstring>()</argsstring>
+        <name>stream</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="267" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="267" bodyend="270"/>
+      </memberdef>
+      <memberdef kind="function" id="classpcg__detail_1_1oneseq__stream_1ad9841f094abb6a076c7b2fb31460dae1" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr size_t</type>
+        <definition>static constexpr size_t pcg_detail::oneseq_stream&lt; itype &gt;::streams_pow2</definition>
+        <argsstring>()</argsstring>
+        <name>streams_pow2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="274" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="274" bodyend="277"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="482">
+        <label>pcg_detail::default_increment&lt; itype &gt;</label>
+        <link refid="structpcg__detail_1_1default__increment"/>
+      </node>
+      <node id="481">
+        <label>pcg_detail::oneseq_stream&lt; itype &gt;</label>
+        <link refid="classpcg__detail_1_1oneseq__stream"/>
+        <childnode refid="482" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="484">
+        <label>pcg_detail::default_increment&lt; itype &gt;</label>
+        <link refid="structpcg__detail_1_1default__increment"/>
+      </node>
+      <node id="483">
+        <label>pcg_detail::oneseq_stream&lt; itype &gt;</label>
+        <link refid="classpcg__detail_1_1oneseq__stream"/>
+        <childnode refid="484" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="254" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="254" bodyend="281"/>
+    <listofallmembers>
+      <member refid="classpcg__detail_1_1oneseq__stream_1abacdb579b5a3930ab4143c2fc01aa73b" prot="public" virt="non-virtual"><scope>pcg_detail::oneseq_stream</scope><name>can_specify_stream</name></member>
+      <member refid="classpcg__detail_1_1oneseq__stream_1ac15eabd5d288cd794e5b74af6c927336" prot="protected" virt="non-virtual"><scope>pcg_detail::oneseq_stream</scope><name>is_mcg</name></member>
+      <member refid="classpcg__detail_1_1oneseq__stream_1a3bd1152cb63171e71ef739d44bd392fa" prot="protected" virt="non-virtual"><scope>pcg_detail::oneseq_stream</scope><name>oneseq_stream</name></member>
+      <member refid="classpcg__detail_1_1oneseq__stream_1a12107cf1c4f41caf6f3fc1366e7edf0d" prot="protected" virt="non-virtual"><scope>pcg_detail::oneseq_stream</scope><name>set_stream</name></member>
+      <member refid="classpcg__detail_1_1oneseq__stream_1a718864759089a4ff2e2950fd3b40debe" prot="public" virt="non-virtual"><scope>pcg_detail::oneseq_stream</scope><name>state_type</name></member>
+      <member refid="classpcg__detail_1_1oneseq__stream_1a4cd0f9d49faf542f139bed6a0cdf6722" prot="public" virt="non-virtual"><scope>pcg_detail::oneseq_stream</scope><name>stream</name></member>
+      <member refid="classpcg__detail_1_1oneseq__stream_1ad9841f094abb6a076c7b2fb31460dae1" prot="public" virt="non-virtual"><scope>pcg_detail::oneseq_stream</scope><name>streams_pow2</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

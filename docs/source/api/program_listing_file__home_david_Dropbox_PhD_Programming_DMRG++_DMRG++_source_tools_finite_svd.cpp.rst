@@ -13,7 +13,8 @@ Program Listing for File svd.cpp
    //
    // Created by david on 2019-06-29.
    //
-   #include <tools/finite/opt.h>
+   //#include <tools/finite/opt.h>
+   #include <tools/nmspc_tools.h>
    #include <state/class_state_finite.h>
    #include <math/class_svd_wrapper.h>
    #include <simulation/nmspc_settings.h>

@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="30" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="46" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-type">
@@ -35,7 +35,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="34" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="class_dense_matrix_product_1ab908741a713be6b2ae160961b1adede6" prot="private" static="no">
         <type>Eigen::Matrix&lt; <ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="35" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="class_dense_matrix_product_1ab9af4e49816fd5a2a2c67c115938b3eb" prot="private" static="no">
         <type>Eigen::Matrix&lt; <ref refid="class_dense_matrix_product_1af38e21031929235141d4751693e287ba" kindref="member">Scalar</ref>, 1, Eigen::Dynamic &gt;</type>
@@ -61,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="36" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="52" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-static-attrib">
@@ -77,7 +77,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="31" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="47" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="38" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="54" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" prot="private" static="no" mutable="no">
         <type>const int</type>
@@ -105,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="39" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="55" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" prot="private" static="no" mutable="no">
         <type><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="40" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="56" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" prot="private" static="no" mutable="no">
         <type><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
@@ -131,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="41" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="57" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1abba3d134449005e70031d5e1de3882de" prot="private" static="no" mutable="no">
         <type>Eigen::PartialPivLU&lt; <ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref> &gt;</type>
@@ -144,7 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="44" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -158,7 +158,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="45" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="61" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" prot="private" static="no" mutable="no">
         <type>double</type>
@@ -172,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="46" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="62" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -186,7 +186,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="47" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="63" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" prot="private" static="no" mutable="no">
         <type>bool</type>
@@ -200,7 +200,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="48" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="64" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -216,7 +216,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="83" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="99" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="99" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -229,7 +229,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="100" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="100" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="116" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="116" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -242,7 +242,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="101" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="101" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="117" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="117" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" prot="public" static="no" mutable="no">
         <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
@@ -255,7 +255,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="102" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="102" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="118" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="118" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -288,12 +288,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="52" bodyend="62"/>
-        <references refid="class_dense_matrix_product_1a3023c288f4bb0c3592d8271dfe8840b1" compoundref="matrix__product__dense_8h" startline="52" endline="62">DenseMatrixProduct&lt; Scalar_ &gt;::DenseMatrixProduct</references>
-        <references refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" compoundref="matrix__product__dense_8h" startline="39">DenseMatrixProduct&lt; Scalar_ &gt;::L</references>
-        <references refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" compoundref="matrix__product__dense_8h" startline="40">DenseMatrixProduct&lt; Scalar_ &gt;::form</references>
-        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="41">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
-        <references refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" compoundref="matrix__product__dense_8h" startline="95" endline="99">DenseMatrixProduct&lt; Scalar_ &gt;::init_profiling</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="68" bodyend="78"/>
+        <references refid="class_dense_matrix_product_1a3023c288f4bb0c3592d8271dfe8840b1" compoundref="matrix__product__dense_8h" startline="68" endline="78">DenseMatrixProduct&lt; Scalar_ &gt;::DenseMatrixProduct</references>
+        <references refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" compoundref="matrix__product__dense_8h" startline="55">DenseMatrixProduct&lt; Scalar_ &gt;::L</references>
+        <references refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" compoundref="matrix__product__dense_8h" startline="56">DenseMatrixProduct&lt; Scalar_ &gt;::form</references>
+        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="57">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <references refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" compoundref="matrix__product__dense_8h" startline="111" endline="115">DenseMatrixProduct&lt; Scalar_ &gt;::init_profiling</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1afb2f97dfadd10b32e548b74ad111f2be" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -325,9 +325,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="66" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="66" bodyend="73"/>
-        <references refid="class_dense_matrix_product_1afb2f97dfadd10b32e548b74ad111f2be" compoundref="matrix__product__dense_8h" startline="66" endline="73">DenseMatrixProduct&lt; Scalar_ &gt;::DenseMatrixProduct</references>
-        <references refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" compoundref="matrix__product__dense_8h" startline="95" endline="99">DenseMatrixProduct&lt; Scalar_ &gt;::init_profiling</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="82" bodyend="89"/>
+        <references refid="class_dense_matrix_product_1afb2f97dfadd10b32e548b74ad111f2be" compoundref="matrix__product__dense_8h" startline="82" endline="89">DenseMatrixProduct&lt; Scalar_ &gt;::DenseMatrixProduct</references>
+        <references refid="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" compoundref="matrix__product__dense_8h" startline="111" endline="115">DenseMatrixProduct&lt; Scalar_ &gt;::init_profiling</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a1e4b8ba24d25fe97cf0b907f522fd0fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -340,8 +340,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="76" bodyend="76"/>
-        <references refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" compoundref="matrix__product__dense_8h" startline="39">DenseMatrixProduct&lt; Scalar_ &gt;::L</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="92" bodyend="92"/>
+        <references refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" compoundref="matrix__product__dense_8h" startline="55">DenseMatrixProduct&lt; Scalar_ &gt;::L</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a100a118ede957b274b25e745f07684af" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -354,8 +354,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="77" bodyend="77"/>
-        <references refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" compoundref="matrix__product__dense_8h" startline="39">DenseMatrixProduct&lt; Scalar_ &gt;::L</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="93" bodyend="93"/>
+        <references refid="class_dense_matrix_product_1a48a68e722c9648584aae27baf560dc74" compoundref="matrix__product__dense_8h" startline="55">DenseMatrixProduct&lt; Scalar_ &gt;::L</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a235aa72984cde1ac849f94cde21c886b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -368,12 +368,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="119" bodyend="147"/>
-        <references refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" compoundref="matrix__product__dense_8h" startline="47">DenseMatrixProduct&lt; Scalar_ &gt;::readyFactorOp</references>
-        <references refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" compoundref="matrix__product__dense_8h" startline="100">DenseMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="135" bodyend="162"/>
+        <references refid="class_dense_matrix_product_1ab1e25139fc5bcbe3f64e0e6185147766" compoundref="matrix__product__dense_8h" startline="63">DenseMatrixProduct&lt; Scalar_ &gt;::readyFactorOp</references>
+        <references refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" compoundref="matrix__product__dense_8h" startline="116">DenseMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" compoundref="matrix__product__dense_8h" startline="45">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
-        <references refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" compoundref="matrix__product__dense_8h" startline="46">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
+        <references refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" compoundref="matrix__product__dense_8h" startline="61">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" compoundref="matrix__product__dense_8h" startline="62">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a5e2577a5667b3613012ca67e960d8905" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -395,11 +395,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="153" bodyend="171"/>
-        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="41">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="168" bodyend="186"/>
+        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="57">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
-        <references refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" compoundref="matrix__product__dense_8h" startline="83">DenseMatrixProduct&lt; Scalar_ &gt;::counter</references>
+        <references refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" compoundref="matrix__product__dense_8h" startline="99">DenseMatrixProduct&lt; Scalar_ &gt;::counter</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a7e1b6b2ac1c9589a7f2874b3a432cd14" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -420,14 +420,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="177" bodyend="204"/>
-        <references refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" compoundref="matrix__product__dense_8h" startline="40">DenseMatrixProduct&lt; Scalar_ &gt;::form</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="192" bodyend="219"/>
+        <references refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" compoundref="matrix__product__dense_8h" startline="56">DenseMatrixProduct&lt; Scalar_ &gt;::form</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
-        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="41">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="57">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
-        <references refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" compoundref="matrix__product__dense_8h" startline="83">DenseMatrixProduct&lt; Scalar_ &gt;::counter</references>
+        <references refid="class_dense_matrix_product_1abd20c373d07b0d8f6c22ee8f87d331a1" compoundref="matrix__product__dense_8h" startline="99">DenseMatrixProduct&lt; Scalar_ &gt;::counter</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a1e26abfc612f168f0f093a51d3c3c7f2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -440,7 +440,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="113" bodyend="115"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="100" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="129" bodyend="131"/>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a934347fcd26c28423d9e2431e757b039" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -457,8 +457,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="85" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="85" bodyend="85"/>
-        <references refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" compoundref="matrix__product__dense_8h" startline="48">DenseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="101" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="101" bodyend="101"/>
+        <references refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" compoundref="matrix__product__dense_8h" startline="64">DenseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1ac9f90c17c2696cfe51813424c3595d2a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -475,10 +475,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="86" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="86" bodyend="86"/>
-        <references refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" compoundref="matrix__product__dense_8h" startline="48">DenseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
-        <references refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" compoundref="matrix__product__dense_8h" startline="45">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
-        <references refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" compoundref="matrix__product__dense_8h" startline="46">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="102" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="102" bodyend="102"/>
+        <references refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" compoundref="matrix__product__dense_8h" startline="64">DenseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+        <references refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" compoundref="matrix__product__dense_8h" startline="61">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" compoundref="matrix__product__dense_8h" startline="62">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a7146679a7151a81d76d98c9f548b64f0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -499,10 +499,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="87" bodyend="87"/>
-        <references refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" compoundref="matrix__product__dense_8h" startline="48">DenseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
-        <references refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" compoundref="matrix__product__dense_8h" startline="45">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
-        <references refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" compoundref="matrix__product__dense_8h" startline="46">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="103" bodyend="103"/>
+        <references refid="class_dense_matrix_product_1a0614d7aa0c72fde4c52061fdfb6d9343" compoundref="matrix__product__dense_8h" startline="64">DenseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+        <references refid="class_dense_matrix_product_1ac600b0e68910e1de4f7ef0df39e61a28" compoundref="matrix__product__dense_8h" startline="61">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_dense_matrix_product_1a2ce1f40c8f3de757e3f3678bf517ead5" compoundref="matrix__product__dense_8h" startline="62">DenseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1aee7a5a6d8385d9f3e93b7436545792af" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -519,8 +519,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="88" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="88" bodyend="88"/>
-        <references refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" compoundref="matrix__product__dense_8h" startline="40">DenseMatrixProduct&lt; Scalar_ &gt;::form</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="104" bodyend="104"/>
+        <references refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" compoundref="matrix__product__dense_8h" startline="56">DenseMatrixProduct&lt; Scalar_ &gt;::form</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a9e31474e8d77b8bea829b143f9150587" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -537,8 +537,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="89" bodyend="89"/>
-        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="41">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="105" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="105" bodyend="105"/>
+        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="57">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a0f8ba0cf5aefbc4b1ae46aba7ce9d555" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const <ref refid="class_dense_matrix_product_1a597c519d8d42eb23a23754946ee706c2" kindref="member">MatrixType</ref> &amp;</type>
@@ -551,7 +551,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="90" bodyend="90"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="106" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="106" bodyend="106"/>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1adcc4faf595432abcb90ac98190cbdab1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref> &amp;</type>
@@ -564,8 +564,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="91" bodyend="91"/>
-        <references refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" compoundref="matrix__product__dense_8h" startline="40">DenseMatrixProduct&lt; Scalar_ &gt;::form</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="107" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="107" bodyend="107"/>
+        <references refid="class_dense_matrix_product_1a5be580f324a4dfd09b6cf3688af2f9fe" compoundref="matrix__product__dense_8h" startline="56">DenseMatrixProduct&lt; Scalar_ &gt;::form</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1a8507aa6628768a81621bf5eb7692b3e7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref> &amp;</type>
@@ -578,8 +578,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="92" bodyend="92"/>
-        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="41">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="108" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="108" bodyend="108"/>
+        <references refid="class_dense_matrix_product_1a78eecf93c4ec92118ed76b44c20d4f03" compoundref="matrix__product__dense_8h" startline="57">DenseMatrixProduct&lt; Scalar_ &gt;::side</references>
       </memberdef>
       <memberdef kind="function" id="class_dense_matrix_product_1ae43d64d5b71ca36285d2426fa8328b9a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -592,11 +592,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="95" bodyend="99"/>
-        <references refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" compoundref="matrix__product__dense_8h" startline="100">DenseMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="111" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="111" bodyend="115"/>
+        <references refid="class_dense_matrix_product_1a08d11bd79bf36022834934e052c227b2" compoundref="matrix__product__dense_8h" startline="116">DenseMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
         <references refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" compoundref="class__tic__toc_8cpp" startline="22" endline="24">class_tic_toc::set_properties</references>
-        <references refid="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" compoundref="matrix__product__dense_8h" startline="101">DenseMatrixProduct&lt; Scalar_ &gt;::t_multOpv</references>
-        <references refid="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" compoundref="matrix__product__dense_8h" startline="102">DenseMatrixProduct&lt; Scalar_ &gt;::t_multax</references>
+        <references refid="class_dense_matrix_product_1a6df1764aa021d4bebd067e0aa42ea3f7" compoundref="matrix__product__dense_8h" startline="117">DenseMatrixProduct&lt; Scalar_ &gt;::t_multOpv</references>
+        <references refid="class_dense_matrix_product_1a748d7662a78333b6d5b5048ef2e952e7" compoundref="matrix__product__dense_8h" startline="118">DenseMatrixProduct&lt; Scalar_ &gt;::t_multax</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -604,32 +604,32 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="345">
+      <node id="348">
         <label>DenseMatrixProduct&lt; Scalar_ &gt;</label>
         <link refid="class_dense_matrix_product"/>
-        <childnode refid="346" relation="usage">
+        <childnode refid="349" relation="usage">
           <edgelabel>t_factorOp</edgelabel>
           <edgelabel>t_multax</edgelabel>
           <edgelabel>t_multOpv</edgelabel>
         </childnode>
       </node>
-      <node id="348">
+      <node id="351">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="346">
+      <node id="349">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
-        <childnode refid="347" relation="usage">
+        <childnode refid="350" relation="usage">
           <edgelabel>name</edgelabel>
         </childnode>
       </node>
-      <node id="347">
+      <node id="350">
         <label>std::string</label>
-        <childnode refid="348" relation="public-inheritance">
+        <childnode refid="351" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="28" bodyend="103"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h" bodystart="44" bodyend="119"/>
     <listofallmembers>
       <member refid="class_dense_matrix_product_1a7c69bf9fef6a4ceac88d37141c9f1bca" prot="private" virt="non-virtual"><scope>DenseMatrixProduct</scope><name>A_matrix</name></member>
       <member refid="class_dense_matrix_product_1ab12da907364ef6607ac396bfa9214b63" prot="public" virt="non-virtual"><scope>DenseMatrixProduct</scope><name>can_shift</name></member>

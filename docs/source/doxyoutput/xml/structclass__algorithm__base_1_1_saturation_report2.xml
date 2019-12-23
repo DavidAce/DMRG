@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="94" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="88" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="88" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report2_1a0e2895558c091aeb89dd8a25d9e706df" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="95" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="89" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report2_1a98406c00070782a5fd10488a8f6e5de5" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="96" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="90" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report2_1a77617aef0097c3069502f208b2cdfcf6" prot="public" static="no" mutable="no">
         <type>std::vector&lt; double &gt;</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="97" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="97" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="91" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structclass__algorithm__base_1_1_saturation_report2_1a218992fc892b0f5ecfa625e96a6680b1" prot="public" static="no" mutable="no">
         <type>std::vector&lt; double &gt;</type>
@@ -70,7 +70,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="98" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="98" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="92" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -78,19 +78,19 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="462">
+      <node id="511">
         <label>std::vector&lt; double &gt;</label>
       </node>
-      <node id="461">
+      <node id="510">
         <label>class_algorithm_base::SaturationReport2</label>
         <link refid="structclass__algorithm__base_1_1_saturation_report2"/>
-        <childnode refid="462" relation="usage">
+        <childnode refid="511" relation="usage">
           <edgelabel>avgY</edgelabel>
           <edgelabel>slopes</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="93" bodyend="99"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="87" bodyend="93"/>
     <listofallmembers>
       <member refid="structclass__algorithm__base_1_1_saturation_report2_1a218992fc892b0f5ecfa625e96a6680b1" prot="public" virt="non-virtual"><scope>class_algorithm_base::SaturationReport2</scope><name>avgY</name></member>
       <member refid="structclass__algorithm__base_1_1_saturation_report2_1a12c65482378a58e30d65ca13ba6a3147" prot="public" virt="non-virtual"><scope>class_algorithm_base::SaturationReport2</scope><name>has_computed</name></member>

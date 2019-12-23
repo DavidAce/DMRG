@@ -6,6 +6,8 @@
     <innerfile refid="ceres__direct_8cpp">ceres_direct.cpp</innerfile>
     <innerfile refid="ceres__direct__functor_8cpp">ceres_direct_functor.cpp</innerfile>
     <innerfile refid="ceres__direct__functor_8h">ceres_direct_functor.h</innerfile>
+    <innerfile refid="ceres__rosenbrock_8cpp">ceres_rosenbrock.cpp</innerfile>
+    <innerfile refid="ceres__rosenbrock_8h">ceres_rosenbrock.h</innerfile>
     <innerfile refid="ceres__subspace_8cpp">ceres_subspace.cpp</innerfile>
     <innerfile refid="ceres__subspace__functor_8cpp">ceres_subspace_functor.cpp</innerfile>
     <innerfile refid="ceres__subspace__functor_8h">ceres_subspace_functor.h</innerfile>

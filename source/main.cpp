@@ -2,7 +2,7 @@
 
 
 #include <simulation/nmspc_settings.h>
-#include <general/nmspc_random_numbers.h>
+#include <math/nmspc_random.h>
 #include <algorithms/class_algorithm_launcher.h>
 #include <io/class_settings_reader.h>
 #include <io/nmspc_logger.h>

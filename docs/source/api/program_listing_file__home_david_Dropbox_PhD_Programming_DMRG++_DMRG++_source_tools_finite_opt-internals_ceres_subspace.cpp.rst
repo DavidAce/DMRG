@@ -15,17 +15,13 @@ Program Listing for File ceres_subspace.cpp
    //
    
    #include "ceres_subspace_functor.h"
-   #include <Eigen/Core>
    #include <iostream>
    #include <simulation/class_simulation_status.h>
    #include <math/class_eigsolver.h>
    #include <math/arpack_extra/matrix_product_stl.h>
-   #include <math/arpack_extra/matrix_product_sparse.h>
-   #include <tools/finite/opt.h>
    #include <state/class_state_finite.h>
    #include <simulation/nmspc_settings.h>
-   #include <general/nmspc_random_numbers.h>
-   #include <ceres/ceres.h>
+   #include <math/nmspc_random.h>
    
    using namespace tools::finite::opt;
    using namespace tools::finite::opt::internal;
@@ -469,7 +465,8 @@ Program Listing for File ceres_subspace.cpp
    
            Eigen::VectorXcd theta_new;
            double overlap_new  = 0;
-           double energy_new,variance_new,norm;
+           double energy_new,variance_new;
+           [[maybe_unused]] double norm;
            // Note that alpha_i = <theta_initial | theta_new_i> is not supposed to be squared!
    //        Eigen::VectorXcd theta_start      = (theta_initial_map.adjoint() * eigvecs).normalized()  ;
            Eigen::VectorXcd theta_start      = (eigvecs.adjoint() * theta_initial_map).normalized()  ;

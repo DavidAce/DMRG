@@ -152,7 +152,7 @@
         <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="18">w_rnd_strength</references>
         <references refid="namespacesettings_1_1model_1_1tf__ising_1a515c4000b86ee03c42022e29c304dba4" compoundref="nmspc__settings_8h" startline="69">settings::model::tf_ising::w</references>
         <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="19">r_rnd_field</references>
-        <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random__numbers_8cpp" startline="31" endline="34">rn::uniform_double</references>
+        <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random_8cpp" startline="46" endline="49">rn::uniform_double</references>
         <references refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" compoundref="class__model__base_8h" startline="24">class_model_base::all_mpo_parameters_have_been_set</references>
         <references refid="classclass__tf__ising_1a3914c0315a54ca57c352c89c7a91f266" compoundref="class__tf__ising_8cpp" startline="73" endline="98">build_mpo</references>
       </memberdef>
@@ -269,7 +269,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="100" bodyend="105"/>
         <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="19">r_rnd_field</references>
-        <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random__numbers_8cpp" startline="31" endline="34">rn::uniform_double</references>
+        <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random_8cpp" startline="46" endline="49">rn::uniform_double</references>
         <references refid="classclass__tf__ising_1ad99a70edc7656248cbc556b2d3e9ef13" compoundref="class__tf__ising_8h" startline="18">w_rnd_strength</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1a160460bf80f8dcdae2a803d74eb20f44" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
@@ -291,7 +291,7 @@
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp" bodystart="107" bodyend="114"/>
         <references refid="classclass__tf__ising_1ac588eb2b7ad55b3de9ed94bb8cfd83f6" compoundref="class__tf__ising_8h" startline="21">r_ptb_field</references>
         <references refid="classclass__tf__ising_1a56f1df4b88a98dba7ac18367da3f2a04" compoundref="class__tf__ising_8h" startline="19">r_rnd_field</references>
-        <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random__numbers_8cpp" startline="31" endline="34">rn::uniform_double</references>
+        <references refid="namespacern_1a99c661dad967fa63f9948a845f68ee92" compoundref="nmspc__random_8cpp" startline="46" endline="49">rn::uniform_double</references>
       </memberdef>
       <memberdef kind="function" id="classclass__tf__ising_1aafdb9149062801e325b7a5a64ccd990f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
         <type>bool</type>

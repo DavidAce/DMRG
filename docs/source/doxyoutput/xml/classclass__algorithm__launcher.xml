@@ -70,6 +70,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp" bodystart="46" bodyend="53"/>
+        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a678082a3fafad0bf7c4b0019e5ed3eff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -90,6 +91,8 @@
         <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1ae0178ac04369bbdddf243e45a8f268ae" compoundref="h5pp__tmp_8cpp" startline="16" endline="46">tools::common::io::h5tmp::set_tmp_prefix</references>
         <references refid="namespacesettings_1_1output_1a4197c059a51b9b37100cbee88e8d1939" compoundref="nmspc__settings_8h" startline="45">settings::output::output_filename</references>
         <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" compoundref="h5pp__tmp_8cpp" startline="65" endline="85">tools::common::io::h5tmp::create_directory</references>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5tmp_1a4c3d2d889bd2dca9bbfa4ca8558c60be" compoundref="h5pp__tmp_8cpp" startline="48" endline="63">tools::common::io::h5tmp::unset_tmp_prefix</references>
+        <references refid="classclass__algorithm__launcher_1a83dd97c9ada35c9ec72a0a90d8c72a4c" compoundref="class__algorithm__launcher_8h" startline="17">h5ppFile</references>
       </memberdef>
       <memberdef kind="function" id="classclass__algorithm__launcher_1a04e4a7a48a2233154f3ad2afed0ad432" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>

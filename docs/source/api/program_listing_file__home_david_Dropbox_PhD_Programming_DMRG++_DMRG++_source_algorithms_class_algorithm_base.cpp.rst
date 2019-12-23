@@ -39,7 +39,6 @@ Program Listing for File class_algorithm_base.cpp
        log        = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
        tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
        log->trace("Constructing class_algorithm_base");
-       set_profiling_labels();
        tools::common::profile::init_profiling();
        if (settings::output::storage_level >= StorageLevel::NORMAL){
            log->trace("Constructing table buffers in base");
@@ -161,18 +160,6 @@ Program Listing for File class_algorithm_base.cpp
    }
    
    
-   void class_algorithm_base::print_profiling(){
-       if (settings::profiling::on) {
-           log->trace("Printing profiling information (tot)");
-           t_tot.print_time_w_percent();
-           t_run.print_time_w_percent(t_tot);
-           t_prt.print_time_w_percent(t_tot);
-           t_con.print_time_w_percent(t_tot);
-           tools::common::profile::print_profiling(t_tot);
-       }
-   }
-   
-   
    
    double class_algorithm_base::process_memory_in_mb(std::string name){
        std::ifstream filestream("/proc/self/status");
@@ -200,22 +187,3 @@ Program Listing for File class_algorithm_base.cpp
        return -1.0;
    }
    
-   void class_algorithm_base::set_profiling_labels() {
-       using namespace settings::profiling;
-       t_tot.set_properties(true, precision,"+Total Time              ");
-       t_prt.set_properties(on,   precision,"↳ Printing to console    ");
-       t_con.set_properties(on,   precision,"↳ Convergence checks     ");
-       t_run.set_properties(on,   precision, "↳+Simulation             ");
-   //    t_obs.set_properties(on,   precision,"↳ Computing observables  ");
-   
-   //    t_sto.set_properties(on,   precision,"↳ Store to file          ");
-   //    t_ste.set_properties(on,   precision,"↳ finite state storage   ");
-   
-   //    t_evo.set_properties(on,   precision,"↳ Time Evolution         ");
-   //    t_opt.set_properties(on,   precision,"↳+Optimize MPS           ");
-   //    t_eig.set_properties(on,   precision," ↳ Eigenvalue solver     ");
-   //    t_ham.set_properties(on,   precision," ↳ Build Hamiltonian     ");
-   //    t_svd.set_properties(on,   precision,"↳ SVD Truncation         ");
-   //    t_udt.set_properties(on,   precision,"↳ Update Timestep        ");
-   //    t_env.set_properties(on,   precision,"↳ Update Environments    ");
-   }

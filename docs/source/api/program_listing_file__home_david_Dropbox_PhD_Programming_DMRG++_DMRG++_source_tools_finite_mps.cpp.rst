@@ -19,7 +19,7 @@ Program Listing for File mps.cpp
    #include <state/class_state_finite.h>
    #include <state/class_mps_2site.h>
    #include <state/class_environment.h>
-   #include <general/nmspc_random_numbers.h>
+   #include <math/nmspc_random.h>
    #include <general/nmspc_quantum_mechanics.h>
    #include <simulation/nmspc_settings.h>
    

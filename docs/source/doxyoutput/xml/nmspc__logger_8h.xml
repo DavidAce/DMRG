@@ -16,92 +16,102 @@
     <includedby refid="class__mps__site_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp</includedby>
     <includedby refid="tools_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools.h</includedby>
     <incdepgraph>
-      <node id="974">
+      <node id="968">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="975" relation="include">
+        <childnode refid="969" relation="include">
         </childnode>
-        <childnode refid="976" relation="include">
+        <childnode refid="970" relation="include">
         </childnode>
       </node>
-      <node id="976">
+      <node id="970">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="975">
+      <node id="969">
         <label>spdlog/logger.h</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="983">
+      <node id="977">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
         <link refid="class__f_d_m_r_g_8cpp"/>
       </node>
-      <node id="1011">
+      <node id="1006">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_tables.cpp</label>
         <link refid="finite_2io_2h5pp__tables_8cpp"/>
       </node>
-      <node id="991">
+      <node id="985">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp</label>
         <link refid="ceres__direct__functor_8cpp"/>
       </node>
-      <node id="1039">
+      <node id="1035">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.cpp</label>
         <link refid="class__selfdual__tf__rf__ising__normal_8cpp"/>
       </node>
-      <node id="1045">
+      <node id="1041">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp</label>
         <link refid="nmspc__settings_8cpp"/>
       </node>
-      <node id="981">
+      <node id="975">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
         <link refid="class__algorithm__infinite_8cpp"/>
       </node>
-      <node id="1042">
+      <node id="1038">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.h</label>
         <link refid="class__settings__reader_8h"/>
-        <childnode refid="1043" relation="include">
+        <childnode refid="1039" relation="include">
         </childnode>
-        <childnode refid="1044" relation="include">
+        <childnode refid="1040" relation="include">
         </childnode>
-        <childnode refid="1045" relation="include">
+        <childnode refid="1041" relation="include">
         </childnode>
       </node>
-      <node id="994">
+      <node id="990">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp</label>
         <link refid="ceres__subspace__functor_8cpp"/>
       </node>
-      <node id="1048">
+      <node id="1044">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools.h</label>
         <link refid="tools_8h"/>
       </node>
-      <node id="1014">
+      <node id="1009">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</label>
         <link refid="mps-internals_8cpp"/>
       </node>
-      <node id="1017">
+      <node id="1012">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
         <link refid="ops_8cpp"/>
       </node>
-      <node id="1034">
+      <node id="1030">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h</label>
         <link refid="class__tf__ising_8h"/>
-        <childnode refid="1033" relation="include">
+        <childnode refid="1029" relation="include">
         </childnode>
-        <childnode refid="1035" relation="include">
+        <childnode refid="1031" relation="include">
         </childnode>
       </node>
-      <node id="1030">
+      <node id="1026">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h</label>
         <link refid="class__state__finite_8h"/>
+        <childnode refid="974" relation="include">
+        </childnode>
+        <childnode refid="976" relation="include">
+        </childnode>
+        <childnode refid="977" relation="include">
+        </childnode>
         <childnode refid="980" relation="include">
         </childnode>
-        <childnode refid="982" relation="include">
+        <childnode refid="996" relation="include">
         </childnode>
-        <childnode refid="983" relation="include">
+        <childnode refid="1002" relation="include">
         </childnode>
-        <childnode refid="986" relation="include">
+        <childnode refid="1003" relation="include">
         </childnode>
-        <childnode refid="1001" relation="include">
+        <childnode refid="1004" relation="include">
+        </childnode>
+        <childnode refid="1005" relation="include">
+        </childnode>
+        <childnode refid="1006" relation="include">
         </childnode>
         <childnode refid="1007" relation="include">
         </childnode>
@@ -115,147 +125,149 @@
         </childnode>
         <childnode refid="1012" relation="include">
         </childnode>
-        <childnode refid="1013" relation="include">
-        </childnode>
-        <childnode refid="1014" relation="include">
-        </childnode>
-        <childnode refid="1015" relation="include">
-        </childnode>
-        <childnode refid="1016" relation="include">
-        </childnode>
-        <childnode refid="1017" relation="include">
-        </childnode>
-        <childnode refid="988" relation="include">
-        </childnode>
-        <childnode refid="990" relation="include">
-        </childnode>
-        <childnode refid="991" relation="include">
-        </childnode>
-        <childnode refid="993" relation="include">
-        </childnode>
-        <childnode refid="994" relation="include">
-        </childnode>
-        <childnode refid="995" relation="include">
-        </childnode>
-        <childnode refid="996" relation="include">
-        </childnode>
-        <childnode refid="998" relation="include">
-        </childnode>
-        <childnode refid="1018" relation="include">
-        </childnode>
-        <childnode refid="999" relation="include">
-        </childnode>
-      </node>
-      <node id="988">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp</label>
-        <link refid="ceres__base_8cpp"/>
-      </node>
-      <node id="1012">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
-        <link refid="finite_2measure_8cpp"/>
-      </node>
-      <node id="998">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
-        <link refid="finite_2opt_8cpp"/>
-      </node>
-      <node id="1031">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp</label>
-        <link refid="class__model__base_8cpp"/>
-      </node>
-      <node id="1000">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
-        <link refid="class__mps__2site_8cpp"/>
-      </node>
-      <node id="1001">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.cpp</label>
-        <link refid="class__state__finite_8cpp"/>
-      </node>
-      <node id="1023">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
-        <link refid="infinite_2measure_8cpp"/>
-      </node>
-      <node id="1037">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
-        <link refid="class__selfdual__tf__rf__ising_8cpp"/>
-      </node>
-      <node id="1019">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
-        <link refid="infinite_2debug_8cpp"/>
-      </node>
-      <node id="1004">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp</label>
-        <link refid="common_2io_2h5pp__tables_8cpp"/>
-      </node>
-      <node id="1002">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
-        <link refid="class__state__infinite_8cpp"/>
-      </node>
-      <node id="997">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp</label>
-        <link refid="report_8cpp"/>
-      </node>
-      <node id="977">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="978" relation="include">
-        </childnode>
-        <childnode refid="979" relation="include">
-        </childnode>
-        <childnode refid="1028" relation="include">
-        </childnode>
-        <childnode refid="1029" relation="include">
-        </childnode>
-        <childnode refid="1041" relation="include">
-        </childnode>
-        <childnode refid="1042" relation="include">
-        </childnode>
-        <childnode refid="1043" relation="include">
-        </childnode>
-        <childnode refid="1046" relation="include">
-        </childnode>
-        <childnode refid="1044" relation="include">
-        </childnode>
-        <childnode refid="1047" relation="include">
-        </childnode>
-        <childnode refid="1048" relation="include">
-        </childnode>
-      </node>
-      <node id="1006">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/prof.cpp</label>
-        <link refid="prof_8cpp"/>
-      </node>
-      <node id="1007">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
-        <link refid="views_8cpp"/>
-      </node>
-      <node id="1021">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
-        <link refid="infinite_2io_2h5pp_8cpp"/>
-      </node>
-      <node id="985">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
-        <link refid="class__i_t_e_b_d_8cpp"/>
-      </node>
-      <node id="979">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h</label>
-        <link refid="nmspc__tools_8h"/>
-        <childnode refid="978" relation="include">
-        </childnode>
-        <childnode refid="980" relation="include">
-        </childnode>
-        <childnode refid="981" relation="include">
-        </childnode>
         <childnode refid="982" relation="include">
-        </childnode>
-        <childnode refid="983" relation="include">
         </childnode>
         <childnode refid="984" relation="include">
         </childnode>
         <childnode refid="985" relation="include">
         </childnode>
-        <childnode refid="986" relation="include">
-        </childnode>
         <childnode refid="987" relation="include">
+        </childnode>
+        <childnode refid="989" relation="include">
+        </childnode>
+        <childnode refid="990" relation="include">
+        </childnode>
+        <childnode refid="991" relation="include">
+        </childnode>
+        <childnode refid="992" relation="include">
+        </childnode>
+        <childnode refid="994" relation="include">
+        </childnode>
+        <childnode refid="1013" relation="include">
+        </childnode>
+        <childnode refid="1014" relation="include">
+        </childnode>
+      </node>
+      <node id="982">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp</label>
+        <link refid="ceres__base_8cpp"/>
+      </node>
+      <node id="1007">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
+        <link refid="finite_2measure_8cpp"/>
+      </node>
+      <node id="994">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
+        <link refid="finite_2opt_8cpp"/>
+      </node>
+      <node id="1027">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp</label>
+        <link refid="class__model__base_8cpp"/>
+      </node>
+      <node id="995">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
+        <link refid="class__mps__2site_8cpp"/>
+      </node>
+      <node id="996">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.cpp</label>
+        <link refid="class__state__finite_8cpp"/>
+      </node>
+      <node id="1019">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1033">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
+        <link refid="class__selfdual__tf__rf__ising_8cpp"/>
+      </node>
+      <node id="1015">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
+        <link refid="infinite_2debug_8cpp"/>
+      </node>
+      <node id="999">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp</label>
+        <link refid="common_2io_2h5pp__tables_8cpp"/>
+      </node>
+      <node id="997">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
+      </node>
+      <node id="993">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/report.cpp</label>
+        <link refid="report_8cpp"/>
+      </node>
+      <node id="971">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="972" relation="include">
+        </childnode>
+        <childnode refid="973" relation="include">
+        </childnode>
+        <childnode refid="1024" relation="include">
+        </childnode>
+        <childnode refid="1025" relation="include">
+        </childnode>
+        <childnode refid="1037" relation="include">
+        </childnode>
+        <childnode refid="1038" relation="include">
+        </childnode>
+        <childnode refid="1039" relation="include">
+        </childnode>
+        <childnode refid="1042" relation="include">
+        </childnode>
+        <childnode refid="1040" relation="include">
+        </childnode>
+        <childnode refid="1043" relation="include">
+        </childnode>
+        <childnode refid="1044" relation="include">
+        </childnode>
+      </node>
+      <node id="1001">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/prof.cpp</label>
+        <link refid="prof_8cpp"/>
+      </node>
+      <node id="1002">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1017">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
+        <link refid="infinite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="979">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
+        <link refid="class__i_t_e_b_d_8cpp"/>
+      </node>
+      <node id="973">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="972" relation="include">
+        </childnode>
+        <childnode refid="974" relation="include">
+        </childnode>
+        <childnode refid="975" relation="include">
+        </childnode>
+        <childnode refid="976" relation="include">
+        </childnode>
+        <childnode refid="977" relation="include">
+        </childnode>
+        <childnode refid="978" relation="include">
+        </childnode>
+        <childnode refid="979" relation="include">
+        </childnode>
+        <childnode refid="980" relation="include">
+        </childnode>
+        <childnode refid="981" relation="include">
+        </childnode>
+        <childnode refid="995" relation="include">
+        </childnode>
+        <childnode refid="996" relation="include">
+        </childnode>
+        <childnode refid="997" relation="include">
+        </childnode>
+        <childnode refid="998" relation="include">
+        </childnode>
+        <childnode refid="999" relation="include">
         </childnode>
         <childnode refid="1000" relation="include">
         </childnode>
@@ -305,155 +317,155 @@
         </childnode>
         <childnode refid="1023" relation="include">
         </childnode>
-        <childnode refid="1024" relation="include">
-        </childnode>
-        <childnode refid="1025" relation="include">
-        </childnode>
-        <childnode refid="1026" relation="include">
-        </childnode>
-        <childnode refid="1027" relation="include">
-        </childnode>
       </node>
-      <node id="1032">
+      <node id="1028">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h</label>
         <link refid="class__model__factory_8h"/>
-        <childnode refid="1033" relation="include">
+        <childnode refid="1029" relation="include">
         </childnode>
-        <childnode refid="1002" relation="include">
+        <childnode refid="997" relation="include">
         </childnode>
-        <childnode refid="1009" relation="include">
+        <childnode refid="1004" relation="include">
         </childnode>
-        <childnode refid="1010" relation="include">
+        <childnode refid="1005" relation="include">
         </childnode>
-        <childnode refid="1013" relation="include">
+        <childnode refid="1008" relation="include">
         </childnode>
-        <childnode refid="1024" relation="include">
+        <childnode refid="1020" relation="include">
         </childnode>
       </node>
-      <node id="1018">
+      <node id="1013">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp</label>
         <link refid="finite_2print_8cpp"/>
       </node>
-      <node id="989">
+      <node id="983">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.h</label>
         <link refid="ceres__direct__functor_8h"/>
-        <childnode refid="990" relation="include">
-        </childnode>
-        <childnode refid="991" relation="include">
-        </childnode>
-      </node>
-      <node id="1009">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
-        <link refid="finite_2io_2h5pp_8cpp"/>
-      </node>
-      <node id="1035">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
-        <link refid="class__tf__ising_8cpp"/>
-      </node>
-      <node id="1010">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_restore.cpp</label>
-        <link refid="h5pp__restore_8cpp"/>
-      </node>
-      <node id="980">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
-        <link refid="class__algorithm__finite_8cpp"/>
-      </node>
-      <node id="1040">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp</label>
-        <link refid="class__environment_8cpp"/>
-      </node>
-      <node id="1036">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</label>
-        <link refid="class__selfdual__tf__rf__ising_8h"/>
-        <childnode refid="1033" relation="include">
-        </childnode>
-        <childnode refid="1037" relation="include">
-        </childnode>
-      </node>
-      <node id="1043">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp</label>
-        <link refid="class__settings__reader_8cpp"/>
-      </node>
-      <node id="986">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
-        <link refid="class__x_d_m_r_g_8cpp"/>
-      </node>
-      <node id="1029">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h</label>
-        <link refid="class__model__base_8h"/>
-        <childnode refid="1030" relation="include">
+        <childnode refid="984" relation="include">
         </childnode>
         <childnode refid="985" relation="include">
         </childnode>
-        <childnode refid="1031" relation="include">
+      </node>
+      <node id="1004">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
+        <link refid="finite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="1031">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
+        <link refid="class__tf__ising_8cpp"/>
+      </node>
+      <node id="1005">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_restore.cpp</label>
+        <link refid="h5pp__restore_8cpp"/>
+      </node>
+      <node id="974">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
+        <link refid="class__algorithm__finite_8cpp"/>
+      </node>
+      <node id="1036">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp</label>
+        <link refid="class__environment_8cpp"/>
+      </node>
+      <node id="1032">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</label>
+        <link refid="class__selfdual__tf__rf__ising_8h"/>
+        <childnode refid="1029" relation="include">
+        </childnode>
+        <childnode refid="1033" relation="include">
+        </childnode>
+      </node>
+      <node id="1039">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp</label>
+        <link refid="class__settings__reader_8cpp"/>
+      </node>
+      <node id="980">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
+        <link refid="class__x_d_m_r_g_8cpp"/>
+      </node>
+      <node id="1025">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="1026" relation="include">
+        </childnode>
+        <childnode refid="979" relation="include">
+        </childnode>
+        <childnode refid="1027" relation="include">
+        </childnode>
+        <childnode refid="1028" relation="include">
+        </childnode>
+        <childnode refid="1030" relation="include">
+        </childnode>
+        <childnode refid="1029" relation="include">
         </childnode>
         <childnode refid="1032" relation="include">
         </childnode>
         <childnode refid="1034" relation="include">
         </childnode>
-        <childnode refid="1033" relation="include">
-        </childnode>
         <childnode refid="1036" relation="include">
         </childnode>
-        <childnode refid="1038" relation="include">
+        <childnode refid="1008" relation="include">
         </childnode>
-        <childnode refid="1040" relation="include">
+        <childnode refid="1012" relation="include">
         </childnode>
-        <childnode refid="1013" relation="include">
+        <childnode refid="994" relation="include">
+        </childnode>
+        <childnode refid="1016" relation="include">
         </childnode>
         <childnode refid="1017" relation="include">
         </childnode>
-        <childnode refid="998" relation="include">
+        <childnode refid="1019" relation="include">
         </childnode>
         <childnode refid="1020" relation="include">
         </childnode>
-        <childnode refid="1021" relation="include">
+        <childnode refid="1022" relation="include">
         </childnode>
         <childnode refid="1023" relation="include">
         </childnode>
-        <childnode refid="1024" relation="include">
-        </childnode>
-        <childnode refid="1026" relation="include">
-        </childnode>
-        <childnode refid="1027" relation="include">
-        </childnode>
       </node>
-      <node id="1022">
+      <node id="1018">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp</label>
         <link refid="infinite_2io_2h5pp__tables_8cpp"/>
       </node>
-      <node id="1044">
+      <node id="1040">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/main.cpp</label>
         <link refid="main_8cpp"/>
       </node>
-      <node id="1041">
+      <node id="1037">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp</label>
         <link refid="class__h5table__buffer_8cpp"/>
       </node>
-      <node id="1038">
+      <node id="1034">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.h</label>
         <link refid="class__selfdual__tf__rf__ising__normal_8h"/>
-        <childnode refid="1033" relation="include">
+        <childnode refid="1029" relation="include">
         </childnode>
-        <childnode refid="1039" relation="include">
+        <childnode refid="1035" relation="include">
         </childnode>
       </node>
-      <node id="1028">
+      <node id="1024">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.h</label>
         <link refid="class__state__infinite_8h"/>
-        <childnode refid="981" relation="include">
+        <childnode refid="975" relation="include">
         </childnode>
-        <childnode refid="982" relation="include">
+        <childnode refid="976" relation="include">
         </childnode>
-        <childnode refid="984" relation="include">
+        <childnode refid="978" relation="include">
         </childnode>
-        <childnode refid="985" relation="include">
+        <childnode refid="979" relation="include">
+        </childnode>
+        <childnode refid="997" relation="include">
         </childnode>
         <childnode refid="1002" relation="include">
         </childnode>
-        <childnode refid="1007" relation="include">
+        <childnode refid="1004" relation="include">
         </childnode>
-        <childnode refid="1009" relation="include">
+        <childnode refid="1015" relation="include">
+        </childnode>
+        <childnode refid="1016" relation="include">
+        </childnode>
+        <childnode refid="1017" relation="include">
+        </childnode>
+        <childnode refid="1018" relation="include">
         </childnode>
         <childnode refid="1019" relation="include">
         </childnode>
@@ -465,132 +477,132 @@
         </childnode>
         <childnode refid="1023" relation="include">
         </childnode>
-        <childnode refid="1024" relation="include">
-        </childnode>
-        <childnode refid="1025" relation="include">
-        </childnode>
-        <childnode refid="1026" relation="include">
-        </childnode>
-        <childnode refid="1027" relation="include">
-        </childnode>
       </node>
-      <node id="982">
+      <node id="976">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
         <link refid="class__algorithm__launcher_8cpp"/>
       </node>
-      <node id="987">
+      <node id="981">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h</label>
         <link refid="opt_8h"/>
+        <childnode refid="980" relation="include">
+        </childnode>
+        <childnode refid="982" relation="include">
+        </childnode>
+        <childnode refid="983" relation="include">
+        </childnode>
         <childnode refid="986" relation="include">
         </childnode>
         <childnode refid="988" relation="include">
         </childnode>
-        <childnode refid="989" relation="include">
+        <childnode refid="991" relation="include">
         </childnode>
         <childnode refid="992" relation="include">
         </childnode>
         <childnode refid="993" relation="include">
         </childnode>
-        <childnode refid="995" relation="include">
-        </childnode>
-        <childnode refid="996" relation="include">
-        </childnode>
-        <childnode refid="997" relation="include">
-        </childnode>
-        <childnode refid="998" relation="include">
-        </childnode>
-        <childnode refid="999" relation="include">
-        </childnode>
-      </node>
-      <node id="1033">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</label>
-        <link refid="class__model__factory_8cpp"/>
-      </node>
-      <node id="1013">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</label>
-        <link refid="finite_2mpo_8cpp"/>
-      </node>
-      <node id="995">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp</label>
-        <link refid="ceres__subspace__hamiltonian_8cpp"/>
-      </node>
-      <node id="990">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp</label>
-        <link refid="ceres__direct_8cpp"/>
-      </node>
-      <node id="1005">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp</label>
-        <link refid="h5pp__tmp_8cpp"/>
-      </node>
-      <node id="1046">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp</label>
-        <link refid="nmspc__logger_8cpp"/>
-      </node>
-      <node id="1025">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
-        <link refid="infinite_2mps_8cpp"/>
-      </node>
-      <node id="1020">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
-        <link refid="env_8cpp"/>
-      </node>
-      <node id="993">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
-        <link refid="ceres__subspace_8cpp"/>
-      </node>
-      <node id="984">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
-        <link refid="class__i_d_m_r_g_8cpp"/>
-      </node>
-      <node id="978">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
-        <link refid="class__algorithm__base_8cpp"/>
-      </node>
-      <node id="992">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h</label>
-        <link refid="ceres__subspace__functor_8h"/>
-        <childnode refid="993" relation="include">
-        </childnode>
         <childnode refid="994" relation="include">
         </childnode>
       </node>
-      <node id="1003">
+      <node id="1029">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</label>
+        <link refid="class__model__factory_8cpp"/>
+      </node>
+      <node id="1008">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</label>
+        <link refid="finite_2mpo_8cpp"/>
+      </node>
+      <node id="991">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp</label>
+        <link refid="ceres__subspace__hamiltonian_8cpp"/>
+      </node>
+      <node id="987">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.cpp</label>
+        <link refid="ceres__rosenbrock_8cpp"/>
+      </node>
+      <node id="984">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp</label>
+        <link refid="ceres__direct_8cpp"/>
+      </node>
+      <node id="1000">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp</label>
+        <link refid="h5pp__tmp_8cpp"/>
+      </node>
+      <node id="1042">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp</label>
+        <link refid="nmspc__logger_8cpp"/>
+      </node>
+      <node id="1021">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
+        <link refid="infinite_2mps_8cpp"/>
+      </node>
+      <node id="1016">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
+        <link refid="env_8cpp"/>
+      </node>
+      <node id="989">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
+      </node>
+      <node id="978">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
+        <link refid="class__i_d_m_r_g_8cpp"/>
+      </node>
+      <node id="972">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
+        <link refid="class__algorithm__base_8cpp"/>
+      </node>
+      <node id="988">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h</label>
+        <link refid="ceres__subspace__functor_8h"/>
+        <childnode refid="989" relation="include">
+        </childnode>
+        <childnode refid="990" relation="include">
+        </childnode>
+      </node>
+      <node id="986">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.h</label>
+        <link refid="ceres__rosenbrock_8h"/>
+        <childnode refid="987" relation="include">
+        </childnode>
+      </node>
+      <node id="998">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp.cpp</label>
         <link refid="common_2io_2h5pp_8cpp"/>
       </node>
-      <node id="1008">
+      <node id="1003">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/debug.cpp</label>
         <link refid="finite_2debug_8cpp"/>
       </node>
-      <node id="999">
+      <node id="1014">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp</label>
         <link refid="svd_8cpp"/>
       </node>
-      <node id="1027">
+      <node id="1023">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</label>
         <link refid="infinite_2print_8cpp"/>
       </node>
-      <node id="1016">
+      <node id="1011">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp</label>
         <link refid="multisite_8cpp"/>
       </node>
-      <node id="1024">
+      <node id="1020">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mpo.cpp</label>
         <link refid="infinite_2mpo_8cpp"/>
       </node>
-      <node id="996">
+      <node id="992">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
         <link refid="ground__state_8cpp"/>
       </node>
-      <node id="1047">
+      <node id="1043">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp</label>
         <link refid="class__mps__site_8cpp"/>
       </node>
-      <node id="1015">
+      <node id="1010">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</label>
         <link refid="finite_2mps_8cpp"/>
       </node>
-      <node id="1026">
+      <node id="1022">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
       </node>
@@ -607,17 +619,22 @@
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;spdlog/logger.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;spdlog/fmt/bundled/ranges.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8" refid="namespace_logger" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_logger" kindref="compound">Logger</ref>{</highlight></codeline>
-<codeline lineno="9"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" kindref="member">enableTimeStamp</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>);</highlight></codeline>
-<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" kindref="member">disableTimeStamp</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log);</highlight></codeline>
-<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" kindref="member">setLogLevel</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>levelZeroToSix);</highlight></codeline>
-<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1a28a08ace407590591117c1ce9eb1536d" kindref="member">getLogLevel</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log);</highlight></codeline>
-<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">setLogger</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log,<sp/>std::string<sp/>name,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>levelZeroToSix<sp/>=<sp/>2,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">timestamp</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;spdlog::logger&gt;<sp/><sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">setLogger</ref>(std::string<sp/>name,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>levelZeroToSix<sp/>=<sp/>2,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">timestamp</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(SPDLOG_FMT_EXTERNAL)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;fmt/ranges.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;spdlog/fmt/bundled/ranges.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="namespace_logger" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_logger" kindref="compound">Logger</ref>{</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" kindref="member">enableTimeStamp</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>);</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" kindref="member">disableTimeStamp</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log);</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" kindref="member">setLogLevel</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>levelZeroToSix);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1a28a08ace407590591117c1ce9eb1536d" kindref="member">getLogLevel</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">setLogger</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log,<sp/>std::string<sp/>name,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>levelZeroToSix<sp/>=<sp/>2,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">timestamp</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">extern</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;spdlog::logger&gt;<sp/><sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">setLogger</ref>(std::string<sp/>name,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>levelZeroToSix<sp/>=<sp/>2,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">timestamp</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h"/>
   </compounddef>

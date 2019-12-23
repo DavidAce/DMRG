@@ -10,138 +10,35 @@
     <includes local="no">spdlog/sinks/stdout_color_sinks.h</includes>
     <includes local="no">spdlog/spdlog.h</includes>
     <includedby refid="class__state__infinite_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.h</includedby>
+    <includedby refid="arpackpp__solver_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</includedby>
     <includedby refid="matrix__product__dense_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</includedby>
     <includedby refid="matrix__product__sparse_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</includedby>
     <includedby refid="matrix__product__stl_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</includedby>
     <includedby refid="matrix__product__hamiltonian_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</includedby>
-    <includedby refid="arpackpp__solver_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</includedby>
     <includedby refid="matrix__recast_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</includedby>
     <includedby refid="class__eigsolver_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</includedby>
     <incdepgraph>
-      <node id="1424">
+      <node id="1434">
         <label>map</label>
       </node>
-      <node id="1428">
+      <node id="1438">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="1426">
+      <node id="1436">
         <label>vector</label>
       </node>
-      <node id="1427">
+      <node id="1437">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="1423">
+      <node id="1433">
         <label>array</label>
       </node>
-      <node id="1422">
+      <node id="1432">
         <label>iostream</label>
       </node>
-      <node id="1421">
+      <node id="1431">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1422" relation="include">
-        </childnode>
-        <childnode refid="1423" relation="include">
-        </childnode>
-        <childnode refid="1424" relation="include">
-        </childnode>
-        <childnode refid="1425" relation="include">
-        </childnode>
-        <childnode refid="1426" relation="include">
-        </childnode>
-        <childnode refid="1427" relation="include">
-        </childnode>
-        <childnode refid="1428" relation="include">
-        </childnode>
-      </node>
-      <node id="1425">
-        <label>complex</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="1431">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
-        <link refid="class__algorithm__infinite_8cpp"/>
-      </node>
-      <node id="1442">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
-        <link refid="infinite_2measure_8cpp"/>
-      </node>
-      <node id="1438">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
-        <link refid="infinite_2debug_8cpp"/>
-      </node>
-      <node id="1435">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
-        <link refid="class__state__infinite_8cpp"/>
-      </node>
-      <node id="1436">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
-        <link refid="views_8cpp"/>
-      </node>
-      <node id="1440">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
-        <link refid="infinite_2io_2h5pp_8cpp"/>
-      </node>
-      <node id="1434">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
-        <link refid="class__i_t_e_b_d_8cpp"/>
-      </node>
-      <node id="1459">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</label>
-        <link refid="arpackpp__solver_8h"/>
-        <childnode refid="1448" relation="include">
-        </childnode>
-        <childnode refid="1451" relation="include">
-        </childnode>
-      </node>
-      <node id="1447">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</label>
-        <link refid="matrix__product__dense_8h"/>
-        <childnode refid="1448" relation="include">
-        </childnode>
-        <childnode refid="1449" relation="include">
-        </childnode>
-      </node>
-      <node id="1437">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
-        <link refid="finite_2io_2h5pp_8cpp"/>
-      </node>
-      <node id="1458">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</label>
-        <link refid="matrix__product__hamiltonian_8h"/>
-        <childnode refid="1448" relation="include">
-        </childnode>
-        <childnode refid="1435" relation="include">
-        </childnode>
-        <childnode refid="1454" relation="include">
-        </childnode>
-        <childnode refid="1445" relation="include">
-        </childnode>
-      </node>
-      <node id="1441">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp</label>
-        <link refid="infinite_2io_2h5pp__tables_8cpp"/>
-      </node>
-      <node id="1448">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
-        <link refid="arpackpp__solver_8cpp"/>
-      </node>
-      <node id="1456">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</label>
-        <link refid="matrix__product__stl_8h"/>
-        <childnode refid="1448" relation="include">
-        </childnode>
-        <childnode refid="1457" relation="include">
-        </childnode>
-        <childnode refid="1453" relation="include">
-        </childnode>
-      </node>
-      <node id="1430">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.h</label>
-        <link refid="class__state__infinite_8h"/>
-        <childnode refid="1431" relation="include">
-        </childnode>
         <childnode refid="1432" relation="include">
         </childnode>
         <childnode refid="1433" relation="include">
@@ -156,10 +53,93 @@
         </childnode>
         <childnode refid="1438" relation="include">
         </childnode>
-        <childnode refid="1439" relation="include">
+      </node>
+      <node id="1435">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1441">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
+        <link refid="class__algorithm__infinite_8cpp"/>
+      </node>
+      <node id="1452">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1448">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
+        <link refid="infinite_2debug_8cpp"/>
+      </node>
+      <node id="1445">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
+      </node>
+      <node id="1446">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1450">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
+        <link refid="infinite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="1444">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
+        <link refid="class__i_t_e_b_d_8cpp"/>
+      </node>
+      <node id="1457">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
+        <childnode refid="1458" relation="include">
         </childnode>
-        <childnode refid="1440" relation="include">
+        <childnode refid="1459" relation="include">
         </childnode>
+      </node>
+      <node id="1463">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1464" relation="include">
+        </childnode>
+      </node>
+      <node id="1447">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
+        <link refid="finite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="1469">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</label>
+        <link refid="matrix__product__hamiltonian_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1445" relation="include">
+        </childnode>
+        <childnode refid="1462" relation="include">
+        </childnode>
+        <childnode refid="1455" relation="include">
+        </childnode>
+      </node>
+      <node id="1451">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp</label>
+        <link refid="infinite_2io_2h5pp__tables_8cpp"/>
+      </node>
+      <node id="1458">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
+        <link refid="arpackpp__solver_8cpp"/>
+      </node>
+      <node id="1467">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</label>
+        <link refid="matrix__product__stl_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1468" relation="include">
+        </childnode>
+        <childnode refid="1461" relation="include">
+        </childnode>
+      </node>
+      <node id="1440">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.h</label>
+        <link refid="class__state__infinite_8h"/>
         <childnode refid="1441" relation="include">
         </childnode>
         <childnode refid="1442" relation="include">
@@ -172,108 +152,126 @@
         </childnode>
         <childnode refid="1446" relation="include">
         </childnode>
-      </node>
-      <node id="1432">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
-        <link refid="class__algorithm__launcher_8cpp"/>
-      </node>
-      <node id="1455">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</label>
-        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1447" relation="include">
+        </childnode>
         <childnode refid="1448" relation="include">
         </childnode>
         <childnode refid="1449" relation="include">
         </childnode>
-        <childnode refid="1453" relation="include">
-        </childnode>
-      </node>
-      <node id="1449">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</label>
-        <link refid="matrix__recast_8h"/>
         <childnode refid="1450" relation="include">
         </childnode>
         <childnode refid="1451" relation="include">
         </childnode>
-      </node>
-      <node id="1450">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp</label>
-        <link refid="matrix__recast_8cpp"/>
-      </node>
-      <node id="1444">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
-        <link refid="infinite_2mps_8cpp"/>
-      </node>
-      <node id="1453">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
-        <link refid="ceres__subspace_8cpp"/>
-      </node>
-      <node id="1439">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
-        <link refid="env_8cpp"/>
-      </node>
-      <node id="1433">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
-        <link refid="class__i_d_m_r_g_8cpp"/>
-      </node>
-      <node id="1429">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1430" relation="include">
-        </childnode>
-        <childnode refid="1447" relation="include">
-        </childnode>
-        <childnode refid="1455" relation="include">
-        </childnode>
-        <childnode refid="1456" relation="include">
-        </childnode>
-        <childnode refid="1458" relation="include">
-        </childnode>
-        <childnode refid="1459" relation="include">
-        </childnode>
-        <childnode refid="1449" relation="include">
-        </childnode>
-        <childnode refid="1451" relation="include">
-        </childnode>
-      </node>
-      <node id="1452">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
-        <link refid="class__eigsolver_8cpp"/>
-      </node>
-      <node id="1451">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
-        <link refid="class__eigsolver_8h"/>
         <childnode refid="1452" relation="include">
-        </childnode>
-        <childnode refid="1435" relation="include">
-        </childnode>
-        <childnode refid="1436" relation="include">
         </childnode>
         <childnode refid="1453" relation="include">
         </childnode>
         <childnode refid="1454" relation="include">
         </childnode>
-        <childnode refid="1442" relation="include">
+        <childnode refid="1455" relation="include">
+        </childnode>
+        <childnode refid="1456" relation="include">
+        </childnode>
+      </node>
+      <node id="1442">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
+        <link refid="class__algorithm__launcher_8cpp"/>
+      </node>
+      <node id="1466">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1464" relation="include">
+        </childnode>
+      </node>
+      <node id="1464">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="1465" relation="include">
+        </childnode>
+        <childnode refid="1459" relation="include">
+        </childnode>
+      </node>
+      <node id="1465">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp</label>
+        <link refid="matrix__recast_8cpp"/>
+      </node>
+      <node id="1454">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
+        <link refid="infinite_2mps_8cpp"/>
+      </node>
+      <node id="1461">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
+      </node>
+      <node id="1449">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
+        <link refid="env_8cpp"/>
+      </node>
+      <node id="1443">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
+        <link refid="class__i_d_m_r_g_8cpp"/>
+      </node>
+      <node id="1439">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1440" relation="include">
+        </childnode>
+        <childnode refid="1457" relation="include">
+        </childnode>
+        <childnode refid="1463" relation="include">
+        </childnode>
+        <childnode refid="1466" relation="include">
+        </childnode>
+        <childnode refid="1467" relation="include">
+        </childnode>
+        <childnode refid="1469" relation="include">
+        </childnode>
+        <childnode refid="1464" relation="include">
+        </childnode>
+        <childnode refid="1459" relation="include">
+        </childnode>
+      </node>
+      <node id="1460">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
+        <link refid="class__eigsolver_8cpp"/>
+      </node>
+      <node id="1459">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="1460" relation="include">
         </childnode>
         <childnode refid="1445" relation="include">
         </childnode>
+        <childnode refid="1446" relation="include">
+        </childnode>
+        <childnode refid="1461" relation="include">
+        </childnode>
+        <childnode refid="1462" relation="include">
+        </childnode>
+        <childnode refid="1452" relation="include">
+        </childnode>
+        <childnode refid="1455" relation="include">
+        </childnode>
       </node>
-      <node id="1446">
+      <node id="1456">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</label>
         <link refid="infinite_2print_8cpp"/>
       </node>
-      <node id="1443">
+      <node id="1453">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mpo.cpp</label>
         <link refid="infinite_2mpo_8cpp"/>
       </node>
-      <node id="1454">
+      <node id="1462">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
         <link refid="ground__state_8cpp"/>
       </node>
-      <node id="1457">
+      <node id="1468">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp</label>
         <link refid="matrix__product__stl_8cpp"/>
       </node>
-      <node id="1445">
+      <node id="1455">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
       </node>

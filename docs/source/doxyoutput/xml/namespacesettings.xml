@@ -31,9 +31,9 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="16" bodyend="146"/>
         <references refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" compoundref="nmspc__settings_8h" startline="36">settings::input::input_filename</references>
-        <references refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" compoundref="class__settings__reader_8cpp" startline="75" endline="77">class_settings_reader::get_input_filename</references>
+        <references refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" compoundref="class__settings__reader_8cpp" startline="77" endline="79">class_settings_reader::get_input_filename</references>
         <references refid="namespacesettings_1_1input_1a6237bd4c8d635524769d9a47084dad5a" compoundref="nmspc__settings_8h" startline="37">settings::input::input_file_raw</references>
-        <references refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" compoundref="class__settings__reader_8cpp" startline="71" endline="73">class_settings_reader::get_input_file_as_string</references>
+        <references refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" compoundref="class__settings__reader_8cpp" startline="73" endline="75">class_settings_reader::get_input_file_as_string</references>
         <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="118">settings::idmrg::on</references>
         <references refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" compoundref="nmspc__settings_8h" startline="129">settings::fdmrg::on</references>
         <references refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" compoundref="nmspc__settings_8h" startline="143">settings::xdmrg::on</references>

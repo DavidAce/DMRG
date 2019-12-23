@@ -21,7 +21,7 @@ Program Listing for File ops.cpp
    #include <general/nmspc_tensor_extra.h>
    #include <general/nmspc_quantum_mechanics.h>
    #include <iomanip>
-   #include <general/nmspc_random_numbers.h>
+   #include <math/nmspc_random.h>
    
    
    using Scalar         = std::complex<double>;

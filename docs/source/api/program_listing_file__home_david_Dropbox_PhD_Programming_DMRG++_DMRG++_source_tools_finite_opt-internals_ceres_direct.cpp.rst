@@ -19,8 +19,6 @@ Program Listing for File ceres_direct.cpp
    #include <state/class_state_finite.h>
    #include <simulation/class_simulation_status.h>
    #include <simulation/nmspc_settings.h>
-   #include <ceres/ceres.h>
-   
    
    
    Eigen::Tensor<class_state_finite::Scalar,3>
@@ -56,7 +54,7 @@ Program Listing for File ceres_direct.cpp
            t_opt->toc();
            opt_log.emplace_back("Initial guess" , theta_initial.size(), energy_initial, std::log10(variance_initial), 1.0, theta_initial_vec.norm(), 0 , 0, t_opt->get_last_time_interval());
        }
-       double energy_new,variance_new,overlap_new;
+       double energy_new = 0,variance_new = 0,overlap_new = 0;
        auto options = ceres_default_options;
    
        ceres::GradientProblemSolver::Summary summary;

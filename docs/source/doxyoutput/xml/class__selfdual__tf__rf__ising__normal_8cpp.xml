@@ -5,220 +5,340 @@
     <includes refid="class__selfdual__tf__rf__ising__normal_8h" local="yes">class_selfdual_tf_rf_ising_normal.h</includes>
     <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
     <includes refid="nmspc__quantum__mechanics_8h" local="no">general/nmspc_quantum_mechanics.h</includes>
-    <includes refid="nmspc__random__numbers_8h" local="no">general/nmspc_random_numbers.h</includes>
+    <includes refid="nmspc__random_8h" local="no">math/nmspc_random.h</includes>
     <includes local="no">iomanip</includes>
     <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <incdepgraph>
-      <node id="1709">
+      <node id="1934">
         <label>list</label>
       </node>
-      <node id="1706">
-        <label>general/nmspc_random_numbers.h</label>
-        <link refid="nmspc__random__numbers_8h"/>
-        <childnode refid="1707" relation="include">
-        </childnode>
-        <childnode refid="1685" relation="include">
-        </childnode>
-        <childnode refid="1705" relation="include">
-        </childnode>
-        <childnode refid="1689" relation="include">
-        </childnode>
+      <node id="1924">
+        <label>locale</label>
       </node>
-      <node id="1683">
+      <node id="1890">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.cpp</label>
         <link refid="class__selfdual__tf__rf__ising__normal_8cpp"/>
-        <childnode refid="1684" relation="include">
+        <childnode refid="1891" relation="include">
         </childnode>
-        <childnode refid="1686" relation="include">
+        <childnode refid="1893" relation="include">
         </childnode>
-        <childnode refid="1704" relation="include">
+        <childnode refid="1911" relation="include">
         </childnode>
-        <childnode refid="1706" relation="include">
+        <childnode refid="1913" relation="include">
         </childnode>
-        <childnode refid="1692" relation="include">
+        <childnode refid="1899" relation="include">
         </childnode>
-        <childnode refid="1708" relation="include">
+        <childnode refid="1933" relation="include">
         </childnode>
-        <childnode refid="1695" relation="include">
+        <childnode refid="1902" relation="include">
         </childnode>
       </node>
-      <node id="1711">
+      <node id="1936">
         <label>functional</label>
       </node>
-      <node id="1692">
+      <node id="1899">
         <label>iomanip</label>
       </node>
-      <node id="1691">
+      <node id="1921">
+        <label>limits</label>
+      </node>
+      <node id="1898">
         <label>iterator</label>
       </node>
-      <node id="1710">
+      <node id="1929">
+        <label>cstdint</label>
+      </node>
+      <node id="1935">
         <label>cmath</label>
       </node>
-      <node id="1693">
+      <node id="1920">
+        <label>cassert</label>
+      </node>
+      <node id="1900">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="1694" relation="include">
+        <childnode refid="1901" relation="include">
         </childnode>
-        <childnode refid="1689" relation="include">
+        <childnode refid="1896" relation="include">
         </childnode>
-        <childnode refid="1688" relation="include">
+        <childnode refid="1895" relation="include">
         </childnode>
       </node>
-      <node id="1713">
+      <node id="1926">
+        <label>stdexcept</label>
+      </node>
+      <node id="1937">
         <label>numeric</label>
       </node>
-      <node id="1689">
+      <node id="1896">
         <label>Eigen/Core</label>
       </node>
-      <node id="1696">
+      <node id="1913">
+        <label>math/nmspc_random.h</label>
+        <link refid="nmspc__random_8h"/>
+        <childnode refid="1914" relation="include">
+        </childnode>
+        <childnode refid="1892" relation="include">
+        </childnode>
+        <childnode refid="1912" relation="include">
+        </childnode>
+        <childnode refid="1896" relation="include">
+        </childnode>
+        <childnode refid="1915" relation="include">
+        </childnode>
+      </node>
+      <node id="1903">
         <label>string</label>
       </node>
-      <node id="1701">
+      <node id="1908">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="1702" relation="include">
+        <childnode refid="1909" relation="include">
         </childnode>
-        <childnode refid="1703" relation="include">
+        <childnode refid="1910" relation="include">
         </childnode>
       </node>
-      <node id="1694">
+      <node id="1916">
+        <label>cinttypes</label>
+      </node>
+      <node id="1901">
         <label>experimental/type_traits</label>
       </node>
-      <node id="1688">
+      <node id="1895">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="1703">
+      <node id="1910">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="1699">
+      <node id="1915">
+        <label>pcg/pcg_random.hpp</label>
+        <link refid="pcg__random_8hpp"/>
+        <childnode refid="1916" relation="include">
+        </childnode>
+        <childnode refid="1917" relation="include">
+        </childnode>
+        <childnode refid="1918" relation="include">
+        </childnode>
+        <childnode refid="1919" relation="include">
+        </childnode>
+        <childnode refid="1920" relation="include">
+        </childnode>
+        <childnode refid="1921" relation="include">
+        </childnode>
+        <childnode refid="1892" relation="include">
+        </childnode>
+        <childnode refid="1922" relation="include">
+        </childnode>
+        <childnode refid="1923" relation="include">
+        </childnode>
+        <childnode refid="1924" relation="include">
+        </childnode>
+        <childnode refid="1925" relation="include">
+        </childnode>
+        <childnode refid="1926" relation="include">
+        </childnode>
+        <childnode refid="1927" relation="include">
+        </childnode>
+      </node>
+      <node id="1906">
         <label>class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="1700" relation="include">
+        <childnode refid="1907" relation="include">
         </childnode>
-        <childnode refid="1688" relation="include">
+        <childnode refid="1895" relation="include">
         </childnode>
-        <childnode refid="1701" relation="include">
+        <childnode refid="1908" relation="include">
         </childnode>
       </node>
-      <node id="1690">
+      <node id="1897">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="1707">
+      <node id="1914">
         <label>random</label>
       </node>
-      <node id="1698">
+      <node id="1905">
         <label>simulation/enums.h</label>
         <link refid="enums_8h"/>
       </node>
-      <node id="1702">
+      <node id="1930">
+        <label>cstdio</label>
+      </node>
+      <node id="1909">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="1708">
+      <node id="1933">
         <label>math/nmspc_math.h</label>
         <link refid="nmspc__math_8h"/>
-        <childnode refid="1685" relation="include">
+        <childnode refid="1892" relation="include">
         </childnode>
-        <childnode refid="1691" relation="include">
+        <childnode refid="1898" relation="include">
         </childnode>
-        <childnode refid="1697" relation="include">
+        <childnode refid="1904" relation="include">
         </childnode>
-        <childnode refid="1709" relation="include">
+        <childnode refid="1934" relation="include">
         </childnode>
-        <childnode refid="1710" relation="include">
+        <childnode refid="1935" relation="include">
         </childnode>
-        <childnode refid="1711" relation="include">
+        <childnode refid="1936" relation="include">
         </childnode>
-        <childnode refid="1700" relation="include">
+        <childnode refid="1907" relation="include">
         </childnode>
-        <childnode refid="1712" relation="include">
+        <childnode refid="1923" relation="include">
         </childnode>
-        <childnode refid="1713" relation="include">
+        <childnode refid="1937" relation="include">
         </childnode>
-        <childnode refid="1714" relation="include">
+        <childnode refid="1938" relation="include">
         </childnode>
-        <childnode refid="1689" relation="include">
+        <childnode refid="1896" relation="include">
         </childnode>
       </node>
-      <node id="1687">
+      <node id="1894">
         <label>general/nmspc_omp.h</label>
         <link refid="nmspc__omp_8h"/>
-        <childnode refid="1688" relation="include">
+        <childnode refid="1895" relation="include">
         </childnode>
       </node>
-      <node id="1684">
+      <node id="1891">
         <label>class_selfdual_tf_rf_ising_normal.h</label>
         <link refid="class__selfdual__tf__rf__ising__normal_8h"/>
-        <childnode refid="1685" relation="include">
+        <childnode refid="1892" relation="include">
         </childnode>
-        <childnode refid="1686" relation="include">
+        <childnode refid="1893" relation="include">
         </childnode>
-        <childnode refid="1695" relation="include">
+        <childnode refid="1902" relation="include">
         </childnode>
-        <childnode refid="1692" relation="include">
+        <childnode refid="1899" relation="include">
         </childnode>
-        <childnode refid="1699" relation="include">
+        <childnode refid="1906" relation="include">
         </childnode>
       </node>
-      <node id="1714">
+      <node id="1938">
         <label>optional</label>
       </node>
-      <node id="1697">
+      <node id="1904">
         <label>vector</label>
       </node>
-      <node id="1712">
+      <node id="1927">
+        <label>pcg_extras.hpp</label>
+        <link refid="pcg__extras_8hpp"/>
+        <childnode refid="1916" relation="include">
+        </childnode>
+        <childnode refid="1917" relation="include">
+        </childnode>
+        <childnode refid="1918" relation="include">
+        </childnode>
+        <childnode refid="1919" relation="include">
+        </childnode>
+        <childnode refid="1920" relation="include">
+        </childnode>
+        <childnode refid="1921" relation="include">
+        </childnode>
+        <childnode refid="1892" relation="include">
+        </childnode>
+        <childnode refid="1922" relation="include">
+        </childnode>
+        <childnode refid="1923" relation="include">
+        </childnode>
+        <childnode refid="1924" relation="include">
+        </childnode>
+        <childnode refid="1898" relation="include">
+        </childnode>
+        <childnode refid="1928" relation="include">
+        </childnode>
+      </node>
+      <node id="1925">
+        <label>new</label>
+      </node>
+      <node id="1923">
         <label>utility</label>
       </node>
-      <node id="1685">
+      <node id="1928">
+        <label>pcg_uint128.hpp</label>
+        <link refid="pcg__uint128_8hpp"/>
+        <childnode refid="1929" relation="include">
+        </childnode>
+        <childnode refid="1930" relation="include">
+        </childnode>
+        <childnode refid="1920" relation="include">
+        </childnode>
+        <childnode refid="1931" relation="include">
+        </childnode>
+        <childnode refid="1923" relation="include">
+        </childnode>
+        <childnode refid="1932" relation="include">
+        </childnode>
+        <childnode refid="1922" relation="include">
+        </childnode>
+      </node>
+      <node id="1918">
+        <label>cstdlib</label>
+      </node>
+      <node id="1892">
         <label>iostream</label>
       </node>
-      <node id="1704">
+      <node id="1917">
+        <label>cstddef</label>
+      </node>
+      <node id="1931">
+        <label>climits</label>
+      </node>
+      <node id="1911">
         <label>general/nmspc_quantum_mechanics.h</label>
         <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="1689" relation="include">
+        <childnode refid="1896" relation="include">
         </childnode>
-        <childnode refid="1688" relation="include">
+        <childnode refid="1895" relation="include">
         </childnode>
-        <childnode refid="1705" relation="include">
+        <childnode refid="1912" relation="include">
         </childnode>
-        <childnode refid="1697" relation="include">
+        <childnode refid="1904" relation="include">
         </childnode>
       </node>
-      <node id="1705">
+      <node id="1922">
+        <label>type_traits</label>
+      </node>
+      <node id="1912">
         <label>complex</label>
       </node>
-      <node id="1695">
+      <node id="1902">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="1696" relation="include">
+        <childnode refid="1903" relation="include">
         </childnode>
-        <childnode refid="1697" relation="include">
+        <childnode refid="1904" relation="include">
         </childnode>
-        <childnode refid="1698" relation="include">
+        <childnode refid="1905" relation="include">
         </childnode>
       </node>
-      <node id="1686">
+      <node id="1893">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="1687" relation="include">
+        <childnode refid="1894" relation="include">
         </childnode>
-        <childnode refid="1689" relation="include">
+        <childnode refid="1896" relation="include">
         </childnode>
-        <childnode refid="1690" relation="include">
+        <childnode refid="1897" relation="include">
         </childnode>
-        <childnode refid="1688" relation="include">
+        <childnode refid="1895" relation="include">
         </childnode>
-        <childnode refid="1691" relation="include">
+        <childnode refid="1898" relation="include">
         </childnode>
-        <childnode refid="1685" relation="include">
+        <childnode refid="1892" relation="include">
         </childnode>
-        <childnode refid="1692" relation="include">
+        <childnode refid="1899" relation="include">
         </childnode>
-        <childnode refid="1693" relation="include">
+        <childnode refid="1900" relation="include">
         </childnode>
       </node>
-      <node id="1700">
+      <node id="1919">
+        <label>cstring</label>
+      </node>
+      <node id="1907">
         <label>memory</label>
+      </node>
+      <node id="1932">
+        <label>initializer_list</label>
       </node>
     </incdepgraph>
       <sectiondef kind="typedef">
@@ -248,7 +368,7 @@
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__selfdual__tf__rf__ising__normal_8h" kindref="compound">class_selfdual_tf_rf_ising_normal.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tensor__extra_8h" kindref="compound">general/nmspc_tensor_extra.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__quantum__mechanics_8h" kindref="compound">general/nmspc_quantum_mechanics.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random__numbers_8h" kindref="compound">general/nmspc_random_numbers.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random_8h" kindref="compound">math/nmspc_random.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__math_8h" kindref="compound">math/nmspc_math.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>

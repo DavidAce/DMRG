@@ -16,38 +16,18 @@ Program Listing for File class_svd_wrapper_lapacke.cpp
    
    #include <complex.h>
    #undef I
+   #include<complex>
+   #define lapack_complex_float  std::complex<float>
+   #define lapack_complex_double std::complex<double>
    
-   #ifdef MKL_AVAILABLE
-   #ifndef MKL_Complex8
-   #define MKL_Complex8 std::complex<float>
-   #endif
-   #ifndef MKL_Complex16
-   #define MKL_Complex16 std::complex<double>
-   #endif
-   #ifndef ComplexFloat_
-   #define ComplexFloat_  MKL_Complex8
-   #endif
-   #ifndef ComplexDouble_
-   #define ComplexDouble_ MKL_Complex16
-   #endif
+   #if __has_include(<mkl_lapacke.h>)
    #include <mkl_lapacke.h>
-   #else
-   #define ComplexFloat_  __complex__ float
-   #define ComplexDouble_ __complex__ double
+   #elif __has_include(<lapacke.h>)
    #include <lapacke.h>
    #endif
    
    #include <math/class_svd_wrapper.h>
    #include <Eigen/Core>
-   //
-   //template<typename Scalar>
-   //
-   //std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>,class_SVD::MatrixType<Scalar> , long>
-   //do_svd_dgesvd(const Scalar *matrix, int rows, int cols){
-   //
-   //}
-   
-   
    
    
    template<typename Scalar>
@@ -85,13 +65,16 @@ Program Listing for File class_svd_wrapper_lapacke.cpp
        if constexpr (std::is_same<Scalar,std::complex<double>>::value){
            int lrwork = (int) (5 * std::min(rows,cols));
            VectorType<double> rwork(lrwork);
-           auto Ap  =  reinterpret_cast< ComplexDouble_ *>(A.data());
-           auto Up  =  reinterpret_cast< ComplexDouble_ *>(U.data());
-           auto VTp =  reinterpret_cast< ComplexDouble_ *>(VT.data());
-           info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, work.data(), -1,rwork.data());
+           auto Ap      =  reinterpret_cast< lapack_complex_double *>(A.data());
+           auto Up      =  reinterpret_cast< lapack_complex_double *>(U.data());
+           auto VTp     =  reinterpret_cast< lapack_complex_double *>(VT.data());
+           auto Wp_qry  =  reinterpret_cast< lapack_complex_double *>(work.data());
+   
+           info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp_qry, -1,rwork.data());
            int lwork  = (int) std::real(work(0));
            work.resize(lwork);
-           info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, work.data(), lwork,rwork.data());
+           auto Wp  =  reinterpret_cast< lapack_complex_double *>(work.data());
+           info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork,rwork.data());
        }
    
        long max_size    =  std::min(S.size(),rank_max);
@@ -137,5 +120,4 @@ Program Listing for File class_svd_wrapper_lapacke.cpp
    using cplx = std::complex<double>;
    template std::tuple<class_SVD::MatrixType<cplx>, class_SVD::VectorType<cplx>,class_SVD::MatrixType<cplx> , long>
    class_SVD::do_svd_lapacke(const cplx *, long, long, long);
-   
    

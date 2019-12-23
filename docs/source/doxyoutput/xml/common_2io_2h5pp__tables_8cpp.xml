@@ -6,157 +6,152 @@
     <includes refid="table__types_8h" local="no">io/table_types.h</includes>
     <includes refid="class__h5table__buffer_8h" local="no">io/class_h5table_buffer.h</includes>
     <incdepgraph>
-      <node id="2453">
+      <node id="2712">
         <label>list</label>
       </node>
-      <node id="2472">
-        <label>filesystem</label>
-      </node>
-      <node id="2448">
+      <node id="2707">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp</label>
         <link refid="common_2io_2h5pp__tables_8cpp"/>
-        <childnode refid="2449" relation="include">
+        <childnode refid="2708" relation="include">
         </childnode>
-        <childnode refid="2465" relation="include">
+        <childnode refid="2724" relation="include">
         </childnode>
-        <childnode refid="2470" relation="include">
+        <childnode refid="2729" relation="include">
         </childnode>
       </node>
-      <node id="2465">
+      <node id="2724">
         <label>io/table_types.h</label>
         <link refid="table__types_8h"/>
-        <childnode refid="2454" relation="include">
+        <childnode refid="2713" relation="include">
         </childnode>
-        <childnode refid="2466" relation="include">
+        <childnode refid="2725" relation="include">
         </childnode>
-        <childnode refid="2467" relation="include">
+        <childnode refid="2726" relation="include">
         </childnode>
-        <childnode refid="2468" relation="include">
+        <childnode refid="2727" relation="include">
         </childnode>
-        <childnode refid="2469" relation="include">
+        <childnode refid="2728" relation="include">
         </childnode>
       </node>
-      <node id="2463">
+      <node id="2722">
         <label>Eigen/Core</label>
       </node>
-      <node id="2451">
+      <node id="2710">
         <label>string</label>
       </node>
-      <node id="2468">
+      <node id="2727">
         <label>hdf5_hl.h</label>
       </node>
-      <node id="2458">
+      <node id="2717">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2459" relation="include">
+        <childnode refid="2718" relation="include">
         </childnode>
-        <childnode refid="2460" relation="include">
+        <childnode refid="2719" relation="include">
         </childnode>
       </node>
-      <node id="2455">
+      <node id="2714">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2456" relation="include">
+        <childnode refid="2715" relation="include">
         </childnode>
-        <childnode refid="2457" relation="include">
+        <childnode refid="2716" relation="include">
         </childnode>
       </node>
-      <node id="2469">
+      <node id="2728">
         <label>simulation/class_simulation_status.h</label>
         <link refid="class__simulation__status_8h"/>
-        <childnode refid="2450" relation="include">
+        <childnode refid="2709" relation="include">
         </childnode>
-        <childnode refid="2451" relation="include">
+        <childnode refid="2710" relation="include">
         </childnode>
-        <childnode refid="2460" relation="include">
+        <childnode refid="2719" relation="include">
         </childnode>
-        <childnode refid="2454" relation="include">
+        <childnode refid="2713" relation="include">
         </childnode>
-        <childnode refid="2466" relation="include">
+        <childnode refid="2725" relation="include">
         </childnode>
-        <childnode refid="2467" relation="include">
+        <childnode refid="2726" relation="include">
         </childnode>
-        <childnode refid="2468" relation="include">
+        <childnode refid="2727" relation="include">
         </childnode>
       </node>
-      <node id="2449">
+      <node id="2708">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="2450" relation="include">
+        <childnode refid="2709" relation="include">
         </childnode>
-        <childnode refid="2451" relation="include">
+        <childnode refid="2710" relation="include">
         </childnode>
-        <childnode refid="2452" relation="include">
+        <childnode refid="2711" relation="include">
         </childnode>
-        <childnode refid="2453" relation="include">
+        <childnode refid="2712" relation="include">
         </childnode>
-        <childnode refid="2454" relation="include">
+        <childnode refid="2713" relation="include">
         </childnode>
-        <childnode refid="2455" relation="include">
+        <childnode refid="2714" relation="include">
         </childnode>
-        <childnode refid="2458" relation="include">
+        <childnode refid="2717" relation="include">
         </childnode>
-        <childnode refid="2461" relation="include">
+        <childnode refid="2720" relation="include">
         </childnode>
-        <childnode refid="2463" relation="include">
+        <childnode refid="2722" relation="include">
         </childnode>
-        <childnode refid="2464" relation="include">
+        <childnode refid="2723" relation="include">
         </childnode>
       </node>
-      <node id="2464">
+      <node id="2723">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2457">
+      <node id="2716">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="2471">
+      <node id="2730">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="2461">
+      <node id="2720">
         <label>tools/finite/opt-internals/enum_classes.h</label>
         <link refid="enum__classes_8h"/>
-        <childnode refid="2460" relation="include">
+        <childnode refid="2719" relation="include">
         </childnode>
-        <childnode refid="2462" relation="include">
+        <childnode refid="2721" relation="include">
         </childnode>
       </node>
-      <node id="2456">
+      <node id="2715">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="2454">
+      <node id="2713">
         <label>vector</label>
       </node>
-      <node id="2466">
+      <node id="2725">
         <label>array</label>
       </node>
-      <node id="2462">
+      <node id="2721">
         <label>sstream</label>
       </node>
-      <node id="2467">
+      <node id="2726">
         <label>hdf5.h</label>
       </node>
-      <node id="2460">
+      <node id="2719">
         <label>iostream</label>
       </node>
-      <node id="2459">
+      <node id="2718">
         <label>chrono</label>
       </node>
-      <node id="2470">
+      <node id="2729">
         <label>io/class_h5table_buffer.h</label>
         <link refid="class__h5table__buffer_8h"/>
-        <childnode refid="2450" relation="include">
+        <childnode refid="2709" relation="include">
         </childnode>
-        <childnode refid="2471" relation="include">
+        <childnode refid="2730" relation="include">
         </childnode>
-        <childnode refid="2465" relation="include">
-        </childnode>
-        <childnode refid="2472" relation="include">
+        <childnode refid="2724" relation="include">
         </childnode>
       </node>
-      <node id="2452">
+      <node id="2711">
         <label>complex</label>
       </node>
-      <node id="2450">
+      <node id="2709">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -187,36 +182,39 @@
 <codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ae719f215236153e180f0c3101a5315d6" kindref="member">position</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" kindref="member">position</ref>;</highlight></codeline>
 <codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ae38590e343ae29b7b0d3b802fd59b16c" kindref="member">t_tot</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" kindref="member">wall_time</ref>;</highlight></codeline>
 <codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a090cde732c2599e7fa3dbcb874a4bfdc" kindref="member">t_run</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" kindref="member">simu_time</ref>;</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a86da5de35b8f25bdb248dc7408b45223" kindref="member">t_eig</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" kindref="member">tools::common::profile::t_eig</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ace6c6dd4d0601d40e5d577a8bc8c7577" kindref="member">t_svd</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ad987923c3666f4ae567f64ad2b826282" kindref="member">t_ene</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a39447ddc47e0911ba7f2c6a73d03a096" kindref="member">t_var</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a820fa70372c7db896e971719088fb290" kindref="member">t_ent</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">tools::common::profile::t_ent</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ae6c6515ad685cf3dc7f887fe3a49f0cb" kindref="member">t_hdf</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" kindref="member">tools::common::profile::t_hdf</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a524b74f45f160338d6f55cc05ed4f571" kindref="member">t_prj</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" kindref="member">tools::common::profile::t_prj</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a4dc08271ff837d56e0658e5f8185e6e3" kindref="member">t_opt</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">tools::common::profile::t_opt</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a89846cfcad65bfdc8ac4301342c2798f" kindref="member">t_chk</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" kindref="member">tools::common::profile::t_chk</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a7a391aaf87b799f6d0522437260e55ab" kindref="member">t_ene_mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a3efd01089ce7b4d9ba9d61270d55fb71" kindref="member">tools::common::profile::t_ene_mpo</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1aa1aabda4286a23cc939dbf310c581edf" kindref="member">t_ene_ham</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1abd24d6ad20dc8f1a79c9fe670e839028" kindref="member">tools::common::profile::t_ene_ham</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a9425db5989d606049a07a73cc9c9f242" kindref="member">t_ene_mom</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a543972c1667fe8fa09979f5e5b66106f" kindref="member">tools::common::profile::t_ene_mom</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a539f4a5460f234ed827201f22e489dcc" kindref="member">t_var_mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a92761da2df9560368517c1572bd86abf" kindref="member">tools::common::profile::t_var_mpo</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a9dcaad0c3eca3ae9bea47f51969fc986" kindref="member">t_var_ham</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a5202d5bd6e0d7c97cd09b43b47a9729f" kindref="member">tools::common::profile::t_var_ham</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a4aa0a258d1b05bb8e63b9d19c05283b0" kindref="member">t_var_mom</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a35332911ee3232209960797403bf52bb" kindref="member">tools::common::profile::t_var_mom</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ad43a6190e71324d78b0f8679e594c244" kindref="member">t_env</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a80ac2e6a6b2cd1d4f65a794b56deba69" kindref="member">t_evo</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1abd50caa1be36525900945a302708cbde" kindref="member">t_udt</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a0c9397c69d9ab911761e0d4350c67472" kindref="member">t_ste</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1afc92c236f236191e1a7666bdf8d62d55" kindref="member">t_prt</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a6d27cc9d1066dbdef69b9b9792cac9fa" kindref="member">t_obs</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a5293908cb5c2f252b4e4d497fcccb61a" kindref="member">t_mps</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1aa81e8cd67183d330d1b746f054e08817" kindref="member">t_chi</ref><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>h5tbuf.<ref refid="classclass__h5table__buffer_1a40bca00c593b115f06ca6b11b8283546" kindref="member">append_record</ref>(profiling_entry);</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Appending<sp/>profiling<sp/>data<sp/>to<sp/>table:<sp/>{}...<sp/>OK&quot;</highlight><highlight class="normal">,h5tbuf.<ref refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" kindref="member">get_table_name</ref>());</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a86da5de35b8f25bdb248dc7408b45223" kindref="member">t_eig</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1ac3910b10ef8cf578fe3197de44f4db5d" kindref="member">tools::common::profile::t_eig</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ace6c6dd4d0601d40e5d577a8bc8c7577" kindref="member">t_svd</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" kindref="member">tools::common::profile::t_svd</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ad987923c3666f4ae567f64ad2b826282" kindref="member">t_ene</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a39447ddc47e0911ba7f2c6a73d03a096" kindref="member">t_var</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a820fa70372c7db896e971719088fb290" kindref="member">t_ent</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">tools::common::profile::t_ent</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ae6c6515ad685cf3dc7f887fe3a49f0cb" kindref="member">t_hdf</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1aa711eac661747a5aae2b07e6013a1b6d" kindref="member">tools::common::profile::t_hdf</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a524b74f45f160338d6f55cc05ed4f571" kindref="member">t_prj</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" kindref="member">tools::common::profile::t_prj</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a4dc08271ff837d56e0658e5f8185e6e3" kindref="member">t_opt</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1ab1cc211efd9f963d899d378e4660be72" kindref="member">tools::common::profile::t_opt</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a89846cfcad65bfdc8ac4301342c2798f" kindref="member">t_chk</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1aa80d483840fee9d8e485fce1c480bd34" kindref="member">tools::common::profile::t_chk</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>profiling_entry.t_ene_mpo<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>tools::common::profile::t_ene_mpo.get_measured_time();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1aa1aabda4286a23cc939dbf310c581edf" kindref="member">t_ene_ham</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1abd24d6ad20dc8f1a79c9fe670e839028" kindref="member">tools::common::profile::t_ene_ham</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a9425db5989d606049a07a73cc9c9f242" kindref="member">t_ene_mom</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a543972c1667fe8fa09979f5e5b66106f" kindref="member">tools::common::profile::t_ene_mom</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>profiling_entry.t_var_mpo<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>tools::common::profile::t_var_mpo.get_measured_time();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a9dcaad0c3eca3ae9bea47f51969fc986" kindref="member">t_var_ham</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a5202d5bd6e0d7c97cd09b43b47a9729f" kindref="member">tools::common::profile::t_var_ham</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a4aa0a258d1b05bb8e63b9d19c05283b0" kindref="member">t_var_mom</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1common_1_1profile_1a35332911ee3232209960797403bf52bb" kindref="member">tools::common::profile::t_var_mom</ref>.<ref refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" kindref="member">get_measured_time</ref>();</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1ad43a6190e71324d78b0f8679e594c244" kindref="member">t_env</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a80ac2e6a6b2cd1d4f65a794b56deba69" kindref="member">t_evo</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1abd50caa1be36525900945a302708cbde" kindref="member">t_udt</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a0c9397c69d9ab911761e0d4350c67472" kindref="member">t_ste</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1afc92c236f236191e1a7666bdf8d62d55" kindref="member">t_prt</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a6d27cc9d1066dbdef69b9b9792cac9fa" kindref="member">t_obs</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1a5293908cb5c2f252b4e4d497fcccb61a" kindref="member">t_mps</ref><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>profiling_entry.<ref refid="structclass__h5table__profiling_1_1data__struct_1aa81e8cd67183d330d1b746f054e08817" kindref="member">t_chi</ref><sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>h5tbuf.<ref refid="classclass__h5table__buffer_1a40bca00c593b115f06ca6b11b8283546" kindref="member">append_record</ref>(profiling_entry);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Appending<sp/>profiling<sp/>data<sp/>to<sp/>table:<sp/>{}...<sp/>OK&quot;</highlight><highlight class="normal">,h5tbuf.<ref refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" kindref="member">get_table_name</ref>());</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal">}</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tables.cpp"/>
   </compounddef>

@@ -4,236 +4,238 @@
     <compoundname>ceres_subspace_hamiltonian.cpp</compoundname>
     <includes refid="opt_8h" local="no">tools/finite/opt.h</includes>
     <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
-    <includes refid="nmspc__omp_8h" local="no">general/nmspc_omp.h</includes>
     <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
     <incdepgraph>
-      <node id="3373">
+      <node id="3800">
         <label>list</label>
       </node>
-      <node id="3393">
+      <node id="3820">
         <label>iomanip</label>
       </node>
-      <node id="3392">
+      <node id="3819">
         <label>iterator</label>
       </node>
-      <node id="3385">
+      <node id="3813">
         <label>ceres/ceres.h</label>
       </node>
-      <node id="3387">
+      <node id="3814">
         <label>state/class_state_finite.h</label>
         <link refid="class__state__finite_8h"/>
-        <childnode refid="3370" relation="include">
+        <childnode refid="3797" relation="include">
         </childnode>
-        <childnode refid="3372" relation="include">
+        <childnode refid="3799" relation="include">
         </childnode>
-        <childnode refid="3388" relation="include">
+        <childnode refid="3815" relation="include">
         </childnode>
-        <childnode refid="3389" relation="include">
+        <childnode refid="3816" relation="include">
         </childnode>
-        <childnode refid="3397" relation="include">
+        <childnode refid="3824" relation="include">
         </childnode>
-        <childnode refid="3398" relation="include">
+        <childnode refid="3825" relation="include">
         </childnode>
-        <childnode refid="3383" relation="include">
+        <childnode refid="3810" relation="include">
         </childnode>
-        <childnode refid="3384" relation="include">
+        <childnode refid="3811" relation="include">
         </childnode>
       </node>
-      <node id="3394">
+      <node id="3821">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="3395" relation="include">
+        <childnode refid="3822" relation="include">
         </childnode>
-        <childnode refid="3383" relation="include">
+        <childnode refid="3810" relation="include">
         </childnode>
-        <childnode refid="3384" relation="include">
+        <childnode refid="3811" relation="include">
         </childnode>
       </node>
-      <node id="3383">
+      <node id="3810">
         <label>Eigen/Core</label>
       </node>
-      <node id="3371">
+      <node id="3798">
         <label>string</label>
       </node>
-      <node id="3378">
+      <node id="3805">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="3379" relation="include">
+        <childnode refid="3806" relation="include">
         </childnode>
-        <childnode refid="3380" relation="include">
+        <childnode refid="3807" relation="include">
         </childnode>
       </node>
-      <node id="3375">
+      <node id="3802">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="3376" relation="include">
+        <childnode refid="3803" relation="include">
         </childnode>
-        <childnode refid="3377" relation="include">
+        <childnode refid="3804" relation="include">
         </childnode>
       </node>
-      <node id="3395">
+      <node id="3822">
         <label>experimental/type_traits</label>
       </node>
-      <node id="3369">
+      <node id="3796">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="3370" relation="include">
+        <childnode refid="3797" relation="include">
         </childnode>
-        <childnode refid="3371" relation="include">
+        <childnode refid="3798" relation="include">
         </childnode>
-        <childnode refid="3372" relation="include">
+        <childnode refid="3799" relation="include">
         </childnode>
-        <childnode refid="3373" relation="include">
+        <childnode refid="3800" relation="include">
         </childnode>
-        <childnode refid="3374" relation="include">
+        <childnode refid="3801" relation="include">
         </childnode>
-        <childnode refid="3375" relation="include">
+        <childnode refid="3802" relation="include">
         </childnode>
-        <childnode refid="3378" relation="include">
+        <childnode refid="3805" relation="include">
         </childnode>
-        <childnode refid="3381" relation="include">
+        <childnode refid="3808" relation="include">
         </childnode>
-        <childnode refid="3383" relation="include">
+        <childnode refid="3810" relation="include">
         </childnode>
-        <childnode refid="3384" relation="include">
+        <childnode refid="3811" relation="include">
         </childnode>
       </node>
-      <node id="3384">
+      <node id="3811">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="3389">
+      <node id="3816">
         <label>state/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="3370" relation="include">
+        <childnode refid="3797" relation="include">
         </childnode>
-        <childnode refid="3390" relation="include">
+        <childnode refid="3817" relation="include">
         </childnode>
-        <childnode refid="3396" relation="include">
+        <childnode refid="3823" relation="include">
         </childnode>
       </node>
-      <node id="3377">
+      <node id="3804">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="3398">
+      <node id="3825">
         <label>model/class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="3370" relation="include">
+        <childnode refid="3797" relation="include">
         </childnode>
-        <childnode refid="3384" relation="include">
+        <childnode refid="3811" relation="include">
         </childnode>
-        <childnode refid="3375" relation="include">
+        <childnode refid="3802" relation="include">
         </childnode>
       </node>
-      <node id="3391">
+      <node id="3818">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="3400">
+      <node id="3827">
         <label>simulation/enums.h</label>
         <link refid="enums_8h"/>
       </node>
-      <node id="3381">
+      <node id="3808">
         <label>tools/finite/opt-internals/enum_classes.h</label>
         <link refid="enum__classes_8h"/>
-        <childnode refid="3380" relation="include">
+        <childnode refid="3807" relation="include">
         </childnode>
-        <childnode refid="3382" relation="include">
+        <childnode refid="3809" relation="include">
         </childnode>
       </node>
-      <node id="3376">
+      <node id="3803">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="3397">
+      <node id="3824">
         <label>state/class_mps_site.h</label>
         <link refid="class__mps__site_8h"/>
-        <childnode refid="3372" relation="include">
+        <childnode refid="3799" relation="include">
         </childnode>
-        <childnode refid="3388" relation="include">
+        <childnode refid="3815" relation="include">
         </childnode>
-        <childnode refid="3384" relation="include">
+        <childnode refid="3811" relation="include">
         </childnode>
       </node>
-      <node id="3386">
+      <node id="3812">
         <label>general/nmspc_omp.h</label>
         <link refid="nmspc__omp_8h"/>
-        <childnode refid="3384" relation="include">
+        <childnode refid="3811" relation="include">
         </childnode>
       </node>
-      <node id="3388">
+      <node id="3815">
         <label>optional</label>
       </node>
-      <node id="3374">
+      <node id="3801">
         <label>vector</label>
       </node>
-      <node id="3396">
+      <node id="3823">
         <label>spdlog/fmt/fmt.h</label>
       </node>
-      <node id="3368">
+      <node id="3794">
         <label>tools/finite/opt.h</label>
         <link refid="opt_8h"/>
-        <childnode refid="3369" relation="include">
+        <childnode refid="3795" relation="include">
         </childnode>
-        <childnode refid="3378" relation="include">
+        <childnode refid="3796" relation="include">
         </childnode>
-        <childnode refid="3385" relation="include">
+        <childnode refid="3805" relation="include">
         </childnode>
-        <childnode refid="3386" relation="include">
+        <childnode refid="3812" relation="include">
+        </childnode>
+        <childnode refid="3813" relation="include">
         </childnode>
       </node>
-      <node id="3367">
+      <node id="3795">
+        <label>complex.h</label>
+      </node>
+      <node id="3793">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp</label>
         <link refid="ceres__subspace__hamiltonian_8cpp"/>
-        <childnode refid="3368" relation="include">
+        <childnode refid="3794" relation="include">
         </childnode>
-        <childnode refid="3387" relation="include">
+        <childnode refid="3814" relation="include">
         </childnode>
-        <childnode refid="3386" relation="include">
-        </childnode>
-        <childnode refid="3399" relation="include">
+        <childnode refid="3826" relation="include">
         </childnode>
       </node>
-      <node id="3382">
+      <node id="3809">
         <label>sstream</label>
       </node>
-      <node id="3380">
+      <node id="3807">
         <label>iostream</label>
       </node>
-      <node id="3379">
+      <node id="3806">
         <label>chrono</label>
       </node>
-      <node id="3372">
+      <node id="3799">
         <label>complex</label>
       </node>
-      <node id="3399">
+      <node id="3826">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="3371" relation="include">
+        <childnode refid="3798" relation="include">
         </childnode>
-        <childnode refid="3374" relation="include">
+        <childnode refid="3801" relation="include">
         </childnode>
-        <childnode refid="3400" relation="include">
+        <childnode refid="3827" relation="include">
         </childnode>
       </node>
-      <node id="3390">
+      <node id="3817">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="3386" relation="include">
+        <childnode refid="3812" relation="include">
         </childnode>
-        <childnode refid="3383" relation="include">
+        <childnode refid="3810" relation="include">
         </childnode>
-        <childnode refid="3391" relation="include">
+        <childnode refid="3818" relation="include">
         </childnode>
-        <childnode refid="3384" relation="include">
+        <childnode refid="3811" relation="include">
         </childnode>
-        <childnode refid="3392" relation="include">
+        <childnode refid="3819" relation="include">
         </childnode>
-        <childnode refid="3380" relation="include">
+        <childnode refid="3807" relation="include">
         </childnode>
-        <childnode refid="3393" relation="include">
+        <childnode refid="3820" relation="include">
         </childnode>
-        <childnode refid="3394" relation="include">
+        <childnode refid="3821" relation="include">
         </childnode>
       </node>
-      <node id="3370">
+      <node id="3797">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -276,8 +278,8 @@
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__omp_8h" kindref="compound">general/nmspc_omp.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
 <codeline lineno="9" refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a5d7e8c839b6857b387b9ad487be9e7c9" refkind="member"><highlight class="normal">Eigen::Tensor&lt;std::complex&lt;double&gt;,6&gt;<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians_1a5d7e8c839b6857b387b9ad487be9e7c9" kindref="member">tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
 <codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>mpo<sp/>=<sp/>state.<ref refid="classclass__state__finite_1af4f4d5316ae5af544868ba7d94450d9a" kindref="member">get_multimpo</ref>();</highlight></codeline>
 <codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Contracting<sp/>multisite<sp/>hamiltonian...&quot;</highlight><highlight class="normal">);</highlight></codeline>

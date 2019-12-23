@@ -84,7 +84,7 @@
         <references refid="classclass__state__finite_1aac02262c410802ea0546cda195c34eca" compoundref="class__state__finite_8cpp" startline="531" endline="533">class_state_finite::clear_cache</references>
         <references refid="classclass__state__finite_1a8ac57b8631243325a0db1982b75d1cb8" compoundref="class__state__finite_8cpp" startline="561" endline="564">class_state_finite::tag_all_sites_have_been_updated</references>
         <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1a28a3a61253caeb19fa5a3c3368d8633c" compoundref="nmspc__tools_8h" startline="54">tools::finite::mps::internals::seed_state_unused</references>
-        <references refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" compoundref="nmspc__random__numbers_8cpp" startline="11" endline="14">rn::seed</references>
+        <references refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" compoundref="nmspc__random_8cpp" startline="13" endline="29">rn::seed</references>
         <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1a60bfd7b8237aaaa28149f345cb8bb530" compoundref="mps-internals_8cpp" startline="51" endline="88">tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset</references>
         <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1ab9f8b31ab128132ea61c593125f70f95" compoundref="mps-internals_8cpp" startline="125" endline="156">tools::finite::mps::internals::set_product_state_randomly</references>
         <references refid="namespacetools_1_1finite_1_1mps_1ae1aa22d6af49f05638105b00dd5c0e28" compoundref="finite_2mps_8cpp" startline="79" endline="134">rebuild_environments</references>
@@ -109,11 +109,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="10" bodyend="64"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="11" bodyend="65"/>
         <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">Textra::operator&lt;&lt;</references>
         <references refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" compoundref="class__state__finite_8cpp" startline="418" endline="420">class_state_finite::active_dimensions</references>
         <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" compoundref="nmspc__tools_8h" startline="374">tools::common::profile::t_svd</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" compoundref="nmspc__tools_8h" startline="380">tools::common::profile::t_svd</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
         <references refid="classclass__state__finite_1a3364452c2cfa578c7de18e28eee2d675" compoundref="class__state__finite_8cpp" startline="104" endline="107">class_state_finite::get_chi_lim</references>
@@ -154,7 +154,7 @@
 <para>Move current position to the left (<computeroutput>direction=1</computeroutput>) or right (<computeroutput>direction=-1</computeroutput>), and store the <bold>newly enlarged</bold> environment. Turn direction around if the edge is reached. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="327" bodyend="419"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="328" bodyend="420"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a498dcd4510b5affe16ea0657f7a437c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>

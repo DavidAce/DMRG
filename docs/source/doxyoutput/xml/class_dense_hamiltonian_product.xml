@@ -403,52 +403,52 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="343">
+      <node id="346">
         <label>OMP</label>
         <link refid="class_o_m_p"/>
       </node>
-      <node id="342">
+      <node id="345">
         <label>std::array&lt; long, 4 &gt;</label>
       </node>
-      <node id="336">
+      <node id="339">
         <label>DenseHamiltonianProduct&lt; Scalar_ &gt;</label>
         <link refid="class_dense_hamiltonian_product"/>
-        <childnode refid="337" relation="usage">
+        <childnode refid="340" relation="usage">
           <edgelabel>shape_theta1</edgelabel>
         </childnode>
-        <childnode refid="338" relation="usage">
+        <childnode refid="341" relation="usage">
           <edgelabel>shape_theta2</edgelabel>
         </childnode>
-        <childnode refid="339" relation="usage">
+        <childnode refid="342" relation="usage">
           <edgelabel>t_mul</edgelabel>
         </childnode>
-        <childnode refid="342" relation="usage">
+        <childnode refid="345" relation="usage">
           <edgelabel>shape_mpo4</edgelabel>
           <edgelabel>shape_theta4</edgelabel>
         </childnode>
-        <childnode refid="343" relation="usage">
+        <childnode refid="346" relation="usage">
           <edgelabel>omp</edgelabel>
         </childnode>
       </node>
-      <node id="341">
+      <node id="344">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="339">
+      <node id="342">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
-        <childnode refid="340" relation="usage">
+        <childnode refid="343" relation="usage">
           <edgelabel>name</edgelabel>
         </childnode>
       </node>
-      <node id="337">
+      <node id="340">
         <label>std::array&lt; long, 1 &gt;</label>
       </node>
-      <node id="338">
+      <node id="341">
         <label>std::array&lt; long, 2 &gt;</label>
       </node>
-      <node id="340">
+      <node id="343">
         <label>std::string</label>
-        <childnode refid="341" relation="public-inheritance">
+        <childnode refid="344" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

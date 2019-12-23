@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structpcg__detail_1_1engine_1_1can__specify__stream__tag" kind="struct" language="C++" prot="protected">
+    <compoundname>pcg_detail::engine::can_specify_stream_tag</compoundname>
+    <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="358" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="358" bodyend="358"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

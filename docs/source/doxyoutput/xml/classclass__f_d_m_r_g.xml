@@ -76,6 +76,8 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp" bodystart="64" bodyend="113"/>
+        <references refid="namespacetools_1_1common_1_1profile_1ab2944237031c9b3b95d776604b107f76" compoundref="nmspc__tools_8h" startline="378">tools::common::profile::t_con</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
         <references refid="namespacesettings_1_1fdmrg_1ae628b1a6ea887a9f04c1e27acfe3868b" compoundref="nmspc__settings_8h" startline="132">settings::fdmrg::min_sweeps</references>
@@ -84,10 +86,11 @@
         <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="39">status_data::simulation_has_converged</references>
         <references refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" compoundref="class__simulation__status_8h" startline="45">status_data::chi_lim_has_reached_chi_max</references>
         <references refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" compoundref="class__simulation__status_8h" startline="55">status_data::variance_mpo_saturated_for</references>
-        <references refid="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" compoundref="class__algorithm__finite_8h" startline="39">class_algorithm_finite::max_saturation_iters</references>
+        <references refid="classclass__algorithm__finite_1a8908aad72db98c88a37d4d0696c1a330" compoundref="class__algorithm__finite_8h" startline="38">class_algorithm_finite::max_saturation_iters</references>
         <references refid="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" compoundref="class__simulation__status_8h" startline="54">status_data::entanglement_saturated_for</references>
         <references refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" compoundref="class__simulation__status_8h" startline="44">status_data::simulation_has_to_stop</references>
         <references refid="classclass__f_d_m_r_g_1ac719179f6fa2f471afdba895b0a8026d" compoundref="class__f_d_m_r_g_8h" startline="21">projected_during_saturation</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="classclass__f_d_m_r_g_1af6173971aac8a926019069605ffbe012" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>bool</type>
@@ -215,226 +218,211 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="127">
-        <label>class_fDMRG</label>
-        <link refid="classclass__f_d_m_r_g"/>
-        <childnode refid="128" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="128">
-        <label>class_algorithm_finite</label>
-        <link refid="classclass__algorithm__finite"/>
-        <childnode refid="129" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="129">
-        <label>class_algorithm_base</label>
-        <link refid="classclass__algorithm__base"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
-      <node id="148">
-        <label>std::unique_ptr&lt; class_model_base &gt;</label>
-        <childnode refid="149" relation="usage">
-          <edgelabel>ptr</edgelabel>
-        </childnode>
-      </node>
-      <node id="158">
-        <label>std::vector&lt; std::list&lt; double &gt; &gt;</label>
-        <childnode refid="138" relation="usage">
-          <edgelabel>elements</edgelabel>
-        </childnode>
-      </node>
-      <node id="153">
-        <label>class_environment_base</label>
-        <link refid="classclass__environment__base"/>
-        <childnode refid="133" relation="usage">
-          <edgelabel>side</edgelabel>
-        </childnode>
-      </node>
-      <node id="157">
-        <label>std::vector&lt; double &gt;</label>
-      </node>
       <node id="130">
         <label>class_fDMRG</label>
         <link refid="classclass__f_d_m_r_g"/>
         <childnode refid="131" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="138">
-        <label>std::list&lt; double &gt;</label>
-      </node>
-      <node id="149">
-        <label>class_model_base</label>
-        <link refid="classclass__model__base"/>
-      </node>
-      <node id="143">
-        <label>std::list&lt; class_mps_site &gt;</label>
-        <childnode refid="144" relation="usage">
-          <edgelabel>elements</edgelabel>
-        </childnode>
-      </node>
-      <node id="151">
-        <label>std::list&lt; class_environment_var &gt;</label>
-        <childnode refid="152" relation="usage">
-          <edgelabel>elements</edgelabel>
-        </childnode>
-      </node>
-      <node id="152">
-        <label>class_environment_var</label>
-        <link refid="classclass__environment__var"/>
-        <childnode refid="153" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="146">
-        <label>std::list&lt; size_t &gt;</label>
-      </node>
-      <node id="134">
-        <label>std::basic_string&lt; char &gt;</label>
-      </node>
-      <node id="140">
-        <label>std::list&lt; int &gt;</label>
-      </node>
-      <node id="145">
-        <label>class_state_finite::Cache</label>
-        <link refid="structclass__state__finite_1_1_cache"/>
-      </node>
-      <node id="155">
-        <label>std::list&lt; class_environment &gt;</label>
-        <childnode refid="156" relation="usage">
-          <edgelabel>elements</edgelabel>
-        </childnode>
-      </node>
-      <node id="144">
-        <label>class_mps_site</label>
-        <link refid="classclass__mps__site"/>
-      </node>
-      <node id="156">
-        <label>class_environment</label>
-        <link refid="classclass__environment"/>
-        <childnode refid="153" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="142">
-        <label>class_state_finite</label>
-        <link refid="classclass__state__finite"/>
-        <childnode refid="143" relation="usage">
-          <edgelabel>MPS_L</edgelabel>
-          <edgelabel>MPS_R</edgelabel>
-        </childnode>
-        <childnode refid="145" relation="usage">
-          <edgelabel>cache</edgelabel>
-        </childnode>
-        <childnode refid="146" relation="usage">
-          <edgelabel>active_sites</edgelabel>
-        </childnode>
-        <childnode refid="147" relation="usage">
-          <edgelabel>MPO_L</edgelabel>
-          <edgelabel>MPO_R</edgelabel>
-        </childnode>
-        <childnode refid="150" relation="usage">
-          <edgelabel>measurements</edgelabel>
-        </childnode>
-        <childnode refid="151" relation="usage">
-          <edgelabel>ENV2_L</edgelabel>
-          <edgelabel>ENV2_R</edgelabel>
-        </childnode>
-        <childnode refid="154" relation="usage">
-          <edgelabel>site_update_tags</edgelabel>
-        </childnode>
-        <childnode refid="155" relation="usage">
-          <edgelabel>ENV_L</edgelabel>
-          <edgelabel>ENV_R</edgelabel>
-        </childnode>
-        <childnode refid="157" relation="usage">
-          <edgelabel>truncation_error</edgelabel>
-        </childnode>
-      </node>
-      <node id="137">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-        <childnode refid="133" relation="usage">
-          <edgelabel>name</edgelabel>
-        </childnode>
-      </node>
-      <node id="136">
-        <label>status_data</label>
-        <link refid="structstatus__data"/>
-      </node>
-      <node id="150">
-        <label>class_state_finite::Measurements</label>
-        <link refid="structclass__state__finite_1_1_measurements"/>
-      </node>
       <node id="131">
         <label>class_algorithm_finite</label>
         <link refid="classclass__algorithm__finite"/>
         <childnode refid="132" relation="public-inheritance">
         </childnode>
-        <childnode refid="138" relation="usage">
-          <edgelabel>V_mpo_vec</edgelabel>
-          <edgelabel>S_slopes</edgelabel>
-          <edgelabel>V_mpo_slopes</edgelabel>
-        </childnode>
-        <childnode refid="139" relation="usage">
-          <edgelabel>X_mat</edgelabel>
-        </childnode>
-        <childnode refid="140" relation="usage">
-          <edgelabel>X_mpo_vec</edgelabel>
-        </childnode>
-        <childnode refid="141" relation="usage">
-          <edgelabel>state</edgelabel>
-        </childnode>
-        <childnode refid="158" relation="usage">
-          <edgelabel>S_mat</edgelabel>
-        </childnode>
-      </node>
-      <node id="135">
-        <label>class_simulation_status</label>
-        <link refid="classclass__simulation__status"/>
-        <childnode refid="136" relation="public-inheritance">
-        </childnode>
       </node>
       <node id="132">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
-        <childnode refid="133" relation="usage">
-          <edgelabel>sim_name</edgelabel>
-        </childnode>
-        <childnode refid="135" relation="usage">
-          <edgelabel>sim_status</edgelabel>
-        </childnode>
-        <childnode refid="137" relation="usage">
-          <edgelabel>t_con</edgelabel>
-          <edgelabel>t_pos</edgelabel>
-          <edgelabel>t_pre</edgelabel>
-          <edgelabel>t_tot</edgelabel>
-          <edgelabel>t_run</edgelabel>
-          <edgelabel>t_prt</edgelabel>
-        </childnode>
       </node>
-      <node id="141">
-        <label>std::unique_ptr&lt; class_state_finite &gt;</label>
-        <childnode refid="142" relation="usage">
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="150">
+        <label>std::unique_ptr&lt; class_model_base &gt;</label>
+        <childnode refid="151" relation="usage">
           <edgelabel>ptr</edgelabel>
         </childnode>
       </node>
-      <node id="154">
-        <label>std::vector&lt; bool &gt;</label>
-      </node>
-      <node id="147">
-        <label>std::list&lt; std::unique_ptr&lt; class_model_base &gt; &gt;</label>
-        <childnode refid="148" relation="usage">
+      <node id="160">
+        <label>std::vector&lt; std::list&lt; double &gt; &gt;</label>
+        <childnode refid="140" relation="usage">
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
+      <node id="155">
+        <label>class_environment_base</label>
+        <link refid="classclass__environment__base"/>
+        <childnode refid="136" relation="usage">
+          <edgelabel>side</edgelabel>
+        </childnode>
+      </node>
+      <node id="159">
+        <label>std::vector&lt; double &gt;</label>
+      </node>
       <node id="133">
-        <label>std::string</label>
+        <label>class_fDMRG</label>
+        <link refid="classclass__f_d_m_r_g"/>
         <childnode refid="134" relation="public-inheritance">
         </childnode>
       </node>
+      <node id="140">
+        <label>std::list&lt; double &gt;</label>
+      </node>
+      <node id="151">
+        <label>class_model_base</label>
+        <link refid="classclass__model__base"/>
+      </node>
+      <node id="145">
+        <label>std::list&lt; class_mps_site &gt;</label>
+        <childnode refid="146" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="153">
+        <label>std::list&lt; class_environment_var &gt;</label>
+        <childnode refid="154" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="154">
+        <label>class_environment_var</label>
+        <link refid="classclass__environment__var"/>
+        <childnode refid="155" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="148">
+        <label>std::list&lt; size_t &gt;</label>
+      </node>
+      <node id="137">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="142">
+        <label>std::list&lt; int &gt;</label>
+      </node>
+      <node id="147">
+        <label>class_state_finite::Cache</label>
+        <link refid="structclass__state__finite_1_1_cache"/>
+      </node>
+      <node id="157">
+        <label>std::list&lt; class_environment &gt;</label>
+        <childnode refid="158" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="146">
+        <label>class_mps_site</label>
+        <link refid="classclass__mps__site"/>
+      </node>
+      <node id="158">
+        <label>class_environment</label>
+        <link refid="classclass__environment"/>
+        <childnode refid="155" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="144">
+        <label>class_state_finite</label>
+        <link refid="classclass__state__finite"/>
+        <childnode refid="145" relation="usage">
+          <edgelabel>MPS_L</edgelabel>
+          <edgelabel>MPS_R</edgelabel>
+        </childnode>
+        <childnode refid="147" relation="usage">
+          <edgelabel>cache</edgelabel>
+        </childnode>
+        <childnode refid="148" relation="usage">
+          <edgelabel>active_sites</edgelabel>
+        </childnode>
+        <childnode refid="149" relation="usage">
+          <edgelabel>MPO_L</edgelabel>
+          <edgelabel>MPO_R</edgelabel>
+        </childnode>
+        <childnode refid="152" relation="usage">
+          <edgelabel>measurements</edgelabel>
+        </childnode>
+        <childnode refid="153" relation="usage">
+          <edgelabel>ENV2_L</edgelabel>
+          <edgelabel>ENV2_R</edgelabel>
+        </childnode>
+        <childnode refid="156" relation="usage">
+          <edgelabel>site_update_tags</edgelabel>
+        </childnode>
+        <childnode refid="157" relation="usage">
+          <edgelabel>ENV_L</edgelabel>
+          <edgelabel>ENV_R</edgelabel>
+        </childnode>
+        <childnode refid="159" relation="usage">
+          <edgelabel>truncation_error</edgelabel>
+        </childnode>
+      </node>
       <node id="139">
-        <label>std::vector&lt; std::list&lt; int &gt; &gt;</label>
+        <label>status_data</label>
+        <link refid="structstatus__data"/>
+      </node>
+      <node id="152">
+        <label>class_state_finite::Measurements</label>
+        <link refid="structclass__state__finite_1_1_measurements"/>
+      </node>
+      <node id="134">
+        <label>class_algorithm_finite</label>
+        <link refid="classclass__algorithm__finite"/>
+        <childnode refid="135" relation="public-inheritance">
+        </childnode>
         <childnode refid="140" relation="usage">
+          <edgelabel>V_mpo_vec</edgelabel>
+          <edgelabel>S_slopes</edgelabel>
+          <edgelabel>V_mpo_slopes</edgelabel>
+        </childnode>
+        <childnode refid="141" relation="usage">
+          <edgelabel>X_mat</edgelabel>
+        </childnode>
+        <childnode refid="142" relation="usage">
+          <edgelabel>X_mpo_vec</edgelabel>
+        </childnode>
+        <childnode refid="143" relation="usage">
+          <edgelabel>state</edgelabel>
+        </childnode>
+        <childnode refid="160" relation="usage">
+          <edgelabel>S_mat</edgelabel>
+        </childnode>
+      </node>
+      <node id="138">
+        <label>class_simulation_status</label>
+        <link refid="classclass__simulation__status"/>
+        <childnode refid="139" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="135">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+        <childnode refid="136" relation="usage">
+          <edgelabel>sim_name</edgelabel>
+        </childnode>
+        <childnode refid="138" relation="usage">
+          <edgelabel>sim_status</edgelabel>
+        </childnode>
+      </node>
+      <node id="143">
+        <label>std::unique_ptr&lt; class_state_finite &gt;</label>
+        <childnode refid="144" relation="usage">
+          <edgelabel>ptr</edgelabel>
+        </childnode>
+      </node>
+      <node id="156">
+        <label>std::vector&lt; bool &gt;</label>
+      </node>
+      <node id="149">
+        <label>std::list&lt; std::unique_ptr&lt; class_model_base &gt; &gt;</label>
+        <childnode refid="150" relation="usage">
+          <edgelabel>elements</edgelabel>
+        </childnode>
+      </node>
+      <node id="136">
+        <label>std::string</label>
+        <childnode refid="137" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="141">
+        <label>std::vector&lt; std::list&lt; int &gt; &gt;</label>
+        <childnode refid="142" relation="usage">
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
@@ -482,7 +470,6 @@
       <member refid="classclass__algorithm__finite_1a713af9a4ad66b29338ededfb17279774" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>S_mat</name></member>
       <member refid="classclass__algorithm__finite_1ad59eb289e48ceb53003be230375f914c" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>S_slopes</name></member>
       <member refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>Scalar</name></member>
-      <member refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>set_profiling_labels</name></member>
       <member refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>sim_name</name></member>
       <member refid="classclass__f_d_m_r_g_1af6173971aac8a926019069605ffbe012" prot="public" virt="virtual"><scope>class_fDMRG</scope><name>sim_on</name></member>
       <member refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>sim_status</name></member>
@@ -492,12 +479,6 @@
       <member refid="classclass__algorithm__base_1af36e30da0595f116629422821e1e4ced" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>stop_reason</name></member>
       <member refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>StopReason</name></member>
       <member refid="classclass__f_d_m_r_g_1a1494c07358752254c4dd739c160698f4" prot="public" virt="virtual"><scope>class_fDMRG</scope><name>store_wave_function</name></member>
-      <member refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>t_con</name></member>
-      <member refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>t_pos</name></member>
-      <member refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>t_pre</name></member>
-      <member refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>t_prt</name></member>
-      <member refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>t_run</name></member>
-      <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>t_tot</name></member>
       <member refid="classclass__algorithm__finite_1af95402763a137d45e2b25ceecc9252af" prot="public" virt="virtual"><scope>class_fDMRG</scope><name>update_bond_dimension_limit</name></member>
       <member refid="classclass__algorithm__finite_1a8a2b8f64844a71351f9a9bd736053e20" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>V_mpo_slopes</name></member>
       <member refid="classclass__algorithm__finite_1a924c4a4f29db461ca496470cc93fc157" prot="public" virt="non-virtual"><scope>class_fDMRG</scope><name>V_mpo_vec</name></member>
