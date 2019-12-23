@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structpcg__detail_1_1halfsize__trait_3_01pcg128__t_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>pcg_detail::halfsize_trait&lt; pcg128_t &gt;</compoundname>
+    <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
+    <templateparamlist>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="structpcg__detail_1_1halfsize__trait_3_01pcg128__t_01_4_1a310d682c0261ad35d3304550f6129a34" prot="public" static="no">
+        <type>uint64_t</type>
+        <definition>typedef uint64_t pcg_detail::halfsize_trait&lt; pcg128_t &gt;::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1009" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1009" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="1009" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="1009" bodyend="1009"/>
+    <listofallmembers>
+      <member refid="structpcg__detail_1_1halfsize__trait_3_01pcg128__t_01_4_1a310d682c0261ad35d3304550f6129a34" prot="public" virt="non-virtual"><scope>pcg_detail::halfsize_trait&lt; pcg128_t &gt;</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

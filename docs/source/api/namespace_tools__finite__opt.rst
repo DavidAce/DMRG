@@ -47,13 +47,13 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1a3ec18f4c22a35b2b5b4165af7c9d3cf6`
 
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1a7d150c862a9eae2813775e7edb74763e`
+
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1ac3b03b0ddcc21fd5e01097946e431cde`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1a2023d9c739d88128aeacace15b6e1176`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1ada1481b620a78703dc06961147d02e1a`
-
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1a7d150c862a9eae2813775e7edb74763e`
 
 
 Typedefs

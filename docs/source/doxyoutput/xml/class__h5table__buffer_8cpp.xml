@@ -10,119 +10,111 @@
     <includes refid="class__h5table__buffer_8h" local="no">io/class_h5table_buffer.h</includes>
     <includes refid="table__types_8h" local="no">io/table_types.h</includes>
     <includes local="no">h5pp/h5pp.h</includes>
-    <includes local="no">filesystem</includes>
     <incdepgraph>
-      <node id="911">
-        <label>filesystem</label>
-      </node>
-      <node id="897">
+      <node id="886">
         <label>iterator</label>
       </node>
-      <node id="906">
+      <node id="895">
         <label>io/table_types.h</label>
         <link refid="table__types_8h"/>
-        <childnode refid="907" relation="include">
-        </childnode>
-        <childnode refid="908" relation="include">
-        </childnode>
-        <childnode refid="898" relation="include">
-        </childnode>
-        <childnode refid="899" relation="include">
-        </childnode>
-        <childnode refid="909" relation="include">
-        </childnode>
-      </node>
-      <node id="910">
-        <label>string</label>
-      </node>
-      <node id="899">
-        <label>hdf5_hl.h</label>
-      </node>
-      <node id="900">
-        <label>io/nmspc_logger.h</label>
-        <link refid="nmspc__logger_8h"/>
-        <childnode refid="901" relation="include">
-        </childnode>
-        <childnode refid="902" relation="include">
-        </childnode>
-      </node>
-      <node id="909">
-        <label>simulation/class_simulation_status.h</label>
-        <link refid="class__simulation__status_8h"/>
-        <childnode refid="904" relation="include">
-        </childnode>
-        <childnode refid="910" relation="include">
-        </childnode>
-        <childnode refid="896" relation="include">
-        </childnode>
-        <childnode refid="907" relation="include">
-        </childnode>
-        <childnode refid="908" relation="include">
-        </childnode>
-        <childnode refid="898" relation="include">
-        </childnode>
-        <childnode refid="899" relation="include">
-        </childnode>
-      </node>
-      <node id="902">
-        <label>spdlog/fmt/bundled/ranges.h</label>
-      </node>
-      <node id="905">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="895">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp</label>
-        <link refid="class__h5table__buffer_8cpp"/>
         <childnode refid="896" relation="include">
         </childnode>
         <childnode refid="897" relation="include">
         </childnode>
+        <childnode refid="887" relation="include">
+        </childnode>
+        <childnode refid="888" relation="include">
+        </childnode>
         <childnode refid="898" relation="include">
+        </childnode>
+      </node>
+      <node id="899">
+        <label>string</label>
+      </node>
+      <node id="888">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="889">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="890" relation="include">
+        </childnode>
+        <childnode refid="891" relation="include">
+        </childnode>
+      </node>
+      <node id="898">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="893" relation="include">
         </childnode>
         <childnode refid="899" relation="include">
         </childnode>
+        <childnode refid="885" relation="include">
+        </childnode>
+        <childnode refid="896" relation="include">
+        </childnode>
+        <childnode refid="897" relation="include">
+        </childnode>
+        <childnode refid="887" relation="include">
+        </childnode>
+        <childnode refid="888" relation="include">
+        </childnode>
+      </node>
+      <node id="891">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="894">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="884">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp</label>
+        <link refid="class__h5table__buffer_8cpp"/>
+        <childnode refid="885" relation="include">
+        </childnode>
+        <childnode refid="886" relation="include">
+        </childnode>
+        <childnode refid="887" relation="include">
+        </childnode>
+        <childnode refid="888" relation="include">
+        </childnode>
+        <childnode refid="889" relation="include">
+        </childnode>
+        <childnode refid="892" relation="include">
+        </childnode>
+        <childnode refid="895" relation="include">
+        </childnode>
         <childnode refid="900" relation="include">
         </childnode>
-        <childnode refid="903" relation="include">
-        </childnode>
-        <childnode refid="906" relation="include">
-        </childnode>
-        <childnode refid="912" relation="include">
-        </childnode>
-        <childnode refid="911" relation="include">
-        </childnode>
       </node>
-      <node id="901">
+      <node id="890">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="907">
+      <node id="896">
         <label>vector</label>
       </node>
-      <node id="908">
+      <node id="897">
         <label>array</label>
       </node>
-      <node id="898">
+      <node id="887">
         <label>hdf5.h</label>
       </node>
-      <node id="912">
+      <node id="900">
         <label>h5pp/h5pp.h</label>
       </node>
-      <node id="896">
+      <node id="885">
         <label>iostream</label>
       </node>
-      <node id="903">
+      <node id="892">
         <label>io/class_h5table_buffer.h</label>
         <link refid="class__h5table__buffer_8h"/>
-        <childnode refid="904" relation="include">
+        <childnode refid="893" relation="include">
         </childnode>
-        <childnode refid="905" relation="include">
+        <childnode refid="894" relation="include">
         </childnode>
-        <childnode refid="906" relation="include">
-        </childnode>
-        <childnode refid="911" relation="include">
+        <childnode refid="895" relation="include">
         </childnode>
       </node>
-      <node id="904">
+      <node id="893">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -142,101 +134,99 @@
 <codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__h5table__buffer_8h" kindref="compound">io/class_h5table_buffer.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="table__types_8h" kindref="compound">io/table_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;filesystem&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
 <codeline lineno="13"><highlight class="normal"></highlight></codeline>
-<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fs<sp/>=<sp/>std::filesystem;</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
-<codeline lineno="17" refid="classclass__h5table__buffer_1a93cee7a1b4e7840ad7c19b84fb4f2a5f" refkind="member"><highlight class="normal"><ref refid="classclass__h5table__buffer_1a93cee7a1b4e7840ad7c19b84fb4f2a5f" kindref="member">class_h5table_buffer&lt;table_type&gt;::class_h5table_buffer</ref>()</highlight></codeline>
-<codeline lineno="18"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(logName,logLevel);</highlight></codeline>
-<codeline lineno="20"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
+<codeline lineno="15" refid="classclass__h5table__buffer_1a93cee7a1b4e7840ad7c19b84fb4f2a5f" refkind="member"><highlight class="normal"><ref refid="classclass__h5table__buffer_1a93cee7a1b4e7840ad7c19b84fb4f2a5f" kindref="member">class_h5table_buffer&lt;table_type&gt;::class_h5table_buffer</ref>()</highlight></codeline>
+<codeline lineno="16"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(logName,logLevel);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
 <codeline lineno="21"><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"></highlight></codeline>
-<codeline lineno="23"><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><ref refid="classclass__h5table__buffer_1a93cee7a1b4e7840ad7c19b84fb4f2a5f" kindref="member">class_h5table_buffer&lt;table_type&gt;::class_h5table_buffer</ref>(</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fs::path<sp/>table_path_,</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>mpi_on_)</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile(std::move(h5ppFile_)),</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>table_path(table_path_.string()),</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>group_name(table_path_.parent_path()),</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>table_name(table_path_.filename()),</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpi_on(mpi_on_)</highlight></codeline>
-<codeline lineno="35"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(logName,logLevel);</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>table_entries<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::make_unique&lt;table_type&gt;();</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>initialize_table();</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/>set_buffer_size(table_entries-&gt;meta.chunk_size);</highlight></codeline>
-<codeline lineno="40"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
-<codeline lineno="44" refid="classclass__h5table__buffer_1ad012de407b3aff5ffd2fb8ce4da8dc2d" refkind="member"><highlight class="normal"><ref refid="classclass__h5table__buffer_1ad012de407b3aff5ffd2fb8ce4da8dc2d" kindref="member">class_h5table_buffer&lt;table_type&gt;::~class_h5table_buffer</ref>(){</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(h5ppFile){</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>write_buffer_to_file();</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!buffer_is_empty){</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Output<sp/>data<sp/>has<sp/>not<sp/>been<sp/>saved<sp/>to<sp/>file,<sp/>yet<sp/>it<sp/>is<sp/>being<sp/>discarded!&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="50"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
-<codeline lineno="54" refid="classclass__h5table__buffer_1a8cffd45bbce57a74a271cb679758f5dd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__h5table__buffer_1a8cffd45bbce57a74a271cb679758f5dd" kindref="member">class_h5table_buffer&lt;table_type&gt;::initialize_table</ref>(){</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(table_entries-&gt;buffer.empty()<sp/>and<sp/>not<sp/>table_is_initialized)<sp/>{</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Initializing<sp/>output<sp/>table:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>table_name);</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hsize_t<sp/>NRECORDS<sp/>=<sp/>get_num_buffered_entries();</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile-&gt;createGroupLink(group_name);</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>h5ppFile-&gt;linkExists(table_path)){</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hid_t<sp/>file<sp/>=<sp/>h5ppFile-&gt;openFileHandle();</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H5TBmake_table(table_name.c_str(),<sp/>file,<sp/>table_path.c_str(),<sp/>table_entries-&gt;meta.NFIELDS,<sp/>NRECORDS,</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>table_entries-&gt;meta.dst_size,<sp/>table_entries-&gt;meta.field_names.data(),<sp/>table_entries-&gt;meta.dst_offsets.data(),<sp/>table_entries-&gt;meta.field_types.data(),</highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>table_entries-&gt;meta.chunk_size,<sp/>table_entries-&gt;meta.fill_data,<sp/>table_entries-&gt;meta.compress,<sp/>table_entries-&gt;buffer.data());</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H5Fflush(file,H5F_SCOPE_GLOBAL);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile-&gt;closeFileHandle(file);</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>table_is_initialized<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="69"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
+<codeline lineno="23" refid="classclass__h5table__buffer_1a8e9ee43fe7e83f89ee83aeac800d905b" refkind="member"><highlight class="normal"><ref refid="classclass__h5table__buffer_1a93cee7a1b4e7840ad7c19b84fb4f2a5f" kindref="member">class_h5table_buffer&lt;table_type&gt;::class_h5table_buffer</ref>(</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>table_path_,</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>mpi_on_)</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile(<ref refid="namespacestd" kindref="compound">std</ref>::move(h5ppFile_)),</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>table_path(table_path_),</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpi_on(mpi_on_)</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a10274c23daca1076aee14e76172d09ea" kindref="member">group_name</ref><sp/>=<sp/>h5pp::fs::path(<ref refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" kindref="member">table_path</ref>).parent_path();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" kindref="member">table_name</ref><sp/>=<sp/>h5pp::fs::path(<ref refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" kindref="member">table_path</ref>).filename();</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(<ref refid="classclass__h5table__buffer_1ae927e3638afd7ad16a2393bb1de3b836" kindref="member">logName</ref>,<ref refid="classclass__h5table__buffer_1acfb49b4298b8b18ad5e8dbb7934c3281" kindref="member">logLevel</ref>);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::make_unique&lt;table_type&gt;();</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a8cffd45bbce57a74a271cb679758f5dd" kindref="member">initialize_table</ref>();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a93e5b07c0dba938c36f1b4593bf0224f" kindref="member">set_buffer_size</ref>(<ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.chunk_size);</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
+<codeline lineno="42" refid="classclass__h5table__buffer_1ad012de407b3aff5ffd2fb8ce4da8dc2d" refkind="member"><highlight class="normal"><ref refid="classclass__h5table__buffer_1ad012de407b3aff5ffd2fb8ce4da8dc2d" kindref="member">class_h5table_buffer&lt;table_type&gt;::~class_h5table_buffer</ref>(){</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" kindref="member">h5ppFile</ref>){</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" kindref="member">write_buffer_to_file</ref>();</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="classclass__h5table__buffer_1ae8d6e4eacc6cc1bd66d75af49650929e" kindref="member">buffer_is_empty</ref>){</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" kindref="member">log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Output<sp/>data<sp/>has<sp/>not<sp/>been<sp/>saved<sp/>to<sp/>file,<sp/>yet<sp/>it<sp/>is<sp/>being<sp/>discarded!&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
+<codeline lineno="52" refid="classclass__h5table__buffer_1a8cffd45bbce57a74a271cb679758f5dd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__h5table__buffer_1a8cffd45bbce57a74a271cb679758f5dd" kindref="member">class_h5table_buffer&lt;table_type&gt;::initialize_table</ref>(){</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;buffer.empty()<sp/>and<sp/>not<sp/><ref refid="classclass__h5table__buffer_1a460b40c36bc6b246a20dfc0f185b1cab" kindref="member">table_is_initialized</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Initializing<sp/>output<sp/>table:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" kindref="member">table_name</ref>);</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hsize_t<sp/>NRECORDS<sp/>=<sp/><ref refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" kindref="member">get_num_buffered_entries</ref>();</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" kindref="member">h5ppFile</ref>-&gt;createGroupLink(<ref refid="classclass__h5table__buffer_1a10274c23daca1076aee14e76172d09ea" kindref="member">group_name</ref>);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" kindref="member">h5ppFile</ref>-&gt;linkExists(<ref refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" kindref="member">table_path</ref>)){</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hid_t<sp/>file<sp/>=<sp/><ref refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" kindref="member">h5ppFile</ref>-&gt;openFileHandle();</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H5TBmake_table(<ref refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" kindref="member">table_name</ref>.c_str(),<sp/>file,<sp/><ref refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" kindref="member">table_path</ref>.c_str(),<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.NFIELDS,<sp/>NRECORDS,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.dst_size,<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.field_names.data(),<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.dst_offsets.data(),<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.field_types.data(),</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.chunk_size,<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.fill_data,<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.compress,<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;buffer.data());</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H5Fflush(file,H5F_SCOPE_GLOBAL);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" kindref="member">h5ppFile</ref>-&gt;closeFileHandle(file);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a460b40c36bc6b246a20dfc0f185b1cab" kindref="member">table_is_initialized</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
 <codeline lineno="72"><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"></highlight></codeline>
-<codeline lineno="74"><highlight class="normal"></highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
-<codeline lineno="76" refid="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" kindref="member">class_h5table_buffer&lt;table_type&gt;:: write_buffer_to_file</ref>()<sp/>{</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!table_entries-&gt;buffer.empty()<sp/>and<sp/>table_is_initialized)<sp/>{</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Writing<sp/>buffer<sp/>to<sp/>output<sp/>table:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>table_name);</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hsize_t<sp/>NRECORDS<sp/>=<sp/>get_num_buffered_entries();</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile-&gt;createGroupLink(group_name);</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hid_t<sp/>file<sp/>=<sp/>h5ppFile-&gt;openFileHandle();</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H5TBappend_records(file,<sp/>table_path.c_str(),<sp/>NRECORDS,<sp/>table_entries-&gt;meta.dst_size,</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>table_entries-&gt;meta.dst_offsets.data(),<sp/>table_entries-&gt;meta.dst_sizes.data(),<sp/>table_entries-&gt;buffer.data());</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>table_entries-&gt;buffer.clear();</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>recorded_entries<sp/>+=<sp/>NRECORDS;</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H5Fflush(file,H5F_SCOPE_GLOBAL);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile-&gt;closeFileHandle(file);</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>buffer_is_empty<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="91"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"></highlight></codeline>
-<codeline lineno="93"><highlight class="normal"></highlight></codeline>
-<codeline lineno="94" refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/>std::string<sp/><ref refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" kindref="member">class_h5table_buffer&lt;table_type&gt;::get_table_name</ref>()</highlight><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>table_name;}</highlight></codeline>
-<codeline lineno="95" refid="classclass__h5table__buffer_1a5ead4aba4e20aa30f8f32a605c08dedf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/>std::string<sp/><ref refid="classclass__h5table__buffer_1a5ead4aba4e20aa30f8f32a605c08dedf" kindref="member">class_h5table_buffer&lt;table_type&gt;::get_table_path</ref>()</highlight><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>table_path;}</highlight></codeline>
-<codeline lineno="96" refid="classclass__h5table__buffer_1a4e0f9512b6429eb9f403d5bb57980347" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a4e0f9512b6429eb9f403d5bb57980347" kindref="member">class_h5table_buffer&lt;table_type&gt;::get_num_recorded_entries</ref>()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>recorded_entries;}</highlight></codeline>
-<codeline lineno="97" refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" kindref="member">class_h5table_buffer&lt;table_type&gt;::get_num_buffered_entries</ref>()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>table_entries-&gt;buffer.size();}</highlight></codeline>
-<codeline lineno="98" refid="classclass__h5table__buffer_1a93e5b07c0dba938c36f1b4593bf0224f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a93e5b07c0dba938c36f1b4593bf0224f" kindref="member">class_h5table_buffer&lt;table_type&gt;::set_buffer_size</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>new_size)<sp/>{<sp/>buffer_max_size<sp/>=<sp/>new_size;}</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;</highlight></codeline>
+<codeline lineno="74" refid="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" kindref="member">class_h5table_buffer&lt;table_type&gt;:: write_buffer_to_file</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!<ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;buffer.empty()<sp/>and<sp/><ref refid="classclass__h5table__buffer_1a460b40c36bc6b246a20dfc0f185b1cab" kindref="member">table_is_initialized</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Writing<sp/>buffer<sp/>to<sp/>output<sp/>table:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" kindref="member">table_name</ref>);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hsize_t<sp/>NRECORDS<sp/>=<sp/><ref refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" kindref="member">get_num_buffered_entries</ref>();</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" kindref="member">h5ppFile</ref>-&gt;createGroupLink(<ref refid="classclass__h5table__buffer_1a10274c23daca1076aee14e76172d09ea" kindref="member">group_name</ref>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>hid_t<sp/>file<sp/>=<sp/><ref refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" kindref="member">h5ppFile</ref>-&gt;openFileHandle();</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H5TBappend_records(file,<sp/><ref refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" kindref="member">table_path</ref>.c_str(),<sp/>NRECORDS,<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.dst_size,</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.dst_offsets.data(),<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;meta.dst_sizes.data(),<sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;buffer.data());</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;buffer.clear();</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a6131169ee1a4a3943a36c4cd53d6814e" kindref="member">recorded_entries</ref><sp/>+=<sp/>NRECORDS;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>H5Fflush(file,H5F_SCOPE_GLOBAL);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" kindref="member">h5ppFile</ref>-&gt;closeFileHandle(file);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1ae8d6e4eacc6cc1bd66d75af49650929e" kindref="member">buffer_is_empty</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/>std::string<sp/><ref refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" kindref="member">class_h5table_buffer&lt;table_type&gt;::get_table_name</ref>()</highlight><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" kindref="member">table_name</ref>;}</highlight></codeline>
+<codeline lineno="93" refid="classclass__h5table__buffer_1a5ead4aba4e20aa30f8f32a605c08dedf" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/>std::string<sp/><ref refid="classclass__h5table__buffer_1a5ead4aba4e20aa30f8f32a605c08dedf" kindref="member">class_h5table_buffer&lt;table_type&gt;::get_table_path</ref>()</highlight><highlight class="keyword"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" kindref="member">table_path</ref>;}</highlight></codeline>
+<codeline lineno="94" refid="classclass__h5table__buffer_1a4e0f9512b6429eb9f403d5bb57980347" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a4e0f9512b6429eb9f403d5bb57980347" kindref="member">class_h5table_buffer&lt;table_type&gt;::get_num_recorded_entries</ref>()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__h5table__buffer_1a6131169ee1a4a3943a36c4cd53d6814e" kindref="member">recorded_entries</ref>;}</highlight></codeline>
+<codeline lineno="95" refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" kindref="member">class_h5table_buffer&lt;table_type&gt;::get_num_buffered_entries</ref>()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" kindref="member">table_entries</ref>-&gt;buffer.size();}</highlight></codeline>
+<codeline lineno="96" refid="classclass__h5table__buffer_1a93e5b07c0dba938c36f1b4593bf0224f" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>table_type&gt;<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__h5table__buffer_1a93e5b07c0dba938c36f1b4593bf0224f" kindref="member">class_h5table_buffer&lt;table_type&gt;::set_buffer_size</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>new_size)<sp/>{<sp/><ref refid="classclass__h5table__buffer_1a2f72e72fe0fbf067c0458efa1a0d0ff3" kindref="member">buffer_max_size</ref><sp/>=<sp/>new_size;}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//Explicit<sp/>instantiations</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//Explicit<sp/>instantiations</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="102"><highlight class="normal"></highlight></codeline>
-<codeline lineno="103"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_measurements_finite&gt;</ref>;</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_measurements_infinite&gt;</ref>;</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_profiling&gt;</ref>;</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_simulation_status&gt;</ref>;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_measurements_finite&gt;</ref>;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_measurements_infinite&gt;</ref>;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_profiling&gt;</ref>;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_simulation_status&gt;</ref>;</highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp"/>
   </compounddef>

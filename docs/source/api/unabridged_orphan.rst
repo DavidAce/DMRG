@@ -41,6 +41,11 @@ Directories
 .. toctree::
    :maxdepth: 5
 
+   dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg.rst
+
+.. toctree::
+   :maxdepth: 5
+
    dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model.rst
 
 .. toctree::
@@ -126,6 +131,16 @@ Files
    :maxdepth: 5
 
    file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct_functor.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_rosenbrock.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_rosenbrock.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -570,6 +585,11 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_filesystem.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_logger.cpp.rst
 
 .. toctree::
@@ -600,12 +620,12 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.cpp.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h.rst
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -651,6 +671,21 @@ Files
    :maxdepth: 5
 
    file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg_pcg_extras.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg_pcg_random.hpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg_pcg_uint128.hpp.rst
 
 .. toctree::
    :maxdepth: 5

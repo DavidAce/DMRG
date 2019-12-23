@@ -19,6 +19,7 @@ Files
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_h5table_buffer.h`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_settings_reader.cpp`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_settings_reader.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_filesystem.h`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_logger.cpp`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_logger.h`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_table_types.h`

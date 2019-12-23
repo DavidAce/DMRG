@@ -68,6 +68,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="217" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="217" bodyend="225"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">log</references>
       </memberdef>
       <memberdef kind="function" id="namespaceeigutils_1_1eig_logger_1a82c0e82fa7b658057257b2f08ba028f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -95,6 +96,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="227" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="227" bodyend="236"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1ab424a1ce754abbd02e0f70ee216386ce" compoundref="nmspc__eigutils_8h" startline="206" endline="210">enableTimeStamp</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">log</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1a283e8a93ceaaec1515e70a46abe33994" compoundref="nmspc__eigutils_8h" startline="211" endline="215">disableTimeStamp</references>
         <references refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" compoundref="nmspc__eigutils_8h" startline="217" endline="225">setLogLevel</references>
         <references refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" compoundref="nmspc__logger_8cpp" startline="10" endline="14">Logger::enableTimeStamp</references>
         <references refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" compoundref="nmspc__logger_8cpp" startline="16" endline="20">Logger::disableTimeStamp</references>

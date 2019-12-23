@@ -29,8 +29,6 @@ Includes
 --------
 
 
-- ``filesystem``
-
 - ``h5pp/h5pp.h``
 
 - ``hdf5.h``

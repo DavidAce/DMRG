@@ -17,7 +17,7 @@ Program Listing for File class_tf_ising.cpp
    #include "class_tf_ising.h"
    #include <general/nmspc_tensor_extra.h>
    #include <general/nmspc_quantum_mechanics.h>
-   #include <general/nmspc_random_numbers.h>
+   #include <math/nmspc_random.h>
    #include <iomanip>
    #include <math/nmspc_math.h>
    #include <simulation/nmspc_settings.h>

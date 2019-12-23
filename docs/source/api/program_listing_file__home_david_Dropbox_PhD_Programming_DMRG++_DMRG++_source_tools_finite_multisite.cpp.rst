@@ -61,7 +61,7 @@ Program Listing for File multisite.cpp
        std::list<size_t> costs;
        std::list<size_t> sites;
        std::vector<Eigen::DSizes<long,3>> dims;
-       while(position >= 0 and position < length){
+       while(position < length){
            sites.emplace_back(position);
            costs.emplace_back(get_problem_size(state,sites));
            position += direction;

@@ -6,7 +6,7 @@
 #include <tools/nmspc_tools.h>
 #include <model/class_model_base.h>
 #include <model/class_model_factory.h>
-#include <general/nmspc_random_numbers.h>
+#include <math/nmspc_random.h>
 void tools::infinite::mpo::initialize(class_state_infinite & state, std::string model_type){
     tools::log->trace("Initializing mpo");
     //Generate MPO

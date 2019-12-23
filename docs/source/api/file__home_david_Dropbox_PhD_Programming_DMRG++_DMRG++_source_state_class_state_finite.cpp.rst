@@ -33,8 +33,6 @@ Includes
 
 - ``general/nmspc_quantum_mechanics.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_quantum_mechanics.h`)
 
-- ``spdlog/fmt/bundled/ranges.h``
-
 - ``tools/nmspc_tools.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_nmspc_tools.h`)
 
 

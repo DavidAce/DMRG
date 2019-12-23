@@ -408,7 +408,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="123" bodyend="148"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="123" bodyend="146"/>
         <references refid="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" compoundref="matrix__product__sparse_8h" startline="50">SparseMatrixProduct&lt; Scalar_ &gt;::readyFactorOp</references>
         <references refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" compoundref="matrix__product__sparse_8h" startline="103">SparseMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
@@ -436,7 +436,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="151" bodyend="170"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="149" bodyend="168"/>
         <references refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" compoundref="matrix__product__sparse_8h" startline="38">SparseMatrixProduct&lt; Scalar_ &gt;::side</references>
         <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
         <references refid="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" compoundref="matrix__product__sparse_8h" startline="49">SparseMatrixProduct&lt; Scalar_ &gt;::sparseLU</references>
@@ -462,7 +462,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="173" bodyend="201"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="171" bodyend="199"/>
         <references refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" compoundref="matrix__product__sparse_8h" startline="37">SparseMatrixProduct&lt; Scalar_ &gt;::form</references>
         <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
         <references refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" compoundref="matrix__product__sparse_8h" startline="38">SparseMatrixProduct&lt; Scalar_ &gt;::side</references>
@@ -646,28 +646,28 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="464">
+      <node id="515">
         <label>SparseMatrixProduct&lt; Scalar_ &gt;</label>
         <link refid="class_sparse_matrix_product"/>
-        <childnode refid="465" relation="usage">
+        <childnode refid="516" relation="usage">
           <edgelabel>t_factorOp</edgelabel>
           <edgelabel>t_multax</edgelabel>
           <edgelabel>t_multOpv</edgelabel>
         </childnode>
       </node>
-      <node id="467">
+      <node id="518">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="465">
+      <node id="516">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
-        <childnode refid="466" relation="usage">
+        <childnode refid="517" relation="usage">
           <edgelabel>name</edgelabel>
         </childnode>
       </node>
-      <node id="466">
+      <node id="517">
         <label>std::string</label>
-        <childnode refid="467" relation="public-inheritance">
+        <childnode refid="518" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

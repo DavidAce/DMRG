@@ -29,8 +29,6 @@ Includes
 --------
 
 
-- ``ceres/ceres.h``
-
 - ``ceres_direct_functor.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_finite_opt-internals_ceres_direct_functor.h`)
 
 - ``general/class_tic_toc.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_class_tic_toc.h`)

@@ -33,8 +33,6 @@ Includes
 
 - ``general/nmspc_omp.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_omp.h`)
 
-- ``general/nmspc_random_numbers.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`)
-
 - ``getopt.h``
 
 - ``gitversion.h``
@@ -43,9 +41,13 @@ Includes
 
 - ``io/class_settings_reader.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_class_settings_reader.h`)
 
+- ``io/nmspc_filesystem.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_filesystem.h`)
+
 - ``io/nmspc_logger.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_nmspc_logger.h`)
 
 - ``iostream``
+
+- ``math/nmspc_random.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.h`)
 
 - ``signal.h``
 

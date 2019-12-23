@@ -29,24 +29,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="372">
+      <node id="401">
         <label>true_type</label>
       </node>
-      <node id="371">
+      <node id="400">
         <label>TypeCheck::is_eigen_array&lt; Eigen::Array&lt; T, rows, cols, StorageOrder &gt; &gt;</label>
         <link refid="struct_type_check_1_1is__eigen__array_3_01_eigen_1_1_array_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4"/>
-        <childnode refid="372" relation="public-inheritance">
+        <childnode refid="401" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="374">
+      <node id="403">
         <label>true_type</label>
       </node>
-      <node id="373">
+      <node id="402">
         <label>TypeCheck::is_eigen_array&lt; Eigen::Array&lt; T, rows, cols, StorageOrder &gt; &gt;</label>
         <link refid="struct_type_check_1_1is__eigen__array_3_01_eigen_1_1_array_3_01_t_00_01rows_00_01cols_00_01_storage_order_01_4_01_4"/>
-        <childnode refid="374" relation="public-inheritance">
+        <childnode refid="403" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

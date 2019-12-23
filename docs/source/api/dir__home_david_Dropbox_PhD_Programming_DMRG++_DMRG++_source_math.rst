@@ -15,6 +15,7 @@ Subdirectories
 --------------
 
 - :ref:`dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra`
+- :ref:`dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_pcg`
 
 
 Files
@@ -27,5 +28,7 @@ Files
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_class_svd_wrapper_lapacke.cpp`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_eigutils.h`
 - :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_math.h`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.cpp`
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.h`
 
 

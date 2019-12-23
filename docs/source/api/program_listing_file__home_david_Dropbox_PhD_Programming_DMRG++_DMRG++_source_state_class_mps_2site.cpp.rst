@@ -18,7 +18,7 @@ Program Listing for File class_mps_2site.cpp
    #include <state/class_mps_2site.h>
    #include <state/class_mps_site.h>
    #include <math/nmspc_math.h>
-   #include <general/nmspc_random_numbers.h>
+   #include <math/nmspc_random.h>
    #include <simulation/nmspc_settings.h>
    #include <iomanip>
    #include <tools/nmspc_tools.h>

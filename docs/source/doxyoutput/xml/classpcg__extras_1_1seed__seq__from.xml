@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classpcg__extras_1_1seed__seq__from" kind="class" language="C++" prot="public">
+    <compoundname>pcg_extras::seed_seq_from</compoundname>
+    <includes refid="pcg__extras_8hpp" local="no">pcg_extras.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename RngType</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classpcg__extras_1_1seed__seq__from_1a9a0e65175ac6814b655b479fecbbc515" prot="private" static="no">
+        <type>uint_least32_t</type>
+        <definition>typedef uint_least32_t pcg_extras::seed_seq_from&lt; RngType &gt;::result_type</definition>
+        <argsstring></argsstring>
+        <name>result_type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="561" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="561" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classpcg__extras_1_1seed__seq__from_1a3066831574b0c1b36ccd7441194feb7c" prot="private" static="no" mutable="no">
+        <type>RngType</type>
+        <definition>RngType pcg_extras::seed_seq_from&lt; RngType &gt;::rng_</definition>
+        <argsstring></argsstring>
+        <name>rng_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="559" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="559" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classpcg__extras_1_1seed__seq__from_1a1d01bd6f7f0c4c3dae871e8026d92c38" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>pcg_extras::seed_seq_from&lt; RngType &gt;::seed_seq_from</definition>
+        <argsstring>(Args &amp;&amp;... args)</argsstring>
+        <name>seed_seq_from</name>
+        <param>
+          <type>Args &amp;&amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="565" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="565" bodyend="569"/>
+        <references refid="classpcg__extras_1_1seed__seq__from_1a3066831574b0c1b36ccd7441194feb7c" compoundref="pcg__extras_8hpp" startline="559">pcg_extras::seed_seq_from&lt; RngType &gt;::rng_</references>
+      </memberdef>
+      <memberdef kind="function" id="classpcg__extras_1_1seed__seq__from_1acd4556759cf92f49bf958e0cacb72e07" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Iter</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void pcg_extras::seed_seq_from&lt; RngType &gt;::generate</definition>
+        <argsstring>(Iter start, Iter finish)</argsstring>
+        <name>generate</name>
+        <param>
+          <type>Iter</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>Iter</type>
+          <declname>finish</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="572" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="572" bodyend="576"/>
+        <references refid="classpcg__extras_1_1seed__seq__from_1a3066831574b0c1b36ccd7441194feb7c" compoundref="pcg__extras_8hpp" startline="559">pcg_extras::seed_seq_from&lt; RngType &gt;::rng_</references>
+      </memberdef>
+      <memberdef kind="function" id="classpcg__extras_1_1seed__seq__from_1a6889125ccdb3b1113c345d5a7d0c9255" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>constexpr size_t</type>
+        <definition>constexpr size_t pcg_extras::seed_seq_from&lt; RngType &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="578" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="578" bodyend="584"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="557" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="557" bodyend="585"/>
+    <listofallmembers>
+      <member refid="classpcg__extras_1_1seed__seq__from_1acd4556759cf92f49bf958e0cacb72e07" prot="public" virt="non-virtual"><scope>pcg_extras::seed_seq_from</scope><name>generate</name></member>
+      <member refid="classpcg__extras_1_1seed__seq__from_1a9a0e65175ac6814b655b479fecbbc515" prot="private" virt="non-virtual"><scope>pcg_extras::seed_seq_from</scope><name>result_type</name></member>
+      <member refid="classpcg__extras_1_1seed__seq__from_1a3066831574b0c1b36ccd7441194feb7c" prot="private" virt="non-virtual"><scope>pcg_extras::seed_seq_from</scope><name>rng_</name></member>
+      <member refid="classpcg__extras_1_1seed__seq__from_1a1d01bd6f7f0c4c3dae871e8026d92c38" prot="public" virt="non-virtual"><scope>pcg_extras::seed_seq_from</scope><name>seed_seq_from</name></member>
+      <member refid="classpcg__extras_1_1seed__seq__from_1a6889125ccdb3b1113c345d5a7d0c9255" prot="public" virt="non-virtual"><scope>pcg_extras::seed_seq_from</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

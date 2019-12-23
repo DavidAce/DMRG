@@ -134,37 +134,37 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="122">
+      <node id="125">
         <label>class_environment_base</label>
         <link refid="classclass__environment__base"/>
       </node>
-      <node id="121">
+      <node id="124">
         <label>class_environment_var</label>
         <link refid="classclass__environment__var"/>
-        <childnode refid="122" relation="public-inheritance">
+        <childnode refid="125" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="124">
+      <node id="127">
         <label>class_environment_base</label>
         <link refid="classclass__environment__base"/>
-        <childnode refid="125" relation="usage">
+        <childnode refid="128" relation="usage">
           <edgelabel>side</edgelabel>
         </childnode>
       </node>
-      <node id="123">
+      <node id="126">
         <label>class_environment_var</label>
         <link refid="classclass__environment__var"/>
-        <childnode refid="124" relation="public-inheritance">
+        <childnode refid="127" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="126">
+      <node id="129">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="125">
+      <node id="128">
         <label>std::string</label>
-        <childnode refid="126" relation="public-inheritance">
+        <childnode refid="129" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

@@ -31,9 +31,9 @@ Functions
 
 - :ref:`exhale_function_namespacetools_1_1infinite_1_1measure_1af8594974f93ea1285297c0e814ab2dcb`
 
-- :ref:`exhale_function_namespacetools_1_1infinite_1_1measure_1a3fff46f0de2edad1caca45dffaab52ca`
-
 - :ref:`exhale_function_namespacetools_1_1infinite_1_1measure_1af2bc70d4c689bf480777d784d1e60dce`
+
+- :ref:`exhale_function_namespacetools_1_1infinite_1_1measure_1a3fff46f0de2edad1caca45dffaab52ca`
 
 - :ref:`exhale_function_namespacetools_1_1infinite_1_1measure_1a387d1103658134b08a09685d778d2548`
 

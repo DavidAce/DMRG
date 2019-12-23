@@ -21,9 +21,7 @@ Program Listing for File class_h5table_buffer.cpp
    #include <io/class_h5table_buffer.h>
    #include <io/table_types.h>
    #include <h5pp/h5pp.h>
-   #include <filesystem>
    
-   namespace fs = std::filesystem;
    
    template<typename table_type>
    class_h5table_buffer<table_type>::class_h5table_buffer()
@@ -36,15 +34,15 @@ Program Listing for File class_h5table_buffer.cpp
    template<typename table_type>
    class_h5table_buffer<table_type>::class_h5table_buffer(
            std::shared_ptr<h5pp::File> h5ppFile_,
-           fs::path table_path_,
+           std::string table_path_,
            bool mpi_on_)
            :
            h5ppFile(std::move(h5ppFile_)),
-           table_path(table_path_.string()),
-           group_name(table_path_.parent_path()),
-           table_name(table_path_.filename()),
+           table_path(table_path_),
            mpi_on(mpi_on_)
    {
+       group_name = h5pp::fs::path(table_path).parent_path();
+       table_name = h5pp::fs::path(table_path).filename();
        log = Logger::setLogger(logName,logLevel);
        table_entries      = std::make_unique<table_type>();
        initialize_table();

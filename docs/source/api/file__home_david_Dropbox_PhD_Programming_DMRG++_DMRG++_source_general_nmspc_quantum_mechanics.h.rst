@@ -129,9 +129,9 @@ Variables
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_1a526b15cbef6524e5d7f496992aa4124e`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_1afd4053f405789c5556b138bce9da5c32`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_1a76e83986f3dd3f21f66745e74b0d1efb`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_1afd4053f405789c5556b138bce9da5c32`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_1a47d668cb08219573f14c3272fe91d590`
 
@@ -145,21 +145,21 @@ Variables
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1acfc44d248aa25773edc90c232a54f47f`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a108205fa9b3f65edcb8baca98edd5925`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1ac1296391083d31f641019131926507ad`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a6c647e6a015b60e161400c3fbe4072f5`
 

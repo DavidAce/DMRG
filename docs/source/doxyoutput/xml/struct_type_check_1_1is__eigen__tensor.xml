@@ -14,24 +14,24 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="384">
+      <node id="413">
         <label>false_type</label>
       </node>
-      <node id="383">
+      <node id="412">
         <label>TypeCheck::is_eigen_tensor&lt; T &gt;</label>
         <link refid="struct_type_check_1_1is__eigen__tensor"/>
-        <childnode refid="384" relation="public-inheritance">
+        <childnode refid="413" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="386">
+      <node id="415">
         <label>false_type</label>
       </node>
-      <node id="385">
+      <node id="414">
         <label>TypeCheck::is_eigen_tensor&lt; T &gt;</label>
         <link refid="struct_type_check_1_1is__eigen__tensor"/>
-        <childnode refid="386" relation="public-inheritance">
+        <childnode refid="415" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

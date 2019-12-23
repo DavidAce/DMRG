@@ -39,6 +39,15 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="61" bodyend="-1"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a7aabb154fe5863b121e1d7dc47ab5765" compoundref="nmspc__tools_8h" startline="377">tools::common::profile::t_sim</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
+        <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a2846b1d2fefe653f9fe80c92bc846be3" compoundref="nmspc__tools_8h" startline="374">tools::common::profile::t_tot</references>
+        <references refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" compoundref="class__tic__toc_8cpp" startline="103" endline="105">class_tic_toc::get_age</references>
+        <references refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" compoundref="class__simulation__status_8h" startline="36">status_data::simu_time</references>
+        <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_d_m_r_g_1af7b8ff1ff8a2ba0784cecab54ac25ba6" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>void</type>
@@ -54,7 +63,7 @@
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="24" bodyend="58"/>
         <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="118">settings::idmrg::on</references>
-        <references refid="classclass__i_d_m_r_g_1ad06337dc6d59f356ae4b408db1e34dbf" compoundref="class__i_d_m_r_g_8cpp" startline="77" endline="94">check_convergence</references>
+        <references refid="classclass__i_d_m_r_g_1ad06337dc6d59f356ae4b408db1e34dbf" compoundref="class__i_d_m_r_g_8cpp" startline="77" endline="93">check_convergence</references>
         <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
         <references refid="namespacesettings_1_1idmrg_1a0b0d73c9584cf669c3b6ef2c148698cd" compoundref="nmspc__settings_8h" startline="119">settings::idmrg::max_steps</references>
@@ -77,7 +86,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="77" bodyend="94"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="77" bodyend="93"/>
+        <references refid="namespacetools_1_1common_1_1profile_1ab2944237031c9b3b95d776604b107f76" compoundref="nmspc__tools_8h" startline="378">tools::common::profile::t_con</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
         <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="46">status_data::entanglement_has_converged</references>
         <references refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" compoundref="class__simulation__status_8h" startline="48">status_data::variance_mpo_has_converged</references>
@@ -85,6 +96,7 @@
         <references refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" compoundref="class__simulation__status_8h" startline="52">status_data::variance_mom_has_converged</references>
         <references refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" compoundref="class__simulation__status_8h" startline="45">status_data::chi_lim_has_reached_chi_max</references>
         <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="39">status_data::simulation_has_converged</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_d_m_r_g_1ad20909b9e63dfcb1724a0c53268bdb51" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>bool</type>
@@ -98,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="99" bodyend="99"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="98" bodyend="98"/>
         <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="118">settings::idmrg::on</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_d_m_r_g_1a904706d36e61c0739a15823d672c0ca7" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
@@ -113,7 +125,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="100" bodyend="100"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="99" bodyend="99"/>
         <references refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" compoundref="nmspc__settings_8h" startline="120">settings::idmrg::chi_max</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_d_m_r_g_1afb5e5b37f63d3a92f2171c0685e50043" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
@@ -128,7 +140,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="101" bodyend="101"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="100" bodyend="100"/>
       </memberdef>
       <memberdef kind="function" id="classclass__i_d_m_r_g_1a1eb94f25ffcd7a6d634327bfde1bf14d" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
         <type>size_t</type>
@@ -142,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="102" bodyend="102"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="101" bodyend="101"/>
         <references refid="namespacesettings_1_1idmrg_1a045e93c114bea3cce9b57146f2a7f176" compoundref="nmspc__settings_8h" startline="124">settings::idmrg::write_freq</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_d_m_r_g_1a6831d6885838a4e9a94ebe27ce6dc201" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
@@ -157,7 +169,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="103" bodyend="103"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="102" bodyend="102"/>
         <references refid="namespacesettings_1_1idmrg_1af8fb290c6eac82f9e33a94e71d26a29d" compoundref="nmspc__settings_8h" startline="123">settings::idmrg::print_freq</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_d_m_r_g_1ab329d7ed446dab62ccbf2330c53b6874" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
@@ -172,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="104" bodyend="104"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="103" bodyend="103"/>
         <references refid="namespacesettings_1_1idmrg_1aa8fbed186f5dc10147472f92cb11cd6f" compoundref="nmspc__settings_8h" startline="121">settings::idmrg::chi_grow</references>
       </memberdef>
       <memberdef kind="function" id="classclass__i_d_m_r_g_1a408f83ce031c6092e8f5c7faad9e6630" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
@@ -187,7 +199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="105" bodyend="105"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="104" bodyend="104"/>
         <references refid="namespacesettings_1_1idmrg_1a5f9290b0a54de4af134cabe9aedb6295" compoundref="nmspc__settings_8h" startline="122">settings::idmrg::chi_init</references>
       </memberdef>
       </sectiondef>
@@ -196,104 +208,89 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="199">
+      <node id="201">
         <label>class_algorithm_infinite</label>
         <link refid="classclass__algorithm__infinite"/>
-        <childnode refid="200" relation="public-inheritance">
+        <childnode refid="202" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="200">
+      <node id="202">
         <label>class_algorithm_base</label>
         <link refid="classclass__algorithm__base"/>
       </node>
-      <node id="198">
+      <node id="200">
         <label>class_iDMRG</label>
         <link refid="classclass__i_d_m_r_g"/>
-        <childnode refid="199" relation="public-inheritance">
+        <childnode refid="201" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="202">
+      <node id="204">
         <label>class_algorithm_infinite</label>
         <link refid="classclass__algorithm__infinite"/>
-        <childnode refid="203" relation="public-inheritance">
+        <childnode refid="205" relation="public-inheritance">
         </childnode>
-        <childnode refid="209" relation="usage">
+        <childnode refid="210" relation="usage">
           <edgelabel>S_vec</edgelabel>
           <edgelabel>V_mom_vec</edgelabel>
           <edgelabel>V_mpo_vec</edgelabel>
           <edgelabel>V_ham_vec</edgelabel>
         </childnode>
-        <childnode refid="210" relation="usage">
+        <childnode refid="211" relation="usage">
           <edgelabel>B_ham_vec</edgelabel>
           <edgelabel>BS_vec</edgelabel>
           <edgelabel>B_mom_vec</edgelabel>
           <edgelabel>B_mpo_vec</edgelabel>
         </childnode>
-        <childnode refid="211" relation="usage">
+        <childnode refid="212" relation="usage">
           <edgelabel>X_mom_vec</edgelabel>
           <edgelabel>X_mpo_vec</edgelabel>
           <edgelabel>X_ham_vec</edgelabel>
           <edgelabel>XS_vec</edgelabel>
         </childnode>
       </node>
-      <node id="209">
+      <node id="210">
         <label>std::list&lt; double &gt;</label>
       </node>
-      <node id="210">
+      <node id="211">
         <label>std::list&lt; bool &gt;</label>
       </node>
-      <node id="205">
+      <node id="207">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="211">
+      <node id="212">
         <label>std::list&lt; int &gt;</label>
       </node>
-      <node id="208">
-        <label>class_tic_toc</label>
-        <link refid="classclass__tic__toc"/>
-        <childnode refid="204" relation="usage">
-          <edgelabel>name</edgelabel>
-        </childnode>
-      </node>
-      <node id="207">
+      <node id="209">
         <label>status_data</label>
         <link refid="structstatus__data"/>
       </node>
-      <node id="206">
+      <node id="208">
         <label>class_simulation_status</label>
         <link refid="classclass__simulation__status"/>
-        <childnode refid="207" relation="public-inheritance">
+        <childnode refid="209" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="205">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+        <childnode refid="206" relation="usage">
+          <edgelabel>sim_name</edgelabel>
+        </childnode>
+        <childnode refid="208" relation="usage">
+          <edgelabel>sim_status</edgelabel>
         </childnode>
       </node>
       <node id="203">
-        <label>class_algorithm_base</label>
-        <link refid="classclass__algorithm__base"/>
-        <childnode refid="204" relation="usage">
-          <edgelabel>sim_name</edgelabel>
-        </childnode>
-        <childnode refid="206" relation="usage">
-          <edgelabel>sim_status</edgelabel>
-        </childnode>
-        <childnode refid="208" relation="usage">
-          <edgelabel>t_con</edgelabel>
-          <edgelabel>t_pos</edgelabel>
-          <edgelabel>t_pre</edgelabel>
-          <edgelabel>t_tot</edgelabel>
-          <edgelabel>t_run</edgelabel>
-          <edgelabel>t_prt</edgelabel>
-        </childnode>
-      </node>
-      <node id="201">
         <label>class_iDMRG</label>
         <link refid="classclass__i_d_m_r_g"/>
-        <childnode refid="202" relation="public-inheritance">
+        <childnode refid="204" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="204">
+      <node id="206">
         <label>std::string</label>
-        <childnode refid="205" relation="public-inheritance">
+        <childnode refid="207" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
@@ -340,7 +337,6 @@
       <member refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>S_slope</name></member>
       <member refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>S_vec</name></member>
       <member refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>Scalar</name></member>
-      <member refid="classclass__algorithm__base_1a539f089e4d2c8d121fbd0b9765529f72" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>set_profiling_labels</name></member>
       <member refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>sim_name</name></member>
       <member refid="classclass__i_d_m_r_g_1ad20909b9e63dfcb1724a0c53268bdb51" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>sim_on</name></member>
       <member refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>sim_status</name></member>
@@ -350,12 +346,6 @@
       <member refid="classclass__algorithm__base_1af36e30da0595f116629422821e1e4ced" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>stop_reason</name></member>
       <member refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>StopReason</name></member>
       <member refid="classclass__algorithm__infinite_1a3b3bd13802b17fe5cb9600e4dcaabded" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>swap</name></member>
-      <member refid="classclass__algorithm__base_1a41e28970ec5e7a0cf2a1700b217f5152" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>t_con</name></member>
-      <member refid="classclass__algorithm__base_1a15d39ee8a896d1142c354fe947c95386" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>t_pos</name></member>
-      <member refid="classclass__algorithm__base_1a5b284e854a8debc108cdd078c7f2b6a9" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>t_pre</name></member>
-      <member refid="classclass__algorithm__base_1ad14c71fb99e1eb2b0e0d81e1a51a98c8" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>t_prt</name></member>
-      <member refid="classclass__algorithm__base_1af4a24c9c727620185761c1d30e453b53" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>t_run</name></member>
-      <member refid="classclass__algorithm__base_1acc0a9428cfd271631302e375bfad3e92" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>t_tot</name></member>
       <member refid="classclass__algorithm__infinite_1a93e97af4e20920c9690ff47fe78ddd60" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>update_bond_dimension_limit</name></member>
       <member refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>V_ham_slope</name></member>
       <member refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>V_ham_vec</name></member>

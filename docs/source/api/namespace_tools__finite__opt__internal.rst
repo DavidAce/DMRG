@@ -30,6 +30,8 @@ Classes
 
 - :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor`
 
+- :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor`
+
 - :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor`
 
 - :ref:`exhale_class_classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base`
@@ -53,6 +55,8 @@ Functions
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1aeae2ef5c9bb0ae3feff554833673b753`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a42ead97c9c959ca369fcb8193acf8f8d`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1a3a33e74e9df3aa34c3ceccfa589c1cf1`
 

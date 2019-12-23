@@ -3,7 +3,7 @@
 Function rn::random_with_replacement(const Eigen::ArrayXd&, const int)
 ======================================================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.h`
 
 
 Function Documentation

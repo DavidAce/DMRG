@@ -14,7 +14,6 @@ Program Listing for File ceres_direct_functor.cpp
    // Created by david on 2019-07-15.
    //
    
-   #include <general/nmspc_omp.h> // For multithreaded computation
    #include "ceres_direct_functor.h"
    #include <state/class_state_finite.h>
    

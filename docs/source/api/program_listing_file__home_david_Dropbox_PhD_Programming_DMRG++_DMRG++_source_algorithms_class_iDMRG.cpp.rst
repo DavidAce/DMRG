@@ -72,25 +72,24 @@ Program Listing for File class_iDMRG.cpp
    
    void class_iDMRG::single_DMRG_step(std::string ritz){
        log->trace("Starting infinite DMRG step");
-       t_run.tic();
+       tools::common::profile::t_sim.tic();
        Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
        tools::infinite::opt::truncate_theta(theta, *state);
        state->unset_measurements();
-       t_run.toc();
-       sim_status.wall_time = t_tot.get_age();
-       sim_status.simu_time = t_run.get_measured_time();
+       tools::common::profile::t_sim.toc();
+       sim_status.wall_time = tools::common::profile::t_tot.get_age();
+       sim_status.simu_time = tools::common::profile::t_sim.get_measured_time();
    }
    
    
    
    void class_iDMRG::check_convergence(){
        log->trace("Checking convergence");
-       t_con.tic();
+       tools::common::profile::t_con.tic();
        check_convergence_entg_entropy();
        check_convergence_variance_mpo();
        check_convergence_variance_ham();
        check_convergence_variance_mom();
-       update_bond_dimension_limit();
        if(sim_status.entanglement_has_converged and
           sim_status.variance_mpo_has_converged and
           sim_status.variance_ham_has_converged and
@@ -99,7 +98,7 @@ Program Listing for File class_iDMRG.cpp
        {
            sim_status.simulation_has_converged = true;
        }
-       t_con.toc();
+       tools::common::profile::t_con.toc();
    }
    
    

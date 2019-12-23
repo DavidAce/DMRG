@@ -15,17 +15,26 @@ Program Listing for File opt.h
    //
    
    #pragma once
+   // This trick avoids collision between the preprocessor
+   // symbol I and a template type size_t I in Eigen getting
+   // overridden and causing trouble at compile time.
+   #include <complex.h>
+   #undef I
    
-   
+   // It is VERY IMPORTANT to set this flag when using CERES
+   // For some reason the Eigen destructor starts calling std::free instead of
+   // the handmade allocator free in calls inside CERES. I do not know the reason.
+   // Setting this flag here or globally helps.
+   #define EIGEN_MALLOC_ALREADY_ALIGNED 0
    #include <tools/nmspc_tools.h>
    #include <general/class_tic_toc.h>
-   #include <ceres/ceres.h>
    #include <general/nmspc_omp.h>
+   #include <ceres/ceres.h>
+   
    class class_tic_toc;
    
    
-   namespace tools::finite::opt{
-       namespace internal{
+   namespace tools::finite::opt::internal{
            extern Eigen::Tensor<std::complex<double>,3> old_subspace_optimization(const class_state_finite &state,
                                                                                   const class_simulation_status &sim_status,
                                                                                   OptType optType, OptMode optMode);
@@ -44,6 +53,7 @@ Program Listing for File opt.h
                                                                                        OptType optType, OptMode optMode);
            extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_state_finite & state, const class_simulation_status & sim_status);
            extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_state_finite & state, std::string ritzstring = "SR");
+           extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const class_state_finite & state);
    
            namespace local_hamiltonians{
                extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_tensor(const class_state_finite & state);
@@ -68,7 +78,6 @@ Program Listing for File opt.h
            Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
    
    
-   //        extern std::complex<double>                    get_subspace_hamiltonian_component();
            inline ceres::GradientProblemSolver::Options ceres_default_options;
    
            inline bool no_state_in_window = false;
@@ -109,35 +118,8 @@ Program Listing for File opt.h
            inline std::unique_ptr<class_tic_toc> t_vH   =  std::make_unique<class_tic_toc>(true,5,"t_vH  ");
            inline std::unique_ptr<class_tic_toc> t_op   =  std::make_unique<class_tic_toc>(true,5,"t_op  ");
    
-   
-   //        inline LBFGSpp::LBFGSParam<double> get_params(){
-   //            using namespace LBFGSpp;
-   //            LBFGSpp::LBFGSParam<double> params;
-   //            // READ HERE http://pages.mtu.edu/~msgocken/ma5630spring2003/lectures/lines/lines/node3.html
-   //            // I think c1 corresponds to ftol, and c2 corresponds to wolfe
-   //            params.max_iterations = 1000;
-   //            params.max_linesearch = 80; // Default is 20.
-   //            params.m              = 8;     // Default is 6
-   //            params.past           = 1;     //
-   //            params.epsilon        = 1e-2;  // Default is 1e-5.
-   //            params.delta          = 1e-6; // Default is 0.
-   //            params.ftol           = 1e-4;  // Default is 1e-4.
-   //            params.wolfe          = 0.90;   // Default is 0.9
-   //            params.min_step       = 1e-40;
-   //            params.max_step       = 1e+40;
-   //            params.linesearch     = LINE_SEARCH_ALGORITHM::LBFGS_LINESEARCH_BACKTRACKING_ARMIJO;
-   //            return params;
-   //        }
-   //
-   //        inline auto params = get_params();
-   
-   
-   
-   
-   
            class ceres_base_functor : public ceres::FirstOrderFunction{
            public:
-               EIGEN_MAKE_ALIGNED_OPERATOR_NEW
            protected:
                mutable double variance;
                mutable double energy  ;
@@ -167,15 +149,9 @@ Program Listing for File opt.h
                double get_energy     () const;
                size_t get_count      () const;
                double get_norm       () const;
-               int    NumParameters  () const;
-               virtual bool Evaluate(const double* v_double_double,
-                                     double* fx,
-                                     double* grad_double_double) const = 0;
-   
-   
+               int    NumParameters  () const final;
            };
    
    
        }
-   }
    

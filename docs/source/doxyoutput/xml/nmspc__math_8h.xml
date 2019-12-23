@@ -25,102 +25,31 @@
     <includedby refid="class__state__infinite_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</includedby>
     <includedby refid="views_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</includedby>
     <incdepgraph>
-      <node id="1464">
+      <node id="1474">
         <label>list</label>
       </node>
-      <node id="1466">
+      <node id="1476">
         <label>functional</label>
       </node>
-      <node id="1462">
+      <node id="1472">
         <label>iterator</label>
       </node>
-      <node id="1465">
+      <node id="1475">
         <label>cmath</label>
       </node>
-      <node id="1469">
+      <node id="1479">
         <label>numeric</label>
       </node>
-      <node id="1471">
+      <node id="1481">
         <label>Eigen/Core</label>
       </node>
-      <node id="1460">
+      <node id="1470">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h</label>
         <link refid="nmspc__math_8h"/>
-        <childnode refid="1461" relation="include">
-        </childnode>
-        <childnode refid="1462" relation="include">
-        </childnode>
-        <childnode refid="1463" relation="include">
-        </childnode>
-        <childnode refid="1464" relation="include">
-        </childnode>
-        <childnode refid="1465" relation="include">
-        </childnode>
-        <childnode refid="1466" relation="include">
-        </childnode>
-        <childnode refid="1467" relation="include">
-        </childnode>
-        <childnode refid="1468" relation="include">
-        </childnode>
-        <childnode refid="1469" relation="include">
-        </childnode>
-        <childnode refid="1470" relation="include">
-        </childnode>
         <childnode refid="1471" relation="include">
         </childnode>
-      </node>
-      <node id="1470">
-        <label>optional</label>
-      </node>
-      <node id="1463">
-        <label>vector</label>
-      </node>
-      <node id="1468">
-        <label>utility</label>
-      </node>
-      <node id="1461">
-        <label>iostream</label>
-      </node>
-      <node id="1467">
-        <label>memory</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="1479">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.cpp</label>
-        <link refid="class__selfdual__tf__rf__ising__normal_8cpp"/>
-      </node>
-      <node id="1475">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
-        <link refid="class__algorithm__infinite_8cpp"/>
-      </node>
-      <node id="1481">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
-        <link refid="class__mps__2site_8cpp"/>
-      </node>
-      <node id="1478">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
-        <link refid="class__selfdual__tf__rf__ising_8cpp"/>
-      </node>
-      <node id="1482">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
-        <link refid="class__state__infinite_8cpp"/>
-      </node>
-      <node id="1483">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
-        <link refid="views_8cpp"/>
-      </node>
-      <node id="1480">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
-        <link refid="class__tf__ising_8cpp"/>
-      </node>
-      <node id="1474">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
-        <link refid="class__algorithm__finite_8cpp"/>
-      </node>
-      <node id="1472">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h</label>
-        <link refid="nmspc__math_8h"/>
+        <childnode refid="1472" relation="include">
+        </childnode>
         <childnode refid="1473" relation="include">
         </childnode>
         <childnode refid="1474" relation="include">
@@ -139,20 +68,91 @@
         </childnode>
         <childnode refid="1481" relation="include">
         </childnode>
-        <childnode refid="1482" relation="include">
-        </childnode>
-        <childnode refid="1483" relation="include">
-        </childnode>
+      </node>
+      <node id="1480">
+        <label>optional</label>
+      </node>
+      <node id="1473">
+        <label>vector</label>
+      </node>
+      <node id="1478">
+        <label>utility</label>
+      </node>
+      <node id="1471">
+        <label>iostream</label>
       </node>
       <node id="1477">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1489">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.cpp</label>
+        <link refid="class__selfdual__tf__rf__ising__normal_8cpp"/>
+      </node>
+      <node id="1485">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
+        <link refid="class__algorithm__infinite_8cpp"/>
+      </node>
+      <node id="1491">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
+        <link refid="class__mps__2site_8cpp"/>
+      </node>
+      <node id="1488">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
+        <link refid="class__selfdual__tf__rf__ising_8cpp"/>
+      </node>
+      <node id="1492">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
+      </node>
+      <node id="1493">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1490">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
+        <link refid="class__tf__ising_8cpp"/>
+      </node>
+      <node id="1484">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
+        <link refid="class__algorithm__finite_8cpp"/>
+      </node>
+      <node id="1482">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h</label>
+        <link refid="nmspc__math_8h"/>
+        <childnode refid="1483" relation="include">
+        </childnode>
+        <childnode refid="1484" relation="include">
+        </childnode>
+        <childnode refid="1485" relation="include">
+        </childnode>
+        <childnode refid="1486" relation="include">
+        </childnode>
+        <childnode refid="1487" relation="include">
+        </childnode>
+        <childnode refid="1488" relation="include">
+        </childnode>
+        <childnode refid="1489" relation="include">
+        </childnode>
+        <childnode refid="1490" relation="include">
+        </childnode>
+        <childnode refid="1491" relation="include">
+        </childnode>
+        <childnode refid="1492" relation="include">
+        </childnode>
+        <childnode refid="1493" relation="include">
+        </childnode>
+      </node>
+      <node id="1487">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</label>
         <link refid="class__model__factory_8cpp"/>
       </node>
-      <node id="1476">
+      <node id="1486">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
         <link refid="class__i_d_m_r_g_8cpp"/>
       </node>
-      <node id="1473">
+      <node id="1483">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
         <link refid="class__algorithm__base_8cpp"/>
       </node>

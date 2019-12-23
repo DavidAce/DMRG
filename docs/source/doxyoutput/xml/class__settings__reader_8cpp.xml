@@ -6,72 +6,73 @@
     <includes refid="nmspc__logger_8h" local="no">io/nmspc_logger.h</includes>
     <includes local="no">sstream</includes>
     <incdepgraph>
-      <node id="942">
+      <node id="935">
+        <label>io/nmspc_filesystem.h</label>
+        <link refid="nmspc__filesystem_8h"/>
+      </node>
+      <node id="929">
         <label>iomanip</label>
       </node>
-      <node id="938">
+      <node id="925">
         <label>class_settings_reader.h</label>
         <link refid="class__settings__reader_8h"/>
-        <childnode refid="939" relation="include">
+        <childnode refid="926" relation="include">
         </childnode>
-        <childnode refid="940" relation="include">
+        <childnode refid="927" relation="include">
         </childnode>
-        <childnode refid="941" relation="include">
+        <childnode refid="928" relation="include">
         </childnode>
-        <childnode refid="942" relation="include">
+        <childnode refid="929" relation="include">
         </childnode>
-        <childnode refid="943" relation="include">
+        <childnode refid="930" relation="include">
         </childnode>
-        <childnode refid="944" relation="include">
+        <childnode refid="931" relation="include">
         </childnode>
-        <childnode refid="945" relation="include">
+        <childnode refid="932" relation="include">
         </childnode>
-        <childnode refid="946" relation="include">
+        <childnode refid="935" relation="include">
         </childnode>
       </node>
-      <node id="944">
-        <label>filesystem</label>
-      </node>
-      <node id="941">
+      <node id="928">
         <label>string</label>
       </node>
-      <node id="946">
+      <node id="932">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="947" relation="include">
+        <childnode refid="933" relation="include">
         </childnode>
-        <childnode refid="948" relation="include">
+        <childnode refid="934" relation="include">
         </childnode>
       </node>
-      <node id="940">
+      <node id="927">
         <label>fstream</label>
       </node>
-      <node id="937">
+      <node id="924">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp</label>
         <link refid="class__settings__reader_8cpp"/>
-        <childnode refid="938" relation="include">
+        <childnode refid="925" relation="include">
         </childnode>
-        <childnode refid="946" relation="include">
+        <childnode refid="932" relation="include">
         </childnode>
-        <childnode refid="949" relation="include">
+        <childnode refid="936" relation="include">
         </childnode>
       </node>
-      <node id="948">
+      <node id="934">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="947">
+      <node id="933">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="949">
+      <node id="936">
         <label>sstream</label>
       </node>
-      <node id="943">
+      <node id="930">
         <label>cctype</label>
       </node>
-      <node id="939">
+      <node id="926">
         <label>iostream</label>
       </node>
-      <node id="945">
+      <node id="931">
         <label>algorithm</label>
       </node>
     </incdepgraph>
@@ -87,156 +88,158 @@
 <codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__settings__reader_8h" kindref="compound">class_settings_reader.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__logger_8h" kindref="compound">io/nmspc_logger.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;sstream&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight></codeline>
-<codeline lineno="9" refid="classclass__settings__reader_1a65edc64ccde3751915c265a4735b4afd" refkind="member"><highlight class="normal"><ref refid="classclass__settings__reader_1a155b1ac0cd7a8acf0f791c1f09973e7e" kindref="member">class_settings_reader::class_settings_reader</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>fs::path<sp/>&amp;file_path_,std::string<sp/>logName):<sp/>file_path(file_path_)<sp/>{</highlight></codeline>
-<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(logName,2,</highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/><sp/><ref refid="classclass__settings__reader_1a93f74976808279cc9bc3b18fc8d7bf24" kindref="member">find_input_file</ref>(<ref refid="classclass__settings__reader_1ac057132487786bb8138b9fa4a8aed1cb" kindref="member">file_path</ref>);</highlight></codeline>
-<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>std::ifstream<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>file;</highlight></codeline>
-<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>found_file.empty()){</highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>file.open(found_file.c_str());</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
-<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;critical(</highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>open<sp/>file<sp/>[<sp/>{}<sp/>]:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>found_file.string(),<sp/>std::string(ex.what())<sp/>);</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>open<sp/>file<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>found_file.string()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(ex.what()));</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="22"><highlight class="normal"></highlight></codeline>
-<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Load<sp/>the<sp/>file<sp/>into<sp/>memory</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(file.is_open())<sp/>{</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>file.clear();</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>file.seekg(0,<sp/>std::ios::beg);</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" kindref="member">file_string</ref><sp/>=<sp/>std::string<sp/>(<sp/>(std::istreambuf_iterator&lt;char&gt;(file)<sp/>),</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(std::istreambuf_iterator&lt;char&gt;()<sp/><sp/><sp/><sp/><sp/>));</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>file.close();</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Extract<sp/>the<sp/>parameters<sp/>and<sp/>generate<sp/>a<sp/>key-value<sp/>map</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>std::istringstream<sp/>file_stream<sp/>(<ref refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" kindref="member">file_string</ref>);</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>line;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(std::getline(file_stream,<sp/>line)){</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" kindref="member">is_parameterline</ref>(line)){</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Loading<sp/>line:<sp/>{}&quot;</highlight><highlight class="normal">,line);</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>param_key;</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>param_val;</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::istringstream<sp/>linestream(line);</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::getline(linestream,param_key,<sp/></highlight><highlight class="charliteral">&apos;=&apos;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::getline(linestream,param_val,<sp/><sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>param_val<sp/>=<sp/>param_val.substr(0,<sp/><ref refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" kindref="member">find_comment_character</ref>(param_val));</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" kindref="member">remove_spaces</ref>(param_key);</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" kindref="member">remove_spaces</ref>(param_val);</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::transform(param_key.begin(),<sp/>param_key.end(),<sp/>param_key.begin(),<sp/>::tolower);</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1aa62d791d80cc7eb22f662d70fdf7bef6" kindref="member">param_map</ref>[param_key]<sp/>=<sp/>param_val;</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Generate<sp/>a<sp/>parameter<sp/><sp/>key-value<sp/>map</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::vector&lt;std::istringstream&gt;<sp/>file_cache;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>for<sp/>(auto<sp/>&amp;<sp/>linestream:<sp/>file_cache){</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>param_key;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>param_val;</highlight></codeline>
-<codeline lineno="60"><highlight class="comment"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::getline(linestream,param_key,<sp/>&apos;=&apos;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::getline(linestream,param_val,<sp/><sp/>&apos;\n&apos;);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>param_val<sp/>=<sp/>param_val.substr(0,<sp/>find_comment_character(param_val));</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>remove_spaces(param_key);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>remove_spaces(param_val);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::transform(param_key.begin(),<sp/>param_key.end(),<sp/>param_key.begin(),<sp/>::tolower);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>param_map[param_key]<sp/>=<sp/>param_val;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">fs<sp/>=<sp/>tools::fs;</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="classclass__settings__reader_1a2732dcaa48774ee9557ecb2d724bd5e2" refkind="member"><highlight class="normal"><ref refid="classclass__settings__reader_1a155b1ac0cd7a8acf0f791c1f09973e7e" kindref="member">class_settings_reader::class_settings_reader</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>&amp;file_path_,std::string<sp/>logName):<sp/>file_path(file_path_)<sp/>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(logName,2,</highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/><sp/><ref refid="classclass__settings__reader_1afcf8a62845bd578536a9d90e5dabcebe" kindref="member">find_input_file</ref>(<ref refid="classclass__settings__reader_1a5beda5f031f97ab5eb48356107ffa5f3" kindref="member">file_path</ref>);</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>std::ifstream<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>file;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/>found_file.empty()){</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>file.open(found_file.c_str());</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal">(std::exception<sp/>&amp;ex){</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;critical(</highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>open<sp/>file<sp/>[<sp/>{}<sp/>]:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>found_file.string(),<sp/>std::string(ex.what())<sp/>);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>open<sp/>file<sp/>[<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>found_file.string()<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;]:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(ex.what()));</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Load<sp/>the<sp/>file<sp/>into<sp/>memory</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(file.is_open())<sp/>{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>file.clear();</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>file.seekg(0,<sp/>std::ios::beg);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" kindref="member">file_string</ref><sp/>=<sp/>std::string<sp/>(<sp/>(std::istreambuf_iterator&lt;char&gt;(file)<sp/>),</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(std::istreambuf_iterator&lt;char&gt;()<sp/><sp/><sp/><sp/><sp/>));</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>file.close();</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Extract<sp/>the<sp/>parameters<sp/>and<sp/>generate<sp/>a<sp/>key-value<sp/>map</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>std::istringstream<sp/>file_stream<sp/>(<ref refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" kindref="member">file_string</ref>);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>line;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(std::getline(file_stream,<sp/>line)){</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" kindref="member">is_parameterline</ref>(line)){</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Loading<sp/>line:<sp/>{}&quot;</highlight><highlight class="normal">,line);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>param_key;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>param_val;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::istringstream<sp/>linestream(line);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::getline(linestream,param_key,<sp/></highlight><highlight class="charliteral">&apos;=&apos;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::getline(linestream,param_val,<sp/><sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>param_val<sp/>=<sp/>param_val.substr(0,<sp/><ref refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" kindref="member">find_comment_character</ref>(param_val));</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" kindref="member">remove_spaces</ref>(param_key);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" kindref="member">remove_spaces</ref>(param_val);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::transform(param_key.begin(),<sp/>param_key.end(),<sp/>param_key.begin(),<sp/>::tolower);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1aa62d791d80cc7eb22f662d70fdf7bef6" kindref="member">param_map</ref>[param_key]<sp/>=<sp/>param_val;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Generate<sp/>a<sp/>parameter<sp/><sp/>key-value<sp/>map</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::vector&lt;std::istringstream&gt;<sp/>file_cache;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>for<sp/>(auto<sp/>&amp;<sp/>linestream:<sp/>file_cache){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>param_key;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>param_val;</highlight></codeline>
+<codeline lineno="62"><highlight class="comment"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::getline(linestream,param_key,<sp/>&apos;=&apos;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::getline(linestream,param_val,<sp/><sp/>&apos;\n&apos;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>param_val<sp/>=<sp/>param_val.substr(0,<sp/>find_comment_character(param_val));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>remove_spaces(param_key);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>remove_spaces(param_val);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::transform(param_key.begin(),<sp/>param_key.end(),<sp/>param_key.begin(),<sp/>::tolower);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>param_map[param_key]<sp/>=<sp/>param_val;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
-<codeline lineno="71" refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" refkind="member"><highlight class="normal">std::string<sp/><ref refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" kindref="member">class_settings_reader::get_input_file_as_string</ref>(){</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" kindref="member">file_string</ref>;</highlight></codeline>
-<codeline lineno="73"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"></highlight></codeline>
-<codeline lineno="75" refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" refkind="member"><highlight class="normal">std::string<sp/><ref refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" kindref="member">class_settings_reader::get_input_filename</ref>(){</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1ac057132487786bb8138b9fa4a8aed1cb" kindref="member">file_path</ref>.string();</highlight></codeline>
-<codeline lineno="77"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" refkind="member"><highlight class="normal">std::string<sp/><ref refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" kindref="member">class_settings_reader::get_input_file_as_string</ref>(){</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a1064aa52dff6b7d60c179dbd85df0382" kindref="member">file_string</ref>;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77" refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" refkind="member"><highlight class="normal">std::string<sp/><ref refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" kindref="member">class_settings_reader::get_input_filename</ref>(){</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a5beda5f031f97ab5eb48356107ffa5f3" kindref="member">file_path</ref>.string();</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="81" refid="classclass__settings__reader_1a5f20351bd6291364c36b1d7266b132b7" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a5f20351bd6291364c36b1d7266b132b7" kindref="member">class_settings_reader::check_if_input_file_exists</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>fs::path<sp/>&amp;path_to_file){</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(path_to_file.has_filename()){</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(path_to_file)){</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::ifstream<sp/>in(path_to_file.c_str());</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(in.is_open()){</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in.close();</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;File<sp/>does<sp/>not<sp/>exist:<sp/>{}&quot;</highlight><highlight class="normal">,path_to_file.string());</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Given<sp/>output_folder<sp/>does<sp/>not<sp/>point<sp/>to<sp/>a<sp/>file:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>path_to_file.string());</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="95"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"></highlight></codeline>
-<codeline lineno="97" refid="classclass__settings__reader_1a93f74976808279cc9bc3b18fc8d7bf24" refkind="member"><highlight class="normal">fs::path<sp/><ref refid="classclass__settings__reader_1a93f74976808279cc9bc3b18fc8d7bf24" kindref="member">class_settings_reader::find_input_file</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>fs::path<sp/>&amp;given_path)<sp/>{</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="classclass__settings__reader_1a7d5a5212ce07996e5da6f59dee20a0ee" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a7d5a5212ce07996e5da6f59dee20a0ee" kindref="member">class_settings_reader::check_if_input_file_exists</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>fs::path<sp/>&amp;path_to_file){</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(path_to_file.has_filename()){</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(path_to_file)){</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::ifstream<sp/>in(path_to_file.c_str());</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(in.is_open()){</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in.close();</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;File<sp/>does<sp/>not<sp/>exist:<sp/>{}&quot;</highlight><highlight class="normal">,path_to_file.string());</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Given<sp/>output_folder<sp/>does<sp/>not<sp/>point<sp/>to<sp/>a<sp/>file:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>path_to_file.string());</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Check<sp/>if<sp/>file<sp/>exists<sp/>in<sp/>the<sp/>given<sp/>path.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>fs::path<sp/>complete_path<sp/>=<sp/>fs::system_complete(given_path);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/>complete_path<sp/>=<sp/>fs::absolute(given_path);</highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(given_path)){</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>complete_path<sp/>=<sp/>fs::canonical(given_path);</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Checking<sp/>for<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,complete_path.string());</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__settings__reader_1a5f20351bd6291364c36b1d7266b132b7" kindref="member">check_if_input_file_exists</ref>(complete_path)){</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Found<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,fs::canonical(complete_path).string());</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::canonical(complete_path);</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"></highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Check<sp/>if<sp/>file<sp/>exists<sp/>in<sp/>the<sp/>given<sp/>path<sp/>(if<sp/>it<sp/>is<sp/>a<sp/>relative<sp/>path!),<sp/>relative<sp/>to<sp/>the<sp/>executable.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(given_path.is_relative())<sp/>{</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>complete_path<sp/>=<sp/>fs::absolute(fs::current_path()<sp/>/<sp/>given_path);</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Checking<sp/>for<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,complete_path.string());</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__settings__reader_1a5f20351bd6291364c36b1d7266b132b7" kindref="member">check_if_input_file_exists</ref>(complete_path))<sp/>{</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Found<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,fs::canonical(complete_path).string());</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::canonical(complete_path);</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"></highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Check<sp/>if<sp/>file<sp/>exists<sp/>in<sp/>current<sp/>directory</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>complete_path<sp/>=<sp/>fs::absolute(fs::current_path()/given_path.filename());</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Checking<sp/>for<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,complete_path.string());</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__settings__reader_1a5f20351bd6291364c36b1d7266b132b7" kindref="member">check_if_input_file_exists</ref>(complete_path)){</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Found<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,fs::canonical(complete_path).string());</highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::canonical(complete_path);</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Input<sp/>file<sp/>could<sp/>not<sp/>be<sp/>found:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string());</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::path();</highlight></codeline>
-<codeline lineno="135"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137" refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" kindref="member">class_settings_reader::remove_spaces</ref>(std::string<sp/>&amp;str){</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>str.erase(std::remove_if(str.begin(),<sp/>str.end(),<sp/>::isspace),<sp/>str.end());</highlight></codeline>
-<codeline lineno="139"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"></highlight></codeline>
-<codeline lineno="141" refid="classclass__settings__reader_1ae6cb87cc813ced19542e083fc4bb1c12" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1ae6cb87cc813ced19542e083fc4bb1c12" kindref="member">class_settings_reader::has_only_digits</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacesettings" kindref="compound">s</ref>){</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.find_first_not_of(<sp/></highlight><highlight class="stringliteral">&quot;+-0123456789&quot;</highlight><highlight class="normal"><sp/>)<sp/>==<sp/>std::string::npos;</highlight></codeline>
-<codeline lineno="143"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"></highlight></codeline>
-<codeline lineno="145" refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" kindref="member">class_settings_reader::is_parameterline</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacesettings" kindref="compound">s</ref>){</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.find(</highlight><highlight class="stringliteral">&quot;=&quot;</highlight><highlight class="normal">)<sp/>!=<sp/>std::string::npos;</highlight></codeline>
-<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"></highlight></codeline>
-<codeline lineno="149" refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" refkind="member"><highlight class="normal">std::string::size_type<sp/><ref refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" kindref="member">class_settings_reader::find_comment_character</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacesettings" kindref="compound">s</ref>){</highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>comment_symbols<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;//&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;/*&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;#&quot;</highlight><highlight class="normal">};</highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;sym<sp/>:<sp/>comment_symbols){</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(s.find(sym)<sp/>!=<sp/>std::string::npos){</highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.find(sym);</highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.npos;</highlight></codeline>
-<codeline lineno="157"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="classclass__settings__reader_1afcf8a62845bd578536a9d90e5dabcebe" refkind="member"><highlight class="normal">fs::path<sp/><ref refid="classclass__settings__reader_1afcf8a62845bd578536a9d90e5dabcebe" kindref="member">class_settings_reader::find_input_file</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>fs::path<sp/>&amp;given_path)<sp/>{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Check<sp/>if<sp/>file<sp/>exists<sp/>in<sp/>the<sp/>given<sp/>path.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>fs::path<sp/>complete_path<sp/>=<sp/>fs::system_complete(given_path);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>fs::path<sp/>complete_path<sp/>=<sp/>fs::absolute(given_path);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fs::exists(given_path)){</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>complete_path<sp/>=<sp/>fs::canonical(given_path);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Checking<sp/>for<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,complete_path.string());</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__settings__reader_1a7d5a5212ce07996e5da6f59dee20a0ee" kindref="member">check_if_input_file_exists</ref>(complete_path)){</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Found<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,fs::canonical(complete_path).string());</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::canonical(complete_path);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Check<sp/>if<sp/>file<sp/>exists<sp/>in<sp/>the<sp/>given<sp/>path<sp/>(if<sp/>it<sp/>is<sp/>a<sp/>relative<sp/>path!),<sp/>relative<sp/>to<sp/>the<sp/>executable.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(given_path.is_relative())<sp/>{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>complete_path<sp/>=<sp/>fs::absolute(fs::current_path()<sp/>/<sp/>given_path);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Checking<sp/>for<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,complete_path.string());</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__settings__reader_1a7d5a5212ce07996e5da6f59dee20a0ee" kindref="member">check_if_input_file_exists</ref>(complete_path))<sp/>{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Found<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,fs::canonical(complete_path).string());</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::canonical(complete_path);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Check<sp/>if<sp/>file<sp/>exists<sp/>in<sp/>current<sp/>directory</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>complete_path<sp/>=<sp/>fs::absolute(fs::current_path()/given_path.filename());</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Checking<sp/>for<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,complete_path.string());</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__settings__reader_1a7d5a5212ce07996e5da6f59dee20a0ee" kindref="member">check_if_input_file_exists</ref>(complete_path)){</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;info(</highlight><highlight class="stringliteral">&quot;Found<sp/>input<sp/>file:<sp/>[<sp/>{}<sp/>]<sp/>in<sp/>path:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string()<sp/>,fs::canonical(complete_path).string());</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::canonical(complete_path);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1ae008fa40b856cb9e0cfd122ebd112ba6" kindref="member">log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Input<sp/>file<sp/>could<sp/>not<sp/>be<sp/>found:<sp/>[<sp/>{}<sp/>]&quot;</highlight><highlight class="normal">,<sp/>given_path.string());</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__settings__reader_1a44e213c12d417be4de36fbdd601159e2" kindref="member">found_file</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>fs::path();</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139" refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a31ef05b9f4e6d6a484e40e58cc959ddb" kindref="member">class_settings_reader::remove_spaces</ref>(std::string<sp/>&amp;str){</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>str.erase(std::remove_if(str.begin(),<sp/>str.end(),<sp/>::isspace),<sp/>str.end());</highlight></codeline>
+<codeline lineno="141"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143" refid="classclass__settings__reader_1ae6cb87cc813ced19542e083fc4bb1c12" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1ae6cb87cc813ced19542e083fc4bb1c12" kindref="member">class_settings_reader::has_only_digits</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacesettings" kindref="compound">s</ref>){</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.find_first_not_of(<sp/></highlight><highlight class="stringliteral">&quot;+-0123456789&quot;</highlight><highlight class="normal"><sp/>)<sp/>==<sp/>std::string::npos;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__settings__reader_1a44382dfaf525d1d4212f1a39f5a64b80" kindref="member">class_settings_reader::is_parameterline</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacesettings" kindref="compound">s</ref>){</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.find(</highlight><highlight class="stringliteral">&quot;=&quot;</highlight><highlight class="normal">)<sp/>!=<sp/>std::string::npos;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight></codeline>
+<codeline lineno="151" refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" refkind="member"><highlight class="normal">std::string::size_type<sp/><ref refid="classclass__settings__reader_1a95a28404ef3809e3ebffde60b9921ca1" kindref="member">class_settings_reader::find_comment_character</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/><ref refid="namespacesettings" kindref="compound">s</ref>){</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>comment_symbols<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;//&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;/*&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;#&quot;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;sym<sp/>:<sp/>comment_symbols){</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(s.find(sym)<sp/>!=<sp/>std::string::npos){</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.find(sym);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>s.npos;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_settings_reader.cpp"/>
   </compounddef>

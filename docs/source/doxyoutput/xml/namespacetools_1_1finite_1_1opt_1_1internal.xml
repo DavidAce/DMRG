@@ -4,6 +4,7 @@
     <compoundname>tools::finite::opt::internal</compoundname>
     <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" prot="public">tools::finite::opt::internal::ceres_base_functor</innerclass>
     <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" prot="public">tools::finite::opt::internal::ceres_direct_functor</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor" prot="public">tools::finite::opt::internal::ceres_rosenbrock_functor</innerclass>
     <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" prot="public">tools::finite::opt::internal::ceres_subspace_functor</innerclass>
     <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" prot="public">tools::finite::opt::internal::EnumBase</innerclass>
     <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internal_1_1local__hamiltonians">tools::finite::opt::internal::local_hamiltonians</innernamespace>
@@ -94,7 +95,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="60" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="69" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="69" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a419a817e3df33efc2cd5b5db2fd04b43" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -108,7 +109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="62" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="71" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a2249f3765bcb5866af4926949fb36273" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -122,7 +123,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="63" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="72" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1aed9abe9539378a8b85014a980566781b" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -136,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="90" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="99" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="99" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a35ee857d14946312cdb143d4f94055b4" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -150,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="91" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="100" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="100" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a50890ed92dde9137470ada59dc2dfb60" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -164,7 +165,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="92" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="101" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="101" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5466c1b6fb9e1f57c103afa587b42f4b" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -178,7 +179,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="93" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="102" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="102" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1abe84b23d57f9096bfa7e5b8ae3bedc52" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -192,7 +193,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="94" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="103" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1ab60d12bdf772cfeb4f7914c049921a00" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -206,7 +207,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="95" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="104" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a7594979f90c385344d5c16bde4dd1c2b" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -220,7 +221,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="96" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="105" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="105" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1aa2028385e087c3451a181ea561d69358" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -234,7 +235,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="97" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="97" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="106" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="106" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacetools_1_1finite_1_1opt_1_1internal_1a2aad5071bb18a30cbf97a3c316d3c8c3" prot="public" static="no" mutable="no">
         <type>std::unique_ptr&lt; <ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref> &gt;</type>
@@ -248,7 +249,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="98" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="98" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="107" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="107" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -279,7 +280,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="17" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="26" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a340c941b950ada44c1f420facbb03126" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
@@ -304,7 +305,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="20" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="29" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a0abb0adb09b25c3dee510da447c09678" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
@@ -329,7 +330,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp" bodystart="15" bodyend="19"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp" bodystart="13" bodyend="17"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aeae2ef5c9bb0ae3feff554833673b753" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
@@ -358,7 +359,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="26" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="35" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a3a33e74e9df3aa34c3ceccfa589c1cf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
@@ -387,7 +388,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp" bodystart="327" bodyend="632"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp" bodystart="323" bodyend="629"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a2a93afd2f5904978f22caab056cded54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
@@ -408,7 +409,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="33" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="42" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aabae584c7a04a4a84e2dfa13a801340a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt;</type>
@@ -430,7 +431,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp" bodystart="11" bodyend="46"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp" bodystart="11" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a42ead97c9c959ca369fcb8193acf8f8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; class_state_finite::Scalar, 3 &gt; tools::finite::opt::internal::ceres_rosenbrock_optimization</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>ceres_rosenbrock_optimization</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.cpp" bodystart="9" bodyend="28"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aca0917316fdb1c25975f67000eb40f20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -452,7 +470,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="279" bodyend="283"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="279" bodyend="283"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1ad72bfa3915c398e56d24a3ed7523b47a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -474,7 +492,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="291" bodyend="295"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp" bodystart="291" bodyend="295"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5db98a373e6e4490cd8d6188135d668a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -496,7 +514,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="50" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="60" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a5e5f35b60b5bed6326c0267e707171c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -518,7 +536,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="52" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="62" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a021eb543fbbd22a97e6ac3b7576ad424" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -544,7 +562,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="54" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="64" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1ab2be6467cfa50f6980f0ec03c74e822e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -570,7 +588,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="56" column="1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="66" column="1"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aea0b5cf7e49905cefb8efed498ace3d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::vector&lt; int &gt;</type>
@@ -587,7 +605,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp" bodystart="24" bodyend="42"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp" bodystart="20" bodyend="38"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a87b9da9cd1ba3039fcc7259fa221073f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -609,7 +627,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="68" bodyend="68"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="77" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="77" bodyend="77"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1aa034824e2451be23c2e4026e76c07afb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -630,7 +648,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="69" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="141" bodyend="147"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="107" bodyend="113"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a8d74d849646a7145ba9f431f8848242b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -651,7 +669,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="148" bodyend="154"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="114" bodyend="120"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a812ad853671c4241ba557921938665a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -672,7 +690,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="71" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="158" bodyend="164"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="124" bodyend="130"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a79ce5fcab0cb78cc92f18b0d9a7e4b5c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -693,7 +711,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="165" bodyend="171"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="131" bodyend="137"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1af916802ba488155e10414012373ad01d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>std::pair&lt; double, double &gt;</type>
@@ -714,7 +732,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="175" bodyend="190"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="141" bodyend="156"/>
       </memberdef>
       <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1_1internal_1a58358f1ac4d7929a0c855269e2231253" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -727,7 +745,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="92" bodyend="102"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="98" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="94" bodyend="104"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

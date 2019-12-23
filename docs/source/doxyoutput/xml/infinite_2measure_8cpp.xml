@@ -12,365 +12,365 @@
     <includes refid="class__eigsolver_8h" local="no">math/class_eigsolver.h</includes>
     <includes refid="class__svd__wrapper_8h" local="no">math/class_svd_wrapper.h</includes>
     <incdepgraph>
-      <node id="2849">
+      <node id="3105">
         <label>Eigen/SparseLU</label>
       </node>
-      <node id="2808">
+      <node id="3064">
         <label>list</label>
       </node>
-      <node id="2850">
+      <node id="3106">
         <label>math/class_svd_wrapper.h</label>
         <link refid="class__svd__wrapper_8h"/>
-        <childnode refid="2822" relation="include">
+        <childnode refid="3078" relation="include">
         </childnode>
-        <childnode refid="2826" relation="include">
+        <childnode refid="3082" relation="include">
         </childnode>
       </node>
-      <node id="2826">
+      <node id="3082">
         <label>iomanip</label>
       </node>
-      <node id="2847">
+      <node id="3103">
         <label>Eigen/LU</label>
       </node>
-      <node id="2825">
+      <node id="3081">
         <label>iterator</label>
       </node>
-      <node id="2803">
+      <node id="3059">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
         <link refid="infinite_2measure_8cpp"/>
-        <childnode refid="2804" relation="include">
+        <childnode refid="3060" relation="include">
         </childnode>
-        <childnode refid="2820" relation="include">
+        <childnode refid="3076" relation="include">
         </childnode>
-        <childnode refid="2836" relation="include">
+        <childnode refid="3092" relation="include">
         </childnode>
-        <childnode refid="2837" relation="include">
+        <childnode refid="3093" relation="include">
         </childnode>
-        <childnode refid="2838" relation="include">
+        <childnode refid="3094" relation="include">
         </childnode>
-        <childnode refid="2840" relation="include">
+        <childnode refid="3096" relation="include">
         </childnode>
-        <childnode refid="2841" relation="include">
+        <childnode refid="3097" relation="include">
         </childnode>
-        <childnode refid="2842" relation="include">
+        <childnode refid="3098" relation="include">
         </childnode>
-        <childnode refid="2850" relation="include">
+        <childnode refid="3106" relation="include">
         </childnode>
       </node>
-      <node id="2827">
+      <node id="3083">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="2828" relation="include">
+        <childnode refid="3084" relation="include">
         </childnode>
-        <childnode refid="2818" relation="include">
+        <childnode refid="3074" relation="include">
         </childnode>
-        <childnode refid="2819" relation="include">
+        <childnode refid="3075" relation="include">
         </childnode>
       </node>
-      <node id="2818">
+      <node id="3074">
         <label>Eigen/Core</label>
       </node>
-      <node id="2806">
+      <node id="3062">
         <label>string</label>
       </node>
-      <node id="2813">
+      <node id="3069">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="2814" relation="include">
+        <childnode refid="3070" relation="include">
         </childnode>
-        <childnode refid="2815" relation="include">
+        <childnode refid="3071" relation="include">
         </childnode>
       </node>
-      <node id="2810">
+      <node id="3066">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="2811" relation="include">
+        <childnode refid="3067" relation="include">
         </childnode>
-        <childnode refid="2812" relation="include">
+        <childnode refid="3068" relation="include">
         </childnode>
       </node>
-      <node id="2831">
+      <node id="3087">
         <label>map</label>
       </node>
-      <node id="2828">
+      <node id="3084">
         <label>experimental/type_traits</label>
       </node>
-      <node id="2804">
+      <node id="3060">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="2805" relation="include">
+        <childnode refid="3061" relation="include">
         </childnode>
-        <childnode refid="2806" relation="include">
+        <childnode refid="3062" relation="include">
         </childnode>
-        <childnode refid="2807" relation="include">
+        <childnode refid="3063" relation="include">
         </childnode>
-        <childnode refid="2808" relation="include">
+        <childnode refid="3064" relation="include">
         </childnode>
-        <childnode refid="2809" relation="include">
+        <childnode refid="3065" relation="include">
         </childnode>
-        <childnode refid="2810" relation="include">
+        <childnode refid="3066" relation="include">
         </childnode>
-        <childnode refid="2813" relation="include">
+        <childnode refid="3069" relation="include">
         </childnode>
-        <childnode refid="2816" relation="include">
+        <childnode refid="3072" relation="include">
         </childnode>
-        <childnode refid="2818" relation="include">
+        <childnode refid="3074" relation="include">
         </childnode>
-        <childnode refid="2819" relation="include">
+        <childnode refid="3075" relation="include">
         </childnode>
       </node>
-      <node id="2819">
+      <node id="3075">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="2843">
+      <node id="3099">
         <label>math/arpack_extra/arpackpp_solver.h</label>
         <link refid="arpackpp__solver_8h"/>
-        <childnode refid="2809" relation="include">
+        <childnode refid="3065" relation="include">
         </childnode>
-        <childnode refid="2813" relation="include">
+        <childnode refid="3069" relation="include">
         </childnode>
-        <childnode refid="2829" relation="include">
+        <childnode refid="3085" relation="include">
         </childnode>
-        <childnode refid="2807" relation="include">
+        <childnode refid="3063" relation="include">
         </childnode>
       </node>
-      <node id="2845">
+      <node id="3101">
         <label>matrix_product_dense.h</label>
         <link refid="matrix__product__dense_8h"/>
-        <childnode refid="2829" relation="include">
+        <childnode refid="3085" relation="include">
         </childnode>
-        <childnode refid="2813" relation="include">
+        <childnode refid="3069" relation="include">
         </childnode>
-        <childnode refid="2815" relation="include">
+        <childnode refid="3071" relation="include">
         </childnode>
-        <childnode refid="2826" relation="include">
+        <childnode refid="3082" relation="include">
         </childnode>
-        <childnode refid="2818" relation="include">
+        <childnode refid="3074" relation="include">
         </childnode>
-        <childnode refid="2846" relation="include">
+        <childnode refid="3102" relation="include">
         </childnode>
-        <childnode refid="2847" relation="include">
+        <childnode refid="3103" relation="include">
         </childnode>
       </node>
-      <node id="2838">
+      <node id="3094">
         <label>state/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="2805" relation="include">
+        <childnode refid="3061" relation="include">
         </childnode>
-        <childnode refid="2822" relation="include">
+        <childnode refid="3078" relation="include">
         </childnode>
-        <childnode refid="2839" relation="include">
+        <childnode refid="3095" relation="include">
         </childnode>
       </node>
-      <node id="2812">
+      <node id="3068">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="2840">
+      <node id="3096">
         <label>model/class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="2805" relation="include">
+        <childnode refid="3061" relation="include">
         </childnode>
-        <childnode refid="2819" relation="include">
+        <childnode refid="3075" relation="include">
         </childnode>
-        <childnode refid="2810" relation="include">
+        <childnode refid="3066" relation="include">
         </childnode>
       </node>
-      <node id="2833">
+      <node id="3089">
         <label>spdlog/spdlog.h</label>
       </node>
-      <node id="2824">
+      <node id="3080">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="2835">
+      <node id="3091">
         <label>simulation/enums.h</label>
         <link refid="enums_8h"/>
       </node>
-      <node id="2816">
+      <node id="3072">
         <label>tools/finite/opt-internals/enum_classes.h</label>
         <link refid="enum__classes_8h"/>
-        <childnode refid="2815" relation="include">
+        <childnode refid="3071" relation="include">
         </childnode>
-        <childnode refid="2817" relation="include">
+        <childnode refid="3073" relation="include">
         </childnode>
       </node>
-      <node id="2811">
+      <node id="3067">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="2836">
+      <node id="3092">
         <label>state/class_mps_site.h</label>
         <link refid="class__mps__site_8h"/>
-        <childnode refid="2807" relation="include">
+        <childnode refid="3063" relation="include">
         </childnode>
-        <childnode refid="2821" relation="include">
+        <childnode refid="3077" relation="include">
         </childnode>
-        <childnode refid="2819" relation="include">
+        <childnode refid="3075" relation="include">
         </childnode>
       </node>
-      <node id="2823">
+      <node id="3079">
         <label>general/nmspc_omp.h</label>
         <link refid="nmspc__omp_8h"/>
-        <childnode refid="2819" relation="include">
+        <childnode refid="3075" relation="include">
         </childnode>
       </node>
-      <node id="2820">
+      <node id="3076">
         <label>state/class_state_infinite.h</label>
         <link refid="class__state__infinite_8h"/>
-        <childnode refid="2805" relation="include">
+        <childnode refid="3061" relation="include">
         </childnode>
-        <childnode refid="2821" relation="include">
+        <childnode refid="3077" relation="include">
         </childnode>
-        <childnode refid="2822" relation="include">
+        <childnode refid="3078" relation="include">
         </childnode>
-        <childnode refid="2813" relation="include">
+        <childnode refid="3069" relation="include">
         </childnode>
-        <childnode refid="2829" relation="include">
+        <childnode refid="3085" relation="include">
         </childnode>
-        <childnode refid="2834" relation="include">
+        <childnode refid="3090" relation="include">
         </childnode>
-        <childnode refid="2810" relation="include">
+        <childnode refid="3066" relation="include">
         </childnode>
       </node>
-      <node id="2821">
+      <node id="3077">
         <label>optional</label>
       </node>
-      <node id="2809">
+      <node id="3065">
         <label>vector</label>
       </node>
-      <node id="2839">
+      <node id="3095">
         <label>spdlog/fmt/fmt.h</label>
       </node>
-      <node id="2846">
+      <node id="3102">
         <label>complex.h</label>
       </node>
-      <node id="2832">
+      <node id="3088">
         <label>spdlog/sinks/stdout_color_sinks.h</label>
       </node>
-      <node id="2830">
+      <node id="3086">
         <label>array</label>
       </node>
-      <node id="2817">
+      <node id="3073">
         <label>sstream</label>
       </node>
-      <node id="2848">
+      <node id="3104">
         <label>matrix_product_sparse.h</label>
         <link refid="matrix__product__sparse_8h"/>
-        <childnode refid="2829" relation="include">
+        <childnode refid="3085" relation="include">
         </childnode>
-        <childnode refid="2813" relation="include">
+        <childnode refid="3069" relation="include">
         </childnode>
-        <childnode refid="2815" relation="include">
+        <childnode refid="3071" relation="include">
         </childnode>
-        <childnode refid="2826" relation="include">
+        <childnode refid="3082" relation="include">
         </childnode>
-        <childnode refid="2818" relation="include">
+        <childnode refid="3074" relation="include">
         </childnode>
-        <childnode refid="2824" relation="include">
+        <childnode refid="3080" relation="include">
         </childnode>
-        <childnode refid="2849" relation="include">
+        <childnode refid="3105" relation="include">
         </childnode>
       </node>
-      <node id="2837">
+      <node id="3093">
         <label>state/class_mps_2site.h</label>
         <link refid="class__mps__2site_8h"/>
-        <childnode refid="2805" relation="include">
+        <childnode refid="3061" relation="include">
         </childnode>
-        <childnode refid="2822" relation="include">
+        <childnode refid="3078" relation="include">
         </childnode>
       </node>
-      <node id="2844">
+      <node id="3100">
         <label>math/arpack_extra/matrix_recast.h</label>
         <link refid="matrix__recast_8h"/>
-        <childnode refid="2807" relation="include">
+        <childnode refid="3063" relation="include">
         </childnode>
-        <childnode refid="2809" relation="include">
+        <childnode refid="3065" relation="include">
         </childnode>
-        <childnode refid="2829" relation="include">
+        <childnode refid="3085" relation="include">
         </childnode>
-        <childnode refid="2845" relation="include">
+        <childnode refid="3101" relation="include">
         </childnode>
-        <childnode refid="2848" relation="include">
+        <childnode refid="3104" relation="include">
         </childnode>
       </node>
-      <node id="2815">
+      <node id="3071">
         <label>iostream</label>
       </node>
-      <node id="2829">
+      <node id="3085">
         <label>math/nmspc_eigutils.h</label>
         <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="2815" relation="include">
+        <childnode refid="3071" relation="include">
         </childnode>
-        <childnode refid="2830" relation="include">
+        <childnode refid="3086" relation="include">
         </childnode>
-        <childnode refid="2831" relation="include">
+        <childnode refid="3087" relation="include">
         </childnode>
-        <childnode refid="2807" relation="include">
+        <childnode refid="3063" relation="include">
         </childnode>
-        <childnode refid="2809" relation="include">
+        <childnode refid="3065" relation="include">
         </childnode>
-        <childnode refid="2832" relation="include">
+        <childnode refid="3088" relation="include">
         </childnode>
-        <childnode refid="2833" relation="include">
+        <childnode refid="3089" relation="include">
         </childnode>
       </node>
-      <node id="2814">
+      <node id="3070">
         <label>chrono</label>
       </node>
-      <node id="2842">
+      <node id="3098">
         <label>math/class_eigsolver.h</label>
         <link refid="class__eigsolver_8h"/>
-        <childnode refid="2843" relation="include">
+        <childnode refid="3099" relation="include">
         </childnode>
-        <childnode refid="2844" relation="include">
+        <childnode refid="3100" relation="include">
         </childnode>
-        <childnode refid="2829" relation="include">
+        <childnode refid="3085" relation="include">
         </childnode>
       </node>
-      <node id="2841">
+      <node id="3097">
         <label>general/nmspc_quantum_mechanics.h</label>
         <link refid="nmspc__quantum__mechanics_8h"/>
-        <childnode refid="2818" relation="include">
+        <childnode refid="3074" relation="include">
         </childnode>
-        <childnode refid="2819" relation="include">
+        <childnode refid="3075" relation="include">
         </childnode>
-        <childnode refid="2807" relation="include">
+        <childnode refid="3063" relation="include">
         </childnode>
-        <childnode refid="2809" relation="include">
+        <childnode refid="3065" relation="include">
         </childnode>
       </node>
-      <node id="2807">
+      <node id="3063">
         <label>complex</label>
       </node>
-      <node id="2834">
+      <node id="3090">
         <label>simulation/nmspc_settings.h</label>
         <link refid="nmspc__settings_8h"/>
-        <childnode refid="2806" relation="include">
+        <childnode refid="3062" relation="include">
         </childnode>
-        <childnode refid="2809" relation="include">
+        <childnode refid="3065" relation="include">
         </childnode>
-        <childnode refid="2835" relation="include">
+        <childnode refid="3091" relation="include">
         </childnode>
       </node>
-      <node id="2822">
+      <node id="3078">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="2823" relation="include">
+        <childnode refid="3079" relation="include">
         </childnode>
-        <childnode refid="2818" relation="include">
+        <childnode refid="3074" relation="include">
         </childnode>
-        <childnode refid="2824" relation="include">
+        <childnode refid="3080" relation="include">
         </childnode>
-        <childnode refid="2819" relation="include">
+        <childnode refid="3075" relation="include">
         </childnode>
-        <childnode refid="2825" relation="include">
+        <childnode refid="3081" relation="include">
         </childnode>
-        <childnode refid="2815" relation="include">
+        <childnode refid="3071" relation="include">
         </childnode>
-        <childnode refid="2826" relation="include">
+        <childnode refid="3082" relation="include">
         </childnode>
-        <childnode refid="2827" relation="include">
+        <childnode refid="3083" relation="include">
         </childnode>
       </node>
-      <node id="2805">
+      <node id="3061">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -837,7 +837,7 @@
 <codeline lineno="438"><highlight class="normal"></highlight></codeline>
 <codeline lineno="439" refid="namespacetools_1_1infinite_1_1measure_1a4a0012d7085f261239c956a8be85e813" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1measure_1a1c1006d378e8eaef060bab7d68340e53" kindref="member">tools::infinite::measure::energy_mpo</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>){</highlight></codeline>
 <codeline lineno="440"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Measuring<sp/>energy<sp/>mpo<sp/>from<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="441"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a3efd01089ce7b4d9ba9d61270d55fb71" kindref="member">tools::common::profile::t_ene_mpo</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="441"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
 <codeline lineno="442"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,<sp/>0&gt;<sp/><sp/>E<sp/>=</highlight></codeline>
 <codeline lineno="443"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a077ed4aed07939f87e25afdea2b3fe16" kindref="member">Lblock</ref>-&gt;block</highlight></codeline>
 <codeline lineno="444"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(theta,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{1}))</highlight></codeline>
@@ -850,7 +850,7 @@
 <codeline lineno="451"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Energy<sp/>has<sp/>an<sp/>imaginary<sp/>part:<sp/>&quot;<sp/>+<sp/>std::to_string(std::real(E(0)))<sp/>+<sp/>&quot;<sp/>+<sp/>i<sp/>&quot;<sp/>+<sp/>std::to_string(std::imag(E(0))));</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="452"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="453"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(abs(imag(E(0)))<sp/>&lt;<sp/>1e-10<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Energy<sp/>has<sp/>an<sp/>imaginary<sp/>part&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="454"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a3efd01089ce7b4d9ba9d61270d55fb71" kindref="member">tools::common::profile::t_ene_mpo</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="454"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
 <codeline lineno="455"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::real(E(0))<sp/>;</highlight></codeline>
 <codeline lineno="456"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="457"><highlight class="normal"></highlight></codeline>
@@ -948,7 +948,7 @@
 <codeline lineno="549" refid="namespacetools_1_1infinite_1_1measure_1af8594974f93ea1285297c0e814ab2dcb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1measure_1af8594974f93ea1285297c0e814ab2dcb" kindref="member">tools::infinite::measure::energy_variance_mpo</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>&amp;<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>&amp;<ref refid="namespacetools_1_1infinite_1_1measure_1a1c1006d378e8eaef060bab7d68340e53" kindref="member">energy_mpo</ref>)<sp/>{</highlight></codeline>
 <codeline lineno="550"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__infinite_1ab0a0427aeedae4c985ccac78ba125578" kindref="member">sim_type</ref><sp/>==<sp/><ref refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921a0bb0414b61270ee9c22f21b2f93b8f0f" kindref="member">SimulationType::iTEBD</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::numeric_limits&lt;double&gt;::quiet_NaN();}</highlight></codeline>
 <codeline lineno="551"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Measuring<sp/>energy<sp/>variance<sp/>mpo<sp/>from<sp/>state&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="552"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a92761da2df9560368517c1572bd86abf" kindref="member">tools::common::profile::t_var_mpo</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="552"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
 <codeline lineno="553"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,<sp/>0&gt;<sp/>H2<sp/>=</highlight></codeline>
 <codeline lineno="554"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1ab7dc738725acc7cc2b3b5f68d6d7b442" kindref="member">Lblock2</ref>-&gt;block</highlight></codeline>
 <codeline lineno="555"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0}<sp/><sp/>,{1}))</highlight></codeline>
@@ -958,8 +958,8 @@
 <codeline lineno="559"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__infinite_1a32291bdbb5c48c2010902e017ac2ceed" kindref="member">HB</ref>-&gt;MPO(),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({4,3},{0,2}))</highlight></codeline>
 <codeline lineno="560"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>.conjugate()<sp/><sp/>,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,3,5},{1,0,2}))</highlight></codeline>
 <codeline lineno="561"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__infinite_1a118c4de180bbf69d18182f8aae819b98" kindref="member">Rblock2</ref>-&gt;block,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,3,1,2},{0,1,2,3}));</highlight></codeline>
-<codeline lineno="562"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a92761da2df9560368517c1572bd86abf" kindref="member">tools::common::profile::t_var_mpo</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
-<codeline lineno="563"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(abs(imag(H2(0)))<sp/>&gt;<sp/>1e-10<sp/>){</highlight></codeline>
+<codeline lineno="562"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="563"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(std::imag(H2(0)))<sp/>&gt;<sp/>1e-10<sp/>){</highlight></codeline>
 <codeline lineno="564"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;H2<sp/>has<sp/>an<sp/>imaginary<sp/>part:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(std::real(H2(0)))<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;<sp/>+<sp/>i<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(std::imag(H2(0))));</highlight></codeline>
 <codeline lineno="565"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="566"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::abs(H2(0)<sp/>-<sp/>energy_mpo*energy_mpo);</highlight></codeline>

@@ -154,13 +154,13 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="363">
+      <node id="374">
         <label>EnumClass</label>
       </node>
-      <node id="362">
+      <node id="373">
         <label>tools::finite::opt::internal::EnumBase&lt; EnumClass &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
-        <childnode refid="363" relation="usage">
+        <childnode refid="374" relation="usage">
           <edgelabel>option</edgelabel>
         </childnode>
       </node>

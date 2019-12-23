@@ -24,7 +24,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="138" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="99" bodyend="128"/>
-        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="375">tools::common::profile::t_ene</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="385">tools::common::profile::t_ene</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
@@ -90,9 +90,9 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="141" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="147" bodyend="235"/>
-        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="376">tools::common::profile::t_var</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="386">tools::common::profile::t_var</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
-        <references refid="class_o_m_p_1a0f81be91c24a8f9abc4dc1f2fff1feae" compoundref="nmspc__omp_8h" startline="28" endline="30">OMP::OMP</references>
+        <references refid="class_o_m_p_1a0f81be91c24a8f9abc4dc1f2fff1feae" compoundref="nmspc__omp_8h" startline="33" endline="35">OMP::OMP</references>
         <references refid="namespacesettings_1_1threading_1ac01485bfd26c27921bfc55828e1e6dab" compoundref="nmspc__settings_8h" startline="30">settings::threading::num_threads_eigen</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
         <references refid="classclass__state__finite_1ae9674e542cf36b0b22d4d85abf0b733b" compoundref="class__state__finite_8cpp" startline="335" endline="340">class_state_finite::isReduced</references>
@@ -137,7 +137,7 @@
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="143" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="244" bodyend="252"/>
         <references refid="namespacetools_1_1finite_1_1measure_1af68ec1bfec44e2ebd09751dbcc46439b" compoundref="finite_2measure_8cpp" startline="178" endline="193">tools::finite::measure::energy</references>
         <references refid="namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b" compoundref="finite_2measure_8cpp" startline="310" endline="348">tools::finite::measure::mps_wavefn</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="375">tools::common::profile::t_ene</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="385">tools::common::profile::t_ene</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>
@@ -178,7 +178,7 @@
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="145" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp" bodystart="263" bodyend="272"/>
         <references refid="namespacetools_1_1finite_1_1measure_1aaf6b94743b51434a613712914ee3d8a0" compoundref="finite_2measure_8cpp" startline="205" endline="219">tools::finite::measure::energy_variance</references>
         <references refid="namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b" compoundref="finite_2measure_8cpp" startline="310" endline="348">tools::finite::measure::mps_wavefn</references>
-        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="376">tools::common::profile::t_var</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="386">tools::common::profile::t_var</references>
         <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
         <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
       </memberdef>

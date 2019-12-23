@@ -29,8 +29,6 @@ Includes
 --------
 
 
-- ``filesystem``
-
 - ``io/table_types.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_io_table_types.h`)
 
 - ``memory``

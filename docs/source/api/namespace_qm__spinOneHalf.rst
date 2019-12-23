@@ -25,9 +25,9 @@ Variables
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a4a5ef724088c97b34f5f3e155d744bfd`
 
-- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63`
-
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c`
+
+- :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63`
 
 - :ref:`exhale_variable_namespaceqm_1_1spin_one_half_1a108205fa9b3f65edcb8baca98edd5925`
 

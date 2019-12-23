@@ -17,13 +17,13 @@ Functions
 ---------
 
 
-- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c`
-
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a722d9206b6ee1fcdc509586c0f5c2afd`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1ac8d4282b81c3d70eb3741733c44ea678`
 
 - :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1a082052a5b98f556e373c29f2c0770e0a`
+
+- :ref:`exhale_function_namespacetools_1_1finite_1_1opt_1_1internal_1_1reports_1aa8e95624c729e891a1ff9c755a26446c`
 
 
 Typedefs

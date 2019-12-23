@@ -21,7 +21,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="15" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="13" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ae6a1bb8d850f369b32ae87e0b9fec44c" prot="private" static="no">
         <type>Eigen::Matrix&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="16" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="14" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -49,7 +49,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="18" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="15" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a23db6a16a38dbb357b190e32859e60a4" prot="private" static="no" mutable="no">
         <type>const Eigen::VectorXd &amp;</type>
@@ -62,7 +62,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="19" bodyend="-1"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="16" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -93,14 +93,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp" bodystart="11" bodyend="27"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp" bodystart="10" bodyend="26"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab11183279b126fea1dc68437c4adab80" compoundref="ceres__subspace__functor_8cpp" startline="10" endline="26">tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::ceres_subspace_functor</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" compoundref="opt_8h" startline="114">tools::finite::opt::internal::ceres_base_functor::energy_reduced</references>
+        <references refid="classclass__state__finite_1af5765949c5a515d45526b4c266a41dd2" compoundref="class__state__finite_8cpp" startline="343" endline="345">class_state_finite::get_energy_reduced</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" compoundref="opt_8h" startline="129">tools::finite::opt::internal::ceres_base_functor::num_parameters</references>
       </memberdef>
-      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab5270f12503bb4dbea44929f49d487a6" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a6fef56e83a33caecd537f197194b2e33" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
         <type>bool</type>
         <definition>bool tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;::Evaluate</definition>
-        <argsstring>(const double *v_double_double, double *fx, double *grad_double_double) const override</argsstring>
+        <argsstring>(const double *v_double_double, double *fx, double *grad_double_double) const final</argsstring>
         <name>Evaluate</name>
-        <reimplements refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a5dc23b153b0f3325e5baed46cab730b4">Evaluate</reimplements>
         <param>
           <type>const double *</type>
           <declname>v_double_double</declname>
@@ -119,7 +122,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp" bodystart="32" bodyend="115"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp" bodystart="31" bodyend="114"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" compoundref="ceres__base_8cpp" startline="39" endline="39">tools::finite::opt::internal::ceres_base_functor::NumParameters</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" compoundref="opt_8h" startline="125">tools::finite::opt::internal::ceres_base_functor::norm</references>
+        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" compoundref="opt_8h" startline="126">tools::finite::opt::internal::ceres_base_functor::counter</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" compoundref="opt_8h" startline="113">tools::finite::opt::internal::ceres_base_functor::energy</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" compoundref="opt_8h" startline="114">tools::finite::opt::internal::ceres_base_functor::energy_reduced</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" compoundref="opt_8h" startline="127">tools::finite::opt::internal::ceres_base_functor::length</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" compoundref="opt_8h" startline="112">tools::finite::opt::internal::ceres_base_functor::variance</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" compoundref="opt_8h" startline="124">tools::finite::opt::internal::ceres_base_functor::norm_offset</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -127,47 +139,47 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="29">
+      <node id="35">
         <label>tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor"/>
-        <childnode refid="30" relation="public-inheritance">
+        <childnode refid="36" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="30">
+      <node id="36">
         <label>tools::finite::opt::internal::ceres_base_functor</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor"/>
-        <childnode refid="31" relation="public-inheritance">
+        <childnode refid="37" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="31">
-        <label>ceres::FirstOrderFunction</label>
+      <node id="37">
+        <label>FirstOrderFunction</label>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="35">
+      <node id="41">
         <label>OMP</label>
         <link refid="class_o_m_p"/>
       </node>
-      <node id="32">
+      <node id="38">
         <label>tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor"/>
-        <childnode refid="33" relation="public-inheritance">
+        <childnode refid="39" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="33">
+      <node id="39">
         <label>tools::finite::opt::internal::ceres_base_functor</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor"/>
-        <childnode refid="34" relation="public-inheritance">
+        <childnode refid="40" relation="public-inheritance">
         </childnode>
-        <childnode refid="35" relation="usage">
+        <childnode refid="41" relation="usage">
           <edgelabel>omp</edgelabel>
         </childnode>
       </node>
-      <node id="34">
-        <label>ceres::FirstOrderFunction</label>
+      <node id="40">
+        <label>FirstOrderFunction</label>
       </node>
     </collaborationgraph>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="13" bodyend="29"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" line="11" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h" bodystart="11" bodyend="25"/>
     <listofallmembers>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a0f438c834a7a3bbf34ac1e6b54ba89f5" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>ceres_base_functor</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab11183279b126fea1dc68437c4adab80" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>ceres_subspace_functor</name></member>
@@ -184,7 +196,7 @@
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1acc91cc97f47890958cdb0d0dc020369a" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_target_dens</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a282a6e155e6f8a24dbad354d3b22f7cc" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_upper_bound</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1b8c8a8b8ec48066ffa648aba869b67e" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>energy_window</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab5270f12503bb4dbea44929f49d487a6" prot="public" virt="virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>Evaluate</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a6fef56e83a33caecd537f197194b2e33" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>Evaluate</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>get_count</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>get_energy</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>get_norm</name></member>
@@ -197,7 +209,7 @@
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>norm</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>norm_offset</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>num_parameters</name></member>
-      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a07e5673c435676a4c0a93c35c29e39e5" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>NumParameters</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>NumParameters</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>omp</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>variance</name></member>
       <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ae6a1bb8d850f369b32ae87e0b9fec44c" prot="private" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_subspace_functor</scope><name>VectorType</name></member>

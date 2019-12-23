@@ -29,14 +29,6 @@ Includes
 --------
 
 
-- ``algorithm`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.cpp`)
-
-- ``arpack++/arscomp.h``
-
-- ``arpack++/arsnsym.h``
-
-- ``arpack++/arssym.h``
-
 - ``arpackpp_solver.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_arpack_extra_arpackpp_solver.h`)
 
 - ``general/nmspc_type_check.h`` (:ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_type_check.h`)

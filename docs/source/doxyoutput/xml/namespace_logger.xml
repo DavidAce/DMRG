@@ -18,7 +18,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="9" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="10" bodyend="14"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="10" bodyend="14"/>
       </memberdef>
       <memberdef kind="function" id="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -35,7 +35,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="10" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="16" bodyend="20"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="16" bodyend="20"/>
       </memberdef>
       <memberdef kind="function" id="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -56,7 +56,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="11" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="22" bodyend="30"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="22" bodyend="30"/>
       </memberdef>
       <memberdef kind="function" id="namespace_logger_1a28a08ace407590591117c1ce9eb1536d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>size_t</type>
@@ -73,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="34" bodyend="36"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="34" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -104,7 +104,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="40" bodyend="51"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="40" bodyend="51"/>
         <references refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" compoundref="nmspc__logger_8cpp" startline="10" endline="14">enableTimeStamp</references>
         <references refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" compoundref="nmspc__logger_8cpp" startline="16" endline="20">disableTimeStamp</references>
         <references refid="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" compoundref="nmspc__logger_8cpp" startline="22" endline="30">setLogLevel</references>
@@ -134,7 +134,10 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="54" bodyend="66"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.cpp" bodystart="54" bodyend="66"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1ab424a1ce754abbd02e0f70ee216386ce" compoundref="nmspc__eigutils_8h" startline="206" endline="210">eigutils::eigLogger::enableTimeStamp</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">eigutils::eigLogger::log</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1a283e8a93ceaaec1515e70a46abe33994" compoundref="nmspc__eigutils_8h" startline="211" endline="215">eigutils::eigLogger::disableTimeStamp</references>
         <references refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" compoundref="nmspc__eigutils_8h" startline="217" endline="225">eigutils::eigLogger::setLogLevel</references>
         <references refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" compoundref="nmspc__logger_8cpp" startline="10" endline="14">enableTimeStamp</references>
         <references refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" compoundref="nmspc__logger_8cpp" startline="16" endline="20">disableTimeStamp</references>
@@ -145,6 +148,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="8" column="1"/>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/nmspc_logger.h" line="13" column="1"/>
   </compounddef>
 </doxygen>

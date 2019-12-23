@@ -48,8 +48,6 @@ Namespaces
 ----------
 
 
-- :ref:`namespace_tools__finite__opt`
-
 - :ref:`namespace_tools__finite__opt__internal`
 
 

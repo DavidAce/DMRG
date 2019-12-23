@@ -13,174 +13,49 @@
     <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</includedby>
     <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</includedby>
     <incdepgraph>
-      <node id="1364">
+      <node id="1374">
         <label>Eigen/SparseLU</label>
       </node>
-      <node id="1358">
+      <node id="1368">
         <label>iomanip</label>
       </node>
-      <node id="1361">
+      <node id="1371">
         <label>Eigen/LU</label>
       </node>
-      <node id="1359">
+      <node id="1369">
         <label>Eigen/Core</label>
       </node>
-      <node id="1347">
+      <node id="1357">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="1348" relation="include">
-        </childnode>
-        <childnode refid="1349" relation="include">
-        </childnode>
-      </node>
-      <node id="1352">
-        <label>map</label>
-      </node>
-      <node id="1345">
-        <label>math/arpack_extra/arpackpp_solver.h</label>
-        <link refid="arpackpp__solver_8h"/>
-        <childnode refid="1346" relation="include">
-        </childnode>
-        <childnode refid="1347" relation="include">
-        </childnode>
-        <childnode refid="1350" relation="include">
-        </childnode>
-        <childnode refid="1353" relation="include">
-        </childnode>
-      </node>
-      <node id="1357">
-        <label>matrix_product_dense.h</label>
-        <link refid="matrix__product__dense_8h"/>
-        <childnode refid="1350" relation="include">
-        </childnode>
-        <childnode refid="1347" relation="include">
-        </childnode>
-        <childnode refid="1349" relation="include">
-        </childnode>
         <childnode refid="1358" relation="include">
         </childnode>
         <childnode refid="1359" relation="include">
         </childnode>
-        <childnode refid="1360" relation="include">
-        </childnode>
-        <childnode refid="1361" relation="include">
-        </childnode>
-      </node>
-      <node id="1355">
-        <label>spdlog/spdlog.h</label>
-      </node>
-      <node id="1363">
-        <label>Eigen/Sparse</label>
-      </node>
-      <node id="1346">
-        <label>vector</label>
-      </node>
-      <node id="1360">
-        <label>complex.h</label>
-      </node>
-      <node id="1354">
-        <label>spdlog/sinks/stdout_color_sinks.h</label>
-      </node>
-      <node id="1351">
-        <label>array</label>
       </node>
       <node id="1362">
-        <label>matrix_product_sparse.h</label>
-        <link refid="matrix__product__sparse_8h"/>
-        <childnode refid="1350" relation="include">
-        </childnode>
-        <childnode refid="1347" relation="include">
-        </childnode>
-        <childnode refid="1349" relation="include">
-        </childnode>
-        <childnode refid="1358" relation="include">
-        </childnode>
-        <childnode refid="1359" relation="include">
-        </childnode>
-        <childnode refid="1363" relation="include">
-        </childnode>
-        <childnode refid="1364" relation="include">
-        </childnode>
+        <label>map</label>
       </node>
-      <node id="1356">
-        <label>math/arpack_extra/matrix_recast.h</label>
-        <link refid="matrix__recast_8h"/>
-        <childnode refid="1353" relation="include">
-        </childnode>
-        <childnode refid="1346" relation="include">
-        </childnode>
-        <childnode refid="1350" relation="include">
+      <node id="1355">
+        <label>math/arpack_extra/arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
+        <childnode refid="1356" relation="include">
         </childnode>
         <childnode refid="1357" relation="include">
         </childnode>
-        <childnode refid="1362" relation="include">
+        <childnode refid="1360" relation="include">
         </childnode>
-      </node>
-      <node id="1349">
-        <label>iostream</label>
-      </node>
-      <node id="1350">
-        <label>math/nmspc_eigutils.h</label>
-        <link refid="nmspc__eigutils_8h"/>
-        <childnode refid="1349" relation="include">
+        <childnode refid="1363" relation="include">
         </childnode>
-        <childnode refid="1351" relation="include">
-        </childnode>
-        <childnode refid="1352" relation="include">
-        </childnode>
-        <childnode refid="1353" relation="include">
-        </childnode>
-        <childnode refid="1346" relation="include">
-        </childnode>
-        <childnode refid="1354" relation="include">
-        </childnode>
-        <childnode refid="1355" relation="include">
-        </childnode>
-      </node>
-      <node id="1348">
-        <label>chrono</label>
-      </node>
-      <node id="1344">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
-        <link refid="class__eigsolver_8h"/>
-        <childnode refid="1345" relation="include">
-        </childnode>
-        <childnode refid="1356" relation="include">
-        </childnode>
-        <childnode refid="1350" relation="include">
-        </childnode>
-      </node>
-      <node id="1353">
-        <label>complex</label>
-      </node>
-    </incdepgraph>
-    <invincdepgraph>
-      <node id="1371">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
-        <link refid="infinite_2measure_8cpp"/>
       </node>
       <node id="1367">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
-        <link refid="class__state__infinite_8cpp"/>
-      </node>
-      <node id="1368">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
-        <link refid="views_8cpp"/>
-      </node>
-      <node id="1369">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
-        <link refid="ceres__subspace_8cpp"/>
-      </node>
-      <node id="1366">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
-        <link refid="class__eigsolver_8cpp"/>
-      </node>
-      <node id="1365">
-        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
-        <link refid="class__eigsolver_8h"/>
-        <childnode refid="1366" relation="include">
+        <label>matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="1360" relation="include">
         </childnode>
-        <childnode refid="1367" relation="include">
+        <childnode refid="1357" relation="include">
+        </childnode>
+        <childnode refid="1359" relation="include">
         </childnode>
         <childnode refid="1368" relation="include">
         </childnode>
@@ -190,14 +65,139 @@
         </childnode>
         <childnode refid="1371" relation="include">
         </childnode>
+      </node>
+      <node id="1365">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1373">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1356">
+        <label>vector</label>
+      </node>
+      <node id="1370">
+        <label>complex.h</label>
+      </node>
+      <node id="1364">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1361">
+        <label>array</label>
+      </node>
+      <node id="1372">
+        <label>matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1360" relation="include">
+        </childnode>
+        <childnode refid="1357" relation="include">
+        </childnode>
+        <childnode refid="1359" relation="include">
+        </childnode>
+        <childnode refid="1368" relation="include">
+        </childnode>
+        <childnode refid="1369" relation="include">
+        </childnode>
+        <childnode refid="1373" relation="include">
+        </childnode>
+        <childnode refid="1374" relation="include">
+        </childnode>
+      </node>
+      <node id="1366">
+        <label>math/arpack_extra/matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="1363" relation="include">
+        </childnode>
+        <childnode refid="1356" relation="include">
+        </childnode>
+        <childnode refid="1360" relation="include">
+        </childnode>
+        <childnode refid="1367" relation="include">
+        </childnode>
         <childnode refid="1372" relation="include">
         </childnode>
       </node>
-      <node id="1370">
+      <node id="1359">
+        <label>iostream</label>
+      </node>
+      <node id="1360">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1359" relation="include">
+        </childnode>
+        <childnode refid="1361" relation="include">
+        </childnode>
+        <childnode refid="1362" relation="include">
+        </childnode>
+        <childnode refid="1363" relation="include">
+        </childnode>
+        <childnode refid="1356" relation="include">
+        </childnode>
+        <childnode refid="1364" relation="include">
+        </childnode>
+        <childnode refid="1365" relation="include">
+        </childnode>
+      </node>
+      <node id="1358">
+        <label>chrono</label>
+      </node>
+      <node id="1354">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="1355" relation="include">
+        </childnode>
+        <childnode refid="1366" relation="include">
+        </childnode>
+        <childnode refid="1360" relation="include">
+        </childnode>
+      </node>
+      <node id="1363">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1381">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1377">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
+      </node>
+      <node id="1378">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1379">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
+      </node>
+      <node id="1376">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
+        <link refid="class__eigsolver_8cpp"/>
+      </node>
+      <node id="1375">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="1376" relation="include">
+        </childnode>
+        <childnode refid="1377" relation="include">
+        </childnode>
+        <childnode refid="1378" relation="include">
+        </childnode>
+        <childnode refid="1379" relation="include">
+        </childnode>
+        <childnode refid="1380" relation="include">
+        </childnode>
+        <childnode refid="1381" relation="include">
+        </childnode>
+        <childnode refid="1382" relation="include">
+        </childnode>
+      </node>
+      <node id="1380">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
         <link refid="ground__state_8cpp"/>
       </node>
-      <node id="1372">
+      <node id="1382">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
         <link refid="infinite_2opt_8cpp"/>
       </node>

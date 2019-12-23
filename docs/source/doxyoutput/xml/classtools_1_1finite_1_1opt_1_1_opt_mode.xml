@@ -52,7 +52,7 @@
         <inbodydescription>
         </inbodydescription>
         <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="75" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.cpp" bodystart="15" bodyend="21"/>
-        <references refid="namespacetools_1_1finite_1_1opt_1a4f7b1f67320c2a2a5788ff7633f2baee" compoundref="finite_2opt_8cpp" startline="82" endline="86">tools::finite::opt::find_ground_state</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1a4f7b1f67320c2a2a5788ff7633f2baee" compoundref="finite_2opt_8cpp" startline="84" endline="88">tools::finite::opt::find_ground_state</references>
         <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6afa8c009c8dd4d4f9dde7515c00d5cd4661">tools::finite::opt::internal::OVERLAP</references>
         <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6aface18bb9a2b22515d0cd36bca6b998bde">tools::finite::opt::internal::VARIANCE</references>
       </memberdef>
@@ -62,25 +62,25 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="444">
+      <node id="485">
         <label>tools::finite::opt::OptMode</label>
         <link refid="classtools_1_1finite_1_1opt_1_1_opt_mode"/>
-        <childnode refid="445" relation="public-inheritance">
+        <childnode refid="486" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="445">
+      <node id="486">
         <label>tools::finite::opt::internal::EnumBase&lt; opt::MODE &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="446">
+      <node id="487">
         <label>tools::finite::opt::OptMode</label>
         <link refid="classtools_1_1finite_1_1opt_1_1_opt_mode"/>
-        <childnode refid="447" relation="public-inheritance">
+        <childnode refid="488" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="447">
+      <node id="488">
         <label>tools::finite::opt::internal::EnumBase&lt; opt::MODE &gt;</label>
         <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
       </node>

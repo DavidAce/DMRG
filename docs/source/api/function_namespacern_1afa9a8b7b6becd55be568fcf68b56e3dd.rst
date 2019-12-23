@@ -3,7 +3,7 @@
 Template Function rn::uniform_unit_n_sphere
 ===========================================
 
-- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_general_nmspc_random_numbers.h`
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.h`
 
 
 Function Documentation

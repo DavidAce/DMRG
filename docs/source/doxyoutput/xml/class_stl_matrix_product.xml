@@ -311,7 +311,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="43" bodyend="69"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="43" bodyend="67"/>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a44e185122b14fe0603ae8c1a00a9886c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -332,7 +332,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="75" bodyend="101"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="73" bodyend="99"/>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1a5e01ae791681e6383cad617a87d2e9e8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -353,7 +353,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="107" bodyend="135"/>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp" bodystart="105" bodyend="133"/>
       </memberdef>
       <memberdef kind="function" id="class_stl_matrix_product_1af9f79876cd02cafe4e2badecfa1de022" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -530,40 +530,40 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="476">
+      <node id="531">
         <label>std::vector&lt; Scalar &gt;</label>
-        <childnode refid="477" relation="usage">
+        <childnode refid="532" relation="usage">
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="475">
+      <node id="530">
         <label>std::basic_string&lt; char &gt;</label>
       </node>
-      <node id="473">
+      <node id="528">
         <label>class_tic_toc</label>
         <link refid="classclass__tic__toc"/>
-        <childnode refid="474" relation="usage">
+        <childnode refid="529" relation="usage">
           <edgelabel>name</edgelabel>
         </childnode>
       </node>
-      <node id="477">
+      <node id="532">
         <label>std::complex</label>
       </node>
-      <node id="472">
+      <node id="527">
         <label>StlMatrixProduct&lt; Scalar_ &gt;</label>
         <link refid="class_stl_matrix_product"/>
-        <childnode refid="473" relation="usage">
+        <childnode refid="528" relation="usage">
           <edgelabel>t_factorOp</edgelabel>
           <edgelabel>t_multax</edgelabel>
           <edgelabel>t_multOpv</edgelabel>
         </childnode>
-        <childnode refid="476" relation="usage">
+        <childnode refid="531" relation="usage">
           <edgelabel>A_stl</edgelabel>
         </childnode>
       </node>
-      <node id="474">
+      <node id="529">
         <label>std::string</label>
-        <childnode refid="475" relation="public-inheritance">
+        <childnode refid="530" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

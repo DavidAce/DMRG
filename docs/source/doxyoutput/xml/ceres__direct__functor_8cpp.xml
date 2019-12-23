@@ -2,229 +2,229 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
   <compounddef id="ceres__direct__functor_8cpp" kind="file" language="C++">
     <compoundname>ceres_direct_functor.cpp</compoundname>
-    <includes refid="nmspc__omp_8h" local="no">general/nmspc_omp.h</includes>
     <includes refid="ceres__direct__functor_8h" local="yes">ceres_direct_functor.h</includes>
     <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
     <incdepgraph>
-      <node id="3205">
+      <node id="3552">
         <label>list</label>
       </node>
-      <node id="3196">
+      <node id="3544">
         <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp</label>
         <link refid="ceres__direct__functor_8cpp"/>
-        <childnode refid="3197" relation="include">
+        <childnode refid="3545" relation="include">
         </childnode>
-        <childnode refid="3199" relation="include">
-        </childnode>
-        <childnode refid="3219" relation="include">
+        <childnode refid="3566" relation="include">
         </childnode>
       </node>
-      <node id="3225">
+      <node id="3572">
         <label>iomanip</label>
       </node>
-      <node id="3224">
+      <node id="3571">
         <label>iterator</label>
       </node>
-      <node id="3216">
+      <node id="3565">
         <label>ceres/ceres.h</label>
       </node>
-      <node id="3219">
+      <node id="3566">
         <label>state/class_state_finite.h</label>
         <link refid="class__state__finite_8h"/>
-        <childnode refid="3202" relation="include">
+        <childnode refid="3549" relation="include">
         </childnode>
-        <childnode refid="3204" relation="include">
+        <childnode refid="3551" relation="include">
         </childnode>
-        <childnode refid="3220" relation="include">
+        <childnode refid="3567" relation="include">
         </childnode>
-        <childnode refid="3221" relation="include">
+        <childnode refid="3568" relation="include">
         </childnode>
-        <childnode refid="3227" relation="include">
+        <childnode refid="3576" relation="include">
         </childnode>
-        <childnode refid="3228" relation="include">
+        <childnode refid="3577" relation="include">
         </childnode>
-        <childnode refid="3215" relation="include">
+        <childnode refid="3562" relation="include">
         </childnode>
-        <childnode refid="3198" relation="include">
+        <childnode refid="3563" relation="include">
         </childnode>
       </node>
-      <node id="3217">
+      <node id="3573">
         <label>general/nmspc_type_check.h</label>
         <link refid="nmspc__type__check_8h"/>
-        <childnode refid="3218" relation="include">
+        <childnode refid="3574" relation="include">
         </childnode>
-        <childnode refid="3215" relation="include">
+        <childnode refid="3562" relation="include">
         </childnode>
-        <childnode refid="3198" relation="include">
+        <childnode refid="3563" relation="include">
         </childnode>
       </node>
-      <node id="3215">
+      <node id="3562">
         <label>Eigen/Core</label>
       </node>
-      <node id="3203">
+      <node id="3550">
         <label>string</label>
       </node>
-      <node id="3210">
+      <node id="3557">
         <label>general/class_tic_toc.h</label>
         <link refid="class__tic__toc_8h"/>
-        <childnode refid="3211" relation="include">
+        <childnode refid="3558" relation="include">
         </childnode>
-        <childnode refid="3212" relation="include">
+        <childnode refid="3559" relation="include">
         </childnode>
       </node>
-      <node id="3207">
+      <node id="3554">
         <label>io/nmspc_logger.h</label>
         <link refid="nmspc__logger_8h"/>
-        <childnode refid="3208" relation="include">
+        <childnode refid="3555" relation="include">
         </childnode>
-        <childnode refid="3209" relation="include">
+        <childnode refid="3556" relation="include">
         </childnode>
       </node>
-      <node id="3218">
+      <node id="3574">
         <label>experimental/type_traits</label>
       </node>
-      <node id="3201">
+      <node id="3548">
         <label>tools/nmspc_tools.h</label>
         <link refid="nmspc__tools_8h"/>
-        <childnode refid="3202" relation="include">
+        <childnode refid="3549" relation="include">
         </childnode>
-        <childnode refid="3203" relation="include">
+        <childnode refid="3550" relation="include">
         </childnode>
-        <childnode refid="3204" relation="include">
+        <childnode refid="3551" relation="include">
         </childnode>
-        <childnode refid="3205" relation="include">
+        <childnode refid="3552" relation="include">
         </childnode>
-        <childnode refid="3206" relation="include">
+        <childnode refid="3553" relation="include">
         </childnode>
-        <childnode refid="3207" relation="include">
+        <childnode refid="3554" relation="include">
         </childnode>
-        <childnode refid="3210" relation="include">
+        <childnode refid="3557" relation="include">
         </childnode>
-        <childnode refid="3213" relation="include">
+        <childnode refid="3560" relation="include">
         </childnode>
-        <childnode refid="3215" relation="include">
+        <childnode refid="3562" relation="include">
         </childnode>
-        <childnode refid="3198" relation="include">
+        <childnode refid="3563" relation="include">
         </childnode>
       </node>
-      <node id="3198">
+      <node id="3563">
         <label>unsupported/Eigen/CXX11/Tensor</label>
       </node>
-      <node id="3199">
+      <node id="3545">
         <label>ceres_direct_functor.h</label>
         <link refid="ceres__direct__functor_8h"/>
-        <childnode refid="3200" relation="include">
-        </childnode>
-        <childnode refid="3217" relation="include">
+        <childnode refid="3546" relation="include">
         </childnode>
       </node>
-      <node id="3221">
+      <node id="3568">
         <label>state/class_environment.h</label>
         <link refid="class__environment_8h"/>
-        <childnode refid="3202" relation="include">
+        <childnode refid="3549" relation="include">
         </childnode>
-        <childnode refid="3222" relation="include">
+        <childnode refid="3569" relation="include">
         </childnode>
-        <childnode refid="3226" relation="include">
+        <childnode refid="3575" relation="include">
         </childnode>
       </node>
-      <node id="3209">
+      <node id="3556">
         <label>spdlog/fmt/bundled/ranges.h</label>
       </node>
-      <node id="3228">
+      <node id="3577">
         <label>model/class_model_base.h</label>
         <link refid="class__model__base_8h"/>
-        <childnode refid="3202" relation="include">
+        <childnode refid="3549" relation="include">
         </childnode>
-        <childnode refid="3198" relation="include">
+        <childnode refid="3563" relation="include">
         </childnode>
-        <childnode refid="3207" relation="include">
+        <childnode refid="3554" relation="include">
         </childnode>
       </node>
-      <node id="3223">
+      <node id="3570">
         <label>Eigen/Sparse</label>
       </node>
-      <node id="3213">
+      <node id="3560">
         <label>tools/finite/opt-internals/enum_classes.h</label>
         <link refid="enum__classes_8h"/>
-        <childnode refid="3212" relation="include">
+        <childnode refid="3559" relation="include">
         </childnode>
-        <childnode refid="3214" relation="include">
+        <childnode refid="3561" relation="include">
         </childnode>
       </node>
-      <node id="3208">
+      <node id="3555">
         <label>spdlog/logger.h</label>
       </node>
-      <node id="3227">
+      <node id="3576">
         <label>state/class_mps_site.h</label>
         <link refid="class__mps__site_8h"/>
-        <childnode refid="3204" relation="include">
+        <childnode refid="3551" relation="include">
         </childnode>
-        <childnode refid="3220" relation="include">
+        <childnode refid="3567" relation="include">
         </childnode>
-        <childnode refid="3198" relation="include">
+        <childnode refid="3563" relation="include">
         </childnode>
       </node>
-      <node id="3197">
+      <node id="3564">
         <label>general/nmspc_omp.h</label>
         <link refid="nmspc__omp_8h"/>
-        <childnode refid="3198" relation="include">
+        <childnode refid="3563" relation="include">
         </childnode>
       </node>
-      <node id="3220">
+      <node id="3567">
         <label>optional</label>
       </node>
-      <node id="3206">
+      <node id="3553">
         <label>vector</label>
       </node>
-      <node id="3226">
+      <node id="3575">
         <label>spdlog/fmt/fmt.h</label>
       </node>
-      <node id="3200">
+      <node id="3546">
         <label>tools/finite/opt.h</label>
         <link refid="opt_8h"/>
-        <childnode refid="3201" relation="include">
+        <childnode refid="3547" relation="include">
         </childnode>
-        <childnode refid="3210" relation="include">
+        <childnode refid="3548" relation="include">
         </childnode>
-        <childnode refid="3216" relation="include">
+        <childnode refid="3557" relation="include">
         </childnode>
-        <childnode refid="3197" relation="include">
+        <childnode refid="3564" relation="include">
+        </childnode>
+        <childnode refid="3565" relation="include">
         </childnode>
       </node>
-      <node id="3214">
+      <node id="3547">
+        <label>complex.h</label>
+      </node>
+      <node id="3561">
         <label>sstream</label>
       </node>
-      <node id="3212">
+      <node id="3559">
         <label>iostream</label>
       </node>
-      <node id="3211">
+      <node id="3558">
         <label>chrono</label>
       </node>
-      <node id="3204">
+      <node id="3551">
         <label>complex</label>
       </node>
-      <node id="3222">
+      <node id="3569">
         <label>general/nmspc_tensor_extra.h</label>
         <link refid="nmspc__tensor__extra_8h"/>
-        <childnode refid="3197" relation="include">
+        <childnode refid="3564" relation="include">
         </childnode>
-        <childnode refid="3215" relation="include">
+        <childnode refid="3562" relation="include">
         </childnode>
-        <childnode refid="3223" relation="include">
+        <childnode refid="3570" relation="include">
         </childnode>
-        <childnode refid="3198" relation="include">
+        <childnode refid="3563" relation="include">
         </childnode>
-        <childnode refid="3224" relation="include">
+        <childnode refid="3571" relation="include">
         </childnode>
-        <childnode refid="3212" relation="include">
+        <childnode refid="3559" relation="include">
         </childnode>
-        <childnode refid="3225" relation="include">
+        <childnode refid="3572" relation="include">
         </childnode>
-        <childnode refid="3217" relation="include">
+        <childnode refid="3573" relation="include">
         </childnode>
       </node>
-      <node id="3202">
+      <node id="3549">
         <label>memory</label>
       </node>
     </incdepgraph>
@@ -237,57 +237,57 @@
 <codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-07-15.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="4"><highlight class="normal"></highlight></codeline>
-<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__omp_8h" kindref="compound">general/nmspc_omp.h</ref>&gt;</highlight><highlight class="normal"><sp/></highlight><highlight class="comment">//<sp/>For<sp/>multithreaded<sp/>computation</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ceres__direct__functor_8h" kindref="compound">ceres_direct_functor.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="ceres__direct__functor_8h" kindref="compound">ceres_direct_functor.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
 <codeline lineno="8"><highlight class="normal"></highlight></codeline>
 <codeline lineno="9"><highlight class="normal"></highlight></codeline>
-<codeline lineno="10"><highlight class="normal"></highlight></codeline>
-<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internal" kindref="compound">tools::finite::opt::internal</ref>;</highlight></codeline>
-<codeline lineno="12"><highlight class="normal"></highlight></codeline>
-<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="14" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a5d8de37a4067962dfd9db73f5a92b825" refkind="member"><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a5d8de37a4067962dfd9db73f5a92b825" kindref="member">ceres_direct_functor&lt;Scalar&gt;::ceres_direct_functor</ref>(</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,</highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;<sp/>sim_status)</highlight></codeline>
-<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" kindref="compound">ceres_base_functor</ref>(state,sim_status)</highlight></codeline>
-<codeline lineno="18"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Constructing<sp/>direct<sp/>functor&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="20"><highlight class="normal"></highlight></codeline>
-<codeline lineno="21"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#ifdef<sp/>_OPENMP</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Parallelizing<sp/>with<sp/>{}<sp/>threads&quot;</highlight><highlight class="normal">,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a1214ed3d0993b64a994b78f26fc0caf7" kindref="member">num_threads</ref>);</highlight></codeline>
-<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#endif</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Generating<sp/>multi<sp/>components&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" kindref="member">energy_reduced</ref><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1af5765949c5a515d45526b4c266a41dd2" kindref="member">get_energy_reduced</ref>();</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;Scalar,double&gt;::value){</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1af4f4d5316ae5af544868ba7d94450d9a" kindref="member">get_multimpo</ref>().real();</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envL_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a9794c32313428c0c8fac21a4d151177d" kindref="member">get_ENVL</ref><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.front());</highlight></codeline>
-<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envR_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1aac02b1c96819f608c09f39ff7862ee29" kindref="member">get_ENVR</ref><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.back());</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2L_cplx<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a2143f2bd43e90849f0b3f48401a4e17a" kindref="member">get_ENV2L</ref>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.front());</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2R_cplx<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a68322646c4cc11ea2c0ea18cd96a86c6" kindref="member">get_ENV2R</ref>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.back());</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" kindref="member">envL</ref><sp/><sp/>=<sp/>envL_cplx.block.real();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" kindref="member">envR</ref><sp/><sp/>=<sp/>envR_cplx.block.real();</highlight></codeline>
-<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref><sp/>=<sp/>env2L_cplx.block.real();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref><sp/>=<sp/>env2R_cplx.block.real();</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1af4f4d5316ae5af544868ba7d94450d9a" kindref="member">get_multimpo</ref>();</highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envL_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a9794c32313428c0c8fac21a4d151177d" kindref="member">get_ENVL</ref><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.front());</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envR_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1aac02b1c96819f608c09f39ff7862ee29" kindref="member">get_ENVR</ref><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.back());</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2L_cplx<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a2143f2bd43e90849f0b3f48401a4e17a" kindref="member">get_ENV2L</ref>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.front());</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2R_cplx<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a68322646c4cc11ea2c0ea18cd96a86c6" kindref="member">get_ENV2R</ref>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.back());</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" kindref="member">envL</ref><sp/><sp/>=<sp/>envL_cplx.block;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" kindref="member">envR</ref><sp/><sp/>=<sp/>envR_cplx.block;</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref><sp/>=<sp/>env2L_cplx.block;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref><sp/>=<sp/>env2R_cplx.block;</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" kindref="member">active_dimensions</ref>();</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Finished<sp/>building<sp/>multicomponents&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internal" kindref="compound">tools::finite::opt::internal</ref>;</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="13" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a5d8de37a4067962dfd9db73f5a92b825" refkind="member"><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a5d8de37a4067962dfd9db73f5a92b825" kindref="member">ceres_direct_functor&lt;Scalar&gt;::ceres_direct_functor</ref>(</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;<sp/>sim_status)</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" kindref="compound">ceres_base_functor</ref>(state,sim_status)</highlight></codeline>
+<codeline lineno="17"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Constructing<sp/>direct<sp/>functor&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#ifdef<sp/>_OPENMP</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Parallelizing<sp/>with<sp/>{}<sp/>threads&quot;</highlight><highlight class="normal">,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a1214ed3d0993b64a994b78f26fc0caf7" kindref="member">num_threads</ref>);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor"><sp/><sp/><sp/><sp/>#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Generating<sp/>multi<sp/>components&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" kindref="member">energy_reduced</ref><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1af5765949c5a515d45526b4c266a41dd2" kindref="member">get_energy_reduced</ref>();</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;Scalar,double&gt;::value){</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1af4f4d5316ae5af544868ba7d94450d9a" kindref="member">get_multimpo</ref>().real();</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envL_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a9794c32313428c0c8fac21a4d151177d" kindref="member">get_ENVL</ref><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.front());</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envR_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1aac02b1c96819f608c09f39ff7862ee29" kindref="member">get_ENVR</ref><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.back());</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2L_cplx<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a2143f2bd43e90849f0b3f48401a4e17a" kindref="member">get_ENV2L</ref>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.front());</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2R_cplx<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a68322646c4cc11ea2c0ea18cd96a86c6" kindref="member">get_ENV2R</ref>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.back());</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" kindref="member">envL</ref><sp/><sp/>=<sp/>envL_cplx.block.real();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" kindref="member">envR</ref><sp/><sp/>=<sp/>envR_cplx.block.real();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref><sp/>=<sp/>env2L_cplx.block.real();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref><sp/>=<sp/>env2R_cplx.block.real();</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1af4f4d5316ae5af544868ba7d94450d9a" kindref="member">get_multimpo</ref>();</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envL_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a9794c32313428c0c8fac21a4d151177d" kindref="member">get_ENVL</ref><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.front());</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>envR_cplx<sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1aac02b1c96819f608c09f39ff7862ee29" kindref="member">get_ENVR</ref><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.back());</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2L_cplx<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a2143f2bd43e90849f0b3f48401a4e17a" kindref="member">get_ENV2L</ref>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.front());</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>env2R_cplx<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a68322646c4cc11ea2c0ea18cd96a86c6" kindref="member">get_ENV2R</ref>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.back());</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" kindref="member">envL</ref><sp/><sp/>=<sp/>envL_cplx.block;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" kindref="member">envR</ref><sp/><sp/>=<sp/>envR_cplx.block;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref><sp/>=<sp/>env2L_cplx.block;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref><sp/>=<sp/>env2R_cplx.block;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" kindref="member">active_dimensions</ref>();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Finished<sp/>building<sp/>multicomponents&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.resize(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>);</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.resize(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>);</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" kindref="member">num_parameters</ref><sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[0]<sp/>*<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[1]<sp/>*<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[2];</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" kindref="member">num_parameters</ref><sp/>*=<sp/>2;}</highlight></codeline>
-<codeline lineno="55"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.resize(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.resize(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" kindref="member">num_parameters</ref><sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[0]<sp/>*<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[1]<sp/>*<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[2];</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" kindref="member">num_parameters</ref><sp/>*=<sp/>2;}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
@@ -297,212 +297,211 @@
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>
 <codeline lineno="63"><highlight class="normal"></highlight></codeline>
 <codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="67" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1afeb89610db9a6a4a1076194376f7c94e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1afeb89610db9a6a4a1076194376f7c94e" kindref="member">ceres_direct_functor&lt;Scalar&gt;::Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>v_double_double,</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>fx,</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>grad_double_double)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a2aad5071bb18a30cbf97a3c316d3c8c3" kindref="member">t_op</ref>-&gt;tic();</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>ene,ene2,var;</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>vHv,<sp/>vH2v;</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>vv,log10var;</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>norm_func,norm_grad;</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>vecSize<sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a07e5673c435676a4c0a93c35c29e39e5" kindref="member">NumParameters</ref>();</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){vecSize<sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a07e5673c435676a4c0a93c35c29e39e5" kindref="member">NumParameters</ref>()/2;}</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>VectorType&gt;<sp/>v<sp/>(reinterpret_cast&lt;const<sp/>Scalar*&gt;(v_double_double)<sp/><sp/><sp/>,<sp/>vecSize);</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>vv<sp/><sp/><sp/><sp/>=<sp/>v.squaredNorm();</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" kindref="member">norm</ref><sp/><sp/>=<sp/>std::sqrt(vv);</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab658e218305cdc90e9573eadb206a90a" kindref="member">get_H2v</ref>(v);</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a79b6023bf74322357f43a1c553365446" kindref="member">get_Hv</ref>(v);</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>Hv<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Map&lt;VectorType&gt;(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.data()<sp/>,<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.size());</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>H2v<sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Map&lt;VectorType&gt;(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.data(),<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.size());</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>vHv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>v.dot(Hv);</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>vH2v<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>v.dot(H2v);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="66" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a8253aa3a22ca3487ee441f30a9898870" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a8253aa3a22ca3487ee441f30a9898870" kindref="member">ceres_direct_functor&lt;Scalar&gt;::Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>v_double_double,</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>fx,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>grad_double_double)</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a2aad5071bb18a30cbf97a3c316d3c8c3" kindref="member">t_op</ref>-&gt;tic();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>ene,ene2,var;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref><sp/>vHv,<sp/>vH2v;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>vv,log10var;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>norm_func,norm_grad;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>vecSize<sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" kindref="member">NumParameters</ref>();</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){vecSize<sp/>=<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" kindref="member">NumParameters</ref>()/2;}</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>VectorType&gt;<sp/>v<sp/>(reinterpret_cast&lt;const<sp/>Scalar*&gt;(v_double_double)<sp/><sp/><sp/>,<sp/>vecSize);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>vv<sp/><sp/><sp/><sp/>=<sp/>v.squaredNorm();</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" kindref="member">norm</ref><sp/><sp/>=<sp/>std::sqrt(vv);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab658e218305cdc90e9573eadb206a90a" kindref="member">get_H2v</ref>(v);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a79b6023bf74322357f43a1c553365446" kindref="member">get_Hv</ref>(v);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>Hv<sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Map&lt;VectorType&gt;(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.data()<sp/>,<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.size());</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>H2v<sp/><sp/><sp/><sp/><sp/>=<sp/>Eigen::Map&lt;VectorType&gt;(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.data(),<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.size());</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>vHv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>v.dot(Hv);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>vH2v<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>v.dot(H2v);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>this<sp/>next<sp/>bit<sp/>carefully<sp/>to<sp/>avoid<sp/>negative<sp/>variance<sp/>when<sp/>numbers<sp/>are<sp/>very<sp/>small</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>ene<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>vHv/vv;</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>ene2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>vH2v/vv;</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::real(ene2)<sp/>&lt;<sp/>0.0<sp/>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Counter<sp/>=<sp/>{}.<sp/>ene2<sp/>is<sp/>negative:<sp/><sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>,<sp/>std::real(ene2)<sp/>,<sp/>std::imag(ene2));</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>ene2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(ene2)<sp/>&lt;<sp/><sp/>0.0<sp/>?<sp/>std::abs(ene2)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>std::real(ene2);</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>ene2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(ene2)<sp/>==<sp/>0.0<sp/>?<sp/>std::numeric_limits&lt;double&gt;::epsilon()<sp/>:<sp/>std::real(ene2);</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"></highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>ene2<sp/>-<sp/>ene*ene;</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>tools::log-&gt;info(&quot;log10var/L<sp/>=<sp/>{:&lt;24.18f}<sp/>+<sp/>i{:&lt;24.18f}<sp/>|<sp/>ene<sp/>=<sp/>{:&lt;24.18f}<sp/>+<sp/>i<sp/>{:&lt;24.18f}&quot;,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::log10(std::abs(std::real(var))/length),<sp/><sp/>std::log10(std::abs(std::imag(var))/length),</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::real(ene),<sp/>std::imag(ene)</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="102"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::real(var)<sp/><sp/>&lt;<sp/>0.0<sp/>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Counter<sp/>=<sp/>{}.<sp/>var<sp/><sp/>is<sp/>negative:<sp/><sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>,<sp/>std::real(var)<sp/><sp/>,<sp/>std::imag(var));</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(var)<sp/>&lt;<sp/><sp/>0.0<sp/>?<sp/>std::abs(var)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>std::real(var);</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(var)<sp/>==<sp/>0.0<sp/>?<sp/>std::numeric_limits&lt;double&gt;::epsilon()<sp/>:<sp/>std::real(var);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Do<sp/>this<sp/>next<sp/>bit<sp/>carefully<sp/>to<sp/>avoid<sp/>negative<sp/>variance<sp/>when<sp/>numbers<sp/>are<sp/>very<sp/>small</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>ene<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>vHv/vv;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>ene2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>vH2v/vv;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::real(ene2)<sp/>&lt;<sp/>0.0<sp/>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Counter<sp/>=<sp/>{}.<sp/>ene2<sp/>is<sp/>negative:<sp/><sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>,<sp/>std::real(ene2)<sp/>,<sp/>std::imag(ene2));</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>ene2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(ene2)<sp/>&lt;<sp/><sp/>0.0<sp/>?<sp/>std::abs(ene2)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>std::real(ene2);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>ene2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(ene2)<sp/>==<sp/>0.0<sp/>?<sp/>std::numeric_limits&lt;double&gt;::epsilon()<sp/>:<sp/>std::real(ene2);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>ene2<sp/>-<sp/>ene*ene;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>tools::log-&gt;info(&quot;log10var/L<sp/>=<sp/>{:&lt;24.18f}<sp/>+<sp/>i{:&lt;24.18f}<sp/>|<sp/>ene<sp/>=<sp/>{:&lt;24.18f}<sp/>+<sp/>i<sp/>{:&lt;24.18f}&quot;,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::log10(std::abs(std::real(var))/length),<sp/><sp/>std::log10(std::abs(std::imag(var))/length),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::real(ene),<sp/>std::imag(ene)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::real(var)<sp/><sp/>&lt;<sp/>0.0<sp/>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;debug(</highlight><highlight class="stringliteral">&quot;Counter<sp/>=<sp/>{}.<sp/>var<sp/><sp/>is<sp/>negative:<sp/><sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>,<sp/>std::real(var)<sp/><sp/>,<sp/>std::imag(var));</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(var)<sp/>&lt;<sp/><sp/>0.0<sp/>?<sp/>std::abs(var)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>std::real(var);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/>var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(var)<sp/>==<sp/>0.0<sp/>?<sp/>std::numeric_limits&lt;double&gt;::epsilon()<sp/>:<sp/>std::real(var);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
 <codeline lineno="106"><highlight class="normal"></highlight></codeline>
-<codeline lineno="107"><highlight class="normal"></highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" kindref="member">energy</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(ene<sp/>+<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" kindref="member">energy_reduced</ref>)<sp/>/<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" kindref="member">length</ref>;</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" kindref="member">variance</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::abs(var)/<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" kindref="member">length</ref>;</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" kindref="member">norm_offset</ref><sp/><sp/><sp/><sp/>=<sp/>std::abs(vv)<sp/>-<sp/>1.0<sp/>;</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tie(norm_func,norm_grad)<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1af916802ba488155e10414012373ad01d" kindref="member">windowed_func_grad</ref>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" kindref="member">norm_offset</ref>,0.1);</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/>log10var<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::log10(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" kindref="member">variance</ref>);</highlight></codeline>
-<codeline lineno="113"><highlight class="normal"></highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fx<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fx[0]<sp/>=<sp/>log10var<sp/>+<sp/>norm_func;</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"></highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/><sp/>grad<sp/>(reinterpret_cast&lt;<sp/><sp/><sp/><sp/><sp/><sp/>Scalar*&gt;(grad_double_double),<sp/>vecSize);</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(grad_double_double<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>vv_1<sp/><sp/>=<sp/>std::pow(vv,-1);</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>var_1<sp/>=<sp/>1.0/var/<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">std::log</ref>(10);</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>=<sp/>var_1<sp/>*<sp/>vv_1<sp/>*<sp/>(H2v<sp/>-<sp/>2.0*ene*Hv<sp/>-<sp/>(ene2<sp/>-<sp/>2.0*ene*ene)*v);</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;Scalar,double&gt;::value){</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>*=<sp/>2.0;</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>+=<sp/>norm_grad<sp/>*<sp/>v;</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;log10<sp/>var:<sp/>{:&lt;24.18f}<sp/>Energy:<sp/>{:&lt;24.18f}<sp/>|Grad|:<sp/>{:&lt;24.18f}<sp/>|Grad|_inf:<sp/>{:&lt;24.18f}<sp/>SqNorm:<sp/>{:&lt;24.18f}<sp/>Norm:<sp/>{:&lt;24.18f}<sp/>Norm_func:<sp/>{:&lt;24.18f}<sp/>|Norm_grad<sp/>*v|:<sp/>{:&lt;24.18f}<sp/>fx:<sp/>{:&lt;24.18f}&quot;,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::log10(std::abs(var)/length),</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::real(ene<sp/>+<sp/>energy_reduced)<sp/>/<sp/>length,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="132"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad.norm(),</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad.cwiseAbs().maxCoeff(),</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="134"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vv,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>norm,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>norm_func,</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(norm_grad<sp/>*<sp/>v).norm(),</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fx[0]);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" kindref="member">energy</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::real(ene<sp/>+<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" kindref="member">energy_reduced</ref>)<sp/>/<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" kindref="member">length</ref>;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" kindref="member">variance</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::abs(var)/<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" kindref="member">length</ref>;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" kindref="member">norm_offset</ref><sp/><sp/><sp/><sp/>=<sp/>std::abs(vv)<sp/>-<sp/>1.0<sp/>;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tie(norm_func,norm_grad)<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1af916802ba488155e10414012373ad01d" kindref="member">windowed_func_grad</ref>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" kindref="member">norm_offset</ref>,0.1);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>log10var<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::log10(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" kindref="member">variance</ref>);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(fx<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fx[0]<sp/>=<sp/>log10var<sp/>+<sp/>norm_func;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;VectorType&gt;<sp/><sp/>grad<sp/>(reinterpret_cast&lt;<sp/><sp/><sp/><sp/><sp/><sp/>Scalar*&gt;(grad_double_double),<sp/>vecSize);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(grad_double_double<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>vv_1<sp/><sp/>=<sp/>std::pow(vv,-1);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>var_1<sp/>=<sp/>1.0/var/<ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">std::log</ref>(10);</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>=<sp/>var_1<sp/>*<sp/>vv_1<sp/>*<sp/>(H2v<sp/>-<sp/>2.0*ene*Hv<sp/>-<sp/>(ene2<sp/>-<sp/>2.0*ene*ene)*v);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;Scalar,double&gt;::value){</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>*=<sp/>2.0;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad<sp/>+=<sp/>norm_grad<sp/>*<sp/>v;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;log10<sp/>var:<sp/>{:&lt;24.18f}<sp/>Energy:<sp/>{:&lt;24.18f}<sp/>|Grad|:<sp/>{:&lt;24.18f}<sp/>|Grad|_inf:<sp/>{:&lt;24.18f}<sp/>SqNorm:<sp/>{:&lt;24.18f}<sp/>Norm:<sp/>{:&lt;24.18f}<sp/>Norm_func:<sp/>{:&lt;24.18f}<sp/>|Norm_grad<sp/>*v|:<sp/>{:&lt;24.18f}<sp/>fx:<sp/>{:&lt;24.18f}&quot;,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::log10(std::abs(var)/length),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::real(ene<sp/>+<sp/>energy_reduced)<sp/>/<sp/>length,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad.norm(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>grad.cwiseAbs().maxCoeff(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>vv,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>norm,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>norm_func,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(norm_grad<sp/>*<sp/>v).norm(),</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>fx[0]);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
 <codeline lineno="139"><highlight class="normal"></highlight></codeline>
-<codeline lineno="140"><highlight class="normal"></highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::isnan(log10var)<sp/>or<sp/>std::isinf(log10var)){</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;log10<sp/>variance<sp/>is<sp/>invalid&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vv)<sp/><sp/>,<sp/>std::imag(vv));</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vH2v<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vH2v)<sp/>,std::imag(vH2v)<sp/>);</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vHv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vHv)<sp/><sp/>,std::imag(vHv)<sp/><sp/>);</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(var)<sp/><sp/>,std::imag(var));</highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;ene<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(ene)<sp/><sp/>,std::imag(ene));</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;log10(var/L)<sp/><sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::log10(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" kindref="member">variance</ref>/<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" kindref="member">length</ref>)<sp/>);</highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;energy<sp/>offset<sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a6fe6619a82ba5ee67d0b0c0b29156924" kindref="member">energy_offset</ref><sp/>);</highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;norm<sp/><sp/><sp/>offset<sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" kindref="member">norm_offset</ref><sp/>);</highlight></codeline>
-<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Direct<sp/>functor<sp/>failed<sp/>at<sp/>counter<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>)<sp/>);</highlight></codeline>
-<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::isnan(log10var)<sp/>or<sp/>std::isinf(log10var)){</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;log10<sp/>variance<sp/>is<sp/>invalid&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vv)<sp/><sp/>,<sp/>std::imag(vv));</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vH2v<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vH2v)<sp/>,std::imag(vH2v)<sp/>);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;vHv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(vHv)<sp/><sp/>,std::imag(vHv)<sp/><sp/>);</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;var<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(var)<sp/><sp/>,std::imag(var));</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;ene<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>{:.16f}<sp/>+<sp/>i{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::real(ene)<sp/><sp/>,std::imag(ene));</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;log10(var/L)<sp/><sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/>std::log10(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" kindref="member">variance</ref>/<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" kindref="member">length</ref>)<sp/>);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;energy<sp/>offset<sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a6fe6619a82ba5ee67d0b0c0b29156924" kindref="member">energy_offset</ref><sp/>);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;norm<sp/><sp/><sp/>offset<sp/><sp/><sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal"><sp/>,<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" kindref="member">norm_offset</ref><sp/>);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Direct<sp/>functor<sp/>failed<sp/>at<sp/>counter<sp/>=<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>)<sp/>);</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight></codeline>
 <codeline lineno="153"><highlight class="normal"></highlight></codeline>
 <codeline lineno="154"><highlight class="normal"></highlight></codeline>
-<codeline lineno="155"><highlight class="normal"></highlight></codeline>
-<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>++;</highlight></codeline>
-<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a2aad5071bb18a30cbf97a3c316d3c8c3" kindref="member">t_op</ref>-&gt;toc();</highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="159"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" kindref="member">counter</ref>++;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a2aad5071bb18a30cbf97a3c316d3c8c3" kindref="member">t_op</ref>-&gt;toc();</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
 <codeline lineno="160"><highlight class="normal"></highlight></codeline>
 <codeline lineno="161"><highlight class="normal"></highlight></codeline>
 <codeline lineno="162"><highlight class="normal"></highlight></codeline>
-<codeline lineno="163"><highlight class="normal"></highlight></codeline>
-<codeline lineno="164"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="165" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab658e218305cdc90e9573eadb206a90a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab658e218305cdc90e9573eadb206a90a" kindref="member">ceres_direct_functor&lt;Scalar&gt;::get_H2v</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a349c4e2fd4c4cfefae4bfcdb0344d137" kindref="member">VectorType</ref><sp/>&amp;v)</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a7594979f90c385344d5c16bde4dd1c2b" kindref="member">t_vH2</ref>-&gt;tic();</highlight></codeline>
-<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2chiL<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[1]);</highlight></codeline>
-<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2chiR<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[2]);</highlight></codeline>
-<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2spin<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[0]);</highlight></codeline>
-<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>vH2;</highlight></codeline>
-<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(log2spin<sp/>&gt;<sp/>log2chiL<sp/>+<sp/>log2chiR){</highlight></codeline>
-<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(log2chiL<sp/>&gt;<sp/>log2chiR){</highlight></codeline>
-<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_H2v<sp/>path:<sp/>log2spin<sp/>&gt;<sp/>log2chiL<sp/>+<sp/>log2chiR<sp/><sp/>and<sp/><sp/>log2chiL<sp/>&gt;<sp/>log2chiR<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
-<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
-<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
-<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
-<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,0}))</highlight></codeline>
-<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{0,2}))</highlight></codeline>
-<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2,1,4},<sp/>{2,0,1}))</highlight></codeline>
-<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{2,0,1});</highlight></codeline>
-<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="183"><highlight class="normal"></highlight></codeline>
-<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_H2v<sp/>path:<sp/>log2spin<sp/>&gt;<sp/>log2chiL<sp/>+<sp/>log2chiR<sp/><sp/>and<sp/><sp/>log2chiL<sp/>&lt;=<sp/>log2chiR<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{2,0,1});</highlight></codeline>
-<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
-<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
-<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
-<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,1}))</highlight></codeline>
-<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{0,2}))</highlight></codeline>
-<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2,4,1},<sp/>{2,0,1}))</highlight></codeline>
-<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{2,1,0});</highlight></codeline>
-<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="195"><highlight class="normal"></highlight></codeline>
-<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_H2v<sp/>path:<sp/>log2spin<sp/>&lt;=<sp/>log2chiL<sp/>+<sp/>log2chiR&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
-<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
-<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,0}))</highlight></codeline>
-<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({4,2},<sp/>{2,0}))</highlight></codeline>
-<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2,3},<sp/>{0,2,3}))</highlight></codeline>
-<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,<sp/>0,<sp/>2});</highlight></codeline>
-<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="207"><highlight class="normal"></highlight></codeline>
-<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a7594979f90c385344d5c16bde4dd1c2b" kindref="member">t_vH2</ref>-&gt;toc();</highlight></codeline>
-<codeline lineno="209"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="164" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab658e218305cdc90e9573eadb206a90a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ab658e218305cdc90e9573eadb206a90a" kindref="member">ceres_direct_functor&lt;Scalar&gt;::get_H2v</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a349c4e2fd4c4cfefae4bfcdb0344d137" kindref="member">VectorType</ref><sp/>&amp;v)</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a7594979f90c385344d5c16bde4dd1c2b" kindref="member">t_vH2</ref>-&gt;tic();</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2chiL<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[1]);</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2chiR<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[2]);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2spin<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[0]);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>vH2;</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(log2spin<sp/>&gt;<sp/>log2chiL<sp/>+<sp/>log2chiR){</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(log2chiL<sp/>&gt;<sp/>log2chiR){</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_H2v<sp/>path:<sp/>log2spin<sp/>&gt;<sp/>log2chiL<sp/>+<sp/>log2chiR<sp/><sp/>and<sp/><sp/>log2chiL<sp/>&gt;<sp/>log2chiR<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).<ref refid="namespacepcg__extras_1a131f49fae5a8125fbe37eee8c28154b2" kindref="member">shuffle</ref>(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,0}))</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{0,2}))</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2,1,4},<sp/>{2,0,1}))</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{2,0,1});</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_H2v<sp/>path:<sp/>log2spin<sp/>&gt;<sp/>log2chiL<sp/>+<sp/>log2chiR<sp/><sp/>and<sp/><sp/>log2chiL<sp/>&lt;=<sp/>log2chiR<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).<ref refid="namespacepcg__extras_1a131f49fae5a8125fbe37eee8c28154b2" kindref="member">shuffle</ref>(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{2,0,1});</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,1}))</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{0,2}))</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2,4,1},<sp/>{2,0,1}))</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{2,1,0});</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_H2v<sp/>path:<sp/>log2spin<sp/>&lt;=<sp/>log2chiL<sp/>+<sp/>log2chiR&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).<ref refid="namespacepcg__extras_1a131f49fae5a8125fbe37eee8c28154b2" kindref="member">shuffle</ref>(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1af8acccee56c324ae455bd3fb007a0310" kindref="member">H2v_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a6a7c80f09887ee441b307e3ba9d9b786" kindref="member">env2L</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,0}))</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({4,2},<sp/>{2,0}))</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a0eac2ee9b27821ae80db097e296ad283" kindref="member">env2R</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2,3},<sp/>{0,2,3}))</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,<sp/>0,<sp/>2});</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a7594979f90c385344d5c16bde4dd1c2b" kindref="member">t_vH2</ref>-&gt;toc();</highlight></codeline>
+<codeline lineno="208"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
 <codeline lineno="210"><highlight class="normal"></highlight></codeline>
 <codeline lineno="211"><highlight class="normal"></highlight></codeline>
-<codeline lineno="212"><highlight class="normal"></highlight></codeline>
-<codeline lineno="213"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
-<codeline lineno="214" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a79b6023bf74322357f43a1c553365446" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a79b6023bf74322357f43a1c553365446" kindref="member">ceres_direct_functor&lt;Scalar&gt;::get_Hv</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a349c4e2fd4c4cfefae4bfcdb0344d137" kindref="member">VectorType</ref><sp/>&amp;v)</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aa2028385e087c3451a181ea561d69358" kindref="member">t_vH</ref>-&gt;tic();</highlight></codeline>
-<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2chiL<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[1]);</highlight></codeline>
-<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2chiR<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[2]);</highlight></codeline>
-<codeline lineno="218"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>size_t<sp/>log2spin<sp/><sp/>=<sp/>std::log2(multiComponents.dsizes[0]);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(log2chiL<sp/>&gt;<sp/>log2chiR){</highlight></codeline>
-<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_Hv<sp/>path:<sp/>log2chiL<sp/>&gt;<sp/>log2chiR<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="221"><highlight class="normal"></highlight></codeline>
-<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
-<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
-<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
-<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" kindref="member">envL</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
-<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,0}))</highlight></codeline>
-<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" kindref="member">envR</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2},<sp/>{0,<sp/>2}))</highlight></codeline>
-<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,<sp/>0,<sp/>2});</highlight></codeline>
-<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_Hv<sp/>path:<sp/>log2chiL<sp/>&lt;=<sp/>log2chiR<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
-<codeline lineno="231"><highlight class="normal"></highlight></codeline>
-<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{2,0,1});</highlight></codeline>
-<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
-<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
-<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" kindref="member">envR</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
-<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,1}))</highlight></codeline>
-<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" kindref="member">envL</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2},<sp/>{0,2}))</highlight></codeline>
-<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,<sp/>2,<sp/>0});</highlight></codeline>
-<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="240"><highlight class="normal"></highlight></codeline>
-<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aa2028385e087c3451a181ea561d69358" kindref="member">t_vH</ref>-&gt;toc();</highlight></codeline>
-<codeline lineno="242"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="213" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a79b6023bf74322357f43a1c553365446" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a79b6023bf74322357f43a1c553365446" kindref="member">ceres_direct_functor&lt;Scalar&gt;::get_Hv</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a349c4e2fd4c4cfefae4bfcdb0344d137" kindref="member">VectorType</ref><sp/>&amp;v)</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aa2028385e087c3451a181ea561d69358" kindref="member">t_vH</ref>-&gt;tic();</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2chiL<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[1]);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>log2chiR<sp/><sp/>=<sp/>std::log2(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>[2]);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>size_t<sp/>log2spin<sp/><sp/>=<sp/>std::log2(multiComponents.dsizes[0]);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(log2chiL<sp/>&gt;<sp/>log2chiR){</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_Hv<sp/>path:<sp/>log2chiL<sp/>&gt;<sp/>log2chiR<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).<ref refid="namespacepcg__extras_1a131f49fae5a8125fbe37eee8c28154b2" kindref="member">shuffle</ref>(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" kindref="member">envL</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,0}))</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" kindref="member">envR</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2},<sp/>{0,<sp/>2}))</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,<sp/>0,<sp/>2});</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1abae83f716b9945ef241ad066d4df8c89" kindref="member">print_path</ref>)<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;get_Hv<sp/>path:<sp/>log2chiL<sp/>&lt;=<sp/>log2chiR<sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>Eigen::TensorMap&lt;const<sp/>Eigen::Tensor&lt;const<sp/>Scalar,3&gt;&gt;(v.derived().data(),<sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1ae9e6a1af2475228141ab4f05060e8870" kindref="member">dsizes</ref>).<ref refid="namespacepcg__extras_1a131f49fae5a8125fbe37eee8c28154b2" kindref="member">shuffle</ref>(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{2,0,1});</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a24db90e9ff64d3caa2f420ee096dfc87" kindref="member">Hv_tensor</ref>.device(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" kindref="member">omp</ref>.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>theta</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a401b4fc3d34cb89a58f27252f3be816d" kindref="member">envR</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},<sp/>{0}))</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a951563b4cf59a0b4fbcc5d1a3386e10c" kindref="member">mpo</ref><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,3},<sp/>{2,1}))</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor_1a153cefeacf60bf6f8143937e8e709618" kindref="member">envL</ref>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,2},<sp/>{0,2}))</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,<sp/>2,<sp/>0});</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aa2028385e087c3451a181ea561d69358" kindref="member">t_vH</ref>-&gt;toc();</highlight></codeline>
+<codeline lineno="241"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"></highlight></codeline>
 <codeline lineno="243"><highlight class="normal"></highlight></codeline>
-<codeline lineno="244"><highlight class="normal"></highlight></codeline>
-<codeline lineno="245"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="246"><highlight class="normal"></highlight><highlight class="comment">//std::pair&lt;typename<sp/>ceres_direct_functor&lt;Scalar&gt;::VectorType,<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="247"><highlight class="normal"></highlight><highlight class="comment">//ceres_direct_functor&lt;Scalar&gt;::get_Hv_vHv(const<sp/>VectorType<sp/>&amp;v)const{</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="248"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>Hv<sp/>=<sp/>get_Hv(v);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="249"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_vHv-&gt;tic();</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="250"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>vHv<sp/>=<sp/>v.dot(Hv);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="251"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_vHv-&gt;toc();</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="252"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>std::make_pair(Hv,vHv);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="253"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight><highlight class="comment">//std::pair&lt;typename<sp/>ceres_direct_functor&lt;Scalar&gt;::VectorType,<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight><highlight class="comment">//ceres_direct_functor&lt;Scalar&gt;::get_Hv_vHv(const<sp/>VectorType<sp/>&amp;v)const{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>Hv<sp/>=<sp/>get_Hv(v);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="248"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_vHv-&gt;tic();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="249"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>vHv<sp/>=<sp/>v.dot(Hv);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="250"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>t_vHv-&gt;toc();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="251"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>std::make_pair(Hv,vHv);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="252"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="253"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="254"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="255"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="256"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="257"><highlight class="normal"></highlight><highlight class="comment">//std::pair&lt;typename<sp/>ceres_direct_functor&lt;Scalar&gt;::VectorType,<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="258"><highlight class="normal"></highlight><highlight class="comment">//ceres_direct_functor&lt;Scalar&gt;::get_H2v_vH2v(const<sp/>VectorType<sp/>&amp;v)const{</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="259"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>H2v<sp/>=<sp/>get_H2v(v);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="260"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="261"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>std::make_pair(H2v,vH2v);</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="262"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="255"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight><highlight class="comment">//std::pair&lt;typename<sp/>ceres_direct_functor&lt;Scalar&gt;::VectorType,<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight><highlight class="comment">//ceres_direct_functor&lt;Scalar&gt;::get_H2v_vH2v(const<sp/>VectorType<sp/>&amp;v)const{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>H2v<sp/>=<sp/>get_H2v(v);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>std::make_pair(H2v,vH2v);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight></codeline>
 <codeline lineno="263"><highlight class="normal"></highlight></codeline>
 <codeline lineno="264"><highlight class="normal"></highlight></codeline>
-<codeline lineno="265"><highlight class="normal"></highlight></codeline>
-<codeline lineno="266"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kindref="compound">tools::finite::opt::internal::ceres_direct_functor&lt;double&gt;</ref>;</highlight></codeline>
-<codeline lineno="267"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kindref="compound">tools::finite::opt::internal::ceres_direct_functor&lt;std::complex&lt;double&gt;</ref>&gt;;</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kindref="compound">tools::finite::opt::internal::ceres_direct_functor&lt;double&gt;</ref>;</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" kindref="compound">tools::finite::opt::internal::ceres_direct_functor&lt;std::complex&lt;double&gt;</ref>&gt;;</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight></codeline>
 <codeline lineno="268"><highlight class="normal"></highlight></codeline>
 <codeline lineno="269"><highlight class="normal"></highlight></codeline>
-<codeline lineno="270"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp"/>
   </compounddef>

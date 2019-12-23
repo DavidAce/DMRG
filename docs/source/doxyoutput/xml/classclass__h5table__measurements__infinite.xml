@@ -53,47 +53,47 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="177">
+      <node id="179">
         <label>class_h5table_measurements_infinite::data_struct</label>
         <link refid="structclass__h5table__measurements__infinite_1_1data__struct"/>
       </node>
-      <node id="180">
+      <node id="182">
         <label>std::array&lt; hid_t, NFIELDS &gt;</label>
       </node>
-      <node id="176">
+      <node id="178">
         <label>std::vector&lt; class_h5table_measurements_infinite::data_struct &gt;</label>
-        <childnode refid="177" relation="usage">
+        <childnode refid="179" relation="usage">
           <edgelabel>elements</edgelabel>
         </childnode>
       </node>
-      <node id="181">
+      <node id="183">
         <label>std::array&lt; size_t, NFIELDS &gt;</label>
       </node>
-      <node id="178">
+      <node id="180">
         <label>class_h5table_measurements_infinite::meta_struct</label>
         <link refid="structclass__h5table__measurements__infinite_1_1meta__struct"/>
-        <childnode refid="179" relation="usage">
+        <childnode refid="181" relation="usage">
           <edgelabel>field_names</edgelabel>
         </childnode>
-        <childnode refid="180" relation="usage">
+        <childnode refid="182" relation="usage">
           <edgelabel>field_types</edgelabel>
         </childnode>
-        <childnode refid="181" relation="usage">
+        <childnode refid="183" relation="usage">
           <edgelabel>dst_offsets</edgelabel>
           <edgelabel>dst_sizes</edgelabel>
         </childnode>
       </node>
-      <node id="175">
+      <node id="177">
         <label>class_h5table_measurements_infinite</label>
         <link refid="classclass__h5table__measurements__infinite"/>
-        <childnode refid="176" relation="usage">
+        <childnode refid="178" relation="usage">
           <edgelabel>buffer</edgelabel>
         </childnode>
-        <childnode refid="178" relation="usage">
+        <childnode refid="180" relation="usage">
           <edgelabel>meta</edgelabel>
         </childnode>
       </node>
-      <node id="179">
+      <node id="181">
         <label>std::array&lt; const char *, NFIELDS &gt;</label>
       </node>
     </collaborationgraph>
