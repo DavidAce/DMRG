@@ -2,15 +2,30 @@
 // Created by david on 2016-07-24.
 //
 
-#include "nmspc_random_numbers.h"
+#include "nmspc_random.h"
 
 using namespace Eigen;
 using namespace std;
 namespace rn{
-    std::mt19937 rng;
+//    std::mt19937 rng;
+    pcg32 rng;
+
     void seed(unsigned long n){
-        rng.seed(n);
-        std::srand((unsigned int) n);
+        std::cout << "Seeding : " << n << std::endl;
+
+        // Seed with a real random value, if available
+//        pcg_extras::seed_seq_from<std::random_device> seed_source;
+//        std::vector<unsigned long int> seeds (10);
+//        seed_source.generate(seeds.begin(),seeds.end());
+//        std::seed_seq seed_value { };
+        std::seed_seq seq{n};
+
+        rng.seed(seq);
+
+//        std::srand((unsigned int) n);
+        std::srand(rng());
+//        for(auto s: seeds) std::cout << s << std::endl;
+
     }
 
     int uniform_integer_1(){
