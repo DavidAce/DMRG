@@ -9,7 +9,6 @@ source/algorithms/class_iTEBD.cpp
 source/algorithms/class_xDMRG.cpp
 source/general/class_tic_toc.cpp
 source/general/nmspc_quantum_mechanics.cpp
-source/general/nmspc_random_numbers.cpp
 source/io/class_h5table_buffer.cpp
 source/io/class_settings_reader.cpp
 source/io/nmspc_logger.cpp
@@ -20,6 +19,7 @@ source/math/arpack_extra/matrix_recast.cpp
 source/math/class_eigsolver.cpp
 source/math/class_svd_wrapper.cpp
 source/math/class_svd_wrapper_lapacke.cpp
+source/math/nmspc_random.cpp
 source/model/class_model_base.cpp
 source/model/class_model_factory.cpp
 source/model/class_selfdual_tf_rf_ising.cpp
@@ -80,7 +80,6 @@ source/algorithms/class_xDMRG.h
 source/general/class_tic_toc.h
 source/general/nmspc_omp.h
 source/general/nmspc_quantum_mechanics.h
-source/general/nmspc_random_numbers.h
 source/general/nmspc_tensor_extra.h
 source/general/nmspc_type_check.h
 source/io/class_h5table_buffer.h
@@ -99,6 +98,10 @@ source/math/class_eigsolver.h
 source/math/class_svd_wrapper.h
 source/math/nmspc_eigutils.h
 source/math/nmspc_math.h
+source/math/nmspc_random.h
+source/math/pcg/pcg_extras.hpp
+source/math/pcg/pcg_random.hpp
+source/math/pcg/pcg_uint128.hpp
 source/model/class_hamiltonian_h5tables.h
 source/model/class_model_base.h
 source/model/class_model_factory.h
