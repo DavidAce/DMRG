@@ -41,7 +41,7 @@ CMake will check for dependencies in the host system. If not found, it will down
 If the dependencies are successfully found or installed, the project is built and an executable is generated in `build/Release/DMRG++`.
 
 ### Usage
-The input configuration file `input/input.cfg` controls the properties of the simulation. `DMRG++` admits custom input files from command-line arguments, e.g. `DMRG++ -i ../CustomFolder/custom.cfg`.
+The input configuration file `input/input.cfg` controls the properties of the simulation. `DMRG++` admits custom input files from command-line arguments, e.g. `./build/Release/DMRG++ -i ../CustomFolder/custom.cfg`.
 
 If no configuration file is given as argument, the default is to look for a configuration file located in `input/input.cfg` relative to the project root folder.
 
@@ -55,7 +55,7 @@ needs to hand-craft the *Matrix Product Operator* (MPO) of the model, and add it
 Once implemented, the model is selected using the input configuration file in `input/input.cfg`, with the option `model::model_type `.
 
 #### Output file
-After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration file `./input/input.cfg`.
+After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration file `input/input.cfg`.
 By default this should be in `output/output.h5`. This file will contain values like the final energies, entanglement entropies, entanglement spectrums and
 optionally the final state in MPS form.
 
@@ -81,11 +81,12 @@ The following software is required to build the project:
 ### Optional Requirements
 The compilation of DMRG++ requires several libraries. To meet the requirements, you have two options:
 
-  1. **Automatic**: let CMake download and compile the libraries below from source into a local folder `./libs`. This is the default behavior if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `./libs` folder.
-  2. **Manually**: install the libraries yourself with your favorite package manager (e.g. `conda`, `apt` in ubuntu or `brew` in OSX). The build attempts to find libraries in your local system. 
+  1. **Automatic**: let CMake download and compile the libraries below from source into a local folder `libs-release` or `libs-debug`. This is an opt-in behavior if the library is not found on your system. Note that this does *NOT* make a system-wide install, so you can safely delete the `libs-<config>` folders.
+  2. **Manually**: install the libraries yourself with your favorite package manager (e.g. `conda`,`apt` in ubuntu or `brew` in OSX). The build attempts to find libraries in your local system. 
   3. **Manual with modules from [Easybuild](https://easybuild.readthedocs.io/en/latest/)** (in construction). You can also load *modules* from the ubuntu command-line tool *environment-modules* or *Lmod*.  CMake will look for environment variables such as `EBROOT<libname>` that are defined when loading Easybuild modules.
-
- If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.
+ 
+ If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from other sources package manager, or select conan as the preferred download method. This is done
+ with the flag `./build.sh --download-method=conan` or directly as a CMake cli parameter `-DDOWNLOAD_METHOD=conan`. This requires conan to be installed in your system e.g., through apt/pip/conda.
  
 #### List of libraries
  
@@ -93,10 +94,10 @@ The compilation of DMRG++ requires several libraries. To meet the requirements, 
  - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
  - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
  - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) LC++ frontend for Arpack.
- - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5.
+ - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5. 
+ - [**spdlog**](https://github.com/gabime/spdlog) A fast logger based on fmt.
  - [**HDF5**](https://support.hdfgroup.org/HDF5/) for output binary output file support (tested with version >= 1.10).
  - [**ceres**](http://ceres-solver.org/) Optimization library. Here we use the L-BFGS routines. 
- - [**spdlog**](https://github.com/gabime/spdlog) A fast logger.
 
 ---
 
