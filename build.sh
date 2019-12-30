@@ -98,7 +98,6 @@ do
     -t|--build-target)              build_target=$2                 ; echo " * Build target             : $2"      ; shift 2 ;;
        --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
-       --download-missing)          download_missing="ON"           ; echo " * Download missing libs    : ON"      ; shift   ;;
        --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs:    : ON"      ; shift   ;;
@@ -132,7 +131,7 @@ for lib in "${clear_libs[@]}"; do
     fi
 done
 
-if [[ "$download_method" != *"anual" && "$download_method" != *"onan" ]]; then
+if [[ ! "$download_method" =~ "native|conan|none" ]]; then
     echo "Download method unsupported: $download_method"
     exit 1
 fi
