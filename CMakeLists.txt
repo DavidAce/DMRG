@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
-project(DMRG++ CXX )
-#enable_language()
+project(DMRG++
+        VERSION 2.0.0
+        DESCRIPTION "DMRG algorithms for 1D quantum spin chains"
+        HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
