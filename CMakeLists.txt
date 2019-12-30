@@ -23,8 +23,8 @@ option(CMAKE_VERBOSE_MAKEFILE   "Verbose makefile"                              
 #################################################################
 ### Make an "enum" for valid download methods                 ###
 #################################################################
-set(VALID_DOWNLOAD_METHODS hunter conan manual none)
-set(DOWNLOAD_METHOD manual CACHE STRING "Download method for external dependencies")
+set(VALID_DOWNLOAD_METHODS hunter conan native none)
+set(DOWNLOAD_METHOD native CACHE STRING "Download method for external dependencies")
 set_property(CACHE DOWNLOAD_METHOD  PROPERTY STRINGS ${VALID_DOWNLOAD_METHODS})
 if(NOT DOWNLOAD_METHOD IN_LIST VALID_DOWNLOAD_METHODS)
     message(FATAL_ERROR "DOWNLOAD_METHOD must be one of ${VALID_DOWNLOAD_METHODS}")
@@ -266,8 +266,8 @@ endif()
 ###########################################
 if(${DOWNLOAD_METHOD} MATCHES "conan")
     include(cmake-modules/SetupDependenciesConan.cmake)
-elseif(${DOWNLOAD_METHOD} MATCHES "manual")
-    include(cmake-modules/SetupDependenciesManual.cmake)
+elseif(${DOWNLOAD_METHOD} MATCHES "native")
+    include(cmake-modules/SetupDependenciesNative.cmake)
 endif()
 include(cmake-modules/PrintTargetInfo.cmake)
 target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)  # Link everything to main project

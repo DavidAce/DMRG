@@ -11,7 +11,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -c | --clear-cmake              : Clear CMake files before build (delete ./build)
 -d | --dry-run                  : Dry run
    | --download-missing         : Download missing libraries [ ON | OFF ] (default = OFF)
-   | --download-method          : Download libraries using [ manual | conan ] (default = manual)
+   | --download-method          : Download libraries using [ native | conan ] (default = native)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
 -g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
    | --gcc-toolchain [=arg]     : Path to GCC toolchain. Use with Clang if it can't find stdlib (defailt = none)
@@ -69,7 +69,7 @@ build_target="all"
 march="haswell"
 enable_shared="OFF"
 download_missing="OFF"
-download_method="manual"
+download_method="native"
 enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
