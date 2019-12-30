@@ -1,0 +1,367 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__i_d_m_r_g" kind="class" language="C++" prot="public">
+    <compoundname>class_iDMRG</compoundname>
+    <basecompoundref refid="classclass__algorithm__infinite" prot="public" virt="non-virtual">class_algorithm_infinite</basecompoundref>
+    <includes refid="class__i_d_m_r_g_8h" local="no">class_iDMRG.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1a3df56b81d9ded5d5d83de10f4d593fdf" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_iDMRG::class_iDMRG</definition>
+        <argsstring>(std::shared_ptr&lt; h5pp::File &gt; h5ppFile_)</argsstring>
+        <name>class_iDMRG</name>
+        <param>
+          <type>std::shared_ptr&lt; h5pp::File &gt;</type>
+          <declname>h5ppFile_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="16" bodyend="20"/>
+        <references refid="classclass__i_d_m_r_g_1a3df56b81d9ded5d5d83de10f4d593fdf" compoundref="class__i_d_m_r_g_8cpp" startline="16" endline="20">class_iDMRG</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1a1ed3270932c01d1b3368b4641ce58294" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_iDMRG::single_DMRG_step</definition>
+        <argsstring>(std::string ritz)</argsstring>
+        <name>single_DMRG_step</name>
+        <param>
+          <type>std::string</type>
+          <declname>ritz</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="61" bodyend="-1"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a7aabb154fe5863b121e1d7dc47ab5765" compoundref="nmspc__tools_8h" startline="377">tools::common::profile::t_sim</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
+        <references refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" compoundref="class__simulation__status_8h" startline="35">status_data::wall_time</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a2846b1d2fefe653f9fe80c92bc846be3" compoundref="nmspc__tools_8h" startline="374">tools::common::profile::t_tot</references>
+        <references refid="classclass__tic__toc_1abdb3f46902102c328384e6160d733124" compoundref="class__tic__toc_8cpp" startline="103" endline="105">class_tic_toc::get_age</references>
+        <references refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" compoundref="class__simulation__status_8h" startline="36">status_data::simu_time</references>
+        <references refid="classclass__tic__toc_1ac743e885a66900cd82645c5bb07d2f73" compoundref="class__tic__toc_8cpp" startline="33" endline="35">class_tic_toc::get_measured_time</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1af7b8ff1ff8a2ba0784cecab54ac25ba6" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>void</type>
+        <definition>void class_iDMRG::run_simulation</definition>
+        <argsstring>() final</argsstring>
+        <name>run_simulation</name>
+        <reimplements refid="classclass__algorithm__infinite_1abdf68a4ae64f7302ad9e82a48d468e8a">run_simulation</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="24" bodyend="58"/>
+        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="118">settings::idmrg::on</references>
+        <references refid="classclass__i_d_m_r_g_1ad06337dc6d59f356ae4b408db1e34dbf" compoundref="class__i_d_m_r_g_8cpp" startline="77" endline="93">check_convergence</references>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
+        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
+        <references refid="namespacesettings_1_1idmrg_1a0b0d73c9584cf669c3b6ef2c148698cd" compoundref="nmspc__settings_8h" startline="119">settings::idmrg::max_steps</references>
+        <references refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4a5657d36364908ad640638b4239c8a97e">class_algorithm_base::MAX_ITERS</references>
+        <references refid="structstatus__data_1a682a441660e6bf83604320835ee6c20d" compoundref="class__simulation__status_8h" startline="41">status_data::simulation_has_succeeded</references>
+        <references refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4afd9f6519d3f45276829fe74eb2c4bb85">class_algorithm_base::SUCCEEDED</references>
+        <references refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" compoundref="class__simulation__status_8h" startline="44">status_data::simulation_has_to_stop</references>
+        <references refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4a5c290ac23e3d60150ad896708595fcb7">class_algorithm_base::SATURATED</references>
+        <references refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" compoundref="class__simulation__status_8h" startline="19">status_data::step</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1ad06337dc6d59f356ae4b408db1e34dbf" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>void</type>
+        <definition>void class_iDMRG::check_convergence</definition>
+        <argsstring>() final</argsstring>
+        <name>check_convergence</name>
+        <reimplements refid="classclass__algorithm__base_1a6d37e1472c3e74f8e50a11c71a8b03ee">check_convergence</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="77" bodyend="93"/>
+        <references refid="namespacetools_1_1common_1_1profile_1ab2944237031c9b3b95d776604b107f76" compoundref="nmspc__tools_8h" startline="378">tools::common::profile::t_con</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" compoundref="class__algorithm__base_8h" startline="43">class_algorithm_base::sim_status</references>
+        <references refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" compoundref="class__simulation__status_8h" startline="46">status_data::entanglement_has_converged</references>
+        <references refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" compoundref="class__simulation__status_8h" startline="48">status_data::variance_mpo_has_converged</references>
+        <references refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" compoundref="class__simulation__status_8h" startline="50">status_data::variance_ham_has_converged</references>
+        <references refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" compoundref="class__simulation__status_8h" startline="52">status_data::variance_mom_has_converged</references>
+        <references refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" compoundref="class__simulation__status_8h" startline="45">status_data::chi_lim_has_reached_chi_max</references>
+        <references refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" compoundref="class__simulation__status_8h" startline="39">status_data::simulation_has_converged</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1ad20909b9e63dfcb1724a0c53268bdb51" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool class_iDMRG::sim_on</definition>
+        <argsstring>() final</argsstring>
+        <name>sim_on</name>
+        <reimplements refid="classclass__algorithm__base_1ae08aa4b8e9bbd286c9ec76f15553a037">sim_on</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="98" bodyend="98"/>
+        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="118">settings::idmrg::on</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1a904706d36e61c0739a15823d672c0ca7" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>long</type>
+        <definition>long class_iDMRG::chi_max</definition>
+        <argsstring>() final</argsstring>
+        <name>chi_max</name>
+        <reimplements refid="classclass__algorithm__base_1a76ef69cebc415e32298214af4cf9003b">chi_max</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="99" bodyend="99"/>
+        <references refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" compoundref="nmspc__settings_8h" startline="120">settings::idmrg::chi_max</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1afb5e5b37f63d3a92f2171c0685e50043" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>size_t</type>
+        <definition>size_t class_iDMRG::num_sites</definition>
+        <argsstring>() final</argsstring>
+        <name>num_sites</name>
+        <reimplements refid="classclass__algorithm__base_1a0f6c17cedfeb0baba3df055e87655ea8">num_sites</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="100" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1a1eb94f25ffcd7a6d634327bfde1bf14d" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>size_t</type>
+        <definition>size_t class_iDMRG::write_freq</definition>
+        <argsstring>() final</argsstring>
+        <name>write_freq</name>
+        <reimplements refid="classclass__algorithm__base_1a14c1cf2ee0f07ec3d4d3acd55ac213a7">write_freq</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="101" bodyend="101"/>
+        <references refid="namespacesettings_1_1idmrg_1a045e93c114bea3cce9b57146f2a7f176" compoundref="nmspc__settings_8h" startline="124">settings::idmrg::write_freq</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1a6831d6885838a4e9a94ebe27ce6dc201" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>size_t</type>
+        <definition>size_t class_iDMRG::print_freq</definition>
+        <argsstring>() final</argsstring>
+        <name>print_freq</name>
+        <reimplements refid="classclass__algorithm__base_1a5d6af987e476e9a93a2bab9261ac16bb">print_freq</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="102" bodyend="102"/>
+        <references refid="namespacesettings_1_1idmrg_1af8fb290c6eac82f9e33a94e71d26a29d" compoundref="nmspc__settings_8h" startline="123">settings::idmrg::print_freq</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1ab329d7ed446dab62ccbf2330c53b6874" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool class_iDMRG::chi_grow</definition>
+        <argsstring>() final</argsstring>
+        <name>chi_grow</name>
+        <reimplements refid="classclass__algorithm__base_1a77520add9ead85c0b5a98cdbb46edaf6">chi_grow</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="103" bodyend="103"/>
+        <references refid="namespacesettings_1_1idmrg_1aa8fbed186f5dc10147472f92cb11cd6f" compoundref="nmspc__settings_8h" startline="121">settings::idmrg::chi_grow</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__i_d_m_r_g_1a408f83ce031c6092e8f5c7faad9e6630" prot="public" static="no" const="no" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>long</type>
+        <definition>long class_iDMRG::chi_init</definition>
+        <argsstring>() final</argsstring>
+        <name>chi_init</name>
+        <reimplements refid="classclass__algorithm__base_1a43b93d906ce8263b7436c4758231ba5e">chi_init</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp" bodystart="104" bodyend="104"/>
+        <references refid="namespacesettings_1_1idmrg_1a5f9290b0a54de4af134cabe9aedb6295" compoundref="nmspc__settings_8h" startline="122">settings::idmrg::chi_init</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Class that runs the infinite DMRG algorithm. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="201">
+        <label>class_algorithm_infinite</label>
+        <link refid="classclass__algorithm__infinite"/>
+        <childnode refid="202" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="202">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+      </node>
+      <node id="200">
+        <label>class_iDMRG</label>
+        <link refid="classclass__i_d_m_r_g"/>
+        <childnode refid="201" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="204">
+        <label>class_algorithm_infinite</label>
+        <link refid="classclass__algorithm__infinite"/>
+        <childnode refid="205" relation="public-inheritance">
+        </childnode>
+        <childnode refid="210" relation="usage">
+          <edgelabel>S_vec</edgelabel>
+          <edgelabel>V_mom_vec</edgelabel>
+          <edgelabel>V_mpo_vec</edgelabel>
+          <edgelabel>V_ham_vec</edgelabel>
+        </childnode>
+        <childnode refid="211" relation="usage">
+          <edgelabel>B_ham_vec</edgelabel>
+          <edgelabel>BS_vec</edgelabel>
+          <edgelabel>B_mom_vec</edgelabel>
+          <edgelabel>B_mpo_vec</edgelabel>
+        </childnode>
+        <childnode refid="212" relation="usage">
+          <edgelabel>X_mom_vec</edgelabel>
+          <edgelabel>X_mpo_vec</edgelabel>
+          <edgelabel>X_ham_vec</edgelabel>
+          <edgelabel>XS_vec</edgelabel>
+        </childnode>
+      </node>
+      <node id="210">
+        <label>std::list&lt; double &gt;</label>
+      </node>
+      <node id="211">
+        <label>std::list&lt; bool &gt;</label>
+      </node>
+      <node id="207">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="212">
+        <label>std::list&lt; int &gt;</label>
+      </node>
+      <node id="209">
+        <label>status_data</label>
+        <link refid="structstatus__data"/>
+      </node>
+      <node id="208">
+        <label>class_simulation_status</label>
+        <link refid="classclass__simulation__status"/>
+        <childnode refid="209" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="205">
+        <label>class_algorithm_base</label>
+        <link refid="classclass__algorithm__base"/>
+        <childnode refid="206" relation="usage">
+          <edgelabel>sim_name</edgelabel>
+        </childnode>
+        <childnode refid="208" relation="usage">
+          <edgelabel>sim_status</edgelabel>
+        </childnode>
+      </node>
+      <node id="203">
+        <label>class_iDMRG</label>
+        <link refid="classclass__i_d_m_r_g"/>
+        <childnode refid="204" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="206">
+        <label>std::string</label>
+        <childnode refid="207" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.h" bodystart="14" bodyend="30"/>
+    <listofallmembers>
+      <member refid="classclass__algorithm__infinite_1acc84655600d7e4028a28ae96bceb6f29" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>B_ham_vec</name></member>
+      <member refid="classclass__algorithm__infinite_1a8ec9eca947b8dc09ac496535fc3a0909" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>B_mom_vec</name></member>
+      <member refid="classclass__algorithm__infinite_1ac3b2e97f7691df778ba334d85997389b" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>B_mpo_vec</name></member>
+      <member refid="classclass__algorithm__infinite_1a8dcfd195113c804ef7d91e68b9175e88" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>BS_vec</name></member>
+      <member refid="classclass__i_d_m_r_g_1ad06337dc6d59f356ae4b408db1e34dbf" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>check_convergence</name></member>
+      <member refid="classclass__algorithm__infinite_1ad5ddf1d7d7b1184f4874e9db5fed23d9" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>check_convergence_entg_entropy</name></member>
+      <member refid="classclass__algorithm__infinite_1ac3374fa48c9c4c2f6b09b9e5b4fd1a8d" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>check_convergence_variance_ham</name></member>
+      <member refid="classclass__algorithm__infinite_1aa7c274874ad3e3d0258b2d7850f7867a" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>check_convergence_variance_mom</name></member>
+      <member refid="classclass__algorithm__infinite_1ad35ded89a86cc7815ebae568eae20e2e" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>check_convergence_variance_mpo</name></member>
+      <member refid="classclass__algorithm__base_1aa374f4bdc5b96a72e96688ac874bfe62" prot="protected" virt="non-virtual"><scope>class_iDMRG</scope><name>check_saturation_using_slope</name></member>
+      <member refid="classclass__algorithm__base_1a6c3102d68422740613902d7d16604f63" prot="protected" virt="non-virtual"><scope>class_iDMRG</scope><name>check_saturation_using_slope2</name></member>
+      <member refid="classclass__i_d_m_r_g_1ab329d7ed446dab62ccbf2330c53b6874" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>chi_grow</name></member>
+      <member refid="classclass__i_d_m_r_g_1a408f83ce031c6092e8f5c7faad9e6630" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>chi_init</name></member>
+      <member refid="classclass__i_d_m_r_g_1a904706d36e61c0739a15823d672c0ca7" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>chi_max</name></member>
+      <member refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__base_1a790233233d4352402e651a312e7ae76a" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>class_algorithm_base</name></member>
+      <member refid="classclass__algorithm__infinite_1a6ffb1d089cf2ad92d95d11dae4f2beef" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>class_algorithm_infinite</name></member>
+      <member refid="classclass__i_d_m_r_g_1a3df56b81d9ded5d5d83de10f4d593fdf" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>class_iDMRG</name></member>
+      <member refid="classclass__algorithm__infinite_1a7cfa931e8444f5aba7bfee278f4a6b58" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>clear_saturation_status</name></member>
+      <member refid="classclass__algorithm__infinite_1af2e3d3e0fdc1584d4f1936ada6972009" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>copy_from_tmp</name></member>
+      <member refid="classclass__algorithm__infinite_1a677af8697d8ab608b039313309b38956" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>enlarge_environment</name></member>
+      <member refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>h5pp_file</name></member>
+      <member refid="classclass__algorithm__infinite_1aa76cb2d746e2f6efca1b9a9304a0ed02" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>h5tbuf_measurements</name></member>
+      <member refid="classclass__algorithm__base_1ab0712c1f7e09a4ffcac2d8df99bf4b6b" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>h5tbuf_profiling</name></member>
+      <member refid="classclass__algorithm__base_1a068eedc09bbb4355bb691d2aeb48d48d" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>h5tbuf_sim_status</name></member>
+      <member refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" prot="protected" virt="non-virtual"><scope>class_iDMRG</scope><name>log</name></member>
+      <member refid="classclass__i_d_m_r_g_1afb5e5b37f63d3a92f2171c0685e50043" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>num_sites</name></member>
+      <member refid="classclass__i_d_m_r_g_1a6831d6885838a4e9a94ebe27ce6dc201" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>print_freq</name></member>
+      <member refid="classclass__algorithm__base_1ad0c595a0722179ffa0a478052e9f7c39" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>print_profiling</name></member>
+      <member refid="classclass__algorithm__infinite_1a993724b938167db865be9b23f291b5d9" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>print_status_full</name></member>
+      <member refid="classclass__algorithm__infinite_1af232e6d037549f0aae338b402aa9c722" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>print_status_update</name></member>
+      <member refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>process_memory_in_mb</name></member>
+      <member refid="classclass__algorithm__base_1aeec0f1d83000ef7ba92bbcdd74bdcabb" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>quietNaN</name></member>
+      <member refid="classclass__algorithm__infinite_1a941f8aa17b53f73e3cba9fdd24109f7c" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>reset_to_random_state</name></member>
+      <member refid="classclass__algorithm__infinite_1aab4b6749fea057d0f5e85c026bab919e" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>run</name></member>
+      <member refid="classclass__algorithm__infinite_1aa7176e26e0dd793557a649fc6c0b75f1" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>run_postprocessing</name></member>
+      <member refid="classclass__algorithm__infinite_1a2cabf133e43683569ef43b9639476dab" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>run_preprocessing</name></member>
+      <member refid="classclass__i_d_m_r_g_1af7b8ff1ff8a2ba0784cecab54ac25ba6" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>run_simulation</name></member>
+      <member refid="classclass__algorithm__infinite_1a4a62d84b92e36ed7079bc114f9b40728" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>S_slope</name></member>
+      <member refid="classclass__algorithm__infinite_1ad91e5fe135e2d0779ce15032908b925f" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>S_vec</name></member>
+      <member refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>Scalar</name></member>
+      <member refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>sim_name</name></member>
+      <member refid="classclass__i_d_m_r_g_1ad20909b9e63dfcb1724a0c53268bdb51" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>sim_on</name></member>
+      <member refid="classclass__algorithm__base_1a0dfe4e91492006565c1129e45ac185b8" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>sim_status</name></member>
+      <member refid="classclass__algorithm__base_1a7ee19b5bbea7bb4dca809914690039a8" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>sim_type</name></member>
+      <member refid="classclass__i_d_m_r_g_1a1ed3270932c01d1b3368b4641ce58294" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>single_DMRG_step</name></member>
+      <member refid="classclass__algorithm__infinite_1a2de10bb21a8ca511c8742a518f69a6e5" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>state</name></member>
+      <member refid="classclass__algorithm__base_1af36e30da0595f116629422821e1e4ced" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>stop_reason</name></member>
+      <member refid="classclass__algorithm__base_1a9bef39d158c6e6d1eed969116c7345b4" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>StopReason</name></member>
+      <member refid="classclass__algorithm__infinite_1a3b3bd13802b17fe5cb9600e4dcaabded" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>swap</name></member>
+      <member refid="classclass__algorithm__infinite_1a93e97af4e20920c9690ff47fe78ddd60" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>update_bond_dimension_limit</name></member>
+      <member refid="classclass__algorithm__infinite_1a837927e924e553f5801a33c2458d51eb" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>V_ham_slope</name></member>
+      <member refid="classclass__algorithm__infinite_1a81480a03144424bad518d25dd212a560" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>V_ham_vec</name></member>
+      <member refid="classclass__algorithm__infinite_1a3bcd397840d92500383d124e4cef5333" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>V_mom_slope</name></member>
+      <member refid="classclass__algorithm__infinite_1a26fed56d782f59eb8fbcb4e35fd3a196" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>V_mom_vec</name></member>
+      <member refid="classclass__algorithm__infinite_1a2b3decefbdbd9f2e4e7ab1871cbbdff3" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>V_mpo_slope</name></member>
+      <member refid="classclass__algorithm__infinite_1a7bbb22b08660d9a233d2b9cd96cabd58" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>V_mpo_vec</name></member>
+      <member refid="classclass__i_d_m_r_g_1a1eb94f25ffcd7a6d634327bfde1bf14d" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>write_freq</name></member>
+      <member refid="classclass__algorithm__infinite_1a61900694e483f2b95d05fa7591a9f739" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>write_measurements</name></member>
+      <member refid="classclass__algorithm__infinite_1a9a9b9e19dd91abcc2d7dfdf8ba7c920a" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>write_profiling</name></member>
+      <member refid="classclass__algorithm__infinite_1a84c74d3e276739573cac8008a935d981" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>write_sim_status</name></member>
+      <member refid="classclass__algorithm__infinite_1ac427ff8b98e2f6bef7e11e6703b87574" prot="public" virt="virtual"><scope>class_iDMRG</scope><name>write_state</name></member>
+      <member refid="classclass__algorithm__infinite_1a8c0ed712a983752bcecc2d645cfd8401" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>X_ham_vec</name></member>
+      <member refid="classclass__algorithm__infinite_1a17c4fcff55d7b01560a835ee91ac6d84" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>X_mom_vec</name></member>
+      <member refid="classclass__algorithm__infinite_1a8895c39f0050aecc51f56f0b3d650306" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>X_mpo_vec</name></member>
+      <member refid="classclass__algorithm__infinite_1a9c4ec6ab37bc9fd8b90cb9ad587a40bc" prot="public" virt="non-virtual"><scope>class_iDMRG</scope><name>XS_vec</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

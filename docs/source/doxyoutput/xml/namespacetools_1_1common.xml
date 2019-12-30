@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1common" kind="namespace" language="C++">
+    <compoundname>tools::common</compoundname>
+    <innernamespace refid="namespacetools_1_1common_1_1io">tools::common::io</innernamespace>
+    <innernamespace refid="namespacetools_1_1common_1_1profile">tools::common::profile</innernamespace>
+    <innernamespace refid="namespacetools_1_1common_1_1views">tools::common::views</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using tools::common::Scalar = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="345" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="345" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="344" column="1"/>
+  </compounddef>
+</doxygen>

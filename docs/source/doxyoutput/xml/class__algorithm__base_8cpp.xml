@@ -1,0 +1,463 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__algorithm__base_8cpp" kind="file" language="C++">
+    <compoundname>class_algorithm_base.cpp</compoundname>
+    <includes local="no">fstream</includes>
+    <includes local="no">complex</includes>
+    <includes refid="class__algorithm__base_8h" local="yes">class_algorithm_base.h</includes>
+    <includes refid="class__h5table__buffer_8h" local="no">io/class_h5table_buffer.h</includes>
+    <includes refid="nmspc__logger_8h" local="no">io/nmspc_logger.h</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
+    <includes local="no">h5pp/h5pp.h</includes>
+    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
+    <incdepgraph>
+      <node id="7">
+        <label>list</label>
+      </node>
+      <node id="33">
+        <label>functional</label>
+      </node>
+      <node id="31">
+        <label>iterator</label>
+      </node>
+      <node id="32">
+        <label>cmath</label>
+      </node>
+      <node id="19">
+        <label>io/table_types.h</label>
+        <link refid="table__types_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>numeric</label>
+      </node>
+      <node id="26">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="13">
+        <label>string</label>
+      </node>
+      <node id="16">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="8">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>map</label>
+      </node>
+      <node id="12">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1">
+        <label>fstream</label>
+      </node>
+      <node id="22">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="18">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="11">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="24">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="30">
+        <label>math/nmspc_math.h</label>
+        <link refid="nmspc__math_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>optional</label>
+      </node>
+      <node id="6">
+        <label>vector</label>
+      </node>
+      <node id="3">
+        <label>class_algorithm_base.h</label>
+        <link refid="class__algorithm__base_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>utility</label>
+      </node>
+      <node id="14">
+        <label>array</label>
+      </node>
+      <node id="25">
+        <label>sstream</label>
+      </node>
+      <node id="15">
+        <label>hdf5.h</label>
+      </node>
+      <node id="28">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="10">
+        <label>iostream</label>
+      </node>
+      <node id="9">
+        <label>chrono</label>
+      </node>
+      <node id="0">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp</label>
+        <link refid="class__algorithm__base_8cpp"/>
+        <childnode refid="1" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>io/class_h5table_buffer.h</label>
+        <link refid="class__h5table__buffer_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>complex</label>
+      </node>
+      <node id="29">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" prot="public" static="no">
+        <type><ref refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" kindref="member">class_algorithm_base::Scalar</ref></type>
+        <definition>using Scalar =  class_algorithm_base::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-01-18.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;fstream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;complex&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__algorithm__base_8h" kindref="compound">class_algorithm_base.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__h5table__buffer_8h" kindref="compound">io/class_h5table_buffer.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__logger_8h" kindref="compound">io/nmspc_logger.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__math_8h" kindref="compound">math/nmspc_math.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__algorithm__base_1ac2a5042c5337ef3b8c6d29a115e25843" kindref="member">class_algorithm_base::Scalar</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="classclass__algorithm__base_1a790233233d4352402e651a312e7ae76a" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__base_1a35e482872c1dec9372c74c40a82208d0" kindref="member">class_algorithm_base::class_algorithm_base</ref>(std::shared_ptr&lt;h5pp::File&gt;<sp/>h5ppFile_,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>sim_name_,</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="enums_8h_1ad69f3cf5fdb6ef307d85180c346e7921" kindref="member">SimulationType</ref><sp/>sim_type_)</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>h5pp_file<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move(h5ppFile_)),</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_name<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="namespacestd" kindref="compound">std</ref>::move(sim_name_)),</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>sim_type<sp/><sp/><sp/><sp/><sp/><sp/><sp/>(sim_type_)<sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(<ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,<ref refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" kindref="member">settings::console::verbosity</ref>,<ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">settings::console::timestamp</ref>);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(<ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref>,<ref refid="namespacesettings_1_1console_1af5a0b931a18f3b2c1f12db4768c02aa9" kindref="member">settings::console::verbosity</ref>,<ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">settings::console::timestamp</ref>);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Constructing<sp/>class_algorithm_base&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a46720fc1d130729b6d90f91492d5c94d" kindref="member">tools::common::profile::init_profiling</ref>();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051" kindref="member">StorageLevel::NORMAL</ref>){</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Constructing<sp/>table<sp/>buffers<sp/>in<sp/>base&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1ab0712c1f7e09a4ffcac2d8df99bf4b6b" kindref="member">h5tbuf_profiling</ref><sp/><sp/>=<sp/>std::make_unique&lt;class_h5table_buffer&lt;class_h5table_profiling&gt;&gt;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/journal/profiling&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__algorithm__base_1a068eedc09bbb4355bb691d2aeb48d48d" kindref="member">h5tbuf_sim_status</ref><sp/>=<sp/>std::make_unique&lt;class_h5table_buffer&lt;class_h5table_simulation_status&gt;&gt;(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>,<sp/><ref refid="classclass__algorithm__base_1a64e1bbd06c9d036b60d1cd9536e8f0c8" kindref="member">sim_name</ref><sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/journal/sim_status&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>)<sp/><ref refid="classclass__algorithm__base_1a7d8b31e09c367e1ce51d4586a8adf906" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Writing<sp/>input<sp/>file&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>)<sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(<ref refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" kindref="member">settings::input::input_filename</ref><sp/><sp/>,<sp/></highlight><highlight class="stringliteral">&quot;common/input_filename&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>)<sp/><ref refid="classclass__algorithm__base_1a39fdccbd48afa02c5526ecce4e7cf0e8" kindref="member">h5pp_file</ref>-&gt;writeDataset(<ref refid="namespacesettings_1_1input_1a6237bd4c8d635524769d9a47084dad5a" kindref="member">settings::input::input_file_raw</ref><sp/><sp/>,<sp/></highlight><highlight class="stringliteral">&quot;common/input_file&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><ref refid="structclass__algorithm__base_1_1_saturation_report" kindref="compound">class_algorithm_base::SaturationReport</ref></highlight></codeline>
+<codeline lineno="47" refid="classclass__algorithm__base_1aa374f4bdc5b96a72e96688ac874bfe62" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__base_1aa374f4bdc5b96a72e96688ac874bfe62" kindref="member">class_algorithm_base::check_saturation_using_slope</ref>(</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;bool&gt;<sp/><sp/>&amp;<sp/>B_vec,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>&amp;Y_vec,</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;int&gt;<sp/>&amp;X_vec,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_data,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iter,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rate,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance)</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structclass__algorithm__base_1_1_saturation_report" kindref="compound">SaturationReport</ref><sp/>report;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>last_measurement<sp/>=<sp/>X_vec.empty()<sp/>?<sp/>0<sp/>:<sp/>X_vec.back();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(iter<sp/>-<sp/>last_measurement<sp/>&lt;<sp/>rate){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>report;}</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>It&apos;s<sp/>time<sp/>to<sp/>check.<sp/>Insert<sp/>current<sp/>numbers</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>B_vec.push_back(false);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>Y_vec.push_back(new_data);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>X_vec.push_back(iter);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>min_data_points<sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(Y_vec.size()<sp/>&lt;<sp/>min_data_points){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>report;}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>start_point<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>band_size<sp/><sp/><sp/>=<sp/>2.0<sp/>+<sp/>2.0*tolerance;<sp/><sp/></highlight><highlight class="comment">//<sp/>Between<sp/>2<sp/>and<sp/><sp/>4<sp/>standard<sp/>deviations<sp/>away</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>recent_point<sp/><sp/><sp/>=<sp/>std::floor(0.75*Y_vec.size());</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/>recent_point<sp/>=<sp/>std::min(Y_vec.size()-min_data_points<sp/>,<sp/>recent_point);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>recent_point_std<sp/>=<sp/><ref refid="namespacemath_1a1c0284331d1637efe74c375fef296e94" kindref="member">math::stdev</ref>(Y_vec,<sp/>recent_point);<sp/></highlight><highlight class="comment">//Computes<sp/>the<sp/>standard<sp/>dev<sp/>of<sp/>Y_vec<sp/>from<sp/>recent_point<sp/>to<sp/>end</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>some_point<sp/>=<sp/>0;<sp/>some_point<sp/>&lt;<sp/>Y_vec.size();<sp/>some_point++){</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>some_point_std<sp/>=<sp/><ref refid="namespacemath_1a1c0284331d1637efe74c375fef296e94" kindref="member">math::stdev</ref>(Y_vec,<sp/>some_point);<sp/></highlight><highlight class="comment">//Computes<sp/>the<sp/>standard<sp/>dev<sp/>of<sp/>Y_vec<sp/>from<sp/>some_point<sp/>to<sp/>end</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>arrow<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(some_point_std<sp/>&lt;<sp/>band_size<sp/>*<sp/>recent_point_std<sp/>and<sp/>start_point<sp/>==<sp/>0){</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>start_point<sp/>=<sp/>some_point;</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Scale<sp/>the<sp/>slope<sp/>so<sp/>that<sp/>it<sp/>can<sp/>be<sp/>interpreted<sp/>as<sp/>change<sp/>in<sp/>percent,<sp/>just<sp/>as<sp/>the<sp/>tolerance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>avgY<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacemath_1a871f3778bb92deb9570e3bd4a3692439" kindref="member">math::mean</ref>(Y_vec,start_point);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacemath_1abdf99bc627241de5f8ae40af8a73cedb" kindref="member">slope</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacemath_1abdf99bc627241de5f8ae40af8a73cedb" kindref="member">math::slope</ref>(X_vec,Y_vec,start_point)/avgY<sp/>*<sp/>100<sp/>/<sp/>std::sqrt(Y_vec.size()-start_point);<sp/></highlight><highlight class="comment">//TODO:<sp/>Is<sp/>dividing<sp/>by<sp/>sqrt(elems)<sp/>reasonable?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::isnan(slope)<sp/>?<sp/>0.0<sp/>:<sp/><ref refid="namespacemath_1abdf99bc627241de5f8ae40af8a73cedb" kindref="member">slope</ref>;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1afd0e69afe481ee46381ef8fb70c54790" kindref="member">slope</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacemath_1abdf99bc627241de5f8ae40af8a73cedb" kindref="member">slope</ref>;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1a6f46317eb8a3f9753516ad64892d5db0" kindref="member">check_from</ref><sp/><sp/><sp/><sp/>=<sp/>start_point;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1a0754af6aec19aa9590b7a6cbc62d3c6e" kindref="member">avgY</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>avgY;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report_1a4665be3f15a36ab061304513f6a32be8" kindref="member">has_computed</ref><sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>report;</highlight></codeline>
+<codeline lineno="96"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><ref refid="structclass__algorithm__base_1_1_saturation_report2" kindref="compound">class_algorithm_base::SaturationReport2</ref></highlight></codeline>
+<codeline lineno="100" refid="classclass__algorithm__base_1a6c3102d68422740613902d7d16604f63" refkind="member"><highlight class="normal"><ref refid="classclass__algorithm__base_1a6c3102d68422740613902d7d16604f63" kindref="member">class_algorithm_base::check_saturation_using_slope2</ref>(</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;double&gt;<sp/>&amp;Y_vec,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::list&lt;int&gt;<sp/><sp/><sp/><sp/>&amp;X_vec,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_data,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>iter,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>rate,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>tolerance)</highlight></codeline>
+<codeline lineno="116"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structclass__algorithm__base_1_1_saturation_report2" kindref="compound">SaturationReport2</ref><sp/>report;</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>last_measurement<sp/>=<sp/>X_vec.empty()<sp/>?<sp/>0<sp/>:<sp/>X_vec.back();</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(iter<sp/>-<sp/>last_measurement<sp/>&lt;<sp/>rate){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>report;}</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>It&apos;s<sp/>time<sp/>to<sp/>check.<sp/>Insert<sp/>current<sp/>numbers</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>Y_vec.push_back(new_data);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>X_vec.push_back(iter);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>data_points<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal">(data_points<sp/>&lt;=<sp/>Y_vec.size()){</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>x_it<sp/>=<sp/>X_vec.end();</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>y_it<sp/>=<sp/>Y_vec.end();</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::advance(x_it,<sp/>-data_points);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::advance(y_it,<sp/>-data_points);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(data_points<sp/>&gt;=<sp/>2){</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>numerator<sp/><sp/><sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>denominator<sp/>=<sp/>0.0;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>v_end<sp/>=<sp/>Y_vec.end();</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>avgX<sp/>=<sp/>accumulate(x_it,<sp/>X_vec.end(),<sp/>0.0)<sp/>/<sp/>(double)data_points;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>avgY<sp/>=<sp/>accumulate(y_it,<sp/>Y_vec.end(),<sp/>0.0)<sp/>/<sp/>(double)data_points;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal">(y_it<sp/>!=<sp/>v_end){</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>numerator<sp/><sp/><sp/>+=<sp/>(*x_it<sp/>-<sp/>avgX)<sp/>*<sp/>(*y_it<sp/>-<sp/>avgY);</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>denominator<sp/>+=<sp/>(*x_it<sp/>-<sp/>avgX)<sp/>*<sp/>(*x_it<sp/>-<sp/>avgX);</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>y_it++;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>x_it++;</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacemath_1abdf99bc627241de5f8ae40af8a73cedb" kindref="member">slope</ref><sp/>=<sp/>std::abs(numerator<sp/>/<sp/>denominator)<sp/>/<sp/>avgY<sp/>*<sp/>100;</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>slope<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::isnan(slope)<sp/>?<sp/>0.0<sp/>:<sp/><ref refid="namespacemath_1abdf99bc627241de5f8ae40af8a73cedb" kindref="member">slope</ref>;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a12c65482378a58e30d65ca13ba6a3147" kindref="member">has_computed</ref><sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a77617aef0097c3069502f208b2cdfcf6" kindref="member">slopes</ref>.push_back(slope);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a218992fc892b0f5ecfa625e96a6680b1" kindref="member">avgY</ref>.push_back(avgY);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(x_it<sp/>==<sp/>X_vec.begin())<sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(y_it<sp/>==<sp/>Y_vec.begin())<sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>data_points++;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a12c65482378a58e30d65ca13ba6a3147" kindref="member">has_computed</ref>){</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>first_greater_than_tolerance<sp/>=<sp/>std::distance(report.slopes.begin(),<sp/>std::upper_bound(report.slopes.begin(),report.slopes.end(),tolerance));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>first_greater_than_tolerance<sp/>=<sp/>std::distance(report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a77617aef0097c3069502f208b2cdfcf6" kindref="member">slopes</ref>.begin(),</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::<sp/>find_if(report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a77617aef0097c3069502f208b2cdfcf6" kindref="member">slopes</ref>.begin(),<sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a77617aef0097c3069502f208b2cdfcf6" kindref="member">slopes</ref>.end(),[tolerance](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>&amp;<sp/>x)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>x<sp/>&gt;<sp/>tolerance;<sp/>}));</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a98406c00070782a5fd10488a8f6e5de5" kindref="member">saturated_for</ref><sp/>=<sp/>first_greater_than_tolerance;</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a0e2895558c091aeb89dd8a25d9e706df" kindref="member">has_saturated</ref><sp/>=<sp/>report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a98406c00070782a5fd10488a8f6e5de5" kindref="member">saturated_for</ref><sp/>&gt;<sp/>0;</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::reverse(report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a77617aef0097c3069502f208b2cdfcf6" kindref="member">slopes</ref>.begin(),report.<ref refid="structclass__algorithm__base_1_1_saturation_report2_1a77617aef0097c3069502f208b2cdfcf6" kindref="member">slopes</ref>.end());<sp/></highlight><highlight class="comment">//Reverse<sp/>looks<sp/>better<sp/>on<sp/>print</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>report;</highlight></codeline>
+<codeline lineno="164"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168" refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__algorithm__base_1ada828b1dc778d6c547a8c03875a26b9a" kindref="member">class_algorithm_base::process_memory_in_mb</ref>(std::string<sp/>name){</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>std::ifstream<sp/>filestream(</highlight><highlight class="stringliteral">&quot;/proc/self/status&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>line;</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(std::getline(filestream,<sp/>line)){</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::istringstream<sp/>is_line(line);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>key;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::getline(is_line,<sp/>key,<sp/></highlight><highlight class="charliteral">&apos;:&apos;</highlight><highlight class="normal">)){</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(key<sp/>==<sp/>name){</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>value_str;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::getline(is_line,<sp/>value_str))<sp/>{</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Extract<sp/>the<sp/>number</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string::size_type<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">sz</ref>;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>alias<sp/>of<sp/>size_t</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>value<sp/>=<sp/>std::stoi<sp/>(value_str,&amp;sz);</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Now<sp/>we<sp/>have<sp/>the<sp/>value<sp/>in<sp/>kb</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>value/1024.0;</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>pos<sp/>=<sp/>value.find_first_not_of(&quot;<sp/>\t&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>trimmed_value<sp/>=<sp/>value.substr(pos<sp/>!=<sp/>std::string::npos<sp/>?<sp/>pos<sp/>:<sp/>0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>return<sp/>trimmed_value;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>-1.0;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.cpp"/>
+  </compounddef>
+</doxygen>

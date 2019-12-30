@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__simulation__status" kind="class" language="C++" prot="public">
+    <compoundname>class_simulation_status</compoundname>
+    <basecompoundref refid="structstatus__data" prot="public" virt="non-virtual">status_data</basecompoundref>
+    <includes refid="class__simulation__status_8h" local="no">class_simulation_status.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__simulation__status_1a9519e06a26514d0b0aa7100dffd70453" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_simulation_status::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp" bodystart="8" bodyend="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classclass__simulation__status_1aa73819621bd2d8b1507a664e50d22e01" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>friend std::ostream &amp;</type>
+        <definition>std::ostream&amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, const class_simulation_status &amp;sim_status)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.cpp" bodystart="18" bodyend="61"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="258">
+        <label>status_data</label>
+        <link refid="structstatus__data"/>
+      </node>
+      <node id="257">
+        <label>class_simulation_status</label>
+        <link refid="classclass__simulation__status"/>
+        <childnode refid="258" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="260">
+        <label>status_data</label>
+        <link refid="structstatus__data"/>
+      </node>
+      <node id="259">
+        <label>class_simulation_status</label>
+        <link refid="classclass__simulation__status"/>
+        <childnode refid="260" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/class_simulation_status.h" bodystart="60" bodyend="67"/>
+    <listofallmembers>
+      <member refid="structstatus__data_1ad9cfe0cc4a462c416584066fb9abc28f" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>chi_lim</name></member>
+      <member refid="structstatus__data_1a563478860bb43be3e9c4a00325372c34" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>chi_lim_has_reached_chi_max</name></member>
+      <member refid="structstatus__data_1a394209e7e516250158bc78e854504288" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>chi_max</name></member>
+      <member refid="classclass__simulation__status_1a9519e06a26514d0b0aa7100dffd70453" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>clear</name></member>
+      <member refid="structstatus__data_1a1664848a54f3c4b407e8f10a81dc40a7" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>delta_t</name></member>
+      <member refid="structstatus__data_1a2642502c4df9c294eb3d70111e57f9b7" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_dens</name></member>
+      <member refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_dens_target</name></member>
+      <member refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_dens_window</name></member>
+      <member refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_lbound</name></member>
+      <member refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_max</name></member>
+      <member refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_min</name></member>
+      <member refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_target</name></member>
+      <member refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>energy_ubound</name></member>
+      <member refid="structstatus__data_1a05425f160264fc7b0aa9f5bea0bc461a" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>entanglement_has_converged</name></member>
+      <member refid="structstatus__data_1a461992519f52cb575b5411b8be38ef1c" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>entanglement_has_saturated</name></member>
+      <member refid="structstatus__data_1a621237449da0c96f46a4d97f9e3078b9" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>entanglement_saturated_for</name></member>
+      <member refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>iteration</name></member>
+      <member refid="structstatus__data_1a93ca2d10ef209ccd644ff5f5d9efabf5" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>min_sweeps</name></member>
+      <member refid="structstatus__data_1a16d2c55935f9a23c594bce56c1679b31" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>moves</name></member>
+      <member refid="structstatus__data_1aa32e29bb9c8addcaf8f6591ae3030975" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>num_resets</name></member>
+      <member refid="classclass__simulation__status_1aa73819621bd2d8b1507a664e50d22e01" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>operator&lt;&lt;</name></member>
+      <member refid="structstatus__data_1aeb8d489338407c7ea6d19ea2e78980b7" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>phys_time</name></member>
+      <member refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>position</name></member>
+      <member refid="structstatus__data_1a2ee8432e8b3a4b14f9b8fb16cf73a06d" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simu_time</name></member>
+      <member refid="structstatus__data_1a66507c5502dd9342583929e5a0953321" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_converged</name></member>
+      <member refid="structstatus__data_1ad1888c88421c43a27431329438801788" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_got_stuck</name></member>
+      <member refid="structstatus__data_1af54b3e221c66558f5f564f48d9974958" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_saturated</name></member>
+      <member refid="structstatus__data_1abe15010ddc3fee2d541b521bb23dfdb5" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_stuck_for</name></member>
+      <member refid="structstatus__data_1a682a441660e6bf83604320835ee6c20d" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_succeeded</name></member>
+      <member refid="structstatus__data_1ad492e1e0419f6a35924cfa7fafa8e9c3" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>simulation_has_to_stop</name></member>
+      <member refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>step</name></member>
+      <member refid="structstatus__data_1a31ad284483c3cba0ccccdcbe80e262db" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>time_step_has_converged</name></member>
+      <member refid="structstatus__data_1a443249c1ffd4e1d2a3d1c1c34b9f2999" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_ham_has_converged</name></member>
+      <member refid="structstatus__data_1a64f89df0e715685ce0a894dc3c618760" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_ham_has_saturated</name></member>
+      <member refid="structstatus__data_1aca462206692cefd191733b5987b27887" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_ham_saturated_for</name></member>
+      <member refid="structstatus__data_1a515061b82a5375b8c8a502c8d452974f" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_mom_has_converged</name></member>
+      <member refid="structstatus__data_1ab5ab15b8c025f30a6d4c6e750ea38f8f" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_mom_has_saturated</name></member>
+      <member refid="structstatus__data_1ab12472ca8a5c1819ae6edb5f21b5a9b9" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_mom_saturated_for</name></member>
+      <member refid="structstatus__data_1a04f287ba8285d95324bdb568f5e60057" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_mpo_has_converged</name></member>
+      <member refid="structstatus__data_1addb896a29a85c3a50a6a4a6ed8f8472e" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_mpo_has_saturated</name></member>
+      <member refid="structstatus__data_1a756b1a37d89d85dd571232acdc7e9131" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>variance_mpo_saturated_for</name></member>
+      <member refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" prot="public" virt="non-virtual"><scope>class_simulation_status</scope><name>wall_time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

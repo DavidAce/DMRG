@@ -1,0 +1,500 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__mps__site" kind="class" language="C++" prot="public">
+    <compoundname>class_mps_site</compoundname>
+    <includes refid="class__mps__site_8h" local="no">class_mps_site.h</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using class_mps_site::Scalar =  std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__mps__site_1aee619b07d3a0ffb40ec5cd3ea9539234" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,3&gt; class_mps_site::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><formula id="17">$M$</formula> A or B tensor </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__site_1abd0bd0d9a1e0e28f9f4cc0e9f516c499" prot="private" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,1&gt; class_mps_site::L</definition>
+        <argsstring></argsstring>
+        <name>L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><formula id="18">$\Lambda$</formula> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__site_1a644fd37b2fa54516a3ce0a62ec2a2e7e" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; size_t &gt;</type>
+        <definition>std::optional&lt;size_t&gt; class_mps_site::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__site_1a3942bbfa860ab9c317075e0d5809e643" prot="private" static="no" mutable="no">
+        <type>std::optional&lt; Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &gt;</type>
+        <definition>std::optional&lt;Eigen::Tensor&lt;Scalar,1&gt; &gt; class_mps_site::LC</definition>
+        <argsstring></argsstring>
+        <name>LC</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><formula id="19">$\Lambda_C$</formula> Center lambda, if this is a center matrix </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__mps__site_1a13383bdc1acdccdb7498500e10152978" prot="private" static="no" mutable="yes">
+        <type>std::optional&lt; Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
+        <definition>std::optional&lt;Eigen::Tensor&lt;Scalar,3&gt; &gt; class_mps_site::MC</definition>
+        <argsstring></argsstring>
+        <name>MC</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__mps__site_1a49cd5ec3dbf92c969d2f5b333e37e741" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_mps_site::class_mps_site</definition>
+        <argsstring>()=default</argsstring>
+        <name>class_mps_site</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="25" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a3436a000757c4f222b6d50311e0e339d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_mps_site::class_mps_site</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;M_, const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;L_, size_t pos)</argsstring>
+        <name>class_mps_site</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>M_</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>L_</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>pos</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="26" bodyend="33"/>
+        <references refid="classclass__mps__site_1a3436a000757c4f222b6d50311e0e339d" compoundref="class__mps__site_8h" startline="26" endline="33">class_mps_site</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1adf56e1941a73609a8ddb825a9d64f444" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool class_mps_site::isReal</definition>
+        <argsstring>() const</argsstring>
+        <name>isReal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="19" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool class_mps_site::isCenter</definition>
+        <argsstring>() const</argsstring>
+        <name>isCenter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="11" bodyend="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+        <definition>const Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M_bare</definition>
+        <argsstring>() const</argsstring>
+        <name>get_M_bare</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="39" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="20" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+        <definition>const Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M</definition>
+        <argsstring>() const</argsstring>
+        <name>get_M</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="22" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+        <definition>const Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_L</definition>
+        <argsstring>() const</argsstring>
+        <name>get_L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+        <definition>const Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_LC</definition>
+        <argsstring>() const</argsstring>
+        <name>get_LC</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="37" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a4369c9c4f7950fce81b37c9af13c21bb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M_bare</definition>
+        <argsstring>()</argsstring>
+        <name>get_M_bare</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="45" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a346a7458ecee54ef01fb4b462daf1d39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; &amp; class_mps_site::get_M</definition>
+        <argsstring>()</argsstring>
+        <name>get_M</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="49" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1aa60f0056e3084fc8cfb8c98a002baafa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_L</definition>
+        <argsstring>()</argsstring>
+        <name>get_L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="52" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1acd304ba6e94c47b32cc91d4ec20ceb45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 1 &gt; &amp; class_mps_site::get_LC</definition>
+        <argsstring>()</argsstring>
+        <name>get_LC</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="53" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1ace3ae49b18d3e3272b5fc5cb29bc910b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; long, long, long &gt;</type>
+        <definition>std::tuple&lt; long, long, long &gt; class_mps_site::get_dims</definition>
+        <argsstring>() const</argsstring>
+        <name>get_dims</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="60" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1abd804cef2a87106c6693b90520effe54" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long class_mps_site::get_spin_dim</definition>
+        <argsstring>() const</argsstring>
+        <name>get_spin_dim</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="61" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long class_mps_site::get_chiL</definition>
+        <argsstring>() const</argsstring>
+        <name>get_chiL</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="62" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>long</type>
+        <definition>long class_mps_site::get_chiR</definition>
+        <argsstring>() const</argsstring>
+        <name>get_chiR</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="63" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a24a3135214b89f7ae16726943ced2dd9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t class_mps_site::get_position</definition>
+        <argsstring>() const</argsstring>
+        <name>get_position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="68" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1aa442a1a8f0feda7dea59d0c7642f0385" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_site::set_position</definition>
+        <argsstring>(size_t position_)</argsstring>
+        <name>set_position</name>
+        <param>
+          <type>size_t</type>
+          <declname>position_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="52" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="67" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a6a832679f595a8892c4d6188d79f016f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_site::set_mps</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;M_, const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;L_)</argsstring>
+        <name>set_mps</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>M_</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>L_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="53" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="75" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_site::set_M</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;M_)</argsstring>
+        <name>set_M</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>M_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="80" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1ae45d764b841b649a980625dd256946fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_site::set_L</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;L_)</argsstring>
+        <name>set_L</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>L_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="81" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1aad26307dc4d6da12c6dcbf8644c38d4e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_site::set_LC</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;LC_)</argsstring>
+        <name>set_LC</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>LC_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="82" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a8b9c026baf5785cff95c919f5d96de95" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_site::unset_LC</definition>
+        <argsstring>()</argsstring>
+        <name>unset_LC</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="58" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="58" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a7dc50135d9e136844dcd1ce2d23a84ab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_site::apply_mpo</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;mpo)</argsstring>
+        <name>apply_mpo</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>mpo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="59" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="84" bodyend="104"/>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="11" endline="17">isCenter</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__mps__site_1a3ff64592e765842d39c4aac985a00cd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_mps_site::apply_mpo</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;mpo)</argsstring>
+        <name>apply_mpo</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>mpo</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.cpp" bodystart="105" bodyend="109"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" line="13" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_site.h" bodystart="13" bodyend="71"/>
+    <listofallmembers>
+      <member refid="classclass__mps__site_1a7dc50135d9e136844dcd1ce2d23a84ab" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>apply_mpo</name></member>
+      <member refid="classclass__mps__site_1a3ff64592e765842d39c4aac985a00cd8" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>apply_mpo</name></member>
+      <member refid="classclass__mps__site_1a49cd5ec3dbf92c969d2f5b333e37e741" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>class_mps_site</name></member>
+      <member refid="classclass__mps__site_1a3436a000757c4f222b6d50311e0e339d" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>class_mps_site</name></member>
+      <member refid="classclass__mps__site_1af931bb3586531cda4240f9d4c1356538" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_chiL</name></member>
+      <member refid="classclass__mps__site_1ae6b9f71bc7268ba5a078e924c850e158" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_chiR</name></member>
+      <member refid="classclass__mps__site_1ace3ae49b18d3e3272b5fc5cb29bc910b" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_dims</name></member>
+      <member refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_L</name></member>
+      <member refid="classclass__mps__site_1aa60f0056e3084fc8cfb8c98a002baafa" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_L</name></member>
+      <member refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_LC</name></member>
+      <member refid="classclass__mps__site_1acd304ba6e94c47b32cc91d4ec20ceb45" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_LC</name></member>
+      <member refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M</name></member>
+      <member refid="classclass__mps__site_1a346a7458ecee54ef01fb4b462daf1d39" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M</name></member>
+      <member refid="classclass__mps__site_1aba25177e2ec8f5ebe1bfdfc34b2e2134" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M_bare</name></member>
+      <member refid="classclass__mps__site_1a4369c9c4f7950fce81b37c9af13c21bb" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_M_bare</name></member>
+      <member refid="classclass__mps__site_1a24a3135214b89f7ae16726943ced2dd9" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_position</name></member>
+      <member refid="classclass__mps__site_1abd804cef2a87106c6693b90520effe54" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>get_spin_dim</name></member>
+      <member refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>isCenter</name></member>
+      <member refid="classclass__mps__site_1adf56e1941a73609a8ddb825a9d64f444" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>isReal</name></member>
+      <member refid="classclass__mps__site_1abd0bd0d9a1e0e28f9f4cc0e9f516c499" prot="private" virt="non-virtual"><scope>class_mps_site</scope><name>L</name></member>
+      <member refid="classclass__mps__site_1a3942bbfa860ab9c317075e0d5809e643" prot="private" virt="non-virtual"><scope>class_mps_site</scope><name>LC</name></member>
+      <member refid="classclass__mps__site_1aee619b07d3a0ffb40ec5cd3ea9539234" prot="private" virt="non-virtual"><scope>class_mps_site</scope><name>M</name></member>
+      <member refid="classclass__mps__site_1a13383bdc1acdccdb7498500e10152978" prot="private" virt="non-virtual"><scope>class_mps_site</scope><name>MC</name></member>
+      <member refid="classclass__mps__site_1a644fd37b2fa54516a3ce0a62ec2a2e7e" prot="private" virt="non-virtual"><scope>class_mps_site</scope><name>position</name></member>
+      <member refid="classclass__mps__site_1ab867e2c6bd3acce8d616d5ae8fb59def" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>Scalar</name></member>
+      <member refid="classclass__mps__site_1ae45d764b841b649a980625dd256946fe" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>set_L</name></member>
+      <member refid="classclass__mps__site_1aad26307dc4d6da12c6dcbf8644c38d4e" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>set_LC</name></member>
+      <member refid="classclass__mps__site_1a942b2819382a1b16c0bec06a4b230a74" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>set_M</name></member>
+      <member refid="classclass__mps__site_1a6a832679f595a8892c4d6188d79f016f" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>set_mps</name></member>
+      <member refid="classclass__mps__site_1aa442a1a8f0feda7dea59d0c7642f0385" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>set_position</name></member>
+      <member refid="classclass__mps__site_1a8b9c026baf5785cff95c919f5d96de95" prot="public" virt="non-virtual"><scope>class_mps_site</scope><name>unset_LC</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

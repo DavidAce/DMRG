@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="ceres__rosenbrock_8h" kind="file" language="C++">
+    <compoundname>ceres_rosenbrock.h</compoundname>
+    <includes refid="opt_8h" local="no">tools/finite/opt.h</includes>
+    <includedby refid="ceres__rosenbrock_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.cpp</includedby>
+    <incdepgraph>
+      <node id="3645">
+        <label>list</label>
+      </node>
+      <node id="3658">
+        <label>ceres/ceres.h</label>
+      </node>
+      <node id="3655">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="3643">
+        <label>string</label>
+      </node>
+      <node id="3650">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="3651" relation="include">
+        </childnode>
+        <childnode refid="3652" relation="include">
+        </childnode>
+      </node>
+      <node id="3647">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="3648" relation="include">
+        </childnode>
+        <childnode refid="3649" relation="include">
+        </childnode>
+      </node>
+      <node id="3641">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="3642" relation="include">
+        </childnode>
+        <childnode refid="3643" relation="include">
+        </childnode>
+        <childnode refid="3644" relation="include">
+        </childnode>
+        <childnode refid="3645" relation="include">
+        </childnode>
+        <childnode refid="3646" relation="include">
+        </childnode>
+        <childnode refid="3647" relation="include">
+        </childnode>
+        <childnode refid="3650" relation="include">
+        </childnode>
+        <childnode refid="3653" relation="include">
+        </childnode>
+        <childnode refid="3655" relation="include">
+        </childnode>
+        <childnode refid="3656" relation="include">
+        </childnode>
+      </node>
+      <node id="3656">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="3649">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="3653">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="3652" relation="include">
+        </childnode>
+        <childnode refid="3654" relation="include">
+        </childnode>
+      </node>
+      <node id="3648">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="3657">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="3656" relation="include">
+        </childnode>
+      </node>
+      <node id="3646">
+        <label>vector</label>
+      </node>
+      <node id="3639">
+        <label>tools/finite/opt.h</label>
+        <link refid="opt_8h"/>
+        <childnode refid="3640" relation="include">
+        </childnode>
+        <childnode refid="3641" relation="include">
+        </childnode>
+        <childnode refid="3650" relation="include">
+        </childnode>
+        <childnode refid="3657" relation="include">
+        </childnode>
+        <childnode refid="3658" relation="include">
+        </childnode>
+      </node>
+      <node id="3640">
+        <label>complex.h</label>
+      </node>
+      <node id="3654">
+        <label>sstream</label>
+      </node>
+      <node id="3652">
+        <label>iostream</label>
+      </node>
+      <node id="3651">
+        <label>chrono</label>
+      </node>
+      <node id="3638">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.h</label>
+        <link refid="ceres__rosenbrock_8h"/>
+        <childnode refid="3639" relation="include">
+        </childnode>
+      </node>
+      <node id="3644">
+        <label>complex</label>
+      </node>
+      <node id="3642">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3660">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.cpp</label>
+        <link refid="ceres__rosenbrock_8cpp"/>
+      </node>
+      <node id="3659">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.h</label>
+        <link refid="ceres__rosenbrock_8h"/>
+        <childnode refid="3660" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor" prot="public">tools::finite::opt::internal::ceres_rosenbrock_functor</innerclass>
+    <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internal">tools::finite::opt::internal</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-12-10.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internal" kindref="compound">tools::finite::opt::internal</ref><sp/>{</highlight></codeline>
+<codeline lineno="10" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor" kindref="compound">ceres_rosenbrock_functor</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>ceres::FirstOrderFunction<sp/>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="12" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor_1a3f51a5f59a7e89c4ad69bccd02743724" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor_1a3f51a5f59a7e89c4ad69bccd02743724" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*parameters,</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*cost,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*gradient)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>x<sp/>=<sp/>parameters[0];</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>y<sp/>=<sp/>parameters[1];</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cost[0]<sp/>=<sp/>(1.0<sp/>-<sp/>x)<sp/>*<sp/>(1.0<sp/>-<sp/>x)<sp/>+<sp/>100.0<sp/>*<sp/>(y<sp/>-<sp/>x<sp/>*<sp/>x)<sp/>*<sp/>(y<sp/>-<sp/>x<sp/>*<sp/>x);</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(gradient<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>gradient[0]<sp/>=<sp/>-2.0<sp/>*<sp/>(1.0<sp/>-<sp/>x)<sp/>-<sp/>200.0<sp/>*<sp/>(y<sp/>-<sp/>x<sp/>*<sp/>x)<sp/>*<sp/>2.0<sp/>*<sp/>x;</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>gradient[1]<sp/>=<sp/>200.0<sp/>*<sp/>(y<sp/>-<sp/>x<sp/>*<sp/>x);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor_1aedf36667658cbe5d1b5efc99bd5e003d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__rosenbrock__functor_1aedf36667658cbe5d1b5efc99bd5e003d" kindref="member">NumParameters</ref>()<sp/>const<sp/>final<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>2;<sp/>}</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.h"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1infinite_1_1debug" kind="namespace" language="C++">
+    <compoundname>tools::infinite::debug</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1debug_1a94e0f187500838d0617ada50766a7a6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::debug::check_integrity</definition>
+        <argsstring>(const class_state_infinite &amp;state)</argsstring>
+        <name>check_integrity</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="331" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp" bodystart="11" bodyend="21"/>
+        <references refid="classclass__state__infinite_1a0870c12501c560befa97ed273c464394" compoundref="class__state__infinite_8cpp" startline="106" endline="116">class_state_infinite::assert_positions</references>
+        <references refid="namespacetools_1_1infinite_1_1debug_1aba45f70626be5b7f72bc3a8908b91a5a" compoundref="infinite_2debug_8cpp" startline="26" endline="35">check_integrity_of_mps</references>
+        <references refid="namespacetools_1_1infinite_1_1print_1a3bed2549c51f324b355c2679b168a55c" compoundref="infinite_2print_8cpp" startline="17" endline="22">tools::infinite::print::print_state</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1debug_1aba45f70626be5b7f72bc3a8908b91a5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::debug::check_integrity_of_mps</definition>
+        <argsstring>(const class_state_infinite &amp;state)</argsstring>
+        <name>check_integrity_of_mps</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="332" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp" bodystart="26" bodyend="35"/>
+        <references refid="namespacetools_1_1infinite_1_1measure_1a2c553c8536fb81c5cf371b12e35c8f5d" compoundref="infinite_2measure_8cpp" startline="406" endline="412">tools::infinite::measure::norm</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1debug_1ab6a756340110dd8c82223856d89a45d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::debug::check_normalization_routine</definition>
+        <argsstring>(const class_state_infinite &amp;state)</argsstring>
+        <name>check_normalization_routine</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="333" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="330" column="1"/>
+  </compounddef>
+</doxygen>

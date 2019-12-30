@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - multisite_dmrg
-#      - master
+      - master
 
 # INSPIRATION https://github.com/onqtam/doctest/pull/285/files/875052e18cf5f5f0b9176e59f847b6205f3efb78#
 jobs:
@@ -23,16 +23,17 @@ jobs:
       matrix:
         # Github Actions requires a single row to be added to the build matrix.
         # See https://help.github.com/en/articles/workflow-syntax-for-github-actions.
-        name: [ubuntu-18.04-gcc-8,ubuntu-18.04-gcc-9,ubuntu-18.04-clang-8,ubuntu-18.04-clang-9, ubuntu-18.04-clang-9-conda] # windows-2019-clang,windows-2019-gcc
+        name: [ubuntu-18.04-gcc-8-apt,ubuntu-18.04-gcc-9-conan,ubuntu-18.04-clang-8,ubuntu-18.04-clang-9, ubuntu-18.04-clang-9-conda, ubuntu-18.04-clang-9-conan] # windows-2019-clang,windows-2019-gcc
         include:
-          - name: ubuntu-18.04-gcc-8
+          - name: ubuntu-18.04-gcc-8-apt
             os: ubuntu-18.04
             compiler: gcc
             version: "8"
             flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
+            sources: apt
             apt: gcc-8 g++-8 gfortran-8 libsz2 zlibc libopenblas-dev libarpack2-dev libarpack++2-dev liblapacke-dev libhdf5-dev libspdlog-dev libgflags-dev libgoogle-glog-dev libceres-dev libunwind-dev lzma libaec-dev
           
-          - name: ubuntu-18.04-gcc-9
+          - name: ubuntu-18.04-gcc-9-conan
             os: ubuntu-18.04
             compiler: gcc
             version: "9"
@@ -44,14 +45,14 @@ jobs:
             os: ubuntu-18.04
             compiler: clang
             version: "8"
-            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
+            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug -j 2
 
 
           - name: ubuntu-18.04-clang-9
             os: ubuntu-18.04
             compiler: clang
             version: "9"
-            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
+            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug -j 2
 
           - name: ubuntu-18.04-clang-9-conda
             os: ubuntu-18.04
@@ -59,9 +60,15 @@ jobs:
             version: "9"
             sources: conda
             conda: hdf5 hdf5-static eigen spdlog
-            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug
-          
-          
+            flags: --download-missing --enable-tests  -a haswell  --build-type=Debug -j 2
+
+          - name: ubuntu-18.04-clang-9-conan
+            os: ubuntu-18.04
+            compiler: clang
+            version: "9"
+            sources: conda conan
+            conda: conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+            flags: --download-missing --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug
           #- name: windows-2019-clang
           #  os: windows-2019
           #  compiler: clang
@@ -99,9 +106,9 @@ jobs:
             conda config --add channels conda-forge
             conda install --yes ${{ matrix.conda }}
           fi
-          if [ "${{ matrix.sources }}" = *"conan"* ] ; then
+          if [[ "${{ matrix.sources }}" == *"conan"* ]]; then
             conan user
-            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg 
+            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
           fi
       - name: Install (Windows)
         if: runner.os == 'Windows'
@@ -128,18 +135,10 @@ jobs:
           }
           # Scoop modifies the PATH so we make the modified PATH global.
           echo "::set-env name=PATH::$env:PATH"
-      - name: Configure
-        run: |
-          cmake -E make_directory build/Debug
-          cd build/Debug
-          cmake -DCMAKE_BUILD_TYPE=Debug ${{ matrix.flags }} -G "CodeBlocks - Unix Makefiles" ../../
       - name: Build
-        run: |
-          cd build/Debug
-          cmake --build . --target all
+        run: | 
+          ./build.sh --verbose ${{ matrix.flags }}
       - name: Test
         run: |
           cd build/Debug
           ctest
-
-

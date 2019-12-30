@@ -1,0 +1,470 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__h5table__buffer" kind="class" language="C++" prot="public">
+    <compoundname>class_h5table_buffer</compoundname>
+    <includes refid="class__algorithm__base_8h" local="no">class_algorithm_base.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename table_type</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; h5pp::File &gt;</type>
+        <definition>std::shared_ptr&lt;h5pp::File&gt; class_h5table_buffer&lt; table_type &gt;::h5ppFile</definition>
+        <argsstring></argsstring>
+        <name>h5ppFile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" prot="private" static="no" mutable="no">
+        <type>std::unique_ptr&lt; table_type &gt;</type>
+        <definition>std::unique_ptr&lt;table_type&gt; class_h5table_buffer&lt; table_type &gt;::table_entries</definition>
+        <argsstring></argsstring>
+        <name>table_entries</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_h5table_buffer&lt; table_type &gt;::table_path</definition>
+        <argsstring></argsstring>
+        <name>table_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a10274c23daca1076aee14e76172d09ea" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_h5table_buffer&lt; table_type &gt;::group_name</definition>
+        <argsstring></argsstring>
+        <name>group_name</name>
+        <initializer>= &quot;default_group&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_h5table_buffer&lt; table_type &gt;::table_name</definition>
+        <argsstring></argsstring>
+        <name>table_name</name>
+        <initializer>= &quot;default_table&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a6131169ee1a4a3943a36c4cd53d6814e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_h5table_buffer&lt; table_type &gt;::recorded_entries</definition>
+        <argsstring></argsstring>
+        <name>recorded_entries</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a2f72e72fe0fbf067c0458efa1a0d0ff3" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_h5table_buffer&lt; table_type &gt;::buffer_max_size</definition>
+        <argsstring></argsstring>
+        <name>buffer_max_size</name>
+        <initializer>= 10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="29" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1ae8d6e4eacc6cc1bd66d75af49650929e" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_h5table_buffer&lt; table_type &gt;::buffer_is_empty</definition>
+        <argsstring></argsstring>
+        <name>buffer_is_empty</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a460b40c36bc6b246a20dfc0f185b1cab" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_h5table_buffer&lt; table_type &gt;::table_is_initialized</definition>
+        <argsstring></argsstring>
+        <name>table_is_initialized</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1afe97ec8330d574681a7cdffa2fee5167" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool class_h5table_buffer&lt; table_type &gt;::mpi_on</definition>
+        <argsstring></argsstring>
+        <name>mpi_on</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" prot="private" static="no" mutable="no">
+        <type>std::shared_ptr&lt; spdlog::logger &gt;</type>
+        <definition>std::shared_ptr&lt;spdlog::logger&gt; class_h5table_buffer&lt; table_type &gt;::log</definition>
+        <argsstring></argsstring>
+        <name>log</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1acfb49b4298b8b18ad5e8dbb7934c3281" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_h5table_buffer&lt; table_type &gt;::logLevel</definition>
+        <argsstring></argsstring>
+        <name>logLevel</name>
+        <initializer>= 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classclass__h5table__buffer_1ae927e3638afd7ad16a2393bb1de3b836" prot="private" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string class_h5table_buffer&lt; table_type &gt;::logName</definition>
+        <argsstring></argsstring>
+        <name>logName</name>
+        <initializer>= &quot;h5t_buffer&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classclass__h5table__buffer_1a8cffd45bbce57a74a271cb679758f5dd" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_h5table_buffer&lt; table_type &gt;::initialize_table</definition>
+        <argsstring>()</argsstring>
+        <name>initialize_table</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="52" bodyend="67"/>
+        <references refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" compoundref="class__h5table__buffer_8h" startline="24">class_h5table_buffer&lt; table_type &gt;::table_entries</references>
+        <references refid="classclass__h5table__buffer_1a460b40c36bc6b246a20dfc0f185b1cab" compoundref="class__h5table__buffer_8h" startline="31">class_h5table_buffer&lt; table_type &gt;::table_is_initialized</references>
+        <references refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" compoundref="class__h5table__buffer_8h" startline="35">class_h5table_buffer&lt; table_type &gt;::log</references>
+        <references refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" compoundref="class__h5table__buffer_8h" startline="27">class_h5table_buffer&lt; table_type &gt;::table_name</references>
+        <references refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" compoundref="class__h5table__buffer_8cpp" startline="95" endline="95">class_h5table_buffer&lt; table_type &gt;::get_num_buffered_entries</references>
+        <references refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" compoundref="class__h5table__buffer_8h" startline="23">class_h5table_buffer&lt; table_type &gt;::h5ppFile</references>
+        <references refid="classclass__h5table__buffer_1a10274c23daca1076aee14e76172d09ea" compoundref="class__h5table__buffer_8h" startline="26">class_h5table_buffer&lt; table_type &gt;::group_name</references>
+        <references refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" compoundref="class__h5table__buffer_8h" startline="25">class_h5table_buffer&lt; table_type &gt;::table_path</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_h5table_buffer&lt; table_type &gt;::write_buffer_to_file</definition>
+        <argsstring>()</argsstring>
+        <name>write_buffer_to_file</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="74" bodyend="89"/>
+        <references refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" compoundref="class__h5table__buffer_8h" startline="24">class_h5table_buffer&lt; table_type &gt;::table_entries</references>
+        <references refid="classclass__h5table__buffer_1a460b40c36bc6b246a20dfc0f185b1cab" compoundref="class__h5table__buffer_8h" startline="31">class_h5table_buffer&lt; table_type &gt;::table_is_initialized</references>
+        <references refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" compoundref="class__h5table__buffer_8h" startline="35">class_h5table_buffer&lt; table_type &gt;::log</references>
+        <references refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" compoundref="class__h5table__buffer_8h" startline="27">class_h5table_buffer&lt; table_type &gt;::table_name</references>
+        <references refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" compoundref="class__h5table__buffer_8cpp" startline="95" endline="95">class_h5table_buffer&lt; table_type &gt;::get_num_buffered_entries</references>
+        <references refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" compoundref="class__h5table__buffer_8h" startline="23">class_h5table_buffer&lt; table_type &gt;::h5ppFile</references>
+        <references refid="classclass__h5table__buffer_1a10274c23daca1076aee14e76172d09ea" compoundref="class__h5table__buffer_8h" startline="26">class_h5table_buffer&lt; table_type &gt;::group_name</references>
+        <references refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" compoundref="class__h5table__buffer_8h" startline="25">class_h5table_buffer&lt; table_type &gt;::table_path</references>
+        <references refid="classclass__h5table__buffer_1a6131169ee1a4a3943a36c4cd53d6814e" compoundref="class__h5table__buffer_8h" startline="28">class_h5table_buffer&lt; table_type &gt;::recorded_entries</references>
+        <references refid="classclass__h5table__buffer_1ae8d6e4eacc6cc1bd66d75af49650929e" compoundref="class__h5table__buffer_8h" startline="30">class_h5table_buffer&lt; table_type &gt;::buffer_is_empty</references>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classclass__h5table__buffer_1a93cee7a1b4e7840ad7c19b84fb4f2a5f" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_h5table_buffer&lt; table_type &gt;::class_h5table_buffer</definition>
+        <argsstring>()</argsstring>
+        <name>class_h5table_buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="15" bodyend="18"/>
+        <references refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" compoundref="class__h5table__buffer_8h" startline="35">class_h5table_buffer&lt; table_type &gt;::log</references>
+        <references refid="classclass__h5table__buffer_1ae927e3638afd7ad16a2393bb1de3b836" compoundref="class__h5table__buffer_8h" startline="37">class_h5table_buffer&lt; table_type &gt;::logName</references>
+        <references refid="classclass__h5table__buffer_1acfb49b4298b8b18ad5e8dbb7934c3281" compoundref="class__h5table__buffer_8h" startline="36">class_h5table_buffer&lt; table_type &gt;::logLevel</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1ad012de407b3aff5ffd2fb8ce4da8dc2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_h5table_buffer&lt; table_type &gt;::~class_h5table_buffer</definition>
+        <argsstring>()</argsstring>
+        <name>~class_h5table_buffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="42" bodyend="48"/>
+        <references refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" compoundref="class__h5table__buffer_8h" startline="23">class_h5table_buffer&lt; table_type &gt;::h5ppFile</references>
+        <references refid="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" compoundref="class__h5table__buffer_8cpp" startline="74" endline="89">class_h5table_buffer&lt; table_type &gt;::write_buffer_to_file</references>
+        <references refid="classclass__h5table__buffer_1ae8d6e4eacc6cc1bd66d75af49650929e" compoundref="class__h5table__buffer_8h" startline="30">class_h5table_buffer&lt; table_type &gt;::buffer_is_empty</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1a8e9ee43fe7e83f89ee83aeac800d905b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>class_h5table_buffer&lt; table_type &gt;::class_h5table_buffer</definition>
+        <argsstring>(std::shared_ptr&lt; h5pp::File &gt; h5ppFile_, std::string table_path_, bool mpi_on_=false)</argsstring>
+        <name>class_h5table_buffer</name>
+        <param>
+          <type>std::shared_ptr&lt; h5pp::File &gt;</type>
+          <declname>h5ppFile_</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>table_path_</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>mpi_on_</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="23" bodyend="38"/>
+        <references refid="classclass__h5table__buffer_1a8e9ee43fe7e83f89ee83aeac800d905b" compoundref="class__h5table__buffer_8cpp" startline="23" endline="38">class_h5table_buffer&lt; table_type &gt;::class_h5table_buffer</references>
+        <references refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" compoundref="class__h5table__buffer_8h" startline="25">class_h5table_buffer&lt; table_type &gt;::table_path</references>
+        <references refid="classclass__h5table__buffer_1afe97ec8330d574681a7cdffa2fee5167" compoundref="class__h5table__buffer_8h" startline="32">class_h5table_buffer&lt; table_type &gt;::mpi_on</references>
+        <references refid="classclass__h5table__buffer_1a10274c23daca1076aee14e76172d09ea" compoundref="class__h5table__buffer_8h" startline="26">class_h5table_buffer&lt; table_type &gt;::group_name</references>
+        <references refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" compoundref="class__h5table__buffer_8h" startline="27">class_h5table_buffer&lt; table_type &gt;::table_name</references>
+        <references refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" compoundref="class__h5table__buffer_8h" startline="35">class_h5table_buffer&lt; table_type &gt;::log</references>
+        <references refid="classclass__h5table__buffer_1ae927e3638afd7ad16a2393bb1de3b836" compoundref="class__h5table__buffer_8h" startline="37">class_h5table_buffer&lt; table_type &gt;::logName</references>
+        <references refid="classclass__h5table__buffer_1acfb49b4298b8b18ad5e8dbb7934c3281" compoundref="class__h5table__buffer_8h" startline="36">class_h5table_buffer&lt; table_type &gt;::logLevel</references>
+        <references refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" compoundref="class__h5table__buffer_8h" startline="24">class_h5table_buffer&lt; table_type &gt;::table_entries</references>
+        <references refid="classclass__h5table__buffer_1a8cffd45bbce57a74a271cb679758f5dd" compoundref="class__h5table__buffer_8cpp" startline="52" endline="67">class_h5table_buffer&lt; table_type &gt;::initialize_table</references>
+        <references refid="classclass__h5table__buffer_1a93e5b07c0dba938c36f1b4593bf0224f" compoundref="class__h5table__buffer_8cpp" startline="96" endline="96">class_h5table_buffer&lt; table_type &gt;::set_buffer_size</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1a40bca00c593b115f06ca6b11b8283546" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void class_h5table_buffer&lt; table_type &gt;::append_record</definition>
+        <argsstring>(Args &amp;&amp;...args)</argsstring>
+        <name>append_record</name>
+        <param>
+          <type>Args &amp;&amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" bodystart="51" bodyend="58"/>
+        <references refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" compoundref="class__h5table__buffer_8h" startline="35">class_h5table_buffer&lt; table_type &gt;::log</references>
+        <references refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" compoundref="class__h5table__buffer_8h" startline="27">class_h5table_buffer&lt; table_type &gt;::table_name</references>
+        <references refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" compoundref="class__h5table__buffer_8h" startline="24">class_h5table_buffer&lt; table_type &gt;::table_entries</references>
+        <references refid="classclass__h5table__buffer_1ae8d6e4eacc6cc1bd66d75af49650929e" compoundref="class__h5table__buffer_8h" startline="30">class_h5table_buffer&lt; table_type &gt;::buffer_is_empty</references>
+        <references refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" compoundref="class__h5table__buffer_8cpp" startline="95" endline="95">class_h5table_buffer&lt; table_type &gt;::get_num_buffered_entries</references>
+        <references refid="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" compoundref="class__h5table__buffer_8cpp" startline="74" endline="89">class_h5table_buffer&lt; table_type &gt;::write_buffer_to_file</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string class_h5table_buffer&lt; table_type &gt;::get_table_name</definition>
+        <argsstring>() const</argsstring>
+        <name>get_table_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="60" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="92" bodyend="92"/>
+        <references refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" compoundref="class__h5table__buffer_8h" startline="27">class_h5table_buffer&lt; table_type &gt;::table_name</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1a5ead4aba4e20aa30f8f32a605c08dedf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string class_h5table_buffer&lt; table_type &gt;::get_table_path</definition>
+        <argsstring>() const</argsstring>
+        <name>get_table_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="93" bodyend="93"/>
+        <references refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" compoundref="class__h5table__buffer_8h" startline="25">class_h5table_buffer&lt; table_type &gt;::table_path</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1a4e0f9512b6429eb9f403d5bb57980347" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t class_h5table_buffer&lt; table_type &gt;::get_num_recorded_entries</definition>
+        <argsstring>() const</argsstring>
+        <name>get_num_recorded_entries</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="94" bodyend="94"/>
+        <references refid="classclass__h5table__buffer_1a6131169ee1a4a3943a36c4cd53d6814e" compoundref="class__h5table__buffer_8h" startline="28">class_h5table_buffer&lt; table_type &gt;::recorded_entries</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t class_h5table_buffer&lt; table_type &gt;::get_num_buffered_entries</definition>
+        <argsstring>() const</argsstring>
+        <name>get_num_buffered_entries</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="95" bodyend="95"/>
+        <references refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" compoundref="class__h5table__buffer_8h" startline="24">class_h5table_buffer&lt; table_type &gt;::table_entries</references>
+      </memberdef>
+      <memberdef kind="function" id="classclass__h5table__buffer_1a93e5b07c0dba938c36f1b4593bf0224f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void class_h5table_buffer&lt; table_type &gt;::set_buffer_size</definition>
+        <argsstring>(size_t new_size)</argsstring>
+        <name>set_buffer_size</name>
+        <param>
+          <type>size_t</type>
+          <declname>new_size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/class_h5table_buffer.cpp" bodystart="96" bodyend="96"/>
+        <references refid="classclass__h5table__buffer_1a2f72e72fe0fbf067c0458efa1a0d0ff3" compoundref="class__h5table__buffer_8h" startline="29">class_h5table_buffer&lt; table_type &gt;::buffer_max_size</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="167">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="164">
+        <label>class_h5table_buffer&lt; table_type &gt;</label>
+        <link refid="classclass__h5table__buffer"/>
+        <childnode refid="165" relation="usage">
+          <edgelabel>table_entries</edgelabel>
+        </childnode>
+        <childnode refid="166" relation="usage">
+          <edgelabel>table_path</edgelabel>
+          <edgelabel>table_name</edgelabel>
+          <edgelabel>logName</edgelabel>
+          <edgelabel>group_name</edgelabel>
+        </childnode>
+      </node>
+      <node id="165">
+        <label>std::unique_ptr&lt; table_type &gt;</label>
+      </node>
+      <node id="166">
+        <label>std::string</label>
+        <childnode refid="167" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_base.h" bodystart="18" bodyend="-1"/>
+    <listofallmembers>
+      <member refid="classclass__h5table__buffer_1a40bca00c593b115f06ca6b11b8283546" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>append_record</name></member>
+      <member refid="classclass__h5table__buffer_1ae8d6e4eacc6cc1bd66d75af49650929e" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>buffer_is_empty</name></member>
+      <member refid="classclass__h5table__buffer_1a2f72e72fe0fbf067c0458efa1a0d0ff3" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>buffer_max_size</name></member>
+      <member refid="classclass__h5table__buffer_1a93cee7a1b4e7840ad7c19b84fb4f2a5f" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>class_h5table_buffer</name></member>
+      <member refid="classclass__h5table__buffer_1a8e9ee43fe7e83f89ee83aeac800d905b" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>class_h5table_buffer</name></member>
+      <member refid="classclass__h5table__buffer_1aef8539a70ac1f1cbdd0dd3be41665519" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>get_num_buffered_entries</name></member>
+      <member refid="classclass__h5table__buffer_1a4e0f9512b6429eb9f403d5bb57980347" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>get_num_recorded_entries</name></member>
+      <member refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>get_table_name</name></member>
+      <member refid="classclass__h5table__buffer_1a5ead4aba4e20aa30f8f32a605c08dedf" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>get_table_path</name></member>
+      <member refid="classclass__h5table__buffer_1a10274c23daca1076aee14e76172d09ea" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>group_name</name></member>
+      <member refid="classclass__h5table__buffer_1a0bb4417df7b13461c9f76ea541658087" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>h5ppFile</name></member>
+      <member refid="classclass__h5table__buffer_1a8cffd45bbce57a74a271cb679758f5dd" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>initialize_table</name></member>
+      <member refid="classclass__h5table__buffer_1a6fc0cc779177ff803ff5bf0f5051c655" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>log</name></member>
+      <member refid="classclass__h5table__buffer_1acfb49b4298b8b18ad5e8dbb7934c3281" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>logLevel</name></member>
+      <member refid="classclass__h5table__buffer_1ae927e3638afd7ad16a2393bb1de3b836" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>logName</name></member>
+      <member refid="classclass__h5table__buffer_1afe97ec8330d574681a7cdffa2fee5167" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>mpi_on</name></member>
+      <member refid="classclass__h5table__buffer_1a6131169ee1a4a3943a36c4cd53d6814e" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>recorded_entries</name></member>
+      <member refid="classclass__h5table__buffer_1a93e5b07c0dba938c36f1b4593bf0224f" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>set_buffer_size</name></member>
+      <member refid="classclass__h5table__buffer_1a146e8dd141d77cf4b8f3036ce6b8bfba" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>table_entries</name></member>
+      <member refid="classclass__h5table__buffer_1a460b40c36bc6b246a20dfc0f185b1cab" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>table_is_initialized</name></member>
+      <member refid="classclass__h5table__buffer_1a3b272a891a7201c0c963d6e3a851bd84" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>table_name</name></member>
+      <member refid="classclass__h5table__buffer_1a280d34ac1df9091331d9ef454de7eb12" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>table_path</name></member>
+      <member refid="classclass__h5table__buffer_1a5df123362cda10822713fd2098ff056a" prot="private" virt="non-virtual"><scope>class_h5table_buffer</scope><name>write_buffer_to_file</name></member>
+      <member refid="classclass__h5table__buffer_1ad012de407b3aff5ffd2fb8ce4da8dc2d" prot="public" virt="non-virtual"><scope>class_h5table_buffer</scope><name>~class_h5table_buffer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

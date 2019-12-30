@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacesettings_1_1fdmrg" kind="namespace" language="C++">
+    <compoundname>settings::fdmrg</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::fdmrg::on</definition>
+        <argsstring></argsstring>
+        <name>on</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Turns fDMRG simulation on/off. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="129" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a11e487d6f9af65a1d479a6631578ef6c" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::fdmrg::num_sites</definition>
+        <argsstring></argsstring>
+        <name>num_sites</name>
+        <initializer>= 16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of sites on the chain </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="130" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a06f9b3649e0f8f8a5b76b5f315f9d4ec" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::fdmrg::max_sweeps</definition>
+        <argsstring></argsstring>
+        <name>max_sweeps</name>
+        <initializer>= 10</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Max number sweeps along the chain. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1ae628b1a6ea887a9f04c1e27acfe3868b" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::fdmrg::min_sweeps</definition>
+        <argsstring></argsstring>
+        <name>min_sweeps</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Min number sweeps along the chain. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="132" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a591fd10b121c47245c0ededecc4fa238" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long settings::fdmrg::chi_max</definition>
+        <argsstring></argsstring>
+        <name>chi_max</name>
+        <initializer>= 8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bond dimension of the current position (maximum number of singular values to keep in SVD). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a1ec29f5e29fb084816e19eb3200232af" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::fdmrg::chi_grow</definition>
+        <argsstring></argsstring>
+        <name>chi_grow</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1ac8e8a18f4c1106502d4542691c0738b2" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long settings::fdmrg::chi_init</definition>
+        <argsstring></argsstring>
+        <name>chi_init</name>
+        <initializer>= 16</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initial chi limit. Only used when chi_grow == true. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="135" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1aa13535832cc406268ce9d8cb84cf49ab" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::fdmrg::print_freq</definition>
+        <argsstring></argsstring>
+        <name>print_freq</name>
+        <initializer>= 100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Print frequency for console output. In units of sweeps. (0 = off). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="136" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a4d5eed12a79f9d570135c218942c5401" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t settings::fdmrg::write_freq</definition>
+        <argsstring></argsstring>
+        <name>write_freq</name>
+        <initializer>= 100</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Write frequency,for output file buffer. In units of sweeps. (0 = off). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="137" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacesettings_1_1fdmrg_1a2c6ec0c3892141068a29cc36c34b9398" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool settings::fdmrg::store_wavefn</definition>
+        <argsstring></argsstring>
+        <name>store_wavefn</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length &gt; 14 </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="138" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="128" column="1"/>
+  </compounddef>
+</doxygen>

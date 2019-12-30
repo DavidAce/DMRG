@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1mps" kind="namespace" language="C++">
+    <compoundname>tools::finite::mps</compoundname>
+    <innernamespace refid="namespacetools_1_1finite_1_1mps_1_1internals">tools::finite::mps::internals</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a70318ecfb101bca752ecc239971237bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::initialize</definition>
+        <argsstring>(class_state_finite &amp;state, size_t length)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="46" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp" bodystart="15" bodyend="30"/>
+        <references refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" compoundref="class__state__finite_8cpp" startline="418" endline="420">class_state_finite::active_dimensions</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a4c2e547e9034696d8fecebc735ac6f19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::randomize</definition>
+        <argsstring>(class_state_finite &amp;state, const std::string &amp;parity_sector=&quot;random&quot;, int seed_state=-1, bool use_pauli_eigenstates=false, bool enumeration=false)</argsstring>
+        <name>randomize</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>parity_sector</declname>
+          <defval>&quot;random&quot;</defval>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>seed_state</declname>
+          <defval>-1</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>use_pauli_eigenstates</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>enumeration</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>There are many ways to randomize an initial product state state, based on the arguments (parity_sector,seed_state,use_pauli_eigenstates, enumeration) = (string,int,true/false,true/false). Let &quot;+-sector&quot; mean one of {&quot;x&quot;,&quot;+x&quot;,&quot;-x&quot;,&quot;y&quot;,&quot;+y&quot;,&quot;-y&quot;, &quot;z&quot;,&quot;+z&quot;,&quot;-z&quot;}. <verbatim> a) (&quot;+-sector&quot;  ,+- ,t,f)   Set spinors to a random sequence of eigenvectors (up/down) of either
+                             sx, sy or sz pauli matrices (same pauli for all sites). If the global
+                             sign (+-) is omitted, a random sign is chosen with equal probabilities.
+                             In the x and z cases the full state will turn out to be entirely real,
+                             which improves performance.
+
+ b) (&quot;random&quot;    ,+- ,f,f)   Set each spinor randomly on C2
+
+
+ c) (&quot;+-sector&quot;  ,+- ,f,f)   Set each spinor randomly on C2 (i.e. case b) and then project the  full state
+                             to the given parity sector. If the global sign (+-) is omitted,  a random
+                             sign is chosen with equal probabilities. As a consequence of this, the
+                             full state will have always have nonzero imaginary part.
+
+ d) (&quot;randomAxis&quot;,+- ,f,f)   Randomly select one of {&quot;x&quot;,&quot;y&quot;,&quot;z&quot;} and go to case a).
+ e) (&quot;none&quot;      ,+- ,f,f)   Does not randomize
+ f) (&quot;+-sector&quot;  ,&gt;=0,?,t)   Interpret seed_state as bitfield &quot;01100010110...&quot; and interpret these as
+                             up(0)/down(1) of either sx, sy or sz pauli matrices (same pauli for all sites)
+</verbatim> Note: seed_state is only used if &gt;= 0. Note: we &quot;use&quot; the seed_state only once. Subsequent calls do not keep resetting the seed. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp" bodystart="34" bodyend="76"/>
+        <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
+        <references refid="classclass__state__finite_1aac02262c410802ea0546cda195c34eca" compoundref="class__state__finite_8cpp" startline="531" endline="533">class_state_finite::clear_cache</references>
+        <references refid="classclass__state__finite_1a8ac57b8631243325a0db1982b75d1cb8" compoundref="class__state__finite_8cpp" startline="561" endline="564">class_state_finite::tag_all_sites_have_been_updated</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1a28a3a61253caeb19fa5a3c3368d8633c" compoundref="nmspc__tools_8h" startline="54">tools::finite::mps::internals::seed_state_unused</references>
+        <references refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" compoundref="nmspc__random_8cpp" startline="13" endline="29">rn::seed</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1a60bfd7b8237aaaa28149f345cb8bb530" compoundref="mps-internals_8cpp" startline="51" endline="88">tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1ab9f8b31ab128132ea61c593125f70f95" compoundref="mps-internals_8cpp" startline="125" endline="156">tools::finite::mps::internals::set_product_state_randomly</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1ae1aa22d6af49f05638105b00dd5c0e28" compoundref="finite_2mps_8cpp" startline="79" endline="134">rebuild_environments</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a2a02d83d01861a078dc582fbbcf10e63" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::normalize</definition>
+        <argsstring>(class_state_finite &amp;state, const std::optional&lt; size_t &gt; chi_lim=std::nullopt)</argsstring>
+        <name>normalize</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::optional&lt; size_t &gt;</type>
+          <declname>chi_lim</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="11" bodyend="65"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">Textra::operator&lt;&lt;</references>
+        <references refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" compoundref="class__state__finite_8cpp" startline="418" endline="420">class_state_finite::active_dimensions</references>
+        <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
+        <references refid="namespacetools_1_1common_1_1profile_1a74153f6a3ae0bd3c747c7cc5d524fd5e" compoundref="nmspc__tools_8h" startline="380">tools::common::profile::t_svd</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+        <references refid="classclass__state__finite_1a3364452c2cfa578c7de18e28eee2d675" compoundref="class__state__finite_8cpp" startline="104" endline="107">class_state_finite::get_chi_lim</references>
+        <references refid="classclass__state__finite_1a5481332aa5f53d1708dd1d21fff2b6cb" compoundref="class__state__finite_8cpp" startline="124" endline="124">class_state_finite::get_direction</references>
+        <references refid="classclass__state__finite_1a9ee20da02dc91d209fd07bdc68dc1c36" compoundref="class__state__finite_8cpp" startline="157" endline="159">class_state_finite::position_is_any_edge</references>
+        <references refid="classclass__state__finite_1afbd69eb73c65d1e5558e131e2636c897" compoundref="class__state__finite_8cpp" startline="125" endline="125">class_state_finite::flip_direction</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1ae1aa22d6af49f05638105b00dd5c0e28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::rebuild_environments</definition>
+        <argsstring>(class_state_finite &amp;state)</argsstring>
+        <name>rebuild_environments</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp" bodystart="79" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a487d8b4e858dfa77a4ba5b7db8486474" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int tools::finite::mps::move_center_point</definition>
+        <argsstring>(class_state_finite &amp;state)</argsstring>
+        <name>move_center_point</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Move current position to the left (<computeroutput>direction=1</computeroutput>) or right (<computeroutput>direction=-1</computeroutput>), and store the <bold>newly enlarged</bold> environment. Turn direction around if the edge is reached. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="328" bodyend="420"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1a498dcd4510b5affe16ea0657f7a437c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::project_to_closest_parity_sector</definition>
+        <argsstring>(class_state_finite &amp;state, std::string paulistring)</argsstring>
+        <name>project_to_closest_parity_sector</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>paulistring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp" bodystart="138" bodyend="140"/>
+        <references refid="classclass__state__finite_1acd27402752b06bd245716d2b5a087ba2" compoundref="class__state__finite_8cpp" startline="23" endline="52">class_state_finite::operator=</references>
+        <references refid="namespacetools_1_1finite_1_1ops_1a9b5ed5708bfbf96ee08ab2d863af83b0" compoundref="ops_8cpp" startline="127" endline="163">tools::finite::ops::get_projection_to_closest_parity_sector</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1ac7510360e1eb542926940899665123aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::normalize</definition>
+        <argsstring>(class_state_finite &amp;state, const std::vector&lt; size_t &gt; &amp;bond_dimensions={})</argsstring>
+        <name>normalize</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; size_t &gt; &amp;</type>
+          <declname>bond_dimensions</declname>
+          <defval>{}</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="28" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1ab887387a786b296460c0e0e1f306e02a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::project_to_closest_parity_sector</definition>
+        <argsstring>(class_state_finite &amp;state, std::string paulistring, bool keep_bond_dimensions=false)</argsstring>
+        <name>project_to_closest_parity_sector</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>paulistring</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>keep_bond_dimensions</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="31" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="45" column="1"/>
+  </compounddef>
+</doxygen>

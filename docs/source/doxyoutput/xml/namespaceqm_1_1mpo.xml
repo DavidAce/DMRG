@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespaceqm_1_1mpo" kind="namespace" language="C++">
+    <compoundname>qm::mpo</compoundname>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using qm::mpo::Scalar = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespaceqm_1_1mpo_1aef01a3621428315dc34cdb8059851389" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 4 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
+        <definition>std::tuple&lt; Eigen::Tensor&lt; qm::mpo::Scalar, 4 &gt;, Eigen::Tensor&lt; qm::mpo::Scalar, 3 &gt;, Eigen::Tensor&lt; qm::mpo::Scalar, 3 &gt; &gt; qm::mpo::pauli_mpo</definition>
+        <argsstring>(const Eigen::MatrixXcd paulimatrix)</argsstring>
+        <name>pauli_mpo</name>
+        <param>
+          <type>const Eigen::MatrixXcd</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds the MPO for measuring parity on spin systems. P = Π s_{i} where Π is the product over all sites, and s_{i} is the given pauli matrix for site i.</para><para>MPO = | s | <verbatim>   2
+   |
+</verbatim> 0<mdash/>s<mdash/>1 | 3 </para>        </detaileddescription>
+        <inbodydescription>
+<para>&lt; Extent of pauli matrices in a rank-4 tensor</para><para>&lt; Extent of pauli matrices in a rank-2 tensor </para>        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="187" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1_1mpo_1aaf25781e6c5310591bbdf86e116909a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 4 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
+        <definition>std::tuple&lt; Eigen::Tensor&lt; qm::mpo::Scalar, 4 &gt;, Eigen::Tensor&lt; qm::mpo::Scalar, 3 &gt;, Eigen::Tensor&lt; qm::mpo::Scalar, 3 &gt; &gt; qm::mpo::parity_selector_mpo</definition>
+        <argsstring>(const Eigen::MatrixXcd paulimatrix, const int sector=1)</argsstring>
+        <name>parity_selector_mpo</name>
+        <param>
+          <type>const Eigen::MatrixXcd</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>sector</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds the MPO that projects out the MPS component in a parity sector. |psi+-&gt; = O |psi&gt;= (1 +- P) |psi&gt; Note that |psi+-&gt; aren&apos;t normalized after applying this MPO! <verbatim> | I   0    |
+</verbatim> O = | 0 +-s |</para><para><verbatim>   2
+   |
+</verbatim> 0<mdash/>O<mdash/>1 | 3 </para>        </detaileddescription>
+        <inbodydescription>
+<para>&lt; Extent of pauli matrices in a rank-4 tensor</para><para>&lt; Extent of pauli matrices in a rank-2 tensor </para>        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="226" bodyend="260"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1_1mpo_1ae9dfc0e5c530087196a667e5203bf400" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::tuple&lt; std::list&lt; Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 4 &gt; &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 3 &gt;, Eigen::Tensor&lt; <ref refid="namespaceqm_1_1mpo_1a525b38e083d183a2ee50a8f6fff25949" kindref="member">Scalar</ref>, 3 &gt; &gt;</type>
+        <definition>std::tuple&lt; std::list&lt; Eigen::Tensor&lt; qm::mpo::Scalar, 4 &gt; &gt;, Eigen::Tensor&lt; qm::mpo::Scalar, 3 &gt;, Eigen::Tensor&lt; qm::mpo::Scalar, 3 &gt; &gt; qm::mpo::parity_projector_mpos</definition>
+        <argsstring>(const Eigen::MatrixXcd paulimatrix, const size_t sites, const int sector=1)</argsstring>
+        <name>parity_projector_mpos</name>
+        <param>
+          <type>const Eigen::MatrixXcd</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <param>
+          <type>const size_t</type>
+          <declname>sites</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>sector</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Builds the MPO that projects out the MPS component in a parity sector. |psi+-&gt; = O |psi&gt;= (1/2) (1 +- P) |psi&gt; Here 1 = outer product of 2x2 identity matrices, &quot;sites&quot; times. Also P = outer product of 2x2 pauli matrices, &quot;sites&quot; times. The sign in &quot;sector&quot; and the factor 1/2 is put into the left edge at the end. <verbatim>  | I   0  |
+</verbatim> O = | 0 s |</para><para><verbatim>   2
+   |
+</verbatim> 0<mdash/>O<mdash/>1 | 3 </para>        </detaileddescription>
+        <inbodydescription>
+<para>&lt; Extent of pauli matrices in a rank-4 tensor</para><para>&lt; Extent of pauli matrices in a rank-2 tensor </para>        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="269" bodyend="306"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="48" column="1"/>
+  </compounddef>
+</doxygen>

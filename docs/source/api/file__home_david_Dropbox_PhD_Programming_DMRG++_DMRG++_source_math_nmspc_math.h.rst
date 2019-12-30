@@ -1,0 +1,117 @@
+
+.. _file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_math.h:
+
+File nmspc_math.h
+=================
+
+|exhale_lsh| :ref:`Parent directory <dir__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math>` (``/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_math.h``)
+-------------------------------------------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_math.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``Eigen/Core``
+
+- ``cmath``
+
+- ``functional``
+
+- ``iostream``
+
+- ``iterator``
+
+- ``list``
+
+- ``memory``
+
+- ``numeric``
+
+- ``optional``
+
+- ``utility``
+
+- ``vector``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_base.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_finite.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_algorithm_infinite.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_algorithms_class_iDMRG.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_model_factory.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_selfdual_tf_rf_ising_normal.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_mps_2site.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_state_infinite.cpp`
+
+- :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_tools_common_views.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_Math`
+
+- :ref:`namespace_math`
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_namespacemath_1a2f5c50dcbb98a2cb0edad21ec1b0b68c`
+
+- :ref:`exhale_function_namespacemath_1abdbf7f465dfc7caaf3d8bbf5ddc9234c`
+
+- :ref:`exhale_function_namespacemath_1aadb857d9d1370dae374e670f1832ca8f`
+
+- :ref:`exhale_function_namespacemath_1a871f3778bb92deb9570e3bd4a3692439`
+
+- :ref:`exhale_function_namespacemath_1a950ba2c26eab3a176711e689337ad0e9`
+
+- :ref:`exhale_function_namespacemath_1a3ce95fbd77bede9bc5f50374c6d0f58e`
+
+- :ref:`exhale_function_namespacemath_1a3389e677b639402cc6eaf924f713b398`
+
+- :ref:`exhale_function_namespacemath_1abdf8a2bf14cace5e0424feb58ad2e5b4`
+
+- :ref:`exhale_function_namespacemath_1abdf99bc627241de5f8ae40af8a73cedb`
+
+- :ref:`exhale_function_namespacemath_1a1c0284331d1637efe74c375fef296e94`
+

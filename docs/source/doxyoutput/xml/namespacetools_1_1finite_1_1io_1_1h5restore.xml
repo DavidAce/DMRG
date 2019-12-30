@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1io_1_1h5restore" kind="namespace" language="C++">
+    <compoundname>tools::finite::io::h5restore</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5restore_1a96a231c92a6e790db619ed69893a627d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::h5restore::load_from_hdf5</definition>
+        <argsstring>(const h5pp::File &amp;h5ppFile, class_state_finite &amp;state, class_simulation_status &amp;sim_status, const std::string &amp;prefix_path)</argsstring>
+        <name>load_from_hdf5</name>
+        <param>
+          <type>const h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="224" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_restore.cpp" bodystart="11" bodyend="21"/>
+        <references refid="namespacetools_1_1common_1_1io_1_1h5restore_1a3874bf050aa341a92161f166670ec186" compoundref="common_2io_2h5pp_8cpp" startline="57" endline="106">tools::common::io::h5restore::load_sim_status_from_hdf5</references>
+        <references refid="classclass__state__finite_1acd27402752b06bd245716d2b5a087ba2" compoundref="class__state__finite_8cpp" startline="23" endline="52">class_state_finite::operator=</references>
+        <references refid="namespacetools_1_1finite_1_1io_1_1h5restore_1abb1884899162aa68856f44f33a6f8e4f" compoundref="h5pp__restore_8cpp" startline="23" endline="74">load_state_from_hdf5</references>
+        <references refid="classclass__state__finite_1a9c81a351f5f21f3328db348dad032e5c" compoundref="class__state__finite_8cpp" startline="95" endline="95">class_state_finite::set_sweeps</references>
+        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
+        <references refid="namespacetools_1_1finite_1_1debug_1aa2f45bb2e350bec302e3c8f59f1733a0" compoundref="finite_2debug_8cpp" startline="13" endline="28">tools::finite::debug::check_integrity</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1_1h5restore_1abb1884899162aa68856f44f33a6f8e4f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::io::h5restore::load_state_from_hdf5</definition>
+        <argsstring>(const h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>load_state_from_hdf5</name>
+        <param>
+          <type>const h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="225" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_restore.cpp" bodystart="23" bodyend="74"/>
+        <references refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" compoundref="class__state__finite_8cpp" startline="418" endline="420">class_state_finite::active_dimensions</references>
+        <references refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" compoundref="class__state__finite_8cpp" startline="91" endline="91">class_state_finite::get_position</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1ae1aa22d6af49f05638105b00dd5c0e28" compoundref="finite_2mps_8cpp" startline="79" endline="134">tools::finite::mps::rebuild_environments</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="223" column="1"/>
+  </compounddef>
+</doxygen>

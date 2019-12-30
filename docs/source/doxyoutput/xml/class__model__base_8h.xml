@@ -1,0 +1,434 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__model__base_8h" kind="file" language="C++">
+    <compoundname>class_model_base.h</compoundname>
+    <includes local="no">memory</includes>
+    <includes local="no">unsupported/Eigen/CXX11/Tensor</includes>
+    <includes refid="nmspc__logger_8h" local="no">io/nmspc_logger.h</includes>
+    <includedby refid="class__state__finite_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h</includedby>
+    <includedby refid="class__i_t_e_b_d_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</includedby>
+    <includedby refid="class__model__base_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp</includedby>
+    <includedby refid="class__model__factory_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h</includedby>
+    <includedby refid="class__tf__ising_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h</includedby>
+    <includedby refid="class__model__factory_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</includedby>
+    <includedby refid="class__selfdual__tf__rf__ising_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</includedby>
+    <includedby refid="class__selfdual__tf__rf__ising__normal_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.h</includedby>
+    <includedby refid="class__environment_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp</includedby>
+    <includedby refid="finite_2mpo_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</includedby>
+    <includedby refid="ops_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</includedby>
+    <includedby refid="finite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</includedby>
+    <includedby refid="env_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</includedby>
+    <includedby refid="infinite_2io_2h5pp_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</includedby>
+    <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</includedby>
+    <includedby refid="infinite_2mpo_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mpo.cpp</includedby>
+    <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</includedby>
+    <includedby refid="infinite_2print_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</includedby>
+    <incdepgraph>
+      <node id="1711">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="1712" relation="include">
+        </childnode>
+        <childnode refid="1713" relation="include">
+        </childnode>
+      </node>
+      <node id="1710">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1713">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="1708">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="1709" relation="include">
+        </childnode>
+        <childnode refid="1710" relation="include">
+        </childnode>
+        <childnode refid="1711" relation="include">
+        </childnode>
+      </node>
+      <node id="1712">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="1709">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1718">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_fDMRG.cpp</label>
+        <link refid="class__f_d_m_r_g_8cpp"/>
+      </node>
+      <node id="1725">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_tables.cpp</label>
+        <link refid="finite_2io_2h5pp__tables_8cpp"/>
+      </node>
+      <node id="1734">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct_functor.cpp</label>
+        <link refid="ceres__direct__functor_8cpp"/>
+      </node>
+      <node id="1754">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.cpp</label>
+        <link refid="class__selfdual__tf__rf__ising__normal_8cpp"/>
+      </node>
+      <node id="1737">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp</label>
+        <link refid="ceres__subspace__functor_8cpp"/>
+      </node>
+      <node id="1728">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp</label>
+        <link refid="mps-internals_8cpp"/>
+      </node>
+      <node id="1731">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
+        <link refid="ops_8cpp"/>
+      </node>
+      <node id="1749">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h</label>
+        <link refid="class__tf__ising_8h"/>
+        <childnode refid="1746" relation="include">
+        </childnode>
+        <childnode refid="1750" relation="include">
+        </childnode>
+      </node>
+      <node id="1715">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="1716" relation="include">
+        </childnode>
+        <childnode refid="1717" relation="include">
+        </childnode>
+        <childnode refid="1718" relation="include">
+        </childnode>
+        <childnode refid="1719" relation="include">
+        </childnode>
+        <childnode refid="1720" relation="include">
+        </childnode>
+        <childnode refid="1721" relation="include">
+        </childnode>
+        <childnode refid="1722" relation="include">
+        </childnode>
+        <childnode refid="1723" relation="include">
+        </childnode>
+        <childnode refid="1724" relation="include">
+        </childnode>
+        <childnode refid="1725" relation="include">
+        </childnode>
+        <childnode refid="1726" relation="include">
+        </childnode>
+        <childnode refid="1727" relation="include">
+        </childnode>
+        <childnode refid="1728" relation="include">
+        </childnode>
+        <childnode refid="1729" relation="include">
+        </childnode>
+        <childnode refid="1730" relation="include">
+        </childnode>
+        <childnode refid="1731" relation="include">
+        </childnode>
+        <childnode refid="1732" relation="include">
+        </childnode>
+        <childnode refid="1733" relation="include">
+        </childnode>
+        <childnode refid="1734" relation="include">
+        </childnode>
+        <childnode refid="1735" relation="include">
+        </childnode>
+        <childnode refid="1736" relation="include">
+        </childnode>
+        <childnode refid="1737" relation="include">
+        </childnode>
+        <childnode refid="1738" relation="include">
+        </childnode>
+        <childnode refid="1739" relation="include">
+        </childnode>
+        <childnode refid="1740" relation="include">
+        </childnode>
+        <childnode refid="1741" relation="include">
+        </childnode>
+        <childnode refid="1742" relation="include">
+        </childnode>
+      </node>
+      <node id="1732">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp</label>
+        <link refid="ceres__base_8cpp"/>
+      </node>
+      <node id="1726">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
+        <link refid="finite_2measure_8cpp"/>
+      </node>
+      <node id="1740">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp</label>
+        <link refid="finite_2opt_8cpp"/>
+      </node>
+      <node id="1744">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp</label>
+        <link refid="class__model__base_8cpp"/>
+      </node>
+      <node id="1720">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_finite.cpp</label>
+        <link refid="class__state__finite_8cpp"/>
+      </node>
+      <node id="1758">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1752">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.cpp</label>
+        <link refid="class__selfdual__tf__rf__ising_8cpp"/>
+      </node>
+      <node id="1747">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
+      </node>
+      <node id="1721">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1757">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
+        <link refid="infinite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="1743">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
+        <link refid="class__i_t_e_b_d_8cpp"/>
+      </node>
+      <node id="1745">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h</label>
+        <link refid="class__model__factory_8h"/>
+        <childnode refid="1746" relation="include">
+        </childnode>
+        <childnode refid="1747" relation="include">
+        </childnode>
+        <childnode refid="1723" relation="include">
+        </childnode>
+        <childnode refid="1724" relation="include">
+        </childnode>
+        <childnode refid="1727" relation="include">
+        </childnode>
+        <childnode refid="1748" relation="include">
+        </childnode>
+      </node>
+      <node id="1741">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/print.cpp</label>
+        <link refid="finite_2print_8cpp"/>
+      </node>
+      <node id="1723">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
+        <link refid="finite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="1750">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.cpp</label>
+        <link refid="class__tf__ising_8cpp"/>
+      </node>
+      <node id="1724">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_restore.cpp</label>
+        <link refid="h5pp__restore_8cpp"/>
+      </node>
+      <node id="1716">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_finite.cpp</label>
+        <link refid="class__algorithm__finite_8cpp"/>
+      </node>
+      <node id="1755">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp</label>
+        <link refid="class__environment_8cpp"/>
+      </node>
+      <node id="1751">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising.h</label>
+        <link refid="class__selfdual__tf__rf__ising_8h"/>
+        <childnode refid="1746" relation="include">
+        </childnode>
+        <childnode refid="1752" relation="include">
+        </childnode>
+      </node>
+      <node id="1719">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_xDMRG.cpp</label>
+        <link refid="class__x_d_m_r_g_8cpp"/>
+      </node>
+      <node id="1714">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="1715" relation="include">
+        </childnode>
+        <childnode refid="1743" relation="include">
+        </childnode>
+        <childnode refid="1744" relation="include">
+        </childnode>
+        <childnode refid="1745" relation="include">
+        </childnode>
+        <childnode refid="1749" relation="include">
+        </childnode>
+        <childnode refid="1746" relation="include">
+        </childnode>
+        <childnode refid="1751" relation="include">
+        </childnode>
+        <childnode refid="1753" relation="include">
+        </childnode>
+        <childnode refid="1755" relation="include">
+        </childnode>
+        <childnode refid="1727" relation="include">
+        </childnode>
+        <childnode refid="1731" relation="include">
+        </childnode>
+        <childnode refid="1740" relation="include">
+        </childnode>
+        <childnode refid="1756" relation="include">
+        </childnode>
+        <childnode refid="1757" relation="include">
+        </childnode>
+        <childnode refid="1758" relation="include">
+        </childnode>
+        <childnode refid="1748" relation="include">
+        </childnode>
+        <childnode refid="1759" relation="include">
+        </childnode>
+        <childnode refid="1760" relation="include">
+        </childnode>
+      </node>
+      <node id="1753">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_selfdual_tf_rf_ising_normal.h</label>
+        <link refid="class__selfdual__tf__rf__ising__normal_8h"/>
+        <childnode refid="1746" relation="include">
+        </childnode>
+        <childnode refid="1754" relation="include">
+        </childnode>
+      </node>
+      <node id="1717">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
+        <link refid="class__algorithm__launcher_8cpp"/>
+      </node>
+      <node id="1746">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp</label>
+        <link refid="class__model__factory_8cpp"/>
+      </node>
+      <node id="1727">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp</label>
+        <link refid="finite_2mpo_8cpp"/>
+      </node>
+      <node id="1738">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp</label>
+        <link refid="ceres__subspace__hamiltonian_8cpp"/>
+      </node>
+      <node id="1735">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_rosenbrock.cpp</label>
+        <link refid="ceres__rosenbrock_8cpp"/>
+      </node>
+      <node id="1733">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_direct.cpp</label>
+        <link refid="ceres__direct_8cpp"/>
+      </node>
+      <node id="1756">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
+        <link refid="env_8cpp"/>
+      </node>
+      <node id="1736">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
+      </node>
+      <node id="1722">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/debug.cpp</label>
+        <link refid="finite_2debug_8cpp"/>
+      </node>
+      <node id="1742">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp</label>
+        <link refid="svd_8cpp"/>
+      </node>
+      <node id="1760">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</label>
+        <link refid="infinite_2print_8cpp"/>
+      </node>
+      <node id="1730">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/multisite.cpp</label>
+        <link refid="multisite_8cpp"/>
+      </node>
+      <node id="1748">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mpo.cpp</label>
+        <link refid="infinite_2mpo_8cpp"/>
+      </node>
+      <node id="1739">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
+        <link refid="ground__state_8cpp"/>
+      </node>
+      <node id="1729">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps.cpp</label>
+        <link refid="finite_2mps_8cpp"/>
+      </node>
+      <node id="1759">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classclass__model__base" prot="public">class_model_base</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-07-04.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;memory&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;unsupported/Eigen/CXX11/Tensor&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__logger_8h" kindref="compound">io/nmspc_logger.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="classclass__model__base" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass__model__base" kindref="compound">class_model_base</ref>{</highlight></codeline>
+<codeline lineno="12" refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a7eafb862599d2db69b94667f5feb1029" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="14" refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::array&lt;long,<sp/>4&gt;<sp/><ref refid="classclass__model__base_1a114e24e0f86452d6dd235fd718731763" kindref="member">extent4</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="15" refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::array&lt;long,<sp/>2&gt;<sp/><ref refid="classclass__model__base_1ae61a2ca27b9fd27fd19561285ed4abaf" kindref="member">extent2</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="16" refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::optional&lt;size_t&gt;<sp/><ref refid="classclass__model__base_1a42d247bc9576204556626cbf25702508" kindref="member">position</ref>;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="17" refid="classclass__model__base_1a33433f14a50c45b0aa52873e01076b84" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>std::shared_ptr&lt;spdlog::logger&gt;<sp/><ref refid="classclass__model__base_1a33433f14a50c45b0aa52873e01076b84" kindref="member">log</ref>;</highlight></codeline>
+<codeline lineno="18" refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__model__base_1acefbc9336ce05ab10c862610a090c548" kindref="member">mpo_internal</ref>;</highlight></codeline>
+<codeline lineno="19" refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1ad73746dd49b2da0ac98c308ef6d07def" kindref="member">e_reduced</ref><sp/>=<sp/>0;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a6a2f96984fa4ce3efec11a5acd2c4fd0" kindref="member">class_model_base</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position_,<sp/>std::string<sp/>logName<sp/>=<sp/></highlight><highlight class="stringliteral">&quot;MODEL&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24" refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1abaa56fa72f7d7c1019e1cf3bd74772b7" kindref="member">all_mpo_parameters_have_been_set</ref><sp/>=<sp/><sp/><sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<sp/><sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">MPO</ref>()<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" kindref="member">isReal</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1abcce2b2aa2f4680afcb8e92a72c1a992" kindref="member">set_position</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>new_pos);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">get_position</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classclass__model__base_1a22d74bafe839007a10f75ac03585fd25" kindref="member">MPO_matrix_view</ref>();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1afbd0c80af83c59b9af90d190ec8acaac" kindref="member">set_reduced_energy</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a6bfba5c3d319a16c0451509e98df9b0b" kindref="member">isReduced</ref><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a1d6a8fc02b00f4ee83ebaa3d0332cfee" kindref="member">get_reduced_energy</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1ac281b65a3ef25fe526e43eebec5d0051" kindref="member">~class_model_base</ref>()<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>std::unique_ptr&lt;class_model_base&gt;<sp/><ref refid="classclass__model__base_1aa63f907aa0ac70db3a9477ce73c1fdd6" kindref="member">clone</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__model__base_1a230141d80f84b200729e74fa114bd3e8" kindref="member">MPO_reduced_view</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/><ref refid="classclass__model__base_1a230141d80f84b200729e74fa114bd3e8" kindref="member">MPO_reduced_view</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>single_site_energy)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1a97eac32ea2fdfc6095f6aecaeaa4728f" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<sp/>MPO_,<sp/>std::vector&lt;double&gt;<sp/>&amp;<sp/>parameters)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1a97eac32ea2fdfc6095f6aecaeaa4728f" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;double&gt;<sp/>&amp;<sp/>parameters)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1a97eac32ea2fdfc6095f6aecaeaa4728f" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXd<sp/>&amp;<sp/>all_parameters,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1a97eac32ea2fdfc6095f6aecaeaa4728f" kindref="member">set_hamiltonian</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::VectorXd<sp/>&amp;<sp/>parameters)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1a9aef4688065a93324826893011ef8c14" kindref="member">build_mpo</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1ad774bf318ecff3bf13f8e7821aacdf4a" kindref="member">randomize_hamiltonian</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1a923bd3048f1b5c53bfdb831b3da2efe2" kindref="member">perturb_hamiltonian</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>amplitude)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1ac76b63a806bf09e1d7c888f0be4fa7c5" kindref="member">is_perturbed</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1ade62bca0b950914a94c72c72d6c2cc3c" kindref="member">print_parameter_names</ref><sp/>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1a8ed38e3cb48bacc3103be07284b20831" kindref="member">print_parameter_values</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a7c8050ed2641e8145fdf30860435986a" kindref="member">get_spin_dimension</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>std::vector&lt;std::string&gt;<sp/><ref refid="classclass__model__base_1a2c8ca66dc1a83c1ddb5ea91aec7fe1ed" kindref="member">get_parameter_names</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>std::vector&lt;double&gt;<sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1aed5208f88cae90c68966c58c1b42526b" kindref="member">get_parameter_values</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__model__base_1a4803a9abc26a3282e512dc7a691dc837" kindref="member">set_full_lattice_parameters</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;std::vector&lt;double&gt;&gt;<sp/>parameters,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>reverse<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">)<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/><ref refid="classclass__model__base_1a6c6d9ef43a65fbdb4fba2d01676dd3b3" kindref="member">single_site_hamiltonian</ref>(</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>position,</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sites,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a4513609fe08e4d35652bda887a9d612c" kindref="member">SX</ref>,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a7bc201ff785a2937da0582985b40fed5" kindref="member">SY</ref>,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Eigen::MatrixXcd&gt;<sp/>&amp;<ref refid="namespaceqm_1_1spin_one_half_1a99066807ac447ce395e80353fde8db76" kindref="member">SZ</ref>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.h"/>
+  </compounddef>
+</doxygen>

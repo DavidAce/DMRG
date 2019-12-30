@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="indexpage" kind="page">
+    <compoundname>index</compoundname>
+    <title>DMRG++</title>
+    <detaileddescription>
+<para>This program finds the ground state of a 1D quantum system using the DMRG algorithm. <ulink url="https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf">Working notes</ulink> on the theoretical aspects of this implementation.</para><sect1 id="index_1intro">
+<title>DMRG++ (documentation in progress)</title>
+<para><ulink url="https://en.wikipedia.org/wiki/Density_matrix_renormalization_group">Density matrix renormalization group</ulink> (DMRG) is a variational numerical technique used to study many-body quantum systems. It works by optimizing a trial wave function in the form of a <ulink url="https://en.wikipedia.org/wiki/Matrix_product_states">Matrix Product States</ulink> (MPS), to find either the groundstate or an eigenstate of a 1D quantum system with high precision. DMRG++ includes 4 different MPS-based algorithms for 1D systems:</para><para><itemizedlist>
+<listitem><para><bold>iDMRG:</bold> <emphasis>infinite</emphasis> DMRG. Finds the groundstate of infinite and translationally invariant systems.</para></listitem><listitem><para><bold>fDMRG:</bold> <emphasis>finite</emphasis> DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.</para></listitem><listitem><para><bold>xDMRG:</bold> <emphasis>Excited state</emphasis> DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.</para></listitem><listitem><para><bold>iTEBD:</bold> <emphasis>Imaginary Time Evolving Block Decimation</emphasis>. Finds the ground state of infinite and translationally invariant systems using unitary operators that perform imaginary time evolution.</para></listitem></itemizedlist>
+</para><para>The program is controlled through an input file, whose path (full or relative to the binary) is given as input argument in the command line. See the <ulink url="#installation">Installation</ulink> section below.</para><para>Included here are two 1D models of spin chains, the <emphasis>Quantum Ising model with transverse field</emphasis> and the <emphasis>Self-dual quantum Ising model with random couplings and random fields</emphasis>. The choice of model is done in the input configuration file.</para><sect2 id="index_1notes">
+<title>Notes (in construction)</title>
+<para>Go to the <ulink url="https://github.com/DavidAce/Notebooks/blob/master/DMRG%2B%2B/DMRG%2B%2B.pdf">working notes</ulink> to learn more about the theoretical aspects of this implementation.</para><para><hruler/>
+ </para></sect2>
+</sect1>
+<sect1 id="index_1installation">
+<title>Installation</title>
+<sect2 id="index_1quickstart">
+<title>Quick start</title>
+<para><itemizedlist>
+<listitem><para>Git clone and build with <computeroutput>./build.sh</computeroutput>.</para></listitem><listitem><para>Run with <computeroutput>./run.sh</computeroutput> after setting your options in <computeroutput>./input/input.cfg</computeroutput>.</para></listitem><listitem><para>Profit from <computeroutput>./output/output.h5</computeroutput>.</para></listitem></itemizedlist>
+</para></sect2>
+<sect2 id="index_1build">
+<title>Build</title>
+<para>Git clone or copy &amp; extract the project into a folder of your choosing. Make sure there are no spaces in your path!**.</para><para>The project can be built with a single command from a unix terminal. Simply launch the script <computeroutput>.\build.sh</computeroutput> found in the root folder to trigger a CMake build.</para><para>The script takes optional arguments, run <computeroutput>.\build.sh -h</computeroutput> to learn more.</para><para>Alternatively**, if you intend to develop or study the source code, some IDE&apos;s with CMake support can self-configure from the file CMakeLists.txt found in the project root folder. This is perhaps an even simpler approach. Recommended: <ulink url="https://www.jetbrains.com/clion/download">CLion</ulink> or <ulink url="https://code.visualstudio.com/">Visual Studio Code</ulink> with the C++ and CMake Tools extensions.</para><para>CMake will check for dependencies in the host system. If not found, it will download and install these automatically to a folder <computeroutput>libs</computeroutput> in the project root (see <emphasis>Optional Requirements</emphasis> below). If the dependencies are successfully found or installed, the project is built and an executable is generated in <computeroutput>./build/Release/DMRG++</computeroutput>.</para></sect2>
+<sect2 id="index_1execution">
+<title>Execution</title>
+<para>To run the executable, launch <computeroutput>.\run.sh</computeroutput>, or <computeroutput>.\run.sh -h</computeroutput> to learn more. If no configuration file is given as argument to <computeroutput>run.sh</computeroutput>, the executable will look for a configuration file located in <computeroutput>./input/input.cfg</computeroutput>.</para></sect2>
+<sect2 id="index_1configuration-file">
+<title>Configuration file</title>
+<para>The default configuration file in <computeroutput>./input/input.cfg</computeroutput> contains run-time instructions for DMRG++. Here you can choose the type of simulation, type of model, model parameters, system size, precision as well as settings for profiling, data storage and console verbosity. Read the comments in the file to learn more.</para></sect2>
+<sect2 id="index_1output-file">
+<title>Output file</title>
+<para>After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration file <computeroutput>./input/input.cfg</computeroutput>. By default this should be in <computeroutput>.output/output.h5</computeroutput>. This file will contain values like the final energies, entanglement entropies, entanglement spectrums and optionally the final state in MPS form.</para><para>To view the data you can use any hdf5-viewer, such as HDFCompass.</para><para>The script <computeroutput>analysis/data_analysis.py</computeroutput> (in progress) shows how to analyze the simulation data stored in the hdf5 files. You need to install the python package <computeroutput>h5py</computeroutput> from pip or conda to read files in the HDF5 format.</para></sect2>
+<sect2 id="index_1requirements">
+<title>Minimum Requirements</title>
+<para>The following software is required to build the project:<itemizedlist>
+<listitem><para>C++ compiler with support for C++17, OpenMP and libstdc++ standard library implementation (version &gt;= 7). Tested with two compilers:<itemizedlist>
+<listitem><para>GNU GCC versions 7 and 8 (these bundle libstdc++)</para></listitem><listitem><para>Clang version &gt;= 6.0. (you need to manually install libstdc++ version &gt;= 7, that comes bundled with gcc, for instance from <computeroutput>ppa:ubuntu-toolchain-r/test</computeroutput>)</para></listitem></itemizedlist>
+</para></listitem><listitem><para>CMake version &gt;= 3.10. Pro-tip: if you lack administrator rights, use CMake from anaconda!</para></listitem><listitem><para>*(For library compilation only) Fortran compiler, tested with gfortran-7 and gfortran-8.*</para><para>Ubuntu** 18 or higher will have the above versions in the default repositories. For older distributions, use the ppa <computeroutput>ubuntu-toolchain-r/test</computeroutput> to get newer versions.</para><para>Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with <computeroutput>brew install gcc</computeroutput>. Clang from llvm 6.0 might work but you will have to link to GNU&apos;s <computeroutput>libstdc++.so</computeroutput> or <computeroutput>libstdc++.a</computeroutput> manually. The AppleClang compiler is not supported at all.</para></listitem></itemizedlist>
+</para><sect3 id="index_1optional-requirements">
+<title>Optional Requirements</title>
+<para>The compilation of DMRG++ requires several libraries. To meet the requirements, you have two options:</para><para><orderedlist>
+<listitem><para><bold>Automatic</bold>: let CMake download and compile the libraries below from source into a local folder <computeroutput>./libs</computeroutput>. This is the default behavior if the library is not found on your system. Note that this does <emphasis>NOT</emphasis> make a system-wide install, so you can safely delete the <computeroutput>./libs</computeroutput> folder.</para></listitem><listitem><para><bold>Manual</bold>: install the libraries yourself with your favorite package manager (e.g. <computeroutput>apt</computeroutput> in ubuntu or <computeroutput>brew</computeroutput> in OSX). The build script will always attempt to find the libraries in your system first.</para></listitem><listitem><para><bold>Manual with environment modules</bold> (in construction). You can also load <emphasis>modules</emphasis> from the ubuntu command-line tool <emphasis>environment-modules</emphasis>. Simply export the variable <computeroutput>&lt;LIBNAME&gt;_DIR</computeroutput> to let CMake know where to look.</para></listitem></orderedlist>
+</para><para>If the compilation halts due to any library failing to compile or link, you can try installing/uninstalling that library from your package manager.</para><para><heading level="4">List of libraries</heading>
+</para><para><itemizedlist>
+<listitem><para><bold>BLAS</bold> and <bold>LAPACK</bold>. Required for Arpack. You can choose either <ulink url="https://software.intel.com/en-us/mkl">Intel MKL</ulink> or <ulink url="https://github.com/xianyi/OpenBLAS">OpenBLAS</ulink>. If not found, OpenBLAS is downloaded automatically. Note that OpenBLAS requires Fortran to compile from source. If both MKL and OpenBLAS are found in the system, MKL is preferred.</para></listitem><listitem><para><ulink url="http://eigen.tuxfamily.org"><bold>Eigen</bold></ulink> for tensor and matrix and linear algebra (tested with version &gt;= 3.3).</para></listitem><listitem><para><ulink url="https://github.com/opencollab/arpack-ng"><bold>Arpack</bold></ulink> Eigenvalue solver based on Fortran. Note that this in turn requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.</para></listitem><listitem><para><ulink url="https://github.com/m-reuter/eigsolver_properties"><bold>Arpackpp</bold></ulink> C++ frontend for Arpack.</para></listitem><listitem><para><ulink url="https://github.com/DavidAce/h5pp"><bold>h5pp</bold></ulink> a wrapper for HDF5.</para></listitem><listitem><para><ulink url="https://support.hdfgroup.org/HDF5/"><bold>HDF5</bold></ulink> for hdf5 binary output file support (tested with version &gt;= 1.10).</para></listitem><listitem><para><ulink url="https://github.com/gabime/spdlog"><bold>spdlog</bold></ulink> logger).</para></listitem></itemizedlist>
+</para><para><hruler/>
+</para></sect3>
+</sect2>
+</sect1>
+<sect1 id="index_1notation">
+<title>Notation</title>
+<para>The <emphasis>Vidal canonical form</emphasis>, i.e. ... <formula id="31">$\Gamma\Lambda\Gamma\Lambda$</formula>..., is the underlying data structure for MPS throughout this code. In code we denote</para><para><itemizedlist>
+<listitem><para><formula id="32">$\Gamma \rightarrow$</formula> <computeroutput>G</computeroutput></para></listitem><listitem><para><formula id="33">$\Lambda \rightarrow$</formula> <computeroutput>L</computeroutput></para></listitem></itemizedlist>
+</para><para>There are methods to obtain the MPS in <emphasis>mixed canonical form</emphasis> as well, i.e. <formula id="34">$AAA...AACBB...BBB$</formula>, where <formula id="35">$A$</formula>&apos;s are left unitary, <formula id="36">$B$</formula>&apos;s are right-unitary and <formula id="37">$C$</formula> is a (diagonal) bond-matrix. The <formula id="35">$A$</formula>&apos;s and <formula id="36">$B$</formula>&apos;s are obtained from the Vidal canonical form by simple contraction:</para><para><itemizedlist>
+<listitem><para><formula id="38">$A = \Lambda \Gamma$</formula></para></listitem><listitem><para><formula id="39">$B = \Gamma \Lambda$</formula></para></listitem></itemizedlist>
+</para><sect2 id="index_1convention">
+<title>Tensor index order convention.</title>
+<para>The tensor index order used here follows the convention:<itemizedlist>
+<listitem><para>physical indices first, from left to right or for MPO&apos;s, up to down.</para></listitem><listitem><para>other dimensions (like bond dimensions) next, from left to right.</para></listitem></itemizedlist>
+</para><sect3 id="index_1example">
+<title>Example:</title>
+<para>Consider for some position <formula id="11">$n$</formula> on the chain <formula id="40">$\Gamma = \Gamma^{\sigma_n}_{a,b}$</formula>. Here <formula id="41">$\sigma_n \in [-1,1]$</formula> is a particle with local (physical) dimension <formula id="24">$d$</formula> = 2, and <formula id="42">$a,b$</formula> are the remaining dimensions, in practice they are bond dimensions of <formula id="43">$\Lambda^{n-1}$</formula> and <formula id="44">$\Lambda^{n}$</formula>, respectively, which can be numbers <formula id="45">$\in [1,\chi]$</formula>.</para><para>In diagrammatic tensor notation this is: <verbatim>                        [d]          0
+            G     = [a]__|__[b] = 1__|__2
+</verbatim> where after the second equality the index order is shown. In code this corresponds to</para><para><programlisting><codeline><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank<sp/>=<sp/>3</highlight></codeline>
+<codeline><highlight class="normal">Eigen::Tensor&lt;Scalar,rank&gt;<sp/>G(<ref refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" kindref="member">d</ref>,a,b);</highlight></codeline>
+</programlisting></para><para>An exception to this rule is theta: We have <formula id="46">$\Theta^{\sigma_n,\sigma_{n+1}}_{\chi_a,\chi_b}$</formula>:</para><para><verbatim>                                [d] [d]                0   2
+            Theta     = [chia]___|___|___[chib] = 1 ___|___|___ 3
+</verbatim></para><para>which in code reads</para><para><programlisting><codeline><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank<sp/>=<sp/>4</highlight></codeline>
+<codeline><highlight class="normal">Eigen::Tensor&lt;Scalar,rank&gt;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>(<ref refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" kindref="member">d</ref>,chia,<ref refid="namespacesettings_1_1model_1_1tf__ising_1a3803410b71913df87ec9f6af3fc75517" kindref="member">d</ref>,chib);</highlight></codeline>
+</programlisting></para><para>This index order doesn&apos;t follow the convention above because it simplifies the Schmidt-decomposition, where the indices are merged in pairs ([0,1],[2,3]) to form a matrix on which to perform a singular value decomposition (SVD).</para></sect3>
+</sect2>
+<sect2 id="index_1reference">
+<title>Reference</title>
+<para>This implementation is inspired by the notation and steps in these articles:</para><para><blockquote><para><ulink url="https://arxiv.org/abs/1212.6255">Phase Diagram of the Anisotropic Spin-2 XXZ Model: Infinite-System Density Matrix Renormalization Group Study</ulink><linebreak/>
+ by Kjäll, Zaletel, Mong, Bardarson, and Pollmann, 2012 <linebreak/>
+ </para></blockquote></para><para><blockquote><para><ulink url="http://quantumtensor.pks.mpg.de/wp-content/uploads/2016/06/notes_1.pdf">Efficient Numerical Simulations Using Matrix-Product States</ulink><linebreak/>
+ by F. Pollmann. <linebreak/>
+ </para></blockquote></para><para><blockquote><para><ulink url="https://arxiv.org/abs/1008.3477">The density-matrix renormalization group in the age of matrix product states</ulink><linebreak/>
+ by U. Schollwöck, 2008 <linebreak/>
+ </para></blockquote></para><para><blockquote><para><ulink url="https://doi.org/10.1103/PhysRevB.78.155117">The iTEBD algorithm beyond unitary evolution</ulink><linebreak/>
+ by Orus &amp; Vidal, 2008<linebreak/>
+ </para></blockquote></para><para><blockquote><para><ulink url="http://arxiv.org/abs/0804.2509">Infinite size density matrix renormalization group, revisited</ulink><linebreak/>
+ by McCulloch, 2008 <linebreak/>
+ </para></blockquote></para><para><blockquote><para><ulink url="https://doi.org/10.1103/PhysRevLett.116.247204">Obtaining Highly Excited Eigenstates of Many-Body Localized Hamiltonians by the Density Matrix Renormalization Group Approach</ulink><linebreak/>
+ by V. Khemani, F. Pollmann &amp; S. L. Sondhi, 2016 </para></blockquote></para></sect2>
+</sect1>
+<sect1 id="index_1details">
+<title>Details</title>
+<para><simplesect kind="author"><para>David Aceituno </para></simplesect>
+<simplesect kind="date"><para>06-2019 </para></simplesect>
+<simplesect kind="copyright"><para>MPL2 </para></simplesect>
+</para></sect1>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

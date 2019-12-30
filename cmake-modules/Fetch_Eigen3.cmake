@@ -1,68 +1,53 @@
+# We want to find our own Eigen3 to make sure we patch it properly
+find_package(Eigen3
+        HINTS ${CMAKE_INSTALL_PREFIX}/Eigen3
+        PATHS ${CMAKE_INSTALL_PREFIX}/Eigen3  #${EBROOTEIGEN} Need to patch our own Eigen!!
+        PATH_SUFFIXES Eigen3 eigen3 include/Eigen3 include/eigen3  NO_CMAKE_PACKAGE_REGISTRY NO_DEFAULT_PATH)
 
-find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_DEFAULT_PATH)
-find_package(Eigen3 3.3.4  PATHS ${INSTALL_DIRECTORY}/Eigen3 $ENV{HOME}/.conda  $ENV{HOME}/anaconda3 NO_CMAKE_PACKAGE_REGISTRY)
-
-
-if(TARGET blas)
-    set(EIGEN3_COMPILER_FLAGS  -Wno-parentheses) # -Wno-parentheses
-    set(EIGEN3_USING_BLAS ON)
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-        list(APPEND EIGEN3_COMPILER_FLAGS -Wno-unused-but-set-variable)
-    endif()
-    if(MKL_FOUND)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_MKL_ALL)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE_STRICT)
-        list(APPEND EIGEN3_INCLUDE_DIR ${MKL_INCLUDE_DIR})
-        message(STATUS "Eigen3 will use MKL")
-    elseif (BLAS_FOUND)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_BLAS)
-        list(APPEND EIGEN3_COMPILER_FLAGS -DEIGEN_USE_LAPACKE)
-        message(STATUS "Eigen3 will use BLAS and LAPACKE")
-    endif()
-endif()
-
-
-if(EIGEN3_FOUND AND TARGET Eigen3::Eigen)
-    message(STATUS "EIGEN VERSION ${EIGEN3_VERSION} FOUND IN SYSTEM: ${EIGEN3_INCLUDE_DIR}")
-    target_compile_options(Eigen3::Eigen INTERFACE ${EIGEN3_COMPILER_FLAGS})
-    target_include_directories(Eigen3::Eigen INTERFACE ${EIGEN3_INCLUDE_DIR})
-    add_library(Eigen3 INTERFACE)
-    target_link_libraries(Eigen3 INTERFACE Eigen3::Eigen)
-
-elseif (DOWNLOAD_EIGEN3 OR DOWNLOAD_ALL)
-    message(STATUS "Eigen3 will be installed into ${INSTALL_DIRECTORY}/Eigen3 on first build.")
-
-    include(ExternalProject)
-    ExternalProject_Add(external_EIGEN3
-            GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
-            GIT_TAG 3.3.7
-            GIT_PROGRESS 1
-            PREFIX      ${BUILD_DIRECTORY}/Eigen3
-            INSTALL_DIR ${INSTALL_DIRECTORY}/Eigen3
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            UPDATE_COMMAND ""
-            TEST_COMMAND ""
-#            INSTALL_COMMAND ""
-#            CONFIGURE_COMMAND ""
-        )
-
-
-    ExternalProject_Get_Property(external_EIGEN3 INSTALL_DIR)
-    add_library(Eigen3 INTERFACE)
-    add_library(Eigen3::Eigen ALIAS Eigen3)
-    set(EIGEN3_ROOT_DIR ${INSTALL_DIR})
-    set(EIGEN3_INCLUDE_DIR ${INSTALL_DIR}/include/eigen3)
-    set(Eigen3_DIR ${INSTALL_DIR}/share/eigen3/cmake)
-    add_dependencies(Eigen3 external_EIGEN3)
-    target_compile_options(Eigen3 INTERFACE ${EIGEN3_COMPILER_FLAGS})
-    target_include_directories(Eigen3 INTERFACE ${EIGEN3_INCLUDE_DIR})
-    if(TARGET blas)
-        target_link_libraries(Eigen3 INTERFACE blas)
-    endif()
+if(TARGET Eigen3::Eigen)
+    message(STATUS "Eigen3 found")
 else()
-    message("WARNING: Dependency Eigen3 not found and DOWNLOAD_EIGEN3 is OFF. Build will fail.")
+    if("${DOWNLOAD_METHOD}" MATCHES "none")
+        message(WARNING "Eigen3 will be downloaded anyway because we need a patched version, "
+                "which isn't available through any systems package manager")
+    endif()
+    message(STATUS "Eigen3 will be installed into ${CMAKE_INSTALL_PREFIX}")
+    include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
+    build_dependency(Eigen3 "${CMAKE_INSTALL_PREFIX}" "")
+    find_package(Eigen3 3.3.7
+            HINTS ${CMAKE_INSTALL_PREFIX}/Eigen3
+            PATHS ${CMAKE_INSTALL_PREFIX}/Eigen3 #${EBROOTEIGEN} Need to patch our own Eigen!!
+            PATH_SUFFIXES Eigen3 eigen3 include/Eigen3 include/eigen3  NO_CMAKE_PACKAGE_REGISTRY NO_DEFAULT_PATH)
+    if(TARGET Eigen3::Eigen)
+        message(STATUS "Eigen3 installed successfully")
+    else()
+        message(FATAL_ERROR "Eigen3 could not be downloaded.")
+    endif()
+
+#else()
+#    message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
 endif()
 
 
+if(TARGET Eigen3::Eigen AND TARGET blas::blas )
+    set(EIGEN3_USING_BLAS ON)
+    if(TARGET mkl::mkl)
+        message(STATUS "Eigen3 will use MKL")
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_MKL_ALL)
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
+        target_link_libraries         (Eigen3::Eigen INTERFACE mkl::mkl)
+    else ()
+        message(STATUS "Eigen3 will use BLAS and LAPACKE")
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_BLAS)
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_LAPACKE_STRICT)
+        target_link_libraries         (Eigen3::Eigen INTERFACE blas::blas)
+    endif()
+
+    # Use this flag if Ceres is giving you trouble!
+    # For some reason it starts mixing aligned and hand-made aligned malloc and freeing them willy nilly
+    # This flag forces its hand and avoids a segfault in some cases.
+    #    target_compile_definitions(Eigen3::Eigen INTERFACE -DEIGEN_MALLOC_ALREADY_ALIGNED=0) # Finally something works!!!
+
+
+endif()
 

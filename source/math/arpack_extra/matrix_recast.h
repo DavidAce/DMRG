@@ -2,8 +2,8 @@
 // Created by david on 2018-10-29.
 //
 
-#ifndef MATRIX_RECAST_H
-#define MATRIX_RECAST_H
+#pragma once
+
 
 #include <complex>
 #include <vector>
@@ -62,4 +62,3 @@ public:
 };
 
 
-#endif //MATRIX_RECAST_H

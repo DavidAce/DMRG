@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__h5table__measurements__infinite_1_1meta__struct" kind="struct" language="C++" prot="public">
+    <compoundname>class_h5table_measurements_infinite::meta_struct</compoundname>
+    <includes refid="table__types_8h" local="no">table_types.h</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1af4024c404993a142db00e47ae150b446" prot="public" static="yes" mutable="no">
+        <type>constexpr hsize_t</type>
+        <definition>constexpr hsize_t class_h5table_measurements_infinite::meta_struct::NFIELDS</definition>
+        <argsstring></argsstring>
+        <name>NFIELDS</name>
+        <initializer>= 21</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="165" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1a68c31bda294140f16e98518586d5bfe1" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_h5table_measurements_infinite::meta_struct::dst_size</definition>
+        <argsstring></argsstring>
+        <name>dst_size</name>
+        <initializer>= sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="166" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1ab2cdce28c6fd9d1723f3c8f89191c49f" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__h5table__measurements__infinite_1_1meta__struct_1af4024c404993a142db00e47ae150b446" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t, NFIELDS&gt; class_h5table_measurements_infinite::meta_struct::dst_offsets</definition>
+        <argsstring></argsstring>
+        <name>dst_offsets</name>
+        <initializer>= {
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, iteration),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, step),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, position),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, length),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension_limit),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension_maximum),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, entanglement_entropy),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, norm),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, energy_mpo),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, energy_per_site_mpo),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, energy_per_site_ham),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, energy_per_site_mom),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, energy_variance_mpo),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, energy_variance_per_site_mpo),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, energy_variance_per_site_ham),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, energy_variance_per_site_mom),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, truncation_error),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, wall_time),
+                HOFFSET(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct" kindref="compound">data_struct</ref>, phys_time),
+
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="167" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="167" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1a3099479e1aad51729723fdba03d4b934" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__h5table__measurements__infinite_1_1meta__struct_1af4024c404993a142db00e47ae150b446" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t, NFIELDS&gt; class_h5table_measurements_infinite::meta_struct::dst_sizes</definition>
+        <argsstring></argsstring>
+        <name>dst_sizes</name>
+        <initializer>= {
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a6bbce31a5a87bd0ee1c113db4c3f75a0" kindref="member">data_struct::iteration</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a306a3be975f75802ed2e06c672c2cb14" kindref="member">data_struct::step</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a7ba3d549fe668399459bb751b2c6e30c" kindref="member">data_struct::position</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a3764b19b2597800e8b9248ed8c26ae09" kindref="member">data_struct::length</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1aeeab0f9924fc94a68b34b3633fa90862" kindref="member">data_struct::bond_dimension</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a76b7f8c94e3aebbcfa49fb29118dfac8" kindref="member">data_struct::bond_dimension_limit</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a38ed5f978cca1ff2cff4eb9098388b7d" kindref="member">data_struct::bond_dimension_maximum</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a0553a1a0c494ae705b27f2273f92bfdc" kindref="member">data_struct::entanglement_entropy</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a38b0e6a4f8abf23a184a70995611eea5" kindref="member">data_struct::norm</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1af64043890b827a3cbbe3ed79dd9de2f2" kindref="member">data_struct::energy_mpo</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1adc4325572a0fbe60d3a2de201a8351b8" kindref="member">data_struct::energy_per_site_mpo</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a0bb7e66c2618dc7387e5b88c72b38098" kindref="member">data_struct::energy_per_site_ham</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a71abb74e457f66c3c0b87b173d301daa" kindref="member">data_struct::energy_per_site_mom</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a899195efb3c73c6390662b849fc6a43a" kindref="member">data_struct::energy_variance_mpo</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a966da9373b06c18e01da36028649f351" kindref="member">data_struct::energy_variance_per_site_mpo</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a70a88bf03e6a80f5a94c4575639044a9" kindref="member">data_struct::energy_variance_per_site_ham</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a3d33a99aa3ada0ed9e507df26b943e5c" kindref="member">data_struct::energy_variance_per_site_mom</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a42cce5abc5acc8b09d63bf886c1e2867" kindref="member">data_struct::truncation_error</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1aa93c858a7eb4ac3f49c0f559278f9d64" kindref="member">data_struct::wall_time</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a75891422e0da26bb840c5a3b6bdeec6a" kindref="member">data_struct::phys_time</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__infinite_1_1data__struct_1a7fcac97db31c7db1971fa129bafb3cd4" kindref="member">data_struct::time_step</ref>)
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="190" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="190" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1acc96225560a234f5abbb36b7bf6e3b39" prot="public" static="no" mutable="no">
+        <type>std::array&lt; const char *, <ref refid="structclass__h5table__measurements__infinite_1_1meta__struct_1af4024c404993a142db00e47ae150b446" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;const char *, NFIELDS&gt; class_h5table_measurements_infinite::meta_struct::field_names</definition>
+        <argsstring></argsstring>
+        <name>field_names</name>
+        <initializer>= {
+                &quot;iteration&quot;,
+                &quot;step&quot;,
+                &quot;position&quot;,
+                &quot;length&quot;,
+                &quot;bond_dimension&quot;,
+                &quot;bond_dimension_limit&quot;,
+                &quot;bond_dimension_maximum&quot;,
+                &quot;entanglement_entropy&quot;,
+                &quot;norm&quot;,
+                &quot;energy_mpo&quot;,
+                &quot;energy_per_site_mpo&quot;,
+                &quot;energy_per_site_ham&quot;,
+                &quot;energy_per_site_mom&quot;,
+                &quot;energy_variance&quot;,
+                &quot;energy_variance_per_site_mpo&quot;,
+                &quot;energy_variance_per_site_ham&quot;,
+                &quot;energy_variance_per_site_mom&quot;,
+                &quot;truncation_error&quot;,
+                &quot;wall_time&quot;,
+                &quot;phys_time&quot;,
+                &quot;time_step&quot;
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="213" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1a589429b6ba439c799f9faf52997ae004" prot="public" static="no" mutable="no">
+        <type>std::array&lt; hid_t, <ref refid="structclass__h5table__measurements__infinite_1_1meta__struct_1af4024c404993a142db00e47ae150b446" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;hid_t, NFIELDS&gt; class_h5table_measurements_infinite::meta_struct::field_types</definition>
+        <argsstring></argsstring>
+        <name>field_types</name>
+        <initializer>= {
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="237" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1a5e989544691eaeae8439746ddd0324ca" prot="public" static="no" mutable="no">
+        <type>hsize_t</type>
+        <definition>hsize_t class_h5table_measurements_infinite::meta_struct::chunk_size</definition>
+        <argsstring></argsstring>
+        <name>chunk_size</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="250" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1a7ee0822652126bc0a5f529ea61db5995" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* class_h5table_measurements_infinite::meta_struct::fill_data</definition>
+        <argsstring></argsstring>
+        <name>fill_data</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="251" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__infinite_1_1meta__struct_1a493e29c4c6fd47dfab415e1986b00f35" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_h5table_measurements_infinite::meta_struct::compress</definition>
+        <argsstring></argsstring>
+        <name>compress</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="252" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="453">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="454">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="451">
+        <label>class_h5table_measurements_infinite::meta_struct</label>
+        <link refid="structclass__h5table__measurements__infinite_1_1meta__struct"/>
+        <childnode refid="452" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="453" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="454" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="452">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="164" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="164" bodyend="253"/>
+    <listofallmembers>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1a5e989544691eaeae8439746ddd0324ca" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>chunk_size</name></member>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1a493e29c4c6fd47dfab415e1986b00f35" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>compress</name></member>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1ab2cdce28c6fd9d1723f3c8f89191c49f" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>dst_offsets</name></member>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1a68c31bda294140f16e98518586d5bfe1" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>dst_size</name></member>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1a3099479e1aad51729723fdba03d4b934" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>dst_sizes</name></member>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1acc96225560a234f5abbb36b7bf6e3b39" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>field_names</name></member>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1a589429b6ba439c799f9faf52997ae004" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>field_types</name></member>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1a7ee0822652126bc0a5f529ea61db5995" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>fill_data</name></member>
+      <member refid="structclass__h5table__measurements__infinite_1_1meta__struct_1af4024c404993a142db00e47ae150b446" prot="public" virt="non-virtual"><scope>class_h5table_measurements_infinite::meta_struct</scope><name>NFIELDS</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

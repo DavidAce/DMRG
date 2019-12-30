@@ -1,26 +1,33 @@
-cmake_minimum_required(VERSION 3.10)
-project(DMRG++)
+cmake_minimum_required(VERSION 3.12)
+project(DMRG++ CXX )
+#enable_language()
 
 
-set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
-option(BUILD_SHARED_LIBS  "Sets shared linking on/off"                          OFF)
-option(BUILD_EXAMPLES     "Build examples"                                      OFF)
-option(ENABLE_TESTS       "Enable testing"                                      ON )
-option(DOWNLOAD_HDF5      "Download and install HDF5 if not found"              OFF)
-option(DOWNLOAD_SPDLOG    "Download and install spdlog if not found"            OFF)
-option(DOWNLOAD_EIGEN3    "Download and install Eigen3 if not found"            OFF)
-option(DOWNLOAD_ALL       "Download and install all dependencies if not found"  ON )
-option(ENABLE_CCACHE      "Use ccache to speed up compilation"                  OFF)
-option(ENABLE_COTIRE      "Use cotire to speed up compilation"                  OFF)
-option(USE_OpenMP         "Use OpenMP"                                          OFF)
-option(USE_MKL            "Use Intel MKL libraries"                             ON )
+option(PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"         OFF)
+option(ENABLE_OPENMP            "Use OpenMP"                                          OFF)
+option(ENABLE_MKL               "Enable Intel Math Kernel Library"                    OFF)
+option(ENABLE_LTO               "Enable link time optimization"                       OFF)
+option(BUILD_SHARED_LIBS        "Sets shared linking on/off"                          OFF)
+option(BUILD_TESTS              "Builds ctests"                                       OFF)
+option(BUILD_EXAMPLES           "Build examples"                                      OFF)
+option(CMAKE_VERBOSE_MAKEFILE   "Verbose makefile"                                    OFF)
 
+
+#################################################################
+### Make an "enum" for valid download methods                 ###
+#################################################################
+set(VALID_DOWNLOAD_METHODS hunter conan native none)
+set(DOWNLOAD_METHOD native CACHE STRING "Download method for external dependencies")
+set_property(CACHE DOWNLOAD_METHOD  PROPERTY STRINGS ${VALID_DOWNLOAD_METHODS})
+if(NOT DOWNLOAD_METHOD IN_LIST VALID_DOWNLOAD_METHODS)
+    message(FATAL_ERROR "DOWNLOAD_METHOD must be one of ${VALID_DOWNLOAD_METHODS}")
+endif()
 
 #################################################################
 ### Set default policies if CMake is new enough               ###
@@ -35,11 +42,16 @@ else()
     cmake_policy(SET CMP0067 NEW)
 endif()
 
-
-if(USE_MKL AND NOT DEFINED ENV{MKLROOT})
-    set(ENV{MKLROOT}  "/opt/intel/mkl")
-    message(STATUS "MKLROOT is not defined. Setting default: $ENV{MKLROOT}")
+# Set MKLROOT if not defined in environment
+if(ENABLE_MKL AND NOT MKLROOT)
+    if(DEFINED $ENV{MKLROOT})
+        set(MKLROOT $ENV{MKLROOT})
+    else()
+    set(MKLROOT  /opt/intel/mkl)
+    message(STATUS "MKLROOT is not defined. Setting default: ${MKLROOT}")
+    endif()
 endif()
+
 
 
 ################################################################
@@ -52,325 +64,213 @@ include(cmake-modules/gitversion.cmake)
 
 
 
+
 ##################################################################
-### Get operating system properties into a variable            ###
+### Print host properties                                      ###
 ##################################################################
-set(GET_OS_INFO_CMD lsb_release -a)
-if(${CMAKE_HOST_APPLE})
-    set(GET_OS_INFO_CMD "sw_vers")
-endif()
-execute_process(COMMAND ${GET_OS_INFO_CMD}
-        OUTPUT_VARIABLE OS_PROPERTIES
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-message("========= DETECTED OS =========")
-message("${OS_PROPERTIES}")
+cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
+cmake_host_system_information(RESULT _proc_type   QUERY PROCESSOR_DESCRIPTION)
+cmake_host_system_information(RESULT _os_name     QUERY OS_NAME)
+cmake_host_system_information(RESULT _os_release  QUERY OS_RELEASE)
+cmake_host_system_information(RESULT _os_version  QUERY OS_VERSION)
+cmake_host_system_information(RESULT _os_platform QUERY OS_PLATFORM)
+message("========= HOST INFO =========")
+message("${_host_name}")
+message("${_os_name} ${_os_platform} ${_os_release}")
+message("${_proc_type}")
+message("${_os_version}")
 message("===============================")
 
 
-###################
-### Setup flags ###
-###################
+
+###########################
+### Print compiler info ###
+###########################
 message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
+
+
+############################################################
+### Set  the same microarchitecture for c++ and OpenBLAS ###
+############################################################
 
 if(NOT MARCH)
     set(MARCH "native")
 endif()
-
 if(MARCH)
     if (${MARCH} STREQUAL "zen")
-        string(TOUPPER ZEN OPENBLAS_MARCH)
-        string(TOLOWER znver1 CXX_MARCH)
+        string(TOUPPER ${MARCH} OPENBLAS_MARCH)
+        set(CXX_MARCH znver1)
     elseif (${MARCH} STREQUAL "native")
-        set(OPENBLAS_MARCH "haswell")
-        string(TOLOWER ${MARCH} CXX_MARCH)
+        set(OPENBLAS_MARCH HASWELL)
+        set(CXX_MARCH native)
     else()
         string(TOUPPER ${MARCH} OPENBLAS_MARCH)
         string(TOLOWER ${MARCH} CXX_MARCH)
     endif()
 endif()
 
-message("Using microarchitechture: ${CXX_MARCH}")
-set(COMMON_OPTIONS -g -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH})
-set(DEBUG_OPTIONS            -Wpedantic -Wextra -O0 -g3 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
-set(RELWITHDEBINFO_OPTIONS   -Wpedantic -Wextra -O3 -g3 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC -D_FORTIFY_SOURCE=2)
-set(RELEASE_OPTIONS     -DNDEBUG -O3)
-set(PROFILE_OPTIONS     -DNDEBUG -O3 -lprofiler -g  -ftime-report)
-
-if(ENABLE_CCACHE)
-    find_program(CCACHE_FOUND ccache)
-    if(CCACHE_FOUND)
-        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-        set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
-    endif(CCACHE_FOUND)
-endif()
-
-#################################
-### Microarch dependent flags ###
-#################################
-# Check supported options here http://man7.org/linux/man-pages/man1/gcc.1.html
-if(${MARCH} STREQUAL "haswell" OR ${MARCH} STREQUAL "skylake" OR ${MARCH} STREQUAL "zen" )
-    #list(APPEND RELEASE_OPTIONS -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1 -mpopcnt -maes -mpclmul -mavx -mavx2 -mmovbe -mrdrnd -mf16c -mfsgsbase -mfma  -mbmi -mbmi2 -fstack-protector-strong -Wformat -Wformat-security)
-else()
-    # Set default to whatever sandybridge can manage
-    #list(APPEND RELEASE_OPTIONS  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.2 -msse4.1  -mpopcnt  -maes -mpclmul -mavx -fstack-protector-strong -Wformat -Wformat-security)
-endif()
-
-
-##########################
-### OS-dependent flags ###
-##########################
-if(${CMAKE_HOST_APPLE})
-    list(APPEND COMMON_OPTIONS -mmacosx-version-min=10.13)
-else()
-#    list(APPEND COMMON_OPTIONS -mavx ) #-mfma makes things slower?
-endif()
-
-
-################################
-### Compiler-dependent flags ###
-################################
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    list(APPEND COMMON_OPTIONS -Wno-implicit-fallthrough -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-int-in-bool-context -Wno-maybe-uninitialized -Wno-enum-compare)
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    list(APPEND COMMON_OPTIONS --gcc-toolchain=${GCC_TOOLCHAIN})
-    list(APPEND COMMON_OPTIONS -stdlib=libstdc++ -Wno-deprecated-declarations -Wno-ignored-attributes -Wno-invalid-partial-specialization -Wno-missing-braces -Wno-overloaded-virtual -Wno-uninitialized)
-endif()
-
-
-#######################################
-### Compiler-dependent linker flags ###
-#######################################
-set(COMPILER_LFLAGS)
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
-    list(APPEND COMPILER_LFLAGS -lstdc++fs)     ### For experimental::filesystem
-    list(APPEND COMPILER_LFLAGS -flto)          ### Link time optimization flag
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    list(APPEND COMPILER_LFLAGS -stdlib=libstdc++)
-    list(APPEND COMPILER_LFLAGS -lstdc++fs)        ### For experimental::filesystem
-endif()
-
 
 
 
 ################################
-### print current CXX flags  ###
+###  Add all source files    ###
 ################################
-message(STATUS "COMMON CXX flags:  ${COMMON_OPTIONS} ${CMAKE_CXX_FLAGS}")
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-    message(STATUS "RELEASE CXX flags: ${RELEASE_OPTIONS}")
-elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    message(STATUS "RELWITHDEBINFO CXX flags: ${RELWITHDEBINFO_OPTIONS}")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "DEBUG CXX flags: ${DEBUG_OPTIONS}")
-elseif(CMAKE_BUILD_TYPE STREQUAL "Profile")
-    message(STATUS "PROFILE CXX flags: ${PROFILE_OPTIONS}")
-endif()
-
-
-
-
-
-###########################################
-###  Add all source files recursively   ###
-###########################################
-file(GLOB_RECURSE SOURCES "source/*.cpp")
-file(GLOB_RECURSE HEADERS "source/*.h")
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+include(source_list.txt)
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
-################################################
-###  Force cmake to find .a library suffixes ###
-################################################
+
+add_library(project-settings INTERFACE) # A helper target
+
+##################################################################
+###  Force cmake to find .a library suffixes on static builds  ###
+##################################################################
 if(BUILD_SHARED_LIBS)
-    set(CUSTOM_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    set(LINK_TYPE SHARED)
 else()
-    set(CUSTOM_SUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CUSTOM_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})
-    target_link_libraries  (${PROJECT_NAME} PRIVATE -static)                                             ### Static linkage
+    set(LINK_TYPE STATIC)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} )
+    target_link_libraries  (project-settings INTERFACE -static)   ### Static linkage
 endif()
 
 
 
 
-
-###############################
-###  Require c++17 support  ###
-###############################
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+##############################
+###  Enable c++17 support  ###
+##############################
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-set_target_properties(${PROJECT_NAME}
-        PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED ON
-        CXX_EXTENSIONS OFF)
 
 
+#######################################################
+###  Check  #include<filesystem> or                 ###
+###  or     #include<experimental/filesystem>       ###
+#######################################################
+include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXFilesystem.cmake)
+CheckCXXFilesystem()
 
-######################################
-###  Require experimental headers  ###
-######################################
+#######################################################
+###  Check  #include<experimental/type_traits>      ###
+#######################################################
+include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckTypeTraits.cmake)
+CheckTypeTraits()
 
-include(CheckIncludeFileCXX)
-if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    set(CMAKE_REQUIRED_FLAGS "-std=c++17 -lstdc++fs" )
-elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_REQUIRED_FLAGS     "-stdlib=libstdc++ -lstdc++fs -std=c++17 --gcc-toolchain=${GCC_TOOLCHAIN}" )
-    set(CMAKE_REQUIRED_LIBRARIES "-stdlib=libstdc++ -lstdc++fs -std=c++17")
-endif()
-check_include_file_cxx(experimental/filesystem    has_experimental_filesystem  )
-check_include_file_cxx(experimental/type_traits   has_experimental_type_traits )
-if(NOT has_experimental_filesystem OR NOT has_experimental_type_traits )
-    message(FATAL_ERROR "\n\
-        Missing one or more experimental headers.\n\
-        Consider using a newer compiler (GCC 7 or above, Clang 6 or above),\n\
-        or checking the compiler flags. If using Clang, pass the variable \n\
-        GCC_TOOLCHAIN=<path> \n\
-        where path is the install directory of a recent GCC installation (version 7+)
-        ")
-endif()
-
-include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("
-    #include <experimental/filesystem>
-    #include <experimental/type_traits>
-    #include <optional>
-    namespace fs = std::experimental::filesystem;
-
-    int main(){
-        fs::path testpath;
-        std::optional<int> optint;
-        return 0;
-    }
-    " FS_COMPILES)
-if(NOT FS_COMPILES)
-    message(FATAL_ERROR "Unable to compile with experimental/filesystem headers")
-endif()
-
-##############################################
-###  Optional OpenMP support               ###
-###  Note that Clang has some              ###
-###  trouble with static openmp            ###
-###  Also, installing libiomp5 might help  ###
-###  for shared linking.                   ###
-##############################################
-if(USE_OpenMP)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND STATIC_BUILD)
-        message(WARNING "Disabling OpenMP
-        Clang cannot link \"libomp\" statically.
-        Please use GNU C++ instead to link \"libgomp.a\" statically, or turn off OpenMP
-        by passing \"-DUSE_OpenMP:BOOL=OFF\" to CMake to avoid this warning.")
-        message(STATUS "OpenMP OFF")
-        set(USE_OpenMP OFF)
-    else()
-        find_package(OpenMP)
-        if (OpenMP_FOUND)
-            message(STATUS "OpenMP ON" )
-            set(OpenMP_LIBRARIES  ${OpenMP_gomp_LIBRARY} ${OpenMP_omp_LIBRARY} ${OpenMP_iomp_LIBRARY})
-            target_compile_options    (${PROJECT_NAME} PRIVATE ${OpenMP_CXX_FLAGS})
-            target_link_libraries     (${PROJECT_NAME} PRIVATE ${OpenMP_LIBRARIES})
-            target_compile_definitions(${PROJECT_NAME} PRIVATE OpenMP_AVAILABLE)
-        else()
-            message(WARNING "OpenMP OFF -- Could not be found." )
-        endif()
-    endif()
-else()
-    list(APPEND COMMON_OPTIONS -Wno-unknown-pragmas)
-endif()
+#######################################################
+###  Check  #include<optional> or                   ###
+###  or     #include<experimental/optional>         ###
+#######################################################
+include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXOptional.cmake)
+CheckCXXOptional()
 
 
 
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################
-target_compile_options (${PROJECT_NAME} PRIVATE ${COMMON_OPTIONS})                                          ### common options
-target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")                      ### debug build options
-target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")                  ### Release build options
-target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
-target_compile_options (${PROJECT_NAME} PRIVATE "$<$<CONFIG:PROFILE>:${PROFILE_OPTIONS}>")                  ### Profiling build options
+message(STATUS "Using microarchitechture: ${CXX_MARCH}")
+target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH}>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:          -O3 -g -DNDEBUG>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:            -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2>) # Segfault from -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC when using ceres
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2>) # Segfault from -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC when using ceres
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -g  -DNDEBUG  -lprofiler  -ftime-report>)
+target_compile_features(project-settings INTERFACE cxx_std_17)
 
-set(PTHREAD_LIBRARY "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive")                           # This is needed with static linking!
-add_library(pthread INTERFACE)
-target_link_libraries(pthread INTERFACE ${PTHREAD_LIBRARY})
-target_link_libraries (${PROJECT_NAME} PRIVATE ${COMPILER_LFLAGS})
 
-##########################################
-###  Find or fetch all dependencies   ###
-##########################################
-set(BUILD_DIRECTORY   ${PROJECT_SOURCE_DIR}/cmake-build-libs)
-set(INSTALL_DIRECTORY ${PROJECT_SOURCE_DIR}/libs)
-include(cmake-modules/FindGFortran.cmake)
-if(USE_MKL)
-    include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+#######################################
+### Compiler-dependent linker flags ###
+#######################################
+target_link_libraries(project-settings INTERFACE  -lstdc++fs)
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" )
+    target_link_libraries(project-settings INTERFACE  -stdlib=libstdc++ )
 endif()
-include(cmake-modules/Fetch_OpenBLAS.cmake)                 # If MKL is not found openblas will be used instead. Includes lapack.
-include(cmake-modules/Fetch_Eigen3.cmake)                   # Eigen library
-include(cmake-modules/Fetch_spdlog.cmake)                   # spdlog library
-include(cmake-modules/Fetch_LBFGSpp.cmake)                  # Limited memory BFGS gradient descent library
-include(cmake-modules/Fetch_Arpack-ng.cmake)                # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
-include(cmake-modules/Fetch_Arpackpp.cmake)                 # C++ frontend for arpack-ng
-include(cmake-modules/Fetch_HDF5.cmake)                     # HDF5 binary file format for output data.
-include(cmake-modules/Fetch_h5pp.cmake)                     # GSL for computing some numerical integrals.
-
-target_link_libraries(${PROJECT_NAME} PRIVATE arpack++)
-target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
-target_link_libraries(${PROJECT_NAME} PRIVATE LBFGSpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE hdf5)
-target_link_libraries(${PROJECT_NAME} PRIVATE h5pp::h5pp)
-
-get_target_property(BLAS_INFO       blas             INTERFACE_LINK_LIBRARIES)
-get_target_property(LAPACK_INFO     lapack           INTERFACE_LINK_LIBRARIES)
-get_target_property(LAPACKE_INFO    lapacke          INTERFACE_LINK_LIBRARIES)
-get_target_property(ARPACK_INFO     arpack           INTERFACE_LINK_LIBRARIES)
-get_target_property(ARPACKPP_INFO   arpack++         INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(EIGEN_INFO      Eigen3::Eigen    INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(LBFGS_INFO      LBFGSpp          INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(SPDLOG_INFO     spdlog::spdlog   INTERFACE_INCLUDE_DIRECTORIES)
-get_target_property(HDF5_INFO       hdf5             INTERFACE_LINK_LIBRARIES)
-get_target_property(FORTRAN_INFO    gfortran         INTERFACE_LINK_LIBRARIES)
-get_target_property(H5PP_INFO       h5pp::h5pp       INTERFACE_INCLUDE_DIRECTORIES)
 
 
+##################################################################
+### Check if we can enable Link Time Optimization              ###
+##################################################################
+if(ENABLE_LTO)
+    include(CheckIPOSupported)
+    check_ipo_supported(RESULT supported OUTPUT error)
+    if(supported)
+        message(STATUS "IPO / LTO supported, enabling")
+        set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+    else()
+        message(STATUS "IPO / LTO not supported: <${error}>, will not enable")
+        set(ENABLE_LTO OFF CACHE)
+    endif()
+endif()
 
-message("=============================================================================")
-message("=== SUMMARY OF CMAKE CONFIGURATION:  THE FOLLOWING LIBRARIES WILL BE USED ===")
-message("=============================================================================")
-message("    BLAS           :   ${BLAS_INFO}")
-message("    LAPACK         :   ${LAPACK_INFO}")
-message("    LAPACKE        :   ${LAPACKE_INCLUDE_DIRS} ${LAPACKE_INFO}")
-message("    EIGEN3         :   ${EIGEN_INFO}")
-message("    LBFGS++        :   ${LBFGS_INFO}")
-message("    SPDLOG         :   ${SPDLOG_INFO}")
-message("    HDF5           :   ${HDF5_INFO}")
-message("    ARPACK         :   ${ARPACK_INFO}")
-message("    ARPACKPP       :   ${ARPACKPP_INFO}")
-message("    h5pp           :   ${H5PP_INFO}")
-message("    GFORTRAN       :   ${FORTRAN_INFO}")
-message("=============================================================================")
-message("")
+
+##################################################################
+### Setup dependency paths                                     ###
+##################################################################
+include(GNUInstallDirs)
+string(TOLOWER ${CMAKE_BUILD_TYPE} cmake_build_type)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    message(STATUS "Setting default install prefix -- CMAKE_INSTALL_PREFIX --> ${PROJECT_SOURCE_DIR}/libs-${cmake_build_type}")
+    set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/libs-${cmake_build_type}" CACHE PATH "..." FORCE)
+endif()
+set(EXTERNAL_INSTALL_DIR       ${CMAKE_INSTALL_PREFIX})
+set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/external-deps)
+set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/external-deps)
 
 
 
-###########################################
-### Use precompiled headers with cotire ###
-###########################################
-if (ENABLE_COTIRE)
-    get_target_property(LAPACKE_DIRS   lapacke         INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(ARPACK++_DIRS  arpack++        INTERFACE_INCLUDE_DIRECTORIES)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-            COTIRE_PREFIX_HEADER_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/source"
-            COTIRE_PREFIX_HEADER_IGNORE_PATH
-            "${LAPACKE_DIRS};${ARPACK++_DIRS}"
+
+#################################################################
+### Prepend conda dirs for hints when using find_package      ###
+#################################################################
+if(PREFER_CONDA_LIBS)
+    list(APPEND CONDA_HINTS
+            $ENV{CONDA_PREFIX}
+            $ENV{HOME}/anaconda3
+            $ENV{HOME}/miniconda
             )
-    include(cmake-modules/cotire.cmake)
-    cotire(${PROJECT_NAME})
+endif()
 
+##################################################################
+### Print summary of CMake configuration                       ###
+##################################################################
+message("=============================================================================")
+message("===               DMRG++: SUMMARY OF CMAKE CONFIGURATION                  ===")
+message("=============================================================================")
+message(STATUS "CMAKE_INSTALL_PREFIX         : ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "PREFER_CONDA_LIBS            : ${PREFER_CONDA_LIBS}")
+message(STATUS "ENABLE_OPENMP                : ${ENABLE_OPENMP}")
+message(STATUS "ENABLE_MKL                   : ${ENABLE_MKL}")
+message(STATUS "ENABLE_LTO                   : ${ENABLE_LTO}")
+message(STATUS "DOWNLOAD_MISSING             : ${DOWNLOAD_MISSING}")
+message(STATUS "BUILD_SHARED_LIBS            : ${BUILD_SHARED_LIBS}")
+message(STATUS "BUILD_TESTS                  : ${BUILD_TESTS}")
+message(STATUS "BUILD_EXAMPLES               : ${BUILD_EXAMPLES}")
+message("=============================================================================")
+
+
+##################################################################
+### Preempt Threads::Threads                                   ###
+### It's looked for in dependencies, so we make it right       ###
+### before it's done wrong, i.e. with pthread instead of       ###
+### -lpthread.                                     ###
+##################################################################
+if(NOT TARGET Threads::Threads)
+    set(CMAKE_THREAD_PREFER_PTHREAD FALSE)
+    set(THREADS_PREFER_PTHREAD_FLAG FALSE)
+    find_package(Threads)
+    set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES pthread)
 endif()
 
 
+
+###########################################
+### Fetch or find all the dependencies  ###
+###########################################
+if(${DOWNLOAD_METHOD} MATCHES "conan")
+    include(cmake-modules/SetupDependenciesConan.cmake)
+elseif(${DOWNLOAD_METHOD} MATCHES "native")
+    include(cmake-modules/SetupDependenciesNative.cmake)
+endif()
+include(cmake-modules/PrintTargetInfo.cmake)
+target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)  # Link everything to main project
+print_target_info(${PROJECT_NAME})
 
 ###################
 ### INFORMATION ###
@@ -392,26 +292,29 @@ message("")
 #############################
 if(ENABLE_TESTS)
     enable_testing()
-    add_subdirectory(tests/arpack++_simple   EXCLUDE_FROM_ALL)
-    add_subdirectory(tests/arpack++_mps      EXCLUDE_FROM_ALL)
-    add_subdirectory(tests/file_io           EXCLUDE_FROM_ALL)
-    add_subdirectory(tests/eigsolver         EXCLUDE_FROM_ALL)
+    add_subdirectory(tests/arpack++_simple)
+    add_subdirectory(tests/arpack++_mps   )
+    add_subdirectory(tests/file_io        )
+    add_subdirectory(tests/eigsolver      )
+    add_subdirectory(tests/svdwrapper     )
+    add_subdirectory(tests/eigen_openmp   )
+    add_subdirectory(tests/ceres_pthread  )
 
-    add_custom_target(TEST-all ALL
-            DEPENDS TEST-arpack++_simple
-            DEPENDS TEST-arpack++_mps
-            DEPENDS TEST-file_io
-            DEPENDS TEST-eigsolver
-            DEPENDS ${PROJECT_NAME}
+    add_custom_target(all-tests
+            DEPENDS test-arpack++_simple
+            DEPENDS test-arpack++_mps
+            DEPENDS test-file_io
+            DEPENDS test-eigsolver
+            DEPENDS test-eigen_openmp
+            DEPENDS test-svdwrapper
+            DEPENDS test-ceres_pthread
             )
 
-    add_custom_command(TARGET TEST-all
+    add_custom_command(TARGET all-tests
             POST_BUILD
             COMMENT "Running Tests"
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            DEPENDS arpack++ h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog
             COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures)
-
 endif()
 
 

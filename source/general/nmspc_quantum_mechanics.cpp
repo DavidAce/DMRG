@@ -144,7 +144,7 @@ namespace qm::timeEvolution{
         }
         std::vector<Eigen::Tensor<std::complex<double> ,4>> tensor_vec;
         for(auto &m : matrix_vec){
-            tensor_vec.emplace_back(Textra::Matrix_to_Tensor(m, 2,2,2,2));
+            tensor_vec.emplace_back(Textra::MatrixTensorMap(m, 2,2,2,2));
         }
         return tensor_vec;
     }
@@ -204,7 +204,7 @@ qm::mpo::pauli_mpo(const Eigen::MatrixXcd paulimatrix)
     Eigen::array<long, 2> extent2 = {spin_dim, spin_dim};                          /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<Scalar,4> MPO(1, 1, spin_dim, spin_dim);
     MPO.setZero();
-    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(paulimatrix);
+    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix);
 
     //Create compatible edges
     Eigen::Tensor<Scalar,3> Ledge(1,1,1); // The left  edge
@@ -246,8 +246,8 @@ qm::mpo::parity_selector_mpo(const Eigen::MatrixXcd paulimatrix, const int secto
     Eigen::array<long, 2> extent2 = {spin_dim, spin_dim};                          /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<Scalar,4> MPO(2, 2, spin_dim, spin_dim);
     MPO.setZero();
-    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
-    MPO.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sector * paulimatrix);
+    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
+    MPO.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(sector * paulimatrix);
 
     //Create compatible edges
     Eigen::Tensor<Scalar,3> Ledge(1,1,2); // The left  edge
@@ -290,8 +290,8 @@ qm::mpo::parity_projector_mpos(const Eigen::MatrixXcd paulimatrix, const size_t 
     Eigen::array<long, 2> extent2 = {spin_dim, spin_dim};                          /*!< Extent of pauli matrices in a rank-2 tensor */
     Eigen::Tensor<Scalar,4> MPO(2, 2, spin_dim, spin_dim);
     MPO.setZero();
-    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(I);
-    MPO.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(paulimatrix);
+    MPO.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
+    MPO.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix);
 
     std::list<Eigen::Tensor<Scalar,4>> mpos(sites,MPO);
     //Create compatible edges

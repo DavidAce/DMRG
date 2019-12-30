@@ -1,0 +1,349 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__svd__wrapper_8h" kind="file" language="C++">
+    <compoundname>class_svd_wrapper.h</compoundname>
+    <includes refid="nmspc__tensor__extra_8h" local="yes">general/nmspc_tensor_extra.h</includes>
+    <includes local="no">iomanip</includes>
+    <includedby refid="class__svd__wrapper_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp</includedby>
+    <includedby refid="class__svd__wrapper__lapacke_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp</includedby>
+    <includedby refid="svd_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp</includedby>
+    <includedby refid="infinite_2measure_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</includedby>
+    <includedby refid="infinite_2opt_8cpp" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</includedby>
+    <incdepgraph>
+      <node id="1399">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h</label>
+        <link refid="class__svd__wrapper_8h"/>
+        <childnode refid="1400" relation="include">
+        </childnode>
+        <childnode refid="1407" relation="include">
+        </childnode>
+      </node>
+      <node id="1407">
+        <label>iomanip</label>
+      </node>
+      <node id="1405">
+        <label>iterator</label>
+      </node>
+      <node id="1408">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="1409" relation="include">
+        </childnode>
+        <childnode refid="1403" relation="include">
+        </childnode>
+        <childnode refid="1402" relation="include">
+        </childnode>
+      </node>
+      <node id="1403">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1409">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1402">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1404">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1401">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="1402" relation="include">
+        </childnode>
+      </node>
+      <node id="1406">
+        <label>iostream</label>
+      </node>
+      <node id="1400">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="1401" relation="include">
+        </childnode>
+        <childnode refid="1403" relation="include">
+        </childnode>
+        <childnode refid="1404" relation="include">
+        </childnode>
+        <childnode refid="1402" relation="include">
+        </childnode>
+        <childnode refid="1405" relation="include">
+        </childnode>
+        <childnode refid="1406" relation="include">
+        </childnode>
+        <childnode refid="1407" relation="include">
+        </childnode>
+        <childnode refid="1408" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1410">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h</label>
+        <link refid="class__svd__wrapper_8h"/>
+        <childnode refid="1411" relation="include">
+        </childnode>
+        <childnode refid="1412" relation="include">
+        </childnode>
+        <childnode refid="1413" relation="include">
+        </childnode>
+        <childnode refid="1414" relation="include">
+        </childnode>
+        <childnode refid="1415" relation="include">
+        </childnode>
+      </node>
+      <node id="1414">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1411">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.cpp</label>
+        <link refid="class__svd__wrapper_8cpp"/>
+      </node>
+      <node id="1413">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp</label>
+        <link refid="svd_8cpp"/>
+      </node>
+      <node id="1412">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper_lapacke.cpp</label>
+        <link refid="class__svd__wrapper__lapacke_8cpp"/>
+      </node>
+      <node id="1415">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classclass___s_v_d" prot="public">class_SVD</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2017-10-04.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="nmspc__tensor__extra_8h" kindref="compound">general/nmspc_tensor_extra.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="classclass___s_v_d" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classclass___s_v_d" kindref="compound">class_SVD</ref>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="13" refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a53306a9b953e436bdb7b33200c32b048" kindref="member">SVDThreshold</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1e-12;</highlight></codeline>
+<codeline lineno="14" refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a9845b5c64c2275e51c79d87cce6bc564" kindref="member">truncation_error</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="15" refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;<sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;;</highlight></codeline>
+<codeline lineno="16" refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;<sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">VectorType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;MatrixType&lt;Scalar&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">VectorType&lt;Scalar&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType&lt;Scalar&gt;</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a972e614144e76de88b4495463a491860" kindref="member">do_svd_lapacke</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>*<sp/>mat_ptr,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rows,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>cols,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank_max);</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;MatrixType&lt;Scalar&gt;,<sp/>VectorType&lt;Scalar&gt;,MatrixType&lt;Scalar&gt;,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>*<sp/>mat_ptr,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rows,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>cols,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank_max);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Derived&gt;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;MatrixType&lt;typename<sp/>Derived::Scalar&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">VectorType&lt;typename Derived::Scalar&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">MatrixType&lt;typename Derived::Scalar&gt;</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixBase&lt;Derived&gt;<sp/>&amp;<sp/>mat,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank_max<sp/>);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Derived&gt;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;MatrixType&lt;typename<sp/>Derived::Scalar&gt;,<sp/>VectorType&lt;typename<sp/>Derived::Scalar&gt;,MatrixType&lt;typename<sp/>Derived::Scalar&gt;,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixBase&lt;Derived&gt;<sp/>&amp;<sp/>mat<sp/>);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1aff43b93da28d20df50cb11ee85bb475d" kindref="member">class_SVD</ref>()=</highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="41" refid="classclass___s_v_d_1a57c2d0856227b0933d8116a7f1ff7c4f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a57c2d0856227b0933d8116a7f1ff7c4f" kindref="member">use_lapacke</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a70a15fb97a1af53d053ae02a407b2bb2" kindref="member">get_truncation_error</ref>();</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a7568da355eba7526e68a51faf9545059" kindref="member">setThreshold</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>newThreshold);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/><ref refid="classclass___s_v_d_1a02b392731862c3aae9d6be450964e099" kindref="member">pseudo_inverse</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>&amp;tensor);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">decompose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>&amp;tensor);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">decompose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref>);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;MatrixType&lt;Scalar&gt;<sp/>,VectorType&lt;Scalar&gt;,<sp/>MatrixType&lt;Scalar&gt;&gt;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">decompose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MatrixType&lt;Scalar&gt;<sp/>&amp;matrix);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">decompose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rows,</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>cols);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar,auto<sp/>rank&gt;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,rank&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dL,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dR,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiL,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiR);</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rows,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>cols);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple<sp/>&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref>);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;tensor);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>&gt;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;tensor);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>&gt;</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref>);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Definitions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Derived&gt;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">std::tuple&lt;class_SVD::MatrixType&lt;typename<sp/>Derived::Scalar&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;typename Derived::Scalar&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;typename Derived::Scalar&gt;</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="93" refid="classclass___s_v_d_1aec25da4eeeaf36ca6723a1106bcf1933" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">class_SVD::do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixBase&lt;Derived&gt;<sp/>&amp;<sp/>mat,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank_max<sp/>){</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(mat.derived().data(),<sp/>mat.rows(),mat.cols(),rank_max);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Derived&gt;</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">std::tuple&lt;class_SVD::MatrixType&lt;typename<sp/>Derived::Scalar&gt;,<sp/><ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;typename Derived::Scalar&gt;</ref>,<ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;typename Derived::Scalar&gt;</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">&gt;</highlight></codeline>
+<codeline lineno="99" refid="classclass___s_v_d_1aa4015b12214b465e6cd9709c75f4e328" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">class_SVD::do_svd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixBase&lt;Derived&gt;<sp/>&amp;<sp/>mat<sp/>){</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rank_max<sp/>=<sp/>std::min(mat.rows(),mat.cols());</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(mat.derived().data(),<sp/>mat.rows(),mat.cols(),rank_max);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="110" refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">class_SVD::decompose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>&amp;tensor)<sp/>{</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>mat<sp/>(tensor.data(),<sp/>tensor.dimension(0),<sp/>tensor.dimension(1));</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">[U,S,V,rank]<sp/>=<sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(mat);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_tuple(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(U),</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(S.normalized().template<sp/>cast&lt;Scalar&gt;()),</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(V)</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="120"><highlight class="normal">std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="121" refid="classclass___s_v_d_1a9be5995e9e0a65c250b10b9ddd951c3c" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">class_SVD::decompose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;tensor,</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rows,</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>cols)<sp/>{</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>tensormap<sp/>=<sp/>Eigen::TensorMap&lt;Eigen::Tensor&lt;Scalar,2&gt;&gt;<sp/>(tensor.data(),<sp/>rows,cols);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">decompose</ref>(tensormap);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>2&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="130" refid="classclass___s_v_d_1ac08447697e913ccc4297b14c7a071222" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">class_SVD::decompose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>mat<sp/>(tensor.data(),<sp/>tensor.dimension(0),<sp/>tensor.dimension(1));</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">[U,S,V,rank]<sp/>=<sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(mat,chi_max);</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_tuple(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(U),</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(S.normalized().template<sp/>cast&lt;Scalar&gt;()),</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(V)</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="140"><highlight class="normal">std::tuple&lt;class_SVD::MatrixType&lt;Scalar&gt;<sp/>,<ref refid="classclass___s_v_d_1a0866973f8d051b9d1047753046e6ec44" kindref="member">class_SVD::VectorType&lt;Scalar&gt;</ref>,<sp/><ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;Scalar&gt;</ref>&gt;</highlight></codeline>
+<codeline lineno="141" refid="classclass___s_v_d_1a3f4c3e9979c30e2fc16a2161b7947e77" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a5a37f4c410540ca495bd41783abb6131" kindref="member">class_SVD::decompose</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1aae4ea0d15919e52ae0c6a5159dd4e6f6" kindref="member">class_SVD::MatrixType&lt;Scalar&gt;</ref><sp/>&amp;matrix){</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">[U,S,V,rank]<sp/>=<sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(matrix);</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_tuple(U,</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>S.normalized().template<sp/>cast&lt;Scalar&gt;(),</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>V</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="147"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar,<sp/>auto<sp/>tensor_rank&gt;</highlight></codeline>
+<codeline lineno="151"><highlight class="normal">std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="152" refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">class_SVD::schmidt</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,tensor_rank&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dL,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dR,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiL,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref>,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiR)<sp/>{</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(dL*chiL<sp/>*<sp/>dR*chiR<sp/>!=<sp/>tensor.size()){</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::range_error(</highlight><highlight class="stringliteral">&quot;schmidt<sp/>error:<sp/>tensor<sp/>size<sp/>does<sp/>not<sp/>match<sp/>given<sp/>dimensions.&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>mat<sp/>(tensor.data(),<sp/>dL*chiL,<sp/>dR*chiR);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[U,S,V,rank]<sp/>=<sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(mat,chi_max);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_tuple(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(U,<sp/>dL,<sp/>chiL,<sp/>rank),</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(S.normalized().template<sp/>cast&lt;Scalar&gt;(),<sp/>rank),</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(V,<sp/><sp/>rank,<sp/>dR,<sp/>chiR<sp/>).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{<sp/>1,<sp/>0,<sp/>2<sp/>})</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal">std::tuple<sp/>&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="168" refid="classclass___s_v_d_1ac9220a11678bda98f801b10b3ec91c80" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">class_SVD::schmidt</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;tensor)<sp/>{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dL<sp/><sp/><sp/>=<sp/>tensor.dimension(0);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiL<sp/>=<sp/>tensor.dimension(1);</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dR<sp/><sp/><sp/>=<sp/>tensor.dimension(2);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiR<sp/>=<sp/>tensor.dimension(3);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref><sp/>=<sp/>std::min(dL*chiL,<sp/>dR*chiR);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref>(tensor,dL,dR,chiL,chi_max,chiR);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal">std::tuple&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>&gt;</highlight></codeline>
+<codeline lineno="180" refid="classclass___s_v_d_1ae0c7c86a804b2376fb71427298cb651b" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">class_SVD::schmidt</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dL<sp/><sp/><sp/>=<sp/>tensor.dimension(0);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiL<sp/>=<sp/>tensor.dimension(1);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dR<sp/><sp/><sp/>=<sp/>tensor.dimension(2);</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiR<sp/>=<sp/>tensor.dimension(3);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1a3cf73c9f6ec470f77f6fbacfffd32792" kindref="member">schmidt</ref>(tensor,dL,dR,chiL,chi_max,chiR);</highlight></codeline>
+<codeline lineno="186"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal">std::tuple<sp/>&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/>&gt;</highlight></codeline>
+<codeline lineno="191" refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">class_SVD::schmidt_with_norm</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;tensor)<sp/>{</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dL<sp/><sp/><sp/>=<sp/>tensor.dimension(0);</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiL<sp/>=<sp/>tensor.dimension(1);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dR<sp/><sp/><sp/>=<sp/>tensor.dimension(2);</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiR<sp/>=<sp/>tensor.dimension(3);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref><sp/>=<sp/>std::min(dL*chiL,dR*chiR);</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">schmidt_with_norm</ref>(tensor,chi_max);</highlight></codeline>
+<codeline lineno="198"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal">std::tuple<sp/>&lt;Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>,Eigen::Tensor&lt;Scalar,<sp/>1&gt;,<sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;,</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/>&gt;</highlight></codeline>
+<codeline lineno="202" refid="classclass___s_v_d_1a25ca2c3061b5eca7e5adf5113de78f01" refkind="member"><highlight class="normal"><ref refid="classclass___s_v_d_1ade26c2e7264d4dcac3fcaeda7fe4c443" kindref="member">class_SVD::schmidt_with_norm</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;tensor,<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1idmrg_1a88a9f3be8ff1dcc89152591410c447d6" kindref="member">chi_max</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dL<sp/><sp/><sp/>=<sp/>tensor.dimension(0);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiL<sp/>=<sp/>tensor.dimension(1);</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dR<sp/><sp/><sp/>=<sp/>tensor.dimension(2);</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>chiR<sp/>=<sp/>tensor.dimension(3);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(dL*chiL<sp/>*<sp/>dR*chiR<sp/>!=<sp/>tensor.size()){</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::range_error(</highlight><highlight class="stringliteral">&quot;schmidt_with_norm<sp/>error:<sp/>tensor<sp/>size<sp/>does<sp/>not<sp/>match<sp/>given<sp/>dimensions.&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>MatrixType&lt;Scalar&gt;&gt;<sp/>mat<sp/>(tensor.data(),<sp/>dL*chiL,<sp/>dR*chiR);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[U,S,V,rank]<sp/>=<sp/><ref refid="classclass___s_v_d_1a37e231b39e0f40854ec0ee63790b99b6" kindref="member">do_svd</ref>(mat,chi_max);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>norm<sp/>=<sp/>S.norm();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>Snormalized<sp/>=<sp/>S/norm;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>&quot;regular<sp/>norm:<sp/>&quot;<sp/>&lt;&lt;<sp/>norm;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::fixed<sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>&quot;squared<sp/>norm:<sp/>&quot;<sp/>&lt;&lt;<sp/>S.squaredNorm();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::make_tuple(<ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(U,<sp/>dL,<sp/>chiL,<sp/>rank),</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(S.normalized().template<sp/>cast&lt;Scalar&gt;(),<sp/>rank),</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" kindref="member">Textra::MatrixTensorMap</ref>(V,<sp/><sp/>rank,<sp/>dR,<sp/>chiR<sp/>).shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{<sp/>1,<sp/>0,<sp/>2<sp/>}),</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>S.norm()</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/>);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_svd_wrapper.h"/>
+  </compounddef>
+</doxygen>

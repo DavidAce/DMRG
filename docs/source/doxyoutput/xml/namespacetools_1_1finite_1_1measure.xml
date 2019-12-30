@@ -1,0 +1,621 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1measure" kind="namespace" language="C++">
+    <compoundname>tools::finite::measure</compoundname>
+    <innernamespace refid="namespacetools_1_1finite_1_1measure_1_1multisite">tools::finite::measure::multisite</innernamespace>
+    <innernamespace refid="namespacetools_1_1finite_1_1measure_1_1twosite">tools::finite::measure::twosite</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1measure_1a26e1b23777c92e7ee442e4eb54b9c2ec" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using tools::finite::measure::Scalar = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1ac198a39c208e3ccd5af9402510f6243e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int tools::finite::measure::length</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>length</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="111" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="29" bodyend="31"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1af66720d92c57155c910f42e03186b149" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t tools::finite::measure::bond_dimension_current</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>bond_dimension_current</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="112" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="58" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a67ec4bcbc43bc0856e2d27935d3c11dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t tools::finite::measure::bond_dimension_midchain</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>bond_dimension_midchain</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="113" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="66" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a59439fc8cd211defcfa432a9fec296c7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; size_t &gt;</type>
+        <definition>std::vector&lt; size_t &gt; tools::finite::measure::bond_dimensions</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>bond_dimensions</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="114" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="73" bodyend="83"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+        <references refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" compoundref="class__state__finite_8cpp" startline="211" endline="223">class_state_finite::get_MPS</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="11" endline="17">class_mps_site::isCenter</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::norm</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>norm</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="115" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="34" bodyend="55"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+        <references refid="namespacesettings_1_1precision_1af6b8f17a6552f984d79f29b60e7ce873" compoundref="nmspc__settings_8h" startline="109">settings::precision::max_norm_error</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::spin_component</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::Matrix2cd &amp;paulimatrix)</argsstring>
+        <name>spin_component</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Matrix2cd &amp;</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="118" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="290" bodyend="307"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1_1measure_1a26e1b23777c92e7ee442e4eb54b9c2ec" kindref="member">Scalar</ref>, 1 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 1 &gt; tools::finite::measure::mps_wavefn</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>mps_wavefn</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="119" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="310" bodyend="348"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1ad4d342b14748aa9b6e9238a708a2ba8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::entanglement_entropy_current</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>entanglement_entropy_current</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="120" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="235" bodyend="244"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" compoundref="nmspc__tools_8h" startline="384">tools::common::profile::t_ent</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a5da3c6001a1e7c6f3897afb3f30b3150" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::entanglement_entropy_midchain</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>entanglement_entropy_midchain</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="121" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="246" bodyend="255"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" compoundref="nmspc__tools_8h" startline="384">tools::common::profile::t_ent</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a4515a169c43487b9dd80ed581c0d1d5e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt; double &gt; tools::finite::measure::entanglement_entropies</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>entanglement_entropies</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="122" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="257" bodyend="275"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" compoundref="nmspc__tools_8h" startline="384">tools::common::profile::t_ent</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+        <references refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" compoundref="class__state__finite_8cpp" startline="211" endline="223">class_state_finite::get_MPS</references>
+        <references refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" compoundref="class__mps__site_8cpp" startline="11" endline="17">class_mps_site::isCenter</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; double &gt;</type>
+        <definition>std::vector&lt; double &gt; tools::finite::measure::spin_components</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>spin_components</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="278" bodyend="287"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1af68ec1bfec44e2ebd09751dbcc46439b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::energy</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>energy</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="149" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="178" bodyend="193"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" compoundref="nmspc__tools_8h" startline="385">tools::common::profile::t_ene</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1ae45038e78b02e5f5307a8b618941bbd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_per_site</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>energy_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="150" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="196" bodyend="202"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1_1multisite_1a5bac6e0c64e98ad3f91a2e5b7f38beb5" compoundref="multisite_8cpp" startline="254" endline="261">tools::finite::measure::multisite::energy_per_site</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1aaf6b94743b51434a613712914ee3d8a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_variance</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>energy_variance</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="151" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="205" bodyend="219"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" compoundref="nmspc__tools_8h" startline="386">tools::common::profile::t_var</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1ac2659e53bedfca1f195553d876134e37" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_variance_per_site</definition>
+        <argsstring>(const class_state_finite &amp;state)</argsstring>
+        <name>energy_variance_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="152" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="222" bodyend="226"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a507413053ebde17dea80e3544872237b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_normalized</definition>
+        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status)</argsstring>
+        <name>energy_normalized</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="153" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="229" bodyend="232"/>
+        <references refid="namespacetools_1_1finite_1_1measure_1ae45038e78b02e5f5307a8b618941bbd8" compoundref="finite_2measure_8cpp" startline="196" endline="202">energy_per_site</references>
+        <references refid="namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b" compoundref="finite_2measure_8cpp" startline="310" endline="348">mps_wavefn</references>
+        <references refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" compoundref="class__simulation__status_8h" startline="26">status_data::energy_min</references>
+        <references refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" compoundref="class__simulation__status_8h" startline="27">status_data::energy_max</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a4b34b079f086d27e33b97635b469943c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_minus_energy_reduced</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;theta)</argsstring>
+        <name>energy_minus_energy_reduced</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="155" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="155" bodyend="160"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a23281eafbea3592ae3af7f53dad3c792" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;theta)</argsstring>
+        <name>energy</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="162" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="162" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1aa12da403efefbc15346cf0c88e3aa20b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_per_site</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;theta)</argsstring>
+        <name>energy_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="169" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="169" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1ab3451266459f4bb3728f6e6a8f952a93" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_variance</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;theta)</argsstring>
+        <name>energy_variance</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="176" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="176" bodyend="181"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a1fb7a829d5fd36152b12b34b4f9b433b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_variance_per_site</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;theta)</argsstring>
+        <name>energy_variance_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::ReadOnlyAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="183" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="183" bodyend="189"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a00cde35ea1d77fa76eee8eb9dd0eff5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::measure::spin_component</definition>
+        <argsstring>(const class_state_finite &amp;state, Eigen::Matrix2cd paulimatrix)</argsstring>
+        <name>spin_component</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>Eigen::Matrix2cd</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" line="33" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a18782d32e56a337a9f7a8ac4a983942b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_minus_energy_reduced</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;theta)</argsstring>
+        <name>energy_minus_energy_reduced</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" bodystart="65" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a66d33be4c242e9c4c68fe00468b6a1fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;theta)</argsstring>
+        <name>energy</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" bodystart="72" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1a806e88b9b78c8c26de736089f77f82a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_per_site</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;theta)</argsstring>
+        <name>energy_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" bodystart="79" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1aed7b94ef032831d341db12fb1d43bf19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_variance</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;theta)</argsstring>
+        <name>energy_variance</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" line="86" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" bodystart="86" bodyend="91"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1measure_1ad1efa297c4aabbbf1671e503f7f8b010" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>double</type>
+        <definition>double tools::finite::measure::energy_variance_per_site</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;theta)</argsstring>
+        <name>energy_variance_per_site</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::TensorBase&lt; Derived, Eigen::WriteAccessors &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.h" bodystart="93" bodyend="99"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="108" column="1"/>
+  </compounddef>
+</doxygen>

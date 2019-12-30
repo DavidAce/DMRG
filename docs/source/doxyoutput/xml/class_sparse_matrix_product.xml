@@ -1,0 +1,716 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class_sparse_matrix_product" kind="class" language="C++" prot="public">
+    <compoundname>SparseMatrixProduct</compoundname>
+    <includes refid="matrix__product__sparse_8h" local="no">matrix_product_sparse.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename Scalar_</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" prot="public" static="no">
+        <type>Scalar_</type>
+        <definition>using SparseMatrixProduct&lt; Scalar_ &gt;::Scalar =  Scalar_</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" prot="private" static="no">
+        <type>Eigen::SparseMatrix&lt; <ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref> &gt;</type>
+        <definition>using SparseMatrixProduct&lt; Scalar_ &gt;::MatrixType =  Eigen::SparseMatrix&lt;Scalar&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="30" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sparse_matrix_product_1ac2634ed76e2e930c1929932f08d5807d" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using SparseMatrixProduct&lt; Scalar_ &gt;::DenseMatrixType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>DenseMatrixType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sparse_matrix_product_1a9da6adf07136ea94821a59f5c854f4c6" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
+        <definition>using SparseMatrixProduct&lt; Scalar_ &gt;::VectorType =  Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;</definition>
+        <argsstring></argsstring>
+        <name>VectorType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="class_sparse_matrix_product_1aad748f1d63f18075602b64a9a2aeba3b" prot="private" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref>, 1, Eigen::Dynamic &gt;</type>
+        <definition>using SparseMatrixProduct&lt; Scalar_ &gt;::VectorTypeT =  Eigen::Matrix&lt;Scalar,1,Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>VectorTypeT</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="class_sparse_matrix_product_1ae9551871db6dcc9a59b707df0d731479" prot="public" static="yes" mutable="no">
+        <type>constexpr bool</type>
+        <definition>constexpr bool SparseMatrixProduct&lt; Scalar_ &gt;::can_shift</definition>
+        <argsstring></argsstring>
+        <name>can_shift</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" prot="private" static="no" mutable="no">
+        <type><ref refid="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" kindref="member">MatrixType</ref></type>
+        <definition>MatrixType SparseMatrixProduct&lt; Scalar_ &gt;::A_matrix</definition>
+        <argsstring></argsstring>
+        <name>A_matrix</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="35" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" prot="private" static="no" mutable="no">
+        <type>const int</type>
+        <definition>const int SparseMatrixProduct&lt; Scalar_ &gt;::L</definition>
+        <argsstring></argsstring>
+        <name>L</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" prot="private" static="no" mutable="no">
+        <type><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+        <definition>eigutils::eigSetting::Form SparseMatrixProduct&lt; Scalar_ &gt;::form</definition>
+        <argsstring></argsstring>
+        <name>form</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="37" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" prot="private" static="no" mutable="no">
+        <type><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+        <definition>eigutils::eigSetting::Side SparseMatrixProduct&lt; Scalar_ &gt;::side</definition>
+        <argsstring></argsstring>
+        <name>side</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1adae9765c597c39bd15f923a18bf176d3" prot="private" static="no" mutable="no">
+        <type>Eigen::SparseLU&lt; <ref refid="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" kindref="member">MatrixType</ref> &gt;</type>
+        <definition>Eigen::SparseLU&lt;MatrixType&gt; SparseMatrixProduct&lt; Scalar_ &gt;::lu_sparse</definition>
+        <argsstring></argsstring>
+        <name>lu_sparse</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a3be7ff83047f996c21968079d9924dc2" prot="private" static="no" mutable="no">
+        <type>Eigen::PartialPivLU&lt; <ref refid="class_sparse_matrix_product_1ac2634ed76e2e930c1929932f08d5807d" kindref="member">DenseMatrixType</ref> &gt;</type>
+        <definition>Eigen::PartialPivLU&lt;DenseMatrixType&gt; SparseMatrixProduct&lt; Scalar_ &gt;::lu_dense</definition>
+        <argsstring></argsstring>
+        <name>lu_dense</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double SparseMatrixProduct&lt; Scalar_ &gt;::sigmaR</definition>
+        <argsstring></argsstring>
+        <name>sigmaR</name>
+        <initializer>= std::numeric_limits&lt;double&gt;::quiet_NaN()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a66347693d67796aac1f132ef3b2c386f" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double SparseMatrixProduct&lt; Scalar_ &gt;::sigmaI</definition>
+        <argsstring></argsstring>
+        <name>sigmaI</name>
+        <initializer>= std::numeric_limits&lt;double&gt;::quiet_NaN()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="48" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SparseMatrixProduct&lt; Scalar_ &gt;::sparseLU</definition>
+        <argsstring></argsstring>
+        <name>sparseLU</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="49" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SparseMatrixProduct&lt; Scalar_ &gt;::readyFactorOp</definition>
+        <argsstring></argsstring>
+        <name>readyFactorOp</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="50" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a92ac5fb0a7b9714730befb2e2e60eb36" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool SparseMatrixProduct&lt; Scalar_ &gt;::readyShift</definition>
+        <argsstring></argsstring>
+        <name>readyShift</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="51" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="class_sparse_matrix_product_1af45a041ff9fa23f64f49b5513b920040" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int SparseMatrixProduct&lt; Scalar_ &gt;::counter</definition>
+        <argsstring></argsstring>
+        <name>counter</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="86" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc SparseMatrixProduct&lt; Scalar_ &gt;::t_factorOp</definition>
+        <argsstring></argsstring>
+        <name>t_factorOp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="103" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1ac77d1e444518fd1537fa2e20e8e21451" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc SparseMatrixProduct&lt; Scalar_ &gt;::t_multOpv</definition>
+        <argsstring></argsstring>
+        <name>t_multOpv</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="104" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="class_sparse_matrix_product_1a9aa2e4e213bd6e656e8b196ab40abc73" prot="public" static="no" mutable="no">
+        <type><ref refid="classclass__tic__toc" kindref="compound">class_tic_toc</ref></type>
+        <definition>class_tic_toc SparseMatrixProduct&lt; Scalar_ &gt;::t_multax</definition>
+        <argsstring></argsstring>
+        <name>t_multax</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="105" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="class_sparse_matrix_product_1a7d37335e8603f4a0f4bdb3b052d61536" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>SparseMatrixProduct&lt; Scalar_ &gt;::SparseMatrixProduct</definition>
+        <argsstring>(const Scalar *A_, const int L_, const eigutils::eigSetting::Form form_=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Side side_=eigutils::eigSetting::Side::R)</argsstring>
+        <name>SparseMatrixProduct</name>
+        <param>
+          <type>const <ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref> *</type>
+          <declname>A_</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>L_</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form_</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side_</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="55" bodyend="64"/>
+        <references refid="class_sparse_matrix_product_1a7d37335e8603f4a0f4bdb3b052d61536" compoundref="matrix__product__sparse_8h" startline="55" endline="64">SparseMatrixProduct&lt; Scalar_ &gt;::SparseMatrixProduct</references>
+        <references refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" compoundref="matrix__product__sparse_8h" startline="36">SparseMatrixProduct&lt; Scalar_ &gt;::L</references>
+        <references refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" compoundref="matrix__product__sparse_8h" startline="37">SparseMatrixProduct&lt; Scalar_ &gt;::form</references>
+        <references refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" compoundref="matrix__product__sparse_8h" startline="38">SparseMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <references refid="class_sparse_matrix_product_1a7c5804c63058ddab34ea0eed467c3267" compoundref="matrix__product__sparse_8h" startline="98" endline="102">SparseMatrixProduct&lt; Scalar_ &gt;::init_profiling</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a1e5fe77ad52e4c23eba23a96f19847ae" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>SparseMatrixProduct&lt; Scalar_ &gt;::SparseMatrixProduct</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix_, const eigutils::eigSetting::Form form_=eigutils::eigSetting::Form::SYMMETRIC, const eigutils::eigSetting::Side side_=eigutils::eigSetting::Side::R)</argsstring>
+        <name>SparseMatrixProduct</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix_</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form_</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">eigutils::eigSetting::Form::SYMMETRIC</ref></defval>
+        </param>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side_</declname>
+          <defval><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref></defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="68" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="68" bodyend="76"/>
+        <references refid="class_sparse_matrix_product_1a1e5fe77ad52e4c23eba23a96f19847ae" compoundref="matrix__product__sparse_8h" startline="68" endline="76">SparseMatrixProduct&lt; Scalar_ &gt;::SparseMatrixProduct</references>
+        <references refid="class_sparse_matrix_product_1a7c5804c63058ddab34ea0eed467c3267" compoundref="matrix__product__sparse_8h" startline="98" endline="102">SparseMatrixProduct&lt; Scalar_ &gt;::init_profiling</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a2d412d6e726ea6420c9fb66fcbbdb61d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int SparseMatrixProduct&lt; Scalar_ &gt;::rows</definition>
+        <argsstring>() const</argsstring>
+        <name>rows</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="79" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="79" bodyend="79"/>
+        <references refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" compoundref="matrix__product__sparse_8h" startline="36">SparseMatrixProduct&lt; Scalar_ &gt;::L</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a0a2b9189175c82101ebe709da39a2aa7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int SparseMatrixProduct&lt; Scalar_ &gt;::cols</definition>
+        <argsstring>() const</argsstring>
+        <name>cols</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="80" bodyend="80"/>
+        <references refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" compoundref="matrix__product__sparse_8h" startline="36">SparseMatrixProduct&lt; Scalar_ &gt;::L</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1aa7ae159dcfd84989991fc24e7723363d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar &gt;::FactorOP</definition>
+        <argsstring>()</argsstring>
+        <name>FactorOP</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="123" bodyend="146"/>
+        <references refid="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" compoundref="matrix__product__sparse_8h" startline="50">SparseMatrixProduct&lt; Scalar_ &gt;::readyFactorOp</references>
+        <references refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" compoundref="matrix__product__sparse_8h" startline="103">SparseMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" compoundref="matrix__product__sparse_8h" startline="47">SparseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_sparse_matrix_product_1a66347693d67796aac1f132ef3b2c386f" compoundref="matrix__product__sparse_8h" startline="48">SparseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
+        <references refid="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" compoundref="matrix__product__sparse_8h" startline="49">SparseMatrixProduct&lt; Scalar_ &gt;::sparseLU</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1ac1dc35a95f7aeba3bf19bc03c09f67a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar &gt;::MultOPv</definition>
+        <argsstring>(Scalar *x_in_ptr, Scalar *x_out_ptr)</argsstring>
+        <name>MultOPv</name>
+        <param>
+          <type><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref> *</type>
+          <declname>x_in_ptr</declname>
+        </param>
+        <param>
+          <type><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref> *</type>
+          <declname>x_out_ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="149" bodyend="168"/>
+        <references refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" compoundref="matrix__product__sparse_8h" startline="38">SparseMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" compoundref="matrix__product__sparse_8h" startline="49">SparseMatrixProduct&lt; Scalar_ &gt;::sparseLU</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="class_sparse_matrix_product_1af45a041ff9fa23f64f49b5513b920040" compoundref="matrix__product__sparse_8h" startline="86">SparseMatrixProduct&lt; Scalar_ &gt;::counter</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a4b87bf6fd51487a21fb46cbfc0cbb353" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar &gt;::MultAx</definition>
+        <argsstring>(Scalar *x_in_ptr, Scalar *x_out_ptr)</argsstring>
+        <name>MultAx</name>
+        <param>
+          <type><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref> *</type>
+          <declname>x_in_ptr</declname>
+        </param>
+        <param>
+          <type><ref refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" kindref="member">Scalar</ref> *</type>
+          <declname>x_out_ptr</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="171" bodyend="199"/>
+        <references refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" compoundref="matrix__product__sparse_8h" startline="37">SparseMatrixProduct&lt; Scalar_ &gt;::form</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255">eigutils::eigSetting::NONSYMMETRIC</references>
+        <references refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" compoundref="matrix__product__sparse_8h" startline="38">SparseMatrixProduct&lt; Scalar_ &gt;::side</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6">eigutils::eigSetting::R</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587">eigutils::eigSetting::L</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb">eigutils::eigSetting::SYMMETRIC</references>
+        <references refid="class_sparse_matrix_product_1af45a041ff9fa23f64f49b5513b920040" compoundref="matrix__product__sparse_8h" startline="86">SparseMatrixProduct&lt; Scalar_ &gt;::counter</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1ab9f10631ce1b599064a56c568da3f8b8" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar &gt;::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="117" bodyend="119"/>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1acc105fde44dd7a78b13cf179d13112f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar_ &gt;::set_shift</definition>
+        <argsstring>(std::complex&lt; double &gt; sigma_)</argsstring>
+        <name>set_shift</name>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>sigma_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="88" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="88" bodyend="88"/>
+        <references refid="class_sparse_matrix_product_1a92ac5fb0a7b9714730befb2e2e60eb36" compoundref="matrix__product__sparse_8h" startline="51">SparseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1aae36727a663205058abd7ecbf8767e6c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar_ &gt;::set_shift</definition>
+        <argsstring>(double sigma_)</argsstring>
+        <name>set_shift</name>
+        <param>
+          <type>double</type>
+          <declname>sigma_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="89" bodyend="89"/>
+        <references refid="class_sparse_matrix_product_1a92ac5fb0a7b9714730befb2e2e60eb36" compoundref="matrix__product__sparse_8h" startline="51">SparseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+        <references refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" compoundref="matrix__product__sparse_8h" startline="47">SparseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_sparse_matrix_product_1a66347693d67796aac1f132ef3b2c386f" compoundref="matrix__product__sparse_8h" startline="48">SparseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a4828df37ede2938e95b2c9788165fe1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar_ &gt;::set_shift</definition>
+        <argsstring>(double sigmaR_, double sigmaI_)</argsstring>
+        <name>set_shift</name>
+        <param>
+          <type>double</type>
+          <declname>sigmaR_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>sigmaI_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="90" bodyend="90"/>
+        <references refid="class_sparse_matrix_product_1a92ac5fb0a7b9714730befb2e2e60eb36" compoundref="matrix__product__sparse_8h" startline="51">SparseMatrixProduct&lt; Scalar_ &gt;::readyShift</references>
+        <references refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" compoundref="matrix__product__sparse_8h" startline="47">SparseMatrixProduct&lt; Scalar_ &gt;::sigmaR</references>
+        <references refid="class_sparse_matrix_product_1a66347693d67796aac1f132ef3b2c386f" compoundref="matrix__product__sparse_8h" startline="48">SparseMatrixProduct&lt; Scalar_ &gt;::sigmaI</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a382f07c3e9f519c2a51de54083167c14" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar_ &gt;::set_mode</definition>
+        <argsstring>(const eigutils::eigSetting::Form form_)</argsstring>
+        <name>set_mode</name>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref></type>
+          <declname>form_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="91" bodyend="91"/>
+        <references refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" compoundref="matrix__product__sparse_8h" startline="37">SparseMatrixProduct&lt; Scalar_ &gt;::form</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1aab3e9b44b4e7425a3054b9453bd38bbf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar_ &gt;::set_side</definition>
+        <argsstring>(const eigutils::eigSetting::Side side_)</argsstring>
+        <name>set_side</name>
+        <param>
+          <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref></type>
+          <declname>side_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="92" bodyend="92"/>
+        <references refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" compoundref="matrix__product__sparse_8h" startline="38">SparseMatrixProduct&lt; Scalar_ &gt;::side</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1ae935ca7b176a65c8a6a00ec358b98236" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" kindref="member">MatrixType</ref> &amp;</type>
+        <definition>const MatrixType&amp; SparseMatrixProduct&lt; Scalar_ &gt;::get_matrix</definition>
+        <argsstring>() const</argsstring>
+        <name>get_matrix</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="93" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a536af3fc4b6aa3f8e719f72cd1d5d01e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref> &amp;</type>
+        <definition>const eigutils::eigSetting::Form&amp; SparseMatrixProduct&lt; Scalar_ &gt;::get_form</definition>
+        <argsstring>() const</argsstring>
+        <name>get_form</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="94" bodyend="94"/>
+        <references refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" compoundref="matrix__product__sparse_8h" startline="37">SparseMatrixProduct&lt; Scalar_ &gt;::form</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a25d8ed02b9383b2480c23480d324c215" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const <ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref> &amp;</type>
+        <definition>const eigutils::eigSetting::Side&amp; SparseMatrixProduct&lt; Scalar_ &gt;::get_side</definition>
+        <argsstring>() const</argsstring>
+        <name>get_side</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="95" bodyend="95"/>
+        <references refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" compoundref="matrix__product__sparse_8h" startline="38">SparseMatrixProduct&lt; Scalar_ &gt;::side</references>
+      </memberdef>
+      <memberdef kind="function" id="class_sparse_matrix_product_1a7c5804c63058ddab34ea0eed467c3267" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void SparseMatrixProduct&lt; Scalar_ &gt;::init_profiling</definition>
+        <argsstring>()</argsstring>
+        <name>init_profiling</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="98" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="98" bodyend="102"/>
+        <references refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" compoundref="matrix__product__sparse_8h" startline="103">SparseMatrixProduct&lt; Scalar_ &gt;::t_factorOp</references>
+        <references refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" compoundref="class__tic__toc_8cpp" startline="22" endline="24">class_tic_toc::set_properties</references>
+        <references refid="class_sparse_matrix_product_1ac77d1e444518fd1537fa2e20e8e21451" compoundref="matrix__product__sparse_8h" startline="104">SparseMatrixProduct&lt; Scalar_ &gt;::t_multOpv</references>
+        <references refid="class_sparse_matrix_product_1a9aa2e4e213bd6e656e8b196ab40abc73" compoundref="matrix__product__sparse_8h" startline="105">SparseMatrixProduct&lt; Scalar_ &gt;::t_multax</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="515">
+        <label>SparseMatrixProduct&lt; Scalar_ &gt;</label>
+        <link refid="class_sparse_matrix_product"/>
+        <childnode refid="516" relation="usage">
+          <edgelabel>t_factorOp</edgelabel>
+          <edgelabel>t_multax</edgelabel>
+          <edgelabel>t_multOpv</edgelabel>
+        </childnode>
+      </node>
+      <node id="518">
+        <label>std::basic_string&lt; char &gt;</label>
+      </node>
+      <node id="516">
+        <label>class_tic_toc</label>
+        <link refid="classclass__tic__toc"/>
+        <childnode refid="517" relation="usage">
+          <edgelabel>name</edgelabel>
+        </childnode>
+      </node>
+      <node id="517">
+        <label>std::string</label>
+        <childnode refid="518" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h" bodystart="25" bodyend="107"/>
+    <listofallmembers>
+      <member refid="class_sparse_matrix_product_1a138312f077cf49984d2062f68656a427" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>A_matrix</name></member>
+      <member refid="class_sparse_matrix_product_1ae9551871db6dcc9a59b707df0d731479" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>can_shift</name></member>
+      <member refid="class_sparse_matrix_product_1a0a2b9189175c82101ebe709da39a2aa7" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>cols</name></member>
+      <member refid="class_sparse_matrix_product_1af45a041ff9fa23f64f49b5513b920040" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>counter</name></member>
+      <member refid="class_sparse_matrix_product_1ac2634ed76e2e930c1929932f08d5807d" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>DenseMatrixType</name></member>
+      <member refid="class_sparse_matrix_product_1aa7ae159dcfd84989991fc24e7723363d" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>FactorOP</name></member>
+      <member refid="class_sparse_matrix_product_1ae2996ed9a77ebf56c5137c804b65a792" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>form</name></member>
+      <member refid="class_sparse_matrix_product_1a536af3fc4b6aa3f8e719f72cd1d5d01e" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>get_form</name></member>
+      <member refid="class_sparse_matrix_product_1ae935ca7b176a65c8a6a00ec358b98236" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>get_matrix</name></member>
+      <member refid="class_sparse_matrix_product_1a25d8ed02b9383b2480c23480d324c215" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>get_side</name></member>
+      <member refid="class_sparse_matrix_product_1a7c5804c63058ddab34ea0eed467c3267" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>init_profiling</name></member>
+      <member refid="class_sparse_matrix_product_1a2e1071f3fa7dc2e312b9e02cab53c514" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>L</name></member>
+      <member refid="class_sparse_matrix_product_1a3be7ff83047f996c21968079d9924dc2" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>lu_dense</name></member>
+      <member refid="class_sparse_matrix_product_1adae9765c597c39bd15f923a18bf176d3" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>lu_sparse</name></member>
+      <member refid="class_sparse_matrix_product_1a595d1e99d509613aad671450492857b6" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>MatrixType</name></member>
+      <member refid="class_sparse_matrix_product_1a4b87bf6fd51487a21fb46cbfc0cbb353" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>MultAx</name></member>
+      <member refid="class_sparse_matrix_product_1ac1dc35a95f7aeba3bf19bc03c09f67a0" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>MultOPv</name></member>
+      <member refid="class_sparse_matrix_product_1ab9f10631ce1b599064a56c568da3f8b8" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>print</name></member>
+      <member refid="class_sparse_matrix_product_1ada02754ded2ab5ce1efdbdbdb49e4071" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>readyFactorOp</name></member>
+      <member refid="class_sparse_matrix_product_1a92ac5fb0a7b9714730befb2e2e60eb36" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>readyShift</name></member>
+      <member refid="class_sparse_matrix_product_1a2d412d6e726ea6420c9fb66fcbbdb61d" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>rows</name></member>
+      <member refid="class_sparse_matrix_product_1a4d19d5fc3e0b01220bb2fbcfe6eeba03" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>Scalar</name></member>
+      <member refid="class_sparse_matrix_product_1a382f07c3e9f519c2a51de54083167c14" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>set_mode</name></member>
+      <member refid="class_sparse_matrix_product_1acc105fde44dd7a78b13cf179d13112f4" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>set_shift</name></member>
+      <member refid="class_sparse_matrix_product_1aae36727a663205058abd7ecbf8767e6c" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>set_shift</name></member>
+      <member refid="class_sparse_matrix_product_1a4828df37ede2938e95b2c9788165fe1b" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>set_shift</name></member>
+      <member refid="class_sparse_matrix_product_1aab3e9b44b4e7425a3054b9453bd38bbf" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>set_side</name></member>
+      <member refid="class_sparse_matrix_product_1aa93b40253a3b875deb4c8613fca2519e" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>side</name></member>
+      <member refid="class_sparse_matrix_product_1a66347693d67796aac1f132ef3b2c386f" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>sigmaI</name></member>
+      <member refid="class_sparse_matrix_product_1a882ba29a26bc52d21fab5b077b0d66cc" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>sigmaR</name></member>
+      <member refid="class_sparse_matrix_product_1a437970e485ea90bdb5fc1b23400ba4a3" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>sparseLU</name></member>
+      <member refid="class_sparse_matrix_product_1a7d37335e8603f4a0f4bdb3b052d61536" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>SparseMatrixProduct</name></member>
+      <member refid="class_sparse_matrix_product_1a1e5fe77ad52e4c23eba23a96f19847ae" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>SparseMatrixProduct</name></member>
+      <member refid="class_sparse_matrix_product_1a86054653f415274f3bdfd4ac6315a2be" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>t_factorOp</name></member>
+      <member refid="class_sparse_matrix_product_1a9aa2e4e213bd6e656e8b196ab40abc73" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>t_multax</name></member>
+      <member refid="class_sparse_matrix_product_1ac77d1e444518fd1537fa2e20e8e21451" prot="public" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>t_multOpv</name></member>
+      <member refid="class_sparse_matrix_product_1a9da6adf07136ea94821a59f5c854f4c6" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>VectorType</name></member>
+      <member refid="class_sparse_matrix_product_1aad748f1d63f18075602b64a9a2aeba3b" prot="private" virt="non-virtual"><scope>SparseMatrixProduct</scope><name>VectorTypeT</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

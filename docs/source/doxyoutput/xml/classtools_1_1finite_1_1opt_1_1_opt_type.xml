@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classtools_1_1finite_1_1opt_1_1_opt_type" kind="class" language="C++" prot="public">
+    <compoundname>tools::finite::opt::OptType</compoundname>
+    <basecompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" prot="public" virt="non-virtual">tools::finite::opt::internal::EnumBase&lt; opt::TYPE &gt;</basecompoundref>
+    <includes refid="enum__classes_8h" local="no">enum_classes.h</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1_opt_type_1a46da620f03fe4ca6f910b1aea6468718" prot="public" static="yes" mutable="no">
+        <type>constexpr <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" kindref="member">opt::TYPE</ref></type>
+        <definition>constexpr opt::TYPE tools::finite::opt::OptType::REAL</definition>
+        <argsstring></argsstring>
+        <name>REAL</name>
+        <initializer>= opt::TYPE::REAL</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="61" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="61" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1_opt_type_1af2130e40a3d02d53d4d37937c114e1ba" prot="public" static="yes" mutable="no">
+        <type>constexpr <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" kindref="member">opt::TYPE</ref></type>
+        <definition>constexpr opt::TYPE tools::finite::opt::OptType::CPLX</definition>
+        <argsstring></argsstring>
+        <name>CPLX</name>
+        <initializer>= opt::TYPE::CPLX</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="62" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="62" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1_opt_type_1a932d7f85ca1c785dc89e66ee80d35e51" prot="private" static="no" const="yes" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::OptType::print</definition>
+        <argsstring>(std::ostream &amp;str) const final</argsstring>
+        <name>print</name>
+        <reimplements refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1af318d333a73e048c634af53fb30ae83a">print</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.cpp" bodystart="7" bodyend="13"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1a4f7b1f67320c2a2a5788ff7633f2baee" compoundref="finite_2opt_8cpp" startline="84" endline="88">tools::finite::opt::find_ground_state</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a8cf125b0e31559ba75a9d9b4f818a554">tools::finite::opt::internal::REAL</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991a958448d4909b92010c81d52d3e6ad8f1">tools::finite::opt::internal::CPLX</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="494">
+        <label>tools::finite::opt::internal::EnumBase&lt; opt::TYPE &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
+      </node>
+      <node id="493">
+        <label>tools::finite::opt::OptType</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1_opt_type"/>
+        <childnode refid="494" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="496">
+        <label>tools::finite::opt::internal::EnumBase&lt; opt::TYPE &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
+      </node>
+      <node id="495">
+        <label>tools::finite::opt::OptType</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1_opt_type"/>
+        <childnode refid="496" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="57" bodyend="65"/>
+    <listofallmembers>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_type_1af2130e40a3d02d53d4d37937c114e1ba" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptType</scope><name>CPLX</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1afe1c3eb290c37626ec927d322fb5b03c" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptType</scope><name>EnumBase</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a7ef86eb5f970bb0b9ab0738f2a1ac00f" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptType</scope><name>operator std::string</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1ab815170ca075be9164af300e72dcc479" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptType</scope><name>operator=</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a54253bafd2d611206bb376d751feb2f1" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptType</scope><name>operator==</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1aac4e872b873faefdc5bef1184688227e" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptType</scope><name>option</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_type_1a932d7f85ca1c785dc89e66ee80d35e51" prot="private" virt="virtual"><scope>tools::finite::opt::OptType</scope><name>print</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_type_1a46da620f03fe4ca6f910b1aea6468718" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptType</scope><name>REAL</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a588c655990c13ee77d6d6ba30dafa93a" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptType</scope><name>str</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

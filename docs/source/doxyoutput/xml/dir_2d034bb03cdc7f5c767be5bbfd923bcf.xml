@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_2d034bb03cdc7f5c767be5bbfd923bcf" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model</compoundname>
+    <innerfile refid="class__hamiltonian__h5tables_8h">class_hamiltonian_h5tables.h</innerfile>
+    <innerfile refid="class__model__base_8cpp">class_model_base.cpp</innerfile>
+    <innerfile refid="class__model__base_8h">class_model_base.h</innerfile>
+    <innerfile refid="class__model__factory_8cpp">class_model_factory.cpp</innerfile>
+    <innerfile refid="class__model__factory_8h">class_model_factory.h</innerfile>
+    <innerfile refid="class__selfdual__tf__rf__ising_8cpp">class_selfdual_tf_rf_ising.cpp</innerfile>
+    <innerfile refid="class__selfdual__tf__rf__ising_8h">class_selfdual_tf_rf_ising.h</innerfile>
+    <innerfile refid="class__selfdual__tf__rf__ising__normal_8cpp">class_selfdual_tf_rf_ising_normal.cpp</innerfile>
+    <innerfile refid="class__selfdual__tf__rf__ising__normal_8h">class_selfdual_tf_rf_ising_normal.h</innerfile>
+    <innerfile refid="class__tf__ising_8cpp">class_tf_ising.cpp</innerfile>
+    <innerfile refid="class__tf__ising_8h">class_tf_ising.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/"/>
+  </compounddef>
+</doxygen>

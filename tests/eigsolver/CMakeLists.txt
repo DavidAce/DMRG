@@ -1,32 +1,14 @@
 
 cmake_minimum_required(VERSION 3.10)
-#project(eigsolver)
-add_executable(TEST-eigsolver eigsolver.cpp
-        ${PROJECT_SOURCE_DIR}/source/math/class_eigsolver.cpp
-        ${PROJECT_SOURCE_DIR}/source/general/class_tic_toc.cpp)
+project(test-eigsolver)
+add_executable(test-eigsolver eigsolver.cpp
+        ${CMAKE_SOURCE_DIR}/source/math/class_eigsolver.cpp
+        ${CMAKE_SOURCE_DIR}/source/general/class_tic_toc.cpp)
 
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
-target_include_directories(TEST-eigsolver PUBLIC ${PROJECT_SOURCE_DIR}/source)
-target_include_directories(TEST-eigsolver PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_definitions(TEST-eigsolver PRIVATE TEST_MATRIX_DIR="${PROJECT_SOURCE_DIR}/tests/eigsolver")
-
-################################################
-###  Force cmake to find .a library suffixes ###
-################################################
-if(NOT BUILD_SHARED_LIBS)
-    target_link_libraries  (TEST-eigsolver PRIVATE -static)                                             ### Static linkage
-endif()
-target_link_libraries(TEST-eigsolver PRIVATE Eigen3::Eigen lapacke h5pp::h5pp  hdf5   spdlog::spdlog)
-target_link_libraries(TEST-eigsolver PRIVATE ${COMPILER_LFLAGS})
-
-
-
-set_target_properties  (TEST-eigsolver PROPERTIES CXX_STANDARD_REQUIRED 17)
-target_compile_features(TEST-eigsolver PRIVATE cxx_std_17)
-target_compile_options (TEST-eigsolver PRIVATE ${COMMON_OPTIONS})                                   ### Common options
-target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")               ### Debug build options
-target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")           ### Release build options
-target_compile_options (TEST-eigsolver PRIVATE "$<$<CONFIG:RELWITHDEBINFO>:${RELWITHDEBINFO_OPTIONS}>")    ### Release build with debug info options
-add_test(NAME eigsolver_test COMMAND TEST-eigsolver)
-
-add_dependencies(TEST-eigsolver h5pp::h5pp hdf5 Eigen3::Eigen spdlog::spdlog gfortran )
+target_include_directories(test-eigsolver PUBLIC ${CMAKE_SOURCE_DIR}/source)
+target_include_directories(test-eigsolver PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_definitions(test-eigsolver PRIVATE TEST_MATRIX_DIR="${PROJECT_SOURCE_DIR}")
+target_link_libraries(test-eigsolver PRIVATE project-settings)
+add_test(NAME test-eigsolver COMMAND test-eigsolver)

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1infinite_1_1env" kind="namespace" language="C++">
+    <compoundname>tools::infinite::env</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1env_1a1c1baa954a4f7932c970ef798fc23b73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::env::initialize</definition>
+        <argsstring>(class_state_infinite &amp;state)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="261" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp" bodystart="11" bodyend="16"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="260" column="1"/>
+  </compounddef>
+</doxygen>

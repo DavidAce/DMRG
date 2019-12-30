@@ -1,0 +1,14 @@
+# Here you can specify desired software packages to be downloaded by conan.
+# To activate reading this file from CMakeLists.txt, enable the setting -DDOWNLOAD_METHOD=conan
+
+
+[requires]
+ceres-solver/2.0.0@davidace/development
+h5pp/0.5.0@davidace/stable
+eigen/3.3.7@davidace/patched
+
+[generators]
+cmake
+
+[options]
+*:shared=False

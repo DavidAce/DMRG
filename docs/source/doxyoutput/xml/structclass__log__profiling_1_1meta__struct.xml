@@ -1,0 +1,271 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__log__profiling_1_1meta__struct" kind="struct" language="C++" prot="private">
+    <compoundname>class_log_profiling::meta_struct</compoundname>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1af3eedce60786e0bd8fc5d639256f6845" prot="public" static="yes" mutable="no">
+        <type>constexpr hsize_t</type>
+        <definition>constexpr hsize_t class_log_profiling::meta_struct::NFIELDS</definition>
+        <argsstring></argsstring>
+        <name>NFIELDS</name>
+        <initializer>= 28</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="234" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="234" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1a070c9a5f9095b70adaf9e8500f98c0ca" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_log_profiling::meta_struct::dst_size</definition>
+        <argsstring></argsstring>
+        <name>dst_size</name>
+        <initializer>= sizeof (<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="235" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="235" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1aaa15b6bfab516a07d6c766130e4fde2d" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__log__profiling_1_1meta__struct_1af3eedce60786e0bd8fc5d639256f6845" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t,NFIELDS&gt; class_log_profiling::meta_struct::dst_offsets</definition>
+        <argsstring></argsstring>
+        <name>dst_offsets</name>
+        <initializer>= {
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, step),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, iteration),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, position),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_tot),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_run),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_eig),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_svd),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ene),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_var),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ent),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_hdf),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_prj),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_opt),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_chk),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ene_mpo),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ene_ham),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ene_mom),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_var_mpo),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_var_ham),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_var_mom),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_env),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_evo),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_udt),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ste),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_prt),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_obs),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_mps),
+                HOFFSET(<ref refid="structclass__log__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_chi),
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="236" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1a547edcb08166b21961d545ae50c1bf12" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__log__profiling_1_1meta__struct_1af3eedce60786e0bd8fc5d639256f6845" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t,NFIELDS&gt; class_log_profiling::meta_struct::dst_sizes</definition>
+        <argsstring></argsstring>
+        <name>dst_sizes</name>
+        <initializer>= {
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a90c36734f40b8df6d69efbf68bea2f72" kindref="member">data_struct::step</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a4a51cb6cc78edd0e8df345522b995086" kindref="member">data_struct::iteration</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a76454edc03447c8cc506c4ca1f3ed248" kindref="member">data_struct::position</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a1aa910a41fa23d5701c80ae23eeece31" kindref="member">data_struct::t_tot</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1ad21cad547327630f74e256cf6d9906d2" kindref="member">data_struct::t_run</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a9696cdd4b1e49d0218d993ebdfff99aa" kindref="member">data_struct::t_eig</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a2c62ce1196d54c6aa692cb0e55c3ab5c" kindref="member">data_struct::t_svd</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a0aefd4aa3585e7b002fece374b5ae0a8" kindref="member">data_struct::t_ene</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1ae1899dc239c31f02fe56bd589bbd8a13" kindref="member">data_struct::t_var</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a891b86cedccf87d66cde44a5c4b7291e" kindref="member">data_struct::t_ent</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a588b9aa44c351a3dcc02f2fabd95cb94" kindref="member">data_struct::t_hdf</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a50408fb1d29025269cf764a03e5c2172" kindref="member">data_struct::t_prj</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a581a509c968089bdc4c578a0216c63f4" kindref="member">data_struct::t_opt</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1ad0e40c2cdba32c0c295dfed87dc388d4" kindref="member">data_struct::t_chk</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a268f8c04ad76d684ac4da9b2b60322cc" kindref="member">data_struct::t_ene_mpo</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a2ba83269dad517b1fc070d7d2ab30802" kindref="member">data_struct::t_ene_ham</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1affbf5424d0b5b7646e07cdb194713566" kindref="member">data_struct::t_ene_mom</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1aa6a145aa9342dcf0945fb9046fe38b40" kindref="member">data_struct::t_var_mpo</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a98d227e61105c9257b7e0203f192979a" kindref="member">data_struct::t_var_ham</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1aecb20dbd95db758b162584f503a2e8a6" kindref="member">data_struct::t_var_mom</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a41e0afc07f5f8f821733668cd61d74bf" kindref="member">data_struct::t_env</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1aedd073b3d30e31835335228a05ab3aa3" kindref="member">data_struct::t_evo</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1ae295fc42d6711417f17173ab878ddec8" kindref="member">data_struct::t_udt</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a8be6c981abf789fa5cfd2385d731f676" kindref="member">data_struct::t_ste</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1ad4c7d90865d0325f6f27d410d11ed3ba" kindref="member">data_struct::t_prt</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1aeb7a85eb2fa767b429de8a477007ec4d" kindref="member">data_struct::t_obs</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1aa35b51ff0c1f14491ef831c17431d60a" kindref="member">data_struct::t_mps</ref>),
+                sizeof(<ref refid="structclass__log__profiling_1_1data__struct_1a4dc051ea40d0b7e4506217be58b69407" kindref="member">data_struct::t_chi</ref>)
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="266" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1a50bf1b8c947a91877c1f36cec9e77bd2" prot="public" static="no" mutable="no">
+        <type>std::array&lt; const char *, <ref refid="structclass__log__profiling_1_1meta__struct_1af3eedce60786e0bd8fc5d639256f6845" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;const char*,NFIELDS&gt; class_log_profiling::meta_struct::field_names</definition>
+        <argsstring></argsstring>
+        <name>field_names</name>
+        <initializer>= {
+                &quot;step&quot;,
+                &quot;iteration&quot;,
+                &quot;position&quot;,
+                &quot;t_tot&quot;,
+                &quot;t_run&quot;,
+                &quot;t_eig&quot;,
+                &quot;t_svd&quot;,
+                &quot;t_ene&quot;,
+                &quot;t_var&quot;,
+                &quot;t_ent&quot;,
+                &quot;t_hdf&quot;,
+                &quot;t_prj&quot;,
+                &quot;t_opt&quot;,
+                &quot;t_chk&quot;,
+                &quot;t_ene_mpo&quot;,
+                &quot;t_ene_ham&quot;,
+                &quot;t_ene_mom&quot;,
+                &quot;t_var_mpo&quot;,
+                &quot;t_var_ham&quot;,
+                &quot;t_var_mom&quot;,
+                &quot;t_env&quot;,
+                &quot;t_evo&quot;,
+                &quot;t_udt&quot;,
+                &quot;t_ste&quot;,
+                &quot;t_prt&quot;,
+                &quot;t_obs&quot;,
+                &quot;t_mps&quot;,
+                &quot;t_chi&quot;
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="296" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="296" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1a6f4c62144673355de1a4acadb70d479c" prot="public" static="no" mutable="no">
+        <type>std::array&lt; hid_t, <ref refid="structclass__log__profiling_1_1meta__struct_1af3eedce60786e0bd8fc5d639256f6845" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;hid_t,NFIELDS&gt; class_log_profiling::meta_struct::field_types</definition>
+        <argsstring></argsstring>
+        <name>field_types</name>
+        <initializer>= {
+                H5T_NATIVE_INT, H5T_NATIVE_INT, H5T_NATIVE_INT,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="327" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="327" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1ab89b610b0f4098632a4a6066fcb74be9" prot="public" static="no" mutable="no">
+        <type>hsize_t</type>
+        <definition>hsize_t class_log_profiling::meta_struct::chunk_size</definition>
+        <argsstring></argsstring>
+        <name>chunk_size</name>
+        <initializer>= 32</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="336" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="336" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1acf7a38632bb0d9ed5f5a7bab1c1bdd83" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* class_log_profiling::meta_struct::fill_data</definition>
+        <argsstring></argsstring>
+        <name>fill_data</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="337" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="337" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1meta__struct_1a5f3bc1e52f59bb6ec27fd78879169e90" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_log_profiling::meta_struct::compress</definition>
+        <argsstring></argsstring>
+        <name>compress</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="338" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="338" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="430">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="428">
+        <label>class_log_profiling::meta_struct</label>
+        <link refid="structclass__log__profiling_1_1meta__struct"/>
+        <childnode refid="429" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="430" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="431" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="431">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="429">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="233" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="233" bodyend="339"/>
+    <listofallmembers>
+      <member refid="structclass__log__profiling_1_1meta__struct_1ab89b610b0f4098632a4a6066fcb74be9" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>chunk_size</name></member>
+      <member refid="structclass__log__profiling_1_1meta__struct_1a5f3bc1e52f59bb6ec27fd78879169e90" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>compress</name></member>
+      <member refid="structclass__log__profiling_1_1meta__struct_1aaa15b6bfab516a07d6c766130e4fde2d" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>dst_offsets</name></member>
+      <member refid="structclass__log__profiling_1_1meta__struct_1a070c9a5f9095b70adaf9e8500f98c0ca" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>dst_size</name></member>
+      <member refid="structclass__log__profiling_1_1meta__struct_1a547edcb08166b21961d545ae50c1bf12" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>dst_sizes</name></member>
+      <member refid="structclass__log__profiling_1_1meta__struct_1a50bf1b8c947a91877c1f36cec9e77bd2" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>field_names</name></member>
+      <member refid="structclass__log__profiling_1_1meta__struct_1a6f4c62144673355de1a4acadb70d479c" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>field_types</name></member>
+      <member refid="structclass__log__profiling_1_1meta__struct_1acf7a38632bb0d9ed5f5a7bab1c1bdd83" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>fill_data</name></member>
+      <member refid="structclass__log__profiling_1_1meta__struct_1af3eedce60786e0bd8fc5d639256f6845" prot="public" virt="non-virtual"><scope>class_log_profiling::meta_struct</scope><name>NFIELDS</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

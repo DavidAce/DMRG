@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1infinite_1_1print" kind="namespace" language="C++">
+    <compoundname>tools::infinite::print</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1print_1a3bed2549c51f324b355c2679b168a55c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::print::print_state</definition>
+        <argsstring>(const class_state_infinite &amp;state)</argsstring>
+        <name>print_state</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Print the tensor dimensions for all <formula id="1">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="297" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp" bodystart="17" bodyend="22"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">Textra::operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1print_1a239fe30e0c1919b06db07bcfa0ffdba7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::print::print_state_compact</definition>
+        <argsstring>(const class_state_infinite &amp;state)</argsstring>
+        <name>print_state_compact</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Print the tensor dimensions for all <formula id="1">$\Gamma$</formula>-tensors. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="298" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1print_1ab4dd0d96b484e306dd57e3586ead7890" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::print::print_hamiltonians</definition>
+        <argsstring>(const class_state_infinite &amp;state)</argsstring>
+        <name>print_hamiltonians</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="299" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp" bodystart="10" bodyend="15"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="296" column="1"/>
+  </compounddef>
+</doxygen>

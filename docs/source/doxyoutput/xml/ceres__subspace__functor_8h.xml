@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="ceres__subspace__functor_8h" kind="file" language="C++">
+    <compoundname>ceres_subspace_functor.h</compoundname>
+    <includes refid="opt_8h" local="no">tools/finite/opt.h</includes>
+    <includedby refid="ceres__subspace_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</includedby>
+    <includedby refid="ceres__subspace__functor_8cpp" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp</includedby>
+    <incdepgraph>
+      <node id="3776">
+        <label>list</label>
+      </node>
+      <node id="3789">
+        <label>ceres/ceres.h</label>
+      </node>
+      <node id="3786">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="3774">
+        <label>string</label>
+      </node>
+      <node id="3781">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="3782" relation="include">
+        </childnode>
+        <childnode refid="3783" relation="include">
+        </childnode>
+      </node>
+      <node id="3778">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="3779" relation="include">
+        </childnode>
+        <childnode refid="3780" relation="include">
+        </childnode>
+      </node>
+      <node id="3772">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="3773" relation="include">
+        </childnode>
+        <childnode refid="3774" relation="include">
+        </childnode>
+        <childnode refid="3775" relation="include">
+        </childnode>
+        <childnode refid="3776" relation="include">
+        </childnode>
+        <childnode refid="3777" relation="include">
+        </childnode>
+        <childnode refid="3778" relation="include">
+        </childnode>
+        <childnode refid="3781" relation="include">
+        </childnode>
+        <childnode refid="3784" relation="include">
+        </childnode>
+        <childnode refid="3786" relation="include">
+        </childnode>
+        <childnode refid="3787" relation="include">
+        </childnode>
+      </node>
+      <node id="3787">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="3780">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="3784">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="3783" relation="include">
+        </childnode>
+        <childnode refid="3785" relation="include">
+        </childnode>
+      </node>
+      <node id="3779">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="3788">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="3787" relation="include">
+        </childnode>
+      </node>
+      <node id="3777">
+        <label>vector</label>
+      </node>
+      <node id="3770">
+        <label>tools/finite/opt.h</label>
+        <link refid="opt_8h"/>
+        <childnode refid="3771" relation="include">
+        </childnode>
+        <childnode refid="3772" relation="include">
+        </childnode>
+        <childnode refid="3781" relation="include">
+        </childnode>
+        <childnode refid="3788" relation="include">
+        </childnode>
+        <childnode refid="3789" relation="include">
+        </childnode>
+      </node>
+      <node id="3771">
+        <label>complex.h</label>
+      </node>
+      <node id="3785">
+        <label>sstream</label>
+      </node>
+      <node id="3783">
+        <label>iostream</label>
+      </node>
+      <node id="3782">
+        <label>chrono</label>
+      </node>
+      <node id="3769">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h</label>
+        <link refid="ceres__subspace__functor_8h"/>
+        <childnode refid="3770" relation="include">
+        </childnode>
+      </node>
+      <node id="3775">
+        <label>complex</label>
+      </node>
+      <node id="3773">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="3792">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.cpp</label>
+        <link refid="ceres__subspace__functor_8cpp"/>
+      </node>
+      <node id="3791">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
+      </node>
+      <node id="3790">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h</label>
+        <link refid="ceres__subspace__functor_8h"/>
+        <childnode refid="3791" relation="include">
+        </childnode>
+        <childnode refid="3792" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" prot="public">tools::finite::opt::internal::ceres_subspace_functor</innerclass>
+    <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internal">tools::finite::opt::internal</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-07-15.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="opt_8h" kindref="compound">tools/finite/opt.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools_1_1finite_1_1opt_1_1internal" kindref="compound">tools::finite::opt::internal</ref>{</highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="11" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" kindref="compound">ceres_subspace_functor</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" kindref="compound">ceres_base_functor</ref>{</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="13" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a58322b24c135d17a9fc7586222854b3d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a58322b24c135d17a9fc7586222854b3d" kindref="member">MatrixType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;;</highlight></codeline>
+<codeline lineno="14" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ae6a1bb8d850f369b32ae87e0b9fec44c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ae6a1bb8d850f369b32ae87e0b9fec44c" kindref="member">VectorType</ref><sp/>=<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,1&gt;;</highlight></codeline>
+<codeline lineno="15" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a20a166fcddb704da3585dc47b9b1f984" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a58322b24c135d17a9fc7586222854b3d" kindref="member">MatrixType</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a20a166fcddb704da3585dc47b9b1f984" kindref="member">H2</ref>;</highlight></codeline>
+<codeline lineno="16" refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a23db6a16a38dbb357b190e32859e60a4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::VectorXd<sp/><sp/>&amp;<ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a23db6a16a38dbb357b190e32859e60a4" kindref="member">eigvals</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1ab11183279b126fea1dc68437c4adab80" kindref="member">ceres_subspace_functor</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;<sp/>sim_status,</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a58322b24c135d17a9fc7586222854b3d" kindref="member">MatrixType</ref><sp/>&amp;<sp/>H2_subspace_,</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::VectorXd<sp/><sp/>&amp;<sp/>eigvals_);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor_1a6fef56e83a33caecd537f197194b2e33" kindref="member">Evaluate</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>v_double_double,</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>fx,</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>grad_double_double)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">final</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace_functor.h"/>
+  </compounddef>
+</doxygen>

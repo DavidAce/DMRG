@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools" kind="namespace" language="C++">
+    <compoundname>tools</compoundname>
+    <innernamespace refid="namespacetools_1_1common">tools::common</innernamespace>
+    <innernamespace refid="namespacetools_1_1finite">tools::finite</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite">tools::infinite</innernamespace>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetools_1aac8e89130f43c21749644abcd2807dba" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; spdlog::logger &gt;</type>
+        <definition>std::shared_ptr&lt; spdlog::logger &gt; tools::log</definition>
+        <argsstring></argsstring>
+        <name>log</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="36" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="35" column="1"/>
+  </compounddef>
+</doxygen>

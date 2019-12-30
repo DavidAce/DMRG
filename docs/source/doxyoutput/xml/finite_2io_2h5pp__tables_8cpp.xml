@@ -1,0 +1,331 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="finite_2io_2h5pp__tables_8cpp" kind="file" language="C++">
+    <compoundname>h5pp_tables.cpp</compoundname>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
+    <includes refid="table__types_8h" local="no">io/table_types.h</includes>
+    <includes refid="class__h5table__buffer_8h" local="no">io/class_h5table_buffer.h</includes>
+    <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
+    <includes refid="nmspc__quantum__mechanics_8h" local="no">general/nmspc_quantum_mechanics.h</includes>
+    <incdepgraph>
+      <node id="2737">
+        <label>list</label>
+      </node>
+      <node id="2732">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_tables.cpp</label>
+        <link refid="finite_2io_2h5pp__tables_8cpp"/>
+        <childnode refid="2733" relation="include">
+        </childnode>
+        <childnode refid="2749" relation="include">
+        </childnode>
+        <childnode refid="2754" relation="include">
+        </childnode>
+        <childnode refid="2756" relation="include">
+        </childnode>
+        <childnode refid="2769" relation="include">
+        </childnode>
+      </node>
+      <node id="2763">
+        <label>iomanip</label>
+      </node>
+      <node id="2762">
+        <label>iterator</label>
+      </node>
+      <node id="2756">
+        <label>state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="2734" relation="include">
+        </childnode>
+        <childnode refid="2736" relation="include">
+        </childnode>
+        <childnode refid="2757" relation="include">
+        </childnode>
+        <childnode refid="2758" relation="include">
+        </childnode>
+        <childnode refid="2767" relation="include">
+        </childnode>
+        <childnode refid="2768" relation="include">
+        </childnode>
+        <childnode refid="2747" relation="include">
+        </childnode>
+        <childnode refid="2748" relation="include">
+        </childnode>
+      </node>
+      <node id="2749">
+        <label>io/table_types.h</label>
+        <link refid="table__types_8h"/>
+        <childnode refid="2738" relation="include">
+        </childnode>
+        <childnode refid="2750" relation="include">
+        </childnode>
+        <childnode refid="2751" relation="include">
+        </childnode>
+        <childnode refid="2752" relation="include">
+        </childnode>
+        <childnode refid="2753" relation="include">
+        </childnode>
+      </node>
+      <node id="2764">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="2765" relation="include">
+        </childnode>
+        <childnode refid="2747" relation="include">
+        </childnode>
+        <childnode refid="2748" relation="include">
+        </childnode>
+      </node>
+      <node id="2747">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2735">
+        <label>string</label>
+      </node>
+      <node id="2752">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="2742">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2743" relation="include">
+        </childnode>
+        <childnode refid="2744" relation="include">
+        </childnode>
+      </node>
+      <node id="2739">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2740" relation="include">
+        </childnode>
+        <childnode refid="2741" relation="include">
+        </childnode>
+      </node>
+      <node id="2753">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="2734" relation="include">
+        </childnode>
+        <childnode refid="2735" relation="include">
+        </childnode>
+        <childnode refid="2744" relation="include">
+        </childnode>
+        <childnode refid="2738" relation="include">
+        </childnode>
+        <childnode refid="2750" relation="include">
+        </childnode>
+        <childnode refid="2751" relation="include">
+        </childnode>
+        <childnode refid="2752" relation="include">
+        </childnode>
+      </node>
+      <node id="2765">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2733">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2734" relation="include">
+        </childnode>
+        <childnode refid="2735" relation="include">
+        </childnode>
+        <childnode refid="2736" relation="include">
+        </childnode>
+        <childnode refid="2737" relation="include">
+        </childnode>
+        <childnode refid="2738" relation="include">
+        </childnode>
+        <childnode refid="2739" relation="include">
+        </childnode>
+        <childnode refid="2742" relation="include">
+        </childnode>
+        <childnode refid="2745" relation="include">
+        </childnode>
+        <childnode refid="2747" relation="include">
+        </childnode>
+        <childnode refid="2748" relation="include">
+        </childnode>
+      </node>
+      <node id="2748">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2758">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="2734" relation="include">
+        </childnode>
+        <childnode refid="2759" relation="include">
+        </childnode>
+        <childnode refid="2766" relation="include">
+        </childnode>
+      </node>
+      <node id="2741">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="2768">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="2734" relation="include">
+        </childnode>
+        <childnode refid="2748" relation="include">
+        </childnode>
+        <childnode refid="2739" relation="include">
+        </childnode>
+      </node>
+      <node id="2755">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2761">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2745">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="2744" relation="include">
+        </childnode>
+        <childnode refid="2746" relation="include">
+        </childnode>
+      </node>
+      <node id="2740">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="2767">
+        <label>state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="2736" relation="include">
+        </childnode>
+        <childnode refid="2757" relation="include">
+        </childnode>
+        <childnode refid="2748" relation="include">
+        </childnode>
+      </node>
+      <node id="2760">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="2748" relation="include">
+        </childnode>
+      </node>
+      <node id="2757">
+        <label>optional</label>
+      </node>
+      <node id="2738">
+        <label>vector</label>
+      </node>
+      <node id="2766">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="2750">
+        <label>array</label>
+      </node>
+      <node id="2746">
+        <label>sstream</label>
+      </node>
+      <node id="2751">
+        <label>hdf5.h</label>
+      </node>
+      <node id="2744">
+        <label>iostream</label>
+      </node>
+      <node id="2743">
+        <label>chrono</label>
+      </node>
+      <node id="2754">
+        <label>io/class_h5table_buffer.h</label>
+        <link refid="class__h5table__buffer_8h"/>
+        <childnode refid="2734" relation="include">
+        </childnode>
+        <childnode refid="2755" relation="include">
+        </childnode>
+        <childnode refid="2749" relation="include">
+        </childnode>
+      </node>
+      <node id="2769">
+        <label>general/nmspc_quantum_mechanics.h</label>
+        <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="2747" relation="include">
+        </childnode>
+        <childnode refid="2748" relation="include">
+        </childnode>
+        <childnode refid="2736" relation="include">
+        </childnode>
+        <childnode refid="2738" relation="include">
+        </childnode>
+      </node>
+      <node id="2736">
+        <label>complex</label>
+      </node>
+      <node id="2759">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2760" relation="include">
+        </childnode>
+        <childnode refid="2747" relation="include">
+        </childnode>
+        <childnode refid="2761" relation="include">
+        </childnode>
+        <childnode refid="2748" relation="include">
+        </childnode>
+        <childnode refid="2762" relation="include">
+        </childnode>
+        <childnode refid="2744" relation="include">
+        </childnode>
+        <childnode refid="2763" relation="include">
+        </childnode>
+        <childnode refid="2764" relation="include">
+        </childnode>
+      </node>
+      <node id="2734">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-11-07.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="table__types_8h" kindref="compound">io/table_types.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__h5table__buffer_8h" kindref="compound">io/class_h5table_buffer.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__quantum__mechanics_8h" kindref="compound">general/nmspc_quantum_mechanics.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10" refid="namespacetools_1_1finite_1_1io_1_1h5table_1abd3eddbcf05e6a274c6a18fa43d570f8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1io_1_1h5table_1abd3eddbcf05e6a274c6a18fa43d570f8" kindref="member">tools::finite::io::h5table::write_measurements</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status,<sp/><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_measurements_finite&gt;</ref><sp/>&amp;h5tbuf)<sp/>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Appending<sp/>measurement<sp/>entry<sp/>to<sp/>table:<sp/>{}...&quot;</highlight><highlight class="normal">,h5tbuf.<ref refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" kindref="member">get_table_name</ref>());</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">class_h5table_measurements_finite::data_struct</ref><sp/>measurements_entry;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a859049da2ac8bdd7e2336d5d6124c8ef" kindref="member">step</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a45e276d6df46dc728b839a192d571be2" kindref="member">step</ref>;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a51a4724783b7528e28734da227a6f237" kindref="member">iteration</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" kindref="member">iteration</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1aa25c218dd5ec78e14283e3f4f30762ec" kindref="member">position</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a80d15fc44e01f80419adbab9c914dbba" kindref="member">position</ref>;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a1d6a205cdfeb1939df316115cfb65580" kindref="member">length</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ac198a39c208e3ccd5af9402510f6243e" kindref="member">tools::finite::measure::length</ref>(state);</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a6b5dec20475917d3225ef387071fda90" kindref="member">bond_dimension_midchain</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a67ec4bcbc43bc0856e2d27935d3c11dd" kindref="member">tools::finite::measure::bond_dimension_midchain</ref>(state);</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1ac61bf1f1e81d26f3806463dafcb3944e" kindref="member">bond_dimension_current</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af66720d92c57155c910f42e03186b149" kindref="member">tools::finite::measure::bond_dimension_current</ref>(state);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a85d74b6d86ff55d0d7d3d00f73d038ea" kindref="member">bond_dimension_limit</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a3364452c2cfa578c7de18e28eee2d675" kindref="member">get_chi_lim</ref>();</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a4e3fe541aec815c1849e88889b7f1131" kindref="member">bond_dimension_maximum</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a42f96b6d9228736dca4f73335ac1f584" kindref="member">get_chi_max</ref>();</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a30e3f48e5e52a6ec34215b39c31dbbb3" kindref="member">entanglement_entropy_midchain</ref><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a5da3c6001a1e7c6f3897afb3f30b3150" kindref="member">tools::finite::measure::entanglement_entropy_midchain</ref>(state);</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1abe4cf7caf736d123fe9eda6439a84b45" kindref="member">entanglement_entropy_current</ref><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ad4d342b14748aa9b6e9238a708a2ba8f" kindref="member">tools::finite::measure::entanglement_entropy_current</ref>(state);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a0f8d35de22d30f3c8aea9140d228ed3b" kindref="member">norm</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" kindref="member">tools::finite::measure::norm</ref>(state);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a9ade6106d59a3e1f0f0936628aa073bd" kindref="member">energy</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1af68ec1bfec44e2ebd09751dbcc46439b" kindref="member">tools::finite::measure::energy</ref>(state);</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a2552a513214aca378451f3e5bd4090bb" kindref="member">energy_per_site</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ae45038e78b02e5f5307a8b618941bbd8" kindref="member">tools::finite::measure::energy_per_site</ref>(state);</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a95ac66fc8cd0ee8e34000627ce53109e" kindref="member">energy_variance</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1aaf6b94743b51434a613712914ee3d8a0" kindref="member">tools::finite::measure::energy_variance</ref>(state);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a979a0f303823a6e6f98f6a12c980608d" kindref="member">energy_variance_per_site</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ac2659e53bedfca1f195553d876134e37" kindref="member">tools::finite::measure::energy_variance_per_site</ref>(state);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a2623588047d3d6d48d590b33553b5fdf" kindref="member">spin_component_sx</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">tools::finite::measure::spin_component</ref>(state,<ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">qm::spinOneHalf::sx</ref>);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a004222026d0dfbc707db88993435282c" kindref="member">spin_component_sy</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">tools::finite::measure::spin_component</ref>(state,<ref refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" kindref="member">qm::spinOneHalf::sy</ref>);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1ab52b4a2c4e2871690791adda4c1b6b16" kindref="member">spin_component_sz</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">tools::finite::measure::spin_component</ref>(state,<ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">qm::spinOneHalf::sz</ref>);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1ae07333425e4dccac61c941f4df577245" kindref="member">truncation_error</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a859e4476fd7eb650f5f9951caf034671" kindref="member">get_truncation_error</ref>();</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/>measurements_entry.<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a87c1be4a3779bc68b215eb5611f9a0da" kindref="member">wall_time</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sim_status.<ref refid="structstatus__data_1a1cec36cfaf69539fb67413fe14af5c7e" kindref="member">wall_time</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>h5tbuf.<ref refid="classclass__h5table__buffer_1a40bca00c593b115f06ca6b11b8283546" kindref="member">append_record</ref>(measurements_entry);</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Appending<sp/>measurement<sp/>entry<sp/>to<sp/>table:<sp/>{}...<sp/>OK&quot;</highlight><highlight class="normal">,h5tbuf.<ref refid="classclass__h5table__buffer_1a954cae85d50b86d2837831e77f11eaec" kindref="member">get_table_name</ref>());</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="namespacetools_1_1finite_1_1io_1_1h5table_1af34d60a4a6f784a148a20597e8b61354" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1io_1_1h5table_1af34d60a4a6f784a148a20597e8b61354" kindref="member">tools::finite::io::h5table::write_sim_status</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status,<sp/><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_simulation_status&gt;</ref><sp/>&amp;h5tbuf)<sp/>{</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5table_1a6f7592f678b3f7022bfd237ca0c6ad2e" kindref="member">tools::common::io::h5table::write_sim_status</ref>(sim_status,h5tbuf);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="namespacetools_1_1finite_1_1io_1_1h5table_1ad7b594dd1c91eafeccb5e9ca34fe0035" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1io_1_1h5table_1ad7b594dd1c91eafeccb5e9ca34fe0035" kindref="member">tools::finite::io::h5table::write_profiling</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status,<sp/><ref refid="classclass__h5table__buffer" kindref="compound">class_h5table_buffer&lt;class_h5table_profiling&gt;</ref><sp/>&amp;h5tbuf)<sp/>{</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1io_1_1h5table_1adb046c04ba8888dc06e4a0755e9300c9" kindref="member">tools::common::io::h5table::write_profiling</ref>(sim_status,h5tbuf);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp_tables.cpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,379 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="infinite_2io_2h5pp_8cpp" kind="file" language="C++">
+    <compoundname>h5pp.cpp</compoundname>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
+    <includes refid="class__state__infinite_8h" local="no">state/class_state_infinite.h</includes>
+    <includes refid="class__mps__site_8h" local="no">state/class_mps_site.h</includes>
+    <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
+    <includes refid="class__environment_8h" local="no">state/class_environment.h</includes>
+    <includes refid="class__model__base_8h" local="no">model/class_model_base.h</includes>
+    <includes local="no">h5pp/h5pp.h</includes>
+    <incdepgraph>
+      <node id="2672">
+        <label>list</label>
+      </node>
+      <node id="2690">
+        <label>iomanip</label>
+      </node>
+      <node id="2689">
+        <label>iterator</label>
+      </node>
+      <node id="2691">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="2692" relation="include">
+        </childnode>
+        <childnode refid="2682" relation="include">
+        </childnode>
+        <childnode refid="2683" relation="include">
+        </childnode>
+      </node>
+      <node id="2682">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2670">
+        <label>string</label>
+      </node>
+      <node id="2677">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2678" relation="include">
+        </childnode>
+        <childnode refid="2679" relation="include">
+        </childnode>
+      </node>
+      <node id="2674">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2675" relation="include">
+        </childnode>
+        <childnode refid="2676" relation="include">
+        </childnode>
+      </node>
+      <node id="2695">
+        <label>map</label>
+      </node>
+      <node id="2667">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
+        <link refid="infinite_2io_2h5pp_8cpp"/>
+        <childnode refid="2668" relation="include">
+        </childnode>
+        <childnode refid="2684" relation="include">
+        </childnode>
+        <childnode refid="2700" relation="include">
+        </childnode>
+        <childnode refid="2701" relation="include">
+        </childnode>
+        <childnode refid="2702" relation="include">
+        </childnode>
+        <childnode refid="2704" relation="include">
+        </childnode>
+        <childnode refid="2705" relation="include">
+        </childnode>
+      </node>
+      <node id="2692">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2668">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2669" relation="include">
+        </childnode>
+        <childnode refid="2670" relation="include">
+        </childnode>
+        <childnode refid="2671" relation="include">
+        </childnode>
+        <childnode refid="2672" relation="include">
+        </childnode>
+        <childnode refid="2673" relation="include">
+        </childnode>
+        <childnode refid="2674" relation="include">
+        </childnode>
+        <childnode refid="2677" relation="include">
+        </childnode>
+        <childnode refid="2680" relation="include">
+        </childnode>
+        <childnode refid="2682" relation="include">
+        </childnode>
+        <childnode refid="2683" relation="include">
+        </childnode>
+      </node>
+      <node id="2683">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2702">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="2669" relation="include">
+        </childnode>
+        <childnode refid="2686" relation="include">
+        </childnode>
+        <childnode refid="2703" relation="include">
+        </childnode>
+      </node>
+      <node id="2676">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="2704">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="2669" relation="include">
+        </childnode>
+        <childnode refid="2683" relation="include">
+        </childnode>
+        <childnode refid="2674" relation="include">
+        </childnode>
+      </node>
+      <node id="2697">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="2688">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2699">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="2680">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="2679" relation="include">
+        </childnode>
+        <childnode refid="2681" relation="include">
+        </childnode>
+      </node>
+      <node id="2675">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="2700">
+        <label>state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="2671" relation="include">
+        </childnode>
+        <childnode refid="2685" relation="include">
+        </childnode>
+        <childnode refid="2683" relation="include">
+        </childnode>
+      </node>
+      <node id="2687">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="2683" relation="include">
+        </childnode>
+      </node>
+      <node id="2684">
+        <label>state/class_state_infinite.h</label>
+        <link refid="class__state__infinite_8h"/>
+        <childnode refid="2669" relation="include">
+        </childnode>
+        <childnode refid="2685" relation="include">
+        </childnode>
+        <childnode refid="2686" relation="include">
+        </childnode>
+        <childnode refid="2677" relation="include">
+        </childnode>
+        <childnode refid="2693" relation="include">
+        </childnode>
+        <childnode refid="2698" relation="include">
+        </childnode>
+        <childnode refid="2674" relation="include">
+        </childnode>
+      </node>
+      <node id="2685">
+        <label>optional</label>
+      </node>
+      <node id="2673">
+        <label>vector</label>
+      </node>
+      <node id="2703">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="2696">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="2694">
+        <label>array</label>
+      </node>
+      <node id="2681">
+        <label>sstream</label>
+      </node>
+      <node id="2701">
+        <label>state/class_mps_2site.h</label>
+        <link refid="class__mps__2site_8h"/>
+        <childnode refid="2669" relation="include">
+        </childnode>
+        <childnode refid="2686" relation="include">
+        </childnode>
+      </node>
+      <node id="2705">
+        <label>h5pp/h5pp.h</label>
+      </node>
+      <node id="2679">
+        <label>iostream</label>
+      </node>
+      <node id="2693">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="2679" relation="include">
+        </childnode>
+        <childnode refid="2694" relation="include">
+        </childnode>
+        <childnode refid="2695" relation="include">
+        </childnode>
+        <childnode refid="2671" relation="include">
+        </childnode>
+        <childnode refid="2673" relation="include">
+        </childnode>
+        <childnode refid="2696" relation="include">
+        </childnode>
+        <childnode refid="2697" relation="include">
+        </childnode>
+      </node>
+      <node id="2678">
+        <label>chrono</label>
+      </node>
+      <node id="2671">
+        <label>complex</label>
+      </node>
+      <node id="2698">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2670" relation="include">
+        </childnode>
+        <childnode refid="2673" relation="include">
+        </childnode>
+        <childnode refid="2699" relation="include">
+        </childnode>
+      </node>
+      <node id="2686">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2687" relation="include">
+        </childnode>
+        <childnode refid="2682" relation="include">
+        </childnode>
+        <childnode refid="2688" relation="include">
+        </childnode>
+        <childnode refid="2683" relation="include">
+        </childnode>
+        <childnode refid="2689" relation="include">
+        </childnode>
+        <childnode refid="2679" relation="include">
+        </childnode>
+        <childnode refid="2690" relation="include">
+        </childnode>
+        <childnode refid="2691" relation="include">
+        </childnode>
+      </node>
+      <node id="2669">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-03-09.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__infinite_8h" kindref="compound">state/class_state_infinite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__site_8h" kindref="compound">state/class_mps_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__environment_8h" kindref="compound">state/class_environment.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__base_8h" kindref="compound">model/class_model_base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;h5pp/h5pp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13" refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a7e1a6df71ab7e5b3cb1d7c9eb6dd34db" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a7e1a6df71ab7e5b3cb1d7c9eb6dd34db" kindref="member">tools::infinite::io::h5dset::write_all_state</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/>h5pp::File<sp/>&amp;h5ppFile,</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>sim_name){</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(state.<ref refid="classclass__state__infinite_1a1044590d8feba9a066bba8f372ec993a" kindref="member">has_been_written</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693" kindref="member">StorageLevel::NONE</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f" kindref="member">StorageLevel::LIGHT</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a926b0c24e83e5abb10603b669df33abc" kindref="member">write_hamiltonian_params</ref>(state,h5ppFile,sim_name);</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051" kindref="member">StorageLevel::NORMAL</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a0fdacd14f90f16e4d6fe607cefddbb9f" kindref="member">write_2site_mps</ref>(state,h5ppFile,sim_name);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a73b1689ee424faa77b131f77191becfb" kindref="member">write_2site_mpo</ref>(state,h5ppFile,sim_name);</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a24a5907ebdddb582ee18811bb1aa5b7c" kindref="member">write_2site_env</ref>(state,h5ppFile,sim_name);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a1c52aa24a5a7fb6126fcea01cf3bb2bc" kindref="member">write_2site_env2</ref>(state,h5ppFile,sim_name);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" kindref="member">settings::output::storage_level</ref><sp/>&gt;=<sp/><ref refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaba7de5bc6888294e5884b024a4c894f1" kindref="member">StorageLevel::FULL</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1a1044590d8feba9a066bba8f372ec993a" kindref="member">has_been_written</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a0fdacd14f90f16e4d6fe607cefddbb9f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a0fdacd14f90f16e4d6fe607cefddbb9f" kindref="member">tools::infinite::io::h5dset::write_2site_mps</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_A-&gt;get_M()<sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/MPS_A&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_A-&gt;get_LC(),<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/L_C&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1a09fcfce4431b155f6452f42701026c66" kindref="member">MPS</ref>-&gt;MPS_B-&gt;get_M(),<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/MPS_B&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45" refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a73b1689ee424faa77b131f77191becfb" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a73b1689ee424faa77b131f77191becfb" kindref="member">tools::infinite::io::h5dset::write_2site_mpo</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1a8353252491499180a1da8475263b9988" kindref="member">HA</ref>-&gt;MPO(),<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/MPO_A&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1a32291bdbb5c48c2010902e017ac2ceed" kindref="member">HB</ref>-&gt;MPO(),<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/MPO_B&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51" refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a24a5907ebdddb582ee18811bb1aa5b7c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a24a5907ebdddb582ee18811bb1aa5b7c" kindref="member">tools::infinite::io::h5dset::write_2site_env</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1a077ed4aed07939f87e25afdea2b3fe16" kindref="member">Lblock</ref>-&gt;block,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/ENV_L&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1a06e4df359f1a484a0f3a43ae9945dbd7" kindref="member">Rblock</ref>-&gt;block,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/ENV_R&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a1c52aa24a5a7fb6126fcea01cf3bb2bc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a1c52aa24a5a7fb6126fcea01cf3bb2bc" kindref="member">tools::infinite::io::h5dset::write_2site_env2</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1ab7dc738725acc7cc2b3b5f68d6d7b442" kindref="member">Lblock2</ref>-&gt;block,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/ENV2_L&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1a118c4de180bbf69d18182f8aae819b98" kindref="member">Rblock2</ref>-&gt;block,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/state/2site/ENV2_R&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a926b0c24e83e5abb10603b669df33abc" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a926b0c24e83e5abb10603b669df33abc" kindref="member">tools::infinite::io::h5dset::write_hamiltonian_params</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;state,<sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Write<sp/>down<sp/>the<sp/>Hamiltonian<sp/>metadata<sp/>as<sp/>a<sp/>table</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Remember<sp/>to<sp/>write<sp/>tensors<sp/>in<sp/>row-major<sp/>state<sp/>order<sp/>because<sp/>that&apos;s<sp/>what<sp/>output<sp/>uses.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXd<sp/>hamiltonian_props;</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>propsA<sp/>=<sp/>state.<ref refid="classclass__state__infinite_1a8353252491499180a1da8475263b9988" kindref="member">HA</ref>-&gt;get_parameter_values();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>propsB<sp/>=<sp/>state.<ref refid="classclass__state__infinite_1a32291bdbb5c48c2010902e017ac2ceed" kindref="member">HB</ref>-&gt;get_parameter_values();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::ArrayXd<sp/><sp/>temp_rowA<sp/><sp/>=<sp/>Eigen::Map&lt;Eigen::ArrayXd&gt;<sp/>(propsA.data(),propsA.size());</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::ArrayXd<sp/><sp/>temp_rowB<sp/><sp/>=<sp/>Eigen::Map&lt;Eigen::ArrayXd&gt;<sp/>(propsB.data(),propsB.size());</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/>hamiltonian_props.resize(2,<sp/>temp_rowA.size());</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>hamiltonian_props.row(0)<sp/>=<sp/>temp_rowA.transpose();</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>hamiltonian_props.row(1)<sp/>=<sp/>temp_rowB.transpose();</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(hamiltonian_props<sp/>,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/model/2site/Hamiltonian&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>col<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;name<sp/>:<sp/>state.<ref refid="classclass__state__infinite_1a8353252491499180a1da8475263b9988" kindref="member">HA</ref>-&gt;get_parameter_names()){</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>attr_value<sp/>=<sp/>name;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>attr_name<sp/><sp/>=<sp/></highlight><highlight class="stringliteral">&quot;FIELD_&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(col)<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;_NAME&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>h5ppFile.writeAttributeToLink(attr_value,<sp/>attr_name,sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/model/2site/Hamiltonian&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>col++;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83" refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1af1850f545f4dde95b09ca8750171fafd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1af1850f545f4dde95b09ca8750171fafd" kindref="member">tools::infinite::io::h5dset::write_all_measurements</ref><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref><sp/>&amp;<sp/>state,<sp/>h5pp::File<sp/>&amp;<sp/>h5ppFile,<sp/>std::string<sp/>sim_name){</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__infinite_1aa337cbd68bed88136c332c12b8f920b0" kindref="member">do_all_measurements</ref>();</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1a047dd88f95c605657b3973e630f03d63" kindref="member">length</ref>.value()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/length&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1abae974a0ece39a460df8bacd5fa499ff" kindref="member">bond_dimension</ref>.value()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/bond_dimension&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1af0c172fdc52cc70b5f372c8c1008126c" kindref="member">norm</ref>.value()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/norm&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1a771ea2adc08f5c243c5e87bac9814e63" kindref="member">truncation_error</ref>.value()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/truncation_error&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1a5a62738fcf130c65905125d419f539b7" kindref="member">energy_mpo</ref>.value()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/energy&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1aac24ef5f013f8cc371d69c6c3a406684" kindref="member">energy_per_site_mpo</ref>.value()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/energy_per_site&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1a2fa57a4a1ace53efdb7787867fdfcbef" kindref="member">energy_per_site_ham</ref>.value()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/energy_per_site_mom&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1afede3ef4984c75745ec77d14dcae7e23" kindref="member">energy_per_site_mom</ref>.value()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/energy_per_site_mom&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1acaf0d4bc74090827559e2c8aba1d1d90" kindref="member">energy_variance_per_site_mpo</ref>.value(),<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/energy_variance_per_site&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1a786eb63588ebc07620ca8b68f2e088ad" kindref="member">energy_variance_per_site_ham</ref>.value(),<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/energy_variance_per_site_ham&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1aa8ca000e3f7ccecc2daa9be33bd90b46" kindref="member">energy_variance_per_site_mom</ref>.value(),<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/energy_variance_per_site_mom&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>h5ppFile.writeDataset(state.<ref refid="classclass__state__infinite_1af79035b041fc3f69f4f17d656f964358" kindref="member">measurements</ref>.<ref refid="structclass__state__infinite_1_1_measurements_1a68d816ad30132c33c712ea405be9ba4b" kindref="member">current_entanglement_entropy</ref>.value(),<sp/>sim_name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;/measurements/2site/entanglement_entropy_midchain&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp"/>
+  </compounddef>
+</doxygen>

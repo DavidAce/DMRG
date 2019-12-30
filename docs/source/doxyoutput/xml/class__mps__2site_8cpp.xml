@@ -1,0 +1,543 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__mps__2site_8cpp" kind="file" language="C++">
+    <compoundname>class_mps_2site.cpp</compoundname>
+    <includes refid="class__mps__2site_8h" local="no">state/class_mps_2site.h</includes>
+    <includes refid="class__mps__site_8h" local="no">state/class_mps_site.h</includes>
+    <includes refid="nmspc__math_8h" local="no">math/nmspc_math.h</includes>
+    <includes refid="nmspc__random_8h" local="no">math/nmspc_random.h</includes>
+    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes local="no">iomanip</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
+    <incdepgraph>
+      <node id="2291">
+        <label>list</label>
+      </node>
+      <node id="2306">
+        <label>locale</label>
+      </node>
+      <node id="2293">
+        <label>functional</label>
+      </node>
+      <node id="2283">
+        <label>iomanip</label>
+      </node>
+      <node id="2304">
+        <label>limits</label>
+      </node>
+      <node id="2281">
+        <label>iterator</label>
+      </node>
+      <node id="2311">
+        <label>cstdint</label>
+      </node>
+      <node id="2273">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp</label>
+        <link refid="class__mps__2site_8cpp"/>
+        <childnode refid="2274" relation="include">
+        </childnode>
+        <childnode refid="2286" relation="include">
+        </childnode>
+        <childnode refid="2289" relation="include">
+        </childnode>
+        <childnode refid="2296" relation="include">
+        </childnode>
+        <childnode refid="2315" relation="include">
+        </childnode>
+        <childnode refid="2283" relation="include">
+        </childnode>
+        <childnode refid="2318" relation="include">
+        </childnode>
+      </node>
+      <node id="2292">
+        <label>cmath</label>
+      </node>
+      <node id="2303">
+        <label>cassert</label>
+      </node>
+      <node id="2284">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="2285" relation="include">
+        </childnode>
+        <childnode refid="2279" relation="include">
+        </childnode>
+        <childnode refid="2278" relation="include">
+        </childnode>
+      </node>
+      <node id="2308">
+        <label>stdexcept</label>
+      </node>
+      <node id="2295">
+        <label>numeric</label>
+      </node>
+      <node id="2279">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="2296">
+        <label>math/nmspc_random.h</label>
+        <link refid="nmspc__random_8h"/>
+        <childnode refid="2297" relation="include">
+        </childnode>
+        <childnode refid="2282" relation="include">
+        </childnode>
+        <childnode refid="2287" relation="include">
+        </childnode>
+        <childnode refid="2279" relation="include">
+        </childnode>
+        <childnode refid="2298" relation="include">
+        </childnode>
+      </node>
+      <node id="2316">
+        <label>string</label>
+      </node>
+      <node id="2322">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="2323" relation="include">
+        </childnode>
+        <childnode refid="2282" relation="include">
+        </childnode>
+      </node>
+      <node id="2319">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="2320" relation="include">
+        </childnode>
+        <childnode refid="2321" relation="include">
+        </childnode>
+      </node>
+      <node id="2299">
+        <label>cinttypes</label>
+      </node>
+      <node id="2285">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="2318">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="2275" relation="include">
+        </childnode>
+        <childnode refid="2316" relation="include">
+        </childnode>
+        <childnode refid="2287" relation="include">
+        </childnode>
+        <childnode refid="2291" relation="include">
+        </childnode>
+        <childnode refid="2290" relation="include">
+        </childnode>
+        <childnode refid="2319" relation="include">
+        </childnode>
+        <childnode refid="2322" relation="include">
+        </childnode>
+        <childnode refid="2324" relation="include">
+        </childnode>
+        <childnode refid="2279" relation="include">
+        </childnode>
+        <childnode refid="2278" relation="include">
+        </childnode>
+      </node>
+      <node id="2278">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="2321">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="2298">
+        <label>pcg/pcg_random.hpp</label>
+        <link refid="pcg__random_8hpp"/>
+        <childnode refid="2299" relation="include">
+        </childnode>
+        <childnode refid="2300" relation="include">
+        </childnode>
+        <childnode refid="2301" relation="include">
+        </childnode>
+        <childnode refid="2302" relation="include">
+        </childnode>
+        <childnode refid="2303" relation="include">
+        </childnode>
+        <childnode refid="2304" relation="include">
+        </childnode>
+        <childnode refid="2282" relation="include">
+        </childnode>
+        <childnode refid="2305" relation="include">
+        </childnode>
+        <childnode refid="2294" relation="include">
+        </childnode>
+        <childnode refid="2306" relation="include">
+        </childnode>
+        <childnode refid="2307" relation="include">
+        </childnode>
+        <childnode refid="2308" relation="include">
+        </childnode>
+        <childnode refid="2309" relation="include">
+        </childnode>
+      </node>
+      <node id="2280">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="2297">
+        <label>random</label>
+      </node>
+      <node id="2317">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="2312">
+        <label>cstdio</label>
+      </node>
+      <node id="2324">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="2282" relation="include">
+        </childnode>
+        <childnode refid="2325" relation="include">
+        </childnode>
+      </node>
+      <node id="2320">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="2286">
+        <label>state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="2287" relation="include">
+        </childnode>
+        <childnode refid="2288" relation="include">
+        </childnode>
+        <childnode refid="2278" relation="include">
+        </childnode>
+      </node>
+      <node id="2289">
+        <label>math/nmspc_math.h</label>
+        <link refid="nmspc__math_8h"/>
+        <childnode refid="2282" relation="include">
+        </childnode>
+        <childnode refid="2281" relation="include">
+        </childnode>
+        <childnode refid="2290" relation="include">
+        </childnode>
+        <childnode refid="2291" relation="include">
+        </childnode>
+        <childnode refid="2292" relation="include">
+        </childnode>
+        <childnode refid="2293" relation="include">
+        </childnode>
+        <childnode refid="2275" relation="include">
+        </childnode>
+        <childnode refid="2294" relation="include">
+        </childnode>
+        <childnode refid="2295" relation="include">
+        </childnode>
+        <childnode refid="2288" relation="include">
+        </childnode>
+        <childnode refid="2279" relation="include">
+        </childnode>
+      </node>
+      <node id="2277">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="2278" relation="include">
+        </childnode>
+      </node>
+      <node id="2288">
+        <label>optional</label>
+      </node>
+      <node id="2290">
+        <label>vector</label>
+      </node>
+      <node id="2309">
+        <label>pcg_extras.hpp</label>
+        <link refid="pcg__extras_8hpp"/>
+        <childnode refid="2299" relation="include">
+        </childnode>
+        <childnode refid="2300" relation="include">
+        </childnode>
+        <childnode refid="2301" relation="include">
+        </childnode>
+        <childnode refid="2302" relation="include">
+        </childnode>
+        <childnode refid="2303" relation="include">
+        </childnode>
+        <childnode refid="2304" relation="include">
+        </childnode>
+        <childnode refid="2282" relation="include">
+        </childnode>
+        <childnode refid="2305" relation="include">
+        </childnode>
+        <childnode refid="2294" relation="include">
+        </childnode>
+        <childnode refid="2306" relation="include">
+        </childnode>
+        <childnode refid="2281" relation="include">
+        </childnode>
+        <childnode refid="2310" relation="include">
+        </childnode>
+      </node>
+      <node id="2307">
+        <label>new</label>
+      </node>
+      <node id="2294">
+        <label>utility</label>
+      </node>
+      <node id="2325">
+        <label>sstream</label>
+      </node>
+      <node id="2310">
+        <label>pcg_uint128.hpp</label>
+        <link refid="pcg__uint128_8hpp"/>
+        <childnode refid="2311" relation="include">
+        </childnode>
+        <childnode refid="2312" relation="include">
+        </childnode>
+        <childnode refid="2303" relation="include">
+        </childnode>
+        <childnode refid="2313" relation="include">
+        </childnode>
+        <childnode refid="2294" relation="include">
+        </childnode>
+        <childnode refid="2314" relation="include">
+        </childnode>
+        <childnode refid="2305" relation="include">
+        </childnode>
+      </node>
+      <node id="2274">
+        <label>state/class_mps_2site.h</label>
+        <link refid="class__mps__2site_8h"/>
+        <childnode refid="2275" relation="include">
+        </childnode>
+        <childnode refid="2276" relation="include">
+        </childnode>
+      </node>
+      <node id="2301">
+        <label>cstdlib</label>
+      </node>
+      <node id="2282">
+        <label>iostream</label>
+      </node>
+      <node id="2300">
+        <label>cstddef</label>
+      </node>
+      <node id="2313">
+        <label>climits</label>
+      </node>
+      <node id="2323">
+        <label>chrono</label>
+      </node>
+      <node id="2305">
+        <label>type_traits</label>
+      </node>
+      <node id="2287">
+        <label>complex</label>
+      </node>
+      <node id="2315">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="2316" relation="include">
+        </childnode>
+        <childnode refid="2290" relation="include">
+        </childnode>
+        <childnode refid="2317" relation="include">
+        </childnode>
+      </node>
+      <node id="2276">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="2277" relation="include">
+        </childnode>
+        <childnode refid="2279" relation="include">
+        </childnode>
+        <childnode refid="2280" relation="include">
+        </childnode>
+        <childnode refid="2278" relation="include">
+        </childnode>
+        <childnode refid="2281" relation="include">
+        </childnode>
+        <childnode refid="2282" relation="include">
+        </childnode>
+        <childnode refid="2283" relation="include">
+        </childnode>
+        <childnode refid="2284" relation="include">
+        </childnode>
+      </node>
+      <node id="2302">
+        <label>cstring</label>
+      </node>
+      <node id="2275">
+        <label>memory</label>
+      </node>
+      <node id="2314">
+        <label>initializer_list</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="class__mps__2site_8cpp_1a8a9bc5bfdb07c6e9c17ca16620d3e3ad" prot="public" static="no">
+        <type><ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">class_mps_2site::Scalar</ref></type>
+        <definition>using Scalar =  class_mps_2site::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2017-11-13.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__2site_8h" kindref="compound">state/class_mps_2site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__mps__site_8h" kindref="compound">state/class_mps_site.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__math_8h" kindref="compound">math/nmspc_math.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random_8h" kindref="compound">math/nmspc_random.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="class__mps__2site_8cpp_1a8a9bc5bfdb07c6e9c17ca16620d3e3ad" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">class_mps_2site::Scalar</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Function<sp/>definitions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight><highlight class="comment">//class_mps_2site::class_mps_2site(){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>tools::log-&gt;trace(&quot;Constructing<sp/>2site<sp/>MPS&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/><sp/><sp/><sp/><sp/><sp/>(model_type_str<sp/>==<sp/>&quot;tf_ising&quot;)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>spin_dimension<sp/>=<sp/>2;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>else<sp/>if<sp/>(model_type_str<sp/>==<sp/>&quot;tf_nn_ising&quot;)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>spin_dimension<sp/>=<sp/>2;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>else<sp/>if<sp/>(model_type_str<sp/>==<sp/>&quot;selfdual_tf_rf_ising&quot;)<sp/>spin_dimension<sp/>=<sp/>2;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>A(spin_dimension,1,1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>B(spin_dimension,1,1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>LA(1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>LC(1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>LB(1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>Default<sp/>is<sp/>a<sp/>product<sp/>state,<sp/>spins<sp/>pointing<sp/>up<sp/>in<sp/>z.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>A.setZero();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>B.setZero();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>LA.setConstant(1.0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>LB.setConstant(1.0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>LC.setConstant(1.0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>A(0,0,0)<sp/>=<sp/>1;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>B(0,0,0)<sp/>=<sp/>1;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS_A<sp/>=<sp/>std::make_unique&lt;class_mps_site&gt;(class_mps_site(A,LA,0));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>MPS_B<sp/>=<sp/>std::make_unique&lt;class_mps_site&gt;(class_mps_site(B,LB,1));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classclass__mps__2site_1abf90b0beba90c5e96fb474ba96824cd0" refkind="member"><highlight class="normal"><ref refid="classclass__mps__2site_1ab6dcf84afac2740a8e5adc87e40fc302" kindref="member">class_mps_2site::class_mps_2site</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref><sp/>&amp;other)</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/>swapped(other.swapped),<sp/>MPS_A(copy_unique(other.MPS_A)),<sp/>MPS_B(copy_unique(other.MPS_B))</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>class_mps_2site::initialize(int<sp/>spin_dim){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>spin_dimension<sp/>=<sp/>spin_dim;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>UA(spin_dimension,1,1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>VB(spin_dimension,1,1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>LA(1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>LC(1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>LB(1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>Default<sp/>is<sp/>a<sp/>product<sp/>state,<sp/>spins<sp/>pointing<sp/>up<sp/>in<sp/>z.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>UA.setZero();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>VB.setZero();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>LA.setConstant(1.0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>LB.setConstant(1.0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>LC.setConstant(1.0);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>UA(0,0,0)<sp/>=<sp/>1;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>VB(0,0,0)<sp/>=<sp/>1;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>set_mps(LA,UA,LC,VB,LB);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>swapped<sp/>=<sp/>false;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="classclass__mps__2site_1a507f41fbcfe8f005618099c14994d551" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a507f41fbcfe8f005618099c14994d551" kindref="member">class_mps_2site::isReal</ref>()</highlight><highlight class="keyword">const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;isReal()<sp/>and<sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;isReal();}</highlight></codeline>
+<codeline lineno="76" refid="classclass__mps__2site_1a9d1733cd39da713d91468733108f5ffa" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a9d1733cd39da713d91468733108f5ffa" kindref="member">class_mps_2site::chiA</ref><sp/>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_L().dimension(0);}</highlight></codeline>
+<codeline lineno="77" refid="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" kindref="member">class_mps_2site::chiB</ref><sp/>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;get_L().dimension(0);}</highlight></codeline>
+<codeline lineno="78" refid="classclass__mps__2site_1a13f73f78154af08d937d0c21abbc50ac" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a13f73f78154af08d937d0c21abbc50ac" kindref="member">class_mps_2site::chiC</ref><sp/>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_LC().dimension(0);}</highlight></codeline>
+<codeline lineno="79" refid="classclass__mps__2site_1a29e06366c2edc97ea5ac4aed0fc9ce4e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a29e06366c2edc97ea5ac4aed0fc9ce4e" kindref="member">class_mps_2site::spindim</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>spindimA<sp/>=<sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_M().dimension(0);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>spindimB<sp/>=<sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;get_M().dimension(0);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(spindimA<sp/><sp/>!=<sp/>spindimB)</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Mismatch<sp/>in<sp/>spin<sp/>dimension<sp/>on<sp/>A<sp/>and<sp/>B<sp/>sites:<sp/>{}<sp/>!=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>spindimA,spindimB<sp/>));</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>spindimA;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="86" refid="classclass__mps__2site_1a5952e25a00be641e6dd24a8eea34ac59" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<sp/><ref refid="classclass__mps__2site_1a5952e25a00be641e6dd24a8eea34ac59" kindref="member">class_mps_2site::A_bare</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_M_bare();}</highlight></codeline>
+<codeline lineno="87" refid="classclass__mps__2site_1a0855d33ca2a8b9548bb7ec8f821dd1b9" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<sp/><ref refid="classclass__mps__2site_1a0855d33ca2a8b9548bb7ec8f821dd1b9" kindref="member">class_mps_2site::A</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_M();}</highlight></codeline>
+<codeline lineno="88" refid="classclass__mps__2site_1affa4b7514c8c239bae874a13f8a3f2d6" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<sp/><ref refid="classclass__mps__2site_1affa4b7514c8c239bae874a13f8a3f2d6" kindref="member">class_mps_2site::B</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;get_M();}</highlight></codeline>
+<codeline lineno="89" refid="classclass__mps__2site_1abd7cd23625abfa85b3adc1514644c982" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,2&gt;<sp/><ref refid="classclass__mps__2site_1abd7cd23625abfa85b3adc1514644c982" kindref="member">class_mps_2site::LC</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(<ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_LC());}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="classclass__mps__2site_1a108901e63be9a7c4a3ccf93b097157fe" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="classclass__mps__2site_1a108901e63be9a7c4a3ccf93b097157fe" kindref="member">class_mps_2site::GA</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_M_bare()</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(<ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_L()),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({1},{1}))</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{0,2,1});</highlight></codeline>
+<codeline lineno="95"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="96" refid="classclass__mps__2site_1af89dd0007ac4d0f4265b5889e356c2d4" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,3&gt;<sp/><ref refid="classclass__mps__2site_1af89dd0007ac4d0f4265b5889e356c2d4" kindref="member">class_mps_2site::GB</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;get_M_bare()</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/>.contract(<ref refid="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" kindref="member">Textra::asDiagonalInversed</ref>(<ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;get_L()),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{0}));</highlight></codeline>
+<codeline lineno="99"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="100" refid="classclass__mps__2site_1ae52d8a455b873f827daf7678ce76f8dc" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,2&gt;<sp/><ref refid="classclass__mps__2site_1ae52d8a455b873f827daf7678ce76f8dc" kindref="member">class_mps_2site::LA</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(<ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_L());}</highlight></codeline>
+<codeline lineno="101" refid="classclass__mps__2site_1aaedb09ba9ff5814e22d65b05289d9a06" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,2&gt;<sp/><ref refid="classclass__mps__2site_1aaedb09ba9ff5814e22d65b05289d9a06" kindref="member">class_mps_2site::LB</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" kindref="member">Textra::asDiagonal</ref>(<ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;get_L());}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="classclass__mps__2site_1aa4b5d3d5c98e496852767bdc913c3ee0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1aa4b5d3d5c98e496852767bdc913c3ee0" kindref="member">class_mps_2site::set_mps</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>&amp;<ref refid="classclass__mps__2site_1ae52d8a455b873f827daf7678ce76f8dc" kindref="member">LA</ref>,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<ref refid="classclass__mps__2site_1a0855d33ca2a8b9548bb7ec8f821dd1b9" kindref="member">A</ref>,</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>&amp;<ref refid="classclass__mps__2site_1abd7cd23625abfa85b3adc1514644c982" kindref="member">LC</ref>,</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<ref refid="classclass__mps__2site_1affa4b7514c8c239bae874a13f8a3f2d6" kindref="member">B</ref>,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>&amp;<ref refid="classclass__mps__2site_1aaedb09ba9ff5814e22d65b05289d9a06" kindref="member">LB</ref>)</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;set_mps(A,<sp/>LA);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;set_LC(LC);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;set_mps(B,<sp/>LB);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114" refid="classclass__mps__2site_1aeb415f0e981cb5707f48627585b2eff5" refkind="member"><highlight class="normal">Eigen::DSizes&lt;long,4&gt;<sp/><ref refid="classclass__mps__2site_1aeb415f0e981cb5707f48627585b2eff5" kindref="member">class_mps_2site::dimensions</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Eigen::DSizes&lt;long,4&gt;{<ref refid="classclass__mps__2site_1a29e06366c2edc97ea5ac4aed0fc9ce4e" kindref="member">spindim</ref>(),<ref refid="classclass__mps__2site_1a9d1733cd39da713d91468733108f5ffa" kindref="member">chiA</ref>(),<sp/><ref refid="classclass__mps__2site_1a29e06366c2edc97ea5ac4aed0fc9ce4e" kindref="member">spindim</ref>(),<ref refid="classclass__mps__2site_1a059201f883f470b57ce70ebf97d33994" kindref="member">chiB</ref>()};}</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="classclass__mps__2site_1a14265c98c54e12037449786ac6941e94" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__mps__2site_1a14265c98c54e12037449786ac6941e94" kindref="member">class_mps_2site::swap_AB</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Swapping<sp/>AB&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1aa0f1e5118a91600e9f75bb67852d61c1" kindref="member">swapped</ref><sp/>=<sp/>!<ref refid="classclass__mps__2site_1aa0f1e5118a91600e9f75bb67852d61c1" kindref="member">swapped</ref>;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Store<sp/>the<sp/>positions</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>position_left<sp/><sp/>=<sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_position();</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>position_right<sp/>=<sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;get_position();</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//Swap<sp/>Gamma</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/><ref refid="classclass__mps__2site_1abd7cd23625abfa85b3adc1514644c982" kindref="member">LC</ref><sp/>=<sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_LC();</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;unset_LC();</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;unset_LC();</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>.swap(<ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;set_LC(<ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;get_L());</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;set_L(LC);</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;set_L(LC);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a73674b6014ab21bafe8ef563190327ef" kindref="member">MPS_A</ref>-&gt;set_position(position_left);</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a411574e0aa422a243d8b6f979334120c" kindref="member">MPS_B</ref>-&gt;set_position(position_right);</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="classclass__mps__2site_1a246ef4d1f0d577fee574e76cbd4a4ce8" refkind="member"><highlight class="normal">Eigen::Tensor&lt;class_mps_2site::Scalar,4&gt;<sp/><ref refid="classclass__mps__2site_1a246ef4d1f0d577fee574e76cbd4a4ce8" kindref="member">class_mps_2site::get_theta</ref>(<ref refid="classclass__mps__2site_1a6e48773295f76bd5e7304a87694287fa" kindref="member">Scalar</ref><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" kindref="member">norm</ref>)<sp/></highlight><highlight class="keyword">const</highlight></codeline>
+<codeline lineno="150"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__mps__2site_1a0855d33ca2a8b9548bb7ec8f821dd1b9" kindref="member">A</ref>().contract(<ref refid="classclass__mps__2site_1affa4b7514c8c239bae874a13f8a3f2d6" kindref="member">B</ref>(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({2},{1}))<sp/>/<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" kindref="member">norm</ref>;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>A().contract(LC(),<sp/>idx({2},{0}))</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(B(),<sp/>idx({2},{1}))<sp/>/<sp/>norm;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_mps_2site.cpp"/>
+  </compounddef>
+</doxygen>

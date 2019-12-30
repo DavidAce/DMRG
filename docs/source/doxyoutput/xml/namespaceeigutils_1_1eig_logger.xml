@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespaceeigutils_1_1eig_logger" kind="namespace" language="C++">
+    <compoundname>eigutils::eigLogger</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" prot="public" static="no" mutable="no">
+        <type>std::shared_ptr&lt; spdlog::logger &gt;</type>
+        <definition>std::shared_ptr&lt;spdlog::logger&gt; eigutils::eigLogger::log</definition>
+        <argsstring></argsstring>
+        <name>log</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="205" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespaceeigutils_1_1eig_logger_1ab424a1ce754abbd02e0f70ee216386ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eigutils::eigLogger::enableTimeStamp</definition>
+        <argsstring>(std::shared_ptr&lt; spdlog::logger &gt; &amp;log)</argsstring>
+        <name>enableTimeStamp</name>
+        <param>
+          <type>std::shared_ptr&lt; spdlog::logger &gt; &amp;</type>
+          <declname>log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="206" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="206" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceeigutils_1_1eig_logger_1a283e8a93ceaaec1515e70a46abe33994" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eigutils::eigLogger::disableTimeStamp</definition>
+        <argsstring>(std::shared_ptr&lt; spdlog::logger &gt; &amp;log)</argsstring>
+        <name>disableTimeStamp</name>
+        <param>
+          <type>std::shared_ptr&lt; spdlog::logger &gt; &amp;</type>
+          <declname>log</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="211" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="211" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eigutils::eigLogger::setLogLevel</definition>
+        <argsstring>(size_t levelZeroToSix)</argsstring>
+        <name>setLogLevel</name>
+        <param>
+          <type>size_t</type>
+          <declname>levelZeroToSix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="217" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="217" bodyend="225"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">log</references>
+      </memberdef>
+      <memberdef kind="function" id="namespaceeigutils_1_1eig_logger_1a82c0e82fa7b658057257b2f08ba028f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void eigutils::eigLogger::setLogger</definition>
+        <argsstring>(std::string name, size_t levelZeroToSix=2, bool timestamp=true)</argsstring>
+        <name>setLogger</name>
+        <param>
+          <type>std::string</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>levelZeroToSix</declname>
+          <defval>2</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>timestamp</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="227" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="227" bodyend="236"/>
+        <references refid="namespaceeigutils_1_1eig_logger_1ab424a1ce754abbd02e0f70ee216386ce" compoundref="nmspc__eigutils_8h" startline="206" endline="210">enableTimeStamp</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" compoundref="nmspc__eigutils_8h" startline="205">log</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1a283e8a93ceaaec1515e70a46abe33994" compoundref="nmspc__eigutils_8h" startline="211" endline="215">disableTimeStamp</references>
+        <references refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" compoundref="nmspc__eigutils_8h" startline="217" endline="225">setLogLevel</references>
+        <references refid="namespace_logger_1ac4c5d1383c7ef00641b0dd8d197bb399" compoundref="nmspc__logger_8cpp" startline="10" endline="14">Logger::enableTimeStamp</references>
+        <references refid="namespace_logger_1aee41265da88547f0a0d0e7ce3f753140" compoundref="nmspc__logger_8cpp" startline="16" endline="20">Logger::disableTimeStamp</references>
+        <references refid="namespace_logger_1ac8adfc900b8255517d9bf3939c9e2a09" compoundref="nmspc__logger_8cpp" startline="22" endline="30">Logger::setLogLevel</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="203" column="1"/>
+  </compounddef>
+</doxygen>

@@ -5,7 +5,7 @@
 #include "class_selfdual_tf_rf_ising.h"
 #include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <general/nmspc_random_numbers.h>
+#include <math/nmspc_random.h>
 #include <iomanip>
 #include <math/nmspc_math.h>
 #include <simulation/nmspc_settings.h>
@@ -31,12 +31,10 @@ class_selfdual_tf_rf_ising::class_selfdual_tf_rf_ising(size_t position_, std::st
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
     delta       = J_log_mean - h_log_mean;
 
-
-
 }
 
 
-void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> MPO_, std::vector<double> parameters) {
+void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4> & MPO_, std::vector<double> & parameters) {
     mpo_internal = MPO_;
     set_hamiltonian(parameters);
     auto mpo1 = Eigen::Map<const Eigen::VectorXcd>(MPO_ .data(),MPO_ .size());
@@ -45,18 +43,18 @@ void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::Tensor<Scalar,4>
     if(mpo1 != mpo2)throw std::runtime_error("MPO mismatch");
 }
 
-void   class_selfdual_tf_rf_ising::set_hamiltonian(const std::vector<double> parameters) {
+void   class_selfdual_tf_rf_ising::set_hamiltonian(const std::vector<double> & parameters) {
     auto temp = Eigen::Map<const Eigen::VectorXd>(parameters.data(),parameters.size());
     set_hamiltonian(temp);
 }
 
 
-void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::MatrixXd all_parameters, int position) {
+void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::MatrixXd & all_parameters, int position) {
     set_hamiltonian (all_parameters.row(position));
 }
 
 
-void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd parameters) {
+void   class_selfdual_tf_rf_ising::set_hamiltonian(const Eigen::VectorXd & parameters) {
     if((int)parameters.size() != num_params ) throw std::runtime_error("Wrong number of parameters given to initialize this model");
     assert((int)parameters.size() == num_params and "ERROR: wrong number of parameters given to initialize this model");
     position       = parameters(0);
@@ -89,13 +87,13 @@ void class_selfdual_tf_rf_ising::set_realization_averages(double J_avg_,double h
 void class_selfdual_tf_rf_ising::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
  *
- * H = - Σ J_{i} sz_{i} sz_{i+1} +  h_{i} sx_{i} + l*(h sx_i sx_{i+1} + J sz_{i} sz_{i+2})
+ * H = - Σ J_{i} sz_{i} sz_{i+1} +  h_{i} sx_{i} + l*(h_avg sx_i sx_{i+1} + J_avg sz_{i} sz_{i+2})
  *
  *  |     I                 0           0              0            0   |
  *  |     sz                0           0              0            0   |
  *  |     sx                0           0              0            0   |
  *  |     0                 I           0              0            0   |
- *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_mean*sx     -l*J_mean*sz     I |
+ *  | -(h_rnd)*sx       -J_rnd*sz   -l*h_avg*sx     -l*J_avg*sz     I   |
  *
  *        2
  *        |
@@ -108,27 +106,40 @@ void class_selfdual_tf_rf_ising::build_mpo()
     if (not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
     mpo_internal.resize(5, 5, spin_dim, spin_dim);
     mpo_internal.setZero();
-    mpo_internal.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
-    mpo_internal.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sz);
-    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(sx);
-    mpo_internal.slice(Eigen::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
-    mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
-    mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
-    mpo_internal.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*h_avg) * sx);
-    mpo_internal.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-(lambda*J_avg) * sz);
-    mpo_internal.slice(Eigen::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(Id);
+    mpo_internal.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
+    mpo_internal.slice(Eigen::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(sz);
+    mpo_internal.slice(Eigen::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(sx);
+    mpo_internal.slice(Eigen::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - e_reduced * Id);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(J_rnd + J_ptb) * sz);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(lambda*h_avg) * sx);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(lambda*J_avg) * sz);
+    mpo_internal.slice(Eigen::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(Id);
 }
 
 void class_selfdual_tf_rf_ising::randomize_hamiltonian(){
     J_rnd       = rn::log_normal(J_log_mean,J_sigma);
     h_rnd       = rn::log_normal(h_log_mean,h_sigma);
     if(all_mpo_parameters_have_been_set or mpo_internal.size()>5){
-        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx);
-        mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-J_rnd * sz);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - e_reduced * Id);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(J_rnd + J_ptb) * sz);
     }
-
 }
 
+void class_selfdual_tf_rf_ising::perturb_hamiltonian(double amplitude){
+    h_ptb  = - amplitude * h_rnd;//* rn::uniform_double_box(0,1);
+    J_ptb  = - amplitude * J_rnd;//* rn::uniform_double_box(0,1);
+    if(all_mpo_parameters_have_been_set or mpo_internal.size()>5){
+        mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - e_reduced * Id);
+        mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(J_rnd + J_ptb) * sz);
+    }
+    if (amplitude == 0.0 and is_perturbed())
+        throw std::runtime_error("MPO(" + std::to_string(get_position()) + ": Should have unperturbed!");
+}
+
+bool class_selfdual_tf_rf_ising::is_perturbed() const {
+    return J_ptb != 0.0 and h_ptb != 0.0;
+}
 
 Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view() const {
     if (e_reduced == 0){return MPO();}
@@ -138,7 +149,7 @@ Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view() const {
 Eigen::Tensor<Scalar,4> class_selfdual_tf_rf_ising::MPO_reduced_view(double site_energy) const {
     if (site_energy == 0){return MPO();}
     Eigen::Tensor<Scalar,4> temp  = MPO();
-    temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::Matrix_to_Tensor2(-h_rnd * sx - site_energy * Id);
+    temp.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-(h_rnd + h_ptb) * sx - site_energy * Id);
     return temp;
 }
 
@@ -157,10 +168,9 @@ Eigen::MatrixXcd class_selfdual_tf_rf_ising::single_site_hamiltonian(
 }
 
 
-std::shared_ptr<class_model_base> class_selfdual_tf_rf_ising::clone() const {return std::make_unique<class_selfdual_tf_rf_ising>(*this);}
+std::unique_ptr<class_model_base> class_selfdual_tf_rf_ising::clone() const {return std::make_unique<class_selfdual_tf_rf_ising>(*this);}
 
 
-void   class_selfdual_tf_rf_ising::set_reduced_energy(double site_energy)         {e_reduced = site_energy;}
 size_t class_selfdual_tf_rf_ising::get_spin_dimension()                     const {return spin_dim;}
 //double class_selfdual_tf_rf_ising::get_energy_reduced()                        const {return e_reduced;}
 //double class_selfdual_tf_rf_ising::get_random_field()                          const {return h_rnd;}
@@ -222,7 +232,23 @@ std::vector<std::string> class_selfdual_tf_rf_ising::get_parameter_names() const
     };
 }
 
-
+//std::vector<double> class_selfdual_tf_rf_ising::get_random_parameter_values() const {
+//
+//    return {(double)get_position(),
+//            J_rnd,
+//            h_rnd,
+//            J_log_mean,
+//            h_log_mean,
+//            J_avg,
+//            h_avg,
+//            J_sigma,
+//            h_sigma,
+//            lambda,
+//            delta,
+//            e_reduced,
+//            (double)spin_dim
+//    };
+//}
 
 std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
     return {(double)get_position(),
@@ -243,18 +269,35 @@ std::vector<double> class_selfdual_tf_rf_ising::get_parameter_values() const {
 
 
 
-void class_selfdual_tf_rf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters){
+void class_selfdual_tf_rf_ising::set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters, bool reverse){
     // Calculate average J_rnd on the whole state
     all_mpo_parameters_have_been_set = true;
-    std::vector<double> J_rnd_vec;
-    std::vector<double> h_rnd_vec;
-    for (auto &params : chain_parameters){
-        J_rnd_vec.push_back(params[1]);
-        h_rnd_vec.push_back(params[2]);
+    std::list<double> J_rnd_list;
+    std::list<double> h_rnd_list;
+    if(reverse){
+        J_rnd_list.emplace_front(0.0);
+        for (auto &params : chain_parameters){
+            J_rnd_list.emplace_front(params[1]);
+            h_rnd_list.emplace_front(params[2]);
+        }
+        J_rnd_list.pop_front();
+    }else{
+        for (auto &params : chain_parameters){
+            J_rnd_list.push_back(params[1]);
+            h_rnd_list.push_back(params[2]);
+        }
+        J_rnd_list.back() = 0.0;
     }
-    double J_rnd_avg = std::accumulate(J_rnd_vec.begin(),J_rnd_vec.end(),0.0)/J_rnd_vec.size();
-    double h_rnd_avg = std::accumulate(h_rnd_vec.begin(),h_rnd_vec.end(),0.0)/h_rnd_vec.size();
+
+    J_rnd = *std::next(J_rnd_list.begin(), get_position());
+    h_rnd = *std::next(h_rnd_list.begin(), get_position());
+    J_rnd_list.pop_back();   // Take average of all minus last
+//    h_rnd_list.pop_back(); // Take average of all
+
+    double J_rnd_avg = std::accumulate(J_rnd_list.begin(),J_rnd_list.end(),0.0)/J_rnd_list.size();
+    double h_rnd_avg = std::accumulate(h_rnd_list.begin(),h_rnd_list.end(),0.0)/h_rnd_list.size();
     set_realization_averages(J_rnd_avg,h_rnd_avg);
+
 }
 
 

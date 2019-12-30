@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1infinite_1_1opt" kind="namespace" language="C++">
+    <compoundname>tools::infinite::opt</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1ac6c454fdb5bb47d59e31df4b476e1a76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; tools::infinite::Scalar, 4 &gt; tools::infinite::opt::find_ground_state</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::string ritz=&quot;SR&quot;)</argsstring>
+        <name>find_ground_state</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>ritz</declname>
+          <defval>&quot;SR&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="271" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="17" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1ab1dea0b6449610fc4895a574c5285d6d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; tools::infinite::Scalar, 4 &gt; tools::infinite::opt::time_evolve_theta</definition>
+        <argsstring>(const class_state_infinite &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;U)</argsstring>
+        <name>time_evolve_theta</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>U</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><verbatim>  1--[ Θ ]--3
+     |   |
+     0   2
+                   1--[ Θ ]--3
+     0   1   ---&gt;     |   |
+     |   |            0   2
+     [ U ]
+     |   |
+     2   3
+</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="272" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="47" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1opt_1adc6d702960bfec9021330f71a99c61c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::opt::truncate_theta</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta, class_state_infinite &amp;state)</argsstring>
+        <name>truncate_theta</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="273" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp" bodystart="70" bodyend="78"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="270" column="1"/>
+  </compounddef>
+</doxygen>

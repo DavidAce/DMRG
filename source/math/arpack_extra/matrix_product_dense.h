@@ -2,14 +2,21 @@
 // Created by david on 2018-05-08.
 //
 
-#ifndef MATRIX_PRODUCT_DENSE_H
-#define MATRIX_PRODUCT_DENSE_H
+#pragma once
 
+//
 #ifdef EIGEN_USE_BLAS
 #define EIGEN_USE_BLAS_SUSPEND
 #undef EIGEN_USE_BLAS
 #endif
-
+#ifdef EIGEN_USE_MKL_ALL
+#define EIGEN_USE_MKL_ALL_SUSPEND
+#undef EIGEN_USE_MKL_ALL
+#endif
+#ifdef EIGEN_USE_LAPACKE_STRICT
+#define EIGEN_USE_LAPACKE_STRICT_SUSPEND
+#undef EIGEN_USE_LAPACKE_STRICT
+#endif
 
 
 
@@ -20,9 +27,17 @@
 #include <Eigen/Core>
 #include <complex.h>
 #undef I
-
 #include <Eigen/LU>
 #define profile_matrix_product_dense 1
+
+#if defined(_MKL_LAPACK_H_)
+#pragma message("_MKL_LAPACK_H_ IS NOT SUPPOSED TO BE DEFINED HERE")
+#endif
+
+#if defined(LAPACK_H)
+#pragma message("LAPACK IS NOT SUPPOSED TO BE DEFINED HERE")
+#endif
+
 
 
 template <typename Scalar_>
@@ -128,15 +143,14 @@ void DenseMatrixProduct<Scalar>::FactorOP()
 
     t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");
-    Scalar sigma;
+   
     if constexpr(std::is_same<Scalar,double>::value)
     {
-        sigma = sigmaR;
         lu.compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
     }
     else
     {
-        sigma = std::complex<double>(sigmaR,sigmaI);
+        Scalar sigma = std::complex<double>(sigmaR,sigmaI);
         lu.compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     }
 
@@ -205,11 +219,18 @@ void DenseMatrixProduct<Scalar>::MultAx(Scalar* x_in, Scalar* x_out) {
 }
 
 
+
 #ifdef EIGEN_USE_BLAS_SUSPEND
 #define EIGEN_USE_BLAS
 #undef EIGEN_USE_BLAS_SUSPEND
 #endif
-
-
-
+#ifdef EIGEN_USE_MKL_ALL_SUSPEND
+#define EIGEN_USE_MKL_ALL
+#undef EIGEN_USE_MKL_ALL_SUSPEND
 #endif
+
+#ifdef EIGEN_USE_LAPACKE_STRICT_SUSPEND
+#define EIGEN_USE_LAPACKE_STRICT
+#undef EIGEN_USE_LAPACKE_STRICT_SUSPEND
+#endif
+

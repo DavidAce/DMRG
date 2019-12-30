@@ -1,0 +1,13 @@
+.. _exhale_function_namespacern_1ab1ff96fded7890b771bfee2e40b661d7:
+
+Function rn::random_with_replacement(const Eigen::ArrayXd&, const int)
+======================================================================
+
+- Defined in :ref:`file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_math_nmspc_random.h`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: rn::random_with_replacement(const Eigen::ArrayXd&, const int)

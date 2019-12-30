@@ -1,5 +1,0 @@
-var searchData=
-[
-  ['maptype',['MapType',['../classeigutils_1_1eig_config.html#a8437834a223effb849b9414743d826c2',1,'eigutils::eigConfig']]],
-  ['matrixtype',['MatrixType',['../class_dense_matrix_product.html#a597c519d8d42eb23a23754946ee706c2',1,'DenseMatrixProduct::MatrixType()'],['../class_sparse_matrix_product.html#a595d1e99d509613aad671450492857b6',1,'SparseMatrixProduct::MatrixType()'],['../classclass___s_v_d.html#aae4ea0d15919e52ae0c6a5159dd4e6f6',1,'class_SVD::MatrixType()'],['../classtools_1_1finite_1_1opt_1_1internals_1_1subspace__functor.html#aca577f6c150c51bac6730b537aa34d2a',1,'tools::finite::opt::internals::subspace_functor::MatrixType()'],['../classtools_1_1finite_1_1opt_1_1internals_1_1direct__functor.html#a45c29d3f5854a5a4b51f28e1631c6896',1,'tools::finite::opt::internals::direct_functor::MatrixType()'],['../namespace_textra.html#a7db6974446758b79bad26e168a8daa78',1,'Textra::MatrixType()'],['../matrix__product__stl_8cpp.html#ad214610a757107160682e44efc97fbed',1,'MatrixType():&#160;matrix_product_stl.cpp'],['../subspace_8cpp.html#ad2b5009a90244fe4592ad8fed4ef9d0b',1,'MatrixType():&#160;subspace.cpp']]]
-];

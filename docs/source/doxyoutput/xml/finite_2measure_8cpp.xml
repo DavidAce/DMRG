@@ -1,0 +1,647 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="finite_2measure_8cpp" kind="file" language="C++">
+    <compoundname>measure.cpp</compoundname>
+    <includes local="no">iomanip</includes>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
+    <includes refid="nmspc__settings_8h" local="no">simulation/nmspc_settings.h</includes>
+    <includes refid="class__environment_8h" local="no">state/class_environment.h</includes>
+    <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
+    <includes refid="nmspc__quantum__mechanics_8h" local="no">general/nmspc_quantum_mechanics.h</includes>
+    <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
+    <includes refid="class__simulation__status_8h" local="no">simulation/class_simulation_status.h</includes>
+    <incdepgraph>
+      <node id="3027">
+        <label>list</label>
+      </node>
+      <node id="3022">
+        <label>iomanip</label>
+      </node>
+      <node id="3045">
+        <label>iterator</label>
+      </node>
+      <node id="3049">
+        <label>state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="3024" relation="include">
+        </childnode>
+        <childnode refid="3026" relation="include">
+        </childnode>
+        <childnode refid="3050" relation="include">
+        </childnode>
+        <childnode refid="3041" relation="include">
+        </childnode>
+        <childnode refid="3051" relation="include">
+        </childnode>
+        <childnode refid="3052" relation="include">
+        </childnode>
+        <childnode refid="3037" relation="include">
+        </childnode>
+        <childnode refid="3038" relation="include">
+        </childnode>
+      </node>
+      <node id="3021">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp</label>
+        <link refid="finite_2measure_8cpp"/>
+        <childnode refid="3022" relation="include">
+        </childnode>
+        <childnode refid="3023" relation="include">
+        </childnode>
+        <childnode refid="3039" relation="include">
+        </childnode>
+        <childnode refid="3041" relation="include">
+        </childnode>
+        <childnode refid="3049" relation="include">
+        </childnode>
+        <childnode refid="3053" relation="include">
+        </childnode>
+        <childnode refid="3042" relation="include">
+        </childnode>
+        <childnode refid="3054" relation="include">
+        </childnode>
+      </node>
+      <node id="3046">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="3047" relation="include">
+        </childnode>
+        <childnode refid="3037" relation="include">
+        </childnode>
+        <childnode refid="3038" relation="include">
+        </childnode>
+      </node>
+      <node id="3037">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="3025">
+        <label>string</label>
+      </node>
+      <node id="3057">
+        <label>hdf5_hl.h</label>
+      </node>
+      <node id="3032">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="3033" relation="include">
+        </childnode>
+        <childnode refid="3034" relation="include">
+        </childnode>
+      </node>
+      <node id="3029">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="3030" relation="include">
+        </childnode>
+        <childnode refid="3031" relation="include">
+        </childnode>
+      </node>
+      <node id="3054">
+        <label>simulation/class_simulation_status.h</label>
+        <link refid="class__simulation__status_8h"/>
+        <childnode refid="3024" relation="include">
+        </childnode>
+        <childnode refid="3025" relation="include">
+        </childnode>
+        <childnode refid="3034" relation="include">
+        </childnode>
+        <childnode refid="3028" relation="include">
+        </childnode>
+        <childnode refid="3055" relation="include">
+        </childnode>
+        <childnode refid="3056" relation="include">
+        </childnode>
+        <childnode refid="3057" relation="include">
+        </childnode>
+      </node>
+      <node id="3047">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="3023">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="3024" relation="include">
+        </childnode>
+        <childnode refid="3025" relation="include">
+        </childnode>
+        <childnode refid="3026" relation="include">
+        </childnode>
+        <childnode refid="3027" relation="include">
+        </childnode>
+        <childnode refid="3028" relation="include">
+        </childnode>
+        <childnode refid="3029" relation="include">
+        </childnode>
+        <childnode refid="3032" relation="include">
+        </childnode>
+        <childnode refid="3035" relation="include">
+        </childnode>
+        <childnode refid="3037" relation="include">
+        </childnode>
+        <childnode refid="3038" relation="include">
+        </childnode>
+      </node>
+      <node id="3038">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="3041">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="3024" relation="include">
+        </childnode>
+        <childnode refid="3042" relation="include">
+        </childnode>
+        <childnode refid="3048" relation="include">
+        </childnode>
+      </node>
+      <node id="3031">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="3052">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="3024" relation="include">
+        </childnode>
+        <childnode refid="3038" relation="include">
+        </childnode>
+        <childnode refid="3029" relation="include">
+        </childnode>
+      </node>
+      <node id="3044">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="3040">
+        <label>simulation/enums.h</label>
+        <link refid="enums_8h"/>
+      </node>
+      <node id="3035">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="3034" relation="include">
+        </childnode>
+        <childnode refid="3036" relation="include">
+        </childnode>
+      </node>
+      <node id="3030">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="3051">
+        <label>state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="3026" relation="include">
+        </childnode>
+        <childnode refid="3050" relation="include">
+        </childnode>
+        <childnode refid="3038" relation="include">
+        </childnode>
+      </node>
+      <node id="3043">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="3038" relation="include">
+        </childnode>
+      </node>
+      <node id="3050">
+        <label>optional</label>
+      </node>
+      <node id="3028">
+        <label>vector</label>
+      </node>
+      <node id="3048">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="3055">
+        <label>array</label>
+      </node>
+      <node id="3036">
+        <label>sstream</label>
+      </node>
+      <node id="3056">
+        <label>hdf5.h</label>
+      </node>
+      <node id="3034">
+        <label>iostream</label>
+      </node>
+      <node id="3033">
+        <label>chrono</label>
+      </node>
+      <node id="3053">
+        <label>general/nmspc_quantum_mechanics.h</label>
+        <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="3037" relation="include">
+        </childnode>
+        <childnode refid="3038" relation="include">
+        </childnode>
+        <childnode refid="3026" relation="include">
+        </childnode>
+        <childnode refid="3028" relation="include">
+        </childnode>
+      </node>
+      <node id="3026">
+        <label>complex</label>
+      </node>
+      <node id="3039">
+        <label>simulation/nmspc_settings.h</label>
+        <link refid="nmspc__settings_8h"/>
+        <childnode refid="3025" relation="include">
+        </childnode>
+        <childnode refid="3028" relation="include">
+        </childnode>
+        <childnode refid="3040" relation="include">
+        </childnode>
+      </node>
+      <node id="3042">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="3043" relation="include">
+        </childnode>
+        <childnode refid="3037" relation="include">
+        </childnode>
+        <childnode refid="3044" relation="include">
+        </childnode>
+        <childnode refid="3038" relation="include">
+        </childnode>
+        <childnode refid="3045" relation="include">
+        </childnode>
+        <childnode refid="3034" relation="include">
+        </childnode>
+        <childnode refid="3022" relation="include">
+        </childnode>
+        <childnode refid="3046" relation="include">
+        </childnode>
+      </node>
+      <node id="3024">
+        <label>memory</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="finite_2measure_8cpp_1a09095cf40b0086f4a7eebd622c372c78" prot="public" static="no">
+        <type><ref refid="classclass__state__finite_1a5d7668429213b903702461426ee3fa98" kindref="member">class_state_finite::Scalar</ref></type>
+        <definition>using Scalar =  class_state_finite::Scalar</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-02-01.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2017-11-12.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__settings_8h" kindref="compound">simulation/nmspc_settings.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__environment_8h" kindref="compound">state/class_environment.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="comment">//#include<sp/>&lt;state/class_mps_2site.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__quantum__mechanics_8h" kindref="compound">general/nmspc_quantum_mechanics.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tensor__extra_8h" kindref="compound">general/nmspc_tensor_extra.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__simulation__status_8h" kindref="compound">simulation/class_simulation_status.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespacestd" kindref="compound">std</ref>;</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
+<codeline lineno="25" refid="finite_2measure_8cpp_1a09095cf40b0086f4a7eebd622c372c78" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/><ref refid="classclass__state__finite_1a5d7668429213b903702461426ee3fa98" kindref="member">class_state_finite::Scalar</ref>;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29" refid="namespacetools_1_1finite_1_1measure_1ac198a39c208e3ccd5af9402510f6243e" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1ac198a39c208e3ccd5af9402510f6243e" kindref="member">tools::finite::measure::length</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" kindref="member">tools::finite::measure::norm</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1aa8b41946188900f582d2b630c2826c19" kindref="member">norm</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1aa8b41946188900f582d2b630c2826c19" kindref="member">norm</ref>.value();}</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>chain;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>temp;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>first<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;<sp/>pos<sp/>&lt;<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();<sp/>pos++){</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/><sp/>&amp;M<sp/>=<sp/>state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>();<sp/></highlight><highlight class="comment">//<sp/>std::get&lt;1&gt;(*mpsL);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(first)<sp/>{chain<sp/>=<sp/>M.contract(M.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{0,1}));<sp/>first=</highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight><highlight class="keywordflow">continue</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>temp<sp/>=</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chain</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(M,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{1}))</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(M.conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1},{1,0}));</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chain<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>norm_chain<sp/>=<sp/>std::abs(<ref refid="namespace_textra_1ac6fcdfc5393a97877b4ff51ea6468caa" kindref="member">Textra::TensorMatrixMap</ref>(chain).trace());</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(norm_chain<sp/>-<sp/>1.0)<sp/>&gt;<sp/><ref refid="namespacesettings_1_1precision_1af6b8f17a6552f984d79f29b60e7ce873" kindref="member">settings::precision::max_norm_error</ref>){</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Measure:<sp/>Norm<sp/>far<sp/>from<sp/>unity:<sp/>{:.16f}&quot;</highlight><highlight class="normal">,<sp/>norm_chain);</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>throw<sp/>std::runtime_error(&quot;Norm<sp/>too<sp/>far<sp/>from<sp/>unity:<sp/>&quot;<sp/>+<sp/>std::to_string(norm_chain));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1aa8b41946188900f582d2b630c2826c19" kindref="member">norm</ref><sp/>=<sp/>norm_chain;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1aa8b41946188900f582d2b630c2826c19" kindref="member">norm</ref>.value();</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="namespacetools_1_1finite_1_1measure_1af66720d92c57155c910f42e03186b149" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1af66720d92c57155c910f42e03186b149" kindref="member">tools::finite::measure::bond_dimension_current</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a0c8962096f453af0f6fdd0d84608a82c" kindref="member">bond_dimension_current</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a0c8962096f453af0f6fdd0d84608a82c" kindref="member">bond_dimension_current</ref>.value();}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.back().get_chiR()<sp/>!=<sp/>state.<ref refid="classclass__state__finite_1aa429713d01dbd7d72056bb28914ca312" kindref="member">current_bond</ref>().dimension(0))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Center<sp/>bond<sp/>dimension<sp/>mismatch!&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a0c8962096f453af0f6fdd0d84608a82c" kindref="member">bond_dimension_current</ref><sp/>=<sp/>state.<ref refid="classclass__state__finite_1aa429713d01dbd7d72056bb28914ca312" kindref="member">current_bond</ref>().dimension(0);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a0c8962096f453af0f6fdd0d84608a82c" kindref="member">bond_dimension_current</ref>.value();</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66" refid="namespacetools_1_1finite_1_1measure_1a67ec4bcbc43bc0856e2d27935d3c11dd" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a67ec4bcbc43bc0856e2d27935d3c11dd" kindref="member">tools::finite::measure::bond_dimension_midchain</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ab7709cb1dbc33dd18d4a0b70edaeecf3" kindref="member">bond_dimension_midchain</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ab7709cb1dbc33dd18d4a0b70edaeecf3" kindref="member">bond_dimension_midchain</ref>.value();}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ab7709cb1dbc33dd18d4a0b70edaeecf3" kindref="member">bond_dimension_midchain</ref><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a971fa45cb1a3df3a0573b52d0c35c2b3" kindref="member">midchain_bond</ref>().dimension(0);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ab7709cb1dbc33dd18d4a0b70edaeecf3" kindref="member">bond_dimension_midchain</ref>.value();</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73" refid="namespacetools_1_1finite_1_1measure_1a59439fc8cd211defcfa432a9fec296c7" refkind="member"><highlight class="normal">std::vector&lt;size_t&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a59439fc8cd211defcfa432a9fec296c7" kindref="member">tools::finite::measure::bond_dimensions</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a9997f3e429540d90b27f9064f3cc8836" kindref="member">bond_dimensions</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a9997f3e429540d90b27f9064f3cc8836" kindref="member">bond_dimensions</ref>.value();}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a9997f3e429540d90b27f9064f3cc8836" kindref="member">bond_dimensions</ref><sp/>=<sp/>std::vector&lt;size_t&gt;{};</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;<sp/>pos<sp/>&lt;<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();<sp/>pos++){</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a9997f3e429540d90b27f9064f3cc8836" kindref="member">bond_dimensions</ref>.value().emplace_back(state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" kindref="member">get_L</ref>().dimension(0));</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" kindref="member">isCenter</ref>()){</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a9997f3e429540d90b27f9064f3cc8836" kindref="member">bond_dimensions</ref>.value().emplace_back(state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" kindref="member">get_LC</ref>().dimension(0));</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a9997f3e429540d90b27f9064f3cc8836" kindref="member">bond_dimensions</ref>.value();</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86" refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a33fb61b356c624e811d52f80d1d28ed5" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a33fb61b356c624e811d52f80d1d28ed5" kindref="member">tools::finite::measure::twosite::energy_minus_energy_reduced</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>){</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>measures<sp/>the<sp/>bare<sp/>energy<sp/>as<sp/>given<sp/>by<sp/>the<sp/>MPO&apos;s.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>On<sp/>each<sp/>MPO<sp/>the<sp/>site<sp/>energy<sp/>*could*<sp/>be<sp/>reduced.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>they<sp/>are<sp/>reduced,<sp/>then</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>&lt;<sp/>H<sp/>&gt;<sp/>=<sp/>E<sp/>-<sp/>E_reduced<sp/>~<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>&lt;<sp/>H<sp/>&gt;<sp/>=<sp/>E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_o_m_p" kindref="compound">OMP</ref><sp/>omp(<ref refid="namespacesettings_1_1threading_1ac01485bfd26c27921bfc55828e1e6dab" kindref="member">settings::threading::num_threads_eigen</ref>);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,<sp/>0&gt;<sp/><sp/>E;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>E.device(omp.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a66aea35569db3d887772a81c3bc76db4" kindref="member">ENV_L</ref>.back().block</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(theta,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{1}))</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a44837909b23b1dcd7c2f567999ffc25a" kindref="member">MPO_L</ref>.back()-&gt;MPO(),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1,2},{0,2}))</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a26c82debe3ef3c9b6dd7ad1b08ecdff4" kindref="member">MPO_R</ref>.front()-&gt;MPO(),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({3,1},{0,2}))</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(theta.conjugate(),<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,2,4},{1,0,2}))</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a111edccb05479b7ae467372ac6cb8553" kindref="member">ENV_R</ref>.front().block,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,2,1},{0,1,2}));</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(std::imag(E(0)))<sp/>&gt;<sp/>1e-10<sp/>){</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;critical(fmt::format(</highlight><highlight class="stringliteral">&quot;Energy<sp/>has<sp/>an<sp/>imaginary<sp/>part:<sp/>{:.16f}<sp/>+<sp/>i<sp/>{:.16f}&quot;</highlight><highlight class="normal">,std::real(E(0)),<sp/>std::imag(E(0))));</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(std::abs(std::imag(E(0)))<sp/>&lt;<sp/>1e-10<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Energy<sp/>has<sp/>an<sp/>imaginary<sp/>part!!!&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>ene<sp/>=<sp/>std::real(E(0));</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::isnan(ene)<sp/>or<sp/>std::isinf(ene))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Energy<sp/>is<sp/>invalid:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>ene));</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><sp/>ene;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" kindref="member">tools::finite::measure::twosite::energy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>){</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>This<sp/>measures<sp/>the<sp/>actual<sp/>energy<sp/>of<sp/>the<sp/>system<sp/>regardless<sp/>of<sp/>the<sp/>reduced/non-reduced<sp/>state<sp/>of<sp/>the<sp/>MPO&apos;s</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>they<sp/>are<sp/>reduced,<sp/>then</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>&quot;Actual<sp/>energy&quot;<sp/>=<sp/>(E<sp/>-<sp/>E_reduced)<sp/>+<sp/>E_reduced<sp/>=<sp/>(~0)<sp/>+<sp/>E_reduced<sp/>=<sp/>E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>&quot;Actual<sp/>energy&quot;<sp/>=<sp/>(E<sp/>-<sp/>E_reduced)<sp/>+<sp/>E_reduced<sp/>=<sp/>(E)<sp/><sp/>+<sp/>0<sp/>=<sp/>E</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a33fb61b356c624e811d52f80d1d28ed5" kindref="member">twosite::energy_minus_energy_reduced</ref>(state,theta)<sp/>+<sp/>state.<ref refid="classclass__state__finite_1af5765949c5a515d45526b4c266a41dd2" kindref="member">get_energy_reduced</ref>();</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"></highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126" refid="namespacetools_1_1finite_1_1measure_1_1twosite_1ab6ec7489e8a30af7cfff61b1fe4af8b0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1ab6ec7489e8a30af7cfff61b1fe4af8b0" kindref="member">tools::finite::measure::twosite::energy_per_site</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>){</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" kindref="member">twosite::energy</ref>(state,theta)/state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();</highlight></codeline>
+<codeline lineno="128"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="130" refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a5e864017c044b44b96a5b349f0b02a50" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a5e864017c044b44b96a5b349f0b02a50" kindref="member">tools::finite::measure::twosite::energy_variance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>){</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Depending<sp/>on<sp/>whether<sp/>the<sp/>mpo&apos;s<sp/>are<sp/>reduced<sp/>or<sp/>not<sp/>we<sp/>get<sp/>different<sp/>formulas.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>mpo&apos;s<sp/>are<sp/>reduced:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>Var<sp/>H<sp/>=<sp/>&lt;(H-E_red)^2&gt;<sp/>-<sp/>&lt;(H-E_red)&gt;^2<sp/>=<sp/>&lt;H^2&gt;<sp/>-<sp/>2&lt;H&gt;E_red<sp/>+<sp/>E_red^2<sp/>-<sp/>(&lt;H&gt;<sp/>-<sp/>E_red)<sp/>^2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>H2<sp/><sp/><sp/><sp/>-<sp/>2*E*E_red<sp/>+<sp/>E_red^2<sp/>-<sp/>E^2<sp/>+<sp/>2*E*E_red<sp/>-<sp/>E_red^2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>H2<sp/><sp/><sp/><sp/>-<sp/>E^2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>so<sp/>Var<sp/>H<sp/>=<sp/>&lt;(H-E_red)^2&gt;<sp/>-<sp/>energy_minus_energy_reduced^2<sp/>=<sp/>H2<sp/>-<sp/>~0</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>where<sp/>H2<sp/>is<sp/>computed<sp/>with<sp/>reduced<sp/>mpo&apos;s.<sp/>Note<sp/>that<sp/>~0<sp/>is<sp/>not<sp/>exactly<sp/>zero</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>because<sp/>E_red<sp/>!=<sp/>E<sp/>necessarily<sp/>(though<sp/>they<sp/>are<sp/>supposed<sp/>to<sp/>be<sp/>very<sp/>close)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Else:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/>Var<sp/>H<sp/>=<sp/>&lt;(H<sp/>-<sp/>0)^2&gt;<sp/>-<sp/>&lt;H<sp/>-<sp/>0&gt;^2<sp/>=<sp/>H2<sp/>-<sp/>E^2</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class_o_m_p" kindref="compound">OMP</ref><sp/>omp(<ref refid="namespacesettings_1_1threading_1ac01485bfd26c27921bfc55828e1e6dab" kindref="member">settings::threading::num_threads_eigen</ref>);</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,<sp/>0&gt;<sp/>H2;</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/>H2.device(omp.<ref refid="class_o_m_p_1a777056c7d783729dd94be0e1c4a3e569" kindref="member">dev</ref>)<sp/>=</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1ab6b4a56e88ca9905d4092182737adb5a" kindref="member">ENV2_L</ref>.back().block</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(theta<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0}<sp/><sp/>,{1}))</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a44837909b23b1dcd7c2f567999ffc25a" kindref="member">MPO_L</ref>.back()-&gt;MPO()<sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1,3},{0,2}))</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a26c82debe3ef3c9b6dd7ad1b08ecdff4" kindref="member">MPO_R</ref>.front()-&gt;MPO()<sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({4,2},{0,2}))</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a44837909b23b1dcd7c2f567999ffc25a" kindref="member">MPO_L</ref>.back()-&gt;MPO()<sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1,3},{0,2}))</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a26c82debe3ef3c9b6dd7ad1b08ecdff4" kindref="member">MPO_R</ref>.front()-&gt;MPO()<sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({4,3},{0,2}))</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(theta.conjugate()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,3,5},{1,0,2}))</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a00c90dfc9aab186aefeb0f83ccf5c068" kindref="member">ENV2_R</ref>.front().block<sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,3,1,2},{0,1,2,3}));</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" kindref="member">energy</ref>;</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1ae9674e542cf36b0b22d4d85abf0b733b" kindref="member">isReduced</ref>()){</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>energy<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a33fb61b356c624e811d52f80d1d28ed5" kindref="member">tools::finite::measure::twosite::energy_minus_energy_reduced</ref>(state,theta);</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>energy<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" kindref="member">tools::finite::measure::twosite::energy</ref>(state,theta);</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>E2<sp/>=<sp/>energy*<ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" kindref="member">energy</ref>;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>var<sp/>=<sp/>std::abs(H2(0)<sp/>-<sp/>E2);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::isnan(var)<sp/>or<sp/>std::isinf(var))<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(</highlight><highlight class="stringliteral">&quot;Variance<sp/>is<sp/>invalid:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>var));</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(var<sp/>&lt;<sp/>state.<ref refid="classclass__state__finite_1a2ac4249cf2e85ae5fe84253ca33e2873" kindref="member">lowest_recorded_variance</ref>){</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a2ac4249cf2e85ae5fe84253ca33e2873" kindref="member">lowest_recorded_variance</ref><sp/>=<sp/>var;</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>var;</highlight></codeline>
+<codeline lineno="168"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171" refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a4e46ab266e45e5ff4e9b7abc56bf1458" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a4e46ab266e45e5ff4e9b7abc56bf1458" kindref="member">tools::finite::measure::twosite::energy_variance_per_site</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>){</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a5e864017c044b44b96a5b349f0b02a50" kindref="member">twosite::energy_variance</ref>(state,theta)/state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();</highlight></codeline>
+<codeline lineno="173"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="namespacetools_1_1finite_1_1measure_1af68ec1bfec44e2ebd09751dbcc46439b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1af68ec1bfec44e2ebd09751dbcc46439b" kindref="member">tools::finite::measure::energy</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a07c37d8d061f8b8dda2e3e567c3077cc" kindref="member">energy</ref>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a07c37d8d061f8b8dda2e3e567c3077cc" kindref="member">energy</ref>.value();</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.empty()){</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a5b4d41aa8fd51633e490fe64e7d162a0" kindref="member">get_theta</ref>();</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a07c37d8d061f8b8dda2e3e567c3077cc" kindref="member">energy</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" kindref="member">twosite::energy</ref>(state,<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>);</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a75c2e8572efd17c8d4bf2948f4bfebc3" kindref="member">get_multitheta</ref>();</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a1e15585a9deb384bcfb0caa9e884caea" kindref="member">tools::common::profile::t_ene</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a07c37d8d061f8b8dda2e3e567c3077cc" kindref="member">energy</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" kindref="member">multisite::energy</ref>(state,<ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>);</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a07c37d8d061f8b8dda2e3e567c3077cc" kindref="member">energy</ref>.value();</highlight></codeline>
+<codeline lineno="193"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196" refid="namespacetools_1_1finite_1_1measure_1ae45038e78b02e5f5307a8b618941bbd8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1ae45038e78b02e5f5307a8b618941bbd8" kindref="member">tools::finite::measure::energy_per_site</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a11182ed066985fbb788834ac5682616d" kindref="member">energy_per_site</ref>)</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a11182ed066985fbb788834ac5682616d" kindref="member">energy_per_site</ref>.value();</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.size()<sp/>&gt;<sp/>2)<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1ab6ec7489e8a30af7cfff61b1fe4af8b0" kindref="member">multisite::energy_per_site</ref>(state);</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a11182ed066985fbb788834ac5682616d" kindref="member">energy_per_site</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a095568b22a6f9a79ddc8bdd2b543c94b" kindref="member">energy</ref>(state)/state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a11182ed066985fbb788834ac5682616d" kindref="member">energy_per_site</ref>.value();</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="namespacetools_1_1finite_1_1measure_1aaf6b94743b51434a613712914ee3d8a0" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1aaf6b94743b51434a613712914ee3d8a0" kindref="member">tools::finite::measure::energy_variance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ac09462b4c582e3b3442c870e49b93565" kindref="member">energy_variance</ref>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ac09462b4c582e3b3442c870e49b93565" kindref="member">energy_variance</ref>.value();</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1aa21d9b309aa5ed2e3d27951005be1c35" kindref="member">active_sites</ref>.empty()){</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a5b4d41aa8fd51633e490fe64e7d162a0" kindref="member">get_theta</ref>();</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ac09462b4c582e3b3442c870e49b93565" kindref="member">energy_variance</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a5e864017c044b44b96a5b349f0b02a50" kindref="member">twosite::energy_variance</ref>(state,<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref><sp/>=<sp/>state.<ref refid="classclass__state__finite_1a75c2e8572efd17c8d4bf2948f4bfebc3" kindref="member">get_multitheta</ref>();</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a6589d227812b0e0a40dbe080e54840c5" kindref="member">tools::common::profile::t_var</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ac09462b4c582e3b3442c870e49b93565" kindref="member">energy_variance</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1_1twosite_1a5e864017c044b44b96a5b349f0b02a50" kindref="member">multisite::energy_variance</ref>(state,<sp/><ref refid="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" kindref="member">theta</ref>);</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ac09462b4c582e3b3442c870e49b93565" kindref="member">energy_variance</ref>.value();</highlight></codeline>
+<codeline lineno="219"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight></codeline>
+<codeline lineno="222" refid="namespacetools_1_1finite_1_1measure_1ac2659e53bedfca1f195553d876134e37" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1ac2659e53bedfca1f195553d876134e37" kindref="member">tools::finite::measure::energy_variance_per_site</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a8385794cdf61efdaf55759ca63cbaeb9" kindref="member">energy_variance_per_site</ref>)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a8385794cdf61efdaf55759ca63cbaeb9" kindref="member">energy_variance_per_site</ref>.value();</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a8385794cdf61efdaf55759ca63cbaeb9" kindref="member">energy_variance_per_site</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1aaf6b94743b51434a613712914ee3d8a0" kindref="member">tools::finite::measure::energy_variance</ref>(state)/state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a8385794cdf61efdaf55759ca63cbaeb9" kindref="member">energy_variance_per_site</ref>.value();</highlight></codeline>
+<codeline lineno="226"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight></codeline>
+<codeline lineno="229" refid="namespacetools_1_1finite_1_1measure_1a507413053ebde17dea80e3544872237b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a507413053ebde17dea80e3544872237b" kindref="member">tools::finite::measure::energy_normalized</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref><sp/>&amp;sim_status)<sp/>{</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><sp/>(<ref refid="namespacetools_1_1finite_1_1measure_1ae45038e78b02e5f5307a8b618941bbd8" kindref="member">tools::finite::measure::energy_per_site</ref>(state)<sp/>-<sp/>sim_status.<ref refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" kindref="member">energy_min</ref><sp/>)<sp/>/<sp/>(sim_status.<ref refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" kindref="member">energy_max</ref><sp/>-<sp/>sim_status.<ref refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" kindref="member">energy_min</ref>);</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight></codeline>
+<codeline lineno="235" refid="namespacetools_1_1finite_1_1measure_1ad4d342b14748aa9b6e9238a708a2ba8f" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1ad4d342b14748aa9b6e9238a708a2ba8f" kindref="member">tools::finite::measure::entanglement_entropy_current</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a22a42ad587494c414f98d0cc89a863e0" kindref="member">entanglement_entropy_current</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a22a42ad587494c414f98d0cc89a863e0" kindref="member">entanglement_entropy_current</ref>.value();}</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">tools::common::profile::t_ent</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>LC<sp/>=<sp/>state.<ref refid="classclass__state__finite_1aa429713d01dbd7d72056bb28914ca312" kindref="member">current_bond</ref>();</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,0&gt;<sp/>SE<sp/><sp/>=<sp/>-LC.square()</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(LC.square().log().eval(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{0}));</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a22a42ad587494c414f98d0cc89a863e0" kindref="member">entanglement_entropy_current</ref><sp/>=<sp/>std::real(SE(0));</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">tools::common::profile::t_ent</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a22a42ad587494c414f98d0cc89a863e0" kindref="member">entanglement_entropy_current</ref>.value();</highlight></codeline>
+<codeline lineno="244"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246" refid="namespacetools_1_1finite_1_1measure_1a5da3c6001a1e7c6f3897afb3f30b3150" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a5da3c6001a1e7c6f3897afb3f30b3150" kindref="member">tools::finite::measure::entanglement_entropy_midchain</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a156eb9e83c52eb8508f2313ac17461ce" kindref="member">entanglement_entropy_midchain</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a156eb9e83c52eb8508f2313ac17461ce" kindref="member">entanglement_entropy_midchain</ref>.value();}</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">tools::common::profile::t_ent</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>LC<sp/>=<sp/>state.<ref refid="classclass__state__finite_1a971fa45cb1a3df3a0573b52d0c35c2b3" kindref="member">midchain_bond</ref>();</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,0&gt;<sp/>SE<sp/><sp/>=<sp/>-LC.square()</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(LC.square().log().eval(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{0}));</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a156eb9e83c52eb8508f2313ac17461ce" kindref="member">entanglement_entropy_midchain</ref><sp/>=<sp/><sp/>std::real(SE(0));</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">tools::common::profile::t_ent</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a156eb9e83c52eb8508f2313ac17461ce" kindref="member">entanglement_entropy_midchain</ref>.value();</highlight></codeline>
+<codeline lineno="255"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257" refid="namespacetools_1_1finite_1_1measure_1a4515a169c43487b9dd80ed581c0d1d5e" refkind="member"><highlight class="normal">std::vector&lt;double&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a4515a169c43487b9dd80ed581c0d1d5e" kindref="member">tools::finite::measure::entanglement_entropies</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ae809709f838bde3545f2200e05c33b56" kindref="member">entanglement_entropies</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ae809709f838bde3545f2200e05c33b56" kindref="member">entanglement_entropies</ref>.value();}</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">tools::common::profile::t_ent</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a4515a169c43487b9dd80ed581c0d1d5e" kindref="member">entanglement_entropies</ref>;</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;<sp/>pos<sp/>&lt;<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();<sp/>pos++){</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;L<sp/>=<sp/>state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1a875fa2cd30d58045deff56efad3c0f21" kindref="member">get_L</ref>();</highlight></codeline>
+<codeline lineno="263"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,<sp/>0&gt;<sp/>SE<sp/>=<sp/>-L.square().contract(L.square().log().eval(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},<sp/>{0}));</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>entanglement_entropies.emplace_back(std::real(SE(0)));</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1a7fdd521f619a8c39b8549d450814c419" kindref="member">isCenter</ref>()){</highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;LC<sp/>=<sp/>state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1a27a658f24c50b4b815122aacab41d7e4" kindref="member">get_LC</ref>();</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SE<sp/>=<sp/>-LC.square().contract(LC.square().log().eval(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},<sp/>{0}));</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>entanglement_entropies.emplace_back(std::real(SE(0)));</highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a22a42ad587494c414f98d0cc89a863e0" kindref="member">entanglement_entropy_current</ref><sp/>=<sp/><sp/>std::real(SE(0));</highlight></codeline>
+<codeline lineno="270"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ae809709f838bde3545f2200e05c33b56" kindref="member">entanglement_entropies</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a4515a169c43487b9dd80ed581c0d1d5e" kindref="member">entanglement_entropies</ref>;</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a8efa8e19dcd7c0de8e819e37cc99bb37" kindref="member">tools::common::profile::t_ent</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ae809709f838bde3545f2200e05c33b56" kindref="member">entanglement_entropies</ref>.value();</highlight></codeline>
+<codeline lineno="275"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight></codeline>
+<codeline lineno="278" refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" refkind="member"><highlight class="normal">std::vector&lt;double&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">tools::finite::measure::spin_components</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state){</highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ad344d362f1869fb1b766865d9d86e8b4" kindref="member">spin_components</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ad344d362f1869fb1b766865d9d86e8b4" kindref="member">spin_components</ref>.value();}</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a940114d9be5522a2dac0bf516514c9b2" kindref="member">spin_component_sx</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">measure::spin_component</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">qm::spinOneHalf::sx</ref>);</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ac2607b116025b8caf6b85d34a0bd6762" kindref="member">spin_component_sy</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">measure::spin_component</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" kindref="member">qm::spinOneHalf::sy</ref>);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ae4c76c3d5ba105bdeac4fa7d1ecc9cb1" kindref="member">spin_component_sz</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">measure::spin_component</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">qm::spinOneHalf::sz</ref>);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ad344d362f1869fb1b766865d9d86e8b4" kindref="member">spin_components</ref><sp/>=<sp/><sp/>{state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1a940114d9be5522a2dac0bf516514c9b2" kindref="member">spin_component_sx</ref>.value(),</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ac2607b116025b8caf6b85d34a0bd6762" kindref="member">spin_component_sy</ref>.value(),</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ae4c76c3d5ba105bdeac4fa7d1ecc9cb1" kindref="member">spin_component_sz</ref>.value()};</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state.<ref refid="classclass__state__finite_1a7c8f002ac9065203eeb0751aad9ddcf9" kindref="member">measurements</ref>.<ref refid="structclass__state__finite_1_1_measurements_1ad344d362f1869fb1b766865d9d86e8b4" kindref="member">spin_components</ref>.value();</highlight></codeline>
+<codeline lineno="287"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"></highlight></codeline>
+<codeline lineno="290" refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">tools::finite::measure::spin_component</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Matrix2cd<sp/>&amp;<sp/>paulimatrix){</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[mpo,L,R]<sp/><sp/><sp/>=<sp/><ref refid="namespaceqm_1_1mpo_1aef01a3621428315dc34cdb8059851389" kindref="member">qm::mpo::pauli_mpo</ref>(paulimatrix);</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::TensorRef&lt;Eigen::Tensor&lt;Scalar,3&gt;&gt;<sp/>temp;</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;<sp/>pos<sp/>&lt;<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();<sp/>pos++){</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>temp<sp/>=<sp/>L.contract(state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{1}))</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>().conjugate()<sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{1}))</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(mpo<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1,3},{0,2,3}));</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(L.dimensions()<sp/>==<sp/>R.dimensions());</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,0&gt;<sp/>parity_tmp<sp/>=<sp/>L.contract(R,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1,2},{0,1,2}));</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>parity<sp/>=<sp/>std::real(parity_tmp(0));</highlight></codeline>
+<codeline lineno="305"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>parity;</highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight></codeline>
+<codeline lineno="310" refid="namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b" refkind="member"><highlight class="normal">Eigen::Tensor&lt;Scalar,1&gt;<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a6b0ef492a7f7af947258638f60e9a08b" kindref="member">tools::finite::measure::mps_wavefn</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state){</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>chain(1,1);</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/>chain.setConstant(1.0);</highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::TensorRef&lt;Eigen::Tensor&lt;Scalar,2&gt;&gt;<sp/>temp;</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>&quot;state&quot;<sp/>is<sp/>a<sp/>matrix<sp/>whose<sp/>0<sp/>index<sp/>keeps<sp/>growing.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>each<sp/>site<sp/>that<sp/>passes,<sp/>it<sp/>grows<sp/>by<sp/>GA.dimension(0)<sp/>=<sp/>phys<sp/>dim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Say<sp/>the<sp/>state<sp/>is<sp/>a<sp/>16x7<sp/>matrix<sp/>(having<sp/>contracted<sp/>4<sp/>particles,<sp/>and<sp/>the<sp/>latest</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>chi<sp/>was<sp/>7).<sp/>Then<sp/>contracting<sp/>the<sp/>next<sp/>site,<sp/>with<sp/>dimensions<sp/>2x7x9<sp/>will<sp/>get<sp/>you<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>16x2x9<sp/>tensor.<sp/>Now<sp/>the<sp/>reshaping<sp/>convert<sp/>it<sp/>into<sp/>a<sp/>32<sp/>x<sp/>9<sp/>matrix.<sp/>Because</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigen<sp/>is<sp/>column<sp/>major,<sp/>the<sp/>doubling<sp/>16-&gt;32<sp/>will<sp/>stack<sp/>the<sp/>third<sp/>index<sp/>twice.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>mpsL<sp/>:<sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>){</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim0<sp/>=<sp/>mpsL.get_spin_dim();</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dimR<sp/>=<sp/>mpsL.get_chiR();</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dimL<sp/>=<sp/>chain.dimension(0);</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>temp<sp/>=<sp/>chain</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(mpsL.get_M(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1},{1}))</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{dimL<sp/>*<sp/>dim0,<sp/>dimR});</highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chain<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>mpsR<sp/>:<sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>){</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dim0<sp/>=<sp/>mpsR.get_spin_dim();</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dimR<sp/>=<sp/>mpsR.get_chiR();</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dimL<sp/>=<sp/>chain.dimension(0);</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>temp<sp/>=<sp/>chain</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(mpsR.get_M(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1},{1}))</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">array2</ref>{dimL<sp/>*<sp/>dim0,<sp/>dimR});</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>chain<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,1&gt;<sp/>mps_chain<sp/>=<sp/>chain.reshape(<ref refid="namespace_textra_1a4605428e7dc10e4e43f43e69f6ddbd75" kindref="member">array1</ref>{chain.dimension(0)});</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>norm_chain<sp/>=<sp/><ref refid="namespace_textra_1ad5ceb0b38e8e75528105703cd4565833" kindref="member">Textra::TensorVectorMap</ref>(chain).norm();</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(std::abs(norm_chain<sp/>-<sp/>1.0)<sp/>&gt;<sp/><ref refid="namespacesettings_1_1precision_1af6b8f17a6552f984d79f29b60e7ce873" kindref="member">settings::precision::max_norm_error</ref>){</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Norm<sp/>far<sp/>from<sp/>unity:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>norm_chain);</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Norm<sp/>too<sp/>far<sp/>from<sp/>unity:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(norm_chain));</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mps_chain;</highlight></codeline>
+<codeline lineno="348"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/measure.cpp"/>
+  </compounddef>
+</doxygen>

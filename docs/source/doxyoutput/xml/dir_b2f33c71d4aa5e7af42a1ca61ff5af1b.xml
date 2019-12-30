@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_b2f33c71d4aa5e7af42a1ca61ff5af1b" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source</compoundname>
+    <innerdir refid="dir_1f1e02da0ed68619c8cd86756bb8077c">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms</innerdir>
+    <innerdir refid="dir_9cdd153f0f1b41b116eb8c6c3efd2239">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general</innerdir>
+    <innerdir refid="dir_80c9bbdb0d239ca6adfcaca0891dbb0e">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io</innerdir>
+    <innerdir refid="dir_5a2bb10aa94e3e78e9f9f2d4a3256a0b">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math</innerdir>
+    <innerdir refid="dir_2d034bb03cdc7f5c767be5bbfd923bcf">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model</innerdir>
+    <innerdir refid="dir_28ecf1530334b765a757f23ed73063e6">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation</innerdir>
+    <innerdir refid="dir_a32acfe4a752551b45646f1c64efe790">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state</innerdir>
+    <innerdir refid="dir_d4997a96f2e948238c4ace8570226aa1">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools</innerdir>
+    <innerfile refid="main_8cpp">main.cpp</innerfile>
+    <innerfile refid="main_8h">main.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1common_1_1io_1_1h5tmp" kind="namespace" language="C++">
+    <compoundname>tools::common::io::h5tmp</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1ae0178ac04369bbdddf243e45a8f268ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string tools::common::io::h5tmp::set_tmp_prefix</definition>
+        <argsstring>(const std::string &amp;output_filename)</argsstring>
+        <name>set_tmp_prefix</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>output_filename</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="361" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="16" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a4c3d2d889bd2dca9bbfa4ca8558c60be" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string tools::common::io::h5tmp::unset_tmp_prefix</definition>
+        <argsstring>(const std::string &amp;output_filename)</argsstring>
+        <name>unset_tmp_prefix</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>output_filename</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="362" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="48" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1a555a0b980c2c3ea1d028bec935f3e43b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5tmp::copy_from_tmp</definition>
+        <argsstring>(const std::string &amp;output_filename)</argsstring>
+        <name>copy_from_tmp</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>output_filename</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="363" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="88" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1af8091fb2b9e8bb05415b087211e68908" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5tmp::create_directory</definition>
+        <argsstring>(const std::string &amp;dir)</argsstring>
+        <name>create_directory</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>dir</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="364" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="65" bodyend="85"/>
+        <references refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" compoundref="nmspc__tools_8h" startline="36">tools::log</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1io_1_1h5tmp_1ab4d70b7a679a8246d3750d1fbe627569" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::io::h5tmp::remove_from_temp</definition>
+        <argsstring>(const std::string output_filename)</argsstring>
+        <name>remove_from_temp</name>
+        <param>
+          <type>const std::string</type>
+          <declname>output_filename</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="365" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io/h5pp_tmp.cpp" bodystart="116" bodyend="136"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="360" column="1"/>
+  </compounddef>
+</doxygen>
