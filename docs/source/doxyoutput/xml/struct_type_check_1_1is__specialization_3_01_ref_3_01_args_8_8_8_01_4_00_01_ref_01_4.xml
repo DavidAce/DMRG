@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="struct_type_check_1_1is__specialization_3_01_ref_3_01_args_8_8_8_01_4_00_01_ref_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>TypeCheck::is_specialization&lt; Ref&lt; Args... &gt;, Ref &gt;</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">true_type</basecompoundref>
+    <includes refid="nmspc__type__check_8h" local="no">nmspc_type_check.h</includes>
+    <templateparamlist>
+      <param>
+        <type>template&lt; typename... &gt; class</type>
+        <declname>Ref</declname>
+        <defname>Ref</defname>
+      </param>
+      <param>
+        <type>typename...</type>
+        <declname>Args</declname>
+        <defname>Args</defname>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="425">
+        <label>true_type</label>
+      </node>
+      <node id="424">
+        <label>TypeCheck::is_specialization&lt; Ref&lt; Args... &gt;, Ref &gt;</label>
+        <link refid="struct_type_check_1_1is__specialization_3_01_ref_3_01_args_8_8_8_01_4_00_01_ref_01_4"/>
+        <childnode refid="425" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="427">
+        <label>true_type</label>
+      </node>
+      <node id="426">
+        <label>TypeCheck::is_specialization&lt; Ref&lt; Args... &gt;, Ref &gt;</label>
+        <link refid="struct_type_check_1_1is__specialization_3_01_ref_3_01_args_8_8_8_01_4_00_01_ref_01_4"/>
+        <childnode refid="427" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_type_check.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_type_check.h" bodystart="33" bodyend="33"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

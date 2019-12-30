@@ -1,0 +1,271 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__h5table__profiling_1_1meta__struct" kind="struct" language="C++" prot="private">
+    <compoundname>class_h5table_profiling::meta_struct</compoundname>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1a6b6c2b1ca0c2b4bcde613fd5a523e587" prot="public" static="yes" mutable="no">
+        <type>constexpr hsize_t</type>
+        <definition>constexpr hsize_t class_h5table_profiling::meta_struct::NFIELDS</definition>
+        <argsstring></argsstring>
+        <name>NFIELDS</name>
+        <initializer>= 28</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="298" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="298" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1a97bf429569581e0307b562be132d4d17" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_h5table_profiling::meta_struct::dst_size</definition>
+        <argsstring></argsstring>
+        <name>dst_size</name>
+        <initializer>= sizeof (<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="299" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="299" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1a964d71daf59a6ad8fb8e3d91b46d139e" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__h5table__profiling_1_1meta__struct_1a6b6c2b1ca0c2b4bcde613fd5a523e587" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t,NFIELDS&gt; class_h5table_profiling::meta_struct::dst_offsets</definition>
+        <argsstring></argsstring>
+        <name>dst_offsets</name>
+        <initializer>= {
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, iteration),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, step),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, position),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_tot),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_run),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_eig),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_svd),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ene),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_var),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ent),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_hdf),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_prj),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_opt),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_chk),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ene_mpo),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ene_ham),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ene_mom),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_var_mpo),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_var_ham),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_var_mom),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_env),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_evo),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_udt),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_ste),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_prt),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_obs),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_mps),
+                HOFFSET(<ref refid="structclass__h5table__profiling_1_1data__struct" kindref="compound">data_struct</ref>, t_chi),
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="300" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="300" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1a2de1fe3b4d5bfd5ed72d393b2e5d7541" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__h5table__profiling_1_1meta__struct_1a6b6c2b1ca0c2b4bcde613fd5a523e587" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t,NFIELDS&gt; class_h5table_profiling::meta_struct::dst_sizes</definition>
+        <argsstring></argsstring>
+        <name>dst_sizes</name>
+        <initializer>= {
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a9dee89364369e9ac2320452b415f82f0" kindref="member">data_struct::iteration</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a61550460037232f85aea0b5142c8d50e" kindref="member">data_struct::step</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1ae719f215236153e180f0c3101a5315d6" kindref="member">data_struct::position</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1ae38590e343ae29b7b0d3b802fd59b16c" kindref="member">data_struct::t_tot</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a090cde732c2599e7fa3dbcb874a4bfdc" kindref="member">data_struct::t_run</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a86da5de35b8f25bdb248dc7408b45223" kindref="member">data_struct::t_eig</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1ace6c6dd4d0601d40e5d577a8bc8c7577" kindref="member">data_struct::t_svd</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1ad987923c3666f4ae567f64ad2b826282" kindref="member">data_struct::t_ene</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a39447ddc47e0911ba7f2c6a73d03a096" kindref="member">data_struct::t_var</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a820fa70372c7db896e971719088fb290" kindref="member">data_struct::t_ent</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1ae6c6515ad685cf3dc7f887fe3a49f0cb" kindref="member">data_struct::t_hdf</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a524b74f45f160338d6f55cc05ed4f571" kindref="member">data_struct::t_prj</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a4dc08271ff837d56e0658e5f8185e6e3" kindref="member">data_struct::t_opt</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a89846cfcad65bfdc8ac4301342c2798f" kindref="member">data_struct::t_chk</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a7a391aaf87b799f6d0522437260e55ab" kindref="member">data_struct::t_ene_mpo</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1aa1aabda4286a23cc939dbf310c581edf" kindref="member">data_struct::t_ene_ham</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a9425db5989d606049a07a73cc9c9f242" kindref="member">data_struct::t_ene_mom</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a539f4a5460f234ed827201f22e489dcc" kindref="member">data_struct::t_var_mpo</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a9dcaad0c3eca3ae9bea47f51969fc986" kindref="member">data_struct::t_var_ham</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a4aa0a258d1b05bb8e63b9d19c05283b0" kindref="member">data_struct::t_var_mom</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1ad43a6190e71324d78b0f8679e594c244" kindref="member">data_struct::t_env</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a80ac2e6a6b2cd1d4f65a794b56deba69" kindref="member">data_struct::t_evo</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1abd50caa1be36525900945a302708cbde" kindref="member">data_struct::t_udt</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a0c9397c69d9ab911761e0d4350c67472" kindref="member">data_struct::t_ste</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1afc92c236f236191e1a7666bdf8d62d55" kindref="member">data_struct::t_prt</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a6d27cc9d1066dbdef69b9b9792cac9fa" kindref="member">data_struct::t_obs</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1a5293908cb5c2f252b4e4d497fcccb61a" kindref="member">data_struct::t_mps</ref>),
+                sizeof(<ref refid="structclass__h5table__profiling_1_1data__struct_1aa81e8cd67183d330d1b746f054e08817" kindref="member">data_struct::t_chi</ref>)
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="330" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="330" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1a33c7260f3eb99401ef27e5179912efc0" prot="public" static="no" mutable="no">
+        <type>std::array&lt; const char *, <ref refid="structclass__h5table__profiling_1_1meta__struct_1a6b6c2b1ca0c2b4bcde613fd5a523e587" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;const char*,NFIELDS&gt; class_h5table_profiling::meta_struct::field_names</definition>
+        <argsstring></argsstring>
+        <name>field_names</name>
+        <initializer>= {
+                &quot;iteration&quot;,
+                &quot;step&quot;,
+                &quot;position&quot;,
+                &quot;t_tot&quot;,
+                &quot;t_run&quot;,
+                &quot;t_eig&quot;,
+                &quot;t_svd&quot;,
+                &quot;t_ene&quot;,
+                &quot;t_var&quot;,
+                &quot;t_ent&quot;,
+                &quot;t_hdf&quot;,
+                &quot;t_prj&quot;,
+                &quot;t_opt&quot;,
+                &quot;t_chk&quot;,
+                &quot;t_ene_mpo&quot;,
+                &quot;t_ene_ham&quot;,
+                &quot;t_ene_mom&quot;,
+                &quot;t_var_mpo&quot;,
+                &quot;t_var_ham&quot;,
+                &quot;t_var_mom&quot;,
+                &quot;t_env&quot;,
+                &quot;t_evo&quot;,
+                &quot;t_udt&quot;,
+                &quot;t_ste&quot;,
+                &quot;t_prt&quot;,
+                &quot;t_obs&quot;,
+                &quot;t_mps&quot;,
+                &quot;t_chi&quot;
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="360" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="360" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1af743c164624494624036c476c8a058ea" prot="public" static="no" mutable="no">
+        <type>std::array&lt; hid_t, <ref refid="structclass__h5table__profiling_1_1meta__struct_1a6b6c2b1ca0c2b4bcde613fd5a523e587" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;hid_t,NFIELDS&gt; class_h5table_profiling::meta_struct::field_types</definition>
+        <argsstring></argsstring>
+        <name>field_types</name>
+        <initializer>= {
+                H5T_NATIVE_INT, H5T_NATIVE_INT, H5T_NATIVE_INT,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE,H5T_NATIVE_DOUBLE
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="391" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="391" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1a2c17044618cfee76b73d952db2a104a0" prot="public" static="no" mutable="no">
+        <type>hsize_t</type>
+        <definition>hsize_t class_h5table_profiling::meta_struct::chunk_size</definition>
+        <argsstring></argsstring>
+        <name>chunk_size</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="400" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="400" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1a349dfa935f60b3a68df8efb9e1a82947" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* class_h5table_profiling::meta_struct::fill_data</definition>
+        <argsstring></argsstring>
+        <name>fill_data</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="401" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="401" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__profiling_1_1meta__struct_1a9a5594c4603cd7b2298eec1f5f0af43e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_h5table_profiling::meta_struct::compress</definition>
+        <argsstring></argsstring>
+        <name>compress</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="402" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="402" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="458">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="459">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="457">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+      <node id="456">
+        <label>class_h5table_profiling::meta_struct</label>
+        <link refid="structclass__h5table__profiling_1_1meta__struct"/>
+        <childnode refid="457" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="458" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="459" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="297" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="297" bodyend="403"/>
+    <listofallmembers>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1a2c17044618cfee76b73d952db2a104a0" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>chunk_size</name></member>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1a9a5594c4603cd7b2298eec1f5f0af43e" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>compress</name></member>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1a964d71daf59a6ad8fb8e3d91b46d139e" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>dst_offsets</name></member>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1a97bf429569581e0307b562be132d4d17" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>dst_size</name></member>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1a2de1fe3b4d5bfd5ed72d393b2e5d7541" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>dst_sizes</name></member>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1a33c7260f3eb99401ef27e5179912efc0" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>field_names</name></member>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1af743c164624494624036c476c8a058ea" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>field_types</name></member>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1a349dfa935f60b3a68df8efb9e1a82947" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>fill_data</name></member>
+      <member refid="structclass__h5table__profiling_1_1meta__struct_1a6b6c2b1ca0c2b4bcde613fd5a523e587" prot="public" virt="non-virtual"><scope>class_h5table_profiling::meta_struct</scope><name>NFIELDS</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

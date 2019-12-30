@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1infinite" kind="namespace" language="C++">
+    <compoundname>tools::infinite</compoundname>
+    <innernamespace refid="namespacetools_1_1infinite_1_1debug">tools::infinite::debug</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite_1_1env">tools::infinite::env</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite_1_1io">tools::infinite::io</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite_1_1measure">tools::infinite::measure</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite_1_1mpo">tools::infinite::mpo</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite_1_1mps">tools::infinite::mps</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite_1_1opt">tools::infinite::opt</innernamespace>
+    <innernamespace refid="namespacetools_1_1infinite_1_1print">tools::infinite::print</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacetools_1_1infinite_1a4a161f898747fcaab6e8c71eeb0220b6" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using tools::infinite::Scalar = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="253" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="253" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Functions for infinite MPS algorithms like iDMRG and iTEBD. These functions do not require the class_finite_chain_state class, only the class_superblock containing the local 2-site MPS + ENV representation. </para>    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="252" column="1"/>
+  </compounddef>
+</doxygen>

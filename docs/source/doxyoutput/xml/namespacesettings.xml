@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacesettings" kind="namespace" language="C++">
+    <compoundname>settings</compoundname>
+    <innernamespace refid="namespacesettings_1_1console">settings::console</innernamespace>
+    <innernamespace refid="namespacesettings_1_1fdmrg">settings::fdmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1idmrg">settings::idmrg</innernamespace>
+    <innernamespace refid="namespacesettings_1_1input">settings::input</innernamespace>
+    <innernamespace refid="namespacesettings_1_1itebd">settings::itebd</innernamespace>
+    <innernamespace refid="namespacesettings_1_1model">settings::model</innernamespace>
+    <innernamespace refid="namespacesettings_1_1output">settings::output</innernamespace>
+    <innernamespace refid="namespacesettings_1_1precision">settings::precision</innernamespace>
+    <innernamespace refid="namespacesettings_1_1profiling">settings::profiling</innernamespace>
+    <innernamespace refid="namespacesettings_1_1threading">settings::threading</innernamespace>
+    <innernamespace refid="namespacesettings_1_1xdmrg">settings::xdmrg</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacesettings_1a3226e7390ab51155684058cf52f17736" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void settings::load_from_file</definition>
+        <argsstring>(class_settings_reader &amp;indata)</argsstring>
+        <name>load_from_file</name>
+        <param>
+          <type><ref refid="classclass__settings__reader" kindref="compound">class_settings_reader</ref> &amp;</type>
+          <declname>indata</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="16" bodyend="146"/>
+        <references refid="namespacesettings_1_1input_1a2529f9b5acd0b9f096fadd56bb7d4074" compoundref="nmspc__settings_8h" startline="36">settings::input::input_filename</references>
+        <references refid="classclass__settings__reader_1a993a80951543a43fee5affe456b49c1b" compoundref="class__settings__reader_8cpp" startline="77" endline="79">class_settings_reader::get_input_filename</references>
+        <references refid="namespacesettings_1_1input_1a6237bd4c8d635524769d9a47084dad5a" compoundref="nmspc__settings_8h" startline="37">settings::input::input_file_raw</references>
+        <references refid="classclass__settings__reader_1a33f4b0c04f8c6cb0c6c9d6f690bc623c" compoundref="class__settings__reader_8cpp" startline="73" endline="75">class_settings_reader::get_input_file_as_string</references>
+        <references refid="namespacesettings_1_1idmrg_1ac5b947fd1c6fd076ebbe1d3d5cf20a1f" compoundref="nmspc__settings_8h" startline="118">settings::idmrg::on</references>
+        <references refid="namespacesettings_1_1fdmrg_1a0efc934acf5c066b92b26f6bbf6ec05a" compoundref="nmspc__settings_8h" startline="129">settings::fdmrg::on</references>
+        <references refid="namespacesettings_1_1xdmrg_1aeebb3637c961a299795cd2862c8cb113" compoundref="nmspc__settings_8h" startline="143">settings::xdmrg::on</references>
+        <references refid="namespacesettings_1_1itebd_1ac4ff42bc0a7453d9c9fcf3cc6939db58" compoundref="nmspc__settings_8h" startline="159">settings::itebd::on</references>
+        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacesettings_1ae10b3dbe65fa73db62a97a8c06c153b9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void settings::load_from_hdf5</definition>
+        <argsstring>(h5pp::File &amp;h5ppFile)</argsstring>
+        <name>load_from_hdf5</name>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.cpp" bodystart="148" bodyend="160"/>
+        <references refid="namespacesettings_1a3226e7390ab51155684058cf52f17736" compoundref="nmspc__settings_8cpp" startline="16" endline="146">load_from_file</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This namespace contains settings such as time-step length, number of iterations and precision parameters for the different algorithms. </para>    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/nmspc_settings.h" line="11" column="1"/>
+  </compounddef>
+</doxygen>

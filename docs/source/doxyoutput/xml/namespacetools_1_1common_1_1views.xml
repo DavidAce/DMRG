@@ -1,0 +1,798 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1common_1_1views" kind="namespace" language="C++">
+    <compoundname>tools::common::views</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a5e9c5e1d5bef73e833cbc054c7935af3" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::theta</definition>
+        <argsstring></argsstring>
+        <name>theta</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="401" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a4770a1829f476c6daf830b712d0d57db" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::theta_evn_normalized</definition>
+        <argsstring></argsstring>
+        <name>theta_evn_normalized</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="401" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1ab6ade4cf09a0141fb611c32c713e0e2b" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::theta_odd_normalized</definition>
+        <argsstring></argsstring>
+        <name>theta_odd_normalized</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="401" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1ac2194a171cc86ee5c187c37fef7ae11b" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::theta_sw</definition>
+        <argsstring></argsstring>
+        <name>theta_sw</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="402" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1ab3327a05b5c01f98a25e8a9493c890f4" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; tools::common::views::LAGA</definition>
+        <argsstring></argsstring>
+        <name>LAGA</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="403" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1aacc6a9a9420e80a6c3a65ac29a239ae8" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 3 &gt; tools::common::views::LCGB</definition>
+        <argsstring></argsstring>
+        <name>LCGB</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="403" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a2b5b6f9460c87209076d19f7edc8bf92" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt; tools::common::views::l_evn</definition>
+        <argsstring></argsstring>
+        <name>l_evn</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="404" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1aac00eb090b45f9a68587498eeea97370" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt; tools::common::views::r_evn</definition>
+        <argsstring></argsstring>
+        <name>r_evn</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="404" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="29" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a4d84a62c356bd7b16e4b0d08b98ab160" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt; tools::common::views::l_odd</definition>
+        <argsstring></argsstring>
+        <name>l_odd</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="405" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="30" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a6409a1374700c7fca7abc92f0c8d99f6" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 2 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 2 &gt; tools::common::views::r_odd</definition>
+        <argsstring></argsstring>
+        <name>r_odd</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,2&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="405" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a51c330473734753fe9875a00f2b97a9d" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::transfer_matrix_LAGA</definition>
+        <argsstring></argsstring>
+        <name>transfer_matrix_LAGA</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="406" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a58171c86283b19f27d4bc76ff124e347" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::transfer_matrix_LCGB</definition>
+        <argsstring></argsstring>
+        <name>transfer_matrix_LCGB</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="407" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a28385061271c30051d0d8ac567d22ac5" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::transfer_matrix_evn</definition>
+        <argsstring></argsstring>
+        <name>transfer_matrix_evn</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="408" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a63f4e0353437c2a8061941bb71ed818d" prot="public" static="no" mutable="no">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::transfer_matrix_odd</definition>
+        <argsstring></argsstring>
+        <name>transfer_matrix_odd</name>
+        <initializer>= Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt; ()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="409" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="namespacetools_1_1common_1_1views_1a9639d785b811f258c4687f49a2aeb7e5" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool tools::common::views::components_computed</definition>
+        <argsstring></argsstring>
+        <name>components_computed</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="410" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a055661bd0c1b24862a0d47e10a1d388e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::common::views::compute_mps_components</definition>
+        <argsstring>(const class_state_infinite &amp;state)</argsstring>
+        <name>compute_mps_components</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="411" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="49" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a0d5141e44fee1573a7a64c2ce2f3e59e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta</definition>
+        <argsstring>(const class_state_finite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="413" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="116" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a5e06add5b4f88e2a90f7d7b16c29c71d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LB ]--[ GA ]--[ LA ]-- [ GB ] -- [ LB ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="415" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="132" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a251635561b8dc6bdeac45fb295540030" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta_swapped</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta_swapped</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LC ]--[ GB ]--[ LB ]-- [ GA ] -- [ LC ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="416" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="150" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a5309629b31a4afeba3596cc060e13ed6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta_evn</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta_evn</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a right normalized two-site MPS <verbatim>     1--[ LA ]--[ GA ]-- [ LC ] -- [ GB ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="417" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="174" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ab9d5269980b66fe0dcf9e6551d6171e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta_odd</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta_odd</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="418" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="191" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a102cca119d88b783c6b60ed85b5c56de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_zero</definition>
+        <argsstring>(const class_state_infinite &amp;state)</argsstring>
+        <name>get_transfer_matrix_zero</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="419" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="210" bodyend="216"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ac1b668e1718a849acf7f976e9f076cc1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_LBGA</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_LBGA</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="420" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="221" bodyend="225"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a17681f40ab26ba1d7e08632982bd1a58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_GALC</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_GALC</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="421" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="229" bodyend="236"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a2ac1508a9edefed03d973125ee451604" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_GBLB</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_GBLB</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="422" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="239" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a30148ac9dc25e67edc6724d8e9be29a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_LCGB</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_LCGB</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="423" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="247" bodyend="254"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a9fbc4d04079bbf1a7e61897d2aba21f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_theta_evn</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_theta_evn</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="424" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="258" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a1e5e2ed3a2a08224c98a8f85c3eacdf1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_theta_odd</definition>
+        <argsstring>(const class_state_infinite &amp;state, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_theta_odd</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="425" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="264" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a8cc4639f3ddef3920499b599d333db96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_AB</definition>
+        <argsstring>(const class_state_infinite &amp;state, int p)</argsstring>
+        <name>get_transfer_matrix_AB</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="426" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="270" bodyend="285"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a949c89e88406fed5fcf642d34e1edea0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a two-site MPS <verbatim>     1--[ LA ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="428" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="306" bodyend="318"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a980151161df1dabfaea5da9ae2d71775" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta_swapped</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta_swapped</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LC ]--[ GB ]--[ LB ]-- [ GA ] -- [ LA ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="429" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="323" bodyend="339"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a53a47d2730c8b923207c089dec7169d3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta_evn</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta_evn</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>.</para><para>Returns a right normalized two-site MPS <verbatim>     1--[ LA ]--[ GA ]-- [ LC ] -- [ GB ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="430" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="346" bodyend="360"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ac7e9874ea10f09be64e5b08689714974" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_theta_odd</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_theta_odd</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns rank 4 tensor <formula id="2">$\Theta$</formula>, with A and B swapped.</para><para>Returns a two-site MPS with A and B swapped <verbatim>     1--[ LC ]--[ GB ]-- [ LB ] -- [ GA ]--3
+                  |                 |
+                  0                 2</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="431" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="363" bodyend="378"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a686b9c2b5b156a674a8b5cf821190e8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_zero</definition>
+        <argsstring>(const class_mps_2site &amp;MPS)</argsstring>
+        <name>get_transfer_matrix_zero</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="432" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="382" bodyend="388"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1afa5f608610abfca5e155625b329e2280" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_LBGA</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_LBGA</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="433" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="393" bodyend="397"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1aea0bac36161f395733301a37dceaaff0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_GALC</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_GALC</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="434" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="401" bodyend="408"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1aecbf8dcf0a09ffd63376a47983c48239" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_GBLB</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_GBLB</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="435" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="411" bodyend="415"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1acbcc5f21e4c79ed662c4b97a79f96f7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_LCGB</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_LCGB</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="436" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="419" bodyend="426"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ad5c40d98b38bb1d5a8fd190b66b83057" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_theta_evn</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_theta_evn</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="437" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="430" bodyend="433"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1a8bbfc538041c8bc900ab3813cf6f7259" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_theta_odd</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, std::complex&lt; double &gt; norm=1.0)</argsstring>
+        <name>get_transfer_matrix_theta_odd</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>std::complex&lt; double &gt;</type>
+          <declname>norm</declname>
+          <defval>1.0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="438" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="436" bodyend="438"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1common_1_1views_1ac864d0ae1481abb03065ac6d98cdeace" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1common_1a42bb0a9f13f4c00ce0cff48cd503c9c1" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; tools::common::views::get_transfer_matrix_AB</definition>
+        <argsstring>(const class_mps_2site &amp;MPS, int p)</argsstring>
+        <name>get_transfer_matrix_AB</name>
+        <param>
+          <type>const <ref refid="classclass__mps__2site" kindref="compound">class_mps_2site</ref> &amp;</type>
+          <declname>MPS</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="439" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp" bodystart="442" bodyend="457"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="400" column="1"/>
+  </compounddef>
+</doxygen>

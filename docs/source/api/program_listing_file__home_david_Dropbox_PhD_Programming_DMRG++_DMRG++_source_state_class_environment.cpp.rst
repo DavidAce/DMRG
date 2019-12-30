@@ -1,0 +1,192 @@
+
+.. _program_listing_file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_environment.cpp:
+
+Program Listing for File class_environment.cpp
+==============================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_state_class_environment.cpp>` (``/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_environment.cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   //
+   // Created by david on 2017-12-02.
+   //
+   
+   
+   #include "class_environment.h"
+   #include <state/class_mps_site.h>
+   #include <model/class_model_base.h>
+   using namespace std;
+   using namespace Textra;
+   using Scalar = class_environment_base::Scalar;
+   
+   
+   class_environment_base::class_environment_base(std::string side_, size_t position_):position(position_),side(side_){}
+   class_environment_base::class_environment_base(std::string side_, const class_mps_site & MPS, const class_model_base &MPO):side(side_)
+       {
+           if (MPS.get_position() != MPO.get_position())
+               throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(),MPO.get_position()));
+           position = MPS.get_position();
+       }
+   
+   class_environment::class_environment(std::string side_, const class_mps_site & MPS, const class_model_base &MPO):
+           class_environment_base(side_,MPS,MPO){set_edge_dims(MPS,MPO);}
+   
+   
+   class_environment_var::class_environment_var(std::string side_, const class_mps_site & MPS, const class_model_base &MPO):
+           class_environment_base(side_,MPS,MPO){set_edge_dims(MPS,MPO);}
+   
+   
+   bool class_environment::isReal() const {
+       return Textra::isReal(block, "env " + side);
+   }
+   bool class_environment_var::isReal() const {
+       return Textra::isReal(block, "env2" + side);
+   }
+   
+   
+   
+   class_environment class_environment::enlarge(const class_mps_site & MPS, const class_model_base &MPO){
+       if(MPS.get_position() != MPO.get_position()) throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
+   
+       if(not edge_has_been_set) throw std::logic_error("Have to set edge dimensions first!");
+   
+       class_environment env = *this;
+   
+       env.enlarge(MPS.get_M_bare(),MPO.MPO());
+       // Update positions assuming this is a finite chain.
+       // This needs to be corrected (on the right side) on infinite chains
+       if (env.side == "L"){
+           env.position = MPS.get_position() + 1;
+       }else if (env.side == "R"){
+           env.position = MPS.get_position() - 1;
+       }else{
+           throw std::logic_error("Expected environment side L or R, got: " + side);
+       }
+   
+       return env;
+   }
+   
+   
+   
+   void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen::Tensor<Scalar,4> &MPO){
+   //    if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
+   
+       if (side == "L"){
+   
+           sites++;
+           Eigen::Tensor<Scalar,3>
+                   block_enlarged =
+                   block.contract(MPS,               idx({0},{1}))
+                        .contract(MPO,               idx({1,2},{0,2}))
+                        .contract(MPS.conjugate(),   idx({0,3},{1,0}))
+                        .shuffle(array3{0,2,1});
+           block = block_enlarged;
+       }else if (side== "R"){
+           sites++;
+           Eigen::Tensor<Scalar,3>
+                   block_enlarged =
+                   block.contract(MPS,                idx({0},{2}))
+                        .contract(MPO,             idx({1,2},{1,2}))
+                        .contract(MPS.conjugate(), idx({0,3},{2,0}))
+                        .shuffle(array3{0,2,1});
+           block = block_enlarged;
+       }
+   }
+   
+   void class_environment::set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO) {
+       if(edge_has_been_set) return;
+       if (side == "L") {
+           int mpsDim = MPS.get_chiL();
+           int mpoDim = MPO.MPO().dimension(0);
+           block.resize(array3{mpsDim,mpsDim, mpoDim});
+           block.setZero();
+           for (long i = 0; i < mpsDim; i++)block(i,i,mpoDim-1) = 1;
+       }
+       if(side == "R"){
+           int mpsDim = MPS.get_chiR();
+           int mpoDim = MPO.MPO().dimension(1);
+           block.resize(array3{mpsDim,mpsDim, mpoDim});
+           block.setZero();
+           for (long i = 0; i < mpsDim; i++) block(i,i,0) = 1;
+       }
+       sites = 0;
+       edge_has_been_set = true;
+   
+   }
+   
+   
+   
+   
+   class_environment_var class_environment_var::enlarge(const class_mps_site & MPS, const class_model_base &MPO){
+       if(MPS.get_position() != MPO.get_position()) throw std::logic_error("MPS and MPO not at the same position!");
+       class_environment_var env = *this;
+       if(env.sites == 0 and not env.edge_has_been_set){
+           env.set_edge_dims(MPS,MPO);
+           env.position = MPS.get_position();
+           return env;
+       }
+       env.enlarge(MPS.get_M_bare(),MPO.MPO());
+       if (env.side == "L"){
+           env.position = MPS.get_position() + 1;
+       }else if (env.side == "R"){
+           env.position = MPS.get_position() - 1;
+       }else{
+           throw std::logic_error("Expected environment side L or R, got: " + side);
+       }
+   
+       return env;
+   }
+   
+   
+   void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const Eigen::Tensor<Scalar,4> &MPO){
+   //    if(sites == 0 and not edge_has_been_set){set_edge_dims(MPS,MPO);}
+       Eigen::Tensor<Scalar,4> block_enlarged;
+       if (side == "L"){
+   
+           sites++;
+           block_enlarged =
+                   block.contract(MPS,                    idx({0},{1}))
+                           .contract(MPO,                 idx({1,3},{0,2}))
+                           .contract(MPO,                 idx({1,4},{0,2}))
+                           .contract(MPS.conjugate(),     idx({0,4},{1,0}))
+                           .shuffle(array4{0,3,1,2});
+           block = block_enlarged;
+       }
+       if (side == "R"){
+           sites++;
+           block_enlarged =
+                   block.contract(MPS,                idx({0},{2}))
+                           .contract(MPO,             idx({1,3},{1,2}))
+                           .contract(MPO,             idx({1,4},{1,2}))
+                           .contract(MPS.conjugate(), idx({0,4},{2,0}))
+                           .shuffle(array4{0, 3, 1, 2});
+           block = block_enlarged;
+       }
+   }
+   
+   void class_environment_var::set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO) {
+       if(edge_has_been_set) return;
+       if (side == "L") {
+           int mpsDim = MPS.get_chiL();
+           int mpoDim = MPO.MPO().dimension(0);
+           block.resize(array4{mpsDim,mpsDim, mpoDim, mpoDim});
+           block.setZero();
+           for (long i = 0; i < mpsDim; i++)block(i,i, mpoDim-1, mpoDim-1) = 1;
+       }
+       if(side == "R"){
+           int mpsDim = MPS.get_chiR();
+           int mpoDim = MPO.MPO().dimension(1);
+           block.resize(array4{mpsDim,mpsDim, mpoDim, mpoDim});
+           block.setZero();
+           for (long i = 0; i < mpsDim; i++)block(i,i,0,0) = 1;
+       }
+       sites = 0;
+       edge_has_been_set = true;
+   }
+   
+   
+   
+   

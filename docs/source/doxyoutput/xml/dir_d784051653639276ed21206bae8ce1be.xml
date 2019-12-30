@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_d784051653639276ed21206bae8ce1be" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra</compoundname>
+    <innerfile refid="arpackpp__solver_8cpp">arpackpp_solver.cpp</innerfile>
+    <innerfile refid="arpackpp__solver_8h">arpackpp_solver.h</innerfile>
+    <innerfile refid="matrix__product__dense_8h">matrix_product_dense.h</innerfile>
+    <innerfile refid="matrix__product__hamiltonian_8h">matrix_product_hamiltonian.h</innerfile>
+    <innerfile refid="matrix__product__sparse_8h">matrix_product_sparse.h</innerfile>
+    <innerfile refid="matrix__product__stl_8cpp">matrix_product_stl.cpp</innerfile>
+    <innerfile refid="matrix__product__stl_8h">matrix_product_stl.h</innerfile>
+    <innerfile refid="matrix__recast_8cpp">matrix_recast.cpp</innerfile>
+    <innerfile refid="matrix__recast_8h">matrix_recast.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/"/>
+  </compounddef>
+</doxygen>

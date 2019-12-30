@@ -1,18 +1,35 @@
 
+#include <thread>
 #include <complex>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 
-#include <Eigen/Core>
-#include <h5pp/h5pp.h>
-#include <math/class_eigsolver.h>
-
+#ifdef OpenBLAS_AVAILABLE
+#include <cblas.h>
+#include <openblas_config.h>
+#endif
 
 
 #ifdef MKL_AVAILABLE
+#include <mkl_service.h>
+#include <mkl.h>
+#endif
+
+#define lapack_complex_float  std::complex<float>
+#define lapack_complex_double std::complex<double>
+#if __has_include(<mkl_lapacke.h>)
 #include <mkl_lapacke.h>
-#else
+#elif __has_include(<lapacke.h>)
 #include <lapacke.h>
 #endif
+
+
+#include <general/nmspc_omp.h>
+#include <Eigen/Core>
+#include <h5pp/h5pp.h>
+#include <math/class_eigsolver.h>
 
 
 
@@ -50,6 +67,30 @@ std::tuple<Eigen::VectorXd,Eigen::MatrixXd, int> eig_dsyevd(const double* matrix
 
 
 int main(){
+
+    #ifdef _OPENMP
+        omp_set_num_threads(std::thread::hardware_concurrency());
+        Eigen::setNbThreads(std::thread::hardware_concurrency());
+        std::cout << "Using Eigen  with " << Eigen::nbThreads() << " threads" << std::endl;
+        std::cout << "Using OpenMP with " << omp_get_max_threads() << " threads" << std::endl;
+
+        #ifdef OpenBLAS_AVAILABLE
+        openblas_set_num_threads(std::thread::hardware_concurrency());
+                    std::cout << OPENBLAS_VERSION
+                              << " compiled with parallel mode " << openblas_get_parallel()
+                              << " for target " << openblas_get_corename()
+                              << " with config " << openblas_get_config()
+                              << " with multithread threshold " << OPENBLAS_GEMM_MULTITHREAD_THRESHOLD
+                              << ". Running with " << openblas_get_num_threads() << " thread(s)" << std::endl;
+        #endif
+
+        #ifdef MKL_AVAILABLE
+        mkl_set_num_threads(std::thread::hardware_concurrency());
+        std::cout << "Using Intel MKL with " << mkl_get_max_threads() << " threads" << std::endl;
+        #endif
+    #endif
+
+
 
     Eigen::MatrixXd H_localA1, H_localA2;
     Eigen::MatrixXd H_localB1, H_localB2;

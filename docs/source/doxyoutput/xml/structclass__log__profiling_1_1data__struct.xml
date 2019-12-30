@@ -1,0 +1,436 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__log__profiling_1_1data__struct" kind="struct" language="C++" prot="public">
+    <compoundname>class_log_profiling::data_struct</compoundname>
+    <includes refid="log__types_8h" local="no">log_types.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a90c36734f40b8df6d69efbf68bea2f72" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_log_profiling::data_struct::step</definition>
+        <argsstring></argsstring>
+        <name>step</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="201" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a4a51cb6cc78edd0e8df345522b995086" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_log_profiling::data_struct::iteration</definition>
+        <argsstring></argsstring>
+        <name>iteration</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="202" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a76454edc03447c8cc506c4ca1f3ed248" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_log_profiling::data_struct::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="203" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="203" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a1aa910a41fa23d5701c80ae23eeece31" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_tot</definition>
+        <argsstring></argsstring>
+        <name>t_tot</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="204" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1ad21cad547327630f74e256cf6d9906d2" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_run</definition>
+        <argsstring></argsstring>
+        <name>t_run</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="205" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a9696cdd4b1e49d0218d993ebdfff99aa" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_eig</definition>
+        <argsstring></argsstring>
+        <name>t_eig</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="206" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a2c62ce1196d54c6aa692cb0e55c3ab5c" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_svd</definition>
+        <argsstring></argsstring>
+        <name>t_svd</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="207" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a0aefd4aa3585e7b002fece374b5ae0a8" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_ene</definition>
+        <argsstring></argsstring>
+        <name>t_ene</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="208" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1ae1899dc239c31f02fe56bd589bbd8a13" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_var</definition>
+        <argsstring></argsstring>
+        <name>t_var</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="209" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a891b86cedccf87d66cde44a5c4b7291e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_ent</definition>
+        <argsstring></argsstring>
+        <name>t_ent</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="210" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a588b9aa44c351a3dcc02f2fabd95cb94" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_hdf</definition>
+        <argsstring></argsstring>
+        <name>t_hdf</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="211" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a50408fb1d29025269cf764a03e5c2172" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_prj</definition>
+        <argsstring></argsstring>
+        <name>t_prj</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="212" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a581a509c968089bdc4c578a0216c63f4" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_opt</definition>
+        <argsstring></argsstring>
+        <name>t_opt</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="213" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="213" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1ad0e40c2cdba32c0c295dfed87dc388d4" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_chk</definition>
+        <argsstring></argsstring>
+        <name>t_chk</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="214" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a268f8c04ad76d684ac4da9b2b60322cc" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_ene_mpo</definition>
+        <argsstring></argsstring>
+        <name>t_ene_mpo</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="215" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a2ba83269dad517b1fc070d7d2ab30802" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_ene_ham</definition>
+        <argsstring></argsstring>
+        <name>t_ene_ham</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="216" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="216" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1affbf5424d0b5b7646e07cdb194713566" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_ene_mom</definition>
+        <argsstring></argsstring>
+        <name>t_ene_mom</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="217" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1aa6a145aa9342dcf0945fb9046fe38b40" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_var_mpo</definition>
+        <argsstring></argsstring>
+        <name>t_var_mpo</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="218" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="218" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a98d227e61105c9257b7e0203f192979a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_var_ham</definition>
+        <argsstring></argsstring>
+        <name>t_var_ham</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="219" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1aecb20dbd95db758b162584f503a2e8a6" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_var_mom</definition>
+        <argsstring></argsstring>
+        <name>t_var_mom</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="220" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="220" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a41e0afc07f5f8f821733668cd61d74bf" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_env</definition>
+        <argsstring></argsstring>
+        <name>t_env</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="221" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1aedd073b3d30e31835335228a05ab3aa3" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_evo</definition>
+        <argsstring></argsstring>
+        <name>t_evo</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="222" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1ae295fc42d6711417f17173ab878ddec8" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_udt</definition>
+        <argsstring></argsstring>
+        <name>t_udt</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="223" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="223" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a8be6c981abf789fa5cfd2385d731f676" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_ste</definition>
+        <argsstring></argsstring>
+        <name>t_ste</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="224" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="224" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1ad4c7d90865d0325f6f27d410d11ed3ba" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_prt</definition>
+        <argsstring></argsstring>
+        <name>t_prt</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="225" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1aeb7a85eb2fa767b429de8a477007ec4d" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_obs</definition>
+        <argsstring></argsstring>
+        <name>t_obs</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="226" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1aa35b51ff0c1f14491ef831c17431d60a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_mps</definition>
+        <argsstring></argsstring>
+        <name>t_mps</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="227" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__profiling_1_1data__struct_1a4dc051ea40d0b7e4506217be58b69407" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_profiling::data_struct::t_chi</definition>
+        <argsstring></argsstring>
+        <name>t_chi</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="228" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="228" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="200" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="200" bodyend="231"/>
+    <listofallmembers>
+      <member refid="structclass__log__profiling_1_1data__struct_1a4a51cb6cc78edd0e8df345522b995086" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>iteration</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a76454edc03447c8cc506c4ca1f3ed248" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>position</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a90c36734f40b8df6d69efbf68bea2f72" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>step</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a4dc051ea40d0b7e4506217be58b69407" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_chi</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1ad0e40c2cdba32c0c295dfed87dc388d4" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_chk</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a9696cdd4b1e49d0218d993ebdfff99aa" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_eig</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a0aefd4aa3585e7b002fece374b5ae0a8" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_ene</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a2ba83269dad517b1fc070d7d2ab30802" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_ene_ham</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1affbf5424d0b5b7646e07cdb194713566" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_ene_mom</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a268f8c04ad76d684ac4da9b2b60322cc" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_ene_mpo</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a891b86cedccf87d66cde44a5c4b7291e" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_ent</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a41e0afc07f5f8f821733668cd61d74bf" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_env</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1aedd073b3d30e31835335228a05ab3aa3" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_evo</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a588b9aa44c351a3dcc02f2fabd95cb94" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_hdf</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1aa35b51ff0c1f14491ef831c17431d60a" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_mps</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1aeb7a85eb2fa767b429de8a477007ec4d" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_obs</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a581a509c968089bdc4c578a0216c63f4" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_opt</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a50408fb1d29025269cf764a03e5c2172" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_prj</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1ad4c7d90865d0325f6f27d410d11ed3ba" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_prt</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1ad21cad547327630f74e256cf6d9906d2" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_run</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a8be6c981abf789fa5cfd2385d731f676" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_ste</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a2c62ce1196d54c6aa692cb0e55c3ab5c" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_svd</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a1aa910a41fa23d5701c80ae23eeece31" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_tot</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1ae295fc42d6711417f17173ab878ddec8" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_udt</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1ae1899dc239c31f02fe56bd589bbd8a13" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_var</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1a98d227e61105c9257b7e0203f192979a" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_var_ham</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1aecb20dbd95db758b162584f503a2e8a6" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_var_mom</name></member>
+      <member refid="structclass__log__profiling_1_1data__struct_1aa6a145aa9342dcf0945fb9046fe38b40" prot="public" virt="non-virtual"><scope>class_log_profiling::data_struct</scope><name>t_var_mpo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

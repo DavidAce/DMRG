@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespaceqm_1_1time_evolution" kind="namespace" language="C++">
+    <compoundname>qm::timeEvolution</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a78103280aef02f54e28b7d670f5d6837" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
+        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::timeEvolution::Suzuki_Trotter_1st_order</definition>
+        <argsstring>(const std::complex&lt; double &gt; t, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+        <name>Suzuki_Trotter_1st_order</name>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_evn</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_odd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="41" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="92" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a083310714a315dc80200b5c530789dde" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
+        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::timeEvolution::Suzuki_Trotter_2nd_order</definition>
+        <argsstring>(const std::complex&lt; double &gt; t, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+        <name>Suzuki_Trotter_2nd_order</name>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_evn</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_odd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="97" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a6f07f0c3a2181990bb149a1716a7bad5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::MatrixXcd &gt;</type>
+        <definition>std::vector&lt; Eigen::MatrixXcd &gt; qm::timeEvolution::Suzuki_Trotter_4th_order</definition>
+        <argsstring>(const std::complex&lt; double &gt; t, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+        <name>Suzuki_Trotter_4th_order</name>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_evn</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_odd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Implementation based on Janke, W., &amp; Sauer, T. (1992). Properties of higher-order Trotter formulas. Physics Letters A, 165(3), 199–205. <ulink url="https://doi.org/10.1016/0375-9601(92)90035-K">https://doi.org/10.1016/0375-9601(92)90035-K</ulink> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="104" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1a33cd64100e493c77493f03371d1f0ca4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; &gt;</type>
+        <definition>std::vector&lt; Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; &gt; qm::timeEvolution::get_2site_evolution_gates</definition>
+        <argsstring>(const std::complex&lt; double &gt; t, const int susuki_trotter_order, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+        <name>get_2site_evolution_gates</name>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>susuki_trotter_order</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_evn</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_odd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3. These gates need to be applied to the MPS one at a time with a swap in between. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="133" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceqm_1_1time_evolution_1ac04e5bd4da8ae4c7181588285e4da170" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; &gt;</type>
+        <definition>std::vector&lt; Eigen::Tensor&lt; std::complex&lt; double &gt;, 4 &gt; &gt; qm::timeEvolution::compute_G</definition>
+        <argsstring>(const std::complex&lt; double &gt; a, const int susuki_trotter_order, const Eigen::MatrixXcd &amp;h_evn, const Eigen::MatrixXcd &amp;h_odd)</argsstring>
+        <name>compute_G</name>
+        <param>
+          <type>const std::complex&lt; double &gt;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>susuki_trotter_order</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_evn</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>h_odd</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns a set of 2-site unitary gates for the time evolution operator. <verbatim>Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 4 tensor.
+G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO.
+Note that G(-a) = G(a)* if  exp(iaM) !
+</verbatim></para><para><verbatim>            0         1
+            |         |
+            [ exp(aH) ]
+            |         |
+            2         3
+</verbatim> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.cpp" bodystart="160" bodyend="175"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_quantum_mechanics.h" line="40" column="1"/>
+  </compounddef>
+</doxygen>

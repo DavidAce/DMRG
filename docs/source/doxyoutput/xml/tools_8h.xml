@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="tools_8h" kind="file" language="C++">
+    <compoundname>tools.h</compoundname>
+    <includes refid="nmspc__logger_8h" local="no">io/nmspc_logger.h</includes>
+    <includes refid="measure_8h" local="no">tools/finite/measure.h</includes>
+    <incdepgraph>
+      <node id="4300">
+        <label>list</label>
+      </node>
+      <node id="4294">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools.h</label>
+        <link refid="tools_8h"/>
+        <childnode refid="4295" relation="include">
+        </childnode>
+        <childnode refid="4298" relation="include">
+        </childnode>
+      </node>
+      <node id="4302">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="4295">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="4296" relation="include">
+        </childnode>
+        <childnode refid="4297" relation="include">
+        </childnode>
+      </node>
+      <node id="4303">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="4297">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="4298">
+        <label>tools/finite/measure.h</label>
+        <link refid="measure_8h"/>
+        <childnode refid="4299" relation="include">
+        </childnode>
+        <childnode refid="4300" relation="include">
+        </childnode>
+        <childnode refid="4301" relation="include">
+        </childnode>
+        <childnode refid="4302" relation="include">
+        </childnode>
+        <childnode refid="4303" relation="include">
+        </childnode>
+      </node>
+      <node id="4296">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="4299">
+        <label>vector</label>
+      </node>
+      <node id="4301">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <innernamespace refid="namespacetools">tools</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-10-13.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__logger_8h" kindref="compound">io/nmspc_logger.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="measure_8h" kindref="compound">tools/finite/measure.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacetools" kindref="compound">tools</ref>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;spdlog::logger&gt;<sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref>;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools.h"/>
+  </compounddef>
+</doxygen>

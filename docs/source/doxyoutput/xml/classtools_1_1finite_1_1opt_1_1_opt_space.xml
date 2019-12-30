@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classtools_1_1finite_1_1opt_1_1_opt_space" kind="class" language="C++" prot="public">
+    <compoundname>tools::finite::opt::OptSpace</compoundname>
+    <basecompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base" prot="public" virt="non-virtual">tools::finite::opt::internal::EnumBase&lt; opt::SPACE &gt;</basecompoundref>
+    <includes refid="enum__classes_8h" local="no">enum_classes.h</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1_opt_space_1a5541ed9df013f646537b516121d579a0" prot="public" static="yes" mutable="no">
+        <type>constexpr <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" kindref="member">opt::SPACE</ref></type>
+        <definition>constexpr opt::SPACE tools::finite::opt::OptSpace::SUBSPACE</definition>
+        <argsstring></argsstring>
+        <name>SUBSPACE</name>
+        <initializer>= opt::SPACE::SUBSPACE</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="84" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="84" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1_opt_space_1a06a579869d457c3ac8f2e0585c983593" prot="public" static="yes" mutable="no">
+        <type>constexpr <ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" kindref="member">opt::SPACE</ref></type>
+        <definition>constexpr opt::SPACE tools::finite::opt::OptSpace::DIRECT</definition>
+        <argsstring></argsstring>
+        <name>DIRECT</name>
+        <initializer>= opt::SPACE::DIRECT</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="85" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="85" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1_opt_space_1ab54849b00cf4eb3a5beaee84ccef545d" prot="private" static="no" const="yes" explicit="no" inline="no" final="yes" virt="virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::OptSpace::print</definition>
+        <argsstring>(std::ostream &amp;str) const final</argsstring>
+        <name>print</name>
+        <reimplements refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1af318d333a73e048c634af53fb30ae83a">print</reimplements>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.cpp" bodystart="24" bodyend="30"/>
+        <references refid="namespacetools_1_1finite_1_1opt_1a4f7b1f67320c2a2a5788ff7633f2baee" compoundref="finite_2opt_8cpp" startline="84" endline="88">tools::finite::opt::find_ground_state</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda75420cb18c5b572ad779b8c95d797cf6">tools::finite::opt::internal::SUBSPACE</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fda4c5d06b02c97731aaa976179c62dcf76">tools::finite::opt::internal::DIRECT</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="490">
+        <label>tools::finite::opt::internal::EnumBase&lt; opt::SPACE &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
+      </node>
+      <node id="489">
+        <label>tools::finite::opt::OptSpace</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1_opt_space"/>
+        <childnode refid="490" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="492">
+        <label>tools::finite::opt::internal::EnumBase&lt; opt::SPACE &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base"/>
+      </node>
+      <node id="491">
+        <label>tools::finite::opt::OptSpace</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1_opt_space"/>
+        <childnode refid="492" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="80" bodyend="88"/>
+    <listofallmembers>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_space_1a06a579869d457c3ac8f2e0585c983593" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptSpace</scope><name>DIRECT</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1afe1c3eb290c37626ec927d322fb5b03c" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptSpace</scope><name>EnumBase</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a7ef86eb5f970bb0b9ab0738f2a1ac00f" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptSpace</scope><name>operator std::string</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1ab815170ca075be9164af300e72dcc479" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptSpace</scope><name>operator=</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a54253bafd2d611206bb376d751feb2f1" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptSpace</scope><name>operator==</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1aac4e872b873faefdc5bef1184688227e" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptSpace</scope><name>option</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_space_1ab54849b00cf4eb3a5beaee84ccef545d" prot="private" virt="virtual"><scope>tools::finite::opt::OptSpace</scope><name>print</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1_enum_base_1a588c655990c13ee77d6d6ba30dafa93a" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptSpace</scope><name>str</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1_opt_space_1a5541ed9df013f646537b516121d579a0" prot="public" virt="non-virtual"><scope>tools::finite::opt::OptSpace</scope><name>SUBSPACE</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

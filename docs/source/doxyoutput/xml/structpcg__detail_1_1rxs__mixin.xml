@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structpcg__detail_1_1rxs__mixin" kind="struct" language="C++" prot="public">
+    <compoundname>pcg_detail::rxs_mixin</compoundname>
+    <includes refid="pcg__random_8hpp" local="no">pcg_random.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename xtype</type>
+      </param>
+      <param>
+        <type>typename itype</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="structpcg__detail_1_1rxs__mixin_1ad1a22573f3e256d85a724481b8b22f71" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>xtype</type>
+        <definition>static xtype pcg_detail::rxs_mixin&lt; xtype, itype &gt;::output_rxs</definition>
+        <argsstring>(itype internal)</argsstring>
+        <name>output_rxs</name>
+        <param>
+          <type>itype</type>
+          <declname>internal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="831" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="831" bodyend="847"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" line="830" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_random.hpp" bodystart="830" bodyend="848"/>
+    <listofallmembers>
+      <member refid="structpcg__detail_1_1rxs__mixin_1ad1a22573f3e256d85a724481b8b22f71" prot="public" virt="non-virtual"><scope>pcg_detail::rxs_mixin</scope><name>output_rxs</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

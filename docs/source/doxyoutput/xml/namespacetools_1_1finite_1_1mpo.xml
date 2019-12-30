@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1mpo" kind="namespace" language="C++">
+    <compoundname>tools::finite::mpo</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mpo_1a9966c3f1b7bd5b194f510dad3247df6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mpo::initialize</definition>
+        <argsstring>(class_state_finite &amp;state, size_t length, std::string model_type)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>length</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>model_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="63" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp" bodystart="10" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mpo_1a03754b0499f9154ebe733ce673291a73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mpo::randomize</definition>
+        <argsstring>(class_state_finite &amp;state, int seed_state=-1)</argsstring>
+        <name>randomize</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>seed_state</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="64" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp" bodystart="22" bodyend="48"/>
+        <references refid="namespacern_1a79f3f437463ac68b3889fd1b6f5b8967" compoundref="nmspc__random_8cpp" startline="13" endline="29">rn::seed</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mpo_1abfad8343442c70097ea08f6c6224f415" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mpo::reduce_mpo_energy</definition>
+        <argsstring>(class_state_finite &amp;state)</argsstring>
+        <name>reduce_mpo_energy</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="65" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp" bodystart="52" bodyend="61"/>
+        <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
+        <references refid="classclass__state__finite_1aac02262c410802ea0546cda195c34eca" compoundref="class__state__finite_8cpp" startline="531" endline="533">class_state_finite::clear_cache</references>
+        <references refid="namespacetools_1_1finite_1_1mpo_1aead551ae1e088e29b6e45027a7742b31" compoundref="finite_2mpo_8cpp" startline="98" endline="133">reduce_mpo_energy_2site</references>
+        <references refid="namespacetools_1_1finite_1_1mpo_1ac74a02012ee4551f25040dee093b9012" compoundref="finite_2mpo_8cpp" startline="63" endline="95">reduce_mpo_energy_multi</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mpo_1ac74a02012ee4551f25040dee093b9012" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mpo::reduce_mpo_energy_multi</definition>
+        <argsstring>(class_state_finite &amp;state)</argsstring>
+        <name>reduce_mpo_energy_multi</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="66" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp" bodystart="63" bodyend="95"/>
+        <references refid="classclass__state__finite_1aa51817e7304ed32716819624f87ac9eb" compoundref="class__state__finite_8cpp" startline="347" endline="353">class_state_finite::get_energy_per_site_reduced</references>
+        <references refid="classclass__state__finite_1a4c1654f66807fae65fa09958df37369a" compoundref="class__state__finite_8cpp" startline="362" endline="369">class_state_finite::set_reduced_energy_per_site</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mpo_1aead551ae1e088e29b6e45027a7742b31" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mpo::reduce_mpo_energy_2site</definition>
+        <argsstring>(class_state_finite &amp;state)</argsstring>
+        <name>reduce_mpo_energy_2site</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="67" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mpo.cpp" bodystart="98" bodyend="133"/>
+        <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
+        <references refid="classclass__state__finite_1aac02262c410802ea0546cda195c34eca" compoundref="class__state__finite_8cpp" startline="531" endline="533">class_state_finite::clear_cache</references>
+        <references refid="classclass__state__finite_1aa51817e7304ed32716819624f87ac9eb" compoundref="class__state__finite_8cpp" startline="347" endline="353">class_state_finite::get_energy_per_site_reduced</references>
+        <references refid="classclass__state__finite_1a4c1654f66807fae65fa09958df37369a" compoundref="class__state__finite_8cpp" startline="362" endline="369">class_state_finite::set_reduced_energy_per_site</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="62" column="1"/>
+  </compounddef>
+</doxygen>

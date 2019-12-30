@@ -1,0 +1,64 @@
+
+.. _program_listing_file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.h:
+
+Program Listing for File class_tf_ising.h
+=========================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file__home_david_Dropbox_PhD_Programming_DMRG++_DMRG++_source_model_class_tf_ising.h>` (``/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_tf_ising.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   //
+   // Created by david on 2018-07-04.
+   //
+   
+   #pragma once
+   
+   #include <iostream>
+   #include <general/nmspc_tensor_extra.h>
+   #include <iomanip>
+   #include "class_model_base.h"
+   
+   class class_tf_ising : public class_model_base {
+       using Scalar = std::complex<double>;
+   private:
+       int    spin_dim            = 0; 
+       double J_coupling          = 0;
+       double g_mag_field         = 0;
+       double w_rnd_strength      = 0; 
+       double r_rnd_field         = 0; 
+       int    num_params          = 7; 
+       double r_ptb_field         = 0; 
+   public:
+   
+       class_tf_ising(size_t position_, std::string logName = "ISING");
+       void set_hamiltonian(const Eigen::Tensor<Scalar,4> & MPO_, std::vector<double> & parameters)  override;
+       void set_hamiltonian(const std::vector<double> & parameters)                                  override;
+       void set_hamiltonian(const Eigen::MatrixXd & all_parameters, int position)                    override;
+       void set_hamiltonian(const Eigen::VectorXd & parameters)                                      override;
+       void build_mpo()                                                                              override;
+       void randomize_hamiltonian()                                                                  override;
+       void perturb_hamiltonian(double amplitude)                                                    override;
+       bool is_perturbed()                                                                const      override;
+       Eigen::Tensor<Scalar,4> MPO_reduced_view()                                         const      override;
+       Eigen::Tensor<Scalar,4> MPO_reduced_view(double site_energy)                       const      override;
+       Eigen::MatrixXcd single_site_hamiltonian(
+               int position,
+               int sites,
+               std::vector<Eigen::MatrixXcd> &SX,
+               std::vector<Eigen::MatrixXcd> &SY,
+               std::vector<Eigen::MatrixXcd> &SZ)                                          const override;
+       std::unique_ptr<class_model_base> clone()                                     const override;
+       size_t get_spin_dimension()                                                         const override;
+       void   print_parameter_names ()                                                     const override;
+       void   print_parameter_values()                                                     const override;
+   //    std::vector<double>      get_random_parameter_values()                              const override;
+       std::vector<std::string> get_parameter_names()                                      const override;
+       std::vector<double>      get_parameter_values()                                     const override;
+       void   set_full_lattice_parameters(const std::vector<std::vector<double>> chain_parameters, bool reverse = false)  override;
+   
+   
+   };
+   

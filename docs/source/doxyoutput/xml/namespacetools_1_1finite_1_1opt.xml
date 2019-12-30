@@ -1,0 +1,318 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1opt" kind="namespace" language="C++">
+    <compoundname>tools::finite::opt</compoundname>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1_opt_mode" prot="public">tools::finite::opt::OptMode</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1_opt_space" prot="public">tools::finite::opt::OptSpace</innerclass>
+    <innerclass refid="classtools_1_1finite_1_1opt_1_1_opt_type" prot="public">tools::finite::opt::OptType</innerclass>
+    <innernamespace refid="namespacetools_1_1finite_1_1opt_1_1internal">tools::finite::opt::internal</innernamespace>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1ae35515274866257a855a33ab7dc8bb80" prot="public" static="no">
+        <type><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1aef1fe7d7e3b77a23922b15a40a224991" kindref="member">internal::EnumType</ref></type>
+        <definition>using tools::finite::opt::TYPE = typedef internal::EnumType</definition>
+        <argsstring></argsstring>
+        <name>TYPE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1a0b2956d35117c36c11852c2c0a2eee7a" prot="public" static="no">
+        <type><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1ad3075e45d859938e2f21a9121ccad6af" kindref="member">internal::EnumMode</ref></type>
+        <definition>using tools::finite::opt::MODE = typedef internal::EnumMode</definition>
+        <argsstring></argsstring>
+        <name>MODE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="16" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacetools_1_1finite_1_1opt_1ad00e08ddbb75e97eaf7792bf2146a62a" prot="public" static="no">
+        <type><ref refid="namespacetools_1_1finite_1_1opt_1_1internal_1a496b8603e39e3e76bbc4fedcb47a00fd" kindref="member">internal::EnumSpace</ref></type>
+        <definition>using tools::finite::opt::SPACE = typedef internal::EnumSpace</definition>
+        <argsstring></argsstring>
+        <name>SPACE</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/enum_classes.h" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a7a5cf9195f8ab823469c6be2e9fc863f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 3 &gt; tools::finite::opt::find_excited_state</definition>
+        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status, OptMode optMode, OptSpace optSpace, OptType optType)</argsstring>
+        <name>find_excited_state</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_mode" kindref="compound">OptMode</ref></type>
+          <declname>optMode</declname>
+        </param>
+        <param>
+          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_space" kindref="compound">OptSpace</ref></type>
+          <declname>optSpace</declname>
+        </param>
+        <param>
+          <type><ref refid="classtools_1_1finite_1_1opt_1_1_opt_type" kindref="compound">OptType</ref></type>
+          <declname>optType</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="13" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a4f7b1f67320c2a2a5788ff7633f2baee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;</type>
+        <definition>Eigen::Tensor&lt; Scalar, 4 &gt; tools::finite::opt::find_ground_state</definition>
+        <argsstring>(const class_state_finite &amp;state, std::string ritz=&quot;SR&quot;)</argsstring>
+        <name>find_ground_state</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>ritz</declname>
+          <defval>&quot;SR&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.cpp" bodystart="84" bodyend="88"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1ada1481b620a78703dc06961147d02e1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::truncate_theta</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 3 &gt; &amp;theta, class_state_finite &amp;state)</argsstring>
+        <name>truncate_theta</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="95" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="68" bodyend="114"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1aca7e8d107ea33aa5237a88517969dcd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::truncate_left</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 3 &gt; &amp;theta, class_state_finite &amp;state)</argsstring>
+        <name>truncate_left</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="96" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="210" bodyend="299"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a3ec18f4c22a35b2b5b4165af7c9d3cf6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::truncate_right</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 3 &gt; &amp;theta, class_state_finite &amp;state)</argsstring>
+        <name>truncate_right</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="97" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="118" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a7d150c862a9eae2813775e7edb74763e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::truncate_theta</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta, class_state_finite &amp;state, const std::optional&lt; size_t &gt; chi_lim=std::nullopt)</argsstring>
+        <name>truncate_theta</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::optional&lt; size_t &gt;</type>
+          <declname>chi_lim</declname>
+          <defval>std::nullopt</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="98" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/svd.cpp" bodystart="302" bodyend="324"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1ac3b03b0ddcc21fd5e01097946e431cde" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::truncate_theta</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 3 &gt; &amp;theta, class_state_finite &amp;state, long chi_, double SVDThreshold)</argsstring>
+        <name>truncate_theta</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chi_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>SVDThreshold</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="73" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a323b9498c3e39db5ae21e01052faa196" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::truncate_left</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 3 &gt; &amp;theta, class_state_finite &amp;state, long chi_, double SVDThreshold)</argsstring>
+        <name>truncate_left</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chi_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>SVDThreshold</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="74" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a8ee83b4da5c86ba14db460c4fed24a3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::truncate_right</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 3 &gt; &amp;theta, class_state_finite &amp;state, long chi_, double SVDThreshold)</argsstring>
+        <name>truncate_right</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chi_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>SVDThreshold</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="75" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1opt_1a2023d9c739d88128aeacace15b6e1176" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::opt::truncate_theta</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, 4 &gt; &amp;theta, class_state_finite &amp;state, long chi_, double SVDThreshold)</argsstring>
+        <name>truncate_theta</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>theta</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>long</type>
+          <declname>chi_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>SVDThreshold</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="76" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="87" column="1"/>
+  </compounddef>
+</doxygen>

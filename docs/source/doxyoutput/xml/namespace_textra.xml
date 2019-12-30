@@ -1,0 +1,1263 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespace_textra" kind="namespace" language="C++">
+    <compoundname>Textra</compoundname>
+    <innerclass refid="struct_textra_1_1idx__dim__pair" prot="public">Textra::idx_dim_pair</innerclass>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespace_textra_1ad59ad423ffe2196e1b92b0d85e2eff0f" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using Textra::cdouble = typedef std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>cdouble</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a7db6974446758b79bad26e168a8daa78" prot="public" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, Eigen::Dynamic, Eigen::Dynamic &gt;</type>
+        <definition>using Textra::MatrixType = typedef Eigen::Matrix&lt;Scalar, Eigen::Dynamic, Eigen::Dynamic&gt;</definition>
+        <argsstring></argsstring>
+        <name>MatrixType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a358a270e8b355388963a513bd6617131" prot="public" static="no">
+        <type>Eigen::Matrix&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, Eigen::Dynamic, 1 &gt;</type>
+        <definition>using Textra::VectorType = typedef Eigen::Matrix&lt;Scalar, Eigen::Dynamic, 1&gt;</definition>
+        <argsstring></argsstring>
+        <name>VectorType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="32" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1ace777675543f488f279874fd25523d7b" prot="public" static="no">
+        <type>Eigen::SparseMatrix&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;</type>
+        <definition>using Textra::SparseMatrixType = typedef Eigen::SparseMatrix&lt;Scalar&gt;</definition>
+        <argsstring></argsstring>
+        <name>SparseMatrixType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="33" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1ac05ac79c4e225739a3c4b44fb5b577df" prot="public" static="no">
+        <type>Eigen::array&lt; long, rank &gt;</type>
+        <definition>using Textra::array = typedef Eigen::array&lt;long, rank&gt;</definition>
+        <argsstring></argsstring>
+        <name>array</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="34" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="34" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1ac4ea1d05edf6f909513a8ec4af87880a" prot="public" static="no">
+        <type>Eigen::array&lt; Eigen::IndexPair&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;, length &gt;</type>
+        <definition>using Textra::idxlistpair = typedef Eigen::array&lt;Eigen::IndexPair&lt;Scalar&gt;,length&gt;</definition>
+        <argsstring></argsstring>
+        <name>idxlistpair</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="38" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a40142e97da00e9a6470ec0637da532e3" prot="public" static="no">
+        <type>Eigen::array&lt; long, 8 &gt;</type>
+        <definition>using Textra::array8 = typedef Eigen::array&lt;long,8&gt;</definition>
+        <argsstring></argsstring>
+        <name>array8</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="87" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1afa2db9c81f29f8e4324e79340e4ab96a" prot="public" static="no">
+        <type>Eigen::array&lt; long, 7 &gt;</type>
+        <definition>using Textra::array7 = typedef Eigen::array&lt;long,7&gt;</definition>
+        <argsstring></argsstring>
+        <name>array7</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="88" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a3d45de3aad22e5851745e69630523d49" prot="public" static="no">
+        <type>Eigen::array&lt; long, 6 &gt;</type>
+        <definition>using Textra::array6 = typedef Eigen::array&lt;long,6&gt;</definition>
+        <argsstring></argsstring>
+        <name>array6</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1ad77b0c4ddf727b47bd5283b159db860e" prot="public" static="no">
+        <type>Eigen::array&lt; long, 5 &gt;</type>
+        <definition>using Textra::array5 = typedef Eigen::array&lt;long,5&gt;</definition>
+        <argsstring></argsstring>
+        <name>array5</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="90" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1aed08040fb74720378781c145b88c1d5a" prot="public" static="no">
+        <type>Eigen::array&lt; long, 4 &gt;</type>
+        <definition>using Textra::array4 = typedef Eigen::array&lt;long,4&gt;</definition>
+        <argsstring></argsstring>
+        <name>array4</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="91" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" prot="public" static="no">
+        <type>Eigen::array&lt; long, 3 &gt;</type>
+        <definition>using Textra::array3 = typedef Eigen::array&lt;long,3&gt;</definition>
+        <argsstring></argsstring>
+        <name>array3</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="92" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" prot="public" static="no">
+        <type>Eigen::array&lt; long, 2 &gt;</type>
+        <definition>using Textra::array2 = typedef Eigen::array&lt;long,2&gt;</definition>
+        <argsstring></argsstring>
+        <name>array2</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="93" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="93" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1a4605428e7dc10e4e43f43e69f6ddbd75" prot="public" static="no">
+        <type>Eigen::array&lt; long, 1 &gt;</type>
+        <definition>using Textra::array1 = typedef Eigen::array&lt;long,1&gt;</definition>
+        <argsstring></argsstring>
+        <name>array1</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="94" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="94" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespace_textra_1aa765d7f6f02b2cf8d8a0a615f8524fc1" prot="public" static="no">
+        <type>std::is_base_of&lt; Eigen::PlainObjectBase&lt; std::decay_t&lt; Derived &gt; &gt;, std::decay_t&lt; Derived &gt; &gt;</type>
+        <definition>using Textra::is_plainObject = typedef std::is_base_of&lt;Eigen::PlainObjectBase&lt;std::decay_t&lt;Derived&gt; &gt;, std::decay_t&lt;Derived&gt; &gt;</definition>
+        <argsstring></argsstring>
+        <name>is_plainObject</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="163" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespace_textra_1ad322c080214d3af95e19d611c077ea76" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>constexpr <ref refid="namespace_textra_1ac4ea1d05edf6f909513a8ec4af87880a" kindref="member">idxlistpair</ref>&lt; long, 0 &gt;</type>
+        <definition>constexpr idxlistpair&lt;long,0&gt; Textra::idx</definition>
+        <argsstring>()</argsstring>
+        <name>idx</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="40" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="40" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1adb41dcaa749176a53d57268d96efdcc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>std::size_t</type>
+            <declname>N</declname>
+            <defname>N</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr <ref refid="namespace_textra_1ac4ea1d05edf6f909513a8ec4af87880a" kindref="member">idxlistpair</ref>&lt; long, N &gt;</type>
+        <definition>constexpr idxlistpair&lt;long,N&gt; Textra::idx</definition>
+        <argsstring>(const T(&amp;list1)[N], const T(&amp;list2)[N])</argsstring>
+        <name>idx</name>
+        <param>
+          <type>const T(&amp;)</type>
+          <declname>list1</declname>
+          <array>[N]</array>
+        </param>
+        <param>
+          <type>const T(&amp;)</type>
+          <declname>list2</declname>
+          <array>[N]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="47" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="47" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ac89cfa77d023247aabe950ce829f9513" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>std::size_t</type>
+            <declname>NB</declname>
+            <defname>NB</defname>
+          </param>
+          <param>
+            <type>std::size_t</type>
+            <declname>N</declname>
+            <defname>N</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr <ref refid="namespace_textra_1ac4ea1d05edf6f909513a8ec4af87880a" kindref="member">idxlistpair</ref>&lt; long, N &gt;</type>
+        <definition>constexpr idxlistpair&lt;long,N&gt; Textra::sortIdx</definition>
+        <argsstring>(const Eigen::array&lt; long, NB &gt; &amp;dimensions, const long(&amp;idx_ctrct_A)[N], const long(&amp;idx_ctrct_B)[N])</argsstring>
+        <name>sortIdx</name>
+        <param>
+          <type>const Eigen::array&lt; long, NB &gt; &amp;</type>
+          <declname>dimensions</declname>
+        </param>
+        <param>
+          <type>const long(&amp;)</type>
+          <declname>idx_ctrct_A</declname>
+          <array>[N]</array>
+        </param>
+        <param>
+          <type>const long(&amp;)</type>
+          <declname>idx_ctrct_B</declname>
+          <array>[N]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="70" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="70" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a65a7adf70ca3f05a3635830bd91c5787" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 1 &gt;</type>
+        <definition>constexpr Eigen::Tensor&lt;Scalar,1&gt; Textra::extractDiagonal</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
+        <name>extractDiagonal</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="105" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="105" bodyend="117"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a42b2f8b0c5883c74c9fb806db83762da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::asDiagonal</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;tensor)</argsstring>
+        <name>asDiagonal</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="121" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="121" bodyend="123"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a145b649a880d716e15ad11d43c1d1ce8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::asDiagonalSquared</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;tensor)</argsstring>
+        <name>asDiagonalSquared</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="126" bodyend="128"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a0943a701e495e3c6c3211a7407e7a312" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::asDiagonalInversed</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;tensor)</argsstring>
+        <name>asDiagonalInversed</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="131" bodyend="133"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a1eda47ce18fd5ba41628b44b32b6366c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::asDiagonalInversed</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
+        <name>asDiagonalInversed</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="136" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="136" bodyend="141"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a7cd3712f032a50ee9320fc68312c7c20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::asNormalized</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;tensor)</argsstring>
+        <name>asNormalized</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="144" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="144" bodyend="147"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a90452304e6be4b7fd6c520f59be431f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr Eigen::Tensor&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref>, rank &gt;</type>
+        <definition>constexpr Eigen::Tensor&lt;typename Derived::Scalar, rank&gt; Textra::Matrix_to_Tensor</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Eigen::array&lt; long, rank &gt; &amp;dims)</argsstring>
+        <name>Matrix_to_Tensor</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const Eigen::array&lt; long, rank &gt; &amp;</type>
+          <declname>dims</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="166" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="166" bodyend="176"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a9207bc24390fafec44eee851bf9fdee2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Dims</declname>
+            <defname>Dims</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr Eigen::Tensor&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref>, sizeof...(Dims)&gt;</type>
+        <definition>constexpr Eigen::Tensor&lt;typename Derived::Scalar, sizeof... (Dims)&gt; Textra::Matrix_to_Tensor</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Dims... dims)</argsstring>
+        <name>Matrix_to_Tensor</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const Dims...</type>
+          <declname>dims</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="180" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="180" bodyend="182"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a1a713f14010c8216f87e9f33dcf9ca64" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr Eigen::Tensor&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref>, rank &gt;</type>
+        <definition>constexpr Eigen::Tensor&lt;typename Derived::Scalar, rank&gt; Textra::Matrix_to_Tensor</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Eigen::DSizes&lt; long, rank &gt; &amp;dims)</argsstring>
+        <name>Matrix_to_Tensor</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const Eigen::DSizes&lt; long, rank &gt; &amp;</type>
+          <declname>dims</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="185" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="185" bodyend="189"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ac457f29be7f94d9d773b47592c65eef3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::Matrix_to_Tensor1</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix)</argsstring>
+        <name>Matrix_to_Tensor1</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="195" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="195" bodyend="197"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a183aedbd02b4a84ab362812c8ddf3748" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::Matrix_to_Tensor2</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix)</argsstring>
+        <name>Matrix_to_Tensor2</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="200" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="200" bodyend="202"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a1ee11e2d4410760ed26158c27a38d2b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::MatrixTensorMap</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Eigen::DSizes&lt; long, rank &gt; &amp;dims)</argsstring>
+        <name>MatrixTensorMap</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const Eigen::DSizes&lt; long, rank &gt; &amp;</type>
+          <declname>dims</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="205" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="205" bodyend="212"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a925114f5051837d7bdb2ec05d70ae898" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+          <param>
+            <type>typename...</type>
+            <declname>Dims</declname>
+            <defname>Dims</defname>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::MatrixTensorMap</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix, const Dims... dims)</argsstring>
+        <name>MatrixTensorMap</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <param>
+          <type>const Dims...</type>
+          <declname>dims</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="215" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="215" bodyend="217"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a7f6cc605db982f407d7e147c889138eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::MatrixTensorMap</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;matrix)</argsstring>
+        <name>MatrixTensorMap</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="220" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="220" bodyend="226"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a9860b63ba377587f29fa84cbce5702c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr <ref refid="namespace_textra_1a7db6974446758b79bad26e168a8daa78" kindref="member">MatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;</type>
+        <definition>constexpr MatrixType&lt;Scalar&gt; Textra::Tensor2_to_Matrix</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
+        <name>Tensor2_to_Matrix</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="237" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="237" bodyend="239"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1aee5cae05c29a2d54025c36f444591dcd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr <ref refid="namespace_textra_1a7db6974446758b79bad26e168a8daa78" kindref="member">MatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;</type>
+        <definition>constexpr MatrixType&lt;Scalar&gt; Textra::Tensor1_to_Vector</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 1 &gt; &amp;tensor)</argsstring>
+        <name>Tensor1_to_Vector</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 1 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="242" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="242" bodyend="244"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1abec7b372b4239eac14573685fae5f2e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+          <param>
+            <type>typename sizeType</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr <ref refid="namespace_textra_1a7db6974446758b79bad26e168a8daa78" kindref="member">MatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;</type>
+        <definition>constexpr MatrixType&lt;Scalar&gt; Textra::Tensor_to_Matrix</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, rank &gt; &amp;tensor, const sizeType rows, const sizeType cols)</argsstring>
+        <name>Tensor_to_Matrix</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>const sizeType</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const sizeType</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="247" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="247" bodyend="249"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a01151a1a76f286d61ebc2756991fb17d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr <ref refid="namespace_textra_1ace777675543f488f279874fd25523d7b" kindref="member">SparseMatrixType</ref>&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref> &gt;</type>
+        <definition>constexpr SparseMatrixType&lt;Scalar&gt; Textra::Tensor2_to_SparseMatrix</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor, double prune_threshold=1e-15)</argsstring>
+        <name>Tensor2_to_SparseMatrix</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>prune_threshold</declname>
+          <defval>1e-15</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="252" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="252" bodyend="254"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ac6fcdfc5393a97877b4ff51ea6468caa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+          <param>
+            <type>typename sizeType</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::TensorMatrixMap</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, rank &gt; &amp;tensor, const sizeType rows, const sizeType cols)</argsstring>
+        <name>TensorMatrixMap</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>const sizeType</type>
+          <declname>rows</declname>
+        </param>
+        <param>
+          <type>const sizeType</type>
+          <declname>cols</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="258" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="258" bodyend="260"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1afc86f382f30bd3b47208f940731f6029" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::TensorMatrixMap</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
+        <name>TensorMatrixMap</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="263" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="263" bodyend="265"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ad5ceb0b38e8e75528105703cd4565833" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+        </templateparamlist>
+        <type>constexpr auto</type>
+        <definition>constexpr auto Textra::TensorVectorMap</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, 2 &gt; &amp;tensor)</argsstring>
+        <name>TensorVectorMap</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, 2 &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="268" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="268" bodyend="270"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a404c21a4f4844edba87cffd8e06536c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank, Eigen::RowMajor &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,rank, Eigen::RowMajor&gt; Textra::to_RowMajor</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, rank, Eigen::ColMajor &gt; tensor)</argsstring>
+        <name>to_RowMajor</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank, Eigen::ColMajor &gt;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="281" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="281" bodyend="286"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a7ccbf9014eef4fc7fab8e2163d721e89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Matrix&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref>, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt;</type>
+        <definition>Eigen::Matrix&lt;typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::RowMajor&gt; Textra::to_RowMajor</definition>
+        <argsstring>(const Eigen::MatrixBase&lt; Derived &gt; &amp;matrix)</argsstring>
+        <name>to_RowMajor</name>
+        <param>
+          <type>const Eigen::MatrixBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="290" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="290" bodyend="294"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a6ce185ef869dc59048058546aedeb24e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank, Eigen::ColMajor &gt;</type>
+        <definition>Eigen::Tensor&lt;Scalar,rank, Eigen::ColMajor&gt; Textra::to_ColMajor</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, rank, Eigen::RowMajor &gt; tensor)</argsstring>
+        <name>to_ColMajor</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank, Eigen::RowMajor &gt;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="297" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="297" bodyend="302"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ab92f06daa8fdd15320f38aa89bfa7894" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>Eigen::Matrix&lt; typename <ref refid="infinite_2measure_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" kindref="member">Derived::Scalar</ref>, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor &gt;</type>
+        <definition>Eigen::Matrix&lt;typename Derived::Scalar,Eigen::Dynamic,Eigen::Dynamic, Eigen::ColMajor&gt; Textra::to_ColMajor</definition>
+        <argsstring>(const Eigen::MatrixBase&lt; Derived &gt; &amp;matrix)</argsstring>
+        <name>to_ColMajor</name>
+        <param>
+          <type>const Eigen::MatrixBase&lt; Derived &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="305" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="305" bodyend="309"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a134cee5e3300feee66018395aa0ffa05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool Textra::isReal</definition>
+        <argsstring>(const Eigen::EigenBase&lt; Derived &gt; &amp;obj, [[maybe_unused]]const std::string &amp;name=&quot;&quot;, double threshold=1e-14)</argsstring>
+        <name>isReal</name>
+        <param>
+          <type>const Eigen::EigenBase&lt; Derived &gt; &amp;</type>
+          <declname>obj</declname>
+        </param>
+        <param>
+          <attributes>[[maybe_unused]</attributes>
+          <type>]const std::string &amp;</type>
+          <declname>name</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>threshold</declname>
+          <defval>1e-14</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="319" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="319" bodyend="328"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ae7794bc6f089ffe1c7121692c28c7592" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool Textra::isReal</definition>
+        <argsstring>(const Eigen::Tensor&lt; Scalar, rank &gt; &amp;tensor, const std::string &amp;name=&quot;&quot;, double threshold=1e-14)</argsstring>
+        <name>isReal</name>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>name</declname>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>threshold</declname>
+          <defval>1e-14</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="332" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="332" bodyend="335"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a34123857104ed8a9c77ce2f6365bda74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>auto</type>
+        <definition>auto Textra::subtract_phase</definition>
+        <argsstring>(Eigen::MatrixBase&lt; Derived &gt; &amp;v)</argsstring>
+        <name>subtract_phase</name>
+        <param>
+          <type>Eigen::MatrixBase&lt; Derived &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="338" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="338" bodyend="357"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1adf0b0f09052c2cb60ff713691d9f28ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>auto</type>
+        <definition>auto Textra::subtract_phase</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, rank &gt; &amp;tensor)</argsstring>
+        <name>subtract_phase</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="362" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="362" bodyend="365"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1af6755d93497c739f4cab661892897c46" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Derived</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Textra::add_phase</definition>
+        <argsstring>(Eigen::MatrixBase&lt; Derived &gt; &amp;v, std::vector&lt; double &gt; &amp;angles)</argsstring>
+        <name>add_phase</name>
+        <param>
+          <type>Eigen::MatrixBase&lt; Derived &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <declname>angles</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="369" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="369" bodyend="379"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1ae8de771b63d94ce09bc102d204eed693" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+          </param>
+          <param>
+            <type>auto</type>
+            <declname>rank</declname>
+            <defname>rank</defname>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void Textra::add_phase</definition>
+        <argsstring>(Eigen::Tensor&lt; Scalar, rank &gt; &amp;tensor, std::vector&lt; double &gt; &amp;angles)</argsstring>
+        <name>add_phase</name>
+        <param>
+          <type>Eigen::Tensor&lt; <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>, rank &gt; &amp;</type>
+          <declname>tensor</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <declname>angles</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="383" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="383" bodyend="386"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a83480b3f75b0a29f652feb8b2152b475" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>int</type>
+            <declname>L</declname>
+            <defname>L</defname>
+          </param>
+        </templateparamlist>
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; Textra::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, const Eigen::DSizes&lt; T, L &gt; &amp;v)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const Eigen::DSizes&lt; T, L &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="393" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="393" bodyend="400"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a47079abeb81c780b562da5b9a8d1ff19" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>int</type>
+            <declname>L</declname>
+            <defname>L</defname>
+          </param>
+        </templateparamlist>
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; Textra::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, const Eigen::array&lt; T, L &gt; &amp;v)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const Eigen::array&lt; T, L &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="404" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="404" bodyend="411"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1a9f5d2eac44ffb07d9b83baeb71ed0dda" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; Textra::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, const std::list&lt; T &gt; &amp;v)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const std::list&lt; T &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Prints the content of a list nicely. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="416" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="416" bodyend="423"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      <memberdef kind="function" id="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; Textra::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;out, const std::vector&lt; T &gt; &amp;v)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>out</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; T &gt; &amp;</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>Prints the content of a list nicely. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="427" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" bodystart="427" bodyend="434"/>
+        <references refid="namespace_textra_1adf8b82a75b1ea346a094d67ff78330ed" compoundref="nmspc__tensor__extra_8h" startline="427" endline="434">operator&lt;&lt;</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><bold><ref refid="namespace_textra" kindref="compound">Textra</ref></bold> stands for &quot;Tensor Extra&quot;. Provides extra functionality to Eigen::Tensor. </para>    </briefdescription>
+    <detaileddescription>
+<para>This namespace makes shorthand typedef&apos;s to Eigen&apos;s unsupported Tensor module, and provides handy functions to interface between <computeroutput>Eigen::Tensor</computeroutput> and <computeroutput>Eigen::Matrix</computeroutput> objects. The contents of this namespace is co clear it is self-documenting ;) </para>    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_tensor_extra.h" line="20" column="1"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_08283d6d60bf683acfe1f6e5af914fc0" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite</compoundname>
+    <innerdir refid="dir_d2fa117a0b2767983c2af334a0b862d5">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io</innerdir>
+    <innerfile refid="infinite_2debug_8cpp">debug.cpp</innerfile>
+    <innerfile refid="env_8cpp">env.cpp</innerfile>
+    <innerfile refid="infinite_2measure_8cpp">measure.cpp</innerfile>
+    <innerfile refid="infinite_2mpo_8cpp">mpo.cpp</innerfile>
+    <innerfile refid="infinite_2mps_8cpp">mps.cpp</innerfile>
+    <innerfile refid="infinite_2opt_8cpp">opt.cpp</innerfile>
+    <innerfile refid="infinite_2print_8cpp">print.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/"/>
+  </compounddef>
+</doxygen>

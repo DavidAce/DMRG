@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classclass__model__factory" kind="class" language="C++" prot="public">
+    <compoundname>class_model_factory</compoundname>
+    <includes refid="class__model__factory_8h" local="no">class_model_factory.h</includes>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; class_model_base &gt; class_model_factory::create_mpo</definition>
+        <argsstring>(size_t position, std::string model_type_str)</argsstring>
+        <name>create_mpo</name>
+        <param>
+          <type>size_t</type>
+          <declname>position</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>model_type_str</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" line="14" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp" bodystart="15" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__factory_1a27e72c08a4f4bf9fedcbeb182248ad4e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename...</type>
+            <declname>T</declname>
+            <defname>T</defname>
+          </param>
+        </templateparamlist>
+        <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+        <definition>static std::unique_ptr&lt;class_model_base&gt; class_model_factory::create_mpo</definition>
+        <argsstring>(size_t position, std::string model_type_str, T... args)</argsstring>
+        <name>create_mpo</name>
+        <param>
+          <type>size_t</type>
+          <declname>position</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>model_type_str</declname>
+        </param>
+        <param>
+          <type>T...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" line="17" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" bodystart="17" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="classclass__model__factory_1a93f2fd7d6a3172c625cdd332151ace17" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+        <definition>std::unique_ptr&lt; class_model_base &gt; class_model_factory::clone</definition>
+        <argsstring>(std::unique_ptr&lt; class_model_base &gt; other)</argsstring>
+        <name>clone</name>
+        <param>
+          <type>std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.cpp" bodystart="38" bodyend="40"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_factory.h" bodystart="12" bodyend="24"/>
+    <listofallmembers>
+      <member refid="classclass__model__factory_1a93f2fd7d6a3172c625cdd332151ace17" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>clone</name></member>
+      <member refid="classclass__model__factory_1ac168711e6d349e073baabeb39e909df8" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>create_mpo</name></member>
+      <member refid="classclass__model__factory_1a27e72c08a4f4bf9fedcbeb182248ad4e" prot="public" virt="non-virtual"><scope>class_model_factory</scope><name>create_mpo</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

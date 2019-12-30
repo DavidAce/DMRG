@@ -1,0 +1,461 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor" kind="class" language="C++" prot="public">
+    <compoundname>tools::finite::opt::internal::ceres_base_functor</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">FirstOrderFunction</basecompoundref>
+    <derivedcompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor" prot="public" virt="non-virtual">tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;</derivedcompoundref>
+    <derivedcompoundref refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor" prot="public" virt="non-virtual">tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;</derivedcompoundref>
+    <includes refid="opt_8h" local="no">opt.h</includes>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::variance</definition>
+        <argsstring></argsstring>
+        <name>variance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="112" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy</definition>
+        <argsstring></argsstring>
+        <name>energy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="113" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_reduced</definition>
+        <argsstring></argsstring>
+        <name>energy_reduced</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="114" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a05882a554536db051d126643c84c001e" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_lower_bound</definition>
+        <argsstring></argsstring>
+        <name>energy_lower_bound</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="115" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a282a6e155e6f8a24dbad354d3b22f7cc" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_upper_bound</definition>
+        <argsstring></argsstring>
+        <name>energy_upper_bound</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="116" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adfc97b891e838bac78afb3ff0d84bf7f" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_target</definition>
+        <argsstring></argsstring>
+        <name>energy_target</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="117" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1af34fa855cbe63925bbc540e03f431d42" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_min</definition>
+        <argsstring></argsstring>
+        <name>energy_min</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="118" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2abddf9d35cbc20bc6d09a8c75f7b262" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_max</definition>
+        <argsstring></argsstring>
+        <name>energy_max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="119" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="119" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad85bda1d5380a029f29d6607102a251a" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_dens</definition>
+        <argsstring></argsstring>
+        <name>energy_dens</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="120" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1acc91cc97f47890958cdb0d0dc020369a" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_target_dens</definition>
+        <argsstring></argsstring>
+        <name>energy_target_dens</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="121" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1b8c8a8b8ec48066ffa648aba869b67e" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_window</definition>
+        <argsstring></argsstring>
+        <name>energy_window</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="122" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a6fe6619a82ba5ee67d0b0c0b29156924" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::energy_offset</definition>
+        <argsstring></argsstring>
+        <name>energy_offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="123" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::norm_offset</definition>
+        <argsstring></argsstring>
+        <name>norm_offset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="124" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" prot="protected" static="no" mutable="yes">
+        <type>double</type>
+        <definition>double tools::finite::opt::internal::ceres_base_functor::norm</definition>
+        <argsstring></argsstring>
+        <name>norm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" prot="protected" static="no" mutable="yes">
+        <type>int</type>
+        <definition>int tools::finite::opt::internal::ceres_base_functor::counter</definition>
+        <argsstring></argsstring>
+        <name>counter</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" prot="protected" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t tools::finite::opt::internal::ceres_base_functor::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="127" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a965d326383034f117e0f8dfa26f0ed9c" prot="protected" static="no" mutable="no">
+        <type>int</type>
+        <definition>int tools::finite::opt::internal::ceres_base_functor::iteration</definition>
+        <argsstring></argsstring>
+        <name>iteration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="128" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="128" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" prot="protected" static="no" mutable="no">
+        <type>int</type>
+        <definition>int tools::finite::opt::internal::ceres_base_functor::num_parameters</definition>
+        <argsstring></argsstring>
+        <name>num_parameters</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="129" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a24904fea2d1697f5807f2c4f4709abc3" prot="protected" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool tools::finite::opt::internal::ceres_base_functor::have_bounds_on_energy</definition>
+        <argsstring></argsstring>
+        <name>have_bounds_on_energy</name>
+        <initializer>= false</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="130" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" prot="protected" static="no" mutable="no">
+        <type><ref refid="class_o_m_p" kindref="compound">OMP</ref></type>
+        <definition>OMP tools::finite::opt::internal::ceres_base_functor::omp</definition>
+        <argsstring></argsstring>
+        <name>omp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a0f438c834a7a3bbf34ac1e6b54ba89f5" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>ceres_base_functor::ceres_base_functor</definition>
+        <argsstring>(const class_state_finite &amp;state, const class_simulation_status &amp;sim_status)</argsstring>
+        <name>ceres_base_functor</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp" bodystart="14" bodyend="31"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a0f438c834a7a3bbf34ac1e6b54ba89f5" compoundref="ceres__base_8cpp" startline="14" endline="31">ceres_base_functor</references>
+        <references refid="namespacetools_1_1finite_1_1opt_1_1internal_1a58358f1ac4d7929a0c855269e2231253" compoundref="finite_2opt_8cpp" startline="94" endline="104">tools::finite::opt::internal::reset_timers</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" compoundref="opt_8h" startline="127">length</references>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adfc97b891e838bac78afb3ff0d84bf7f" compoundref="opt_8h" startline="117">energy_target</references>
+        <references refid="structstatus__data_1aea612cb23f91a8022ef470fd345a1d28" compoundref="class__simulation__status_8h" startline="28">status_data::energy_target</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2abddf9d35cbc20bc6d09a8c75f7b262" compoundref="opt_8h" startline="119">energy_max</references>
+        <references refid="structstatus__data_1a19fb251d3174bdfae7034104d9af50b2" compoundref="class__simulation__status_8h" startline="27">status_data::energy_max</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1af34fa855cbe63925bbc540e03f431d42" compoundref="opt_8h" startline="118">energy_min</references>
+        <references refid="structstatus__data_1a2ec9feac7517c68c1a47f7271330c7f0" compoundref="class__simulation__status_8h" startline="26">status_data::energy_min</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a05882a554536db051d126643c84c001e" compoundref="opt_8h" startline="115">energy_lower_bound</references>
+        <references refid="structstatus__data_1a88e3d7f6106d61e25e4e7f10cbcac62b" compoundref="class__simulation__status_8h" startline="30">status_data::energy_lbound</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a282a6e155e6f8a24dbad354d3b22f7cc" compoundref="opt_8h" startline="116">energy_upper_bound</references>
+        <references refid="structstatus__data_1af9acc1683b59d2fe405745c31550653b" compoundref="class__simulation__status_8h" startline="29">status_data::energy_ubound</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1acc91cc97f47890958cdb0d0dc020369a" compoundref="opt_8h" startline="121">energy_target_dens</references>
+        <references refid="structstatus__data_1a2c524bc2f5bfbf998be901287c1a0f19" compoundref="class__simulation__status_8h" startline="32">status_data::energy_dens_target</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1b8c8a8b8ec48066ffa648aba869b67e" compoundref="opt_8h" startline="122">energy_window</references>
+        <references refid="structstatus__data_1ae5c85bbfcf2c1a593b4201bd1c11d36b" compoundref="class__simulation__status_8h" startline="33">status_data::energy_dens_window</references>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a965d326383034f117e0f8dfa26f0ed9c" compoundref="opt_8h" startline="128">iteration</references>
+        <references refid="structstatus__data_1a0bf230f68ab2587ea9d80f4ef1aca4dc" compoundref="class__simulation__status_8h" startline="18">status_data::iteration</references>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double ceres_base_functor::get_variance</definition>
+        <argsstring>() const</argsstring>
+        <name>get_variance</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="136" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp" bodystart="35" bodyend="35"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" compoundref="opt_8h" startline="112">variance</references>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double ceres_base_functor::get_energy</definition>
+        <argsstring>() const</argsstring>
+        <name>get_energy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="137" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp" bodystart="36" bodyend="36"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" compoundref="opt_8h" startline="113">energy</references>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t ceres_base_functor::get_count</definition>
+        <argsstring>() const</argsstring>
+        <name>get_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="138" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp" bodystart="37" bodyend="37"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" compoundref="opt_8h" startline="126">counter</references>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double ceres_base_functor::get_norm</definition>
+        <argsstring>() const</argsstring>
+        <name>get_norm</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="139" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp" bodystart="38" bodyend="38"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" compoundref="opt_8h" startline="125">norm</references>
+      </memberdef>
+      <memberdef kind="function" id="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" prot="public" static="no" const="yes" explicit="no" inline="no" final="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int ceres_base_functor::NumParameters</definition>
+        <argsstring>() const final</argsstring>
+        <name>NumParameters</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="140" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_base.cpp" bodystart="39" bodyend="39"/>
+        <references refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" compoundref="opt_8h" startline="129">num_parameters</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="19">
+        <label>tools::finite::opt::internal::ceres_direct_functor&lt; Scalar &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__direct__functor"/>
+        <childnode refid="17" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>tools::finite::opt::internal::ceres_subspace_functor&lt; Scalar &gt;</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__subspace__functor"/>
+        <childnode refid="17" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>tools::finite::opt::internal::ceres_base_functor</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>FirstOrderFunction</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="23">
+        <label>OMP</label>
+        <link refid="class_o_m_p"/>
+      </node>
+      <node id="21">
+        <label>tools::finite::opt::internal::ceres_base_functor</label>
+        <link refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor"/>
+        <childnode refid="22" relation="public-inheritance">
+        </childnode>
+        <childnode refid="23" relation="usage">
+          <edgelabel>omp</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>FirstOrderFunction</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" line="109" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt.h" bodystart="109" bodyend="141"/>
+    <listofallmembers>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a0f438c834a7a3bbf34ac1e6b54ba89f5" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>ceres_base_functor</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a65d9a10408a8b3a4bcd30fa7a66207f7" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>counter</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ac1c08e2b03cf743c7cbf9d2361b8b527" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ad85bda1d5380a029f29d6607102a251a" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_dens</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a05882a554536db051d126643c84c001e" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_lower_bound</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2abddf9d35cbc20bc6d09a8c75f7b262" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_max</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1af34fa855cbe63925bbc540e03f431d42" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_min</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a6fe6619a82ba5ee67d0b0c0b29156924" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_offset</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adc4f5f249bdf9a5211a551950e387aa1" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_reduced</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adfc97b891e838bac78afb3ff0d84bf7f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_target</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1acc91cc97f47890958cdb0d0dc020369a" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_target_dens</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a282a6e155e6f8a24dbad354d3b22f7cc" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_upper_bound</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a1b8c8a8b8ec48066ffa648aba869b67e" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>energy_window</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adccac67a71127bdd60057b46ed0d3c0b" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>get_count</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a56ddbe03efd0aada1836d2a389d280a9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>get_energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1adb2ebda87137091c3cba0220212873a9" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>get_norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a19cca92abbef6b6fa22fab09ed22e9bf" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>get_variance</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a24904fea2d1697f5807f2c4f4709abc3" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>have_bounds_on_energy</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a965d326383034f117e0f8dfa26f0ed9c" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>iteration</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae06b091eee24221c72cd0563654d7d40" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>length</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ae75b8573678a9bd6027b197236dd6f9f" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>norm</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a68fa324900cb19b5fb4fc57968411d4d" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>norm_offset</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1ada202e879d518f4246b989b5b083a554" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>num_parameters</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a2c1add746cb9169f81fd2258947a7701" prot="public" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>NumParameters</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1afd52e23a7be8656238987588e8d6a62d" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>omp</name></member>
+      <member refid="classtools_1_1finite_1_1opt_1_1internal_1_1ceres__base__functor_1a9453dcd076348d129ccb912f212af9e9" prot="protected" virt="non-virtual"><scope>tools::finite::opt::internal::ceres_base_functor</scope><name>variance</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

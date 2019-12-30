@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1mps_1_1internals" kind="namespace" language="C++">
+    <compoundname>tools::finite::mps::internals</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="namespacetools_1_1finite_1_1mps_1_1internals_1a28a3a61253caeb19fa5a3c3368d8633c" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool tools::finite::mps::internals::seed_state_unused</definition>
+        <argsstring></argsstring>
+        <name>seed_state_unused</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="54" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1a60bfd7b8237aaaa28149f345cb8bb530" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset</definition>
+        <argsstring>(class_state_finite &amp;state, const std::string &amp;parity_sector, const int seed_state)</argsstring>
+        <name>set_product_state_in_parity_sector_from_bitset</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>parity_sector</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>seed_state</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="55" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="51" bodyend="88"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+        <references refid="mps-internals_8cpp_1a44f69124ce19c08d8d1652eb95de4b0a" compoundref="mps-internals_8cpp" startline="21" endline="29">get_axis</references>
+        <references refid="mps-internals_8cpp_1a4d7b2558f32ed5ab3f01f64eba898120" compoundref="mps-internals_8cpp" startline="15" endline="19">get_sign</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1af189a48d013fad458ef1f43290eaf74f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly</definition>
+        <argsstring>(class_state_finite &amp;state, const std::string &amp;parity_sector)</argsstring>
+        <name>set_product_state_in_parity_sector_randomly</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>parity_sector</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="56" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="92" bodyend="121"/>
+        <references refid="mps-internals_8cpp_1a44f69124ce19c08d8d1652eb95de4b0a" compoundref="mps-internals_8cpp" startline="21" endline="29">get_axis</references>
+        <references refid="mps-internals_8cpp_1a4d7b2558f32ed5ab3f01f64eba898120" compoundref="mps-internals_8cpp" startline="15" endline="19">get_sign</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1mps_1_1internals_1ab9f8b31ab128132ea61c593125f70f95" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::mps::internals::set_product_state_randomly</definition>
+        <argsstring>(class_state_finite &amp;state, const std::string &amp;parity_sector, bool use_pauli_eigenstates)</argsstring>
+        <name>set_product_state_randomly</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>parity_sector</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>use_pauli_eigenstates</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="57" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/mps-internals.cpp" bodystart="125" bodyend="156"/>
+        <references refid="namespacetools_1_1finite_1_1mps_1_1internals_1af189a48d013fad458ef1f43290eaf74f" compoundref="mps-internals_8cpp" startline="92" endline="121">set_product_state_in_parity_sector_randomly</references>
+        <references refid="classclass__state__finite_1acd27402752b06bd245716d2b5a087ba2" compoundref="class__state__finite_8cpp" startline="23" endline="52">class_state_finite::operator=</references>
+        <references refid="namespacetools_1_1finite_1_1ops_1a9b5ed5708bfbf96ee08ab2d863af83b0" compoundref="ops_8cpp" startline="127" endline="163">tools::finite::ops::get_projection_to_closest_parity_sector</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="53" column="1"/>
+  </compounddef>
+</doxygen>

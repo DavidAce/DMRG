@@ -2,8 +2,8 @@
 // Created by david on 2018-05-08.
 //
 
-#ifndef MATRIX_PRODUCT_SPARSE_H
-#define MATRIX_PRODUCT_SPARSE_H
+#pragma once
+
 
 #ifdef EIGEN_USE_BLAS
 #define EIGEN_USE_BLAS_SUSPEND
@@ -128,16 +128,14 @@ void SparseMatrixProduct<Scalar>::FactorOP()
 
 {   if(readyFactorOp){return;}
     assert(readyShift and "Shift value sigma has not been set.");
-    Scalar sigma;
     t_factorOp.tic();
     if constexpr(std::is_same<Scalar,double>::value)
     {
-        sigma = sigmaR;
         lu_dense.compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
     }
     else
     {
-        sigma = std::complex<double>(sigmaR,sigmaI);
+        Scalar sigma = std::complex<double>(sigmaR,sigmaI);
         lu_dense.compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     }
 
@@ -208,6 +206,3 @@ void SparseMatrixProduct<Scalar>::MultAx(Scalar* x_in, Scalar* x_out) {
 #endif
 
 
-
-
-#endif //

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespaceeigutils" kind="namespace" language="C++">
+    <compoundname>eigutils</compoundname>
+    <innerclass refid="classeigutils_1_1eig_config" prot="public">eigutils::eigConfig</innerclass>
+    <innerclass refid="classeigutils_1_1eig_solution" prot="public">eigutils::eigSolution</innerclass>
+    <innernamespace refid="namespaceeigutils_1_1eig_logger">eigutils::eigLogger</innernamespace>
+    <innernamespace refid="namespaceeigutils_1_1eig_setting">eigutils::eigSetting</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="16" column="1"/>
+  </compounddef>
+</doxygen>

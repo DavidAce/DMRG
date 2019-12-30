@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__log__tebd_1_1data__struct" kind="struct" language="C++" prot="private">
+    <compoundname>class_log_tebd::data_struct</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a5bd806516668e88a55b84e04153c8a78" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_log_tebd::data_struct::iteration</definition>
+        <argsstring></argsstring>
+        <name>iteration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="129" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="129" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1ad919b3c023f53ec0e8ea4d64f8ce7fbc" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_log_tebd::data_struct::chi</definition>
+        <argsstring></argsstring>
+        <name>chi</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="130" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a2c680c33c7d1830faeb25b3ad67f1802" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long class_log_tebd::data_struct::chi_max</definition>
+        <argsstring></argsstring>
+        <name>chi_max</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="131" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a5f2f23782d437da163a5480b8a1fc4eb" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::time_step</definition>
+        <argsstring></argsstring>
+        <name>time_step</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="132" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a683a333ee4d8b9512743e542e8b7b778" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::energy_mpo</definition>
+        <argsstring></argsstring>
+        <name>energy_mpo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1ae73c1ae418b4d85a278f9de6921c35f2" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::energy_ham</definition>
+        <argsstring></argsstring>
+        <name>energy_ham</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a8caeb845651370b766d0d5b3b100786e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::energy_mom</definition>
+        <argsstring></argsstring>
+        <name>energy_mom</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="133" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1ae6de75c6a20e7056cc4fd8f46f0b472e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::variance_mpo</definition>
+        <argsstring></argsstring>
+        <name>variance_mpo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a4d4978dedacea6cb89abc16653919e10" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::variance_ham</definition>
+        <argsstring></argsstring>
+        <name>variance_ham</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a1c8280643a0495706aa15aca84b15e8a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::variance_mom</definition>
+        <argsstring></argsstring>
+        <name>variance_mom</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="134" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="134" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a7232f3c10242a6c708a25e8a97386d57" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::entanglement_entropy</definition>
+        <argsstring></argsstring>
+        <name>entanglement_entropy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="135" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="135" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a7caa5219793c8f56da0682d87674b489" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::truncation_error</definition>
+        <argsstring></argsstring>
+        <name>truncation_error</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="136" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="136" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1a1aa9feb621ccde42113a033e6c56b7d3" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::phys_time</definition>
+        <argsstring></argsstring>
+        <name>phys_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="137" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="137" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__log__tebd_1_1data__struct_1aaf87d2faed69a7822cf330abea15a0a7" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_log_tebd::data_struct::wall_time</definition>
+        <argsstring></argsstring>
+        <name>wall_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="138" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="138" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" line="128" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/log_types.h" bodystart="128" bodyend="139"/>
+    <listofallmembers>
+      <member refid="structclass__log__tebd_1_1data__struct_1ad919b3c023f53ec0e8ea4d64f8ce7fbc" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>chi</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a2c680c33c7d1830faeb25b3ad67f1802" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>chi_max</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1ae73c1ae418b4d85a278f9de6921c35f2" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>energy_ham</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a8caeb845651370b766d0d5b3b100786e" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>energy_mom</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a683a333ee4d8b9512743e542e8b7b778" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>energy_mpo</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a7232f3c10242a6c708a25e8a97386d57" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>entanglement_entropy</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a5bd806516668e88a55b84e04153c8a78" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>iteration</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a1aa9feb621ccde42113a033e6c56b7d3" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>phys_time</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a5f2f23782d437da163a5480b8a1fc4eb" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>time_step</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a7caa5219793c8f56da0682d87674b489" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>truncation_error</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a4d4978dedacea6cb89abc16653919e10" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>variance_ham</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1a1c8280643a0495706aa15aca84b15e8a" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>variance_mom</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1ae6de75c6a20e7056cc4fd8f46f0b472e" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>variance_mpo</name></member>
+      <member refid="structclass__log__tebd_1_1data__struct_1aaf87d2faed69a7822cf330abea15a0a7" prot="public" virt="non-virtual"><scope>class_log_tebd::data_struct</scope><name>wall_time</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

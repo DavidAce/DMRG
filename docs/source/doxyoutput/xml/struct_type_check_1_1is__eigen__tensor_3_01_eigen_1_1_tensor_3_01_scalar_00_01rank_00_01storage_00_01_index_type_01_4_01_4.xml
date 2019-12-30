@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="struct_type_check_1_1is__eigen__tensor_3_01_eigen_1_1_tensor_3_01_scalar_00_01rank_00_01storage_00_01_index_type_01_4_01_4" kind="struct" language="C++" prot="public">
+    <compoundname>TypeCheck::is_eigen_tensor&lt; Eigen::Tensor&lt; Scalar, rank, storage, IndexType &gt; &gt;</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">true_type</basecompoundref>
+    <includes refid="nmspc__type__check_8h" local="no">nmspc_type_check.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename <ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref></type>
+      </param>
+      <param>
+        <type>int</type>
+        <declname>rank</declname>
+        <defname>rank</defname>
+      </param>
+      <param>
+        <type>int</type>
+        <declname>storage</declname>
+        <defname>storage</defname>
+      </param>
+      <param>
+        <type>typename IndexType</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="417">
+        <label>true_type</label>
+      </node>
+      <node id="416">
+        <label>TypeCheck::is_eigen_tensor&lt; Eigen::Tensor&lt; Scalar, rank, storage, IndexType &gt; &gt;</label>
+        <link refid="struct_type_check_1_1is__eigen__tensor_3_01_eigen_1_1_tensor_3_01_scalar_00_01rank_00_01storage_00_01_index_type_01_4_01_4"/>
+        <childnode refid="417" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="419">
+        <label>true_type</label>
+      </node>
+      <node id="418">
+        <label>TypeCheck::is_eigen_tensor&lt; Eigen::Tensor&lt; Scalar, rank, storage, IndexType &gt; &gt;</label>
+        <link refid="struct_type_check_1_1is__eigen__tensor_3_01_eigen_1_1_tensor_3_01_scalar_00_01rank_00_01storage_00_01_index_type_01_4_01_4"/>
+        <childnode refid="419" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_type_check.h" line="38" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/general/nmspc_type_check.h" bodystart="38" bodyend="38"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

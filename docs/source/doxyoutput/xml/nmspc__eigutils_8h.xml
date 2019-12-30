@@ -1,0 +1,533 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="nmspc__eigutils_8h" kind="file" language="C++">
+    <compoundname>nmspc_eigutils.h</compoundname>
+    <includes local="no">iostream</includes>
+    <includes local="no">array</includes>
+    <includes local="no">map</includes>
+    <includes local="no">complex</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">spdlog/sinks/stdout_color_sinks.h</includes>
+    <includes local="no">spdlog/spdlog.h</includes>
+    <includedby refid="class__state__infinite_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.h</includedby>
+    <includedby refid="arpackpp__solver_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</includedby>
+    <includedby refid="matrix__product__dense_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</includedby>
+    <includedby refid="matrix__product__sparse_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</includedby>
+    <includedby refid="matrix__product__stl_8h" local="no">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</includedby>
+    <includedby refid="matrix__product__hamiltonian_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</includedby>
+    <includedby refid="matrix__recast_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</includedby>
+    <includedby refid="class__eigsolver_8h" local="yes">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</includedby>
+    <incdepgraph>
+      <node id="1434">
+        <label>map</label>
+      </node>
+      <node id="1438">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1436">
+        <label>vector</label>
+      </node>
+      <node id="1437">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1433">
+        <label>array</label>
+      </node>
+      <node id="1432">
+        <label>iostream</label>
+      </node>
+      <node id="1431">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1432" relation="include">
+        </childnode>
+        <childnode refid="1433" relation="include">
+        </childnode>
+        <childnode refid="1434" relation="include">
+        </childnode>
+        <childnode refid="1435" relation="include">
+        </childnode>
+        <childnode refid="1436" relation="include">
+        </childnode>
+        <childnode refid="1437" relation="include">
+        </childnode>
+        <childnode refid="1438" relation="include">
+        </childnode>
+      </node>
+      <node id="1435">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="1441">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_infinite.cpp</label>
+        <link refid="class__algorithm__infinite_8cpp"/>
+      </node>
+      <node id="1452">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/measure.cpp</label>
+        <link refid="infinite_2measure_8cpp"/>
+      </node>
+      <node id="1448">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/debug.cpp</label>
+        <link refid="infinite_2debug_8cpp"/>
+      </node>
+      <node id="1445">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.cpp</label>
+        <link refid="class__state__infinite_8cpp"/>
+      </node>
+      <node id="1446">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/views.cpp</label>
+        <link refid="views_8cpp"/>
+      </node>
+      <node id="1450">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp</label>
+        <link refid="infinite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="1444">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iTEBD.cpp</label>
+        <link refid="class__i_t_e_b_d_8cpp"/>
+      </node>
+      <node id="1457">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1459" relation="include">
+        </childnode>
+      </node>
+      <node id="1463">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1464" relation="include">
+        </childnode>
+      </node>
+      <node id="1447">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/io/h5pp.cpp</label>
+        <link refid="finite_2io_2h5pp_8cpp"/>
+      </node>
+      <node id="1469">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_hamiltonian.h</label>
+        <link refid="matrix__product__hamiltonian_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1445" relation="include">
+        </childnode>
+        <childnode refid="1462" relation="include">
+        </childnode>
+        <childnode refid="1455" relation="include">
+        </childnode>
+      </node>
+      <node id="1451">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp_tables.cpp</label>
+        <link refid="infinite_2io_2h5pp__tables_8cpp"/>
+      </node>
+      <node id="1458">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
+        <link refid="arpackpp__solver_8cpp"/>
+      </node>
+      <node id="1467">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.h</label>
+        <link refid="matrix__product__stl_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1468" relation="include">
+        </childnode>
+        <childnode refid="1461" relation="include">
+        </childnode>
+      </node>
+      <node id="1440">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/class_state_infinite.h</label>
+        <link refid="class__state__infinite_8h"/>
+        <childnode refid="1441" relation="include">
+        </childnode>
+        <childnode refid="1442" relation="include">
+        </childnode>
+        <childnode refid="1443" relation="include">
+        </childnode>
+        <childnode refid="1444" relation="include">
+        </childnode>
+        <childnode refid="1445" relation="include">
+        </childnode>
+        <childnode refid="1446" relation="include">
+        </childnode>
+        <childnode refid="1447" relation="include">
+        </childnode>
+        <childnode refid="1448" relation="include">
+        </childnode>
+        <childnode refid="1449" relation="include">
+        </childnode>
+        <childnode refid="1450" relation="include">
+        </childnode>
+        <childnode refid="1451" relation="include">
+        </childnode>
+        <childnode refid="1452" relation="include">
+        </childnode>
+        <childnode refid="1453" relation="include">
+        </childnode>
+        <childnode refid="1454" relation="include">
+        </childnode>
+        <childnode refid="1455" relation="include">
+        </childnode>
+        <childnode refid="1456" relation="include">
+        </childnode>
+      </node>
+      <node id="1442">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_algorithm_launcher.cpp</label>
+        <link refid="class__algorithm__launcher_8cpp"/>
+      </node>
+      <node id="1466">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1458" relation="include">
+        </childnode>
+        <childnode refid="1464" relation="include">
+        </childnode>
+      </node>
+      <node id="1464">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="1465" relation="include">
+        </childnode>
+        <childnode refid="1459" relation="include">
+        </childnode>
+      </node>
+      <node id="1465">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp</label>
+        <link refid="matrix__recast_8cpp"/>
+      </node>
+      <node id="1454">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mps.cpp</label>
+        <link refid="infinite_2mps_8cpp"/>
+      </node>
+      <node id="1461">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ceres_subspace.cpp</label>
+        <link refid="ceres__subspace_8cpp"/>
+      </node>
+      <node id="1449">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/env.cpp</label>
+        <link refid="env_8cpp"/>
+      </node>
+      <node id="1443">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/algorithms/class_iDMRG.cpp</label>
+        <link refid="class__i_d_m_r_g_8cpp"/>
+      </node>
+      <node id="1439">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1440" relation="include">
+        </childnode>
+        <childnode refid="1457" relation="include">
+        </childnode>
+        <childnode refid="1463" relation="include">
+        </childnode>
+        <childnode refid="1466" relation="include">
+        </childnode>
+        <childnode refid="1467" relation="include">
+        </childnode>
+        <childnode refid="1469" relation="include">
+        </childnode>
+        <childnode refid="1464" relation="include">
+        </childnode>
+        <childnode refid="1459" relation="include">
+        </childnode>
+      </node>
+      <node id="1460">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
+        <link refid="class__eigsolver_8cpp"/>
+      </node>
+      <node id="1459">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="1460" relation="include">
+        </childnode>
+        <childnode refid="1445" relation="include">
+        </childnode>
+        <childnode refid="1446" relation="include">
+        </childnode>
+        <childnode refid="1461" relation="include">
+        </childnode>
+        <childnode refid="1462" relation="include">
+        </childnode>
+        <childnode refid="1452" relation="include">
+        </childnode>
+        <childnode refid="1455" relation="include">
+        </childnode>
+      </node>
+      <node id="1456">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/print.cpp</label>
+        <link refid="infinite_2print_8cpp"/>
+      </node>
+      <node id="1453">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/mpo.cpp</label>
+        <link refid="infinite_2mpo_8cpp"/>
+      </node>
+      <node id="1462">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/opt-internals/ground_state.cpp</label>
+        <link refid="ground__state_8cpp"/>
+      </node>
+      <node id="1468">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_product_stl.cpp</label>
+        <link refid="matrix__product__stl_8cpp"/>
+      </node>
+      <node id="1455">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/opt.cpp</label>
+        <link refid="infinite_2opt_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classeigutils_1_1eig_config" prot="public">eigutils::eigConfig</innerclass>
+    <innerclass refid="classeigutils_1_1eig_solution" prot="public">eigutils::eigSolution</innerclass>
+    <innerclass refid="structeigutils_1_1eig_solution_1_1_meta" prot="public">eigutils::eigSolution::Meta</innerclass>
+    <innernamespace refid="namespaceeigutils">eigutils</innernamespace>
+    <innernamespace refid="namespaceeigutils_1_1eig_setting">eigutils::eigSetting</innernamespace>
+    <innernamespace refid="namespaceeigutils_1_1eig_logger">eigutils::eigLogger</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-06-07.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>once</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iostream&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;array&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;map&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;complex&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;spdlog/sinks/stdout_color_sinks.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;spdlog/spdlog.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight></codeline>
+<codeline lineno="16" refid="namespaceeigutils" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils" kindref="compound">eigutils</ref>{</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="namespaceeigutils_1_1eig_setting" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">eigSetting{</highlight></codeline>
+<codeline lineno="19" refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">Form</ref>{<ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">SYMMETRIC</ref>,<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255" kindref="member">NONSYMMETRIC</ref>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Real<sp/>Symmetric,<sp/>Real<sp/>General<sp/>or<sp/>Complex<sp/>General</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20" refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadf" kindref="member">Storage</ref><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff" kindref="member">DENSE</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0459833ba9cad7cfd7bbfe10d7bbbe6e" kindref="member">SPARSE</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa2523e0c272cb676c4f59f97828966f78" kindref="member">STL</ref>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Eigen<sp/>Dense<sp/>or<sp/>sparse,<sp/>or<sp/>std::vector<sp/>for<sp/>container</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="21" refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916" kindref="member">Shift</ref><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a90651ebea9a35ec4e018c8157492e17c" kindref="member">ON</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a88559a0cfd8250c9d65970cc145c92d4" kindref="member">OFF</ref>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Enable<sp/>or<sp/>disable<sp/>shift<sp/>invert</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">Ritz</ref><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1" kindref="member">LA</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7" kindref="member">SA</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">LM</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da4e0d4f6ce30646f5a3f3e2a7422c1c5a" kindref="member">SM</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4" kindref="member">LR</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0" kindref="member">SR</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f" kindref="member">LI</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364" kindref="member">SI</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44" kindref="member">BE</ref>};<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Choice<sp/>of<sp/>eigenvalue.<sp/>LA<sp/>is<sp/>largest<sp/>algebraic,<sp/>and<sp/>so<sp/>on.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23" refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">Side</ref><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">L</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">R</ref>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Left<sp/>or<sp/>right<sp/>eigenvectors</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24" refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">enum<sp/>class</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">Type</ref><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">REAL</ref>,<ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1" kindref="member">CPLX</ref>};<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Real<sp/>or<sp/>complex,<sp/>i.e.<sp/>double<sp/>or<sp/>std::complex&lt;double&gt;<sp/>matrix</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="namespaceeigutils_1_1eig_setting_1a4958e75ebe95c52b7432f57a058acf2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">Ritz</ref><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a4958e75ebe95c52b7432f57a058acf2c" kindref="member">stringToRitz</ref>(std::string<sp/>ritzstring){</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;LA&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1" kindref="member">Ritz::LA</ref>;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;SA&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7" kindref="member">Ritz::SA</ref>;</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;LM&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">Ritz::LM</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;SM&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da4e0d4f6ce30646f5a3f3e2a7422c1c5a" kindref="member">Ritz::SM</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;LR&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4" kindref="member">Ritz::LR</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;SR&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0" kindref="member">Ritz::SR</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;LI&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f" kindref="member">Ritz::LI</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;SI&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364" kindref="member">Ritz::SI</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritzstring<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;BE&quot;</highlight><highlight class="normal">)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44" kindref="member">Ritz::BE</ref>;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>ritz<sp/>string:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>ritzstring);</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="classeigutils_1_1eig_config" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classeigutils_1_1eig_config" kindref="compound">eigConfig</ref>{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="42" refid="classeigutils_1_1eig_config_1a677ba446c2a6b77078bdbf4d5bec2986" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>confOK<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="43" refid="classeigutils_1_1eig_config_1a8437834a223effb849b9414743d826c2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><sp/><ref refid="classeigutils_1_1eig_config_1a8437834a223effb849b9414743d826c2" kindref="member">MapType</ref><sp/>=<sp/>std::map&lt;eigSetting::Ritz,<sp/>std::string&gt;;</highlight></codeline>
+<codeline lineno="44" refid="classeigutils_1_1eig_config_1aea3b822d61bb9ea083fb72dd4343bdfd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classeigutils_1_1eig_config_1a8437834a223effb849b9414743d826c2" kindref="member">MapType</ref><sp/><ref refid="classeigutils_1_1eig_config_1aea3b822d61bb9ea083fb72dd4343bdfd" kindref="member">RitzToString</ref>;</highlight></codeline>
+<codeline lineno="45" refid="classeigutils_1_1eig_config_1a56c7f45b3dd9b3825098380c2278d3f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>ritz_char[3];</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigSetting::Form</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>form<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255" kindref="member">eigSetting::Form::NONSYMMETRIC</ref>;</highlight></codeline>
+<codeline lineno="49" refid="classeigutils_1_1eig_config_1a4684ac07f1047c4ae3962d0480699623" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadf" kindref="member">eigSetting::Storage</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>storage<sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff" kindref="member">eigSetting::Storage::DENSE</ref>;</highlight></codeline>
+<codeline lineno="50" refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916" kindref="member">eigSetting::Shift</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>shift<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a88559a0cfd8250c9d65970cc145c92d4" kindref="member">eigSetting::Shift::OFF</ref>;</highlight></codeline>
+<codeline lineno="51" refid="classeigutils_1_1eig_config_1acd7e00b8286436d66c14bc1b041e5e61" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigSetting::Side</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>side<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigSetting::Side::R</ref>;</highlight></codeline>
+<codeline lineno="52" refid="classeigutils_1_1eig_config_1a9bd11ee439377055620359f00043f109" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigSetting::Ritz</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ritz<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigSetting::Ritz::LM</ref>;</highlight></codeline>
+<codeline lineno="53" refid="classeigutils_1_1eig_config_1abd0743c40a9b0e27b48f780f76cbaf7c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigSetting::Type</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>type<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">eigSetting::Type::REAL</ref>;</highlight></codeline>
+<codeline lineno="54" refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>compute_eigvecs<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="55" refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>remove_phase<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="56" refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><sp/>eigThreshold<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1e-12;</highlight></codeline>
+<codeline lineno="57" refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>eigMaxIter<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>2000;</highlight></codeline>
+<codeline lineno="58" refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>eigMaxNev<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="59" refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>eigMaxNcv<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>16;</highlight></codeline>
+<codeline lineno="60" refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::complex&lt;double&gt;<sp/><sp/>sigma<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::numeric_limits&lt;std::complex&lt;double&gt;&gt;::quiet_NaN();<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Sigma<sp/>value<sp/>for<sp/>shift-invert<sp/>mode.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62" refid="classeigutils_1_1eig_config_1a0295a6af70fca7683cbf942a0b9bcc0b" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classeigutils_1_1eig_config_1a0295a6af70fca7683cbf942a0b9bcc0b" kindref="member">eigConfig</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RitzToString<sp/>=<sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1" kindref="member">eigSetting::Ritz::LA</ref>,<sp/></highlight><highlight class="stringliteral">&quot;LA&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7" kindref="member">eigSetting::Ritz::SA</ref>,<sp/></highlight><highlight class="stringliteral">&quot;SA&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">eigSetting::Ritz::LM</ref>,<sp/></highlight><highlight class="stringliteral">&quot;LM&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da4e0d4f6ce30646f5a3f3e2a7422c1c5a" kindref="member">eigSetting::Ritz::SM</ref>,<sp/></highlight><highlight class="stringliteral">&quot;SM&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4" kindref="member">eigSetting::Ritz::LR</ref>,<sp/></highlight><highlight class="stringliteral">&quot;LR&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0" kindref="member">eigSetting::Ritz::SR</ref>,<sp/></highlight><highlight class="stringliteral">&quot;SR&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f" kindref="member">eigSetting::Ritz::LI</ref>,<sp/></highlight><highlight class="stringliteral">&quot;LI&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364" kindref="member">eigSetting::Ritz::SI</ref>,<sp/></highlight><highlight class="stringliteral">&quot;SI&quot;</highlight><highlight class="normal">},</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44" kindref="member">eigSetting::Ritz::BE</ref>,<sp/></highlight><highlight class="stringliteral">&quot;BE&quot;</highlight><highlight class="normal">}</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="classeigutils_1_1eig_config_1aa911417afd8546ca3dffce231a13f345" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classeigutils_1_1eig_config_1aa911417afd8546ca3dffce231a13f345" kindref="member">writeRitzChar</ref>()</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Writes<sp/>ritz<sp/>to<sp/>string<sp/>and<sp/>checks<sp/>that<sp/>it<sp/>is<sp/>valid<sp/>for<sp/>the<sp/>given<sp/>problem.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>valid<sp/>ritzes<sp/>are<sp/>stated<sp/>in<sp/>the<sp/>arpack++<sp/>manual<sp/>page<sp/>78.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">eigSetting;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(type==<ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1" kindref="member">Type::CPLX</ref><sp/>or<sp/>form==<ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255" kindref="member">Form::NONSYMMETRIC</ref>){</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1" kindref="member">Ritz::LA</ref><sp/>or</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7" kindref="member">Ritz::SA</ref><sp/>or</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44" kindref="member">Ritz::BE</ref></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;WARNING:<sp/>Invalid<sp/>ritz<sp/>for<sp/>nonsym<sp/>problem:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>RitzToString.at(ritz)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1" kindref="member">Ritz::LA</ref>){ritz<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4" kindref="member">Ritz::LR</ref>;}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7" kindref="member">Ritz::SA</ref>){ritz<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0" kindref="member">Ritz::SR</ref>;}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44" kindref="member">Ritz::BE</ref>){ritz<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">Ritz::LM</ref>;}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Changed<sp/>ritz<sp/>to<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>RitzToString.at(ritz)&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(type==<ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">Type::REAL</ref><sp/>and<sp/>form==<ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">Form::SYMMETRIC</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4" kindref="member">Ritz::LR</ref><sp/>or</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0" kindref="member">Ritz::SR</ref><sp/>or</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f" kindref="member">Ritz::LI</ref><sp/>or</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364" kindref="member">Ritz::SI</ref></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;WARNING:<sp/>Invalid<sp/>ritz<sp/>for<sp/>nonsym<sp/>problem:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>RitzToString.at(ritz)&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4" kindref="member">Ritz::LR</ref>){ritz<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1" kindref="member">Ritz::LA</ref>;}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0" kindref="member">Ritz::SR</ref>){ritz<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7" kindref="member">Ritz::SA</ref>;}</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f" kindref="member">Ritz::LI</ref>){ritz<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" kindref="member">Ritz::LM</ref>;}</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ritz==<ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364" kindref="member">Ritz::SI</ref>){ritz<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da4e0d4f6ce30646f5a3f3e2a7422c1c5a" kindref="member">Ritz::SM</ref>;}</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Changed<sp/>ritz<sp/>to<sp/>:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>RitzToString.at(ritz)&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>RitzToString.at(ritz).copy(ritz_char,<sp/>3);</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>confOK<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="116" refid="classeigutils_1_1eig_solution" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classeigutils_1_1eig_solution" kindref="compound">eigSolution</ref>{</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="118" refid="classeigutils_1_1eig_solution_1a0463e83765f6edbb539c39fe65906037" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classeigutils_1_1eig_solution_1a0463e83765f6edbb539c39fe65906037" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>symmetric<sp/>problems</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="classeigutils_1_1eig_solution_1a6d099c5baae5bc9d51244bf049fe1b2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><ref refid="classeigutils_1_1eig_solution_1a6d099c5baae5bc9d51244bf049fe1b2c" kindref="member">eigvecs_real</ref>;</highlight></codeline>
+<codeline lineno="121" refid="classeigutils_1_1eig_solution_1ab53558fe6e1a8ff7bad5456e92de4140" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Scalar&gt;<sp/><ref refid="classeigutils_1_1eig_solution_1ab53558fe6e1a8ff7bad5456e92de4140" kindref="member">eigvecs_cplx</ref>;</highlight></codeline>
+<codeline lineno="122" refid="classeigutils_1_1eig_solution_1a8d0a548b90fc7ba5da69535050cd67f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><ref refid="classeigutils_1_1eig_solution_1a8d0a548b90fc7ba5da69535050cd67f5" kindref="member">eigvals_real</ref>;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>nonsymmetric<sp/>problems</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="classeigutils_1_1eig_solution_1a5420a7afa8e2f5106712282137b69e4f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><ref refid="classeigutils_1_1eig_solution_1a5420a7afa8e2f5106712282137b69e4f" kindref="member">eigvecsR_real</ref>;</highlight></codeline>
+<codeline lineno="126" refid="classeigutils_1_1eig_solution_1acfc2a9cd081aebf3c904c8bd99f6ac2e" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/><ref refid="classeigutils_1_1eig_solution_1acfc2a9cd081aebf3c904c8bd99f6ac2e" kindref="member">eigvecsL_real</ref>;</highlight></codeline>
+<codeline lineno="127" refid="classeigutils_1_1eig_solution_1a130947a440577c7505c14f44aebaeecf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Scalar&gt;<sp/><ref refid="classeigutils_1_1eig_solution_1a130947a440577c7505c14f44aebaeecf" kindref="member">eigvecsR_cplx</ref>;</highlight></codeline>
+<codeline lineno="128" refid="classeigutils_1_1eig_solution_1ab470fa2160017aa562fea2b09e85363c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Scalar&gt;<sp/><ref refid="classeigutils_1_1eig_solution_1ab470fa2160017aa562fea2b09e85363c" kindref="member">eigvecsL_cplx</ref>;</highlight></codeline>
+<codeline lineno="129" refid="classeigutils_1_1eig_solution_1a4ea1f60ab4ae1e2c28fcee57e04ea280" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;Scalar&gt;<sp/><ref refid="classeigutils_1_1eig_solution_1a4ea1f60ab4ae1e2c28fcee57e04ea280" kindref="member">eigvals_cplx</ref>;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;<ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigutils::eigSetting::Type</ref><sp/><sp/><sp/>type,</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/><sp/><sp/>form,</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/><sp/><sp/>side<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref><sp/>&gt;</highlight></codeline>
+<codeline lineno="135" refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/><ref refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" kindref="member">get_eigvecs</ref>(){</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(form<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">Form::SYMMETRIC</ref>){</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(type<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">Type::REAL</ref>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvecs_real;}</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(type<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1" kindref="member">Type::CPLX</ref>)<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvecs_cplx;}</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(form<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255" kindref="member">Form::NONSYMMETRIC</ref><sp/>and<sp/>side<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">Side::R</ref>){</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(type<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">Type::REAL</ref><sp/>and<sp/>side<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">Side::R</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvecsR_cplx;}</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(type<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1" kindref="member">Type::CPLX</ref><sp/>and<sp/>side<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">Side::R</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvecsR_cplx;}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(form<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255" kindref="member">Form::NONSYMMETRIC</ref><sp/>and<sp/>side<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">Side::L</ref>){</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(type<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" kindref="member">Type::REAL</ref><sp/>and<sp/>side<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">Side::L</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvecsL_cplx;}</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(type<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1" kindref="member">Type::CPLX</ref><sp/>and<sp/>side<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" kindref="member">Side::L</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvecsL_cplx;}</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref>,</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/><sp/><sp/>form,</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/><sp/><sp/>side<sp/>=<sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" kindref="member">eigutils::eigSetting::Side::R</ref><sp/>&gt;</highlight></codeline>
+<codeline lineno="152" refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/><ref refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" kindref="member">get_eigvecs</ref>(){</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;double,<sp/>Scalar&gt;::value){</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>get_eigvecs&lt;Type::REAL,form,side&gt;();</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;std::complex&lt;double&gt;,<sp/><ref refid="classeigutils_1_1eig_solution_1a0463e83765f6edbb539c39fe65906037" kindref="member">Scalar</ref>&gt;::value){</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>get_eigvecs&lt;Type::CPLX,form,side&gt;();</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;eigutils::eigSetting::Form<sp/>form&gt;</highlight></codeline>
+<codeline lineno="163" refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/><ref refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" kindref="member">get_eigvals</ref>(){</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(form<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" kindref="member">Form::SYMMETRIC</ref>)<sp/><sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvals_real;}</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(form<sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255" kindref="member">Form::NONSYMMETRIC</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>eigvals_cplx;}</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170" refid="structeigutils_1_1eig_solution_1_1_meta" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structeigutils_1_1eig_solution_1_1_meta" kindref="compound">Meta</ref>{</highlight></codeline>
+<codeline lineno="171" refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>rows<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="172" refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>cols<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="173" refid="structeigutils_1_1eig_solution_1_1_meta_1a3384d9731581012bc8aee5444bb07bd9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>iter<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="174" refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>nev<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>Found<sp/>eigenvectors.<sp/>aka<sp/>cols.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175" refid="structeigutils_1_1eig_solution_1_1_meta_1a87372c02a30541449dca2e2c2d35092f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>nev_converged<sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="176" refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>n<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;<sp/></highlight><highlight class="comment">//<sp/>Linear<sp/>dimension<sp/>of<sp/>the<sp/>input<sp/>matrix<sp/>to<sp/>diagonalize,<sp/>aka<sp/>rows.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177" refid="structeigutils_1_1eig_solution_1_1_meta_1a884651e184373e2a7e41277bd915999f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>counter<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="178" refid="structeigutils_1_1eig_solution_1_1_meta_1afbe223a7fab69bfe7b4f15ecec5e5a2c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/>ncv_used<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="179" refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>eigvals_found<sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>For<sp/>all<sp/>problems</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180" refid="structeigutils_1_1eig_solution_1_1_meta_1a2dd829066e3d193e9d8c2e39b28c3cf1" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecs_found<sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>For<sp/>symmetric<sp/>problems</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181" refid="structeigutils_1_1eig_solution_1_1_meta_1a960196b7474cf46ebd6cc5a4a6534a9d" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecsR_found<sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>For<sp/>nonsymmetric<sp/>problems</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182" refid="structeigutils_1_1eig_solution_1_1_meta_1a93bc1042860e2ce9cbf1f2a4f72e2b36" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecsL_found<sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>For<sp/>nonsymmetric<sp/>problems</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183" refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigSetting::Form</ref><sp/><sp/><ref refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" kindref="member">form</ref>;</highlight></codeline>
+<codeline lineno="184" refid="structeigutils_1_1eig_solution_1_1_meta_1a7ec74e3b8e5320f778709316bc06432c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigSetting::Ritz</ref><sp/><sp/><ref refid="structeigutils_1_1eig_solution_1_1_meta_1a7ec74e3b8e5320f778709316bc06432c" kindref="member">ritz</ref>;</highlight></codeline>
+<codeline lineno="185" refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigSetting::Type</ref><sp/><sp/><ref refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" kindref="member">type</ref>;</highlight></codeline>
+<codeline lineno="186" refid="structeigutils_1_1eig_solution_1_1_meta_1a19d101db665f242d6ecacd4424a62bdf" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigSetting::Side</ref><sp/><sp/><ref refid="structeigutils_1_1eig_solution_1_1_meta_1a19d101db665f242d6ecacd4424a62bdf" kindref="member">side</ref>;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/>meta;</highlight></codeline>
+<codeline lineno="188" refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" kindref="member">reset</ref>(){</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals_real.clear();</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals_cplx.clear();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecs_real.clear();</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecs_cplx.clear();</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsR_real.clear();</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsL_real.clear();</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsR_cplx.clear();</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsL_cplx.clear();</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>meta<sp/>=<sp/><ref refid="structeigutils_1_1eig_solution_1_1_meta" kindref="compound">Meta</ref>();</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203" refid="namespaceeigutils_1_1eig_logger" refkind="compound"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal">eigLogger{</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205" refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/>std::shared_ptr&lt;spdlog::logger&gt;<sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">log</ref>;</highlight></codeline>
+<codeline lineno="206" refid="namespaceeigutils_1_1eig_logger_1ab424a1ce754abbd02e0f70ee216386ce" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_logger_1ab424a1ce754abbd02e0f70ee216386ce" kindref="member">enableTimeStamp</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log){</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(log<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">)<sp/>{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>log-&gt;set_pattern(</highlight><highlight class="stringliteral">&quot;[%Y-%m-%d<sp/>%H:%M:%S][%n]%^[%=8l]%$<sp/>%v&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="211" refid="namespaceeigutils_1_1eig_logger_1a283e8a93ceaaec1515e70a46abe33994" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_logger_1a283e8a93ceaaec1515e70a46abe33994" kindref="member">disableTimeStamp</ref>(std::shared_ptr&lt;spdlog::logger&gt;<sp/>&amp;log){</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(log<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>log-&gt;set_pattern(</highlight><highlight class="stringliteral">&quot;[%n]%^[%=8l]%$<sp/>%v&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight></codeline>
+<codeline lineno="217" refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" kindref="member">setLogLevel</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>levelZeroToSix){</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(levelZeroToSix<sp/>&gt;<sp/>6)<sp/>{</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Expected<sp/>verbosity<sp/>level<sp/>integer<sp/>in<sp/>[0-6].<sp/>Got:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(levelZeroToSix));</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>lvlEnum<sp/>=<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">spdlog::level::level_enum</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(levelZeroToSix);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Set<sp/>console<sp/>settings</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>log-&gt;set_level(lvlEnum);</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="227" refid="namespaceeigutils_1_1eig_logger_1a82c0e82fa7b658057257b2f08ba028f5" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_logger_1a82c0e82fa7b658057257b2f08ba028f5" kindref="member">setLogger</ref>(std::string<sp/>name,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>levelZeroToSix<sp/>=<sp/>2,<sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">timestamp</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(spdlog::get(name)<sp/>==<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>log<sp/>=<sp/>spdlog::stdout_color_mt(name);</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="namespacesettings_1_1console_1a82c11e45aadd82f57643ef3624d2e7be" kindref="member">timestamp</ref>){<ref refid="namespaceeigutils_1_1eig_logger_1ab424a1ce754abbd02e0f70ee216386ce" kindref="member">enableTimeStamp</ref>(log);}</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{<ref refid="namespaceeigutils_1_1eig_logger_1a283e8a93ceaaec1515e70a46abe33994" kindref="member">disableTimeStamp</ref>(log);<sp/>}</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" kindref="member">setLogLevel</ref>(levelZeroToSix);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>log<sp/>=<sp/>spdlog::get(name);</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h"/>
+  </compounddef>
+</doxygen>

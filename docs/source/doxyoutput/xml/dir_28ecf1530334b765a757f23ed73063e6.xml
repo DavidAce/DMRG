@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_28ecf1530334b765a757f23ed73063e6" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation</compoundname>
+    <innerfile refid="class__simulation__status_8cpp">class_simulation_status.cpp</innerfile>
+    <innerfile refid="class__simulation__status_8h">class_simulation_status.h</innerfile>
+    <innerfile refid="enums_8h">enums.h</innerfile>
+    <innerfile refid="nmspc__settings_8cpp">nmspc_settings.cpp</innerfile>
+    <innerfile refid="nmspc__settings_8h">nmspc_settings.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/simulation/"/>
+  </compounddef>
+</doxygen>

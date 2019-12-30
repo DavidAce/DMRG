@@ -1,0 +1,621 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="ops_8cpp" kind="file" language="C++">
+    <compoundname>ops.cpp</compoundname>
+    <includes refid="nmspc__tools_8h" local="no">tools/nmspc_tools.h</includes>
+    <includes refid="class__state__finite_8h" local="no">state/class_state_finite.h</includes>
+    <includes refid="class__model__base_8h" local="no">model/class_model_base.h</includes>
+    <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
+    <includes refid="nmspc__quantum__mechanics_8h" local="no">general/nmspc_quantum_mechanics.h</includes>
+    <includes local="no">iomanip</includes>
+    <includes refid="nmspc__random_8h" local="no">math/nmspc_random.h</includes>
+    <incdepgraph>
+      <node id="3416">
+        <label>list</label>
+      </node>
+      <node id="3453">
+        <label>locale</label>
+      </node>
+      <node id="3435">
+        <label>iomanip</label>
+      </node>
+      <node id="3450">
+        <label>limits</label>
+      </node>
+      <node id="3434">
+        <label>iterator</label>
+      </node>
+      <node id="3411">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp</label>
+        <link refid="ops_8cpp"/>
+        <childnode refid="3412" relation="include">
+        </childnode>
+        <childnode refid="3428" relation="include">
+        </childnode>
+        <childnode refid="3440" relation="include">
+        </childnode>
+        <childnode refid="3431" relation="include">
+        </childnode>
+        <childnode refid="3441" relation="include">
+        </childnode>
+        <childnode refid="3435" relation="include">
+        </childnode>
+        <childnode refid="3442" relation="include">
+        </childnode>
+      </node>
+      <node id="3458">
+        <label>cstdint</label>
+      </node>
+      <node id="3428">
+        <label>state/class_state_finite.h</label>
+        <link refid="class__state__finite_8h"/>
+        <childnode refid="3413" relation="include">
+        </childnode>
+        <childnode refid="3415" relation="include">
+        </childnode>
+        <childnode refid="3429" relation="include">
+        </childnode>
+        <childnode refid="3430" relation="include">
+        </childnode>
+        <childnode refid="3439" relation="include">
+        </childnode>
+        <childnode refid="3440" relation="include">
+        </childnode>
+        <childnode refid="3426" relation="include">
+        </childnode>
+        <childnode refid="3427" relation="include">
+        </childnode>
+      </node>
+      <node id="3449">
+        <label>cassert</label>
+      </node>
+      <node id="3436">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="3437" relation="include">
+        </childnode>
+        <childnode refid="3426" relation="include">
+        </childnode>
+        <childnode refid="3427" relation="include">
+        </childnode>
+      </node>
+      <node id="3455">
+        <label>stdexcept</label>
+      </node>
+      <node id="3426">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="3442">
+        <label>math/nmspc_random.h</label>
+        <link refid="nmspc__random_8h"/>
+        <childnode refid="3443" relation="include">
+        </childnode>
+        <childnode refid="3423" relation="include">
+        </childnode>
+        <childnode refid="3415" relation="include">
+        </childnode>
+        <childnode refid="3426" relation="include">
+        </childnode>
+        <childnode refid="3444" relation="include">
+        </childnode>
+      </node>
+      <node id="3414">
+        <label>string</label>
+      </node>
+      <node id="3421">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="3422" relation="include">
+        </childnode>
+        <childnode refid="3423" relation="include">
+        </childnode>
+      </node>
+      <node id="3418">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="3419" relation="include">
+        </childnode>
+        <childnode refid="3420" relation="include">
+        </childnode>
+      </node>
+      <node id="3445">
+        <label>cinttypes</label>
+      </node>
+      <node id="3437">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="3412">
+        <label>tools/nmspc_tools.h</label>
+        <link refid="nmspc__tools_8h"/>
+        <childnode refid="3413" relation="include">
+        </childnode>
+        <childnode refid="3414" relation="include">
+        </childnode>
+        <childnode refid="3415" relation="include">
+        </childnode>
+        <childnode refid="3416" relation="include">
+        </childnode>
+        <childnode refid="3417" relation="include">
+        </childnode>
+        <childnode refid="3418" relation="include">
+        </childnode>
+        <childnode refid="3421" relation="include">
+        </childnode>
+        <childnode refid="3424" relation="include">
+        </childnode>
+        <childnode refid="3426" relation="include">
+        </childnode>
+        <childnode refid="3427" relation="include">
+        </childnode>
+      </node>
+      <node id="3427">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="3430">
+        <label>state/class_environment.h</label>
+        <link refid="class__environment_8h"/>
+        <childnode refid="3413" relation="include">
+        </childnode>
+        <childnode refid="3431" relation="include">
+        </childnode>
+        <childnode refid="3438" relation="include">
+        </childnode>
+      </node>
+      <node id="3420">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="3444">
+        <label>pcg/pcg_random.hpp</label>
+        <link refid="pcg__random_8hpp"/>
+        <childnode refid="3445" relation="include">
+        </childnode>
+        <childnode refid="3446" relation="include">
+        </childnode>
+        <childnode refid="3447" relation="include">
+        </childnode>
+        <childnode refid="3448" relation="include">
+        </childnode>
+        <childnode refid="3449" relation="include">
+        </childnode>
+        <childnode refid="3450" relation="include">
+        </childnode>
+        <childnode refid="3423" relation="include">
+        </childnode>
+        <childnode refid="3451" relation="include">
+        </childnode>
+        <childnode refid="3452" relation="include">
+        </childnode>
+        <childnode refid="3453" relation="include">
+        </childnode>
+        <childnode refid="3454" relation="include">
+        </childnode>
+        <childnode refid="3455" relation="include">
+        </childnode>
+        <childnode refid="3456" relation="include">
+        </childnode>
+      </node>
+      <node id="3440">
+        <label>model/class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="3413" relation="include">
+        </childnode>
+        <childnode refid="3427" relation="include">
+        </childnode>
+        <childnode refid="3418" relation="include">
+        </childnode>
+      </node>
+      <node id="3433">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="3443">
+        <label>random</label>
+      </node>
+      <node id="3459">
+        <label>cstdio</label>
+      </node>
+      <node id="3424">
+        <label>tools/finite/opt-internals/enum_classes.h</label>
+        <link refid="enum__classes_8h"/>
+        <childnode refid="3423" relation="include">
+        </childnode>
+        <childnode refid="3425" relation="include">
+        </childnode>
+      </node>
+      <node id="3419">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="3439">
+        <label>state/class_mps_site.h</label>
+        <link refid="class__mps__site_8h"/>
+        <childnode refid="3415" relation="include">
+        </childnode>
+        <childnode refid="3429" relation="include">
+        </childnode>
+        <childnode refid="3427" relation="include">
+        </childnode>
+      </node>
+      <node id="3432">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="3427" relation="include">
+        </childnode>
+      </node>
+      <node id="3429">
+        <label>optional</label>
+      </node>
+      <node id="3417">
+        <label>vector</label>
+      </node>
+      <node id="3438">
+        <label>spdlog/fmt/fmt.h</label>
+      </node>
+      <node id="3456">
+        <label>pcg_extras.hpp</label>
+        <link refid="pcg__extras_8hpp"/>
+        <childnode refid="3445" relation="include">
+        </childnode>
+        <childnode refid="3446" relation="include">
+        </childnode>
+        <childnode refid="3447" relation="include">
+        </childnode>
+        <childnode refid="3448" relation="include">
+        </childnode>
+        <childnode refid="3449" relation="include">
+        </childnode>
+        <childnode refid="3450" relation="include">
+        </childnode>
+        <childnode refid="3423" relation="include">
+        </childnode>
+        <childnode refid="3451" relation="include">
+        </childnode>
+        <childnode refid="3452" relation="include">
+        </childnode>
+        <childnode refid="3453" relation="include">
+        </childnode>
+        <childnode refid="3434" relation="include">
+        </childnode>
+        <childnode refid="3457" relation="include">
+        </childnode>
+      </node>
+      <node id="3454">
+        <label>new</label>
+      </node>
+      <node id="3452">
+        <label>utility</label>
+      </node>
+      <node id="3425">
+        <label>sstream</label>
+      </node>
+      <node id="3457">
+        <label>pcg_uint128.hpp</label>
+        <link refid="pcg__uint128_8hpp"/>
+        <childnode refid="3458" relation="include">
+        </childnode>
+        <childnode refid="3459" relation="include">
+        </childnode>
+        <childnode refid="3449" relation="include">
+        </childnode>
+        <childnode refid="3460" relation="include">
+        </childnode>
+        <childnode refid="3452" relation="include">
+        </childnode>
+        <childnode refid="3461" relation="include">
+        </childnode>
+        <childnode refid="3451" relation="include">
+        </childnode>
+      </node>
+      <node id="3447">
+        <label>cstdlib</label>
+      </node>
+      <node id="3423">
+        <label>iostream</label>
+      </node>
+      <node id="3446">
+        <label>cstddef</label>
+      </node>
+      <node id="3460">
+        <label>climits</label>
+      </node>
+      <node id="3422">
+        <label>chrono</label>
+      </node>
+      <node id="3441">
+        <label>general/nmspc_quantum_mechanics.h</label>
+        <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="3426" relation="include">
+        </childnode>
+        <childnode refid="3427" relation="include">
+        </childnode>
+        <childnode refid="3415" relation="include">
+        </childnode>
+        <childnode refid="3417" relation="include">
+        </childnode>
+      </node>
+      <node id="3451">
+        <label>type_traits</label>
+      </node>
+      <node id="3415">
+        <label>complex</label>
+      </node>
+      <node id="3431">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="3432" relation="include">
+        </childnode>
+        <childnode refid="3426" relation="include">
+        </childnode>
+        <childnode refid="3433" relation="include">
+        </childnode>
+        <childnode refid="3427" relation="include">
+        </childnode>
+        <childnode refid="3434" relation="include">
+        </childnode>
+        <childnode refid="3423" relation="include">
+        </childnode>
+        <childnode refid="3435" relation="include">
+        </childnode>
+        <childnode refid="3436" relation="include">
+        </childnode>
+      </node>
+      <node id="3448">
+        <label>cstring</label>
+      </node>
+      <node id="3413">
+        <label>memory</label>
+      </node>
+      <node id="3461">
+        <label>initializer_list</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="ops_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using Scalar =  std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" line="15" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2019-01-30.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tools_8h" kindref="compound">tools/nmspc_tools.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__state__finite_8h" kindref="compound">state/class_state_finite.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="class__model__base_8h" kindref="compound">model/class_model_base.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tensor__extra_8h" kindref="compound">general/nmspc_tensor_extra.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__quantum__mechanics_8h" kindref="compound">general/nmspc_quantum_mechanics.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random_8h" kindref="compound">math/nmspc_random.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15" refid="ops_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_textra" kindref="compound">Textra</ref>;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight></codeline>
+<codeline lineno="18" refid="namespacetools_1_1finite_1_1ops_1a6d8dab3f6e8c90533c7ee5b9cf5f02f4" refkind="member"><highlight class="normal">std::list&lt;Eigen::Tensor&lt;Scalar,4&gt;&gt;<sp/><ref refid="namespacetools_1_1finite_1_1ops_1a6d8dab3f6e8c90533c7ee5b9cf5f02f4" kindref="member">tools::finite::ops::make_mpo_list</ref><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::list&lt;std::unique_ptr&lt;class_model_base&gt;&gt;<sp/>&amp;<sp/>mpos_L,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::list&lt;std::unique_ptr&lt;class_model_base&gt;&gt;<sp/>&amp;<sp/>mpos_R){</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;Eigen::Tensor&lt;Scalar,4&gt;&gt;<sp/>mpos;</highlight></codeline>
+<codeline lineno="20"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo_L<sp/>:<sp/>mpos_L){</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpos.push_back(mpo_L-&gt;MPO());</highlight></codeline>
+<codeline lineno="22"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;mpo_R<sp/>:<sp/>mpos_R){</highlight></codeline>
+<codeline lineno="24"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpos.push_back(mpo_R-&gt;MPO());</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mpos;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="namespacetools_1_1finite_1_1ops_1a2151c6e92bf85e993c06875ac3ccf653" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1a2151c6e92bf85e993c06875ac3ccf653" kindref="member">tools::finite::ops::apply_mpo</ref>(<ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;mpo,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<sp/>Ledge,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<sp/>Redge){</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>std::list&lt;Eigen::Tensor&lt;Scalar,4&gt;&gt;<sp/>mpos(state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>(),<sp/>mpo);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab45d366b38fc8a421bb308847c89a2f8" kindref="member">apply_mpos</ref>(state,mpos,Ledge,Redge);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37" refid="namespacetools_1_1finite_1_1ops_1ab45d366b38fc8a421bb308847c89a2f8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab45d366b38fc8a421bb308847c89a2f8" kindref="member">tools::finite::ops::apply_mpos</ref>(<ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::list&lt;Eigen::Tensor&lt;Scalar,4&gt;&gt;<sp/>&amp;<sp/>mpos,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<sp/>Ledge,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>&amp;<sp/>Redge){</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(mpos.size()<sp/>!=<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>())<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Number<sp/>of<sp/>mpo&apos;s<sp/>doesn&apos;t<sp/>match<sp/>the<sp/>number<sp/>of<sp/>sites<sp/>on<sp/>the<sp/>system&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Apply<sp/>MPO&apos;s<sp/>on<sp/>Gamma<sp/>matrices<sp/>and</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>increase<sp/>the<sp/>size<sp/>on<sp/>all<sp/>Lambdas<sp/>by<sp/>chi*mpoDim</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Applying<sp/>MPO&apos;s&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" kindref="member">clear_measurements</ref>();</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Bond<sp/>dimensions<sp/>before<sp/>applying<sp/>MPO&apos;s<sp/>=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a59439fc8cd211defcfa432a9fec296c7" kindref="member">tools::finite::measure::bond_dimensions</ref>(state));</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Norm<sp/>before<sp/>applying<sp/>MPO&apos;s<sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal">,<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" kindref="member">tools::finite::measure::norm</ref>(state));</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>mpo<sp/>=<sp/>mpos.begin();</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;<sp/>pos<sp/>&lt;<sp/>state.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>;<sp/>pos++){</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1a7dc50135d9e136844dcd1ce2d23a84ab" kindref="member">apply_mpo</ref>(*mpo);</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>mpo++;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Take<sp/>care<sp/>of<sp/>the<sp/>edges.<sp/>Apply<sp/>the<sp/>left<sp/>and<sp/>right<sp/>MPO-edges<sp/>on<sp/>A&apos;s<sp/>and<sp/>B&apos;s</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>so<sp/>the<sp/>left<sp/>and<sp/>right<sp/>most<sp/>lambdas<sp/>become<sp/>ones</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>mpoDimL<sp/>=<sp/>mpos.front().dimension(0);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>Ldim<sp/><sp/><sp/><sp/>=<sp/>Ledge.dimension(0);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>auto<sp/>dims<sp/>=<sp/>state.MPS_L.front().get_M().dimensions();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Mdims<sp/>=<sp/>&quot;<sp/>&lt;&lt;<sp/>dims[0]<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;<sp/>&lt;&lt;<sp/>dims[1]<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;<sp/>&lt;&lt;<sp/>dims[2]<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>M_temp<sp/>=</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Ledge</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{0,2,1})</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">Textra::array2</ref>{Ldim*mpoDimL,Ldim})</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.front().get_M_bare(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},{1}))</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,0,2});</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.front().set_M(M_temp);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.front().set_L(Eigen::Tensor&lt;Scalar,1&gt;(Ldim).constant(1.0));</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>mpoDimR<sp/>=<sp/>mpos.back().dimension(1);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>Rdim<sp/><sp/><sp/><sp/>=<sp/>Redge.dimension(0);</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,<sp/>3&gt;<sp/>M_temp<sp/>=</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Redge</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{0,2,1})</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">Textra::array2</ref>{Rdim*mpoDimR,Rdim})</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>.back().get_M_bare(),<ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},{2}))</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">Textra::array3</ref>{1,2,0});</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>.back().set_M(M_temp);</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1ad13069bc0bbfd99d67c9403db4d4c20c" kindref="member">MPS_R</ref>.back().set_L(Eigen::Tensor&lt;Scalar,1&gt;(Rdim).constant(1.0));</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/>state.<ref refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" kindref="member">clear_measurements</ref>();</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Bond<sp/>dimensions<sp/>after<sp/>applying<sp/>MPO&apos;s<sp/>=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a59439fc8cd211defcfa432a9fec296c7" kindref="member">tools::finite::measure::bond_dimensions</ref>(state));</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Norm<sp/>after<sp/><sp/>applying<sp/>MPO&apos;s<sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal">,<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a5dedbb3ba59f53f43b2df35faa0d6a4a" kindref="member">tools::finite::measure::norm</ref>(state));</highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Norm<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>(after<sp/>mpos):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::norm(state)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sx<sp/>(after<sp/>mpos):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sx)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sy<sp/>(after<sp/>mpos):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sy)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Spin<sp/>component<sp/>sz<sp/>(after<sp/>mpos):<sp/>&quot;<sp/>&lt;&lt;<sp/>tools::finite::measure::spin_component(state,<sp/>qm::spinOneHalf::sz)<sp/><sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90" refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" refkind="member"><highlight class="normal"><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">tools::finite::ops::get_projection_to_parity_sector</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/><sp/>&amp;<sp/>paulimatrix,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>sign)<sp/>{</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(std::abs(sign)<sp/>!=<sp/>1)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Expected<sp/>&apos;sign&apos;<sp/>+1<sp/>or<sp/>-1.<sp/>Got:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(sign));</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Generating<sp/>parity<sp/>projected<sp/>state<sp/>with<sp/>sign<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>sign);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">tools::finite::measure::spin_components</ref>(state);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>requested_spin_component<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">tools::finite::measure::spin_component</ref>(state,<sp/>paulimatrix);</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Current<sp/>global<sp/>spin<sp/>components<sp/>:<sp/>X<sp/>=<sp/>{:.16f}<sp/><sp/>Y<sp/>=<sp/>{:.16f}<sp/><sp/>Z<sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal">,<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>[0],<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>[1],<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>[2]<sp/>);</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Current<sp/>reqstd<sp/>spin<sp/>component<sp/><sp/>:<sp/><sp/><sp/><sp/><sp/>{:.16f}&quot;</highlight><highlight class="normal">,<sp/>requested_spin_component<sp/>);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" kindref="member">tools::common::profile::t_prj</ref>.<ref refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" kindref="member">tic</ref>();</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>state_projected<sp/>=<sp/>state;</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/>state_projected.<ref refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" kindref="member">clear_measurements</ref>();</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>state_projected.<ref refid="classclass__state__finite_1aac02262c410802ea0546cda195c34eca" kindref="member">clear_cache</ref>();</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>[mpo,L,R]<sp/><sp/><sp/><sp/>=<sp/><ref refid="namespaceqm_1_1mpo_1ae9dfc0e5c530087196a667e5203bf400" kindref="member">qm::mpo::parity_projector_mpos</ref>(paulimatrix,state_projected.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>(),<sp/>sign);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab45d366b38fc8a421bb308847c89a2f8" kindref="member">apply_mpos</ref>(state_projected,mpo,<sp/>L,R);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" kindref="member">tools::common::profile::t_prj</ref>.<ref refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" kindref="member">toc</ref>();</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1a2a02d83d01861a078dc582fbbcf10e63" kindref="member">tools::finite::mps::normalize</ref>(state_projected,2*state.<ref refid="classclass__state__finite_1a3364452c2cfa578c7de18e28eee2d675" kindref="member">get_chi_lim</ref>());</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1mps_1ae1aa22d6af49f05638105b00dd5c0e28" kindref="member">tools::finite::mps::rebuild_environments</ref>(state_projected);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1debug_1a198d86e79c9df9fc014f3c38846b1428" kindref="member">tools::finite::debug::check_integrity_of_mps</ref>(state_projected);</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/>state_projected.<ref refid="classclass__state__finite_1a8ac57b8631243325a0db1982b75d1cb8" kindref="member">tag_all_sites_have_been_updated</ref>(</highlight><highlight class="keyword">true</highlight><highlight class="normal">);<sp/></highlight><highlight class="comment">//<sp/>All<sp/>sites<sp/>change<sp/>in<sp/>this<sp/>operation</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">tools::finite::measure::spin_components</ref>(state_projected);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/>requested_spin_component<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">tools::finite::measure::spin_component</ref>(state_projected,<sp/>paulimatrix);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Resulting<sp/>global<sp/>spin<sp/>components<sp/>:<sp/>X<sp/>=<sp/>{:.16f}<sp/><sp/>Y<sp/>=<sp/>{:.16f}<sp/><sp/>Z<sp/>=<sp/>{:.16f}&quot;</highlight><highlight class="normal">,<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>[0],<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>[1],<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>[2]<sp/>);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Resulting<sp/>reqstd<sp/>spin<sp/>component<sp/><sp/>:<sp/><sp/><sp/><sp/><sp/>{:.16f}&quot;</highlight><highlight class="normal">,<sp/>requested_spin_component<sp/>);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state_projected;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117" refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" refkind="member"><highlight class="normal"><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">tools::finite::ops::get_projection_to_closest_parity_sector</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::MatrixXcd<sp/>&amp;<sp/>paulimatrix)<sp/>{</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Finding<sp/>closest<sp/>projection&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>requested_spin_component<sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1ab70288b0d3d905f3ec211b994699861d" kindref="member">tools::finite::measure::spin_component</ref>(state,<sp/>paulimatrix);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(requested_spin_component<sp/>&gt;<sp/>0){</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">get_projection_to_parity_sector</ref>(state,<sp/>paulimatrix,<sp/>1);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">get_projection_to_parity_sector</ref>(state,<sp/>paulimatrix,<sp/>-1);</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127" refid="namespacetools_1_1finite_1_1ops_1a9b5ed5708bfbf96ee08ab2d863af83b0" refkind="member"><highlight class="normal"><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">tools::finite::ops::get_projection_to_closest_parity_sector</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;state,<sp/>std::string<sp/>parity_sector)<sp/>{</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Finding<sp/>closest<sp/>projection<sp/>in<sp/>parity<sp/>sector<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>parity_sector<sp/>);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">)<sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">get_projection_to_closest_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">qm::spinOneHalf::sx</ref>);}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">)<sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">get_projection_to_closest_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" kindref="member">qm::spinOneHalf::sy</ref>);}</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;z&quot;</highlight><highlight class="normal">)<sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">get_projection_to_closest_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">qm::spinOneHalf::sz</ref>);}</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;+x&quot;</highlight><highlight class="normal">)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">get_projection_to_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">qm::spinOneHalf::sx</ref>,<sp/>1);}</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;-x&quot;</highlight><highlight class="normal">)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">get_projection_to_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">qm::spinOneHalf::sx</ref>,-1);}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;+y&quot;</highlight><highlight class="normal">)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">get_projection_to_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" kindref="member">qm::spinOneHalf::sy</ref>,<sp/>1);}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;-y&quot;</highlight><highlight class="normal">)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">get_projection_to_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" kindref="member">qm::spinOneHalf::sy</ref>,-1);}</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;+z&quot;</highlight><highlight class="normal">)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">get_projection_to_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">qm::spinOneHalf::sz</ref>,<sp/>1);}</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;-z&quot;</highlight><highlight class="normal">)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" kindref="member">get_projection_to_parity_sector</ref>(state,<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">qm::spinOneHalf::sz</ref>,-1);}</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;randomAxis&quot;</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::vector&lt;std::string&gt;<sp/>possibilities<sp/>=<sp/>{</highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">,</highlight><highlight class="stringliteral">&quot;z&quot;</highlight><highlight class="normal">};</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::string<sp/>chosen_axis<sp/>=<sp/>possibilities[<ref refid="namespacern_1a387cf52d1a621e81f27fdfceae584ee4" kindref="member">rn::uniform_integer</ref>(0,2)];</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">get_projection_to_closest_parity_sector</ref>(state,<sp/>chosen_axis);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;random&quot;</highlight><highlight class="normal">){</highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>coeffs<sp/>=<sp/>Eigen::Vector3d::Random().normalized();</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Matrix2cd<sp/>random_c2<sp/>=</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>coeffs(0)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1aa08808503c709f6c4c8ef7316ad9fc63" kindref="member">qm::spinOneHalf::sx</ref></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/><sp/><sp/>coeffs(1)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a3442e889c2875e1f02c558c202e72d65" kindref="member">qm::spinOneHalf::sy</ref></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/><sp/><sp/>coeffs(2)<sp/>*<sp/><ref refid="namespaceqm_1_1spin_one_half_1a7a9925b3702c2b7519bda1069531255f" kindref="member">qm::spinOneHalf::sz</ref>;</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">get_projection_to_closest_parity_sector</ref>(state,<sp/>random_c2);</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(parity_sector<sp/>==<sp/></highlight><highlight class="stringliteral">&quot;none&quot;</highlight><highlight class="normal">){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>state;}</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(R</highlight><highlight class="stringliteral">&quot;(Wrong<sp/>pauli<sp/>string.<sp/>Expected<sp/>one<sp/>of<sp/>(+-)<sp/>&quot;x&quot;,&quot;y&quot;,&quot;z&quot;,<sp/>&quot;randomAxis&quot;,<sp/>&quot;random&quot;<sp/>or<sp/>&quot;none&quot;.<sp/>Got:<sp/>)&quot;<sp/>+<sp/>parity_sector);</highlight></codeline>
+<codeline lineno="154"><highlight class="stringliteral"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">tools::log</ref>-&gt;warn(</highlight><highlight class="stringliteral">&quot;Taking<sp/>whichever<sp/>is<sp/>closest<sp/>to<sp/>current<sp/>state!&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref><sp/>=<sp/><ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">tools::finite::measure::spin_components</ref>(state);</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>max_idx<sp/>=<sp/>std::distance(<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>.begin(),<sp/>std::max_element(<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>.begin(),<ref refid="namespacetools_1_1finite_1_1measure_1a6d919a60c4dbc0e8476c96ea281bf386" kindref="member">spin_components</ref>.end()));</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(max_idx<sp/>==<sp/>0)<sp/><sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">get_projection_to_closest_parity_sector</ref>(state,<sp/></highlight><highlight class="stringliteral">&quot;x&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(max_idx<sp/>==<sp/>1)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">get_projection_to_closest_parity_sector</ref>(state,<sp/></highlight><highlight class="stringliteral">&quot;y&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(max_idx<sp/>==<sp/>2)<sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" kindref="member">get_projection_to_closest_parity_sector</ref>(state,<sp/></highlight><highlight class="stringliteral">&quot;z&quot;</highlight><highlight class="normal">);<sp/>}</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Wrong<sp/>parity_sector<sp/>string<sp/>and<sp/>could<sp/>not<sp/>find<sp/>closest<sp/>parity<sp/>state&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(fmt::format(R</highlight><highlight class="stringliteral">&quot;(Wrong<sp/>pauli<sp/>string.<sp/>Expected<sp/>one<sp/>of<sp/>(+-)<sp/>&quot;x&quot;,&quot;y&quot;,&quot;z&quot;,<sp/>&quot;randomAxis&quot;,<sp/>&quot;random&quot;<sp/>or<sp/>&quot;none&quot;.<sp/>Got:<sp/>)&quot;<sp/>+<sp/>parity_sector));</highlight></codeline>
+<codeline lineno="163"><highlight class="stringliteral">}</highlight></codeline>
+<codeline lineno="164"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="165"><highlight class="stringliteral"></highlight></codeline>
+<codeline lineno="166" refid="namespacetools_1_1finite_1_1ops_1a465b189c211d37ae93982966c8baf98c" refkind="member"><highlight class="stringliteral"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1a465b189c211d37ae93982966c8baf98c" kindref="member">tools::finite::ops::overlap</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state2){</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(state1.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>==<sp/>state2.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>States<sp/>have<sp/>different<sp/>lengths!<sp/>Can&apos;t<sp/>do<sp/>overlap.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(state1.<ref refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" kindref="member">get_position</ref>()<sp/>==<sp/>state2.<ref refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" kindref="member">get_position</ref>()<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>States<sp/>need<sp/>to<sp/>be<sp/>at<sp/>the<sp/>same<sp/>position!<sp/>Can&apos;t<sp/>do<sp/>overlap.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/><ref refid="namespacetools_1_1finite_1_1ops_1a465b189c211d37ae93982966c8baf98c" kindref="member">overlap</ref><sp/>=</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>state1.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.front().get_M()</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state2.<ref refid="classclass__state__finite_1a4ea331a72ed617c5556723941bc3be30" kindref="member">MPS_L</ref>.front().get_M().conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,1},{0,1}));</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;<sp/>pos<sp/>&lt;<sp/>state1.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();<sp/>pos++){</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>temp<sp/>=<sp/>overlap</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state1.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0},{1}))</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state2.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>().conjugate(),<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">Textra::idx</ref>({0,1},{1,0}));</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>overlap<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>norm_chain<sp/>=<sp/>std::real(<ref refid="namespace_textra_1ac6fcdfc5393a97877b4ff51ea6468caa" kindref="member">Textra::TensorMatrixMap</ref>(overlap).trace());</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Overlap<sp/>state1<sp/>and<sp/>state2:<sp/>&quot;<sp/>&lt;&lt;<sp/>std::setprecision(16)<sp/>&lt;&lt;<sp/>norm_chain<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>norm_chain;</highlight></codeline>
+<codeline lineno="184"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186" refid="namespacetools_1_1finite_1_1ops_1aa719278ed7f828ecdced373181e55b84" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1aa719278ed7f828ecdced373181e55b84" kindref="member">tools::finite::ops::expectation_value</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state2,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::list&lt;Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;&gt;<sp/><sp/>&amp;<sp/>mpos,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>&amp;<sp/>Ledge,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,3&gt;<sp/>&amp;<sp/>Redge){</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(state1.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>==<sp/>state2.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>States<sp/>have<sp/>different<sp/>lengths!<sp/>Can&apos;t<sp/>do<sp/>overlap.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(state1.<ref refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" kindref="member">get_position</ref>()<sp/>==<sp/>state2.<ref refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" kindref="member">get_position</ref>()<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>States<sp/>need<sp/>to<sp/>be<sp/>at<sp/>the<sp/>same<sp/>position!<sp/>Can&apos;t<sp/>do<sp/>overlap.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>mpo_it<sp/><sp/><sp/><sp/>=<sp/>mpos.begin();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>L<sp/>=<sp/>Ledge;</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;<sp/>pos<sp/>&lt;<sp/>state1.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();<sp/>pos++)<sp/>{</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,3&gt;<sp/>temp<sp/>=</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state1.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{1}))</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(*mpo_it++<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1,2},{0,2}))</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state2.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>().conjugate()<sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,3},{1,0}))</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1a11ff5da431d0a149284e51800d10c0cc" kindref="member">array3</ref>{0,2,1});</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(L.dimensions()<sp/>==<sp/>Redge.dimensions());</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,0&gt;<sp/>E_all_sites<sp/>=<sp/>L.contract(Redge,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1,2},{0,1,2}));</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>energy_chain<sp/>=<sp/>std::real(E_all_sites(0));</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>energy_chain;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208" refid="namespacetools_1_1finite_1_1ops_1a4096cbe90c8cd198a5256c50cadea0a8" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacetools_1_1finite_1_1ops_1a4096cbe90c8cd198a5256c50cadea0a8" kindref="member">tools::finite::ops::exp_sq_value</ref><sp/><sp/><sp/><sp/><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state1,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref><sp/>&amp;<sp/>state2,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::list&lt;Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;&gt;<sp/><sp/>&amp;<sp/>mpos,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>&amp;<sp/>Ledge,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;std::complex&lt;double&gt;,4&gt;<sp/>&amp;<sp/>Redge){</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(state1.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>==<sp/>state2.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>()<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>States<sp/>have<sp/>different<sp/>lengths!<sp/>Can&apos;t<sp/>do<sp/>overlap.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(state1.<ref refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" kindref="member">get_position</ref>()<sp/>==<sp/>state2.<ref refid="classclass__state__finite_1a4964c313378297c9ec876f5d7cc4e12d" kindref="member">get_position</ref>()<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>States<sp/>need<sp/>to<sp/>be<sp/>at<sp/>the<sp/>same<sp/>position!<sp/>Can&apos;t<sp/>do<sp/>overlap.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>mpo_it<sp/><sp/><sp/><sp/>=<sp/>mpos.begin();</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>L<sp/>=<sp/>Ledge;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal">(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>pos<sp/>=<sp/>0;<sp/>pos<sp/>&lt;<sp/>state1.<ref refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" kindref="member">get_length</ref>();<sp/>pos++)<sp/>{</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>temp<sp/>=</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state1.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>()<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0},{1}))</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(*mpo_it<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1,3},{0,2}))</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(*mpo_it++<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({1,4},{0,2}))</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.contract(state2.<ref refid="classclass__state__finite_1ae7d186b65eccf85489ee17c528caf955" kindref="member">get_MPS</ref>(pos).<ref refid="classclass__mps__site_1ac7ede498990cefe06828699f21eae72f" kindref="member">get_M</ref>().conjugate()<sp/><sp/>,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,4},{1,0}))</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">array4</ref>{0,3,1,2});</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L<sp/>=<sp/>temp;</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(L.dimensions()<sp/>==<sp/>Redge.dimensions());</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,0&gt;<sp/>H2_all_sites<sp/>=<sp/>L.contract(Redge,<sp/><ref refid="namespace_textra_1ad322c080214d3af95e19d611c077ea76" kindref="member">idx</ref>({0,1,2,3},{0,1,2,3}));</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>std::real(H2_all_sites(0));</highlight></codeline>
+<codeline lineno="228"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp"/>
+  </compounddef>
+</doxygen>

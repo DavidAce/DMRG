@@ -1,0 +1,383 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="matrix__recast_8cpp" kind="file" language="C++">
+    <compoundname>matrix_recast.cpp</compoundname>
+    <includes refid="matrix__recast_8h" local="yes">matrix_recast.h</includes>
+    <includes local="no">Eigen/Core</includes>
+    <includes local="no">Eigen/Sparse</includes>
+    <includes local="no">iterator</includes>
+    <incdepgraph>
+      <node id="1299">
+        <label>Eigen/SparseLU</label>
+      </node>
+      <node id="1293">
+        <label>iomanip</label>
+      </node>
+      <node id="1296">
+        <label>Eigen/LU</label>
+      </node>
+      <node id="1300">
+        <label>iterator</label>
+      </node>
+      <node id="1294">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1291">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="1292" relation="include">
+        </childnode>
+        <childnode refid="1285" relation="include">
+        </childnode>
+      </node>
+      <node id="1287">
+        <label>map</label>
+      </node>
+      <node id="1290">
+        <label>matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="1284" relation="include">
+        </childnode>
+        <childnode refid="1291" relation="include">
+        </childnode>
+        <childnode refid="1285" relation="include">
+        </childnode>
+        <childnode refid="1293" relation="include">
+        </childnode>
+        <childnode refid="1294" relation="include">
+        </childnode>
+        <childnode refid="1295" relation="include">
+        </childnode>
+        <childnode refid="1296" relation="include">
+        </childnode>
+      </node>
+      <node id="1289">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1298">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1283">
+        <label>vector</label>
+      </node>
+      <node id="1295">
+        <label>complex.h</label>
+      </node>
+      <node id="1288">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1286">
+        <label>array</label>
+      </node>
+      <node id="1297">
+        <label>matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1284" relation="include">
+        </childnode>
+        <childnode refid="1291" relation="include">
+        </childnode>
+        <childnode refid="1285" relation="include">
+        </childnode>
+        <childnode refid="1293" relation="include">
+        </childnode>
+        <childnode refid="1294" relation="include">
+        </childnode>
+        <childnode refid="1298" relation="include">
+        </childnode>
+        <childnode refid="1299" relation="include">
+        </childnode>
+      </node>
+      <node id="1281">
+        <label>matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="1282" relation="include">
+        </childnode>
+        <childnode refid="1283" relation="include">
+        </childnode>
+        <childnode refid="1284" relation="include">
+        </childnode>
+        <childnode refid="1290" relation="include">
+        </childnode>
+        <childnode refid="1297" relation="include">
+        </childnode>
+      </node>
+      <node id="1280">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp</label>
+        <link refid="matrix__recast_8cpp"/>
+        <childnode refid="1281" relation="include">
+        </childnode>
+        <childnode refid="1294" relation="include">
+        </childnode>
+        <childnode refid="1298" relation="include">
+        </childnode>
+        <childnode refid="1300" relation="include">
+        </childnode>
+      </node>
+      <node id="1285">
+        <label>iostream</label>
+      </node>
+      <node id="1284">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1285" relation="include">
+        </childnode>
+        <childnode refid="1286" relation="include">
+        </childnode>
+        <childnode refid="1287" relation="include">
+        </childnode>
+        <childnode refid="1282" relation="include">
+        </childnode>
+        <childnode refid="1283" relation="include">
+        </childnode>
+        <childnode refid="1288" relation="include">
+        </childnode>
+        <childnode refid="1289" relation="include">
+        </childnode>
+      </node>
+      <node id="1292">
+        <label>chrono</label>
+      </node>
+      <node id="1282">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-10-29.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix__recast_8h" kindref="compound">matrix_recast.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Core&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;Eigen/Sparse&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iterator&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//template&lt;typename<sp/>Scalar_&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight><highlight class="comment">//std::ostream<sp/>&amp;operator&lt;&lt;(std::ostream<sp/>&amp;out,<sp/>const<sp/>std::vector&lt;Scalar_&gt;<sp/>&amp;v)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(!v.empty())<sp/>{</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(v.begin(),<sp/>v.end(),<sp/>std::ostream_iterator&lt;Scalar_&gt;(out,<sp/>&quot;<sp/><sp/>&quot;));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>&lt;&lt;<sp/>&apos;\n&apos;;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>out;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="22" refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" refkind="member"><highlight class="normal"><ref refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" kindref="member">matrix_recast&lt;Scalar&gt;::matrix_recast</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>*matrix_ptr_,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L_):matrix_ptr(matrix_ptr_),<sp/>L(L_){</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1acc579e758f933025e8d511d13563f762" kindref="member">recheck_all</ref>();</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="27" refid="classmatrix__recast_1aa7fb1c2b8e7c4c90c89d1253b69cbece" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmatrix__recast_1aa7fb1c2b8e7c4c90c89d1253b69cbece" kindref="member">matrix_recast&lt;Scalar&gt;::prune</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>threshold){</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.resize(<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>*<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>matmap<sp/><sp/><sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,L,L);</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>matpruned(<ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/>matpruned<sp/>=<sp/>(matmap.array().cwiseAbs()<sp/>&lt;<sp/>threshold).select(Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;::Zero(L,L),<sp/>matmap);</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1acc579e758f933025e8d511d13563f762" kindref="member">recheck_all</ref>();</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" kindref="member">pruned</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="38" refid="classmatrix__recast_1acc579e758f933025e8d511d13563f762" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmatrix__recast_1acc579e758f933025e8d511d13563f762" kindref="member">matrix_recast&lt;Scalar&gt;:: recheck_all</ref>(){</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1a7335d1e7c73d054c7455a153f88d7d8a" kindref="member">check_if_sparse</ref>();</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1af4aa3adfc0248562ce45aff1f9218869" kindref="member">check_if_hermitian</ref>();</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1a5cd7c034327893a816fcfbb6ecbaa58b" kindref="member">check_if_real</ref>();</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="48" refid="classmatrix__recast_1a5cd7c034327893a816fcfbb6ecbaa58b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmatrix__recast_1a5cd7c034327893a816fcfbb6ecbaa58b" kindref="member">matrix_recast&lt;Scalar&gt;::check_if_real</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>matrix<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;Scalar,<sp/>double&gt;::value){<ref refid="classmatrix__recast_1aa8078a5f7487342a9125a0723b3c0c37" kindref="member">isReal</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;}</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{<ref refid="classmatrix__recast_1aa8078a5f7487342a9125a0723b3c0c37" kindref="member">isReal</ref><sp/>=<sp/>matrix.imag().isZero(1e-14);}</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="56" refid="classmatrix__recast_1af4aa3adfc0248562ce45aff1f9218869" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmatrix__recast_1af4aa3adfc0248562ce45aff1f9218869" kindref="member">matrix_recast&lt;Scalar&gt;::check_if_hermitian</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>matrix<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1a44d4f6ed4348097efa3f0447856c7b07" kindref="member">isHermitian</ref><sp/>=<sp/>matrix.isApprox(matrix.adjoint(),<sp/>1e-14);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="63" refid="classmatrix__recast_1a7335d1e7c73d054c7455a153f88d7d8a" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classmatrix__recast_1a7335d1e7c73d054c7455a153f88d7d8a" kindref="member">matrix_recast&lt;Scalar&gt;::check_if_sparse</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>matrix<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1ae521608845fe7d0c4bd1e94e5b3c03ff" kindref="member">sparcity</ref><sp/>=<sp/>(matrix.array().cwiseAbs()<sp/>&gt;<sp/>1e-14<sp/>)</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.select(Eigen::MatrixXd::Ones(<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>),0).sum()<sp/>/<sp/>matrix.size();</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classmatrix__recast_1ade013563f9ff923d3503c231cf4e10ea" kindref="member">isSparse</ref><sp/>=<sp/><sp/><ref refid="classmatrix__recast_1ae521608845fe7d0c4bd1e94e5b3c03ff" kindref="member">sparcity</ref><sp/>&lt;<sp/>0.1;</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="71" refid="classmatrix__recast_1af48d6747ecb23c658a21e62849579a43" refkind="member"><highlight class="normal"><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct&lt;double&gt;</ref><sp/><ref refid="classmatrix__recast_1af48d6747ecb23c658a21e62849579a43" kindref="member">matrix_recast&lt;Scalar&gt;::get_as_real_dense</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,<sp/>double&gt;::value){</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" kindref="member">pruned</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct&lt;double&gt;</ref>(<ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct&lt;double&gt;</ref>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(isReal<sp/>and<sp/>&quot;ERROR:<sp/>The<sp/>given<sp/>matrix<sp/>has<sp/>a<sp/>nonzero<sp/>imaginary<sp/>part.<sp/>Can&apos;t<sp/>convert<sp/>to<sp/>real.&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="classmatrix__recast_1aa8078a5f7487342a9125a0723b3c0c37" kindref="member">isReal</ref>){</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sum<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>).imag().cwiseAbs().sum();</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;WARNING:<sp/>The<sp/>given<sp/>matrix<sp/>has<sp/>a<sp/>nonzero<sp/>imaginary<sp/>part,<sp/>yet<sp/>converting<sp/>to<sp/>real.<sp/>Imag<sp/>sum:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>sum<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::MatrixXd<sp/><ref refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" kindref="member">matrix_recast</ref>;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" kindref="member">pruned</ref>){matrix_recast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>).real();}</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{matrix_recast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>).real();}</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct&lt;double&gt;</ref>(matrix_recast.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="90" refid="classmatrix__recast_1ac3af362d62b9f9c968be7b7d5d7893d2" refkind="member"><highlight class="normal"><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;<sp/><ref refid="classmatrix__recast_1ac3af362d62b9f9c968be7b7d5d7893d2" kindref="member">matrix_recast&lt;Scalar&gt;::get_as_cplx_dense</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,<sp/>double&gt;::value){</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" kindref="member">matrix_recast</ref>(<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix_recast.setZero();</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" kindref="member">pruned</ref>){matrix_recast.real()<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{matrix_recast.real()<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;(matrix_recast.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_dense_matrix_product" kindref="compound">DenseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="100"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="103" refid="classmatrix__recast_1adddee01efa8b8bcf650ba4a84493d384" refkind="member"><highlight class="normal"><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct&lt;double&gt;</ref><sp/><ref refid="classmatrix__recast_1adddee01efa8b8bcf650ba4a84493d384" kindref="member">matrix_recast&lt;Scalar&gt;::get_as_real_sparse</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,<sp/>double&gt;::value){</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" kindref="member">pruned</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct&lt;double&gt;</ref>(<ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct&lt;double&gt;</ref>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(not<sp/><ref refid="classmatrix__recast_1aa8078a5f7487342a9125a0723b3c0c37" kindref="member">isReal</ref>){</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>sum<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>).imag().cwiseAbs().sum();</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;WARNING:<sp/>The<sp/>given<sp/>matrix<sp/>has<sp/>a<sp/>nonzero<sp/>imaginary<sp/>part,<sp/>yet<sp/>converting<sp/>to<sp/>real.<sp/>Imag<sp/>sum:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>sum<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::MatrixXd<sp/><ref refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" kindref="member">matrix_recast</ref>;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" kindref="member">pruned</ref>){matrix_recast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>).real();}</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{matrix_recast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>).real();}</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct&lt;double&gt;</ref>(<ref refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" kindref="member">matrix_recast</ref>);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Scalar&gt;</highlight></codeline>
+<codeline lineno="119" refid="classmatrix__recast_1ab315dce9843630b5d03b97fa419a44af" refkind="member"><highlight class="normal"><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;<sp/><ref refid="classmatrix__recast_1ab315dce9843630b5d03b97fa419a44af" kindref="member">matrix_recast&lt;Scalar&gt;::get_as_cplx_sparse</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,<sp/>double&gt;::value){</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/><ref refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" kindref="member">matrix_recast</ref>(<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix_recast.setZero();</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" kindref="member">pruned</ref>){matrix_recast.real()<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{matrix_recast.real()<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;(<ref refid="classmatrix__recast_1a0fa9c7b8cf9f5cb48ffc8384d45cd6f0" kindref="member">matrix_recast</ref>);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classmatrix__recast_1ab8ce3195cb191c970c7d8c2e8ebf1915" kindref="member">pruned</ref>){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;(<ref refid="classmatrix__recast_1a4ebfcbfb8395e88e7dfdfdf4925074d0" kindref="member">matrix_pruned</ref>.data(),<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="class_sparse_matrix_product" kindref="compound">SparseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;(<ref refid="classmatrix__recast_1a6936709f5eff9fc275b87e06d5824280" kindref="member">matrix_ptr</ref>,<ref refid="classmatrix__recast_1aab13914b74887026d258a19cfba4dfac" kindref="member">L</ref>);}</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="130"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>matrix_recast&lt;Scalar&gt;::convert_to_real_dense(){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>READ<sp/>THIS<sp/>TO<sp/>LEARN<sp/>MORE<sp/>http://atantet.github.io/ATSuite_cpp/atspectrum_8hpp_source.html</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_dense.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_dense.clear();</highlight></codeline>
+<codeline lineno="145"><highlight class="comment"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight><highlight class="comment">//</highlight></codeline>
+<codeline lineno="149"><highlight class="comment"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>constexpr(std::is_same&lt;Scalar,<sp/>double&gt;::value){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix_real_dense<sp/>=<sp/>DenseMatrixProduct&lt;double&gt;(matrix_ptr,L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}else{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::MatrixXd<sp/>matrix_recast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(matrix_ptr,L,L).real();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix_real_dense<sp/>=<sp/>DenseMatrixProduct&lt;double&gt;(matrix_recast.data(),L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>matrix_recast&lt;Scalar&gt;::convert_to_cplx_dense(){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>//<sp/>READ<sp/>THIS<sp/>TO<sp/>LEARN<sp/>MORE<sp/>http://atantet.github.io/ATSuite_cpp/atspectrum_8hpp_source.html</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_dense.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_dense.clear();</highlight></codeline>
+<codeline lineno="167"><highlight class="comment"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"></highlight><highlight class="comment">//</highlight></codeline>
+<codeline lineno="171"><highlight class="comment"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>constexpr(std::is_same&lt;Scalar,<sp/>double&gt;::value){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Eigen::MatrixXcd<sp/>matrix_recast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;<sp/>(matrix_ptr,L,L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix_cplx_dense<sp/>=<sp/><sp/>DenseMatrixProduct&lt;std::complex&lt;double&gt;&gt;(matrix_recast.data(),L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}else{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix_cplx_dense<sp/>=<sp/>DenseMatrixProduct&lt;std::complex&lt;double&gt;&gt;(matrix_ptr,L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>matrix_recast&lt;Scalar&gt;::convert_to_real_sparse(){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>READ<sp/>THIS<sp/>TO<sp/>LEARN<sp/>MORE<sp/>http://atantet.github.io/ATSuite_cpp/atspectrum_8hpp_source.html</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_dense.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_dense.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_sparse.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_sparse.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>assert(isReal<sp/>and<sp/>&quot;Matrix<sp/>is<sp/>not<sp/>real!&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::SparseMatrix&lt;double&gt;<sp/>matrix_recast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;(matrix_ptr,L,L).real().sparseView();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_recast.makeCompressed();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_sparse.nnz<sp/>=<sp/>matrix_recast.nonZeros();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_sparse.L<sp/><sp/><sp/>=<sp/>L;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_sparse.N<sp/><sp/><sp/>=<sp/>L*L;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_sparse.irow<sp/>=<sp/>std::vector&lt;int&gt;<sp/><sp/><sp/>(matrix_recast.innerIndexPtr(),<sp/>matrix_recast.innerIndexPtr()<sp/>+<sp/>matrix_recast.nonZeros()<sp/>);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_sparse.pcol<sp/>=<sp/>std::vector&lt;int&gt;<sp/><sp/><sp/>(matrix_recast.outerIndexPtr(),<sp/>matrix_recast.outerIndexPtr()<sp/>+<sp/>matrix_recast.outerSize()<sp/>+1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_sparse.vals<sp/>=<sp/>std::vector&lt;double&gt;(matrix_recast.valuePtr()<sp/><sp/><sp/><sp/><sp/>,<sp/>matrix_recast.valuePtr()<sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>matrix_recast.nonZeros());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="200"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="201"><highlight class="normal"></highlight></codeline>
+<codeline lineno="202"><highlight class="normal"></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"></highlight><highlight class="comment">//template&lt;typename<sp/>Scalar&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>matrix_recast&lt;Scalar&gt;::convert_to_cplx_sparse(){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>READ<sp/>THIS<sp/>TO<sp/>LEARN<sp/>MORE<sp/>http://atantet.github.io/ATSuite_cpp/atspectrum_8hpp_source.html</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="206"><highlight class="normal"></highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"></highlight></codeline>
+<codeline lineno="209"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_dense.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_dense.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_real_sparse.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="212"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_sparse.clear();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="213"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>assert(not<sp/>isReal<sp/>and<sp/>&quot;Matrix<sp/>is<sp/>not<sp/>cplx!&quot;);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="214"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>Eigen::SparseMatrix&lt;std::complex&lt;double&gt;&gt;<sp/>matrix_recast<sp/>=<sp/>Eigen::Map&lt;const<sp/>Eigen::Matrix&lt;Scalar,Eigen::Dynamic,Eigen::Dynamic&gt;&gt;(matrix_ptr,L,L).template<sp/>cast&lt;std::complex&lt;double&gt;&gt;().sparseView();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_recast.makeCompressed();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="216"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_recast.finalize();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Matrix<sp/>compressed:<sp/>\n&quot;<sp/>&lt;&lt;<sp/>matrix_recast<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_sparse.nnz<sp/>=<sp/>matrix_recast.nonZeros();</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_sparse.L<sp/><sp/><sp/>=<sp/>L;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="221"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_sparse.N<sp/><sp/><sp/>=<sp/>L*L;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_sparse.irow<sp/>=<sp/>std::vector&lt;int&gt;<sp/><sp/><sp/>(matrix_recast.innerIndexPtr(),<sp/>matrix_recast.innerIndexPtr()<sp/>+<sp/>matrix_recast.nonZeros()<sp/>);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_sparse.pcol<sp/>=<sp/>std::vector&lt;int&gt;<sp/><sp/><sp/>(matrix_recast.outerIndexPtr(),<sp/>matrix_recast.outerIndexPtr()<sp/>+<sp/>matrix_recast.outerSize()<sp/>+1);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>matrix_cplx_sparse.vals<sp/>=<sp/>std::vector&lt;std::complex&lt;double&gt;&gt;(matrix_recast.valuePtr()<sp/><sp/><sp/><sp/><sp/><sp/><sp/>,<sp/>matrix_recast.valuePtr()<sp/><sp/><sp/><sp/><sp/><sp/><sp/>+<sp/>matrix_recast.nonZeros());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;nonzeros<sp/>:<sp/>&quot;<sp/>&lt;&lt;<sp/>matrix_recast.nonZeros()<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;innerSize:<sp/>&quot;<sp/>&lt;&lt;<sp/>matrix_recast.innerSize()<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;outerSize:<sp/>&quot;<sp/>&lt;&lt;<sp/>matrix_recast.outerSize()<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;irow<sp/>\n&quot;<sp/>&lt;&lt;<sp/>matrix_cplx_sparse.irow<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;pcol<sp/>\n&quot;<sp/>&lt;&lt;<sp/>matrix_cplx_sparse.pcol<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;vals<sp/>\n&quot;<sp/>&lt;&lt;<sp/>matrix_cplx_sparse.vals<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>innernnz<sp/>=<sp/>std::vector&lt;int&gt;<sp/><sp/><sp/>(matrix_recast.innerNonZeroPtr(),<sp/>matrix_recast.innerNonZeroPtr()<sp/>+<sp/>matrix_recast.innerSize()<sp/>);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>auto<sp/>innernnz<sp/>=<sp/>std::vector&lt;int&gt;<sp/><sp/><sp/>(matrix_recast.innerNonZeroPtr(),<sp/>matrix_recast.innerIndexPtr()<sp/>+<sp/>matrix_recast.innerSize()<sp/>);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;innernnz:<sp/>\n&quot;<sp/>&lt;&lt;<sp/>innernnz<sp/>&lt;&lt;<sp/>std::endl;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="237"><highlight class="normal"></highlight></codeline>
+<codeline lineno="238"><highlight class="normal"></highlight></codeline>
+<codeline lineno="239"><highlight class="normal"></highlight></codeline>
+<codeline lineno="240"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmatrix__recast" kindref="compound">matrix_recast&lt;double&gt;</ref>;</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classmatrix__recast" kindref="compound">matrix_recast&lt;std::complex&lt;double&gt;</ref>&gt;;</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/matrix_recast.cpp"/>
+  </compounddef>
+</doxygen>

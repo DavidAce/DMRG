@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct" kind="struct" language="C++" prot="private">
+    <compoundname>class_selfdual_tf_rf_ising_h5table::data_struct</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ad4de01f41f242cb733f68d0f933a103a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_selfdual_tf_rf_ising_h5table::data_struct::position</definition>
+        <argsstring></argsstring>
+        <name>position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a0256c458496401e90dd8918e6b9aee3a" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::J_rnd</definition>
+        <argsstring></argsstring>
+        <name>J_rnd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a473b723b32c5fef5aae35dfe8f3e2107" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::h_rnd</definition>
+        <argsstring></argsstring>
+        <name>h_rnd</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ae95684e673f640438efaaacfbf4a23aa" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::J_log_mean</definition>
+        <argsstring></argsstring>
+        <name>J_log_mean</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ae680ff7a66b4c31389d479aa2f45b3eb" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::h_log_mean</definition>
+        <argsstring></argsstring>
+        <name>h_log_mean</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a06f04f7aace50b4690704034048c9aff" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::J_sigma</definition>
+        <argsstring></argsstring>
+        <name>J_sigma</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1aa62281ce3bcfdc68c806b7594e9c118e" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::h_sigma</definition>
+        <argsstring></argsstring>
+        <name>h_sigma</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="25" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a9117f354cff8f4aac57df30e27001e44" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::lambda</definition>
+        <argsstring></argsstring>
+        <name>lambda</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1abf74727680181c63b488e14dafe63054" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::e_reduced</definition>
+        <argsstring></argsstring>
+        <name>e_reduced</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="27" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a100a313a73266ee15b989df2647fd30f" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double class_selfdual_tf_rf_ising_h5table::data_struct::spin_dim</definition>
+        <argsstring></argsstring>
+        <name>spin_dim</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="28" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="28" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ae76ddaa59841a6d16d93794da742eb18" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>class_selfdual_tf_rf_ising_h5table::data_struct::data_struct</definition>
+        <argsstring>(int position_, double J_rnd_, double h_rnd_, double J_log_mean_, double h_log_mean_, double J_sigma_, double h_sigma_, double lambda_, double e_reduced_, double spin_dim_)</argsstring>
+        <name>data_struct</name>
+        <param>
+          <type>int</type>
+          <declname>position_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>J_rnd_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>h_rnd_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>J_log_mean_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>h_log_mean_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>J_sigma_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>h_sigma_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>lambda_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>e_reduced_</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>spin_dim_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="31" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="31" bodyend="43"/>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ad4de01f41f242cb733f68d0f933a103a" compoundref="class__hamiltonian__h5tables_8h" startline="19">position</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a0256c458496401e90dd8918e6b9aee3a" compoundref="class__hamiltonian__h5tables_8h" startline="20">J_rnd</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a473b723b32c5fef5aae35dfe8f3e2107" compoundref="class__hamiltonian__h5tables_8h" startline="21">h_rnd</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ae95684e673f640438efaaacfbf4a23aa" compoundref="class__hamiltonian__h5tables_8h" startline="22">J_log_mean</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ae680ff7a66b4c31389d479aa2f45b3eb" compoundref="class__hamiltonian__h5tables_8h" startline="23">h_log_mean</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a06f04f7aace50b4690704034048c9aff" compoundref="class__hamiltonian__h5tables_8h" startline="24">J_sigma</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1aa62281ce3bcfdc68c806b7594e9c118e" compoundref="class__hamiltonian__h5tables_8h" startline="25">h_sigma</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a9117f354cff8f4aac57df30e27001e44" compoundref="class__hamiltonian__h5tables_8h" startline="26">lambda</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1abf74727680181c63b488e14dafe63054" compoundref="class__hamiltonian__h5tables_8h" startline="27">e_reduced</references>
+        <references refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a100a313a73266ee15b989df2647fd30f" compoundref="class__hamiltonian__h5tables_8h" startline="28">spin_dim</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" line="18" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_hamiltonian_h5tables.h" bodystart="18" bodyend="44"/>
+    <listofallmembers>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ae76ddaa59841a6d16d93794da742eb18" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>data_struct</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1abf74727680181c63b488e14dafe63054" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>e_reduced</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ae680ff7a66b4c31389d479aa2f45b3eb" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>h_log_mean</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a473b723b32c5fef5aae35dfe8f3e2107" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>h_rnd</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1aa62281ce3bcfdc68c806b7594e9c118e" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>h_sigma</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ae95684e673f640438efaaacfbf4a23aa" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>J_log_mean</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a0256c458496401e90dd8918e6b9aee3a" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>J_rnd</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a06f04f7aace50b4690704034048c9aff" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>J_sigma</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a9117f354cff8f4aac57df30e27001e44" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>lambda</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1ad4de01f41f242cb733f68d0f933a103a" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>position</name></member>
+      <member refid="structclass__selfdual__tf__rf__ising__h5table_1_1data__struct_1a100a313a73266ee15b989df2647fd30f" prot="public" virt="non-virtual"><scope>class_selfdual_tf_rf_ising_h5table::data_struct</scope><name>spin_dim</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

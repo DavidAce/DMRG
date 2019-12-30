@@ -1,0 +1,343 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1ops" kind="namespace" language="C++">
+    <compoundname>tools::finite::ops</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a6d8dab3f6e8c90533c7ee5b9cf5f02f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::list&lt; Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt; &gt;</type>
+        <definition>std::list&lt; Eigen::Tensor&lt; Scalar, 4 &gt; &gt; tools::finite::ops::make_mpo_list</definition>
+        <argsstring>(const std::list&lt; std::unique_ptr&lt; class_model_base &gt;&gt; &amp;mpos_L, const std::list&lt; std::unique_ptr&lt; class_model_base &gt;&gt; &amp;mpos_R)</argsstring>
+        <name>make_mpo_list</name>
+        <param>
+          <type>const std::list&lt; std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;&gt; &amp;</type>
+          <declname>mpos_L</declname>
+        </param>
+        <param>
+          <type>const std::list&lt; std::unique_ptr&lt; <ref refid="classclass__model__base" kindref="compound">class_model_base</ref> &gt;&gt; &amp;</type>
+          <declname>mpos_R</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="72" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="18" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a2151c6e92bf85e993c06875ac3ccf653" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::ops::apply_mpo</definition>
+        <argsstring>(class_state_finite &amp;state, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;mpo, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;Ledge, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;Redge)</argsstring>
+        <name>apply_mpo</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>mpo</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>Ledge</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>Redge</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="73" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="30" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1ab45d366b38fc8a421bb308847c89a2f8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::ops::apply_mpos</definition>
+        <argsstring>(class_state_finite &amp;state, const std::list&lt; Eigen::Tensor&lt; Scalar, 4 &gt;&gt; &amp;mpos, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;Ledge, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;Redge)</argsstring>
+        <name>apply_mpos</name>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const std::list&lt; Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;&gt; &amp;</type>
+          <declname>mpos</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>Ledge</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>Redge</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="74" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="37" bodyend="87"/>
+        <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1afb44307bc576a4c7e0a406db04fe3401" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::ops::get_projection_to_parity_sector</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::MatrixXcd &amp;paulimatrix, int sign)</argsstring>
+        <name>get_projection_to_parity_sector</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sign</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="76" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="90" bodyend="115"/>
+        <references refid="namespacetools_1_1common_1_1profile_1a052b9454794a3644a814c1ead4de7950" compoundref="nmspc__tools_8h" startline="387">tools::common::profile::t_prj</references>
+        <references refid="classclass__tic__toc_1a1924db6e1c9632114e713028e2beca74" compoundref="class__tic__toc_8cpp" startline="37" endline="41">class_tic_toc::tic</references>
+        <references refid="classclass__state__finite_1a27ca02fe2eeb1918576973124bbf7b82" compoundref="class__state__finite_8cpp" startline="418" endline="420">class_state_finite::active_dimensions</references>
+        <references refid="classclass__state__finite_1a8a5a9885a89bdc18f01ebf0c7910277c" compoundref="class__state__finite_8cpp" startline="527" endline="529">class_state_finite::clear_measurements</references>
+        <references refid="classclass__state__finite_1aac02262c410802ea0546cda195c34eca" compoundref="class__state__finite_8cpp" startline="531" endline="533">class_state_finite::clear_cache</references>
+        <references refid="classclass__tic__toc_1afde905f387b29b69afd6940a2a8e2268" compoundref="class__tic__toc_8cpp" startline="43" endline="48">class_tic_toc::toc</references>
+        <references refid="namespacetools_1_1finite_1_1mps_1ae1aa22d6af49f05638105b00dd5c0e28" compoundref="finite_2mps_8cpp" startline="79" endline="134">tools::finite::mps::rebuild_environments</references>
+        <references refid="namespacetools_1_1finite_1_1debug_1a198d86e79c9df9fc014f3c38846b1428" compoundref="finite_2debug_8cpp" startline="32" endline="242">tools::finite::debug::check_integrity_of_mps</references>
+        <references refid="classclass__state__finite_1a8ac57b8631243325a0db1982b75d1cb8" compoundref="class__state__finite_8cpp" startline="561" endline="564">class_state_finite::tag_all_sites_have_been_updated</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1ab58900cd3148311564be0001cc054aaa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::MatrixXcd &amp;paulimatrix)</argsstring>
+        <name>get_projection_to_closest_parity_sector</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="78" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="117" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a9b5ed5708bfbf96ee08ab2d863af83b0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector</definition>
+        <argsstring>(const class_state_finite &amp;state, std::string parity_sector)</argsstring>
+        <name>get_projection_to_closest_parity_sector</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>parity_sector</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="80" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="127" bodyend="163"/>
+        <references refid="namespacetools_1_1finite_1_1ops_1a9b5ed5708bfbf96ee08ab2d863af83b0" compoundref="ops_8cpp" startline="127" endline="163">get_projection_to_closest_parity_sector</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a465b189c211d37ae93982966c8baf98c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::ops::overlap</definition>
+        <argsstring>(const class_state_finite &amp;state1, const class_state_finite &amp;state2)</argsstring>
+        <name>overlap</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state2</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="81" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="166" bodyend="184"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1aa719278ed7f828ecdced373181e55b84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::ops::expectation_value</definition>
+        <argsstring>(const class_state_finite &amp;state1, const class_state_finite &amp;state2, const std::list&lt; Eigen::Tensor&lt; Scalar, 4 &gt;&gt; &amp;mpos, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;Ledge, const Eigen::Tensor&lt; Scalar, 3 &gt; &amp;Redge)</argsstring>
+        <name>expectation_value</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state2</declname>
+        </param>
+        <param>
+          <type>const std::list&lt; Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;&gt; &amp;</type>
+          <declname>mpos</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>Ledge</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 3 &gt; &amp;</type>
+          <declname>Redge</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="82" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="186" bodyend="206"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a4096cbe90c8cd198a5256c50cadea0a8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double tools::finite::ops::exp_sq_value</definition>
+        <argsstring>(const class_state_finite &amp;state1, const class_state_finite &amp;state2, const std::list&lt; Eigen::Tensor&lt; Scalar, 4 &gt;&gt; &amp;mpos, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;Ledge, const Eigen::Tensor&lt; Scalar, 4 &gt; &amp;Redge)</argsstring>
+        <name>exp_sq_value</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state1</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state2</declname>
+        </param>
+        <param>
+          <type>const std::list&lt; Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt;&gt; &amp;</type>
+          <declname>mpos</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>Ledge</declname>
+        </param>
+        <param>
+          <type>const Eigen::Tensor&lt; <ref refid="namespacetools_1_1finite_1a88c40d69fb3fa1a7a0e3c7208effa6f6" kindref="member">Scalar</ref>, 4 &gt; &amp;</type>
+          <declname>Redge</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="83" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite/ops.cpp" bodystart="208" bodyend="228"/>
+        <references refid="classclass__state__finite_1a003b2835aeb5f9a280efff836baf7522" compoundref="class__state__finite_8cpp" startline="90" endline="90">class_state_finite::get_length</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1a1e55a3a926b49d79f414952721cec301" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::ops::get_projection_to_parity_sector</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::MatrixXcd &amp;paulimatrix, int sign, bool keep_bond_dimensions=false)</argsstring>
+        <name>get_projection_to_parity_sector</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>sign</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>keep_bond_dimensions</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="54" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1ad26b122ad2a77e00a24e6395a5723946" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector</definition>
+        <argsstring>(const class_state_finite &amp;state, const Eigen::MatrixXcd &amp;paulimatrix, bool keep_bond_dimensions=false)</argsstring>
+        <name>get_projection_to_closest_parity_sector</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const Eigen::MatrixXcd &amp;</type>
+          <declname>paulimatrix</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>keep_bond_dimensions</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="56" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1ops_1aa55550d781733123359adef8bed2b111" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::ops::get_projection_to_closest_parity_sector</definition>
+        <argsstring>(const class_state_finite &amp;state, std::string parity_sector, bool keep_bond_dimensions=false)</argsstring>
+        <name>get_projection_to_closest_parity_sector</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>parity_sector</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>keep_bond_dimensions</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="58" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="70" column="1"/>
+  </compounddef>
+</doxygen>

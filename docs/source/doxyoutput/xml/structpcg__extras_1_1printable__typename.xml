@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structpcg__extras_1_1printable__typename" kind="struct" language="C++" prot="public">
+    <compoundname>pcg_extras::printable_typename</compoundname>
+    <includes refid="pcg__extras_8hpp" local="no">pcg_extras.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" line="616" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/pcg/pcg_extras.hpp" bodystart="616" bodyend="616"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

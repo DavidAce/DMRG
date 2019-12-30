@@ -1,0 +1,601 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__eigsolver_8cpp" kind="file" language="C++">
+    <compoundname>class_eigsolver.cpp</compoundname>
+    <includes local="no">complex.h</includes>
+    <includes refid="class__eigsolver_8h" local="yes">class_eigsolver.h</includes>
+    <incdepgraph>
+      <node id="1352">
+        <label>Eigen/SparseLU</label>
+      </node>
+      <node id="1347">
+        <label>iomanip</label>
+      </node>
+      <node id="1349">
+        <label>Eigen/LU</label>
+      </node>
+      <node id="1348">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1336">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="1337" relation="include">
+        </childnode>
+        <childnode refid="1338" relation="include">
+        </childnode>
+      </node>
+      <node id="1341">
+        <label>map</label>
+      </node>
+      <node id="1334">
+        <label>math/arpack_extra/arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
+        <childnode refid="1335" relation="include">
+        </childnode>
+        <childnode refid="1336" relation="include">
+        </childnode>
+        <childnode refid="1339" relation="include">
+        </childnode>
+        <childnode refid="1342" relation="include">
+        </childnode>
+      </node>
+      <node id="1346">
+        <label>matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="1339" relation="include">
+        </childnode>
+        <childnode refid="1336" relation="include">
+        </childnode>
+        <childnode refid="1338" relation="include">
+        </childnode>
+        <childnode refid="1347" relation="include">
+        </childnode>
+        <childnode refid="1348" relation="include">
+        </childnode>
+        <childnode refid="1332" relation="include">
+        </childnode>
+        <childnode refid="1349" relation="include">
+        </childnode>
+      </node>
+      <node id="1344">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1351">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1335">
+        <label>vector</label>
+      </node>
+      <node id="1332">
+        <label>complex.h</label>
+      </node>
+      <node id="1343">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1340">
+        <label>array</label>
+      </node>
+      <node id="1350">
+        <label>matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1339" relation="include">
+        </childnode>
+        <childnode refid="1336" relation="include">
+        </childnode>
+        <childnode refid="1338" relation="include">
+        </childnode>
+        <childnode refid="1347" relation="include">
+        </childnode>
+        <childnode refid="1348" relation="include">
+        </childnode>
+        <childnode refid="1351" relation="include">
+        </childnode>
+        <childnode refid="1352" relation="include">
+        </childnode>
+      </node>
+      <node id="1345">
+        <label>math/arpack_extra/matrix_recast.h</label>
+        <link refid="matrix__recast_8h"/>
+        <childnode refid="1342" relation="include">
+        </childnode>
+        <childnode refid="1335" relation="include">
+        </childnode>
+        <childnode refid="1339" relation="include">
+        </childnode>
+        <childnode refid="1346" relation="include">
+        </childnode>
+        <childnode refid="1350" relation="include">
+        </childnode>
+      </node>
+      <node id="1338">
+        <label>iostream</label>
+      </node>
+      <node id="1339">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1338" relation="include">
+        </childnode>
+        <childnode refid="1340" relation="include">
+        </childnode>
+        <childnode refid="1341" relation="include">
+        </childnode>
+        <childnode refid="1342" relation="include">
+        </childnode>
+        <childnode refid="1335" relation="include">
+        </childnode>
+        <childnode refid="1343" relation="include">
+        </childnode>
+        <childnode refid="1344" relation="include">
+        </childnode>
+      </node>
+      <node id="1331">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp</label>
+        <link refid="class__eigsolver_8cpp"/>
+        <childnode refid="1332" relation="include">
+        </childnode>
+        <childnode refid="1333" relation="include">
+        </childnode>
+      </node>
+      <node id="1337">
+        <label>chrono</label>
+      </node>
+      <node id="1333">
+        <label>class_eigsolver.h</label>
+        <link refid="class__eigsolver_8h"/>
+        <childnode refid="1334" relation="include">
+        </childnode>
+        <childnode refid="1345" relation="include">
+        </childnode>
+        <childnode refid="1339" relation="include">
+        </childnode>
+      </node>
+      <node id="1342">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="class__eigsolver_8cpp_1ae50371d798dfe647fd2db629ba774a8a" prot="public" static="no">
+        <name>lapack_complex_float</name>
+        <initializer>std::complex&lt;float&gt;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" line="11" column="9" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="define" id="class__eigsolver_8cpp_1ad3fccfa336e6375f856b0ea83fb28343" prot="public" static="no">
+        <name>lapack_complex_double</name>
+        <initializer>std::complex&lt;double&gt;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" line="12" column="9" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-10-29.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="comment">//#ifndef<sp/>HAVE_LAPACK_CONFIG_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="comment">//#define<sp/>HAVE_LAPACK_CONFIG_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="comment">//#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;complex.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#undef<sp/>I</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11" refid="class__eigsolver_8cpp_1ae50371d798dfe647fd2db629ba774a8a" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>lapack_complex_float<sp/><sp/>std::complex&lt;float&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12" refid="class__eigsolver_8cpp_1ad3fccfa336e6375f856b0ea83fb28343" refkind="member"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>lapack_complex_double<sp/>std::complex&lt;double&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>__has_include(&lt;mkl_lapacke.h&gt;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;mkl_lapacke.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>__has_include(&lt;lapacke.h&gt;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;lapacke.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__eigsolver_8h" kindref="compound">class_eigsolver.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25" refid="classclass__eigsolver_1a7606b470e00affdbeae96729f4d72efa" refkind="member"><highlight class="normal"><ref refid="classclass__eigsolver_1a7606b470e00affdbeae96729f4d72efa" kindref="member">class_eigsolver::class_eigsolver</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>logLevel_):logLevel(logLevel_){</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1a82c0e82fa7b658057257b2f08ba028f5" kindref="member">eigutils::eigLogger::setLogger</ref>(</highlight><highlight class="stringliteral">&quot;eig&quot;</highlight><highlight class="normal">,<ref refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" kindref="member">logLevel</ref>,</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="classclass__eigsolver_1a43a1bb3e4ae651d3f09220f37ebe3f4c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1a43a1bb3e4ae651d3f09220f37ebe3f4c" kindref="member">class_eigsolver::setLogLevel</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>logLevelZeroToSix){</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1af0d2e6550c857a0d2cd4dcfaedb8adcb" kindref="member">logLevel</ref><sp/>=<sp/>logLevelZeroToSix;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1a1738e90923c7cc7b006457fb5e672ce8" kindref="member">eigutils::eigLogger::setLogLevel</ref>(logLevelZeroToSix);</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight></codeline>
+<codeline lineno="36" refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1a5869c02b60250431d52c2f386cc84d10" kindref="member">class_eigsolver::eigs_init</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L,</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nev,</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>ncv,</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;<sp/>sigma,</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigutils::eigSetting::Type</ref><sp/>type,</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form,</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">eigutils::eigSetting::Ritz</ref><sp/>ritz,</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side,</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadf" kindref="member">eigutils::eigSetting::Storage</ref><sp/>storage,</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>compute_eigvecs_,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>remove_phase_</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Init<sp/>full&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" kindref="member">reset</ref>();</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>is_shifted<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sigma<sp/>==<sp/>sigma;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" kindref="member">compute_eigvecs</ref><sp/><sp/>=<sp/>compute_eigvecs_;</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" kindref="member">remove_phase</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>remove_phase_;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>nev;</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>ncv;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" kindref="member">shift</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>is_shifted<sp/>?<sp/>Shift::ON<sp/>:<sp/>Shift::OFF;</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" kindref="member">sigma</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>sigma;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1abd0743c40a9b0e27b48f780f76cbaf7c" kindref="member">type</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>type;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" kindref="member">form</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>form;</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a9bd11ee439377055620359f00043f109" kindref="member">ritz</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>ritz;</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1acd7e00b8286436d66c14bc1b041e5e61" kindref="member">side</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>side;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a4684ac07f1047c4ae3962d0480699623" kindref="member">storage</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>storage;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ncv<sp/>&lt;<sp/>nev<sp/>){</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(nev<sp/>&gt;=<sp/>1<sp/>and<sp/>nev<sp/>&lt;=<sp/>16<sp/>){</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref><sp/>=<sp/>8<sp/>+<sp/>std::ceil((</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">)(1.5*nev));</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(nev<sp/>&gt;<sp/>16<sp/>and<sp/>nev<sp/>&lt;=<sp/>L<sp/>){</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref><sp/>=<sp/>2*nev;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" kindref="member">form</ref><sp/>==<sp/>Form::NONSYMMETRIC){</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref><sp/>==<sp/>1)<sp/>{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref><sp/>&gt;=<sp/>L<sp/>){</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref><sp/>=<sp/>(L<sp/>+<sp/>nev)<sp/><sp/>/<sp/>2;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref><sp/>&lt;=<sp/>L<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Ncv<sp/>&gt;<sp/>L&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref><sp/>&gt;=<sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref><sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Ncv<sp/>&lt;<sp/>Nev&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref><sp/>&lt;=<sp/>L<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;Nev<sp/>&gt;<sp/>L&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a677ba446c2a6b77078bdbf4d5bec2986" kindref="member">confOK</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92" refid="classclass__eigsolver_1accad92a9cfa34658feba66be21ba8dfe" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1accad92a9cfa34658feba66be21ba8dfe" kindref="member">class_eigsolver::eig_init</ref><sp/><sp/>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" kindref="member">eigutils::eigSetting::Type</ref><sp/>type<sp/><sp/><sp/><sp/><sp/><sp/>,</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" kindref="member">eigutils::eigSetting::Form</ref><sp/>form<sp/><sp/><sp/><sp/><sp/><sp/>,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" kindref="member">eigutils::eigSetting::Side</ref><sp/>side<sp/><sp/><sp/><sp/><sp/><sp/>,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>compute_eigvecs_<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>remove_phase_</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Init<sp/>light&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" kindref="member">reset</ref>();</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>is_shifted<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" kindref="member">compute_eigvecs</ref><sp/><sp/>=<sp/>compute_eigvecs_;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a74ac323d3c7c6073daa0c59a05eb9c8f" kindref="member">remove_phase</ref><sp/><sp/><sp/><sp/><sp/>=<sp/>remove_phase_;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" kindref="member">shift</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>is_shifted<sp/>?<sp/>Shift::ON<sp/>:<sp/>Shift::OFF;</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" kindref="member">sigma</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::numeric_limits&lt;double&gt;::quiet_NaN();</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1abd0743c40a9b0e27b48f780f76cbaf7c" kindref="member">type</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>type;</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" kindref="member">form</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>form;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a9bd11ee439377055620359f00043f109" kindref="member">ritz</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Ritz::LM;</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1acd7e00b8286436d66c14bc1b041e5e61" kindref="member">side</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>side;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a4684ac07f1047c4ae3962d0480699623" kindref="member">storage</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Storage::DENSE;</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a677ba446c2a6b77078bdbf4d5bec2986" kindref="member">confOK</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="classclass__eigsolver_1acafe1f6f1266723e7bf5bde1f62d7fc4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1acafe1f6f1266723e7bf5bde1f62d7fc4" kindref="member">class_eigsolver::eig_dsyevd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>matrix,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L){</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>eig_dsyevd.<sp/>Eigvecs:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" kindref="member">compute_eigvecs</ref>);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvals<sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" kindref="member">get_eigvals</ref>&lt;Form::SYMMETRIC&gt;();</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvecs<sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" kindref="member">get_eigvecs</ref>&lt;Type::REAL,Form::SYMMETRIC&gt;();</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvals.resize(L);</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecs.resize(L*L);</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/>std::copy(matrix,<sp/>matrix<sp/>+<sp/>L*L,<sp/>eigvecs.begin());</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/>=<sp/><ref refid="classclass__eigsolver_1acafe1f6f1266723e7bf5bde1f62d7fc4" kindref="member">eig_dsyevd</ref>(eigvecs.data(),eigvals.data(),<sp/>L);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(info<sp/>==<sp/>0){</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a2dd829066e3d193e9d8c2e39b28c3cf1" kindref="member">eigvecs_found</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" kindref="member">eigvals_found</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" kindref="member">rows</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" kindref="member">cols</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" kindref="member">nev</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" kindref="member">n</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" kindref="member">form</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Form::SYMMETRIC;</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" kindref="member">type</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Type::REAL<sp/>;</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;LAPACK<sp/>dsyevd<sp/>failed<sp/>with<sp/>error:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(info));</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="142"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144" refid="classclass__eigsolver_1ac947544c9e71d87d20414d8d7f8c99bf" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1acafe1f6f1266723e7bf5bde1f62d7fc4" kindref="member">class_eigsolver::eig_dsyevd</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*matrix2eigvecs,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*<sp/>eigvals,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L){</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>eig_dsyevd<sp/>(lapacke).<sp/>Eigvecs:<sp/>{}&quot;</highlight><highlight class="normal">,<sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" kindref="member">compute_eigvecs</ref>);</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>some<sp/>reason<sp/>the<sp/>recommended<sp/>lwork<sp/>from<sp/>netlib<sp/>doesn&apos;t<sp/>work.<sp/>It&apos;s<sp/>better<sp/>to<sp/>ask<sp/>lapack<sp/>with<sp/>a<sp/>query.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>These<sp/>nice<sp/>values<sp/>are<sp/>inspired<sp/>from<sp/>armadillo.<sp/>The<sp/>prefactors<sp/>give<sp/>good<sp/>performance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>int<sp/>lwork<sp/><sp/>=<sp/>2<sp/>*<sp/>(1<sp/>+<sp/>6*L<sp/>+<sp/>2*(L*L));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>int<sp/>liwork<sp/>=<sp/>3<sp/>*<sp/>(3<sp/>+<sp/>5*L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>jobz<sp/>=<sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" kindref="member">compute_eigvecs</ref><sp/>?<sp/></highlight><highlight class="charliteral">&apos;V&apos;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="charliteral">&apos;N&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lwork_query<sp/>[1];</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>liwork_query[1];</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,</highlight><highlight class="charliteral">&apos;U&apos;</highlight><highlight class="normal">,L,</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix2eigvecs,</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals,</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lwork_query,</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-1,</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>liwork_query,</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-1);</highlight></codeline>
+<codeline lineno="165"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lwork<sp/><sp/><sp/><sp/><sp/>=<sp/>(int)<sp/>2<sp/>*<sp/>lwork_query[0];<sp/></highlight><highlight class="comment">//Make<sp/>it<sp/>twice<sp/>as<sp/>big<sp/>for<sp/>performance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>liwork<sp/><sp/><sp/><sp/>=<sp/>(int)<sp/>3<sp/>*<sp/>liwork_query[0];<sp/></highlight><highlight class="comment">//Make<sp/>it<sp/>thrice<sp/>as<sp/>big<sp/>for<sp/>performance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;<sp/>lwork<sp/><sp/>=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>lwork);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;<sp/>liwork<sp/>=<sp/>{}&quot;</highlight><highlight class="normal">,<sp/>liwork);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/>work<sp/><sp/>(<sp/>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">)<sp/>lwork<sp/>);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;int<sp/><sp/><sp/>&gt;<sp/>iwork<sp/>(<sp/>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">)<sp/>liwork<sp/>);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_dsyevd_work(LAPACK_COL_MAJOR,jobz,</highlight><highlight class="charliteral">&apos;U&apos;</highlight><highlight class="normal">,L,</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix2eigvecs,</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals,</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>work.data(),</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lwork,</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iwork.data(),</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>liwork);</highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="183"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187" refid="classclass__eigsolver_1afc0929e1929d7bb6d39d2fe800970f5b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1afc0929e1929d7bb6d39d2fe800970f5b" kindref="member">class_eigsolver::eig_zheevd</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;*<sp/>matrix,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L){</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>eig_zheevd&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvals<sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" kindref="member">get_eigvals</ref>&lt;Form::SYMMETRIC&gt;();</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvecs<sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" kindref="member">get_eigvecs</ref>&lt;Type::CPLX,Form::SYMMETRIC&gt;();</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvals.resize(L);</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecs.resize(L*L);</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/>std::copy(matrix,<sp/>matrix<sp/>+<sp/>L*L,<sp/>eigvecs.begin());</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/>=<sp/><ref refid="classclass__eigsolver_1afc0929e1929d7bb6d39d2fe800970f5b" kindref="member">eig_zheevd</ref>(eigvecs.data(),<sp/>eigvals.data(),<sp/>L);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(info<sp/>==<sp/>0){</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a2dd829066e3d193e9d8c2e39b28c3cf1" kindref="member">eigvecs_found</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" kindref="member">eigvals_found</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" kindref="member">rows</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" kindref="member">cols</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" kindref="member">nev</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" kindref="member">n</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" kindref="member">form</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Form::SYMMETRIC;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" kindref="member">type</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Type::CPLX<sp/>;</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;LAPACK<sp/>zheevd<sp/>failed<sp/>with<sp/>error:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(info));</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="209"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"></highlight></codeline>
+<codeline lineno="211" refid="classclass__eigsolver_1a9afbe8ac403ac5223bfb38884714d994" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1afc0929e1929d7bb6d39d2fe800970f5b" kindref="member">class_eigsolver::eig_zheevd</ref>(std::complex&lt;double&gt;*<sp/>matrix2eigvecs,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>*eigvals,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L){</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>eig_zheevd<sp/>(lapacke)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//These<sp/>nice<sp/>values<sp/>are<sp/>inspired<sp/>from<sp/>armadillo.<sp/>The<sp/>prefactors<sp/>give<sp/>good<sp/>performance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lwork<sp/><sp/>=<sp/>2<sp/>*<sp/>(2*L<sp/>+<sp/>L*L);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lrwork<sp/>=<sp/>2<sp/>*<sp/>(1<sp/>+<sp/>5*L<sp/>+<sp/>2*(L*L));</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>liwork<sp/>=<sp/>3<sp/>*<sp/>(3<sp/>+<sp/>5*L);</highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;Scalar&gt;<sp/>work<sp/><sp/>(<sp/>lwork<sp/>);</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/>rwork<sp/>(<sp/>lrwork<sp/>);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;int<sp/><sp/><sp/>&gt;<sp/>iwork<sp/>(<sp/>liwork<sp/>);</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>jobz<sp/>=<sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" kindref="member">compute_eigvecs</ref><sp/>?<sp/></highlight><highlight class="charliteral">&apos;V&apos;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="charliteral">&apos;N&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_zheevd_work(LAPACK_COL_MAJOR,jobz,</highlight><highlight class="charliteral">&apos;U&apos;</highlight><highlight class="normal">,L,</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>reinterpret_cast&lt;<sp/>lapack_complex_double<sp/>*&gt;(matrix2eigvecs),</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals,</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>reinterpret_cast&lt;<sp/>lapack_complex_double<sp/>*&gt;(work.data()),</highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lwork,</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rwork.data(),</highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lrwork,</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>iwork.data(),</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>liwork);</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="234"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"></highlight></codeline>
+<codeline lineno="237" refid="classclass__eigsolver_1a5ec545dca8a27f62e7f4e0f60ed31bd9" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1a5ec545dca8a27f62e7f4e0f60ed31bd9" kindref="member">class_eigsolver::eig_dgeev</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>matrix,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L){</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>eig_dgeev&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvals<sp/><sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" kindref="member">get_eigvals</ref>&lt;Form::NONSYMMETRIC&gt;();</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvecsR<sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" kindref="member">get_eigvecs</ref>&lt;Type::REAL,Form::NONSYMMETRIC,<sp/>Side::R&gt;();</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvecsL<sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" kindref="member">get_eigvecs</ref>&lt;Type::REAL,Form::NONSYMMETRIC,<sp/>Side::L&gt;();</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvals.resize(L);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecsR.resize(L*L);</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecsL.resize(L*L);</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"></highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/>=<sp/><ref refid="classclass__eigsolver_1a5ec545dca8a27f62e7f4e0f60ed31bd9" kindref="member">eig_dgeev</ref>(matrix,eigvecsR.data(),eigvecsL.data(),eigvals.data(),L<sp/>);</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(info<sp/>==<sp/>0){</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a960196b7474cf46ebd6cc5a4a6534a9d" kindref="member">eigvecsR_found</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a93bc1042860e2ce9cbf1f2a4f72e2b36" kindref="member">eigvecsL_found</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" kindref="member">eigvals_found</ref><sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" kindref="member">rows</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" kindref="member">cols</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" kindref="member">nev</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="255"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" kindref="member">n</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" kindref="member">form</ref><sp/>=<sp/>Form::NONSYMMETRIC;</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" kindref="member">type</ref><sp/>=<sp/>Type::REAL<sp/>;</highlight></codeline>
+<codeline lineno="259"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="260"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;LAPACK<sp/>dgeev<sp/>failed<sp/>with<sp/>error:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(info));</highlight></codeline>
+<codeline lineno="261"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="262"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="263"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="266" refid="classclass__eigsolver_1afd09e2dd48b88512fe618e1e85739ef3" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1a5ec545dca8a27f62e7f4e0f60ed31bd9" kindref="member">class_eigsolver::eig_dgeev</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal">*<sp/>matrix,<sp/>std::complex&lt;double&gt;<sp/>*eigvecsR,<sp/>std::complex&lt;double&gt;*<sp/>eigvecsL,<sp/>std::complex&lt;double&gt;<sp/>*eigvals,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L){</highlight></codeline>
+<codeline lineno="267"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>eig_dgeev<sp/>(lapacke)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>some<sp/>reason<sp/>the<sp/>recommended<sp/>lwork<sp/>from<sp/>netlib<sp/>doesn&apos;t<sp/>work.<sp/>It&apos;s<sp/>better<sp/>to<sp/>ask<sp/>lapack<sp/>with<sp/>a<sp/>query.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>int<sp/>lwork<sp/><sp/><sp/>=<sp/>2<sp/>*<sp/>(4*L);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lwork_query;</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight></codeline>
+<codeline lineno="274"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/>eigvals_real(L);</highlight></codeline>
+<codeline lineno="275"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/>eigvals_imag(L);</highlight></codeline>
+<codeline lineno="276"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXd<sp/>tmpR(L,L);</highlight></codeline>
+<codeline lineno="277"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::MatrixXd<sp/>tmpL(L,L);</highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>jobz<sp/>=<sp/><ref refid="classclass__eigsolver_1a919a47b6fd75d48e821eb46f8fac085c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" kindref="member">compute_eigvecs</ref><sp/>?<sp/></highlight><highlight class="charliteral">&apos;V&apos;</highlight><highlight class="normal"><sp/>:<sp/></highlight><highlight class="charliteral">&apos;N&apos;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_dgeev_work(LAPACK_COL_MAJOR,jobz,jobz,L,</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const_cast&lt;double*&gt;(matrix),</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals_real.data(),</highlight></codeline>
+<codeline lineno="284"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals_imag.data(),</highlight></codeline>
+<codeline lineno="285"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tmpL.data(),</highlight></codeline>
+<codeline lineno="286"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="287"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tmpR.data(),</highlight></codeline>
+<codeline lineno="288"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="289"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;lwork_query,</highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-1);</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lwork<sp/>=<sp/>(int)<sp/>std::real(2.0*lwork_query);<sp/></highlight><highlight class="comment">//Make<sp/>it<sp/>twice<sp/>as<sp/>big<sp/>for<sp/>performance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/>work<sp/><sp/>(<sp/>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">)lwork<sp/>);</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_dgeev_work(LAPACK_COL_MAJOR,jobz,jobz,L,</highlight></codeline>
+<codeline lineno="294"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>const_cast&lt;double*&gt;(matrix),</highlight></codeline>
+<codeline lineno="295"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="296"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals_real.data(),</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals_imag.data(),</highlight></codeline>
+<codeline lineno="298"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tmpL.data(),</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>tmpR.data(),</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>work.data(),</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lwork);</highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>count<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="307"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>L;<sp/>i++)<sp/>{</highlight></codeline>
+<codeline lineno="308"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals[i]<sp/>=<sp/>std::complex&lt;double&gt;(eigvals_real[i],<sp/>eigvals_imag[i]);</highlight></codeline>
+<codeline lineno="309"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>j<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(j<sp/>&lt;<sp/>L){</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(eigvals_imag[j]<sp/>==<sp/>0.0){</highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsR[count]<sp/>=<sp/>tmpR(i,j);</highlight><highlight class="comment">//tmpR[i<sp/>+<sp/>j*L];</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsL[count]<sp/>=<sp/>tmpL(i,j);</highlight><highlight class="comment">//tmpL[i<sp/>+<sp/>j*L];</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="314"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>count++;</highlight></codeline>
+<codeline lineno="315"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>j++;</highlight></codeline>
+<codeline lineno="316"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="317"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsR[count]<sp/>=<sp/>std::complex&lt;double&gt;(tmpR(i,j),tmpR(i,j+1));<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>std::complex&lt;double&gt;(tmpR[i<sp/>+<sp/>j*L],<sp/>tmpR[i<sp/>+<sp/>(j+1)*L]);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsL[count]<sp/>=<sp/>std::complex&lt;double&gt;(tmpL(i,j),tmpL(i,j+1));<sp/><sp/><sp/></highlight><highlight class="comment">//std::complex&lt;double&gt;(tmpL[i<sp/>+<sp/>j*L],<sp/>tmpL[i<sp/>+<sp/>(j+1)*L]);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>count++;</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsR[count]<sp/>=<sp/>std::complex&lt;double&gt;(tmpR(i,j),<sp/>-tmpR(i,j+1));<sp/></highlight><highlight class="comment">//std::complex&lt;double&gt;(tmpR[i<sp/>+<sp/>j*L],<sp/>-tmpR[i<sp/>+<sp/>(j+1)*L]);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsL[count]<sp/>=<sp/>std::complex&lt;double&gt;(tmpL(i,j),<sp/>-tmpL(i,j+1));<sp/></highlight><highlight class="comment">//std::complex&lt;double&gt;(tmpL[i<sp/>+<sp/>j*L],<sp/>-tmpL[i<sp/>+<sp/>(j+1)*L]);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>count++;</highlight></codeline>
+<codeline lineno="323"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>j+=2;</highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="326"><highlight class="normal"></highlight></codeline>
+<codeline lineno="327"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="329"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight></codeline>
+<codeline lineno="331"><highlight class="normal"></highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight></codeline>
+<codeline lineno="333" refid="classclass__eigsolver_1a319c6451b3f0523c472815f486c4c13c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1a319c6451b3f0523c472815f486c4c13c" kindref="member">class_eigsolver::eig_zgeev</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;*<sp/>matrix,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L){</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>eig_zgeev&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvals<sp/><sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a94af0d5b1e644b383d2c254fbbc1b15c" kindref="member">get_eigvals</ref>&lt;Form::NONSYMMETRIC&gt;();</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvecsR<sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" kindref="member">get_eigvecs</ref>&lt;Type::CPLX,Form::NONSYMMETRIC,<sp/>Side::R&gt;();</highlight></codeline>
+<codeline lineno="338"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>&amp;<sp/>eigvecsL<sp/>=<sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a9eea0b54a902215967a612a761f5e0a2" kindref="member">get_eigvecs</ref>&lt;Type::CPLX,Form::NONSYMMETRIC,<sp/>Side::L&gt;();</highlight></codeline>
+<codeline lineno="339"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvals.resize(L);</highlight></codeline>
+<codeline lineno="340"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecsR.resize(L*L);</highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/><sp/><sp/>eigvecsL.resize(L*L);</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/>=<sp/><ref refid="classclass__eigsolver_1a319c6451b3f0523c472815f486c4c13c" kindref="member">eig_zgeev</ref>(matrix,eigvecsR.data(),<sp/>eigvecsL.data(),eigvals.data(),L);</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(info<sp/>==<sp/>0){</highlight></codeline>
+<codeline lineno="344"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a960196b7474cf46ebd6cc5a4a6534a9d" kindref="member">eigvecsR_found</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="345"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a93bc1042860e2ce9cbf1f2a4f72e2b36" kindref="member">eigvecsL_found</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" kindref="member">eigvals_found</ref><sp/><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" kindref="member">rows</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" kindref="member">cols</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" kindref="member">nev</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" kindref="member">n</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>L;</highlight></codeline>
+<codeline lineno="351"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1ae76776b1b9c7200ff7c0359b3f0b547f" kindref="member">form</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Form::NONSYMMETRIC;</highlight></codeline>
+<codeline lineno="352"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classclass__eigsolver_1a7718d4fdd0cb874caa750043c1b55fa2" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a1de70c993c669427448835fff124a6b5" kindref="member">type</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>Type::CPLX<sp/>;</highlight></codeline>
+<codeline lineno="353"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;LAPACK<sp/>zgeev<sp/>failed<sp/>with<sp/>error:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::to_string(info));</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="357"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"></highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight></codeline>
+<codeline lineno="360"><highlight class="normal"></highlight></codeline>
+<codeline lineno="361"><highlight class="normal"></highlight></codeline>
+<codeline lineno="362" refid="classclass__eigsolver_1ab6f77c16948940ab50b0fc5244696020" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="classclass__eigsolver_1a319c6451b3f0523c472815f486c4c13c" kindref="member">class_eigsolver::eig_zgeev</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::complex&lt;double&gt;*<sp/>matrix,<sp/>std::complex&lt;double&gt;*<sp/>eigvecsR,<sp/>std::complex&lt;double&gt;*<sp/>eigvecsL,<sp/>std::complex&lt;double&gt;<sp/>*eigvals,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>L){</highlight></codeline>
+<codeline lineno="363"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;trace(</highlight><highlight class="stringliteral">&quot;Starting<sp/>eig_zgeev<sp/>(lapacke)&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="364"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="365"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>int<sp/>lwork<sp/><sp/><sp/>=<sp/><sp/>2*2*L;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="366"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>some<sp/>reason<sp/>the<sp/>recommended<sp/>lwork<sp/>from<sp/>netlib<sp/>doesn&apos;t<sp/>work.<sp/>It&apos;s<sp/>better<sp/>to<sp/>ask<sp/>lapack<sp/>with<sp/>a<sp/>query.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="367"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lrwork<sp/><sp/>=<sp/><sp/>2*L;</highlight></codeline>
+<codeline lineno="368"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>info<sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="369"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>lwork_query;</highlight></codeline>
+<codeline lineno="370"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/>rwork<sp/><sp/>(<sp/>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">)<sp/>lrwork);</highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>matrix_ptr<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="class__eigsolver_8cpp_1ad3fccfa336e6375f856b0ea83fb28343" kindref="member">lapack_complex_double</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(</highlight><highlight class="keyword">const_cast&lt;</highlight><highlight class="normal"><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(matrix));</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>eigvals_ptr<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="class__eigsolver_8cpp_1ad3fccfa336e6375f856b0ea83fb28343" kindref="member">lapack_complex_double</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(eigvals);</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>eigvecsL_ptr<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="class__eigsolver_8cpp_1ad3fccfa336e6375f856b0ea83fb28343" kindref="member">lapack_complex_double</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(eigvecsL);</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>eigvecsR_ptr<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="class__eigsolver_8cpp_1ad3fccfa336e6375f856b0ea83fb28343" kindref="member">lapack_complex_double</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(eigvecsR);</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>lwork_query_ptr<sp/><sp/><sp/><sp/>=<sp/><sp/></highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal"><sp/><ref refid="class__eigsolver_8cpp_1ad3fccfa336e6375f856b0ea83fb28343" kindref="member">lapack_complex_double</ref><sp/>*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(&amp;lwork_query);</highlight></codeline>
+<codeline lineno="376"><highlight class="normal"></highlight></codeline>
+<codeline lineno="377"><highlight class="normal"><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_zgeev_work(LAPACK_COL_MAJOR,</highlight><highlight class="charliteral">&apos;V&apos;</highlight><highlight class="normal">,</highlight><highlight class="charliteral">&apos;V&apos;</highlight><highlight class="normal">,L,</highlight></codeline>
+<codeline lineno="378"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix_ptr,</highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals_ptr,</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsL_ptr,</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsR_ptr,</highlight></codeline>
+<codeline lineno="384"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="385"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lwork_query_ptr,</highlight></codeline>
+<codeline lineno="386"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>-1,</highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rwork.data());</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>lwork<sp/>=<sp/>(int)<sp/>std::real(2.0*lwork_query);<sp/></highlight><highlight class="comment">//Make<sp/>it<sp/>twice<sp/>as<sp/>big<sp/>for<sp/>performance.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;lapack_complex_double&gt;<sp/>work<sp/><sp/>(<sp/>(</highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal">)lwork<sp/>);</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"></highlight></codeline>
+<codeline lineno="391"><highlight class="normal"><sp/><sp/><sp/><sp/>info<sp/>=<sp/>LAPACKE_zgeev_work(LAPACK_COL_MAJOR,</highlight><highlight class="charliteral">&apos;V&apos;</highlight><highlight class="normal">,</highlight><highlight class="charliteral">&apos;V&apos;</highlight><highlight class="normal">,L,</highlight></codeline>
+<codeline lineno="392"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix_ptr,</highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvals_ptr,</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsL_ptr,</highlight></codeline>
+<codeline lineno="396"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>eigvecsR_ptr,</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>L,</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>work.data(),</highlight></codeline>
+<codeline lineno="400"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>lwork,</highlight></codeline>
+<codeline lineno="401"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>rwork.data());</highlight></codeline>
+<codeline lineno="402"><highlight class="normal"></highlight></codeline>
+<codeline lineno="403"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>info;</highlight></codeline>
+<codeline lineno="404"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="405"><highlight class="normal"></highlight></codeline>
+<codeline lineno="406"><highlight class="normal"></highlight></codeline>
+<codeline lineno="407"><highlight class="normal"></highlight></codeline>
+<codeline lineno="408"><highlight class="normal"></highlight></codeline>
+<codeline lineno="409"><highlight class="normal"></highlight></codeline>
+<codeline lineno="410"><highlight class="normal"></highlight></codeline>
+<codeline lineno="411"><highlight class="normal"></highlight></codeline>
+<codeline lineno="412"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/class_eigsolver.cpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_d4997a96f2e948238c4ace8570226aa1" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools</compoundname>
+    <innerdir refid="dir_d9271c77aa46acc9d2d5497196dfae29">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common</innerdir>
+    <innerdir refid="dir_2fe3fdae92163efbedf1ea30d7b5428d">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/finite</innerdir>
+    <innerdir refid="dir_08283d6d60bf683acfe1f6e5af914fc0">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite</innerdir>
+    <innerfile refid="nmspc__tools_8h">nmspc_tools.h</innerfile>
+    <innerfile refid="tools_8h">tools.h</innerfile>
+    <innerfile refid="tools__finite_8h">tools_finite.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/"/>
+  </compounddef>
+</doxygen>

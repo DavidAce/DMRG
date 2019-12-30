@@ -1,0 +1,300 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1finite_1_1io" kind="namespace" language="C++">
+    <compoundname>tools::finite::io</compoundname>
+    <innernamespace refid="namespacetools_1_1finite_1_1io_1_1h5dset">tools::finite::io::h5dset</innernamespace>
+    <innernamespace refid="namespacetools_1_1finite_1_1io_1_1h5restore">tools::finite::io::h5restore</innernamespace>
+    <innernamespace refid="namespacetools_1_1finite_1_1io_1_1h5table">tools::finite::io::h5table</innernamespace>
+    <innernamespace refid="namespacetools_1_1finite_1_1io_1_1internals">tools::finite::io::internals</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a37d4179eaa8406e8a1e04c3e691609bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_all_state</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>write_all_state</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="100" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1addfbae844f3db0a0a929cf093e4c7857" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_bond_matrices</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>write_bond_matrices</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="101" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a68ee74b2afe7fe2ab296dbc1e5cb2d3e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_bond_matrix</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>write_bond_matrix</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="102" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1ac6f85c4daaea9b7d4cc69e1d4c83ebb1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_full_mps</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>write_full_mps</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="103" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a6c5fda74f67d69358c5ff5ae86c599f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_full_mpo</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>write_full_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="104" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a80bf9e47cde868592d18ac55589da2de" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_model</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>write_model</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="105" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a922e1d60f12564fc12f9c32c7652890b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_entanglement</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>write_entanglement</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="106" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1af91bd7a74ba98b9d856b5e7de57f2430" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_all_measurements</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>write_all_measurements</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="107" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1aeb64c163735b326032ffee2c31b0da9c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::write_projection_to_closest_parity_sector</definition>
+        <argsstring>(const class_state_finite &amp;state, h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path, std::string parity_sector, bool keep_bond_dimensions)</argsstring>
+        <name>write_projection_to_closest_parity_sector</name>
+        <param>
+          <type>const <ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>parity_sector</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>keep_bond_dimensions</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="108" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1a7131db8e8279905bf87c91bed48d2237" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::finite::io::load_from_hdf5</definition>
+        <argsstring>(const h5pp::File &amp;h5ppFile, class_state_finite &amp;state, class_simulation_status &amp;sim_status, const std::string &amp;prefix_path)</argsstring>
+        <name>load_from_hdf5</name>
+        <param>
+          <type>const h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type><ref refid="classclass__simulation__status" kindref="compound">class_simulation_status</ref> &amp;</type>
+          <declname>sim_status</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="109" column="1"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1finite_1_1io_1af70b0f3611654305e87f65d54b42afb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classclass__state__finite" kindref="compound">class_state_finite</ref></type>
+        <definition>class_state_finite tools::finite::io::load_state_from_hdf5</definition>
+        <argsstring>(const h5pp::File &amp;h5ppFile, const std::string &amp;prefix_path)</argsstring>
+        <name>load_state_from_hdf5</name>
+        <param>
+          <type>const h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>prefix_path</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/tools_finite.h" line="110" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="200" column="1"/>
+  </compounddef>
+</doxygen>

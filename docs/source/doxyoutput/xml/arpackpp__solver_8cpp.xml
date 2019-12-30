@@ -1,0 +1,562 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="arpackpp__solver_8cpp" kind="file" language="C++">
+    <compoundname>arpackpp_solver.cpp</compoundname>
+    <includes refid="arpackpp__solver_8h" local="yes">arpackpp_solver.h</includes>
+    <includes refid="matrix__product__dense_8h" local="yes">matrix_product_dense.h</includes>
+    <includes refid="matrix__product__sparse_8h" local="yes">matrix_product_sparse.h</includes>
+    <includes refid="matrix__product__stl_8h" local="yes">matrix_product_stl.h</includes>
+    <includes refid="matrix__product__hamiltonian_8h" local="yes">matrix_product_hamiltonian.h</includes>
+    <includes refid="nmspc__type__check_8h" local="no">general/nmspc_type_check.h</includes>
+    <incdepgraph>
+      <node id="1136">
+        <label>Eigen/SparseLU</label>
+      </node>
+      <node id="1130">
+        <label>iomanip</label>
+      </node>
+      <node id="1133">
+        <label>Eigen/LU</label>
+      </node>
+      <node id="1142">
+        <label>iterator</label>
+      </node>
+      <node id="1143">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="1144" relation="include">
+        </childnode>
+        <childnode refid="1131" relation="include">
+        </childnode>
+        <childnode refid="1141" relation="include">
+        </childnode>
+      </node>
+      <node id="1131">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1120">
+        <label>general/class_tic_toc.h</label>
+        <link refid="class__tic__toc_8h"/>
+        <childnode refid="1121" relation="include">
+        </childnode>
+        <childnode refid="1122" relation="include">
+        </childnode>
+      </node>
+      <node id="1125">
+        <label>map</label>
+      </node>
+      <node id="1144">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1141">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1118">
+        <label>arpackpp_solver.h</label>
+        <link refid="arpackpp__solver_8h"/>
+        <childnode refid="1119" relation="include">
+        </childnode>
+        <childnode refid="1120" relation="include">
+        </childnode>
+        <childnode refid="1123" relation="include">
+        </childnode>
+        <childnode refid="1126" relation="include">
+        </childnode>
+      </node>
+      <node id="1129">
+        <label>matrix_product_dense.h</label>
+        <link refid="matrix__product__dense_8h"/>
+        <childnode refid="1123" relation="include">
+        </childnode>
+        <childnode refid="1120" relation="include">
+        </childnode>
+        <childnode refid="1122" relation="include">
+        </childnode>
+        <childnode refid="1130" relation="include">
+        </childnode>
+        <childnode refid="1131" relation="include">
+        </childnode>
+        <childnode refid="1132" relation="include">
+        </childnode>
+        <childnode refid="1133" relation="include">
+        </childnode>
+      </node>
+      <node id="1138">
+        <label>matrix_product_hamiltonian.h</label>
+        <link refid="matrix__product__hamiltonian_8h"/>
+        <childnode refid="1120" relation="include">
+        </childnode>
+        <childnode refid="1124" relation="include">
+        </childnode>
+        <childnode refid="1119" relation="include">
+        </childnode>
+        <childnode refid="1123" relation="include">
+        </childnode>
+        <childnode refid="1139" relation="include">
+        </childnode>
+      </node>
+      <node id="1128">
+        <label>spdlog/spdlog.h</label>
+      </node>
+      <node id="1135">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1117">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp</label>
+        <link refid="arpackpp__solver_8cpp"/>
+        <childnode refid="1118" relation="include">
+        </childnode>
+        <childnode refid="1129" relation="include">
+        </childnode>
+        <childnode refid="1134" relation="include">
+        </childnode>
+        <childnode refid="1137" relation="include">
+        </childnode>
+        <childnode refid="1138" relation="include">
+        </childnode>
+        <childnode refid="1143" relation="include">
+        </childnode>
+      </node>
+      <node id="1137">
+        <label>matrix_product_stl.h</label>
+        <link refid="matrix__product__stl_8h"/>
+        <childnode refid="1123" relation="include">
+        </childnode>
+        <childnode refid="1120" relation="include">
+        </childnode>
+        <childnode refid="1122" relation="include">
+        </childnode>
+        <childnode refid="1130" relation="include">
+        </childnode>
+        <childnode refid="1119" relation="include">
+        </childnode>
+      </node>
+      <node id="1140">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="1141" relation="include">
+        </childnode>
+      </node>
+      <node id="1119">
+        <label>vector</label>
+      </node>
+      <node id="1132">
+        <label>complex.h</label>
+      </node>
+      <node id="1127">
+        <label>spdlog/sinks/stdout_color_sinks.h</label>
+      </node>
+      <node id="1124">
+        <label>array</label>
+      </node>
+      <node id="1134">
+        <label>matrix_product_sparse.h</label>
+        <link refid="matrix__product__sparse_8h"/>
+        <childnode refid="1123" relation="include">
+        </childnode>
+        <childnode refid="1120" relation="include">
+        </childnode>
+        <childnode refid="1122" relation="include">
+        </childnode>
+        <childnode refid="1130" relation="include">
+        </childnode>
+        <childnode refid="1131" relation="include">
+        </childnode>
+        <childnode refid="1135" relation="include">
+        </childnode>
+        <childnode refid="1136" relation="include">
+        </childnode>
+      </node>
+      <node id="1122">
+        <label>iostream</label>
+      </node>
+      <node id="1123">
+        <label>math/nmspc_eigutils.h</label>
+        <link refid="nmspc__eigutils_8h"/>
+        <childnode refid="1122" relation="include">
+        </childnode>
+        <childnode refid="1124" relation="include">
+        </childnode>
+        <childnode refid="1125" relation="include">
+        </childnode>
+        <childnode refid="1126" relation="include">
+        </childnode>
+        <childnode refid="1119" relation="include">
+        </childnode>
+        <childnode refid="1127" relation="include">
+        </childnode>
+        <childnode refid="1128" relation="include">
+        </childnode>
+      </node>
+      <node id="1121">
+        <label>chrono</label>
+      </node>
+      <node id="1126">
+        <label>complex</label>
+      </node>
+      <node id="1139">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="1140" relation="include">
+        </childnode>
+        <childnode refid="1131" relation="include">
+        </childnode>
+        <childnode refid="1135" relation="include">
+        </childnode>
+        <childnode refid="1141" relation="include">
+        </childnode>
+        <childnode refid="1142" relation="include">
+        </childnode>
+        <childnode refid="1122" relation="include">
+        </childnode>
+        <childnode refid="1130" relation="include">
+        </childnode>
+        <childnode refid="1143" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-10-30.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="arpackpp__solver_8h" kindref="compound">arpackpp_solver.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix__product__dense_8h" kindref="compound">matrix_product_dense.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix__product__sparse_8h" kindref="compound">matrix_product_sparse.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix__product__stl_8h" kindref="compound">matrix_product_stl.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="matrix__product__hamiltonian_8h" kindref="compound">matrix_product_hamiltonian.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__type__check_8h" kindref="compound">general/nmspc_type_check.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="12"><highlight class="normal"></highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(_MKL_LAPACK_H_)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight><highlight class="preprocessor">#error<sp/>MKL_LAPACK<sp/>IS<sp/>NOT<sp/>SUPPOSED<sp/>TO<sp/>BE<sp/>DEFINED<sp/>HERE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>defined(LAPACK_H)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="18"><highlight class="normal"></highlight><highlight class="preprocessor">#error<sp/>LAPACK<sp/>IS<sp/>NOT<sp/>SUPPOSED<sp/>TO<sp/>BE<sp/>DEFINED<sp/>HERE</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="20"><highlight class="normal"></highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>__has_include(&lt;arpackpp/arcomp.h&gt;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpackpp/arcomp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpackpp/ardscomp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpackpp/ardnsmat.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpackpp/arsnsym.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpackpp/arssym.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#elif<sp/>__has_include(&lt;arpack++/arcomp.h&gt;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpack++/ardscomp.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpack++/ardnsmat.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpack++/arsnsym.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;arpack++/arssym.h&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#else</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#error<sp/>Could<sp/>not<sp/>include<sp/>arpack<sp/>headers<sp/>correctly</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespace_type_check" kindref="compound">tc</ref><sp/>=<sp/><ref refid="namespace_type_check" kindref="compound">TypeCheck</ref>;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceeigutils_1_1eig_setting" kindref="compound">eigutils::eigSetting</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatrixType&gt;</highlight></codeline>
+<codeline lineno="44" refid="classarpackpp__solver_1a4cdcbf740e5f16a4f9da8e8c3f86d0b0" refkind="member"><highlight class="normal"><ref refid="classarpackpp__solver_1a4cdcbf740e5f16a4f9da8e8c3f86d0b0" kindref="member">arpackpp_solver&lt;MatrixType&gt;::arpackpp_solver</ref>(</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="matrix__product__stl_8cpp_1ad214610a757107160682e44efc97fbed" kindref="member">MatrixType</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;matrix_,</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classeigutils_1_1eig_config" kindref="compound">eigutils::eigConfig</ref><sp/><sp/><sp/><sp/><sp/><sp/>&amp;solverConf_,</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classeigutils_1_1eig_solution" kindref="compound">eigutils::eigSolution</ref><sp/><sp/><sp/><sp/>&amp;solution_,</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a635fa6cfb46b16d83c57633e92d28e5b" kindref="member">Scalar</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>*residual_</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>)</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>matrix(matrix_),</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solverConf(solverConf_),</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution<sp/><sp/>(solution_),</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>residual<sp/><sp/>(residual_)</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1ab9b48f9dab4b8d08f08f86b478c33074" kindref="member">t_sol</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="arpackpp__solver_8h_1a26354e02b6a69ac592d51c35de4eb5bd" kindref="member">profile_arpack</ref>,<sp/>10,</highlight><highlight class="stringliteral">&quot;Time<sp/>iterating<sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a9e3721a806890fc3f5ef53ad919c8ae9" kindref="member">t_get</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="arpackpp__solver_8h_1a26354e02b6a69ac592d51c35de4eb5bd" kindref="member">profile_arpack</ref>,<sp/>10,</highlight><highlight class="stringliteral">&quot;Time<sp/>getting<sp/>sol&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a04d1e75f43c45f0e4f3ad70a9304bfeb" kindref="member">t_sub</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="arpackpp__solver_8h_1a26354e02b6a69ac592d51c35de4eb5bd" kindref="member">profile_arpack</ref>,<sp/>10,</highlight><highlight class="stringliteral">&quot;Time<sp/>subtracting&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1aa8afac6027995db30165ad79ea0d436f" kindref="member">t_all</ref>.<ref refid="classclass__tic__toc_1a235fdbf16b92fac52940f351d8459ab3" kindref="member">set_properties</ref>(<ref refid="arpackpp__solver_8h_1a26354e02b6a69ac592d51c35de4eb5bd" kindref="member">profile_arpack</ref>,<sp/>10,</highlight><highlight class="stringliteral">&quot;Time<sp/>doing<sp/>all<sp/><sp/>&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatrixType&gt;</highlight></codeline>
+<codeline lineno="67" refid="classarpackpp__solver_1a92aa17bf228c308fbd9211bbe95a512b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classarpackpp__solver_1a92aa17bf228c308fbd9211bbe95a512b" kindref="member">arpackpp_solver&lt;MatrixType&gt;::eigs</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1a4c2a1f73d7bfcc2677f7557118c34e91" kindref="member">reset</ref>();</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" kindref="member">nev_internal</ref><sp/>=<sp/>std::min(<ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.rows()/2,<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref>);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a3fe93dd1d54ed4470bf02086073c4719" kindref="member">ncv_internal</ref><sp/>=<sp/>std::max(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a1056a92dd9f1a3c5225e13e7a762d363" kindref="member">eigMaxNcv</ref>,<sp/>2+<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref>);</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/>ncv_internal<sp/>=<sp/>std::min(ncv_internal,<sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.rows());</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(ncv_internal<sp/>&gt;=<sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref><sp/>+<sp/>2<sp/>and<sp/>ncv_internal<sp/>&lt;=<sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.rows());</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" kindref="member">nev_internal</ref><sp/>&gt;=<sp/>1<sp/>and<sp/><ref refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" kindref="member">nev_internal</ref><sp/>&lt;=<sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.rows()<sp/>/<sp/>2);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Stupidly<sp/>enough,<sp/>the<sp/>only<sp/>difference<sp/>between<sp/>the<sp/>github<sp/>and<sp/>&quot;apt&quot;<sp/>versions<sp/>of<sp/>arpack++,</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>is<sp/>that<sp/>the<sp/>apt<sp/>version<sp/>only<sp/>accepts<sp/>char*,<sp/>whereas<sp/>the<sp/>github<sp/>one<sp/>accepts<sp/>string<sp/>and<sp/>char*.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>For<sp/>this<sp/>reason<sp/>we<sp/>have<sp/>to<sp/>convert<sp/>the<sp/>ritz<sp/>to<sp/>a<sp/>format<sp/>that<sp/>both<sp/>can<sp/>take.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1aa911417afd8546ca3dffce231a13f345" kindref="member">writeRitzChar</ref>();</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.set_mode(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" kindref="member">form</ref>);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.set_side(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1acd7e00b8286436d66c14bc1b041e5e61" kindref="member">side</ref>);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Calculate<sp/>shift-inverse<sp/>mat-vec<sp/>mult<sp/>operator<sp/>by<sp/>LU<sp/>decomposition</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(MatrixType::can_shift){</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" kindref="member">shift</ref><sp/>==<sp/><ref refid="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a90651ebea9a35ec4e018c8157492e17c" kindref="member">eigutils::eigSetting::Shift::ON</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.set_shift(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" kindref="member">sigma</ref>);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.FactorOP();</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(not<sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a677ba446c2a6b77078bdbf4d5bec2986" kindref="member">confOK</ref>)<sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;solverConf<sp/>isn&apos;t<sp/>ready!&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/>assert(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a677ba446c2a6b77078bdbf4d5bec2986" kindref="member">confOK</ref><sp/>and<sp/></highlight><highlight class="stringliteral">&quot;solverConf<sp/>isn&apos;t<sp/>ready!&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Dispatch<sp/>to<sp/>symmetric<sp/>or<sp/>nonsymmetric.<sp/>If<sp/>complex,<sp/>there&apos;s<sp/>only<sp/>a<sp/>nonsymmetric<sp/>option<sp/>available.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(std::is_same&lt;<ref refid="classarpackpp__solver_1a635fa6cfb46b16d83c57633e92d28e5b" kindref="member">Scalar</ref>,std::complex&lt;double&gt;&gt;::value){</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;<ref refid="classarpackpp__solver_1adb0f7c699775ac4218b9b6e51ffd1729" kindref="member">eigs_comp</ref>();</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal">(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" kindref="member">form</ref><sp/>==<sp/>Form::SYMMETRIC){this-&gt;<ref refid="classarpackpp__solver_1a1bdce1c8690b632682baec97977802b4" kindref="member">eigs_sym</ref>();}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{this-&gt;<ref refid="classarpackpp__solver_1a60dbd5270412446a65535676157777b6" kindref="member">eigs_nsym</ref>();}</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
+<codeline lineno="100"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatrixType&gt;</highlight></codeline>
+<codeline lineno="103" refid="classarpackpp__solver_1a1bdce1c8690b632682baec97977802b4" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classarpackpp__solver_1a1bdce1c8690b632682baec97977802b4" kindref="member">arpackpp_solver&lt;MatrixType&gt;::eigs_sym</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,double&gt;::value)<sp/>{</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" kindref="member">form</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>==<sp/>Form::SYMMETRIC<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>solverConf<sp/>not<sp/>SYMMETRIC&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(<ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.get_form()<sp/><sp/><sp/><sp/><sp/>==<sp/>Form::SYMMETRIC<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>matrix<sp/>not<sp/>SYMMETRIC&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ARSymStdEig&lt;double,<sp/>MatrixType&gt;<sp/>solver(</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.rows(),</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" kindref="member">nev_internal</ref>,</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;<ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;MatrixType::MultAx,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a56c7f45b3dd9b3825098380c2278d3f5" kindref="member">ritz_char</ref>,</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a3fe93dd1d54ed4470bf02086073c4719" kindref="member">ncv_internal</ref>,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" kindref="member">eigThreshold</ref>,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" kindref="member">eigMaxIter</ref>,</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6e42ece99fa48eac5ed8c43d4c8c2073" kindref="member">residual</ref>);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(MatrixType::can_shift){</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" kindref="member">shift</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Shift::OFF<sp/>:</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Shift::ON<sp/>:</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solver.SetShiftInvertMode(std::real(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" kindref="member">sigma</ref>),<sp/>&amp;matrix,<sp/>&amp;MatrixType::MultOPv);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"></highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;<ref refid="classarpackpp__solver_1a22e2d88177882c0f5fc7bc2bf4765b05" kindref="member">find_solution</ref>(solver,<sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref>);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;copy_solution&lt;Type::REAL,<sp/>Form::SYMMETRIC&gt;(solver);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;critical(</highlight><highlight class="stringliteral">&quot;Called<sp/>eigs_sym()<sp/>with<sp/>wrong<sp/>type:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(tc::type_name&lt;MatrixType&gt;())<sp/>);</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Called<sp/>eigs_sym()<sp/>with<sp/>wrong<sp/>type:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(tc::type_name&lt;MatrixType&gt;()));</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="134"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="136"><highlight class="normal"></highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatrixType&gt;</highlight></codeline>
+<codeline lineno="138" refid="classarpackpp__solver_1a60dbd5270412446a65535676157777b6" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classarpackpp__solver_1a60dbd5270412446a65535676157777b6" kindref="member">arpackpp_solver&lt;MatrixType&gt;::eigs_nsym</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;Scalar,<sp/>double&gt;::value)<sp/>{</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a8c46d95a9a277098df96883a230943b1" kindref="member">form</ref><sp/>==<sp/>Form::NONSYMMETRIC<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>solverConf<sp/>not<sp/>NONSYMMETRIC&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>assert(<ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.get_form()<sp/>==<sp/>Form::NONSYMMETRIC<sp/>and<sp/></highlight><highlight class="stringliteral">&quot;ERROR:<sp/>matrix<sp/>not<sp/>NONSYMMETRIC&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" kindref="member">nev_internal</ref><sp/>==<sp/>1)<sp/>{<sp/><ref refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" kindref="member">nev_internal</ref>++;<sp/>}</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ARNonSymStdEig&lt;double,<sp/>MatrixType&gt;<sp/>solver(</highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.rows(),</highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" kindref="member">nev_internal</ref>,</highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;<ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>,</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;MatrixType::MultAx,</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a56c7f45b3dd9b3825098380c2278d3f5" kindref="member">ritz_char</ref>,</highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a3fe93dd1d54ed4470bf02086073c4719" kindref="member">ncv_internal</ref>,</highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" kindref="member">eigThreshold</ref>,</highlight></codeline>
+<codeline lineno="152"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" kindref="member">eigMaxIter</ref>,</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6e42ece99fa48eac5ed8c43d4c8c2073" kindref="member">residual</ref>);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(MatrixType::can_shift){</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" kindref="member">shift</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Shift::OFF<sp/>:</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Shift::ON<sp/>:</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solver.SetShiftInvertMode(std::real(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" kindref="member">sigma</ref>),<sp/>&amp;matrix,<sp/>&amp;MatrixType::MultOPv);</highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="164"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;<ref refid="classarpackpp__solver_1a22e2d88177882c0f5fc7bc2bf4765b05" kindref="member">find_solution</ref>(solver,<sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref>);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(matrix.get_side()<sp/>==<sp/>Side::R){</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;copy_solution&lt;Type::REAL,<sp/>Form::NONSYMMETRIC,<sp/>Side::R&gt;(solver);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;copy_solution&lt;Type::REAL,<sp/>Form::NONSYMMETRIC,<sp/>Side::L&gt;(solver);</highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;critical(</highlight><highlight class="stringliteral">&quot;Called<sp/>eigs_nsym()<sp/>with<sp/>wrong<sp/>type:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(tc::type_name&lt;MatrixType&gt;())<sp/>);</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Called<sp/>eigs_nsym()<sp/>with<sp/>wrong<sp/>type:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(tc::type_name&lt;MatrixType&gt;()));</highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="177"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatrixType&gt;</highlight></codeline>
+<codeline lineno="184" refid="classarpackpp__solver_1adb0f7c699775ac4218b9b6e51ffd1729" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classarpackpp__solver_1adb0f7c699775ac4218b9b6e51ffd1729" kindref="member">arpackpp_solver&lt;MatrixType&gt;::eigs_comp</ref>()<sp/>{</highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(std::is_same&lt;<ref refid="classarpackpp__solver_1a635fa6cfb46b16d83c57633e92d28e5b" kindref="member">Scalar</ref>,<sp/>std::complex&lt;double&gt;&gt;::value){</highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>ARCompStdEig&lt;double,<sp/>MatrixType&gt;<sp/>solver(</highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.rows(),</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1aa1321ab4f718f999d0aca3fe76c0f1e7" kindref="member">nev_internal</ref>,</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;<ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>,</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&amp;MatrixType::MultAx,</highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a56c7f45b3dd9b3825098380c2278d3f5" kindref="member">ritz_char</ref>,</highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a3fe93dd1d54ed4470bf02086073c4719" kindref="member">ncv_internal</ref>,</highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ae1fe3585b18c19cc2478fb387225eca9" kindref="member">eigThreshold</ref>,</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1aa8fda48767fd115dcd9f858a1b7e1ed4" kindref="member">eigMaxIter</ref>,</highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a6e42ece99fa48eac5ed8c43d4c8c2073" kindref="member">residual</ref>);</highlight></codeline>
+<codeline lineno="196"><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr(MatrixType::can_shift){</highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">switch</highlight><highlight class="normal"><sp/>(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a3a3ef6fe7784796c4d5f75c7f90c85ab" kindref="member">shift</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Shift::OFF<sp/>:</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">case</highlight><highlight class="normal"><sp/>Shift::ON<sp/>:</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solver.SetShiftInvertMode(std::real(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1ac5e8dca0bfad9ac8535031a129fe8ece" kindref="member">sigma</ref>),<sp/>&amp;matrix,<sp/>&amp;MatrixType::MultOPv);</highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">break</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="206"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;<ref refid="classarpackpp__solver_1a22e2d88177882c0f5fc7bc2bf4765b05" kindref="member">find_solution</ref>(solver,<sp/><ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a52a28fb73ac1ac5c591ab408451c9125" kindref="member">eigMaxNev</ref>);</highlight></codeline>
+<codeline lineno="207"><highlight class="normal"></highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(matrix.get_form()<sp/>==<sp/>Form::SYMMETRIC<sp/>and<sp/>matrix.get_side()<sp/>==<sp/>Side::R<sp/>){</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;copy_solution&lt;Type::CPLX,<sp/>Form::SYMMETRIC,<sp/>Side::R&gt;(solver);</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(matrix.get_form()<sp/>==<sp/>Form::SYMMETRIC<sp/>and<sp/>matrix.get_side()<sp/>==<sp/>Side::L<sp/>){</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;copy_solution&lt;Type::CPLX,<sp/>Form::SYMMETRIC,<sp/>Side::L&gt;(solver);</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(matrix.get_form()<sp/>==<sp/>Form::NONSYMMETRIC<sp/>and<sp/>matrix.get_side()<sp/>==<sp/>Side::R<sp/>){</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;copy_solution&lt;Type::CPLX,<sp/>Form::NONSYMMETRIC,<sp/>Side::R&gt;(solver);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(matrix.get_form()<sp/>==<sp/>Form::NONSYMMETRIC<sp/>and<sp/>matrix.get_side()<sp/>==<sp/>Side::L<sp/>){</highlight></codeline>
+<codeline lineno="215"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>this-&gt;copy_solution&lt;Type::CPLX,<sp/>Form::NONSYMMETRIC,<sp/>Side::L&gt;(solver);</highlight></codeline>
+<codeline lineno="216"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="217"><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"></highlight></codeline>
+<codeline lineno="219"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespaceeigutils_1_1eig_logger_1aa81c1034622db3922ad65b5278492ad9" kindref="member">eigutils::eigLogger::log</ref>-&gt;critical(</highlight><highlight class="stringliteral">&quot;Called<sp/>eigs_nsym()<sp/>with<sp/>wrong<sp/>type:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(tc::type_name&lt;MatrixType&gt;())<sp/>);</highlight></codeline>
+<codeline lineno="221"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Called<sp/>eigs_nsym()<sp/>with<sp/>wrong<sp/>type:<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>std::string(tc::type_name&lt;MatrixType&gt;()));</highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="223"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="224"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>MatrixType&gt;</highlight></codeline>
+<codeline lineno="229"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>Derived&gt;</highlight></codeline>
+<codeline lineno="230" refid="classarpackpp__solver_1a22e2d88177882c0f5fc7bc2bf4765b05" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classarpackpp__solver_1a22e2d88177882c0f5fc7bc2bf4765b05" kindref="member">arpackpp_solver&lt;MatrixType&gt;::find_solution</ref>(Derived<sp/>&amp;solver,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>nev)<sp/>{</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classarpackpp__solver_1a6682ef72f15da125c407c69a075ce85c" kindref="member">solverConf</ref>.<ref refid="classeigutils_1_1eig_config_1a17b352f73f0b3cee7f3c98c06c6453dd" kindref="member">compute_eigvecs</ref>)<sp/>{</highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solver.FindEigenvectors();</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" kindref="member">eigvals_found</ref><sp/><sp/>=<sp/>solver.EigenvaluesFound();<sp/><sp/></highlight><highlight class="comment">//BOOL!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a960196b7474cf46ebd6cc5a4a6534a9d" kindref="member">eigvecsR_found</ref><sp/>=<sp/>solver.EigenvectorsFound();<sp/></highlight><highlight class="comment">//BOOL!</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="235"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a3384d9731581012bc8aee5444bb07bd9" kindref="member">iter</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>solver.GetIter();</highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" kindref="member">n</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>solver.GetN();</highlight></codeline>
+<codeline lineno="237"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" kindref="member">nev</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::min(nev,<sp/>solver.GetNev());</highlight></codeline>
+<codeline lineno="238"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a87372c02a30541449dca2e2c2d35092f" kindref="member">nev_converged</ref><sp/><sp/>=<sp/>solver.ConvergedEigenvalues();</highlight></codeline>
+<codeline lineno="239"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1afbe223a7fab69bfe7b4f15ecec5e5a2c" kindref="member">ncv_used</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>solver.GetNcv();</highlight></codeline>
+<codeline lineno="240"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" kindref="member">rows</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>solver.GetN();</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" kindref="member">cols</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" kindref="member">nev</ref>;</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a884651e184373e2a7e41277bd915999f" kindref="member">counter</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.counter;</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solver.FindEigenvalues();</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a6942d5c0eb3f10b3361b9f43ea940752" kindref="member">eigvals_found</ref><sp/>=<sp/>solver.EigenvaluesFound();</highlight></codeline>
+<codeline lineno="246"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a3384d9731581012bc8aee5444bb07bd9" kindref="member">iter</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>solver.GetIter();</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1acdc3a000ddd3b12b57e87d434e86e555" kindref="member">n</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>solver.GetN();</highlight></codeline>
+<codeline lineno="248"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" kindref="member">nev</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>std::min(nev,<sp/>solver.GetNev());</highlight></codeline>
+<codeline lineno="249"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a87372c02a30541449dca2e2c2d35092f" kindref="member">nev_converged</ref><sp/>=<sp/>solver.ConvergedEigenvalues();</highlight></codeline>
+<codeline lineno="250"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1afbe223a7fab69bfe7b4f15ecec5e5a2c" kindref="member">ncv_used</ref><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>solver.GetNcv();</highlight></codeline>
+<codeline lineno="251"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1af52b4d369e2557402f9dcc3bc5fbd448" kindref="member">rows</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>solver.GetN();</highlight></codeline>
+<codeline lineno="252"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a476004608edc4da74ec138898d6ceddd" kindref="member">cols</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a08803b28d8a57ca6bd3ca1a6d0328e8a" kindref="member">nev</ref>;</highlight></codeline>
+<codeline lineno="253"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classarpackpp__solver_1a50a55b7e61238bc033079e784598938d" kindref="member">solution</ref>.<ref refid="classeigutils_1_1eig_solution_1af9690f3e16cb30fd70d88e50c52121b1" kindref="member">meta</ref>.<ref refid="structeigutils_1_1eig_solution_1_1_meta_1a884651e184373e2a7e41277bd915999f" kindref="member">counter</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/><ref refid="classarpackpp__solver_1a87c6e49b8fa5d25b16a6493649748309" kindref="member">matrix</ref>.counter;</highlight></codeline>
+<codeline lineno="254"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="255"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="258"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="259"><highlight class="normal"></highlight><highlight class="comment">//template<sp/>&lt;typename<sp/>MatrixType&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="260"><highlight class="normal"></highlight><highlight class="comment">//template<sp/>&lt;typename<sp/>Derived&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="261"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>arpackpp_solver&lt;MatrixType&gt;::copy_solution_symm(Derived<sp/>&amp;solver)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>int<sp/>eigvecsize<sp/>=<sp/>solution.meta.n<sp/>*<sp/>solution.meta.nev;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="263"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>int<sp/>eigvalsize<sp/>=<sp/>solution.meta.nev;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="264"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if<sp/>(solverConf.compute_eigvecs)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(solverConf.side<sp/>==<sp/>Side::R){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>constexpr(std::is_same&lt;double,typename<sp/>MatrixType::Scalar&gt;::value<sp/>){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="267"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvecsR_real.resize(eigvecsize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="268"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvals_real.resize(eigvalsize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="269"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(solver.RawEigenvectors(),solver.RawEigenvectors()<sp/>+<sp/>eigvecsize,<sp/>solution.eigvecsR_real.begin());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="270"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(solver.RawEigenvalues()<sp/>,<sp/>solver.RawEigenvalues()<sp/>+<sp/>eigvalsize,<sp/>solution.eigvals_real.begin());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}else<sp/>if<sp/>constexpr(std::is_same&lt;std::complex&lt;double&gt;,typename<sp/>MatrixType::Scalar&gt;::value<sp/>){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="272"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvecsR_cplx.resize(eigvecsize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="273"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvals_cplx.resize(eigvalsize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(solver.RawEigenvectors(),solver.RawEigenvectors()<sp/>+<sp/>eigvecsize,<sp/>solution.eigvecsR_cplx.begin());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="275"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(solver.RawEigenvalues()<sp/>,solver.RawEigenvalues()<sp/>+<sp/>eigvalsize,<sp/>solution.eigvals_cplx.begin());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="276"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(solverConf.form<sp/>==<sp/>Form::SYMMETRIC){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="277"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>eigvalsize;<sp/>j++)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="278"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvals_real.emplace_back(solution.eigvals_cplx[j].real());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="279"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="281"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(solverConf.side<sp/>==<sp/>Side::L){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="284"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if<sp/>constexpr(std::is_same&lt;double,typename<sp/>MatrixType::Scalar&gt;::value<sp/>){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="285"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvecsL_real.resize(eigvecsize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="286"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvals_real.resize(eigvalsize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="287"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(solver.RawEigenvectors(),solver.RawEigenvectors()<sp/>+<sp/>eigvecsize,<sp/>solution.eigvecsL_real.begin());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="288"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(solver.RawEigenvalues()<sp/>,solver.RawEigenvalues()<sp/>+<sp/>eigvalsize,<sp/>solution.eigvals_real.begin());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="289"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}else<sp/>if<sp/>constexpr(std::is_same&lt;std::complex&lt;double&gt;,typename<sp/>MatrixType::Scalar&gt;::value<sp/>){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="291"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvecsL_cplx.resize(eigvecsize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvals_cplx.resize(eigvalsize);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="293"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(solver.RawEigenvectors(),solver.RawEigenvectors()<sp/>+<sp/>eigvecsize,<sp/>solution.eigvecsL_cplx.begin());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="294"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::copy(solver.RawEigenvalues()<sp/>,solver.RawEigenvalues()<sp/>+<sp/>eigvalsize,<sp/>solution.eigvals_cplx.begin());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="295"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>if(solverConf.form<sp/>==<sp/>Form::SYMMETRIC){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="296"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>eigvalsize;<sp/>j++)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="297"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvals_real.emplace_back(solution.eigvals_cplx[j].real());</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="298"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="299"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="304"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="305"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="306"><highlight class="normal"></highlight></codeline>
+<codeline lineno="307"><highlight class="normal"></highlight></codeline>
+<codeline lineno="308"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="309"><highlight class="normal"></highlight><highlight class="comment">//template<sp/>&lt;typename<sp/>MatrixType&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal"></highlight><highlight class="comment">//template<sp/>&lt;typename<sp/>Derived&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight><highlight class="comment">//void<sp/>arpackpp_solver&lt;MatrixType&gt;::copy_solution_nsym(Derived<sp/>&amp;solver)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>for<sp/>(int<sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>solution.meta.cols;<sp/>j++)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="313"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvals_cplx.emplace_back(std::complex&lt;double&gt;(solver.EigenvalueReal(j),<sp/>solver.EigenvalueImag(j)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="314"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="315"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>if(solverConf.compute_eigvecs){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="316"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>j<sp/>=<sp/>0;<sp/>j<sp/>&lt;<sp/>solution.meta.cols;<sp/>j++){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="317"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>for<sp/>(int<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>solution.meta.rows;<sp/>i++){</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>solution.eigvecsR_cplx.emplace_back(std::complex&lt;double&gt;(solver.EigenvectorReal(j,i),<sp/>solver.EigenvectorImag(j,i)));</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="321"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="322"><highlight class="normal"></highlight><highlight class="comment">//}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="323"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324"><highlight class="normal"></highlight></codeline>
+<codeline lineno="325"><highlight class="normal"></highlight></codeline>
+<codeline lineno="326"><highlight class="normal"></highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Explicit<sp/>instantiations</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="328"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classarpackpp__solver" kindref="compound">arpackpp_solver&lt;DenseMatrixProduct&lt;double&gt;</ref>&gt;;</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classarpackpp__solver" kindref="compound">arpackpp_solver&lt;DenseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;&gt;;</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classarpackpp__solver" kindref="compound">arpackpp_solver&lt;SparseMatrixProduct&lt;double&gt;</ref>&gt;;</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classarpackpp__solver" kindref="compound">arpackpp_solver&lt;SparseMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;&gt;;</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classarpackpp__solver" kindref="compound">arpackpp_solver&lt;StlMatrixProduct&lt;double&gt;</ref>&gt;;</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classarpackpp__solver" kindref="compound">arpackpp_solver&lt;StlMatrixProduct&lt;std::complex&lt;double&gt;</ref>&gt;&gt;;</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classarpackpp__solver" kindref="compound">arpackpp_solver&lt;DenseHamiltonianProduct&lt;double&gt;</ref>&gt;;</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classarpackpp__solver" kindref="compound">arpackpp_solver&lt;DenseHamiltonianProduct&lt;std::complex&lt;double&gt;</ref>&gt;&gt;;</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/arpack_extra/arpackpp_solver.cpp"/>
+  </compounddef>
+</doxygen>

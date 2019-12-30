@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_a32acfe4a752551b45646f1c64efe790" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state</compoundname>
+    <innerfile refid="class__environment_8cpp">class_environment.cpp</innerfile>
+    <innerfile refid="class__environment_8h">class_environment.h</innerfile>
+    <innerfile refid="class__mps__2site_8cpp">class_mps_2site.cpp</innerfile>
+    <innerfile refid="class__mps__2site_8h">class_mps_2site.h</innerfile>
+    <innerfile refid="class__mps__site_8cpp">class_mps_site.cpp</innerfile>
+    <innerfile refid="class__mps__site_8h">class_mps_site.h</innerfile>
+    <innerfile refid="class__state__finite_8cpp">class_state_finite.cpp</innerfile>
+    <innerfile refid="class__state__finite_8h">class_state_finite.h</innerfile>
+    <innerfile refid="class__state__infinite_8cpp">class_state_infinite.cpp</innerfile>
+    <innerfile refid="class__state__infinite_8h">class_state_infinite.h</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/state/"/>
+  </compounddef>
+</doxygen>

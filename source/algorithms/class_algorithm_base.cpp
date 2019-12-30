@@ -5,24 +5,13 @@
 #include <fstream>
 #include <complex>
 #include "class_algorithm_base.h"
-#include <io/class_hdf5_log_buffer.h>
+#include <io/class_h5table_buffer.h>
 #include <io/nmspc_logger.h>
-#include <state/class_infinite_state.h>
-#include <state/class_environment.h>
-#include <state/class_finite_state.h>
-#include <state/tools/nmspc_tools.h>
-#include <state/class_mps_2site.h>
-#include <math/nmspc_math.h>
-#include <general/nmspc_random_numbers.h>
-#include <general/nmspc_quantum_mechanics.h>
-#include <io/log_types.h>
+#include <tools/nmspc_tools.h>
 #include <h5pp/h5pp.h>
+#include <simulation/nmspc_settings.h>
+#include <math/nmspc_math.h>
 
-namespace s = settings;
-using namespace std;
-using namespace Textra;
-//using namespace std::complex_literals;
-//using namespace eigsolver_properties;
 using Scalar = class_algorithm_base::Scalar;
 
 
@@ -35,177 +24,149 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
           sim_name       (std::move(sim_name_)),
           sim_type       (sim_type_) {
 
-    log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
+    log        = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     log->trace("Constructing class_algorithm_base");
-    set_profiling_labels();
-    tools::finite::profile::init_profiling();
-    log_profiling  = std::make_unique<class_hdf5_log<class_log_profiling>>        (h5pp_file, sim_name + "/logs", "profiling", sim_name);
-    log_sim_status = std::make_unique<class_hdf5_log<class_log_simulation_status>>(h5pp_file, sim_name + "/logs", "status"   , sim_name);
+    tools::common::profile::init_profiling();
+    if (settings::output::storage_level >= StorageLevel::NORMAL){
+        log->trace("Constructing table buffers in base");
+        h5tbuf_profiling  = std::make_unique<class_h5table_buffer<class_h5table_profiling>>        (h5pp_file, sim_name + "/journal/profiling");
+        h5tbuf_sim_status = std::make_unique<class_h5table_buffer<class_h5table_simulation_status>>(h5pp_file, sim_name + "/journal/sim_status");
+    }
 
 
-
-    log->trace("Writing input file");
-    h5pp_file->writeDataset(settings::input::input_file, "common/input_file");
-    h5pp_file->writeDataset(settings::input::input_filename, "common/input_filename");
+    if(h5pp_file) log->trace("Writing input file");
+    if(h5pp_file) h5pp_file->writeDataset(settings::input::input_filename  , "common/input_filename");
+    if(h5pp_file) h5pp_file->writeDataset(settings::input::input_file_raw  , "common/input_file");
 }
 
 
 
 
-
-
-bool class_algorithm_base::check_saturation_using_slope(
-        std::list<bool>  & B_vec,
+class_algorithm_base::SaturationReport
+class_algorithm_base::check_saturation_using_slope(
+//        std::list<bool>  & B_vec,
         std::list<double> &Y_vec,
         std::list<int> &X_vec,
         double new_data,
         int iter,
         int rate,
-        double tolerance,
-        double &slope)
+        double tolerance)
 /*! \brief Checks convergence based on slope.
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
  * If the measurement happened less than rate iterations ago, return.
  * Otherwise, compute the slope of the last 25% of the measurements that have been made.
- * The slope here is defined as the relative slope, i.e. 1/<y> * dy/dx.
+ * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
  */
 
 {
-
+    SaturationReport report;
     int last_measurement = X_vec.empty() ? 0 : X_vec.back();
-    if (iter - last_measurement < rate){return false;}
+    if (iter - last_measurement < rate){return report;}
 
     // It's time to check. Insert current numbers
-    B_vec.push_back(false);
+//    B_vec.push_back(false);
     Y_vec.push_back(new_data);
     X_vec.push_back(iter);
-    unsigned long min_data_points = 2;
-    if (Y_vec.size() < min_data_points){return false;}
-    auto check_from =  (unsigned long)(X_vec.size()*0.75); //Check the last quarter of the measurements in Y_vec.
-    while (X_vec.size() - check_from < min_data_points and check_from > 0){
-        check_from -=1; //Decrease check from if out of bounds.
+    size_t min_data_points = 2;
+    if (Y_vec.size() < min_data_points){return report;}
+    size_t start_point = 0;
+    double band_size   = 2.0 + 2.0*tolerance;  // Between 2 and  4 standard deviations away
+
+    size_t recent_point   = std::floor(0.75*Y_vec.size());
+    recent_point = std::min(Y_vec.size()-min_data_points , recent_point);
+    double recent_point_std = math::stdev(Y_vec, recent_point); //Computes the standard dev of Y_vec from recent_point to end
+    for(size_t some_point = 0; some_point < Y_vec.size(); some_point++){
+        double some_point_std = math::stdev(Y_vec, some_point); //Computes the standard dev of Y_vec from some_point to end
+        std::string arrow = "";
+        if(some_point_std < band_size * recent_point_std and start_point == 0){
+            start_point = some_point;
+            break;
+        }
     }
-
-
-    double n = X_vec.size() - check_from;
-    double numerator = 0.0;
-    double denominator = 0.0;
-
-
-    auto x_it = X_vec.begin();
-    auto y_it = Y_vec.begin();
-    std::advance(x_it, check_from);
-    std::advance(y_it, check_from);
-
-    auto v_end = Y_vec.end();
-    double avgX = accumulate(x_it, X_vec.end(), 0.0) / n;
-    double avgY = accumulate(y_it, Y_vec.end(), 0.0) / n;
-
-    while(y_it != v_end){
-        numerator   += (*x_it - avgX) * (*y_it - avgY);
-        denominator += (*x_it - avgX) * (*x_it - avgX);
-        y_it++;
-        x_it++;
-
-    }
-
-    slope = std::abs(numerator / denominator) / avgY;
-    slope = std::isnan(slope) ? 0.0 : slope;
     //Scale the slope so that it can be interpreted as change in percent, just as the tolerance.
-    bool has_saturated;
-    if (slope < tolerance){
-        B_vec.back() = true;
-        has_saturated = true;
-    }else{
-        B_vec.clear();
-        has_saturated = false;
-    }
-    log->debug("Slope details:");
-    log->debug(" -- relative slope  = {} %", slope);
-    log->debug(" -- tolerance       = {} ", tolerance);
-    log->debug(" -- avgY            = {} ", avgY);
-    log->debug(" -- has saturated   = {} ", has_saturated);
-    log->debug(" -- check from      = {} of {}", check_from, X_vec.size());
-    return has_saturated;
-}
-
-void class_algorithm_base::write_status(bool force){
-    if (not force){
-        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (write_freq() == 0){return;}
-        if (settings::hdf5::storage_level <= StorageLevel::NONE){return;}
-    }
-    log->trace("Writing simulation status to file");
-    h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::common::io::write_simulation_status(sim_status, *h5pp_file, sim_name);
-    h5pp_file->writeDataset(true, sim_name + "/simOK");
+    double avgY          = math::mean(Y_vec,start_point);
+    double slope         = math::slope(X_vec,Y_vec,start_point)/avgY * 100 / std::sqrt(Y_vec.size()-start_point); //TODO: Is dividing by sqrt(elems) reasonable?
+    slope                = std::isnan(slope) ? 0.0 : slope;
+    report.slope         = slope;
+    report.check_from    = start_point;
+    report.avgY          = avgY;
+    report.has_computed  = true;
+    return report;
 }
 
 
-void class_algorithm_base::update_bond_dimension(){
-    sim_status.chi_max = chi_max();
-    if(not chi_grow() or sim_status.bond_dimension_has_reached_max or sim_status.chi_temp == chi_max() ){
-        sim_status.chi_temp = chi_max();
-        sim_status.bond_dimension_has_reached_max = true;
+class_algorithm_base::SaturationReport2
+class_algorithm_base::check_saturation_using_slope2(
+        std::list<double> &Y_vec,
+        std::list<int>    &X_vec,
+        double new_data,
+        int iter,
+        int rate,
+        double tolerance)
+/*! \brief Checks convergence based on slope.
+ * NOTE! THIS FUNCTION REQUIRES MONOTONICALLY DECREASING Y-elements
+ * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
+ * If the last measurement happened less than rate iterations ago, return.
+ * Starting from the last measurement, and including at last 2 data points, check how far back you can go before
+ * the slope to grows larger than the threshold.
+ * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
+ */
+
+{
+    SaturationReport2 report;
+    int last_measurement = X_vec.empty() ? 0 : X_vec.back();
+    if (iter - last_measurement < rate){return report;}
+
+    // It's time to check. Insert current numbers
+    Y_vec.push_back(new_data);
+    X_vec.push_back(iter);
+    unsigned long data_points = 0;
+    while(data_points <= Y_vec.size()){
+        auto x_it = X_vec.end();
+        auto y_it = Y_vec.end();
+        std::advance(x_it, -data_points);
+        std::advance(y_it, -data_points);
+        if (data_points >= 2){
+            double numerator   = 0.0;
+            double denominator = 0.0;
+            auto v_end = Y_vec.end();
+            double avgX = accumulate(x_it, X_vec.end(), 0.0) / (double)data_points;
+            double avgY = accumulate(y_it, Y_vec.end(), 0.0) / (double)data_points;
+            while(y_it != v_end){
+                numerator   += (*x_it - avgX) * (*y_it - avgY);
+                denominator += (*x_it - avgX) * (*x_it - avgX);
+                y_it++;
+                x_it++;
+            }
+
+            double slope = std::abs(numerator / denominator) / avgY * 100;
+            slope        = std::isnan(slope) ? 0.0 : slope;
+
+            report.has_computed  = true;
+            report.slopes.push_back(slope);
+            report.avgY.push_back(avgY);
+        }
+        if(x_it == X_vec.begin()) break;
+        if(y_it == Y_vec.begin()) break;
+        data_points++;
     }
-    if(not sim_status.simulation_has_converged
-       and sim_status.simulation_has_saturated
-       and sim_status.chi_temp < chi_max()){
-        log->trace("Updating bond dimension");
-        sim_status.chi_temp = std::min(chi_max(), sim_status.chi_temp * 2);
-        log->info("New chi = {}", sim_status.chi_temp);
-        clear_saturation_status();
+
+    if(report.has_computed){
+//        auto first_greater_than_tolerance = std::distance(report.slopes.begin(), std::upper_bound(report.slopes.begin(),report.slopes.end(),tolerance));
+        auto first_greater_than_tolerance = std::distance(report.slopes.begin(),
+                std:: find_if(report.slopes.begin(), report.slopes.end(),[tolerance](const double & x) { return x > tolerance; }));
+        report.saturated_for = first_greater_than_tolerance;
+        report.has_saturated = report.saturated_for > 0;
+        std::reverse(report.slopes.begin(),report.slopes.end()); //Reverse looks better on print
     }
-    if(sim_status.chi_temp == chi_max()){
-        sim_status.bond_dimension_has_reached_max = true;
-    }
+    return report;
 }
-
-
-
-
-
-
-//void class_algorithm_base::store_profiling_deltas(bool force) {
-//    if(not force){
-//        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-//        if (not settings::profiling::on or not settings::hdf5::save_profiling){return;}
-//        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
-//    }
-//
-//    log->trace("Storing profiling deltas");
-////    log_profiling->append_record(
-////            sim_status.iteration,
-////            t_tot.get_last_time_interval(),
-////            t_sim.get_last_time_interval(),
-////            t_prt.get_last_time_interval(),
-////            t_con.get_last_time_interval()
-////    );
-//}
-//
-//void class_algorithm_base::store_profiling_totals(bool force) {
-//    if(not force){
-//        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-//        if (not settings::profiling::on or not settings::hdf5::save_profiling){return;}
-//        if (settings::hdf5::storage_level < StorageLevel::NORMAL){return;}
-//    }
-//
-//    log->trace("Storing profiling totals");
-////    log_profiling->append_record(
-////            sim_status.iteration,
-////            t_tot.get_measured_time(),
-////            t_sim.get_measured_time(),
-////            t_prt.get_measured_time(),
-////            t_con.get_measured_time()
-////    );
-//
-//}
 
 
 
 double class_algorithm_base::process_memory_in_mb(std::string name){
-    ifstream filestream("/proc/self/status");
+    std::ifstream filestream("/proc/self/status");
     std::string line;
     while (std::getline(filestream, line)){
         std::istringstream is_line(line);
@@ -230,22 +191,3 @@ double class_algorithm_base::process_memory_in_mb(std::string name){
     return -1.0;
 }
 
-void class_algorithm_base::set_profiling_labels() {
-    using namespace settings::profiling;
-    t_tot.set_properties(true, precision,"+Total Time              ");
-    t_prt.set_properties(on,   precision,"↳ Printing to console    ");
-    t_con.set_properties(on,   precision,"↳ Convergence checks     ");
-    t_sim.set_properties(on,   precision,"↳+Simulation             ");
-//    t_obs.set_properties(on,   precision,"↳ Computing observables  ");
-
-//    t_sto.set_properties(on,   precision,"↳ Store to file          ");
-//    t_ste.set_properties(on,   precision,"↳ finite state storage   ");
-
-//    t_evo.set_properties(on,   precision,"↳ Time Evolution         ");
-//    t_opt.set_properties(on,   precision,"↳+Optimize MPS           ");
-//    t_eig.set_properties(on,   precision," ↳ Eigenvalue solver     ");
-//    t_ham.set_properties(on,   precision," ↳ Build Hamiltonian     ");
-//    t_svd.set_properties(on,   precision,"↳ SVD Truncation         ");
-//    t_udt.set_properties(on,   precision,"↳ Update Timestep        ");
-//    t_env.set_properties(on,   precision,"↳ Update Environments    ");
-}

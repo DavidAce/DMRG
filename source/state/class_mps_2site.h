@@ -1,12 +1,17 @@
-#ifndef DMRG_CLASS_MPS_H
-#define DMRG_CLASS_MPS_H
+#pragma once
+
 
 #include <memory>
 #include "general/nmspc_tensor_extra.h"
 
 
+
+
+
+class class_mps_site;
+
 /*!
- \class class_mps
+ \class class_mps_2site
  \brief Contains the Matrix Product State (MPS) for two sites, A and B, corresponding to sites \f$n\f$ and \f$n+1\f$, respectively.
 
  \section description Description
@@ -41,18 +46,13 @@
  Tensor index order convention: See the <a href="index.html">Home page</a>.
 */
 
-
-
-
-class class_vidal_site;
-
-
-class class_mps_2site {
+class class_mps_2site
+{
 public:
     using Scalar = std::complex<double>;
 private:
 
-    long spin_dimension;                          /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
+//    long spin_dimension = 2;                      /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
     Eigen::Tensor<Scalar,3> tmp3;                 /*!< Temporary holder for swapping*/
     Eigen::Tensor<Scalar,1> tmp1;                 /*!< Temporary holder for swapping*/
 
@@ -62,29 +62,33 @@ private:
         return source ? std::make_unique<T>(*source) : nullptr;
     }
 public:
-    class_mps_2site();
-    class_mps_2site(const class_mps_2site &other);
+//    explicit class_mps_2site(std::string model_type_str);
+    class_mps_2site() = default;
+    explicit class_mps_2site(const class_mps_2site &other);
 
 
     bool swapped = false;                                  /*!< Tracks the swapped state of A and B positions. */
     double truncation_error = 0;
 
-    std::unique_ptr<class_vidal_site> MPS_A;
-    std::unique_ptr<class_vidal_site> MPS_B;
-    Eigen::Tensor<Scalar,1> LC;
+    std::unique_ptr<class_mps_site> MPS_A;
+    std::unique_ptr<class_mps_site> MPS_B;
     bool isReal()const;
     long chiA () const;
     long chiB () const;
     long chiC () const;
     long spindim () const;
-    Eigen::Tensor<Scalar,3> A()     const;
-    Eigen::Tensor<Scalar,3> B()     const;
-    Eigen::Tensor<Scalar,2> C()     const;
-
+    const Eigen::Tensor<Scalar,3> & A_bare()  const;
+    const Eigen::Tensor<Scalar,3> & A()  const;
+    const Eigen::Tensor<Scalar,3> & B()  const;
+    Eigen::Tensor<Scalar,2> LC()     const;
+    Eigen::Tensor<Scalar,3> GA()    const;
+    Eigen::Tensor<Scalar,3> GB()    const;
+    Eigen::Tensor<Scalar,2> LA()    const;
+    Eigen::Tensor<Scalar,2> LB()    const;
     void set_mps(const Eigen::Tensor<Scalar,1> &LA,
-                 const Eigen::Tensor<Scalar,3> &GA,
+                 const Eigen::Tensor<Scalar,3> &A,
                  const Eigen::Tensor<Scalar,1> &LC_,
-                 const Eigen::Tensor<Scalar,3> &GB,
+                 const Eigen::Tensor<Scalar,3> &B,
                  const Eigen::Tensor<Scalar,1> &LB);
 
     Eigen::DSizes<long,4> dimensions() const;
@@ -96,5 +100,3 @@ public:
 
 };
 
-
-#endif //DMRG_CLASS_MPS_H

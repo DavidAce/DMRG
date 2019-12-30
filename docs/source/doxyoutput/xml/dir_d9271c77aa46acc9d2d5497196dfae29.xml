@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="dir_d9271c77aa46acc9d2d5497196dfae29" kind="dir">
+    <compoundname>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common</compoundname>
+    <innerdir refid="dir_37bd406f6e4f9ec832c1811d38426631">/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/io</innerdir>
+    <innerfile refid="prof_8cpp">prof.cpp</innerfile>
+    <innerfile refid="views_8cpp">views.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/common/"/>
+  </compounddef>
+</doxygen>

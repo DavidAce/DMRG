@@ -1,0 +1,253 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="structclass__h5table__measurements__finite_1_1meta__struct" kind="struct" language="C++" prot="public">
+    <compoundname>class_h5table_measurements_finite::meta_struct</compoundname>
+    <includes refid="table__types_8h" local="no">table_types.h</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1a63e28d39781fd50fc8c2724e6cb4ff6a" prot="public" static="yes" mutable="no">
+        <type>constexpr hsize_t</type>
+        <definition>constexpr hsize_t class_h5table_measurements_finite::meta_struct::NFIELDS</definition>
+        <argsstring></argsstring>
+        <name>NFIELDS</name>
+        <initializer>= 20</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="43" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1af2d63b4ad98a728ce12d80ce49de406b" prot="public" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t class_h5table_measurements_finite::meta_struct::dst_size</definition>
+        <argsstring></argsstring>
+        <name>dst_size</name>
+        <initializer>= sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="44" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1a7505d8d3e00b65de1edf303e24a71736" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__h5table__measurements__finite_1_1meta__struct_1a63e28d39781fd50fc8c2724e6cb4ff6a" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t, NFIELDS&gt; class_h5table_measurements_finite::meta_struct::dst_offsets</definition>
+        <argsstring></argsstring>
+        <name>dst_offsets</name>
+        <initializer>= {
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, iteration),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, step),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, position),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, length),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension_midchain),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension_current),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension_limit),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, bond_dimension_maximum),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, entanglement_entropy_midchain),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, entanglement_entropy_current),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, norm),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, energy),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, energy_per_site),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, energy_variance),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, energy_variance_per_site),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, spin_component_sx),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, spin_component_sy),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, spin_component_sz),
+                HOFFSET(<ref refid="structclass__h5table__measurements__finite_1_1data__struct" kindref="compound">data_struct</ref>, truncation_error),
+
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="45" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1ac4d44981fbf4c42ff1f726cf5ee75934" prot="public" static="no" mutable="no">
+        <type>std::array&lt; size_t, <ref refid="structclass__h5table__measurements__finite_1_1meta__struct_1a63e28d39781fd50fc8c2724e6cb4ff6a" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;size_t, NFIELDS&gt; class_h5table_measurements_finite::meta_struct::dst_sizes</definition>
+        <argsstring></argsstring>
+        <name>dst_sizes</name>
+        <initializer>= {
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a51a4724783b7528e28734da227a6f237" kindref="member">data_struct::iteration</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a859049da2ac8bdd7e2336d5d6124c8ef" kindref="member">data_struct::step</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1aa25c218dd5ec78e14283e3f4f30762ec" kindref="member">data_struct::position</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a1d6a205cdfeb1939df316115cfb65580" kindref="member">data_struct::length</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a6b5dec20475917d3225ef387071fda90" kindref="member">data_struct::bond_dimension_midchain</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1ac61bf1f1e81d26f3806463dafcb3944e" kindref="member">data_struct::bond_dimension_current</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a85d74b6d86ff55d0d7d3d00f73d038ea" kindref="member">data_struct::bond_dimension_limit</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a4e3fe541aec815c1849e88889b7f1131" kindref="member">data_struct::bond_dimension_maximum</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a30e3f48e5e52a6ec34215b39c31dbbb3" kindref="member">data_struct::entanglement_entropy_midchain</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1abe4cf7caf736d123fe9eda6439a84b45" kindref="member">data_struct::entanglement_entropy_current</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a0f8d35de22d30f3c8aea9140d228ed3b" kindref="member">data_struct::norm</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a9ade6106d59a3e1f0f0936628aa073bd" kindref="member">data_struct::energy</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a2552a513214aca378451f3e5bd4090bb" kindref="member">data_struct::energy_per_site</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a95ac66fc8cd0ee8e34000627ce53109e" kindref="member">data_struct::energy_variance</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a979a0f303823a6e6f98f6a12c980608d" kindref="member">data_struct::energy_variance_per_site</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a2623588047d3d6d48d590b33553b5fdf" kindref="member">data_struct::spin_component_sx</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a004222026d0dfbc707db88993435282c" kindref="member">data_struct::spin_component_sy</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1ab52b4a2c4e2871690791adda4c1b6b16" kindref="member">data_struct::spin_component_sz</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1ae07333425e4dccac61c941f4df577245" kindref="member">data_struct::truncation_error</ref>),
+                sizeof(<ref refid="structclass__h5table__measurements__finite_1_1data__struct_1a87c1be4a3779bc68b215eb5611f9a0da" kindref="member">data_struct::wall_time</ref>),
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="67" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1a51f20d3b42731def95f03344409e3a04" prot="public" static="no" mutable="no">
+        <type>std::array&lt; const char *, <ref refid="structclass__h5table__measurements__finite_1_1meta__struct_1a63e28d39781fd50fc8c2724e6cb4ff6a" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;const char *, NFIELDS&gt; class_h5table_measurements_finite::meta_struct::field_names</definition>
+        <argsstring></argsstring>
+        <name>field_names</name>
+        <initializer>= {
+                &quot;iteration&quot;,
+                &quot;step&quot;,
+                &quot;position&quot;,
+                &quot;length&quot;,
+                &quot;bond_dimension_midchain&quot;,
+                &quot;bond_dimension_current&quot;,
+                &quot;bond_dimension_limit&quot;,
+                &quot;bond_dimension_maximum&quot;,
+                &quot;entanglement_entropy_midchain&quot;,
+                &quot;entanglement_entropy_current&quot;,
+                &quot;norm&quot;,
+                &quot;energy&quot;,
+                &quot;energy_per_site&quot;,
+                &quot;energy_variance&quot;,
+                &quot;energy_variance_per_site&quot;,
+                &quot;spin_component_sx&quot;,
+                &quot;spin_component_sy&quot;,
+                &quot;spin_component_sz&quot;,
+                &quot;truncation_error&quot;,
+                &quot;wall_time&quot;
+        }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="89" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1a0dde601c0f28dd835d46c67c1a8e696e" prot="public" static="no" mutable="no">
+        <type>std::array&lt; hid_t, <ref refid="structclass__h5table__measurements__finite_1_1meta__struct_1a63e28d39781fd50fc8c2724e6cb4ff6a" kindref="member">NFIELDS</ref> &gt;</type>
+        <definition>std::array&lt;hid_t, NFIELDS&gt; class_h5table_measurements_finite::meta_struct::field_types</definition>
+        <argsstring></argsstring>
+        <name>field_types</name>
+        <initializer>= {
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_INT,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="112" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1aa8cd60c7a1d8c440927fb55506f83a83" prot="public" static="no" mutable="no">
+        <type>hsize_t</type>
+        <definition>hsize_t class_h5table_measurements_finite::meta_struct::chunk_size</definition>
+        <argsstring></argsstring>
+        <name>chunk_size</name>
+        <initializer>= 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="125" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="125" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1a6951d8b020a1549f22a4c1dc37244d8a" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* class_h5table_measurements_finite::meta_struct::fill_data</definition>
+        <argsstring></argsstring>
+        <name>fill_data</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="126" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="126" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structclass__h5table__measurements__finite_1_1meta__struct_1abdcf4f788a22837102a5f61fb3990d87" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int class_h5table_measurements_finite::meta_struct::compress</definition>
+        <argsstring></argsstring>
+        <name>compress</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="127" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="473">
+        <label>std::array&lt; hid_t, NFIELDS &gt;</label>
+      </node>
+      <node id="471">
+        <label>class_h5table_measurements_finite::meta_struct</label>
+        <link refid="structclass__h5table__measurements__finite_1_1meta__struct"/>
+        <childnode refid="472" relation="usage">
+          <edgelabel>field_names</edgelabel>
+        </childnode>
+        <childnode refid="473" relation="usage">
+          <edgelabel>field_types</edgelabel>
+        </childnode>
+        <childnode refid="474" relation="usage">
+          <edgelabel>dst_offsets</edgelabel>
+          <edgelabel>dst_sizes</edgelabel>
+        </childnode>
+      </node>
+      <node id="474">
+        <label>std::array&lt; size_t, NFIELDS &gt;</label>
+      </node>
+      <node id="472">
+        <label>std::array&lt; const char *, NFIELDS &gt;</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" line="42" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/io/table_types.h" bodystart="42" bodyend="128"/>
+    <listofallmembers>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1aa8cd60c7a1d8c440927fb55506f83a83" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>chunk_size</name></member>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1abdcf4f788a22837102a5f61fb3990d87" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>compress</name></member>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1a7505d8d3e00b65de1edf303e24a71736" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>dst_offsets</name></member>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1af2d63b4ad98a728ce12d80ce49de406b" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>dst_size</name></member>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1ac4d44981fbf4c42ff1f726cf5ee75934" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>dst_sizes</name></member>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1a51f20d3b42731def95f03344409e3a04" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>field_names</name></member>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1a0dde601c0f28dd835d46c67c1a8e696e" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>field_types</name></member>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1a6951d8b020a1549f22a4c1dc37244d8a" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>fill_data</name></member>
+      <member refid="structclass__h5table__measurements__finite_1_1meta__struct_1a63e28d39781fd50fc8c2724e6cb4ff6a" prot="public" virt="non-virtual"><scope>class_h5table_measurements_finite::meta_struct</scope><name>NFIELDS</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

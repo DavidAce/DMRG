@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespacetools_1_1infinite_1_1io_1_1h5dset" kind="namespace" language="C++">
+    <compoundname>tools::infinite::io::h5dset</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5dset_1a7e1a6df71ab7e5b3cb1d7c9eb6dd34db" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5dset::write_all_state</definition>
+        <argsstring>(const class_state_infinite &amp;state, h5pp::File &amp;h5ppFile, std::string sim_name)</argsstring>
+        <name>write_all_state</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>sim_name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="304" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp" bodystart="13" bodyend="36"/>
+        <references refid="classclass__state__infinite_1a1044590d8feba9a066bba8f372ec993a" compoundref="class__state__infinite_8h" startline="141">class_state_infinite::has_been_written</references>
+        <references refid="namespacesettings_1_1output_1ab20505a535a2ff1d83979273a3fadf5e" compoundref="nmspc__settings_8h" startline="46">settings::output::storage_level</references>
+        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adab50339a10e1de285ac99d4c3990b8693">NONE</references>
+        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaf8589806bbf66241917092b2a6e18c6f">LIGHT</references>
+        <references refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a926b0c24e83e5abb10603b669df33abc" compoundref="infinite_2io_2h5pp_8cpp" startline="61" endline="81">write_hamiltonian_params</references>
+        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594ada1e23852820b9154316c7c06e2b7ba051">NORMAL</references>
+        <references refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a0fdacd14f90f16e4d6fe607cefddbb9f" compoundref="infinite_2io_2h5pp_8cpp" startline="39" endline="43">write_2site_mps</references>
+        <references refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a73b1689ee424faa77b131f77191becfb" compoundref="infinite_2io_2h5pp_8cpp" startline="45" endline="49">write_2site_mpo</references>
+        <references refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a24a5907ebdddb582ee18811bb1aa5b7c" compoundref="infinite_2io_2h5pp_8cpp" startline="51" endline="54">write_2site_env</references>
+        <references refid="namespacetools_1_1infinite_1_1io_1_1h5dset_1a1c52aa24a5a7fb6126fcea01cf3bb2bc" compoundref="infinite_2io_2h5pp_8cpp" startline="56" endline="59">write_2site_env2</references>
+        <references refid="enums_8h_1ab7c7349414d78d7a1f590dc61f9594adaba7de5bc6888294e5884b024a4c894f1">FULL</references>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5dset_1a0fdacd14f90f16e4d6fe607cefddbb9f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5dset::write_2site_mps</definition>
+        <argsstring>(const class_state_infinite &amp;state, h5pp::File &amp;h5ppFile, std::string sim_name)</argsstring>
+        <name>write_2site_mps</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>sim_name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="305" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp" bodystart="39" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5dset_1a73b1689ee424faa77b131f77191becfb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5dset::write_2site_mpo</definition>
+        <argsstring>(const class_state_infinite &amp;state, h5pp::File &amp;h5ppFile, std::string sim_name)</argsstring>
+        <name>write_2site_mpo</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>sim_name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="306" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp" bodystart="45" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5dset_1a24a5907ebdddb582ee18811bb1aa5b7c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5dset::write_2site_env</definition>
+        <argsstring>(const class_state_infinite &amp;state, h5pp::File &amp;h5ppFile, std::string sim_name)</argsstring>
+        <name>write_2site_env</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>sim_name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="307" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp" bodystart="51" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5dset_1a1c52aa24a5a7fb6126fcea01cf3bb2bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5dset::write_2site_env2</definition>
+        <argsstring>(const class_state_infinite &amp;state, h5pp::File &amp;h5ppFile, std::string sim_name)</argsstring>
+        <name>write_2site_env2</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>sim_name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="308" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp" bodystart="56" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5dset_1a926b0c24e83e5abb10603b669df33abc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5dset::write_hamiltonian_params</definition>
+        <argsstring>(const class_state_infinite &amp;state, h5pp::File &amp;h5ppFile, std::string sim_name)</argsstring>
+        <name>write_hamiltonian_params</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>sim_name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="309" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp" bodystart="61" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacetools_1_1infinite_1_1io_1_1h5dset_1af1850f545f4dde95b09ca8750171fafd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void tools::infinite::io::h5dset::write_all_measurements</definition>
+        <argsstring>(const class_state_infinite &amp;state, h5pp::File &amp;h5ppFile, std::string sim_name)</argsstring>
+        <name>write_all_measurements</name>
+        <param>
+          <type>const <ref refid="classclass__state__infinite" kindref="compound">class_state_infinite</ref> &amp;</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>h5pp::File &amp;</type>
+          <declname>h5ppFile</declname>
+        </param>
+        <param>
+          <type>std::string</type>
+          <declname>sim_name</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="310" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/infinite/io/h5pp.cpp" bodystart="83" bodyend="97"/>
+        <references refid="classclass__state__infinite_1aa337cbd68bed88136c332c12b8f920b0" compoundref="class__state__infinite_8cpp" startline="353" endline="367">class_state_infinite::do_all_measurements</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/tools/nmspc_tools.h" line="303" column="1"/>
+  </compounddef>
+</doxygen>

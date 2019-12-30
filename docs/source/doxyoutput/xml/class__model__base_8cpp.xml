@@ -1,0 +1,352 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="class__model__base_8cpp" kind="file" language="C++">
+    <compoundname>class_model_base.cpp</compoundname>
+    <includes refid="class__model__base_8h" local="yes">class_model_base.h</includes>
+    <includes refid="nmspc__tensor__extra_8h" local="no">general/nmspc_tensor_extra.h</includes>
+    <includes refid="nmspc__quantum__mechanics_8h" local="no">general/nmspc_quantum_mechanics.h</includes>
+    <includes refid="nmspc__random_8h" local="no">math/nmspc_random.h</includes>
+    <includes local="no">iomanip</includes>
+    <incdepgraph>
+      <node id="1698">
+        <label>locale</label>
+      </node>
+      <node id="1681">
+        <label>iomanip</label>
+      </node>
+      <node id="1695">
+        <label>limits</label>
+      </node>
+      <node id="1679">
+        <label>iterator</label>
+      </node>
+      <node id="1703">
+        <label>cstdint</label>
+      </node>
+      <node id="1668">
+        <label>/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp</label>
+        <link refid="class__model__base_8cpp"/>
+        <childnode refid="1669" relation="include">
+        </childnode>
+        <childnode refid="1675" relation="include">
+        </childnode>
+        <childnode refid="1684" relation="include">
+        </childnode>
+        <childnode refid="1687" relation="include">
+        </childnode>
+        <childnode refid="1681" relation="include">
+        </childnode>
+      </node>
+      <node id="1694">
+        <label>cassert</label>
+      </node>
+      <node id="1682">
+        <label>general/nmspc_type_check.h</label>
+        <link refid="nmspc__type__check_8h"/>
+        <childnode refid="1683" relation="include">
+        </childnode>
+        <childnode refid="1677" relation="include">
+        </childnode>
+        <childnode refid="1671" relation="include">
+        </childnode>
+      </node>
+      <node id="1700">
+        <label>stdexcept</label>
+      </node>
+      <node id="1677">
+        <label>Eigen/Core</label>
+      </node>
+      <node id="1687">
+        <label>math/nmspc_random.h</label>
+        <link refid="nmspc__random_8h"/>
+        <childnode refid="1688" relation="include">
+        </childnode>
+        <childnode refid="1680" relation="include">
+        </childnode>
+        <childnode refid="1685" relation="include">
+        </childnode>
+        <childnode refid="1677" relation="include">
+        </childnode>
+        <childnode refid="1689" relation="include">
+        </childnode>
+      </node>
+      <node id="1672">
+        <label>io/nmspc_logger.h</label>
+        <link refid="nmspc__logger_8h"/>
+        <childnode refid="1673" relation="include">
+        </childnode>
+        <childnode refid="1674" relation="include">
+        </childnode>
+      </node>
+      <node id="1690">
+        <label>cinttypes</label>
+      </node>
+      <node id="1683">
+        <label>experimental/type_traits</label>
+      </node>
+      <node id="1671">
+        <label>unsupported/Eigen/CXX11/Tensor</label>
+      </node>
+      <node id="1674">
+        <label>spdlog/fmt/bundled/ranges.h</label>
+      </node>
+      <node id="1689">
+        <label>pcg/pcg_random.hpp</label>
+        <link refid="pcg__random_8hpp"/>
+        <childnode refid="1690" relation="include">
+        </childnode>
+        <childnode refid="1691" relation="include">
+        </childnode>
+        <childnode refid="1692" relation="include">
+        </childnode>
+        <childnode refid="1693" relation="include">
+        </childnode>
+        <childnode refid="1694" relation="include">
+        </childnode>
+        <childnode refid="1695" relation="include">
+        </childnode>
+        <childnode refid="1680" relation="include">
+        </childnode>
+        <childnode refid="1696" relation="include">
+        </childnode>
+        <childnode refid="1697" relation="include">
+        </childnode>
+        <childnode refid="1698" relation="include">
+        </childnode>
+        <childnode refid="1699" relation="include">
+        </childnode>
+        <childnode refid="1700" relation="include">
+        </childnode>
+        <childnode refid="1701" relation="include">
+        </childnode>
+      </node>
+      <node id="1669">
+        <label>class_model_base.h</label>
+        <link refid="class__model__base_8h"/>
+        <childnode refid="1670" relation="include">
+        </childnode>
+        <childnode refid="1671" relation="include">
+        </childnode>
+        <childnode refid="1672" relation="include">
+        </childnode>
+      </node>
+      <node id="1678">
+        <label>Eigen/Sparse</label>
+      </node>
+      <node id="1688">
+        <label>random</label>
+      </node>
+      <node id="1704">
+        <label>cstdio</label>
+      </node>
+      <node id="1673">
+        <label>spdlog/logger.h</label>
+      </node>
+      <node id="1676">
+        <label>general/nmspc_omp.h</label>
+        <link refid="nmspc__omp_8h"/>
+        <childnode refid="1671" relation="include">
+        </childnode>
+      </node>
+      <node id="1686">
+        <label>vector</label>
+      </node>
+      <node id="1701">
+        <label>pcg_extras.hpp</label>
+        <link refid="pcg__extras_8hpp"/>
+        <childnode refid="1690" relation="include">
+        </childnode>
+        <childnode refid="1691" relation="include">
+        </childnode>
+        <childnode refid="1692" relation="include">
+        </childnode>
+        <childnode refid="1693" relation="include">
+        </childnode>
+        <childnode refid="1694" relation="include">
+        </childnode>
+        <childnode refid="1695" relation="include">
+        </childnode>
+        <childnode refid="1680" relation="include">
+        </childnode>
+        <childnode refid="1696" relation="include">
+        </childnode>
+        <childnode refid="1697" relation="include">
+        </childnode>
+        <childnode refid="1698" relation="include">
+        </childnode>
+        <childnode refid="1679" relation="include">
+        </childnode>
+        <childnode refid="1702" relation="include">
+        </childnode>
+      </node>
+      <node id="1699">
+        <label>new</label>
+      </node>
+      <node id="1697">
+        <label>utility</label>
+      </node>
+      <node id="1702">
+        <label>pcg_uint128.hpp</label>
+        <link refid="pcg__uint128_8hpp"/>
+        <childnode refid="1703" relation="include">
+        </childnode>
+        <childnode refid="1704" relation="include">
+        </childnode>
+        <childnode refid="1694" relation="include">
+        </childnode>
+        <childnode refid="1705" relation="include">
+        </childnode>
+        <childnode refid="1697" relation="include">
+        </childnode>
+        <childnode refid="1706" relation="include">
+        </childnode>
+        <childnode refid="1696" relation="include">
+        </childnode>
+      </node>
+      <node id="1692">
+        <label>cstdlib</label>
+      </node>
+      <node id="1680">
+        <label>iostream</label>
+      </node>
+      <node id="1691">
+        <label>cstddef</label>
+      </node>
+      <node id="1705">
+        <label>climits</label>
+      </node>
+      <node id="1684">
+        <label>general/nmspc_quantum_mechanics.h</label>
+        <link refid="nmspc__quantum__mechanics_8h"/>
+        <childnode refid="1677" relation="include">
+        </childnode>
+        <childnode refid="1671" relation="include">
+        </childnode>
+        <childnode refid="1685" relation="include">
+        </childnode>
+        <childnode refid="1686" relation="include">
+        </childnode>
+      </node>
+      <node id="1696">
+        <label>type_traits</label>
+      </node>
+      <node id="1685">
+        <label>complex</label>
+      </node>
+      <node id="1675">
+        <label>general/nmspc_tensor_extra.h</label>
+        <link refid="nmspc__tensor__extra_8h"/>
+        <childnode refid="1676" relation="include">
+        </childnode>
+        <childnode refid="1677" relation="include">
+        </childnode>
+        <childnode refid="1678" relation="include">
+        </childnode>
+        <childnode refid="1671" relation="include">
+        </childnode>
+        <childnode refid="1679" relation="include">
+        </childnode>
+        <childnode refid="1680" relation="include">
+        </childnode>
+        <childnode refid="1681" relation="include">
+        </childnode>
+        <childnode refid="1682" relation="include">
+        </childnode>
+      </node>
+      <node id="1693">
+        <label>cstring</label>
+      </node>
+      <node id="1670">
+        <label>memory</label>
+      </node>
+      <node id="1706">
+        <label>initializer_list</label>
+      </node>
+    </incdepgraph>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="class__model__base_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" prot="public" static="no">
+        <type>std::complex&lt; double &gt;</type>
+        <definition>using Scalar =  std::complex&lt;double&gt;</definition>
+        <argsstring></argsstring>
+        <name>Scalar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" line="12" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Created<sp/>by<sp/>david<sp/>on<sp/>2018-07-04.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="class__model__base_8h" kindref="compound">class_model_base.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__tensor__extra_8h" kindref="compound">general/nmspc_tensor_extra.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__quantum__mechanics_8h" kindref="compound">general/nmspc_quantum_mechanics.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="8"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;<ref refid="nmspc__random_8h" kindref="compound">math/nmspc_random.h</ref>&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;iomanip&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"></highlight></codeline>
+<codeline lineno="11"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal"><ref refid="namespaceqm" kindref="compound">qm</ref>;</highlight></codeline>
+<codeline lineno="12" refid="class__model__base_8cpp_1a131d20d737c4fa1cb2d53d136f8c57ea" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="class__algorithm__base_8cpp_1a528e55cc6b435f7efe6750d6faa36cd6" kindref="member">Scalar</ref><sp/>=<sp/>std::complex&lt;double&gt;;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"></highlight></codeline>
+<codeline lineno="14" refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Eigen::Tensor&lt;Scalar,4&gt;<sp/>&amp;<sp/><ref refid="classclass__model__base_1a0789119b3413f70affbdbc5f7b15e829" kindref="member">class_model_base::MPO</ref>()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(all_mpo_parameters_have_been_set){</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>mpo_internal;</highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="18"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;All<sp/>MPO<sp/>parameters<sp/>haven&apos;t<sp/>been<sp/>set<sp/>yet.&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="20"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="21"><highlight class="normal"></highlight></codeline>
+<codeline lineno="22" refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1ab9f4036f02d2349a1ebf40fbc03fa68c" kindref="member">class_model_base::isReal</ref>()</highlight><highlight class="keyword">const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="23"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="namespace_textra_1a134cee5e3300feee66018395aa0ffa05" kindref="member">Textra::isReal</ref>(MPO(),</highlight><highlight class="stringliteral">&quot;MPO&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline lineno="24"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26" refid="classclass__model__base_1a6bfba5c3d319a16c0451509e98df9b0b" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a6bfba5c3d319a16c0451509e98df9b0b" kindref="member">class_model_base::isReduced</ref>()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>e_reduced<sp/>!=<sp/>0.0;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30" refid="classclass__model__base_1a1d6a8fc02b00f4ee83ebaa3d0332cfee" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a1d6a8fc02b00f4ee83ebaa3d0332cfee" kindref="member">class_model_base::get_reduced_energy</ref>()</highlight><highlight class="keyword"><sp/>const<sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>e_reduced;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="34" refid="classclass__model__base_1afbd0c80af83c59b9af90d190ec8acaac" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><sp/><sp/><ref refid="classclass__model__base_1afbd0c80af83c59b9af90d190ec8acaac" kindref="member">class_model_base::set_reduced_energy</ref>(</highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>site_energy){</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><sp/><sp/>e_reduced<sp/><sp/><sp/><sp/>=<sp/>site_energy;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"><sp/><sp/><sp/><sp/>mpo_internal<sp/>=<sp/>MPO_reduced_view();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="classclass__model__base_1a6a2f96984fa4ce3efec11a5acd2c4fd0" refkind="member"><highlight class="normal"><ref refid="classclass__model__base_1a6a2f96984fa4ce3efec11a5acd2c4fd0" kindref="member">class_model_base::class_model_base</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position_,<sp/>std::string<sp/>logName){</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>position<sp/>=<sp/>position_;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacetools_1aac8e89130f43c21749644abcd2807dba" kindref="member">log</ref><sp/>=<sp/><ref refid="namespace_logger_1a342c5c50f871cc563758e13c1fbf7d58" kindref="member">Logger::setLogger</ref>(logName);</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="classclass__model__base_1abcce2b2aa2f4680afcb8e92a72c1a992" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1abcce2b2aa2f4680afcb8e92a72c1a992" kindref="member">class_model_base::set_position</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>position_){</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/>position<sp/>=<sp/>position_;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52" refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" refkind="member"><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classclass__model__base_1a691eb7ba6564b8bae48db9ae2e368603" kindref="member">class_model_base::get_position</ref>()</highlight><highlight class="keyword"><sp/>const</highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(position){</highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>position.value();}</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal">{</highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::runtime_error(</highlight><highlight class="stringliteral">&quot;Position<sp/>of<sp/>MPO<sp/>has<sp/>not<sp/>been<sp/>set&quot;</highlight><highlight class="normal">);}</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57" refid="classclass__model__base_1a22d74bafe839007a10f75ac03585fd25" refkind="member"><highlight class="normal">Eigen::MatrixXcd<sp/><ref refid="classclass__model__base_1a22d74bafe839007a10f75ac03585fd25" kindref="member">class_model_base::MPO_matrix_view</ref>(){</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rows<sp/>=<sp/>MPO().dimension(0)*MPO().dimension(2);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>cols<sp/>=<sp/>MPO().dimension(1)*MPO().dimension(3);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/>Eigen::Tensor&lt;Scalar,2&gt;<sp/>MPO_temp<sp/>=<sp/>MPO().shuffle(<ref refid="namespace_textra_1aed08040fb74720378781c145b88c1d5a" kindref="member">Textra::array4</ref>{0,2,1,3}).reshape(<ref refid="namespace_textra_1a9f19da2eaa3b2ac621236d06d85ea382" kindref="member">Textra::array2</ref>{rows,cols});</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>Eigen::Map&lt;Eigen::MatrixXcd&gt;(MPO_temp.data(),<sp/>rows,cols);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/>return<sp/>Textra::Tensor_to_Matrix_Map&lt;Scalar&gt;(MPO_temp,<sp/>rows<sp/>,cols);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal">}</highlight></codeline>
+    </programlisting>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/model/class_model_base.cpp"/>
+  </compounddef>
+</doxygen>

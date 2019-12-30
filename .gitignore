@@ -1,10 +1,11 @@
 cmake-build*/
 .idea/
+.vscode/
 output/
 build/
-.vscode/
 tmp/
 libs/
+libs*/
 doxygen_log.txt
 test*.cfg
 *.log
@@ -15,3 +16,9 @@ batch_scripts/output/*
 batch_scripts/bunch/*
 __pycache__/
 *.pyc
+
+docs_rtd/_build
+# wherever you told breathe_projects to look
+docs_rtd/doxyoutput
+# wherever you told Exhale containmentFolder is
+docs_rtd/api

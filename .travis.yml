@@ -1,26 +1,24 @@
-dist: xenial
 sudo: false
-language: generic
+language: cpp
 notifications:
   email: false
 branches:
   only:
     - master
+    - multisite_dmrg
 
 matrix:
   fast_finish: true
   include:
-    - os: linux
-      compiler: gcc-7
+    - name: "xenial gcc-7"
+      dist: xenial
+      os: linux
+      compiler: gcc
       env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=7
-        - CC=gcc-7
         - CXX=g++-7
+        - CC=gcc-7
         - FC=gfortran-7
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
-      cache:
-        apt: true
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -30,17 +28,16 @@ matrix:
             - gcc-7
             - g++-7
             - gfortran-7
-    - os: linux
-      compiler: gcc-8
+
+    - name: "xenial gcc-8"
+      dist: xenial
+      os: linux
+      compiler: gcc
       env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=8
-        - CC=gcc-8
         - CXX=g++-8
+        - CC=gcc-8
         - FC=gfortran-8
-        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
-      cache:
-        apt: true
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -50,22 +47,22 @@ matrix:
             - gcc-8
             - g++-8
             - gfortran-8
-    - os: linux
-      compiler: clang-7
+
+
+    - name: "xenial clang-7"
+      dist: xenial
+      os: linux
+      compiler: clang
       env:
-        - COMPILER_NAME=clang
         - CXX=clang++-7
         - CC=clang-7
-        - CLANG_VERSION=7
         - FC=gfortran-8
-        - MATRIX_EVAL="CXX=clang++-7 && CC=clang-7 && FC=gfortran-8"
-      cache:
-        apt: true
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
           sources:
-            - sourceline:  'ppa:ubuntu-toolchain-r/test'
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
             - sourceline:  'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-7 main'
               key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
@@ -74,17 +71,17 @@ matrix:
             - libstdc++-8-dev
             - gfortran-8
 
-    - os: linux
-      compiler: gcc-7 (preinstalled libs)
+
+    - name: "xenial gcc-7 (apt libs)"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
+      dist: xenial
+      os: linux
+      compiler: gcc
       env:
-        - COMPILER_NAME=gcc
-        - GCC_VERSION=7
-        - CC=gcc-7
         - CXX=g++-7
+        - CC=gcc-7
         - FC=gfortran-7
-        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
-      cache:
-        apt: true
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -96,55 +93,166 @@ matrix:
             - gfortran-7
             - libsz2
             - zlibc
-            - libgsl0-dev
             - libopenblas-dev
             - libarpack2-dev
             - libarpack++2-dev
-            - liblapacke
             - liblapacke-dev
+            - libhdf5-dev
+            - libspdlog-dev
+            - libgflags-dev
+            - libgoogle-glog-dev
+            - libceres-dev
+            - libunwind-dev
+            - lzma
+
+    - name: "bionic gcc-8 (apt libs)"
+      dist: bionic
+      os: linux
+      compiler: gcc
+      env:
+        - CXX=g++-8
+        - CC=gcc-8
+        - FC=gfortran-8
+        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - gcc-8
+            - g++-8
+            - gfortran-8
+            - libsz2
+            - zlibc
+            - libopenblas-dev
+            - libarpack2-dev
+            - libarpack++2-dev
+            - liblapacke-dev
+            - libhdf5-dev
+            - libspdlog-dev
+            - libgflags-dev
+            - libgoogle-glog-dev
+            - libceres-dev
+            - libunwind-dev
+            - lzma
+
+    - name: "bionic gcc-7 (conda-forge libs)"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
+      dist: bionic
+      os: linux
+      compiler: gcc
+      env:
+        - CXX=g++-7
+        - CC=gcc-7
+        - FC=gfortran-7
+        - FLAGS="--download-missing --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - gcc-7
+            - g++-7
+            - gfortran-7
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
         - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
         - chmod +x miniconda.sh
         - ./miniconda.sh -b -p $HOME/miniconda
         - export PATH=$HOME/miniconda/bin:$PATH
+        - conda config --add channels conda-forge
         - conda update --yes conda
-        - conda install --yes hdf5 eigen
+        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
-#    - os: osx
-#      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
-#      compiler: gcc-7
-#      env:
-#        - COMPILER_NAME=gcc
-#        - GCC_VERSION=7
-#        - CXX=g++-7
-#        - CC=gcc-7
-#        - FC=gfortran-7
-#        - MPI=mpich
-#        - MATRIX_EVAL="CXX=g++-7 && CC=gcc-7 && FC=gfortran-7"
-#      before_install:
-#        - brew install gcc@7
-#        - brew link gcc
-#    - os: osx
-#      osx_image: xcode10.1 #Newer versions don't like experimental/filesystem or _stdio.h?
-#      compiler: gcc-8
-#      env:
-#        - COMPILER_NAME=gcc
-#        - GCC_VERSION=8
-#        - CXX=g++-8
-#        - CC=gcc-8
-#        - FC=gfortran-8
-#        - MPI=mpich
-#        - MATRIX_EVAL="CXX=g++-8 && CC=gcc-8 && FC=gfortran-8"
-#      before_install:
-#        - brew install gcc@8
-#        - brew link gcc
+    - name: "bionic clang-7 (conda-forge libs)"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
+      dist: bionic
+      os: linux
+      compiler: clang
+      env:
+        - FC=gfortran-8
+        - FLAGS="--download-missing --prefer-conda --download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - libstdc++-8-dev
+            - gfortran-8
+      before_install:
+        # Here we just install Miniconda, which you shouldn't have to change.
+        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - chmod +x miniconda.sh
+        - ./miniconda.sh -b -p $HOME/miniconda
+        - export PATH=$HOME/miniconda/bin:$PATH
+        - conda config --add channels conda-forge
+        - conda update --yes conda
+        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
 
-before_install:
-  - eval "${MATRIX_EVAL}"
+    - name: "bionic clang (conda-forge libs) (shared)"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
+      dist: bionic
+      os: linux
+      compiler: clang
+      env:
+        - FC=gfortran-8
+        - FLAGS="--download-missing --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - libstdc++-8-dev
+            - gfortran-8
+      before_install:
+        # Here we just install Miniconda, which you shouldn't have to change.
+        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - chmod +x miniconda.sh
+        - ./miniconda.sh -b -p $HOME/miniconda
+        - export PATH=$HOME/miniconda/bin:$PATH
+        - conda config --add channels conda-forge
+        - conda update --yes conda
+        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+
+
+    - name: "bionic clang conan + conda-forge libs"
+      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
+      dist: bionic
+      os: linux
+      compiler: clang
+      env:
+        - FC=gfortran-8
+        - FLAGS="--download-missing --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug"
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - libstdc++-8-dev
+            - gfortran-8
+      before_install:
+        # Here we just install Miniconda, which you shouldn't have to change.
+        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - chmod +x miniconda.sh
+        - ./miniconda.sh -b -p $HOME/miniconda
+        - export PATH=$HOME/miniconda/bin:$PATH
+        - conda config --add channels conda-forge
+        - conda update --yes conda
+        # Install conan
+        - conda install --yes  conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+        # Automatic detection of your arch, compiler, etc.
+        - conan user
+        - conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
+
+
+
 
 script:
-  - ./build.sh -m Debug -j2 -i OFF
-
+  - ./build.sh --verbose ${FLAGS}
 

@@ -1,0 +1,241 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="namespaceeigutils_1_1eig_setting" kind="namespace" language="C++">
+    <compoundname>eigutils::eigSetting</compoundname>
+      <sectiondef kind="enum">
+      <memberdef kind="enum" id="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306" prot="public" static="no">
+        <name>Form</name>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306a161b3d9016563aba9ac190fc02ada9bb" prot="public">
+          <name>SYMMETRIC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1ab3540d4cdfdd84861825cc2a89135306acb84720bd139d3931bce1c4a578f3255" prot="public">
+          <name>NONSYMMETRIC</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="19" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="19" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadf" prot="public" static="no">
+        <name>Storage</name>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0706fbbd929bd8abc4de386c53d439ff" prot="public">
+          <name>DENSE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa0459833ba9cad7cfd7bbfe10d7bbbe6e" prot="public">
+          <name>SPARSE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a86f4e9edf946d68c9e5c0f1c99bdaadfa2523e0c272cb676c4f59f97828966f78" prot="public">
+          <name>STL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="20" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="20" bodyend="20"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916" prot="public" static="no">
+        <name>Shift</name>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a90651ebea9a35ec4e018c8157492e17c" prot="public">
+          <name>ON</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1ad110cf190bb63ea73e5e1ed3260af916a88559a0cfd8250c9d65970cc145c92d4" prot="public">
+          <name>OFF</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="21" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="21" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" prot="public" static="no">
+        <name>Ritz</name>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1" prot="public">
+          <name>LA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7" prot="public">
+          <name>SA</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4" prot="public">
+          <name>LM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da4e0d4f6ce30646f5a3f3e2a7422c1c5a" prot="public">
+          <name>SM</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4" prot="public">
+          <name>LR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0" prot="public">
+          <name>SR</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f" prot="public">
+          <name>LI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364" prot="public">
+          <name>SI</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44" prot="public">
+          <name>BE</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="22" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="22" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74" prot="public" static="no">
+        <name>Side</name>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ad20caec3b48a1eef164cb4ca81ba2587" prot="public">
+          <name>L</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a7b4469c018633b8c2c2d596b5e38de74ae1e1d3d40573127e9ee0480caf1283d6" prot="public">
+          <name>R</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="23" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="23" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="enum" id="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507c" prot="public" static="no">
+        <name>Type</name>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca8cf125b0e31559ba75a9d9b4f818a554" prot="public">
+          <name>REAL</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <enumvalue id="namespaceeigutils_1_1eig_setting_1a9ac877abbc395683ef9e2b49cce8507ca958448d4909b92010c81d52d3e6ad8f1" prot="public">
+          <name>CPLX</name>
+          <briefdescription>
+          </briefdescription>
+          <detaileddescription>
+          </detaileddescription>
+        </enumvalue>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="24" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="24" bodyend="24"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespaceeigutils_1_1eig_setting_1a4958e75ebe95c52b7432f57a058acf2c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69d" kindref="member">Ritz</ref></type>
+        <definition>Ritz eigutils::eigSetting::stringToRitz</definition>
+        <argsstring>(std::string ritzstring)</argsstring>
+        <name>stringToRitz</name>
+        <param>
+          <type>std::string</type>
+          <declname>ritzstring</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="26" column="1" bodyfile="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" bodystart="26" bodyend="37"/>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da6b40fe07a0e5a93eef07242975e83ec1">LA</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da3dd6b9265ff18f31dc30df59304b0ca7">SA</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dadfd5b430bc4db2c2836d0227ad9ac0c4">LM</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da4e0d4f6ce30646f5a3f3e2a7422c1c5a">SM</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da90a7c45eaffbd575ca6fb361e6d170a4">LR</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da8cb2010d27e13509d364436256e972c0">SR</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69da14efbb26a99dc4820b9928957704cb8f">LI</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dace774d9cab3ae0bdf522cd0839bed364">SI</references>
+        <references refid="namespaceeigutils_1_1eig_setting_1a03696695037235bbb52d88102d75b69dad3dcf429c679f9af82eb9a3b31c4df44">BE</references>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/david/Dropbox/PhD/Programming/DMRG++/DMRG++/source/math/nmspc_eigutils.h" line="18" column="1"/>
+  </compounddef>
+</doxygen>

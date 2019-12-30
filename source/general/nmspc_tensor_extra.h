@@ -2,9 +2,9 @@
 // Created by david on 6/7/17.
 //
 
-#ifndef TENSOR_EXTRA_H
-#define TENSOR_EXTRA_H
+#pragma once
 
+#include <general/nmspc_omp.h> // For multithreaded computation
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -201,6 +201,29 @@ namespace Textra {
         return Matrix_to_Tensor(matrix, matrix.rows(),matrix.cols());
     }
 
+    template<typename Derived, auto rank>
+    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix,const Eigen::DSizes<long,rank> &dims){
+        if constexpr (is_plainObject<Derived>::value) {
+            return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().data(), dims);
+        }
+        else{
+            return Matrix_to_Tensor(matrix,dims);
+        }
+    }
+
+    template<typename Derived, typename... Dims>
+    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix,const Dims... dims){
+        return MatrixTensorMap(matrix, Eigen::DSizes<long,sizeof...(Dims)>{dims...});
+    }
+
+    template<typename Derived>
+    constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix){
+        if constexpr(Derived::ColsAtCompileTime ==  1){
+            return MatrixTensorMap(matrix, matrix.size());
+        }else{
+            return MatrixTensorMap(matrix, matrix.rows(),matrix.cols());
+        }
+    }
 
 
 //
@@ -228,6 +251,22 @@ namespace Textra {
     template <typename Scalar>
     constexpr SparseMatrixType<Scalar> Tensor2_to_SparseMatrix(const Eigen::Tensor<Scalar,2> &tensor, double prune_threshold = 1e-15) {
         return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1)).sparseView().pruned(prune_threshold);
+    }
+
+
+    template<typename Scalar,auto rank, typename sizeType>
+    constexpr auto TensorMatrixMap(const Eigen::Tensor<Scalar,rank> &tensor,const sizeType rows,const sizeType cols){
+        return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), rows,cols);
+    }
+
+    template<typename Scalar>
+    constexpr auto TensorMatrixMap(const Eigen::Tensor<Scalar,2> &tensor){
+        return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), tensor.dimension(0),tensor.dimension(1));
+    }
+
+    template<typename Scalar>
+    constexpr auto TensorVectorMap(const Eigen::Tensor<Scalar,2> &tensor){
+        return Eigen::Map<const VectorType<Scalar>> (tensor.data(), tensor.size());
     }
 
 
@@ -397,6 +436,3 @@ namespace Textra {
 }
 
 
-
-
-#endif //TENSOR_EXTRA_H
