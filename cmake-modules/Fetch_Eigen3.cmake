@@ -7,7 +7,7 @@ find_package(Eigen3
 if(TARGET Eigen3::Eigen)
     message(STATUS "Eigen3 found")
 else()
-    if(NOT DOWNLOAD_MISSING)
+    if("${DOWNLOAD_METHOD}" MATCHES "none")
         message(WARNING "Eigen3 will be downloaded anyway because we need a patched version, "
                 "which isn't available through any systems package manager")
     endif()
@@ -25,7 +25,7 @@ else()
     endif()
 
 #else()
-#    message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_MISSING is OFF")
+#    message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
 endif()
 
 

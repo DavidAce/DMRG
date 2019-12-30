@@ -6,7 +6,7 @@ find_Arpackpp()
 
 if (TARGET arpack::arpack++)
     message(STATUS "Arpack++ found")
-elseif(DOWNLOAD_MISSING)
+elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
     message(STATUS "Arpack++ will be installed into ${EXTERNAL_INSTALL_DIR}/arpack++ on first build.")
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK++
@@ -39,7 +39,7 @@ elseif(DOWNLOAD_MISSING)
     target_include_directories(arpack::arpack++ SYSTEM INTERFACE ${INSTALL_DIR}/include)
     add_dependencies(arpack::arpack++ external_ARPACK++)
 else()
-    message(FATAL_ERROR "Dependency Arpack++ not found and DOWNLOAD_MISSING is OFF")
+    message(FATAL_ERROR "Dependency Arpack++ not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
 endif()
 
 
