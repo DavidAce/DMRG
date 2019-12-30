@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - multisite_dmrg
-#      - master
+      - master
 
 # INSPIRATION https://github.com/onqtam/doctest/pull/285/files/875052e18cf5f5f0b9176e59f847b6205f3efb78#
 jobs:
