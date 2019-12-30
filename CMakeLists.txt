@@ -13,7 +13,6 @@ option(PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"   
 option(ENABLE_OPENMP            "Use OpenMP"                                          OFF)
 option(ENABLE_MKL               "Enable Intel Math Kernel Library"                    OFF)
 option(ENABLE_LTO               "Enable link time optimization"                       OFF)
-option(DOWNLOAD_MISSING         "Download and install missing dependencies"           OFF)
 option(BUILD_SHARED_LIBS        "Sets shared linking on/off"                          OFF)
 option(BUILD_TESTS              "Builds ctests"                                       OFF)
 option(BUILD_EXAMPLES           "Build examples"                                      OFF)

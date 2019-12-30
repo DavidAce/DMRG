@@ -45,7 +45,7 @@ endif()
 
 if(TARGET glog::glog)
 
-elseif(DOWNLOAD_MISSING)
+elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
     message(STATUS "glog will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
@@ -61,7 +61,7 @@ elseif(DOWNLOAD_MISSING)
     endif()
 
 else()
-    message(FATAL_ERROR "Dependency glog not found and DOWNLOAD_MISSING is OFF")
+    message(FATAL_ERROR "Dependency glog not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
 endif()
 
 
