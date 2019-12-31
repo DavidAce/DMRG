@@ -18,7 +18,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -37,7 +37,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -57,7 +57,7 @@ matrix:
         - CXX=clang++-7
         - CC=clang-7
         - FC=gfortran-8
-        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -81,7 +81,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -113,7 +113,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-missing --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -146,7 +146,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-missing --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=native --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -173,7 +173,7 @@ matrix:
       compiler: clang
       env:
         - FC=gfortran-8
-        - FLAGS="--download-missing --prefer-conda --download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=native --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -200,7 +200,7 @@ matrix:
       compiler: clang
       env:
         - FC=gfortran-8
-        - FLAGS="--download-missing --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=native --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -227,7 +227,7 @@ matrix:
       compiler: clang
       env:
         - FC=gfortran-8
-        - FLAGS="--download-missing --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=conan --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
