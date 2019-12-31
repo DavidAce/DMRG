@@ -10,7 +10,6 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -b | --build-type [=arg]        : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
 -c | --clear-cmake              : Clear CMake files before build (delete ./build)
 -d | --dry-run                  : Dry run
-   | --download-missing         : Download missing libraries [ ON | OFF ] (default = OFF)
    | --download-method          : Download libraries using [ native | conan ] (default = native)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
 -g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
@@ -50,7 +49,6 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st:v \
                 make-threads:\
                 enable-openmp\
                 enable-mkl\
-                download-missing\
                 download-method:\
                 no-modules\
                 prefer-conda\
@@ -131,7 +129,7 @@ for lib in "${clear_libs[@]}"; do
     fi
 done
 
-if [[ ! "$download_method" =~ "native|conan|none" ]]; then
+if [[ ! "$download_method" =~ native|conan|none ]]; then
     echo "Download method unsupported: $download_method"
     exit 1
 fi
