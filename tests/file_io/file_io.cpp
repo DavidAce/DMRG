@@ -59,10 +59,10 @@ int main()
     h5ppFile.writeDataset(vectorC,"vectorC");
     h5ppFile.writeDataset(tensorC,"tensorC");
     h5ppFile.writeDataset(stringX,"stringX");
-    h5ppFile.writeAttributeToLink(std::string("This is an attribute"), "TestAttr","vectorD");
-    h5ppFile.writeAttributeToLink(std::string("This is an attribute"), "TestAttr","vectorC");
-    h5ppFile.writeAttributeToLink(std::string("This is an attribute"), "TestAttr","tensorC");
-    h5ppFile.writeAttributeToLink(std::string("This is an attribute"), "TestAttr","stringX");
+    h5ppFile.writeAttribute(std::string("This is an attribute"), "TestAttr","vectorD");
+    h5ppFile.writeAttribute(std::string("This is an attribute"), "TestAttr","vectorC");
+    h5ppFile.writeAttribute(std::string("This is an attribute"), "TestAttr","tensorC");
+    h5ppFile.writeAttribute(std::string("This is an attribute"), "TestAttr","stringX");
 
 
     // Read the data back

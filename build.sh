@@ -264,16 +264,20 @@ if [ -z "$dry_run" ] ;then
            ../../
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
-            echo "\n\nExit code: $exit_code"
-            echo "\n\nCMakeFiles/CMakeError.log: \n"
+            echo ""
+            echo "Exit code: $exit_code"
+            echo "CMakeFiles/CMakeError.log:"
+            echo ""
             cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
     cmake --build . --target $build_target --parallel $make_threads
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
-            echo "\n\nExit code: $exit_code"
-            echo "\n\nCMakeFiles/CMakeError.log: \n"
+            echo ""
+            echo "Exit code: $exit_code"
+            echo "CMakeFiles/CMakeError.log:"
+            echo ""
             cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi

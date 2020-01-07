@@ -5,6 +5,8 @@
 #include <omp.h>
 #endif
 
+#define lapack_complex_float  std::complex<float>
+#define lapack_complex_double std::complex<double>
 
 #ifdef OpenBLAS_AVAILABLE
 #include <cblas.h>
@@ -17,8 +19,6 @@
 #include <mkl.h>
 #endif
 
-#define lapack_complex_float  std::complex<float>
-#define lapack_complex_double std::complex<double>
 #if __has_include(<mkl_lapacke.h>)
 #include <mkl_lapacke.h>
 #elif __has_include(<lapacke.h>)
