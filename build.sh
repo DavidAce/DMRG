@@ -260,7 +260,7 @@ if [ -z "$dry_run" ] ;then
           -DENABLE_OPENMP=$enable_openmp \
           -DENABLE_MKL=$enable_mkl \
           -DGCC_TOOLCHAIN=$gcc_toolchain \
-           -G $generator \
+           -G "$generator" \
            ../../
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
