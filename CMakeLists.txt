@@ -18,7 +18,7 @@ option(ENABLE_LTO               "Enable link time optimization"                 
 option(BUILD_SHARED_LIBS        "Sets shared linking on/off"                          OFF)
 option(BUILD_TESTS              "Builds ctests"                                       OFF)
 option(BUILD_EXAMPLES           "Build examples"                                      OFF)
-option(CMAKE_VERBOSE_MAKEFILE   "Verbose makefile"                                    OFF)
+option(DMRG_PRINT_INFO          "Print information during cmake configure"            OFF)
 
 
 #################################################################
@@ -208,12 +208,12 @@ endif()
 include(GNUInstallDirs)
 string(TOLOWER ${CMAKE_BUILD_TYPE} cmake_build_type)
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    message(STATUS "Setting default install prefix -- CMAKE_INSTALL_PREFIX --> ${PROJECT_SOURCE_DIR}/libs-${cmake_build_type}")
-    set(CMAKE_INSTALL_PREFIX "${PROJECT_SOURCE_DIR}/libs-${cmake_build_type}" CACHE PATH "..." FORCE)
+    message(STATUS "Setting default install prefix -- CMAKE_INSTALL_PREFIX --> ${CMAKE_BINARY_DIR}/dmrg-deps-install")
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dmrg-deps-install" CACHE PATH "..." FORCE)
 endif()
-set(EXTERNAL_INSTALL_DIR       ${CMAKE_INSTALL_PREFIX})
-set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/external-deps)
-set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/external-deps)
+#set(EXTERNAL_INSTALL_DIR       ${CMAKE_INSTALL_PREFIX})
+#set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/dmrg-deps-build)
+#set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/dmrg-deps-build)
 
 
 
@@ -240,7 +240,6 @@ message(STATUS "PREFER_CONDA_LIBS            : ${PREFER_CONDA_LIBS}")
 message(STATUS "ENABLE_OPENMP                : ${ENABLE_OPENMP}")
 message(STATUS "ENABLE_MKL                   : ${ENABLE_MKL}")
 message(STATUS "ENABLE_LTO                   : ${ENABLE_LTO}")
-message(STATUS "DOWNLOAD_MISSING             : ${DOWNLOAD_MISSING}")
 message(STATUS "BUILD_SHARED_LIBS            : ${BUILD_SHARED_LIBS}")
 message(STATUS "BUILD_TESTS                  : ${BUILD_TESTS}")
 message(STATUS "BUILD_EXAMPLES               : ${BUILD_EXAMPLES}")

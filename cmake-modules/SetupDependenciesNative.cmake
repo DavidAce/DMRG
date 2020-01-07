@@ -31,7 +31,7 @@ include(cmake-modules/Fetch_h5pp.cmake)                         # h5pp for writi
 ### Link all the things!                                       ###
 ##################################################################
 target_link_libraries(project-settings INTERFACE ceres::ceres)
-target_link_libraries(project-settings INTERFACE h5pp::h5pp h5pp::deps h5pp::flags)
+target_link_libraries(project-settings INTERFACE h5pp::h5pp)
 target_link_libraries(project-settings INTERFACE Eigen3::Eigen) # Put it last in case Eigen wants to use blas
 target_link_libraries(project-settings INTERFACE arpack::arpack++)
 
