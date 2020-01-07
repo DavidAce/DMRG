@@ -7,15 +7,15 @@ find_Arpackpp()
 if (TARGET arpack::arpack++)
     message(STATUS "Arpack++ found")
 elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
-    message(STATUS "Arpack++ will be installed into ${EXTERNAL_INSTALL_DIR}/arpack++ on first build.")
+    message(STATUS "Arpack++ will be installed into ${CMAKE_BINARY_DIR}/dmrg-deps-install/arpack++ on first build.")
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK++
             GIT_REPOSITORY      https://github.com/m-reuter/arpackpp.git
             GIT_TAG             2.3.0
             GIT_PROGRESS false
             GIT_SHALLOW true
-            PREFIX      ${EXTERNAL_BUILD_DIR}/arpack++
-            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/arpack++
+            PREFIX      ${CMAKE_BINARY_DIR}/dmrg-deps-build/arpack++
+            INSTALL_DIR ${CMAKE_BINARY_DIR}/dmrg-deps-install/arpack++
 #            CMAKE_ARGS
 #            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 #            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}

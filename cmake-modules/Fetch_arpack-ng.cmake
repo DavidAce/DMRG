@@ -64,8 +64,8 @@ if(NOT TARGET arpack::arpack)
             GIT_TAG             3.7.0
             GIT_PROGRESS false
             GIT_SHALLOW true
-            PREFIX      ${EXTERNAL_BUILD_DIR}/arpack-ng
-            INSTALL_DIR ${EXTERNAL_INSTALL_DIR}/arpack-ng
+            PREFIX      ${CMAKE_BINARY_DIR}/dmrg-deps-build/arpack-ng
+            INSTALL_DIR ${CMAKE_BINARY_DIR}/dmrg-deps-install/arpack-ng
             UPDATE_COMMAND ""
             BUILD_IN_SOURCE 1
             CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
