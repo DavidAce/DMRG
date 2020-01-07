@@ -124,12 +124,12 @@ build_type_lower=$(echo $build_type | tr '[:upper:]' '[:lower:]')
 for lib in "${clear_libs[@]}"; do
     if [[ "$lib" == "all" ]]; then
         echo "Clearing all installed libraries"
-        rm -r ./build/$build_type/external-deps/*
-        rm -r ./libs-$build_type_lower/*
+        rm -r ./build/$build_type/dmrg-deps-build/*
+        rm -r ./build/$build_type/dmrg-deps-install/*
     else
         echo "Clearing library: $lib"
-        rm -r ./build/$build_type/external-deps/$lib
-        rm -r ./libs-$build_type_lower/$lib
+        rm -r ./build/$build_type/dmrg-deps-build/$lib
+        rm -r ./build/$build_type/dmrg-deps-install/$lib
     fi
 done
 
@@ -171,8 +171,8 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         #    module load CMake/3.15.2
 
         if [ "$compiler" = "Clang" ] ; then
-        #   module load Clang
-            module load Clang/8.0.0-GCCcore-8.2.0
+           module load Clang
+#            module load Clang/8.0.0-GCCcore-8.2.0
             if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
         fi
     fi
@@ -181,8 +181,8 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         export CC=gcc
         export CXX=g++
     elif [ "$compiler" = "Clang" ] ; then
-        export CC=clang
-        export CXX=clang++
+        export CC=clang-8
+        export CXX=clang-cpp
     fi
 
 elif [[ "$HOSTNAME" == *"raken"* ]];then

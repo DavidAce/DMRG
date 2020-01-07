@@ -212,7 +212,7 @@ function(find_package_hdf5)
 
         # Add convenience libraries to collect all the hdf5 libraries
         add_library(hdf5::hdf5 INTERFACE IMPORTED)
-        target_include_directories(hdf5::hdf5 INTERFACE  ${HDF5_INCLUDE_DIR})
+        target_include_directories(hdf5::hdf5 SYSTEM INTERFACE  ${HDF5_INCLUDE_DIR})
         target_link_libraries(hdf5::hdf5
                 INTERFACE
                 ${HDF5_LIBRARIES}
