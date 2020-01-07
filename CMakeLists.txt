@@ -211,9 +211,7 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     message(STATUS "Setting default install prefix -- CMAKE_INSTALL_PREFIX --> ${CMAKE_BINARY_DIR}/dmrg-deps-install")
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dmrg-deps-install" CACHE PATH "..." FORCE)
 endif()
-#set(EXTERNAL_INSTALL_DIR       ${CMAKE_INSTALL_PREFIX})
-#set(EXTERNAL_BUILD_DIR         ${CMAKE_BINARY_DIR}/dmrg-deps-build)
-#set(EXTERNAL_CONFIG_DIR        ${CMAKE_BINARY_DIR}/dmrg-deps-build)
+
 
 
 
