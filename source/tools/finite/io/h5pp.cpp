@@ -101,7 +101,7 @@ void tools::finite::io::h5dset::write_full_mpo(const class_state_finite & state,
         auto values = state.get_MPO(site).get_parameter_values();
         auto names  = state.get_MPO(site).get_parameter_names();
         for (size_t i = 0; i < std::min(values.size(), names.size()); i++){
-            h5ppFile.writeAttributeToLink(values[i], names[i],prefix_path + "/state/mpo/H_" + std::to_string(site));
+            h5ppFile.writeAttribute(values[i], names[i],prefix_path + "/state/mpo/H_" + std::to_string(site));
         }
     }
 }
@@ -125,7 +125,7 @@ void tools::finite::io::h5dset::write_model(const class_state_finite & state, h5
     for (auto &name : state.MPO_L.front()->get_parameter_names()){
         std::string attr_value = name;
         std::string attr_name  = "FIELD_" + std::to_string(col) + "_NAME";
-        h5ppFile.writeAttributeToLink(attr_value, attr_name,prefix_path + "/model/Hamiltonian");
+        h5ppFile.writeAttribute(attr_value, attr_name,prefix_path + "/model/Hamiltonian");
         col++;
     }
 }

@@ -75,7 +75,7 @@ void tools::infinite::io::h5dset::write_hamiltonian_params(const class_state_inf
     for (auto &name : state.HA->get_parameter_names()){
         std::string attr_value = name;
         std::string attr_name  = "FIELD_" + std::to_string(col) + "_NAME";
-        h5ppFile.writeAttributeToLink(attr_value, attr_name,sim_name + "/model/2site/Hamiltonian" );
+        h5ppFile.writeAttribute(attr_value, attr_name,sim_name + "/model/2site/Hamiltonian" );
         col++;
     }
 }

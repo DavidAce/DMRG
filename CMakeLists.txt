@@ -24,8 +24,8 @@ option(CMAKE_VERBOSE_MAKEFILE   "Verbose makefile"                              
 #################################################################
 ### Make an "enum" for valid download methods                 ###
 #################################################################
-set(VALID_DOWNLOAD_METHODS hunter conan native none)
-set(DOWNLOAD_METHOD native CACHE STRING "Download method for external dependencies")
+set(VALID_DOWNLOAD_METHODS none find-only conan native)
+set(DOWNLOAD_METHOD find-only CACHE STRING "Download method for external dependencies")
 set_property(CACHE DOWNLOAD_METHOD  PROPERTY STRINGS ${VALID_DOWNLOAD_METHODS})
 if(NOT DOWNLOAD_METHOD IN_LIST VALID_DOWNLOAD_METHODS)
     message(FATAL_ERROR "DOWNLOAD_METHOD must be one of ${VALID_DOWNLOAD_METHODS}")
@@ -265,9 +265,9 @@ endif()
 ###########################################
 ### Fetch or find all the dependencies  ###
 ###########################################
-if(${DOWNLOAD_METHOD} MATCHES "conan")
+if(DOWNLOAD_METHOD MATCHES "conan")
     include(cmake-modules/SetupDependenciesConan.cmake)
-elseif(${DOWNLOAD_METHOD} MATCHES "native")
+elseif(DOWNLOAD_METHOD MATCHES "find|native")
     include(cmake-modules/SetupDependenciesNative.cmake)
 endif()
 include(cmake-modules/PrintTargetInfo.cmake)
@@ -316,7 +316,7 @@ if(ENABLE_TESTS)
             POST_BUILD
             COMMENT "Running Tests"
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failures)
+            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failure)
 endif()
 
 
