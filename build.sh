@@ -13,6 +13,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --download-method          : Download libraries using [ native | conan ] (default = native)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
 -g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
+-G | --generator [=arg]         : CMake generator  | many options... | (default = "CodeBlocks - Unix Makefiles")
    | --gcc-toolchain [=arg]     : Path to GCC toolchain. Use with Clang if it can't find stdlib (defailt = none)
 -h | --help                     : Help. Shows this text.
 -j | --make-threads [=num]      : Number of threads used by Make build (default = 8)
@@ -230,14 +231,17 @@ cat << EOF >&2
     cmake -E make_directory build/$build_type
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type
+          -DBUILD_SHARED_LIBS=$enable_shared
           -DCMAKE_VERBOSE_MAKEFILE=$verbose
           -DDMRG_PRINT_INFO=$verbose
-          -DDOWNLOAD_MISSING=$download_missing  -DDOWNLOAD_METHOD=$download_method
-          -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march
-          -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp
-          -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared
+          -DDOWNLOAD_METHOD=$download_method
+          -DPREFER_CONDA_LIBS:BOOL=$prefer_conda
+          -DMARCH=$march
+          -DENABLE_TESTS:BOOL=$enable_tests
+          -DENABLE_OPENMP=$enable_openmp
+          -DENABLE_MKL=$enable_mkl
           -DGCC_TOOLCHAIN=$gcc_toolchain
-          -G "CodeBlocks - Unix Makefiles"
+           -G $generator
            ../../
     cmake --build . --target $build_target --parallel $make_threads
 EOF
