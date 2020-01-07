@@ -33,7 +33,7 @@ EOF
 
 
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st:v \
+PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:st:v \
                 --long "\
                 help\
                 arch:\
@@ -53,6 +53,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:j:st:v \
                 no-modules\
                 prefer-conda\
                 verbose\
+                generator\
                 extra-flags:\
                 "  -- "$@")
 
@@ -74,6 +75,7 @@ enable_mkl="OFF"
 make_threads=1
 prefer_conda="OFF"
 verbose="OFF"
+generator="CodeBlocks - Unix Makefiles"
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
 #$1 identifies the first argument, and when we use shift we discard the first argument, so $2 becomes $1 and goes again through the case.
 echo "Enabled options:"
@@ -89,6 +91,7 @@ do
     -d|--dry-run)                   dry_run="ON"                    ; echo " * Dry run                  : ON"      ; shift   ;;
     -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
     -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
+    -G|--generator)                 generator=$2                    ; echo " * CMake generator          : $2"      ; shift 2 ;;
        --gcc-toolchain)             gcc_toolchain=$2                ; echo " * GCC toolchain            : $2"      ; shift 2 ;;
     -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
     -s|--enable-shared)             enable_shared="ON"              ; echo " * Link shared libraries    : ON"      ; shift   ;;
@@ -228,6 +231,7 @@ cat << EOF >&2
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type
           -DCMAKE_VERBOSE_MAKEFILE=$verbose
+          -DDMRG_PRINT_INFO=$verbose
           -DDOWNLOAD_MISSING=$download_missing  -DDOWNLOAD_METHOD=$download_method
           -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march
           -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp
@@ -242,24 +246,30 @@ if [ -z "$dry_run" ] ;then
     cmake -E make_directory build/$build_type
     cd build/$build_type
     cmake -DCMAKE_BUILD_TYPE=$build_type \
+          -DBUILD_SHARED_LIBS=$enable_shared \
           -DCMAKE_VERBOSE_MAKEFILE=$verbose \
-          -DDOWNLOAD_MISSING=$download_missing -DDOWNLOAD_METHOD=$download_method \
-          -DPREFER_CONDA_LIBS:BOOL=$prefer_conda -DMARCH=$march \
-          -DENABLE_TESTS:BOOL=$enable_tests  -DENABLE_OPENMP=$enable_openmp \
-          -DENABLE_MKL=$enable_mkl -DBUILD_SHARED_LIBS=$enable_shared \
+          -DDMRG_PRINT_INFO=$verbose \
+          -DDOWNLOAD_METHOD=$download_method \
+          -DPREFER_CONDA_LIBS:BOOL=$prefer_conda \
+          -DMARCH=$march \
+          -DENABLE_TESTS:BOOL=$enable_tests \
+          -DENABLE_OPENMP=$enable_openmp \
+          -DENABLE_MKL=$enable_mkl \
           -DGCC_TOOLCHAIN=$gcc_toolchain \
-           -G "CodeBlocks - Unix Makefiles" \
+           -G $generator \
            ../../
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
-            echo "Exit code: $exit_code"
+            echo "\n\nExit code: $exit_code"
+            echo "\n\nCMakeFiles/CMakeError.log: \n"
             cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
     cmake --build . --target $build_target --parallel $make_threads
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
-            echo "Exit code: $exit_code"
+            echo "\n\nExit code: $exit_code"
+            echo "\n\nCMakeFiles/CMakeError.log: \n"
             cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
@@ -269,7 +279,7 @@ if [ "$enable_tests" = "ON" ] ;then
     if [[ "$build_target" == *"test-"* ]]; then
         ./build/$build_type/tests/$build_target
     else
-       ctest
+       ctest -C Debug --output-on-failure
     fi
 fi
 
