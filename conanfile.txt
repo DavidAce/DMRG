@@ -4,7 +4,7 @@
 
 [requires]
 ceres-solver/2.0.0@davidace/development
-h5pp/0.5.0@davidace/stable
+h5pp/1.1.0@davidace/stable
 eigen/3.3.7@davidace/patched
 
 [generators]
