@@ -1,5 +1,5 @@
-
 #!/bin/bash
+
 PROGNAME=$0
 
 usage() {

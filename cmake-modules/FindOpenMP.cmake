@@ -1,3 +1,4 @@
+
 function(strip_genex input_string output_string)
     set(result_string)
     foreach(elem ${input_string})
@@ -36,8 +37,8 @@ function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_
     endif()
     unset(has_omp_h)
     unset(has_omp_h CACHE)
-    unset(OMP_COMPILES CACHE)
     unset(OMP_COMPILES)
+    unset(OMP_COMPILES CACHE)
 
     check_include_file_cxx(omp.h    has_omp_h)
     include(CheckCXXSourceCompiles)
@@ -68,3 +69,83 @@ function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_
         set(OMP_COMPILES TRUE PARENT_SCOPE)
     endif()
 endfunction()
+
+
+
+
+
+if(NOT OpenMP_FOUND AND NOT TARGET openmp::openmp AND BUILD_SHARED_LIBS)
+    find_package(OpenMP)
+endif()
+
+
+
+if(NOT OpenMP_FOUND)
+
+    list(APPEND omp_lib_candidates gomp omp iomp5)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        # MKL comes with a useable iomp5 library
+        find_path(MKL_ROOT_DIR
+                include/mkl.h
+                HINTS ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS}
+                PATHS
+                $ENV{MKL_DIR}  ${MKL_DIR}
+                $ENV{MKLDIR}   ${MKLDIR}
+                $ENV{MKLROOT}  ${MKLROOT}
+                $ENV{MKL_ROOT} ${MKL_ROOT}
+                $ENV{mkl_root} ${mkl_root}
+                $ENV{EBROOTIMKL}
+                $ENV{HOME}/intel/mkl
+                /opt/intel/mkl
+                /opt/intel
+                $ENV{BLAS_DIR}
+                $ENV{CONDA_PREFIX}
+                /usr/lib/x86_64-linux-gnu
+                /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
+                "Program Files (x86)/Intel/ComposerXE-2011/mkl"
+                PATH_SUFFIXES
+                intel intel/mkl mkl lib
+                )
+
+        find_library(omp_lib_iomp5 NAMES iomp5
+                PATHS
+                /usr/lib/llvm-9
+                /usr/lib/llvm-8
+                /usr/lib/llvm-7
+                /usr
+                ${MKL_ROOT_DIR}
+                /opt/intel/lib/intel64
+                PATH_SUFFIXES
+                include lib local ../intel/lib/intel64
+                )
+        if(omp_lib_iomp5)
+            list(APPEND omp_lib_candidates ${omp_lib_iomp5})
+        endif()
+
+    endif()
+
+
+    foreach(lib ${omp_lib_candidates})
+        check_omp_compiles("-D_OPENMP" "-static;${lib};pthread;rt;dl" "")
+        if(OMP_COMPILES)
+            set(OMP_LIBRARY ${lib})
+            break()
+        endif()
+    endforeach()
+endif()
+
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(OpenMP DEFAULT_MSG OMP_COMPILES)
+
+
+
+if(OMP_COMPILES)
+    add_library(openmp::openmp INTERFACE IMPORTED)
+    if(TARGET OpenMP::OpenMP_CXX)
+        target_link_libraries(openmp::openmp INTERFACE OpenMP::OpenMP_CXX)
+    else()
+        target_link_libraries(openmp::openmp INTERFACE ${OMP_LIBRARY} pthread rt dl)
+        target_compile_definitions(openmp::openmp INTERFACE -D_OPENMP)
+    endif()
+endif()
