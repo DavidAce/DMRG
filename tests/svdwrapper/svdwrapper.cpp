@@ -6,24 +6,13 @@
 #include <io/nmspc_filesystem.h>
 #include <math/class_svd_wrapper.h>
 
-//#include <complex>
-
-
-//#ifdef MKL_AVAILABLE
-//#include <mkl_lapacke.h>
-//#else
-//#include <lapacke.h>
-//#endif
-
-
-
-
 int main(){
     namespace fs = tools::fs;
     using reciter = fs::recursive_directory_iterator;
     for (auto & item : reciter(std::string(TEST_DIR) + "/testmatrices")){
         std::cout <<  "item: " << item << std::endl;
-        h5pp::File file(item.path().string(), h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
+        int logLevel = 0;
+        h5pp::File file(item.path().string(), h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN, logLevel);
         Eigen::MatrixXcd matrix;
         file.readDataset(matrix,"svdmatrix");
         class_SVD SVD;

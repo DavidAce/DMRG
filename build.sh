@@ -280,9 +280,9 @@ fi
 
 if [ "$enable_tests" = "ON" ] ;then
     if [[ "$build_target" == *"test-"* ]]; then
-        ./build/$build_type/tests/$build_target
+        ctest -C $build_type --verbose -R $build_target
     else
-       ctest -C Debug --output-on-failure
+       ctest -C $build_type --output-on-failure
     fi
 fi
 
