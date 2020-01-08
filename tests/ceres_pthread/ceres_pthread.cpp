@@ -5,10 +5,10 @@
 #include "ceres_pthread.h"
 void opt::SolveRosenbrock(){
     google::InitGoogleLogging("ceres_pthread");
+    google::SetStderrLogging(3);
+
     ceres::GradientProblemSolver::Summary summary;
-
     ceres::GradientProblemSolver::Options options = ceres_default_options;
-
     options.line_search_type = ceres::LineSearchType::WOLFE;
     options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
@@ -17,7 +17,7 @@ void opt::SolveRosenbrock(){
     options.max_lbfgs_rank     = 250;
     options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
     options.max_line_search_step_expansion = 1e4;// 100.0;
-    options.min_line_search_step_size = 1e-256;//  std::numeric_limits<double>::epsilon();
+    options.min_line_search_step_size = 1e-14;//  std::numeric_limits<double>::epsilon();
     options.max_line_search_step_contraction = 1e-3;
     options.min_line_search_step_contraction = 0.6;
     options.max_num_line_search_step_size_iterations  = 50;//20;
@@ -27,7 +27,7 @@ void opt::SolveRosenbrock(){
     options.max_solver_time_in_seconds = 60*10;//60*2;
     options.function_tolerance = 1e-4;
     options.gradient_tolerance = 1e-4;
-    options.parameter_tolerance = 1e-256;//std::numeric_limits<double>::epsilon();//1e-12;
+    options.parameter_tolerance = 1e-14;//std::numeric_limits<double>::epsilon();//1e-12;
     options.minimizer_progress_to_stdout = true;
     options.logging_type = ceres::LoggingType::PER_MINIMIZER_ITERATION;
     Eigen::VectorXd parameters = Eigen::VectorXd::Random(100);

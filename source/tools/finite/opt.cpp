@@ -18,7 +18,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     if(not googleLogginghasInitialized){
         google::InitGoogleLogging(tools::log->name().c_str());
         googleLogginghasInitialized = true;
-        google::SetCommandLineOption("GLOG_minloglevel", "3");
+        google::SetStderrLogging(3);
     }
 
     std::stringstream problem_report;
@@ -52,7 +52,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.gradient_tolerance = 1e-4;
     ceres_default_options.parameter_tolerance = 1e-14;//std::numeric_limits<double>::epsilon();//1e-12;
     ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
-    ceres_default_options.logging_type = ceres::LoggingType::SILENT;
+    ceres_default_options.logging_type = ceres::LoggingType::PER_MINIMIZER_ITERATION;
     if(sim_status.simulation_has_got_stuck){
 //        options.min_line_search_step_size = std::numeric_limits<double>::epsilon();
         ceres_default_options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
