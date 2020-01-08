@@ -313,7 +313,7 @@ if(ENABLE_TESTS)
             POST_BUILD
             COMMENT "Running Tests"
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIGURATION> --output-on-failure)
+            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --output-on-failure)
 endif()
 
 
