@@ -47,7 +47,13 @@ endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-conan_add_remote(NAME conan-dmrg INDEX 1
+conan_add_remote(NAME bincrafters
+        URL https://api.bintray.com/conan/bincrafters/public-conan)
+
+conan_add_remote(NAME conan-community
+        URL https://api.bintray.com/conan/conan-community/conan)
+
+conan_add_remote(NAME conan-dmrg
         URL https://api.bintray.com/conan/davidace/conan-dmrg)
 
 
@@ -64,7 +70,7 @@ conan_cmake_run(CONANFILE conanfile.txt
         CONAN_COMMAND ${CONAN_COMMAND}
         SETTINGS compiler.cppstd=17
         SETTINGS "${conan_libcxx}"
-        OUTPUT_QUIET
+        BUILD_TYPE ${CMAKE_BUILD_TYPE}
         BASIC_SETUP CMAKE_TARGETS
         BUILD missing)
 
