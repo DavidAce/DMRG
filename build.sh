@@ -181,8 +181,8 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         export CC=gcc
         export CXX=g++
     elif [ "$compiler" = "Clang" ] ; then
-        export CC=clang-8
-        export CXX=clang-cpp
+        export CC=clang
+        export CXX=clang++
     fi
 
 elif [[ "$HOSTNAME" == *"raken"* ]];then
