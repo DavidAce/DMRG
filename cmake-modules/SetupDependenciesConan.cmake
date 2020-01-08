@@ -1,3 +1,6 @@
+#  Make sure we use DMRG's own find modules
+list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
+
 ##############################################################################
 ###  Optional OpenMP support                                               ###
 ###  Note that Clang has some  trouble with static openmp and that         ###
@@ -5,8 +8,7 @@
 ###  static openmp anyway because I find it useful. Installing             ###
 ###  libiomp5 might help for shared linking.                               ###
 ##############################################################################
-include(cmake-modules/FindOpenMPLibrary.cmake)
-find_package_openmp()
+find_package(OpenMP REQUIRED) # Uses DMRG's own find module
 
 # These packages are not in conan yet
 include(cmake-modules/FindGFortran.cmake)

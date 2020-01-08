@@ -5,8 +5,8 @@ project(DMRG++
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake-modules)
-
+#  Make sure we use DMRG's own find modules
+list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 ################################################################
 ### Set options for compilation                              ###
@@ -42,16 +42,6 @@ else()
     # Use cmake_policy CMP0067 to let try_compile honor current CMAKE_CXX_STANDARD setting.
     # See here https://stackoverflow.com/questions/47213356/cmake-using-corrext-c-standard-when-checking-for-header-files
     cmake_policy(SET CMP0067 NEW)
-endif()
-
-# Set MKLROOT if not defined in environment
-if(ENABLE_MKL AND NOT MKLROOT)
-    if(DEFINED $ENV{MKLROOT})
-        set(MKLROOT $ENV{MKLROOT})
-    else()
-    set(MKLROOT  /opt/intel/mkl)
-    message(STATUS "MKLROOT is not defined. Setting default: ${MKLROOT}")
-    endif()
 endif()
 
 
