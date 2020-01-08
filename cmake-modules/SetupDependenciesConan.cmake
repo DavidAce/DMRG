@@ -55,7 +55,7 @@ conan_add_remote(NAME bincrafters
 conan_add_remote(NAME conan-community
         URL https://api.bintray.com/conan/conan-community/conan)
 
-conan_add_remote(NAME conan-dmrg
+conan_add_remote(NAME conan-dmrg INDEX 1
         URL https://api.bintray.com/conan/davidace/conan-dmrg)
 
 
