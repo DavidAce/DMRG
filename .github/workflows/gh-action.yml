@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Actions
 
 on:
   # Trigger the workflow on push or pull request,
@@ -46,7 +46,6 @@ jobs:
             compiler: clang
             version: "8"
             flags: --download-method=native
-
 
           - name: ubuntu-18.04-clang-9
             os: ubuntu-18.04
@@ -97,7 +96,6 @@ jobs:
             echo "::set-env name=CXX::clang++-${{ matrix.version }}"
           fi
           echo "::set-env name=FC::gfortran"
-
           if [[ "${{ matrix.sources }}" == *"conda"* ]]; then
             wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
             chmod +x miniconda.sh
@@ -136,8 +134,8 @@ jobs:
           # Some commands modify the PATH so we make the modified PATH global.
           echo "::set-env name=PATH::$env:PATH"
       - name: Build
-        run: | 
-          ./build.sh --enable-tests  -a haswell  --build-type=Debug -j 2 --verbose ${{ matrix.flags }}
+        run: |
+          ./build.sh --enable-tests -a haswell --build-type=Debug -j 2 --verbose ${{ matrix.flags }}
       - name: Test
         run: |
           cd build/Debug
