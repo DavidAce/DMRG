@@ -25,7 +25,7 @@ include(cmake-modules/Fetch_arpack++.cmake)                     # LC++ frontend 
 
 ##################################################################
 ### Install conan-modules/conanfile.txt dependencies          ###
-### This uses conan to get spdlog/eigen3/h5pp/ceres           ###
+### This uses conan to get spdlog,eigen3,h5pp,ceres-solver    ###
 ###    ceres-solver/2.0.0@davidace/development                ###
 ###    h5pp/1.1.0@davidace/stable                             ###
 ###    eigen/3.3.7@davidace/patched                           ###
@@ -35,10 +35,12 @@ find_program (
         CONAN_COMMAND
         conan
         HINTS ${CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONAN_PREFIX} $ENV{CONDA_PREFIX}
-        PATHS $ENV{HOME}/anaconda3 $ENV{HOME}/miniconda $ENV{HOME}/.conda
+        PATHS $ENV{HOME}/anaconda3 $ENV{HOME}/miniconda3 $ENV{HOME}/.conda $ENV{HOME}/.local
         PATH_SUFFIXES bin envs/dmrg/bin
 )
-
+message("Found conan: ${CONAN_COMMAND}")
+message("Searched for conan in: ${CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONAN_PREFIX} $ENV{CONDA_PREFIX}
+$ENV{HOME}/anaconda3 $ENV{HOME}/miniconda3 $ENV{HOME}/.conda $ENV{HOME}.local")
 
 # Download automatically, you can also just copy the conan.cmake file
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
