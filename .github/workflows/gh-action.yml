@@ -108,6 +108,9 @@ jobs:
             conda install --yes ${{ matrix.conda }}
           fi
           if [[ "${{ matrix.sources }}" == *"conan"* ]]; then
+            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
+            conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+            conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
             conan user
           fi
           echo "::set-env name=PATH::$PATH"
@@ -123,6 +126,9 @@ jobs:
           }
           if ( "${{ matrix.sources }}" -match "conan" ){
             scoop install conan --global
+            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
+            conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+            conan remote add conan-community https://api.bintray.com/conan/conan-community/conan
             refreshenv
           }
           echo "::set-env name=CC::${{ matrix.compiler }}"
