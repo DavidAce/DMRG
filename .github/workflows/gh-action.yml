@@ -29,7 +29,7 @@ jobs:
             os: ubuntu-18.04
             compiler: gcc
             version: "8"
-            flags: --enable-tests  -a haswell  --build-type=Debug
+            flags: --enable-tests --download-method=find-only
             sources: apt
             apt: gcc-8 g++-8 gfortran-8 libsz2 zlibc libopenblas-dev libarpack2-dev libarpack++2-dev liblapacke-dev libhdf5-dev libspdlog-dev libgflags-dev libgoogle-glog-dev libceres-dev libunwind-dev lzma libaec-dev
           
@@ -39,28 +39,28 @@ jobs:
             version: "9"
             sources: conda conan
             conda: conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
-            flags: --download-method=conan --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug
+            flags: --download-method=conan --prefer-conda
 
           - name: ubuntu-18.04-clang-8
             os: ubuntu-18.04
             compiler: clang
             version: "8"
-            flags: --download-method=native --enable-tests  -a haswell  --build-type=Debug -j 2
+            flags: --download-method=native
 
 
           - name: ubuntu-18.04-clang-9
             os: ubuntu-18.04
             compiler: clang
             version: "9"
-            flags: --download-method=native --enable-tests  -a haswell  --build-type=Debug -j 2
+            flags: --download-method=native
 
           - name: ubuntu-18.04-clang-9-conda
             os: ubuntu-18.04
             compiler: clang
             version: "9"
             sources: conda
-            conda: hdf5 hdf5-static eigen spdlog
-            flags: --download-method=native --enable-tests  -a haswell  --build-type=Debug -j 2
+            conda: spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+            flags: --download-method=native --prefer-conda
 
           - name: ubuntu-18.04-clang-9-conan
             os: ubuntu-18.04
@@ -68,7 +68,7 @@ jobs:
             version: "9"
             sources: conda conan
             conda: conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
-            flags: --prefer-conda --download-method=conan --enable-tests  -a haswell  -j 2 --build-type=Debug
+            flags: --download-method=conan --prefer-conda
           #- name: windows-2019-clang
           #  os: windows-2019
           #  compiler: clang
@@ -78,6 +78,7 @@ jobs:
           #  compiler: gcc  
     steps:
       - uses: actions/checkout@v1
+      - uses: ilammy/msvc-dev-cmd@v1
       - name: Install (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -108,37 +109,28 @@ jobs:
           fi
           if [[ "${{ matrix.sources }}" == *"conan"* ]]; then
             conan user
-            conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
           fi
       - name: Install (Windows)
         if: runner.os == 'Windows'
         shell: powershell
         run: |
           Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
-          scoop install ninja --global
-          if ("${{ matrix.compiler }}".StartsWith("clang")) {
-            scoop install llvm --global
+          if ( '${{ matrix.generator }}' -match "Ninja" ){
+            scoop install ninja --global
+            refreshenv
           }
-          if ("${{ matrix.compiler }}" -eq "gcc") {
-            # Chocolatey GCC is broken on the windows-2019 image.
-            # See: https://github.com/DaanDeMeyer/doctest/runs/231595515
-            # See: https://github.community/t5/GitHub-Actions/Something-is-wrong-with-the-chocolatey-installed-version-of-gcc/td-p/32413
-            scoop install gcc --global
-            echo "::set-env name=CC::gcc"
-            echo "::set-env name=CXX::g++"
-          } elseif ("${{ matrix.compiler }}" -eq "clang") {
-            echo "::set-env name=CC::clang"
-            echo "::set-env name=CXX::clang++"
-          } else {
-            echo "::set-env name=CC::${{ matrix.compiler }}"
-            echo "::set-env name=CXX::${{ matrix.compiler }}"
+          if ( "${{ matrix.sources }}" -match "conan" ){
+            scoop install conan --global
+            refreshenv
           }
-          # Scoop modifies the PATH so we make the modified PATH global.
+          echo "::set-env name=CC::${{ matrix.compiler }}"
+          echo "::set-env name=CXX::${{ matrix.compiler }}"
+          # Some commands modify the PATH so we make the modified PATH global.
           echo "::set-env name=PATH::$env:PATH"
       - name: Build
         run: | 
-          ./build.sh --verbose ${{ matrix.flags }}
+          ./build.sh --enable-tests  -a haswell  --build-type=Debug -j 2 --verbose ${{ matrix.flags }}
       - name: Test
         run: |
           cd build/Debug
-          ctest
+          ctest -C Debug --output-on-failure
