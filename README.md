@@ -1,5 +1,5 @@
- [![Build Status](https://travis-ci.org/DavidAce/DMRG.svg?branch=master)](https://travis-ci.org/DavidAce/DMRG)
-[![Build Status](https://github.com/DavidAce/DMRG/workflows/C%2FC++%20CI/badge.svg)](https://github.com/DavidAce/DMRG/actions)
+[![Build Status](https://travis-ci.org/DavidAce/DMRG.svg?branch=master)](https://travis-ci.org/DavidAce/DMRG)
+[![Build Status](https://github.com/DavidAce/DMRG/workflows/Actions/badge.svg)](https://github.com/DavidAce/DMRG/actions)
 
 
 # DMRG++
