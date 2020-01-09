@@ -13,8 +13,6 @@
 
 namespace rn{
 
-
-
     namespace internal {
         // Make a random number engine
         //    extern std::mt19937 rng;
@@ -28,7 +26,6 @@ namespace rn{
     }
 
     //Random functions
-
     extern void seed(std::optional<long> n = std::nullopt);
     extern int uniform_integer_01();
     extern int uniform_integer_box(const int min, const int max);

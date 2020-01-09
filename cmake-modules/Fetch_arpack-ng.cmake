@@ -71,15 +71,14 @@ if(NOT TARGET arpack::arpack)
             CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
             CMAKE_ARGS
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
             -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
             -DCMAKE_C_FLAGS=${ARPACK_FLAGS}
             -DCMAKE_Fortran_FLAGS=${ARPACK_FLAGS}
-            -DEXAMPLES=ON
-            -DCMAKE_BUILD_TYPE=Release
+            -DEXAMPLES=OFF
             -DMPI=OFF
             -DINTERFACE64=OFF
-            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
             -DBLAS_LIBRARIES=${EXPANDED_BLAS_GENERATOR}
             -DLAPACK_LIBRARIES=${EXPANDED_LAPACK_GENERATOR}
             DEPENDS blas::blas lapack::lapack gfortran::gfortran
