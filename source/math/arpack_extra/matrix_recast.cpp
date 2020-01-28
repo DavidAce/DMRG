@@ -70,8 +70,8 @@ void matrix_recast<Scalar>::check_if_sparse() {
 template<typename Scalar>
 DenseMatrixProduct<double> matrix_recast<Scalar>::get_as_real_dense() {
     if constexpr(std::is_same<Scalar, double>::value){
-        if (pruned){return DenseMatrixProduct<double>(matrix_pruned.data(),L);}
-        else       {return DenseMatrixProduct<double>(matrix_ptr,L);}
+        if (pruned){return DenseMatrixProduct<double>(matrix_pruned.data(),L,true);}
+        else       {return DenseMatrixProduct<double>(matrix_ptr,L,true);}
     }else{
 //        assert(isReal and "ERROR: The given matrix has a nonzero imaginary part. Can't convert to real.");
         if (not isReal){
@@ -80,7 +80,7 @@ DenseMatrixProduct<double> matrix_recast<Scalar>::get_as_real_dense() {
         }        Eigen::MatrixXd matrix_recast;
         if (pruned){matrix_recast = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_pruned.data(),L,L).real();}
         else       {matrix_recast = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L).real();}
-        return DenseMatrixProduct<double>(matrix_recast.data(),L);
+        return DenseMatrixProduct<double>(matrix_recast.data(),L,true);
 
 
     }
@@ -93,25 +93,26 @@ DenseMatrixProduct<std::complex<double>> matrix_recast<Scalar>::get_as_cplx_dens
         matrix_recast.setZero();
         if (pruned){matrix_recast.real() = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_pruned.data(),L,L);}
         else       {matrix_recast.real() = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L);}
-        return DenseMatrixProduct<std::complex<double>>(matrix_recast.data(),L);
+        return DenseMatrixProduct<std::complex<double>>(matrix_recast.data(),L,true);
     }else{
-        return DenseMatrixProduct<std::complex<double>>(matrix_ptr,L);
+        return DenseMatrixProduct<std::complex<double>>(matrix_ptr,L,true);
     }
 }
 
 template<typename Scalar>
 SparseMatrixProduct<double> matrix_recast<Scalar>::get_as_real_sparse() {
     if constexpr(std::is_same<Scalar, double>::value){
-        if(pruned){return SparseMatrixProduct<double>(matrix_pruned.data(),L);}
-        else      {return SparseMatrixProduct<double>(matrix_ptr,L);}
+        if(pruned){return SparseMatrixProduct<double>(matrix_pruned.data(),L,true);}
+        else      {return SparseMatrixProduct<double>(matrix_ptr,L,true);}
     }else{
         if (not isReal){
             double sum = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L).imag().cwiseAbs().sum();
             std::cerr << "WARNING: The given matrix has a nonzero imaginary part, yet converting to real. Imag sum: " << sum << std::endl;
-        }        Eigen::MatrixXd matrix_recast;
+        }
+        Eigen::MatrixXd matrix_recast;
         if(pruned){matrix_recast = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_pruned.data(),L,L).real();}
         else      {matrix_recast = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L).real();}
-        return SparseMatrixProduct<double>(matrix_recast);
+        return SparseMatrixProduct<double>(matrix_recast.data(),L,true);
     }
 }
 
@@ -122,10 +123,10 @@ SparseMatrixProduct<std::complex<double>> matrix_recast<Scalar>::get_as_cplx_spa
         matrix_recast.setZero();
         if(pruned){matrix_recast.real() = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_pruned.data(),L,L);}
         else      {matrix_recast.real() = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L);}
-        return SparseMatrixProduct<std::complex<double>>(matrix_recast);
+        return SparseMatrixProduct<std::complex<double>>(matrix_recast.data(),L,true);
     }else{
-        if(pruned){return SparseMatrixProduct<std::complex<double>>(matrix_pruned.data(),L);}
-        else      {return SparseMatrixProduct<std::complex<double>>(matrix_ptr,L);}
+        if(pruned){return SparseMatrixProduct<std::complex<double>>(matrix_pruned.data(),L,true);}
+        else      {return SparseMatrixProduct<std::complex<double>>(matrix_ptr,L,true);}
     }
 }
 

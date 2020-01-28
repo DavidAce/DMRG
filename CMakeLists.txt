@@ -225,6 +225,7 @@ message("===               DMRG++: SUMMARY OF CMAKE CONFIGURATION               
 message("=============================================================================")
 message(STATUS "CMAKE_INSTALL_PREFIX         : ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "PREFER_CONDA_LIBS            : ${PREFER_CONDA_LIBS}")
+message(STATUS "DOWNLOAD_METHOD              : ${DOWNLOAD_METHOD}")
 message(STATUS "ENABLE_OPENMP                : ${ENABLE_OPENMP}")
 message(STATUS "ENABLE_MKL                   : ${ENABLE_MKL}")
 message(STATUS "ENABLE_LTO                   : ${ENABLE_LTO}")

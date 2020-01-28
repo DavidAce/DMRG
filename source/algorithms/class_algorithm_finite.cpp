@@ -24,6 +24,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
 
 
     state->set_chi_lim(2); //Can't call chi_init() <-- it's a pure virtual function
+    if(state->hasNaN()) throw std::runtime_error("State has NAN's before initializing it");
 
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
@@ -167,9 +168,9 @@ void class_algorithm_finite::run_postprocessing(){
 }
 
 
-void class_algorithm_finite::move_center_point(){
+void class_algorithm_finite::move_center_point(size_t num_moves){
     log->trace("Moving center point ");
-    size_t move_steps = state->active_sites.empty() ? 1 : std::max(1ul,state->active_sites.size()-2ul);
+    size_t move_steps = state->active_sites.empty() ? num_moves : std::max(1ul,state->active_sites.size()-2ul);
     state->clear_cache();
     try{
         for(size_t i = 0; i < move_steps;i++){
@@ -215,28 +216,38 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
     if(not sim_status.chi_lim_has_reached_chi_max){
         if(chi_grow()){
             // Here the settings specify to grow the bond dimension limit progressively during the simulation
-            // Only do this if the simulation is stuck.
+            // Only do this if the state is limited by bond dimension when
+            // * the simulation has just started (bond dimension < 16)
+            // * the simulation is stuck
+            bool try_grow = (state->get_chi_lim() < 16 and state->position_is_any_edge())
+                            or  sim_status.simulation_has_stuck_for >= max_stuck_iters -2;
 
-//            if(sim_status.simulation_has_stuck_for >= max_stuck_iters){ //Do a bond-dim update after having tried careful "direct" and subspace for some sweeps
-//            if(sim_status.simulation_has_to_stop){ //Do a bond-dim update after having tried careful "direct" and subspace for some sweeps
-            if(sim_status.simulation_has_stuck_for >= max_stuck_iters -2){ //Do a bond-dim update after having tried careful "direct" and subspace for some sweeps
-                size_t trunc_bond_count = (size_t)  std::count_if(state->get_truncation_errors().begin(), state->get_truncation_errors().end(),
-                                                                  [](auto const& val){ return val > std::pow(0.5*settings::precision::svd_threshold, 2); });
-                auto bond_dims = tools::finite::measure::bond_dimensions(*state);
-                size_t bond_at_lim_count = (size_t)  std::count_if(bond_dims.begin(), bond_dims.end(),
-                                                                   [this](auto const& val){ return val >= (size_t)state->get_chi_lim(); });
+            if(try_grow){ //Do a bond-dim update after having tried careful "direct" and subspace for some sweeps
+                size_t trunc_bond_count = state->num_sites_truncated(0.5*settings::precision::svd_threshold);
+                size_t bond_at_lim_count = state->num_bonds_at_limit();
                 log->debug("Truncation errors: {}", state->get_truncation_errors());
-                log->debug("Bond dimensions  : {}", bond_dims);
+                log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
                 log->debug("Truncated bond count: {} ", trunc_bond_count);
                 log->debug("Bond at limit  count: {} ", bond_at_lim_count);
-                if(trunc_bond_count > 0 and bond_at_lim_count > 0){
+                if(state->is_bond_limited()){
+                    if(state->is_damped()){
+                        log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");
+                        return;
+                    }
+                    if(state->is_perturbed()){
+                        log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
+                        return;
+                    }
                     //Write final results before updating bond dimension chi
                     write_state(true);
                     write_measurements(true);
                     write_sim_status(true);
                     write_profiling(true);
-
-                    long chi_new_limit = std::min(state->get_chi_max(), state->get_chi_lim() * 2);
+                    long chi_new_limit = 1;
+                    if(state->get_chi_lim() < 16)
+                        chi_new_limit = std::min(state->get_chi_max(), state->get_chi_lim() + 1);
+                    else
+                        chi_new_limit = std::min(state->get_chi_max(), state->get_chi_lim() * 2);
                     log->info("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_new_limit);
                     state->set_chi_lim(chi_new_limit);
                     clear_saturation_status();
@@ -255,7 +266,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
 
                 }
             }else{
-                log->debug("Not stuck for long enough. Stuck sweeps = {}, will update when stuck sweeps = {}", sim_status.simulation_has_stuck_for , max_stuck_iters - 1);
+                log->debug("Not stuck for long enough. Stuck sweeps = {}, will increase bond dimensions when stuck sweeps = {}", sim_status.simulation_has_stuck_for , max_stuck_iters - 1);
                 log->debug("Kept current bond dimension limit {}", state->get_chi_lim());
 
             }
@@ -432,7 +443,7 @@ void class_algorithm_finite::clear_saturation_status(){
     sim_status.simulation_has_succeeded       = false;
     sim_status.simulation_has_stuck_for       = 0;
     has_projected = false;
-
+    has_damped = false;
 }
 
 

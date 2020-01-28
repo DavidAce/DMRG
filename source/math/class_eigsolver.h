@@ -7,10 +7,11 @@
 #include "math/arpack_extra/arpackpp_solver.h"
 #include "math/arpack_extra/matrix_recast.h"
 #include "nmspc_eigutils.h"
+#include <Eigen/Core>
 
 template<typename T> class DenseMatrixProduct;
 template<typename T> class StlMatrixProduct;
-template<typename T> class SparseMatrixProduct;
+template<typename T,bool> class SparseMatrixProduct;
 template<typename T> class DenseHamiltonianProduct;
 
 
@@ -365,15 +366,15 @@ void class_eigsolver::eigs (const Scalar *matrix,
     Type type = is_cplx ? Type::CPLX : Type::REAL;
     eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     if constexpr(storage == Storage::DENSE){
-        auto matrix_dense = DenseMatrixProduct<Scalar> (matrix,L);
+        auto matrix_dense = DenseMatrixProduct<Scalar> (matrix,L,true);
         arpackpp_solver<DenseMatrixProduct<Scalar>> solver(matrix_dense, solverConf, solution,residual_);
         solver.eigs();
     }else if constexpr (storage == Storage::SPARSE){
-        auto matrix_sparse = SparseMatrixProduct<Scalar> (matrix,L);
+        auto matrix_sparse = SparseMatrixProduct<Scalar> (matrix,L,true);
         arpackpp_solver<SparseMatrixProduct<Scalar>> solver(matrix_sparse, solverConf, solution,residual_);
         solver.eigs();
     }else if constexpr (storage == Storage::STL){
-        auto matrix_stl = StlMatrixProduct<Scalar> (matrix,L);
+        auto matrix_stl = StlMatrixProduct<Scalar> (matrix,L,true);
         arpackpp_solver<StlMatrixProduct<Scalar>> solver(matrix_stl, solverConf, solution,residual_);
         solver.eigs();
     }

@@ -21,15 +21,15 @@ void tools::finite::mpo::initialize(class_state_finite & state, const size_t len
 
 void tools::finite::mpo::randomize(class_state_finite &state) {
     tools::log->trace("Setting random fields in MPO's");
-    std::vector<std::vector<double>> all_params;
+    std::vector<class_model_base::Parameters> all_params;
 
     for (auto &mpo : state.MPO_L){
         mpo->randomize_hamiltonian();
-        all_params.push_back(mpo->get_parameter_values());
+        all_params.emplace_back(mpo->get_parameters());
     }
     for (auto &mpo : state.MPO_R){
         mpo->randomize_hamiltonian();
-        all_params.push_back(mpo->get_parameter_values());
+        all_params.emplace_back(mpo->get_parameters());
     }
 
     for (auto &mpo : state.MPO_L){
@@ -37,9 +37,54 @@ void tools::finite::mpo::randomize(class_state_finite &state) {
     }
     for (auto &mpo : state.MPO_R){
         mpo->set_full_lattice_parameters(all_params,false);
+    }
+
+    for (size_t pos = 0; pos < state.get_length(); pos++){
+        if(state.get_MPO(pos).hasNaN()) throw std::runtime_error("MPO " + std::to_string(pos) + " has initialized with NAN's");
     }
 }
 
+
+void tools::finite::mpo::perturb_hamiltonian(class_state_finite &state, double coupling_ptb, double field_ptb, PerturbMode perturbMode){
+    std::vector<class_model_base::Parameters> all_params;
+    for (auto &mpo : state.MPO_L){
+        mpo->set_perturbation(coupling_ptb, field_ptb, perturbMode);
+        all_params.push_back(mpo->get_parameters());
+    }
+    for (auto &mpo : state.MPO_R){
+        mpo->set_perturbation(coupling_ptb, field_ptb, perturbMode);
+        all_params.push_back(mpo->get_parameters());
+    }
+    for (auto &mpo : state.MPO_L){
+        mpo->set_full_lattice_parameters(all_params, false);
+    }
+    for (auto &mpo : state.MPO_R){
+        mpo->set_full_lattice_parameters(all_params, false);
+    }
+
+    state.clear_cache();
+    state.clear_measurements();
+    tools::finite::mps::rebuild_environments(state);
+    if (coupling_ptb == 0.0 and field_ptb == 0.0 and state.is_perturbed())
+        throw std::runtime_error("State: Should have unperturbed!");
+}
+
+void tools::finite::mpo::damp_hamiltonian(class_state_finite &state, double coupling_damp, double field_damp){
+    for (auto &mpo : state.MPO_L){
+        mpo->set_coupling_damping(coupling_damp);
+        mpo->set_field_damping(field_damp);
+    }
+    for (auto &mpo : state.MPO_R){
+        mpo->set_coupling_damping(coupling_damp);
+        mpo->set_field_damping(field_damp);
+    }
+
+    state.clear_cache();
+    state.clear_measurements();
+    tools::finite::mps::rebuild_environments(state);
+    if (coupling_damp == 0.0 and field_damp == 0.0 and state.is_damped())
+        throw std::runtime_error("State: Should have undamped!");
+}
 
 
 void tools::finite::mpo::reduce_mpo_energy(class_state_finite &state){

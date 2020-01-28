@@ -9,8 +9,8 @@
 #include "general/nmspc_tensor_extra.h"
 #include <spdlog/fmt/fmt.h>
 
-//using namespace Textra;
-//using namespace std;
+// using namespace Textra;
+// using namespace std;
 
 /*! \brief Environment block och type Left or Right.
  *
@@ -33,61 +33,73 @@
 class class_mps_site;
 class class_model_base;
 
-class class_environment_base{
-public:
+class class_environment_base {
+    public:
     using Scalar = std::complex<double>;
-protected:
-    std::optional<size_t> position;
-    bool edge_has_been_set = false;
-    virtual void enlarge      (const Eigen::Tensor<Scalar,3>  & MPS, const Eigen::Tensor<Scalar, 4> &MPO) = 0;
-public:
-    std::string side;
-    size_t sites = 0;                               /*!< Number of particles that have been contracted into this environment. */
-    explicit class_environment_base(std::string side_, size_t position_);
-    explicit class_environment_base(std::string side_, const class_mps_site & MPS, const class_model_base &MPO);
 
-    virtual bool isReal () const = 0;
-    virtual void set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO)                   = 0;
-    void set_position(const size_t position_){position = position_;}
-    size_t get_position() const {
-        if(position) {return position.value();}
-        else{throw std::runtime_error(fmt::format("Position hasn't been set on environment side {}", side));}
+    protected:
+    std::optional<size_t> position;
+    bool                  edge_has_been_set                                                                 = false;
+    virtual void          enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO) = 0;
+
+    public:
+    std::string side;
+    size_t      sites = 0; /*!< Number of particles that have been contracted into this environment. */
+    explicit class_environment_base(std::string side_, size_t position_);
+    explicit class_environment_base(std::string side_, const class_mps_site &MPS, const class_model_base &MPO);
+
+    virtual bool isReal() const                                                        = 0;
+    virtual bool hasNaN() const                                                        = 0;
+    virtual void assertValidity() const                                                = 0;
+    virtual void set_edge_dims(const class_mps_site &MPS, const class_model_base &MPO) = 0;
+    void         set_position(const size_t position_) { position = position_; }
+    size_t       get_position() const {
+        if(position) {
+            return position.value();
+        } else {
+            throw std::runtime_error(fmt::format("Position hasn't been set on environment side {}", side));
+        }
     }
 };
 
-class class_environment final : public class_environment_base{
-private:
-    void enlarge      (const Eigen::Tensor<Scalar,3>  & MPS, const Eigen::Tensor<Scalar, 4> &MPO)   final;
-public:
-    Eigen::Tensor<Scalar,3> block;                 /*!< The environment block. */
+class class_environment final : public class_environment_base {
+    private:
+    void enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO) final;
+
+    public:
+    Eigen::Tensor<Scalar, 3> block; /*!< The environment block. */
     using class_environment_base::class_environment_base;
-    explicit class_environment(std::string side_, const class_mps_site & MPS, const class_model_base &MPO);
-    [[nodiscard]] class_environment enlarge(const class_mps_site & MPS, const class_model_base &MPO);
+    explicit class_environment(std::string side_, const class_mps_site &MPS, const class_model_base &MPO);
+    [[nodiscard]] class_environment enlarge(const class_mps_site &MPS, const class_model_base &MPO);
 
-    bool isReal () const                                                                            final;
-    void set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO)                     final;
-
+    bool isReal() const final;
+    bool hasNaN() const final;
+    void assertValidity() const final;
+    void set_edge_dims(const class_mps_site &MPS, const class_model_base &MPO) final;
 };
 
+class class_environment_var final : public class_environment_base {
+    private:
+    void enlarge(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO) final;
 
-class class_environment_var final : public class_environment_base{
-private:
-    void enlarge      (const Eigen::Tensor<Scalar,3>  & MPS, const Eigen::Tensor<Scalar, 4> &MPO)   final;
-public:
-    Eigen::Tensor<Scalar,4> block;                 /*!< The environment block. */
+    public:
+    Eigen::Tensor<Scalar, 4> block; /*!< The environment block. */
     using class_environment_base::class_environment_base;
-    explicit class_environment_var(std::string side_, const class_mps_site & MPS, const class_model_base &MPO);
-    [[nodiscard]] class_environment_var enlarge(const class_mps_site & MPS, const class_model_base &MPO);
-    bool isReal () const                                                                            final;
-    void set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO)                     final;
+    explicit class_environment_var(std::string side_, const class_mps_site &MPS, const class_model_base &MPO);
+    [[nodiscard]] class_environment_var enlarge(const class_mps_site &MPS, const class_model_base &MPO);
+
+    bool isReal() const final;
+    bool hasNaN() const final;
+    void assertValidity() const final;
+    void set_edge_dims(const class_mps_site &MPS, const class_model_base &MPO) final;
 };
 
 //
 //
-//class class_environment_var{
-//public:
+// class class_environment_var{
+// public:
 //    using Scalar = std::complex<double>;
-//private:
+// private:
 //    std::optional<size_t> position;
 //    bool edge_has_been_set = false;
 //    void enlarge(const Eigen::Tensor<Scalar,3>  & MPS, const Eigen::Tensor<Scalar,4> &MPO);
@@ -95,7 +107,7 @@ public:
 ////    void set_edge_dims(const class_mps_site & MPS, const Eigen::Tensor<Scalar, 4> &MPO);
 //    void set_edge_dims(const Eigen::Tensor<Scalar,3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO);
 //    void set_edge_dims(const int mpsDim, const int mpoDim);
-//public:
+// public:
 //    size_t sites = 0;                                      /*!< Number of particles that have been contracted into this left environment. */
 //    std::string side;
 //    Eigen::Tensor<Scalar,4> block;                         /*!< The environment block. */

@@ -18,6 +18,7 @@ void tools::finite::mps::normalize(class_state_finite & state, const std::option
     size_t num_moves = 2*(state.get_length()-2);
     size_t chi_lim = state.get_chi_lim();
     if(chi_lim_opt.has_value()) chi_lim = chi_lim_opt.value();
+    if(state.hasNaN()) throw std::runtime_error("State has NAN's before normalization");
     tools::log->trace("Norm before normalization = {:.16f}", tools::finite::measure::norm(state));
     tools::log->trace("Bond dimensions before normalization: {}", tools::finite::measure::bond_dimensions(state));
 
@@ -59,6 +60,7 @@ void tools::finite::mps::normalize(class_state_finite & state, const std::option
     }
     tools::common::profile::t_svd.toc();
     state.clear_measurements();
+    if(state.hasNaN()) throw std::runtime_error("State has NAN's after normalization");
     tools::log->trace("Norm after normalization = {:.16f}", tools::finite::measure::norm(state));
     tools::log->trace("Bond dimensions after  normalization: {}", tools::finite::measure::bond_dimensions(state));
 
@@ -359,6 +361,11 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
 //        class_environment_var L2 = ENV2_L.back();
 //        ENV_L .back().enlarge(MPS_L.back(), MPO_L.back());
 //        ENV2_L.back().enlarge(MPS_L.back(), MPO_L.back());
+
+//        tools::log->debug("Clearing damping on site {}", MPO_R.front()->get_position());
+//        MPO_R.front()->set_coupling_damping(0.0); // Clear damping as you go
+//        MPO_R.front()->set_field_damping(0.0);   // Clear damping as you go
+
         ENV_L .emplace_back(ENV_L .back().enlarge(MPS_L.back(), *MPO_L.back()));
         ENV2_L.emplace_back(ENV2_L.back().enlarge(MPS_L.back(), *MPO_L.back()));
         MPS_L.emplace_back(class_mps_site(MPS_R.front().get_M(), LC, MPS_R.front().get_position()));
@@ -379,6 +386,11 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
 //        class_environment_var R2 = ENV2_R.front();
 //        R .enlarge(MPS_R.front(), MPO_R.front()->MPO());
 //        R2.enlarge(MPS_R.front(), MPO_R.front()->MPO());
+
+//        tools::log->debug("Clearing damping on site {}", MPO_L.back()->get_position());
+//        MPO_L.back()->set_coupling_damping(0.0); // Clear damping as you go
+//        MPO_L.back()->set_field_damping(0.0);   // Clear damping as you go
+
         ENV_R .emplace_front(ENV_R .front().enlarge(MPS_R.front(), *MPO_R.front()));
         ENV2_R.emplace_front(ENV2_R.front().enlarge(MPS_R.front(), *MPO_R.front()));
         MPS_R.emplace_front(class_mps_site(MPS_L.back().get_M(), LC, MPS_L.back().get_position()));

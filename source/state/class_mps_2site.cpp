@@ -73,6 +73,7 @@ class_mps_2site::class_mps_2site(const class_mps_2site &other)
 
 
 bool class_mps_2site::isReal()const {return MPS_A->isReal() and MPS_B->isReal();}
+bool class_mps_2site::hasNaN()const {return MPS_A->hasNaN() or MPS_B->hasNaN();}
 long class_mps_2site::chiA () const {return MPS_A->get_L().dimension(0);}
 long class_mps_2site::chiB () const {return MPS_B->get_L().dimension(0);}
 long class_mps_2site::chiC () const {return MPS_A->get_LC().dimension(0);}

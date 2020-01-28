@@ -23,7 +23,7 @@ public:
     constexpr static bool  can_shift = true;
 private:
 
-    std::vector<Scalar> A_stl;           // The actual matrix. Given matrices will be copied into this one.
+    std::vector<Scalar> A_stl;           // The actual matrix. Given matrices will be copied into this one if desired
     const Scalar *A_ptr;                 // A pointer to the matrix, to allow optional copying of the matrix. Note that PartialPivLU stores LU in A.
     const int L;                         // The linear matrix dimension
     eigutils::eigSetting::Form form;     // Chooses SYMMETRIC / NONSYMMETRIC mode
@@ -40,19 +40,9 @@ public:
     StlMatrixProduct(
             const Scalar * const A_,
             const int L_,
+            const bool copy_data,
             const eigutils::eigSetting::Form form_ = eigutils::eigSetting::Form::SYMMETRIC,
-            const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R,
-            const bool copy_data = false
-
-    ): A_ptr(A_) ,L(L_), form(form_), side(side_)
-    {
-        if (copy_data){
-            A_stl.resize(L*L);
-            std::copy(A_ptr,A_ptr + L*L, A_stl.begin());
-            A_ptr = A_stl.data();
-        }
-        init_profiling();
-    }
+            const eigutils::eigSetting::Side side_ = eigutils::eigSetting::Side::R);
 
     ~StlMatrixProduct();
 

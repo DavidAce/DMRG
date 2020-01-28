@@ -18,7 +18,6 @@ public:
     using class_algorithm_finite::class_algorithm_finite;
     explicit class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
 
-    bool   projected_during_saturation  = false;
     void run_simulation()                                        final;
     void check_convergence()                                     final;
     bool   sim_on()                                              final;

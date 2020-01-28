@@ -63,7 +63,7 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
     std::bitset<maxbits> bs (state_number);
     std::vector<int>  bs_vec;
     std::vector<std::string> ud_vec;
-    for(int i = 0; i < state.get_length() ; i++ ) bs_vec.emplace_back(bs[i]) ;
+    for(size_t i = 0; i < state.get_length() ; i++ ) bs_vec.emplace_back(bs[i]) ;
     std::string axis = get_axis(parity_sector);
     int sector       = get_sign(parity_sector);
     Eigen::Tensor<Scalar,1> L (1);

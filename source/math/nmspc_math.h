@@ -161,18 +161,33 @@ namespace math
 
     /*! \brief MatLab-style linearly spaced array
     *   \param num number of linearly spaced values
-    *   \param min minimum value in range
-    *   \param max maximum value in range
+    *   \param a first value in range
+    *   \param b last value in range
     *   \return std::vector<T2>. Example,  <code> Linspaced(5,1,5) </code> gives a std::vector<int>: <code> [1,2,3,4,5] </code>
     */
-    template <typename T1, typename T2>
-    inline std::vector<T2> LinSpaced(T1 num, T2 min, T2 max )
-
+    inline std::vector<double> LinSpaced(std::size_t N, double a, double b )
     {
-        static_assert(std::is_integral<T1>::value && "math::LinSpaced -- Given type is not integral!");
-        Eigen::Array<T2, Eigen::Dynamic, 1> temp =  Eigen::Array<T2, Eigen::Dynamic, 1> :: LinSpaced(num, min, max);
-        return std::vector<T2> (temp.data(), temp.data() + temp.size());
+        double h = (b - a) / static_cast<double>(N-1);
+        std::vector<double> xs(N);
+        double val = a;
+        for(auto & x : xs){
+            x = val;
+            val+=h;
+        }
+        return xs;
     }
+
+
+    inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0)
+    {
+        double expA = std::pow(base,a);
+        double expB = std::pow(base,b);
+        auto vec = LinSpaced(N,expA,expB);
+        for (auto & val : vec) val = std::abs(std::log(val)/std::log(base));
+        return vec;
+    }
+
+
 
 
     /*! \brief Product operator for containers such as vector

@@ -5,8 +5,8 @@
 #pragma once
 
 #include <experimental/type_traits>
-#include <Eigen/Core>
-#include <unsupported/Eigen/CXX11/Tensor>
+//#include <Eigen/Core>
+//#include <unsupported/Eigen/CXX11/Tensor>
 
 namespace TypeCheck{
     template <typename T> using Data_t          = decltype(std::declval<T>().data());
@@ -33,28 +33,28 @@ namespace TypeCheck{
     struct is_specialization<Ref<Args...>, Ref>: std::true_type {};
 
 
-    template<typename T> struct is_eigen_tensor : public std::false_type {};
-    template<typename Scalar, int rank, int storage, typename IndexType>
-    struct is_eigen_tensor<Eigen::Tensor<Scalar, rank, storage,IndexType>> : public std::true_type{};
+//    template<typename T> struct is_eigen_tensor : public std::false_type {};
+//    template<typename Scalar, int rank, int storage, typename IndexType>
+//    struct is_eigen_tensor<Eigen::Tensor<Scalar, rank, storage,IndexType>> : public std::true_type{};
 
 
 //////
 
-    template<typename T> struct is_eigen_matrix : public std::false_type {};
-    template<typename T, int rows, int cols, int StorageOrder> struct is_eigen_matrix<Eigen::Matrix<T,rows,cols,StorageOrder>> : public std::true_type {};
-
-    template<typename T> struct is_eigen_array : public std::false_type {};
-    template<typename T, int rows, int cols, int StorageOrder> struct is_eigen_array<Eigen::Array<T,rows,cols,StorageOrder>> : public std::true_type {};
-
-    template<typename T>
-    constexpr bool is_eigen_matrix_or_array(){
-        if constexpr(is_eigen_matrix<T>::value or
-                     is_eigen_array<T>::value ){
-            return true;
-        }else{
-            return false;
-        }
-    }
+//    template<typename T> struct is_eigen_matrix : public std::false_type {};
+//    template<typename T, int rows, int cols, int StorageOrder> struct is_eigen_matrix<Eigen::Matrix<T,rows,cols,StorageOrder>> : public std::true_type {};
+//
+//    template<typename T> struct is_eigen_array : public std::false_type {};
+//    template<typename T, int rows, int cols, int StorageOrder> struct is_eigen_array<Eigen::Array<T,rows,cols,StorageOrder>> : public std::true_type {};
+//
+//    template<typename T>
+//    constexpr bool is_eigen_matrix_or_array(){
+//        if constexpr(is_eigen_matrix<T>::value or
+//                     is_eigen_array<T>::value ){
+//            return true;
+//        }else{
+//            return false;
+//        }
+//    }
 
     template<typename T>
     constexpr bool is_complex(){

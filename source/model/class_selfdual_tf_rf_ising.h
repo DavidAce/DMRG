@@ -4,76 +4,62 @@
 
 #pragma once
 
-#include <iostream>
-#include <general/nmspc_tensor_extra.h>
-#include <simulation/nmspc_settings.h>
-#include <iomanip>
 #include "class_model_base.h"
-
-template<typename log_type> class class_h5table_buffer;
-class class_selfdual_tf_rf_ising_table;
+#include <general/nmspc_tensor_extra.h>
+#include <iomanip>
+#include <iostream>
+#include <simulation/nmspc_settings.h>
 
 class class_selfdual_tf_rf_ising : public class_model_base {
     using Scalar = std::complex<double>;
-private:
-    int    spin_dim            = 0;           /*!< Spin dimension */
-    double J_rnd               = 0;
-    double h_rnd               = 0;
-    double J_log_mean          = 0;
-    double h_log_mean          = 0;
-    double J_avg               = 0;
-    double h_avg               = 0;
-    double J_sigma             = 0;
-    double h_sigma             = 0;
-    double lambda              = 0;
-    double delta               = 0;
-    double J_ptb               = 0; //Perturbation
-    double h_ptb               = 0; //Perturbation
-    int    num_params = 13;  //Number of parameters for this model excluding this one.
 
+    private:
+    size_t      spin_dim     = 0;           /*!< Spin dimension */
+    std::string distribution = "lognormal"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+    bool        parity_sep   = false;       /*!< Parity sector separation on/off */
+    double      J_rnd        = 0;           /*!< Randomly distributed nearest neighbour coupling */
+    double      h_rnd        = 0;           /*!< Randomly distributed on-site field */
+    double      J_ptb        = 0;           /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
+    double      h_ptb        = 0;           /*!< Perturbation to the coupling, std::pow(J_rnd + J_ptb,1-alpha) */
+    double      J_avg        = 0;           /*!< Average of J_rnd between all sites*/
+    double      h_avg        = 0;           /*!< Average of h_rnd on all sites */
+    double      J_mean       = 0;           /*!< Mean for the distrbution of J_rnd */
+    double      h_mean       = 0;           /*!< Mean for the distrbution of h_rnd */
+    double      J_sigma      = 0;           /*!< Standard deviation for the distribution of J_rnd */
+    double      h_sigma      = 0;           /*!< Standard deviation for the distribution of h_rnd */
+    double      lambda       = 0;           /*!< Factor involved in next-nearest neighbor interaction */
+    double      delta        = 0;           /*!< Difference J_log_mean - h_log_mean  */
+    double      alpha        = 0;           /*!< Damping factor [0,1] on random couplings, std::pow(J_rnd + J_ptb,1-alpha)  */
+    double      beta         = 0;           /*!< Damping factor [0,1] on random fields, std::pow(h_rnd + h_ptb,1-alpha)  */
+    double      psfactor     = 0;           /*!< Parity sector separation factor */
 
-public:
+    double get_coupling() const;
+    double get_field() const;
+    double get_coupling(double J_rnd_, double J_ptb_, double alpha_) const;
+    double get_field(double h_rnd_, double h_ptb_, double beta_) const;
 
-    explicit class_selfdual_tf_rf_ising(size_t position_,std::string logName = "SDUAL-ISING");
+    public:
+    explicit class_selfdual_tf_rf_ising(size_t position_);
 
     // Functions that extend the base (no override)
-    void set_realization_averages(double J_avg_,double h_avg_);
-    auto get_J_rnd(){return J_rnd;};
-    auto get_h_rnd(){return h_rnd;};
-
+    void set_realization_averages(double J_avg_, double h_avg_);
     // Functions that override the base
-    void set_hamiltonian(const Eigen::Tensor<Scalar,4> &MPO_, std::vector<double> &parameters)   override;
-    void set_hamiltonian(const std::vector<double> & parameters)                                 override;
-    void set_hamiltonian(const Eigen::MatrixXd & all_parameters, int position)                   override;
-    void set_hamiltonian(const Eigen::VectorXd & parameters)                                     override;
-    void build_mpo()                                                                             override;
-    void randomize_hamiltonian()                                                                 override;
-    void perturb_hamiltonian(double amplitude)                                                   override;
-    bool is_perturbed()                                                                    const override;
-    Eigen::Tensor<Scalar,4> MPO_reduced_view()                                             const override;
-    Eigen::Tensor<Scalar,4> MPO_reduced_view(double site_energy)                           const override;
-    std::unique_ptr<class_model_base> clone()                                              const override;
-    size_t get_spin_dimension()                                                            const override;
-    void   print_parameter_names ()                                                        const override;
-    void   print_parameter_values()                                                        const override;
-    std::vector<std::string> get_parameter_names()                                         const override;
-    std::vector<double>      get_parameter_values()                                        const override;
-
-    void set_full_lattice_parameters(
-            const std::vector<std::vector<double>> chain_parameters,
-            bool reverse = false)                                                             override;
-
-    Eigen::MatrixXcd single_site_hamiltonian(
-            int position,
-            int sites,
-            std::vector<Eigen::MatrixXcd> &SX,
-            std::vector<Eigen::MatrixXcd> &SY,
-            std::vector<Eigen::MatrixXcd> &SZ)                                          const override;
-
-//    void   write_to_hdf5_table()                                                override;
-
-
-
-
+    std::unique_ptr<class_model_base> clone() const override;
+    Eigen::Tensor<Scalar, 4>          MPO_reduced_view() const override;
+    Eigen::Tensor<Scalar, 4>          MPO_reduced_view(double site_energy) const override;
+    Eigen::Tensor<Scalar, 1>          get_MPO_edge_left() const override;
+    Eigen::Tensor<Scalar, 1>          get_MPO_edge_right() const override;
+    size_t                            get_spin_dimension() const override;
+    Parameters                        get_parameters() const override;
+    void                              set_parameters(const Parameters &parameters) override;
+    void                              set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) override;
+    void                              set_coupling_damping(double alpha) override;
+    void                              set_field_damping(double beta) override;
+    void                              build_mpo() override;
+    void                              randomize_hamiltonian() override;
+    bool                              is_perturbed() const override;
+    bool                              is_damped() const override;
+    void                              set_full_lattice_parameters(std::vector<Parameters> all_parameters, bool reverse = false) override;
+    Eigen::MatrixXcd                  single_site_hamiltonian(int position, int sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd> &SY,
+                                                              std::vector<Eigen::MatrixXcd> &SZ) const override;
 };
-

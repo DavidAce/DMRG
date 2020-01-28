@@ -89,6 +89,7 @@ void tools::finite::mps::rebuild_environments(class_state_finite &state){
         auto ENV_L     = class_environment    ("L",*mpsL_it, *mpoL_it->get()); //Initialized envs
         auto ENV2_L    = class_environment_var("L",*mpsL_it, *mpoL_it->get()); //Initialized envs
         while(mpsL_it != state.MPS_L.end() and mpoL_it != state.MPO_L.end()) {
+            if(ENV_L.hasNaN()) throw std::runtime_error("ENV_L " + std::to_string(ENV_L.get_position()) + " has NAN's");
             state.ENV_L .emplace_back(ENV_L );
             state.ENV2_L.emplace_back(ENV2_L);
             if (mpsL_it->get_position() != state.ENV_L.back().get_position())
@@ -113,6 +114,7 @@ void tools::finite::mps::rebuild_environments(class_state_finite &state){
         auto ENV_R  = class_environment    ("R",*mpsR_it,*mpoR_it->get());
         auto ENV2_R = class_environment_var("R",*mpsR_it,*mpoR_it->get());
         while(mpsR_it != state.MPS_R.rend() and mpoR_it != state.MPO_R.rend()){
+            if(ENV_R.hasNaN()) throw std::runtime_error("ENV_R " + std::to_string(ENV_R.get_position()) + " has NAN's");
             state.ENV_R .emplace_front(ENV_R );
             state.ENV2_R.emplace_front(ENV2_R);
             if (mpsR_it->get_position() != state.ENV_R.front().get_position())

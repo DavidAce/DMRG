@@ -203,6 +203,8 @@ void arpackpp_solver<MatrixType>::eigs_comp() {
                     break;
             }
         }
+//        solver.FindEigenvectors();
+
         this->find_solution(solver, solverConf.eigMaxNev);
 
         if (matrix.get_form() == Form::SYMMETRIC and matrix.get_side() == Side::R ){
@@ -232,6 +234,7 @@ void arpackpp_solver<MatrixType>::find_solution(Derived &solver, int nev) {
         solver.FindEigenvectors();
         solution.meta.eigvals_found  = solver.EigenvaluesFound();  //BOOL!
         solution.meta.eigvecsR_found = solver.EigenvectorsFound(); //BOOL!
+        solution.meta.eigvecs_found  = solver.EigenvectorsFound();
         solution.meta.iter           = solver.GetIter();
         solution.meta.n              = solver.GetN();
         solution.meta.nev            = std::min(nev, solver.GetNev());
@@ -240,6 +243,11 @@ void arpackpp_solver<MatrixType>::find_solution(Derived &solver, int nev) {
         solution.meta.rows           = solver.GetN();
         solution.meta.cols           = solution.meta.nev;
         solution.meta.counter        = matrix.counter;
+        assert(solution.meta.nev_converged >= solution.meta.nev  and "Not enough eigenvalues converged");
+        assert(solution.meta.eigvals_found and "Eigenvalues were not found");
+        assert(solution.meta.eigvecs_found and "Eigenvectors were not found");
+        assert(solution.meta.eigvecsR_found and "Eigenvectors were not found");
+
     }else{
         solver.FindEigenvalues();
         solution.meta.eigvals_found = solver.EigenvaluesFound();
@@ -251,6 +259,9 @@ void arpackpp_solver<MatrixType>::find_solution(Derived &solver, int nev) {
         solution.meta.rows          = solver.GetN();
         solution.meta.cols          = solution.meta.nev;
         solution.meta.counter       = matrix.counter;
+        assert(solution.meta.nev_converged >= solution.meta.nev  and "Not enough eigenvalues converged");
+        assert(solution.meta.eigvals_found and "Eigenvalues were not found");
+
     }
 }
 

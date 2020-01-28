@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <general/nmspc_omp.h> // For multithreaded computation
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -333,6 +332,19 @@ namespace Textra {
         Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
         return isReal(vector, name, threshold);
     }
+
+    template<typename Derived>
+    bool hasNaN(const Eigen::EigenBase<Derived> &obj,[[maybe_unused]]const std::string &name = "") {
+        return obj.derived().hasNaN();
+    }
+
+
+    template<typename Scalar, auto rank>
+    bool hasNaN(const Eigen::Tensor<Scalar,rank> &tensor, const std::string &name = "") {
+        Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>> vector (tensor.data(),tensor.size());
+        return hasNaN(vector, name);
+    }
+
 
     template <typename Derived>
     auto subtract_phase(Eigen::MatrixBase<Derived> &v){

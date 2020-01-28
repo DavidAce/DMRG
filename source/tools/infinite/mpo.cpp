@@ -18,10 +18,10 @@ void tools::infinite::mpo::randomize(class_state_infinite &state) {
     tools::log->trace("Setting random fields in MPO's");
     state.HA->randomize_hamiltonian();
     state.HB->randomize_hamiltonian();
-    std::vector<std::vector<double>> all_params;
+    std::vector<class_model_base::Parameters> all_params;
 
-    all_params.push_back(state.HA->get_parameter_values());
-    all_params.push_back(state.HB->get_parameter_values());
+    all_params.push_back(state.HA->get_parameters());
+    all_params.push_back(state.HB->get_parameters());
 
     state.HA->set_full_lattice_parameters(all_params);
     state.HB->set_full_lattice_parameters(all_params);

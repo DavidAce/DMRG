@@ -16,6 +16,7 @@
 #include <state/class_state_finite.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_omp.h>
 #include <simulation/class_simulation_status.h>
 
 

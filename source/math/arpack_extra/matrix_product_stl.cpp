@@ -19,18 +19,45 @@ using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
 template <typename Scalar>
 using VectorTypeT = Eigen::Matrix<Scalar,1,Eigen::Dynamic>;
 
-static Eigen::PartialPivLU<MatrixType<double>>               lu_real;
-static Eigen::PartialPivLU<MatrixType<std::complex<double>>> lu_cplx;
+
+namespace stl_lu{
+    std::optional<Eigen::PartialPivLU<MatrixType<double>>               >lu_real;
+    std::optional<Eigen::PartialPivLU<MatrixType<std::complex<double>>> >lu_cplx;
+    void reset(){
+        lu_real.reset();
+        lu_cplx.reset();
+    }
+}
+
+
 
 
 template<typename Scalar>
 StlMatrixProduct<Scalar>::~StlMatrixProduct(){
-    lu_real = Eigen::PartialPivLU<MatrixType<double>>              ();
-    lu_cplx = Eigen::PartialPivLU<MatrixType<std::complex<double>>>();
-//    A_stl.clear();
+    stl_lu::reset();
 }
 
-
+// Pointer to data constructor, copies the matrix into an internal Eigen matrix.
+template<typename Scalar>
+StlMatrixProduct<Scalar>::StlMatrixProduct(
+    const Scalar * const A_,
+    const int L_,
+    const bool copy_data,
+    const eigutils::eigSetting::Form form_,
+    const eigutils::eigSetting::Side side_):
+    A_ptr(A_) ,L(L_), form(form_), side(side_)
+{
+    if (copy_data){
+        A_stl.resize(L*L);
+        std::copy(A_ptr,A_ptr + L*L, A_stl.begin());
+        A_ptr = A_stl.data();
+    }
+    init_profiling();
+    if constexpr (std::is_same_v<Scalar,double>)
+        stl_lu::lu_real =  Eigen::PartialPivLU<MatrixType<double>>();
+    if constexpr (std::is_same_v<Scalar,std::complex<double>>)
+        stl_lu::lu_cplx = Eigen::PartialPivLU<MatrixType<std::complex<double>>>();
+}
 
 template<typename Scalar>
 void StlMatrixProduct<Scalar>::print() const {
@@ -51,14 +78,14 @@ void StlMatrixProduct<Scalar>::FactorOP()
     Eigen::Map<const MatrixType<Scalar>> A_matrix (A_ptr,L,L);
     t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");
-    if constexpr(std::is_same<Scalar,double>::value)
+    if constexpr(std::is_same_v<Scalar,double>)
     {
-        lu_real.compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
+        stl_lu::lu_real.value().compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
     }
-    else
+    if constexpr(std::is_same_v<Scalar,std::complex<double>>)
     {
         Scalar sigma = std::complex<double>(sigmaR,sigmaI);
-        lu_cplx.compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
+        stl_lu::lu_cplx.value().compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     }
 
     readyFactorOp = true;
@@ -77,21 +104,19 @@ void StlMatrixProduct<Scalar>::MultOPv(Scalar* x_in_ptr, Scalar* x_out_ptr) {
         case Side::R: {
             Eigen::Map<VectorType<Scalar>>       x_in    (x_in_ptr,L);
             Eigen::Map<VectorType<Scalar>>       x_out   (x_out_ptr,L);
-            if constexpr(std::is_same <Scalar,double>::value){
-                x_out.noalias() = lu_real.solve(x_in);
-            }else{
-                x_out.noalias() = lu_cplx.solve(x_in);
-            }
+            if constexpr(std::is_same_v<Scalar,double>)
+                x_out.noalias() = stl_lu::lu_real.value().solve(x_in);
+            if constexpr(std::is_same_v<Scalar,std::complex<double>>)
+                x_out.noalias() = stl_lu::lu_cplx.value().solve(x_in);
             break;
         }
         case Side::L: {
             Eigen::Map<VectorTypeT<Scalar>>       x_in    (x_in_ptr,L);
             Eigen::Map<VectorTypeT<Scalar>>       x_out   (x_out_ptr,L);
-            if constexpr(std::is_same <Scalar,double>::value){
-                x_out.noalias() = x_in *lu_real.inverse();
-            }else{
-                x_out.noalias() = x_in *lu_cplx.inverse();
-            }
+            if constexpr(std::is_same_v<Scalar,double>)
+                x_out.noalias() = x_in *stl_lu::lu_real.value().inverse();
+            if constexpr(std::is_same_v<Scalar,std::complex<double>>)
+                x_out.noalias() = x_in *stl_lu::lu_cplx.value().inverse();
             break;
         }
     }
@@ -131,6 +156,9 @@ void StlMatrixProduct<Scalar>::MultAx(Scalar* x_in, Scalar* x_out) {
     }
     counter++;
 }
+
+
+
 
 
 
