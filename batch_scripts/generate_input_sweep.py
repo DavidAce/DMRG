@@ -7,7 +7,7 @@ import numpy as np
 
 template_filename = 'input_template.cfg'
 basename    = 'mbl'
-location    = "../input"
+location    = "input"
 os.makedirs(location, exist_ok=True)
 
 
