@@ -1,4 +1,4 @@
-from src.generate_inputs import *
+from generate_inputs.src.generate_inputs import *
 import numpy as np
 
 
