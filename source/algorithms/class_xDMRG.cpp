@@ -228,9 +228,10 @@ void class_xDMRG::single_xDMRG_step()
 
     if(force_overlap > 0ul) {
         log->debug("Forced overlap steps current {}", force_overlap);
-        force_overlap = std::max(0ul, force_overlap - state->active_sites.size() + 2ul);
+        force_overlap = force_overlap - std::min(force_overlap, state->active_sites.size() - 2ul);
         log->debug("Forced overlap steps reduced {}", force_overlap);
     }
+    if(force_overlap > state->get_length() or force_overlap < 0) throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap));
 
 
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){
@@ -368,6 +369,7 @@ void class_xDMRG::check_convergence(){
         clear_saturation_status();
         force_overlap = state->get_length();
     }
+    if(force_overlap > state->get_length() or force_overlap < 0) throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap));
 
 
 

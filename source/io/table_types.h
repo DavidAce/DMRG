@@ -32,6 +32,8 @@ public:
         double  energy_per_site;
         double  energy_variance;
         double  energy_variance_per_site;
+        double  energy_variance_lowest;
+        double  energy_variance_per_site_lowest;
         double  spin_component_sx;
         double  spin_component_sy;
         double  spin_component_sz;
@@ -40,7 +42,7 @@ public:
     };
 
     struct meta_struct {
-        constexpr static hsize_t NFIELDS = 20;
+        constexpr static hsize_t NFIELDS = 22;
         size_t dst_size = sizeof(data_struct);
         std::array<size_t, NFIELDS> dst_offsets = {
                 HOFFSET(data_struct, iteration),
@@ -58,6 +60,8 @@ public:
                 HOFFSET(data_struct, energy_per_site),
                 HOFFSET(data_struct, energy_variance),
                 HOFFSET(data_struct, energy_variance_per_site),
+                HOFFSET(data_struct, energy_variance_lowest),
+                HOFFSET(data_struct, energy_variance_per_site_lowest),
                 HOFFSET(data_struct, spin_component_sx),
                 HOFFSET(data_struct, spin_component_sy),
                 HOFFSET(data_struct, spin_component_sz),
@@ -80,6 +84,8 @@ public:
                 sizeof(data_struct::energy_per_site),
                 sizeof(data_struct::energy_variance),
                 sizeof(data_struct::energy_variance_per_site),
+                sizeof(data_struct::energy_variance_lowest),
+                sizeof(data_struct::energy_variance_per_site_lowest),
                 sizeof(data_struct::spin_component_sx),
                 sizeof(data_struct::spin_component_sy),
                 sizeof(data_struct::spin_component_sz),
@@ -102,6 +108,8 @@ public:
                 "energy_per_site",
                 "energy_variance",
                 "energy_variance_per_site",
+                "energy_variance_lowest",
+                "energy_variance_per_site_lowest",
                 "spin_component_sx",
                 "spin_component_sy",
                 "spin_component_sz",
@@ -121,7 +129,8 @@ public:
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
                 H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
-                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE,
+                H5T_NATIVE_DOUBLE, H5T_NATIVE_DOUBLE};
         hsize_t chunk_size = 4;
         void *fill_data = nullptr;
         int compress = 0;
