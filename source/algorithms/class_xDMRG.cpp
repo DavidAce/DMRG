@@ -227,9 +227,9 @@ void class_xDMRG::single_xDMRG_step()
     log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
     if(force_overlap > 0ul) {
-        log->debug("Forced overlap steps current {} :", force_overlap);
+        log->debug("Forced overlap steps current {}", force_overlap);
         force_overlap = std::max(0ul, force_overlap - state->active_sites.size() + 2ul);
-        log->debug("Forced overlap steps reduced {} :", force_overlap);
+        log->debug("Forced overlap steps reduced {}", force_overlap);
     }
 
 
@@ -357,14 +357,14 @@ void class_xDMRG::check_convergence(){
     {
         tools::log->info("HERE STARTS EXPERIMENT");
         auto current_chi_lim  = state->get_chi_lim();
-        auto reduced_chi_lim  = state->get_chi_lim()/2;
-        auto doubled_chi_lim = std::min(state->get_chi_max(),state->get_chi_lim()*2);
-        state->set_chi_lim(reduced_chi_lim);
+        auto smaller_chi_lim  = std::min(16l, state->get_chi_lim()/2);
+        auto greater_chi_lim  = std::min(state->get_chi_max(),state->get_chi_lim()*2);
+        state->set_chi_lim(smaller_chi_lim);
         move_center_point(2*(state->get_length()-2)); //Truncate the whole chain and come back
 //        tools::finite::mps::normalize(*state);
 //        tools::finite::mps::rebuild_environments(*state);
-        state->set_chi_lim(doubled_chi_lim);
-//        state->set_chi_lim(current_chi_lim);
+//        state->set_chi_lim(greater_chi_lim);
+        state->set_chi_lim(current_chi_lim);
         clear_saturation_status();
         force_overlap = state->get_length();
     }
