@@ -25,6 +25,8 @@ void tools::finite::io::h5table::write_measurements(const class_state_finite &st
     measurements_entry.energy_per_site                 = tools::finite::measure::energy_per_site(state);
     measurements_entry.energy_variance                 = tools::finite::measure::energy_variance(state);
     measurements_entry.energy_variance_per_site        = tools::finite::measure::energy_variance_per_site(state);
+    measurements_entry.energy_variance_lowest          = state.lowest_recorded_variance;
+    measurements_entry.energy_variance_per_site_lowest = state.lowest_recorded_variance/state.get_length();
     measurements_entry.spin_component_sx               = tools::finite::measure::spin_component(state,qm::spinOneHalf::sx);
     measurements_entry.spin_component_sy               = tools::finite::measure::spin_component(state,qm::spinOneHalf::sy);
     measurements_entry.spin_component_sz               = tools::finite::measure::spin_component(state,qm::spinOneHalf::sz);

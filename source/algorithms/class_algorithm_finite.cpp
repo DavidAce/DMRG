@@ -467,7 +467,10 @@ void class_algorithm_finite::write_state(bool result){
         }
         if (settings::output::storage_level >= StorageLevel::FULL and chi_grow()){
             //In full mode we keep a copy every time we update
-            std::string prefix = sim_name + "/results/chi_" + std::to_string(sim_status.chi_lim);
+            std::string prefix = sim_name
+                + "/results/iter_" + std::to_string(sim_status.iteration)
+                + "_step_" + std::to_string(sim_status.step)
+                + "_chi_" + std::to_string(sim_status.chi_lim);
             tools::finite::io::h5dset::write_all_state(*state, *h5pp_file, prefix);
             if(store_wave_function()){
                 //  Write the wavefunction (this is only defined for short enough state ( L < 14 say)
