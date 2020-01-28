@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 project(external-h5pp)
 include(../GetNumThreads.cmake)
 get_num_threads(NUM_THREADS)
@@ -6,7 +6,7 @@ set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${NUM_THREADS})
 include(ExternalProject)
 ExternalProject_Add(external_h5pp
         GIT_REPOSITORY https://github.com/DavidAce/h5pp.git
-        GIT_TAG v1.1.0
+        GIT_TAG master
         GIT_PROGRESS 1
         GIT_SHALLOW 1
         PREFIX          ${CMAKE_BINARY_DIR}

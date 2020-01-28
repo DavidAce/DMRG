@@ -64,7 +64,7 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
     while (true){
         bool allequal = std::all_of(costs.begin(), costs.end(), [costs](size_t c) { return c == costs.front(); });
         auto c = costs.back();
-        if (c <  threshold  and sites.size() == max_sites) {reason = "can't take any more sites"; break;}
+        if (c <  threshold  and sites.size() == max_sites) {reason = "reached max sites"; break;}
         if (c <= threshold  and sites.size() <= max_sites) {reason = "good threshold found: " + std::to_string(c) ;break;}
         else if (sites.size() <= min_sites)                {reason = "at least " + std::to_string(min_sites) + " sites were kept"; break;}
         else if (allequal and sites.size() <= max_sites)   {reason = "equal costs: " + std::to_string(c); break;}

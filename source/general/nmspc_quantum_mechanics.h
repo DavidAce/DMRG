@@ -8,6 +8,7 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <complex>
 #include <vector>
+#include <list>
 
 namespace qm{
     extern std::vector<Eigen::MatrixXcd> gen_manybody_spin(const Eigen::MatrixXcd &s, int sites);

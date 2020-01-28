@@ -3,16 +3,19 @@
 //
 #pragma once
 
-#include <memory>
-#include <string>
-#include <complex>
-#include <list>
-#include <vector>
-#include <io/nmspc_logger.h>
-#include <general/class_tic_toc.h>
-#include <tools/finite/opt-internals/enum_classes.h>
 #include <Eigen/Core>
+#include <complex>
+#include <general/class_tic_toc.h>
+#include <io/nmspc_logger.h>
+#include <list>
+#include <memory>
+#include <simulation/enums.h>
+#include <string>
+#include <tools/finite/opt-internals/enum_classes.h>
 #include <unsupported/Eigen/CXX11/Tensor>
+#include <vector>
+
+/* clang-format off */
 class class_state_infinite;
 class class_mps_2site;
 class class_state_finite;
@@ -41,13 +44,14 @@ namespace tools{
      * MPS and environments for all sites of the lattice.
      */
     {
+
         using Scalar = std::complex<double>;
         namespace mps {
             extern void initialize                          (class_state_finite & state, size_t length);
-            extern void randomize                           (class_state_finite &state, const std::string &parity_sector, const long state_number, const bool use_pauli_eigenstates = false);
+            extern void randomize                           (class_state_finite & state, const std::string &parity_sector, const long state_number, const bool use_pauli_eigenstates = false);
             extern void normalize                           (class_state_finite & state, const std::optional<size_t> chi_lim = std::nullopt);
             extern void rebuild_environments                (class_state_finite & state);
-            extern int  move_center_point                   (class_state_finite & state);          /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
+            extern int  move_center_point                   (class_state_finite & state); /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
             extern void project_to_closest_parity_sector    (class_state_finite & state, std::string paulistring);
 
             namespace internals{
@@ -60,6 +64,8 @@ namespace tools{
         namespace mpo {
             extern void initialize                 (class_state_finite & state, size_t length, std::string model_type);
             extern void randomize                  (class_state_finite & state);
+            extern void perturb_hamiltonian        (class_state_finite & state, double coupling_ptb, double field_ptb,PerturbMode PerturbMode);
+            extern void damp_hamiltonian           (class_state_finite & state, double coupling_damp, double field_damp);
             extern void reduce_mpo_energy          (class_state_finite & state);
             extern void reduce_mpo_energy_multi    (class_state_finite & state);
             extern void reduce_mpo_energy_2site    (class_state_finite & state);
@@ -149,6 +155,7 @@ namespace tools{
             extern double energy_variance                             (const class_state_finite & state);
             extern double energy_variance_per_site                    (const class_state_finite & state);
             extern double energy_normalized                           (const class_state_finite & state, const class_simulation_status & sim_status);
+
             template<typename Derived>
             double energy_minus_energy_reduced(const class_state_finite & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){
                 constexpr int rank = Derived::NumIndices;
@@ -156,6 +163,7 @@ namespace tools{
                 if constexpr (rank == 3) return multisite::energy_minus_energy_reduced(state,theta);
                 static_assert("Wrong rank, expected 3 or 4" and (rank == 3 or rank == 4));
             }
+
             template<typename Derived>
             double energy(const class_state_finite & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){
                 constexpr int rank = Derived::NumIndices;
@@ -198,9 +206,6 @@ namespace tools{
         namespace io{
 
             namespace h5dset{
-                namespace internals{
-                    inline bool make_extendable_dataset(const std::string & prefix_path);
-                }
                 extern void write_all_state                              (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
                 extern void write_bond_matrices                          (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
                 extern void write_bond_matrix                            (const class_state_finite & state, h5pp::File & h5ppFile, const std::string & prefix_path);
@@ -440,9 +445,4 @@ namespace tools{
     }
 
 }
-
-
-
-
-
-
+/* clang-format on */

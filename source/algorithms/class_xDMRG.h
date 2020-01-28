@@ -17,7 +17,9 @@ class class_state_finite;
 class class_xDMRG : public class_algorithm_finite {
 private:
     double energy_window_growth_factor = 1.0;
-public:
+    size_t force_overlap = 0;
+
+    public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;
     explicit class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_);

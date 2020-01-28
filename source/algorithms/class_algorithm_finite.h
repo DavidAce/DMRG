@@ -27,8 +27,7 @@ public:
 
     //MPS
     std::unique_ptr<class_state_finite>    state;
-//    std::list<std::unique_ptr<class_state_finite>> state_champions; // We keep the best from each sweep
-//    std::list<class_state_finite> state_champions; // We keep the best from each sweep
+
     // What happens when stuck this many iterations:
     // 1: direct, 2: subspace, 2: subspace, 4: update bond dim if possile, else stop
     size_t max_stuck_iters               = 4; // If stuck for this many sweeps -> stop simulation
@@ -37,15 +36,18 @@ public:
     size_t min_saturation_iters          = 1; // If both var and ent saturated  this long -> got_stuck: true
     size_t max_saturation_iters          = 3; // If either var or ent saturated this long -> got_stuck: true
     bool   has_projected  = false;
+    bool   has_damped     = false; // Try damping disorder if stuck
+    std::vector<double> damping_exponents;
 
-public:
+
+    public:
 
     virtual void run_simulation()                    = 0;
     virtual void run_preprocessing();
     virtual void run_postprocessing();
     virtual void single_DMRG_step(std::string ritz);
     virtual bool store_wave_function()               = 0;
-    void move_center_point();
+    void move_center_point(size_t num_moves = 1ul);
     void update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt)         final;
     void run()                                                                                  final;
     void clear_saturation_status()                                                              override;

@@ -73,6 +73,7 @@ public:
     std::unique_ptr<class_mps_site> MPS_A;
     std::unique_ptr<class_mps_site> MPS_B;
     bool isReal()const;
+    bool hasNaN()const;
     long chiA () const;
     long chiB () const;
     long chiC () const;

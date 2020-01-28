@@ -53,14 +53,13 @@ void class_h5table_buffer<table_type>::initialize_table(){
     if (table_entries->buffer.empty() and not table_is_initialized) {
         log->trace("Initializing output table: {}", table_name);
         hsize_t NRECORDS = get_num_buffered_entries();
-        h5ppFile->createGroupLink(group_name);
+        h5ppFile->createGroup(group_name);
         if (not h5ppFile->linkExists(table_path)){
-            hid_t file = h5ppFile->openFileHandle();
+            auto file = h5ppFile->openFileHandle();
             H5TBmake_table(table_name.c_str(), file, table_path.c_str(), table_entries->meta.NFIELDS, NRECORDS,
                            table_entries->meta.dst_size, table_entries->meta.field_names.data(), table_entries->meta.dst_offsets.data(), table_entries->meta.field_types.data(),
                            table_entries->meta.chunk_size, table_entries->meta.fill_data, table_entries->meta.compress, table_entries->buffer.data());
 //            H5Fflush(file,H5F_SCOPE_GLOBAL);
-            h5ppFile->closeFileHandle(file);
         }
         table_is_initialized = true;
     }
@@ -75,15 +74,14 @@ void class_h5table_buffer<table_type>:: write_buffer_to_file() {
     if (!table_entries->buffer.empty() and table_is_initialized) {
         log->trace("Writing buffer to output table: {}", table_name);
         hsize_t NRECORDS = get_num_buffered_entries();
-        h5ppFile->createGroupLink(group_name);
-        hid_t file = h5ppFile->openFileHandle();
+        h5ppFile->createGroup(group_name);
+        auto file = h5ppFile->openFileHandle();
         H5TBappend_records(file, table_path.c_str(), NRECORDS, table_entries->meta.dst_size,
                            table_entries->meta.dst_offsets.data(), table_entries->meta.dst_sizes.data(), table_entries->buffer.data());
 
         table_entries->buffer.clear();
         recorded_entries += NRECORDS;
 //        H5Fflush(file,H5F_SCOPE_GLOBAL);
-        h5ppFile->closeFileHandle(file);
     }
     buffer_is_empty = true;
 }

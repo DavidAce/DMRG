@@ -54,6 +54,7 @@ namespace settings {
         inline std::string  model_type                              = "tf_ising";         /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising selfdual_tf_rf_ising_normal}  */
         inline long         seed                                    = 1;                  /*!< Main seed for the random number generator. */
         inline long         state_number                            = -1;                 /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Only positive state numbers are used */
+        inline bool         quench_chi_when_stuck                   = false;              /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
         inline bool         projection_when_growing_chi             = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
         inline bool         projection_trial_when_stuck             = true;               /*!< Project to target parity sector at each sweep when stuck. */
         inline bool         projection_on_every_sweep               = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
@@ -66,7 +67,7 @@ namespace settings {
             inline double       J  = 1;                         /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
             inline double       g  = 1;                         /*!< Transverse field strength */
             inline double       w  = 0;                         /*!< Randomness strength for the random field */
-            inline size_t       d  = 2;                         /*!< Local dimension */
+            inline size_t       d  = 2;                         /*!< Spin dimension */
         }
 
         //Parameters for the transvese-field next-nearest neighbor Ising model
@@ -75,17 +76,19 @@ namespace settings {
             inline double       J2  = 1;                         /*!< Ferromagnetic coupling for next-nearest neighbors.*/
             inline double       g   = 1;                         /*!< Transverse field strength */
             inline double       w   = 0;                         /*!< Randomness strength for the random field */
-            inline size_t       d   = 2;                         /*!< Local dimension */
+            inline size_t       d   = 2;                         /*!< Spin dimension */
         }
 
-        //Parameters for the selfdual transvese-field random-field next-neighbor Ising model
+        //Parameters for the selfdual transverse-field random-field next-neighbor Ising model
         namespace selfdual_tf_rf_ising {
-            inline double       J_log_mean    = 0;               /*!< Average ferromagnetic coupling strength.*/
-            inline double       h_log_mean    = 0;               /*!< Average transverse magnetic field strength */
-            inline double       J_sigma       = 1;               /*!< Standard deviation for the lognormal distribution, i.e. = std(log(J)) , for the ferromagnetic coupling */
-            inline double       h_sigma       = 0;               /*!< Standard deviation for the lognormal distribution, i.e. = std(log(h))   for the transverse magnetic field */
-            inline double       lambda        = 0;               /*!< Lambda parameter */
-            inline size_t       d             = 2;               /*!< Local dimension */
+            inline double       J_mean        = 1;               /*!< Mean for the distribution defining random ferromagnetic coupling strength.*/
+            inline double       h_mean        = 1;               /*!< Mean for the distribution defining random transverse magnetic field strength */
+            inline double       J_sigma       = 1;               /*!< Standard deviation for the log-normal distribution defining ferromagnetic coupling */
+            inline double       h_sigma       = 1;               /*!< Standard deviation for the log-normal distribution defining transverse magnetic field */
+            inline double       lambda        = 0;               /*!< Lambda parameter related to next nearest neighbor coupling */
+            inline bool         parity_sep    = false;           /*!< Separation of +-X parity sectors */
+            inline std::string  distribution  = "lognormal";     /*!< Random distribution for couplings and fields */
+            inline size_t       d             = 2;               /*!< Spin dimension */
         }
     }
 
@@ -103,7 +106,7 @@ namespace settings {
         inline double   min_subspace_error              = 1e-12 ;   /*!< The minimum subspace error. Always do subspace variance optimization with subspace error less than this  */
         inline size_t   max_sites_multidmrg             = 8     ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>12 or so) makes the contractions slow. */
         inline size_t   max_size_full_diag              = 2048  ;   /*!< Maximum linear size allowed for full diagonalization of the local hamiltonian matrix. */
-        inline size_t   min_size_part_diag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
+        inline size_t   max_size_part_diag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
         inline size_t   max_size_direct                 = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
         inline double   max_norm_error                  = 1e-10 ;   /*!< Maximum norm deviation from unity during integrity checks */
         inline size_t   max_resets                      = 4     ;   /*!< Maximum number of resets to initial state. One must be allowed for initialization */

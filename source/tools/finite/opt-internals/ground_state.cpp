@@ -32,8 +32,6 @@ Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground
             shape_mpo4,
             settings::threading::num_threads_eigen);
 
-
-
     class_eigsolver solver;
     solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
 

@@ -47,7 +47,7 @@ public:
         ss << *this;
         return ss.str();
     }
-
+    operator EnumClass() {return option;}
     explicit operator std::string() const {
         return str();
     }

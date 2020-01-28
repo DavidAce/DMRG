@@ -59,25 +59,30 @@ void tools::infinite::io::h5dset::write_2site_env2 (const class_state_infinite &
 }
 
 void tools::infinite::io::h5dset::write_hamiltonian_params(const class_state_infinite &state, h5pp::File & h5ppFile, std::string sim_name){
-    // Write down the Hamiltonian metadata as a table
-    // Remember to write tensors in row-major state order because that's what output uses.
-    Eigen::MatrixXd hamiltonian_props;
 
-    auto propsA = state.HA->get_parameter_values();
-    auto propsB = state.HB->get_parameter_values();
-    Eigen::ArrayXd  temp_rowA  = Eigen::Map<Eigen::ArrayXd> (propsA.data(),propsA.size());
-    Eigen::ArrayXd  temp_rowB  = Eigen::Map<Eigen::ArrayXd> (propsB.data(),propsB.size());
-    hamiltonian_props.resize(2, temp_rowA.size());
-    hamiltonian_props.row(0) = temp_rowA.transpose();
-    hamiltonian_props.row(1) = temp_rowB.transpose();
-    h5ppFile.writeDataset(hamiltonian_props ,sim_name + "/model/2site/Hamiltonian");
-    int col = 0;
-    for (auto &name : state.HA->get_parameter_names()){
-        std::string attr_value = name;
-        std::string attr_name  = "FIELD_" + std::to_string(col) + "_NAME";
-        h5ppFile.writeAttribute(attr_value, attr_name,sim_name + "/model/2site/Hamiltonian" );
-        col++;
+    h5ppFile.writeDataset(settings::model::model_type, sim_name + "/model/model_type");
+    auto paramsA = state.HA->get_parameters();
+    auto paramsB = state.HB->get_parameters();
+        // Write MPO properties as attributes
+    std::string dataset_name = sim_name + "/model/hamiltonian_A";
+    h5ppFile.writeDataset("A", dataset_name);
+    for(auto &params : state.HA->get_parameters()) {
+        if(params.second.type() == typeid(double)) h5ppFile.writeAttribute(std::any_cast<double>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(size_t)) h5ppFile.writeAttribute(std::any_cast<size_t>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(int)) h5ppFile.writeAttribute(std::any_cast<int>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(bool)) h5ppFile.writeAttribute(std::any_cast<bool>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(std::string)) h5ppFile.writeAttribute(std::any_cast<std::string>(params.second), params.first, dataset_name);
     }
+    dataset_name = sim_name + "/model/hamiltonian_B";
+    h5ppFile.writeDataset("B", dataset_name);
+    for(auto &params : state.HB->get_parameters()) {
+        if(params.second.type() == typeid(double)) h5ppFile.writeAttribute(std::any_cast<double>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(size_t)) h5ppFile.writeAttribute(std::any_cast<size_t>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(int)) h5ppFile.writeAttribute(std::any_cast<int>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(bool)) h5ppFile.writeAttribute(std::any_cast<bool>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(std::string)) h5ppFile.writeAttribute(std::any_cast<std::string>(params.second), params.first, dataset_name);
+    }
+
 }
 
 void tools::infinite::io::h5dset::write_all_measurements  (const class_state_infinite & state, h5pp::File & h5ppFile, std::string sim_name){

@@ -2,14 +2,13 @@
 // Created by david on 2018-02-09.
 //
 
-
+#include "class_xDMRG.h"
+#include <math/nmspc_math.h>
+#include <math/nmspc_random.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
-#include <tools/nmspc_tools.h>
 #include <tools/finite/opt.h>
-#include <math/nmspc_random.h>
-#include "class_xDMRG.h"
-
+#include <tools/nmspc_tools.h>
 
 class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG, settings::xdmrg::num_sites) {
@@ -61,12 +60,12 @@ void class_xDMRG::run_simulation()    {
 
         // It's important not to perform the last step.
         // That last state would not get optimized
-        if (state->position_is_any_edge())
+        if (state->position_is_any_edge() and not state->is_perturbed() and not state->is_damped())
         {
             if (sim_status.iteration >= settings::xdmrg::max_sweeps)    {stop_reason = StopReason::MAX_ITERS; break;}
             if (sim_status.simulation_has_succeeded)                    {stop_reason = StopReason::SUCCEEDED; break;}
             if (sim_status.simulation_has_to_stop)                      {stop_reason = StopReason::SATURATED; break;}
-            if (sim_status.num_resets > settings::precision::max_resets) { stop_reason = StopReason::MAX_RESET; break;}
+            if (sim_status.num_resets > settings::precision::max_resets){stop_reason = StopReason::MAX_RESET; break;}
         }
         single_xDMRG_step();
         print_status_update();
@@ -100,27 +99,29 @@ void class_xDMRG::single_xDMRG_step()
     auto optSpace   = opt::OptSpace(opt::SPACE::DIRECT);
     auto optType    = opt::OptType(opt::TYPE::CPLX);
 //    optSpace        = not chi_grow()                                                                  ? opt::SPACE::SUBSPACE   : optSpace.option;
-    optMode         = sim_status.iteration  >= 2  and measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
-    optMode         = sim_status.iteration  >= 5  or  measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode.option;
-//    optSpace        = sim_status.iteration  < 2                                                        ? opt::SPACE::SUBSPACE  : optSpace.option; //TODO: This is just for testing
-    optSpace        = optMode == opt::MODE::OVERLAP                                                    ? opt::SPACE::SUBSPACE  : optSpace.option;
-    optSpace        = sim_status.simulation_has_stuck_for >= 2                                         ? opt::SPACE::SUBSPACE  : optSpace.option;
-    optSpace        = state->size_2site()  > settings::precision::min_size_part_diag ? opt::SPACE::DIRECT : optSpace.option;
-    optSpace        = sim_status.variance_mpo_has_converged                                            ? opt::SPACE::DIRECT    : optSpace.option;
-    optType         = state->isReal()                                                                  ? opt::TYPE::REAL       : optType.option;
+    optMode         = sim_status.iteration  >= 2  and measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode;
+    optMode         = sim_status.iteration  >= 6  or  measure::energy_variance_per_site(*state) < 1e-4 ? opt::MODE::VARIANCE   : optMode;
+    optMode         = force_overlap > 0 ? opt::MODE::OVERLAP : optMode;
+    //    optSpace        = sim_status.iteration  < 2                                                        ? opt::SPACE::SUBSPACE  : optSpace.option; //TODO: This is just for testing
+    optSpace        = optMode == opt::MODE::OVERLAP                                                    ? opt::SPACE::SUBSPACE  : optSpace;
+    optSpace        = sim_status.simulation_has_stuck_for >= 2                                         ? opt::SPACE::SUBSPACE  : optSpace;
+    optSpace        = state->size_2site()  > settings::precision::max_size_part_diag ? opt::SPACE::DIRECT : optSpace.option;
+    optSpace        = sim_status.variance_mpo_has_converged                                            ? opt::SPACE::DIRECT    : optSpace;
+    optType         = state->isReal()                                                                  ? opt::TYPE::REAL       : optType;
     long threshold = 0;
     switch(optSpace.option){
-        case  opt::SPACE::SUBSPACE : threshold = settings::precision::min_size_part_diag; break;
+        case  opt::SPACE::SUBSPACE : threshold = settings::precision::max_size_part_diag; break;
         case  opt::SPACE::DIRECT   : threshold = settings::precision::max_size_direct  ; break;
     }
 
     Eigen::Tensor<Scalar,3> theta;
     // Generate a list of maximum number of active sites to try
-    std::list<size_t> max_num_sites_list = {2,4};
+    std::list<size_t> max_num_sites_list = {2,4,8};
     if(sim_status.simulation_has_stuck_for >= 2) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
     if(max_num_sites_list.size() > 1 and optMode == opt::MODE::OVERLAP)            max_num_sites_list.pop_front(); //You can take many sites in the beginning
     if(max_num_sites_list.size() > 1 and sim_status.simulation_has_stuck_for >= 1) max_num_sites_list.pop_front(); //Take more sites if stuck
-    max_num_sites_list.sort();
+//    if(optMode == opt::MODE::OVERLAP)            max_num_sites_list= {settings::precision::max_sites_multidmrg}; //You can take many sites in the beginning
+//    max_num_sites_list.sort();
     max_num_sites_list.unique();
     max_num_sites_list.remove_if([](auto &elem){return elem > settings::precision::max_sites_multidmrg;});
     if(max_num_sites_list.empty()) max_num_sites_list = {2}; //Just make sure the list isn't empty...
@@ -128,6 +129,9 @@ void class_xDMRG::single_xDMRG_step()
 //    if(optSpace.option == opt::SPACE::DIRECT)  max_num_sites_list = {settings::precision::max_sites_multidmrg};
 //    std::list<size_t> max_num_sites_list = {2,settings::precision::max_sites_multidmrg};
 //    if(sim_status.iteration <= 1) max_num_sites_list = {settings::precision::max_sites_multidmrg}; //You can take many sites in the beginning
+    log->debug("Possible multisite step sizes: {}", max_num_sites_list);
+
+
 
     for (auto & max_num_sites : max_num_sites_list){
         auto old_num_sites = state->active_sites.size();
@@ -222,6 +226,13 @@ void class_xDMRG::single_xDMRG_step()
     opt::truncate_theta(theta, *state);
     log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
+    if(force_overlap > 0ul) {
+        log->debug("Forced overlap steps current {} :", force_overlap);
+        force_overlap = std::max(0ul, force_overlap - state->active_sites.size() + 2ul);
+        log->debug("Forced overlap steps reduced {} :", force_overlap);
+    }
+
+
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){
         tools::log->warn("Norm too large: {:.18f}",tools::finite::measure::norm(*state) );
         tools::finite::mps::normalize(*state);
@@ -299,25 +310,35 @@ void class_xDMRG::check_convergence(){
     if(state->position_is_any_edge()) {
         sim_status.simulation_has_stuck_for = sim_status.simulation_has_got_stuck ? sim_status.simulation_has_stuck_for + 1 : 0;
     }
-//    if (state->position_is_any_edge() and sim_status.simulation_has_stuck_for == 1 and state->is_perturbed() ){
-//        log->info("Unperturbing");
-//        state->perturb_hamiltonian(0.0);
+
+//    if (state->position_is_any_edge()
+//        and sim_status.simulation_has_stuck_for >= 2
+//        and not state->is_bond_limited(0.5*settings::precision::svd_threshold)
+//        and damping_exponents.empty()
+//        and not has_damped)
+//    {
+////        damping_exponents = math::LogSpaced(6,0.0,0.25,0.001);
+//        damping_exponents = {0.0,0.1};
+////        damping_exponents = {0.0,0.01,0.02,0.01};
+//        log->info("Generating damping exponents = {}", damping_exponents);
+//        has_damped = true;
+//        clear_saturation_status();
 //    }
-//    static int num_perturbs = 0;
-//    if (state->position_is_any_edge() and sim_status.simulation_has_stuck_for == 1 and not state->is_perturbed() and num_perturbs == 0){
-//        double amplitude = 0.9;//tools::finite::measure::energy_variance_per_site(*state);
-//        log->info("Perturbing with amplitude {}",amplitude);
-//        state->perturb_hamiltonian(amplitude);
-//        num_perturbs = 1;
+//
+//    if (state->position_is_any_edge() and not damping_exponents.empty() ){
+//        log->info("Setting damping exponent = {}", damping_exponents.back());
+//        state->damp_hamiltonian(damping_exponents.back(),0);
+//        damping_exponents.pop_back();
+//        if(damping_exponents.empty() and state->is_damped())
+//            throw std::logic_error("Damping trial ended but the state is still damped");
 //    }
+
+
+
+
 
 
     sim_status.simulation_has_to_stop = sim_status.simulation_has_stuck_for >= max_stuck_iters;
-
-//                                        and (sim_status.variance_mpo_saturated_for >= max_saturation_iters and
-    //                                             sim_status.entanglement_saturated_for >= max_saturation_iters);
-    //    unstuck = unstuck == true  and  sim_status.simulation_has_got_stuck == false; // We were stuck, but no longer.
-    //    if (unstuck) has_projected = false;
 
 
     log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);
@@ -326,6 +347,28 @@ void class_xDMRG::check_convergence(){
     log->debug("Simulation has got stuck: {}", sim_status.simulation_has_got_stuck);
     log->debug("Simulation has stuck for: {}", sim_status.simulation_has_stuck_for);
     log->debug("Simulation has to stop  : {}", sim_status.simulation_has_to_stop);
+
+    // EXPERIMENTAL AREA
+    if(settings::model::quench_chi_when_stuck
+    and not state->is_bond_limited(0.5*settings::precision::svd_threshold)
+    and state->position_is_any_edge()
+    and sim_status.simulation_has_stuck_for >= 1
+    and force_overlap == 0)
+    {
+        tools::log->info("HERE STARTS EXPERIMENT");
+        auto current_chi_lim  = state->get_chi_lim();
+        auto reduced_chi_lim  = state->get_chi_lim()/2;
+        auto doubled_chi_lim = std::min(state->get_chi_max(),state->get_chi_lim()*2);
+        state->set_chi_lim(reduced_chi_lim);
+        move_center_point(2*(state->get_length()-2)); //Truncate the whole chain and come back
+//        tools::finite::mps::normalize(*state);
+//        tools::finite::mps::rebuild_environments(*state);
+        state->set_chi_lim(doubled_chi_lim);
+//        state->set_chi_lim(current_chi_lim);
+        clear_saturation_status();
+        force_overlap = state->get_length();
+    }
+
 
 
 //    if (    sim_status.num_resets < settings::precision::max_resets
@@ -431,7 +474,6 @@ void class_xDMRG::find_energy_range() {
     sim_status.moves      = state->reset_moves();
     reset_to_random_state("random");
     update_bond_dimension_limit(16);
-
     // Find energy minimum
     while(true) {
         class_algorithm_finite::single_DMRG_step("SR");

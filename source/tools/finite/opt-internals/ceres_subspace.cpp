@@ -214,7 +214,7 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     t_eig->tic();
     tools::common::profile::t_eig.tic();
     // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
-    StlMatrixProduct<Scalar> hamiltonian(H_local.data(),H_local.rows(),Form::SYMMETRIC,Side::R, true);
+    StlMatrixProduct<Scalar> hamiltonian(H_local.data(),H_local.rows(),true,Form::SYMMETRIC,Side::R);
     hamiltonian.set_shift(energy_target);
     hamiltonian.FactorOP();
     double t_lu = hamiltonian.t_factorOp.get_last_time_interval();

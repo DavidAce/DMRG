@@ -34,6 +34,24 @@ bool class_environment_var::isReal() const {
     return Textra::isReal(block, "env2" + side);
 }
 
+bool class_environment::hasNaN() const {
+    return Textra::hasNaN(block, "env " + side);
+}
+bool class_environment_var::hasNaN() const {
+    return Textra::hasNaN(block, "env2" + side);
+}
+
+void class_environment::assertValidity() const  {
+    if(Textra::hasNaN(block, "env " + side)){
+        throw std::runtime_error("enrironment " + side +  " at position " + std::to_string(get_position()) + " has NAN's");
+    }
+}
+void class_environment_var::assertValidity() const {
+    if(Textra::hasNaN(block, "env2" + side)){
+        throw std::runtime_error("enrironment2 " + side +  " at position " + std::to_string(get_position()) + " has NAN's");
+    }
+}
+
 
 
 class_environment class_environment::enlarge(const class_mps_site & MPS, const class_model_base &MPO){
@@ -119,18 +137,29 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
 void class_environment::set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO) {
     if(edge_has_been_set) return;
     if (side == "L") {
-        int mpsDim = MPS.get_chiL();
-        int mpoDim = MPO.MPO().dimension(0);
+        long mpsDim = MPS.get_chiL();
+        long mpoDim = MPO.MPO().dimension(0);
         block.resize(array3{mpsDim,mpsDim, mpoDim});
         block.setZero();
-        for (long i = 0; i < mpsDim; i++)block(i,i,mpoDim-1) = 1;
+        for (long i = 0; i < mpsDim; i++){
+            Eigen::array<long, 1> extent1 = {mpoDim};
+            Eigen::array<long, 3> offset3 = {i,i,0};
+            Eigen::array<long, 3> extent3 = {1,1,mpoDim};
+            block.slice(offset3, extent3).reshape(extent1) =  MPO.get_MPO_edge_left();
+        }
+
     }
     if(side == "R"){
-        int mpsDim = MPS.get_chiR();
-        int mpoDim = MPO.MPO().dimension(1);
+        long mpsDim = MPS.get_chiR();
+        long mpoDim = MPO.MPO().dimension(1);
         block.resize(array3{mpsDim,mpsDim, mpoDim});
         block.setZero();
-        for (long i = 0; i < mpsDim; i++) block(i,i,0) = 1;
+        for (long i = 0; i < mpsDim; i++){
+            Eigen::array<long, 1> extent1 = {mpoDim};
+            Eigen::array<long, 3> offset3 = {i,i,0};
+            Eigen::array<long, 3> extent3 = {1,1,mpoDim};
+            block.slice(offset3, extent3).reshape(extent1) =  MPO.get_MPO_edge_right();
+        }
     }
     sites = 0;
     edge_has_been_set = true;
@@ -234,18 +263,30 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
 void class_environment_var::set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO) {
     if(edge_has_been_set) return;
     if (side == "L") {
-        int mpsDim = MPS.get_chiL();
-        int mpoDim = MPO.MPO().dimension(0);
+        long mpsDim = MPS.get_chiL();
+        long mpoDim = MPO.MPO().dimension(0);
         block.resize(array4{mpsDim,mpsDim, mpoDim, mpoDim});
         block.setZero();
-        for (long i = 0; i < mpsDim; i++)block(i,i, mpoDim-1, mpoDim-1) = 1;
+        Eigen::Tensor<Scalar,2> double_edge = MPO.get_MPO_edge_left().contract(MPO.get_MPO_edge_left(),Textra::idx());
+        for (long i = 0; i < mpsDim; i++){
+            Eigen::array<long, 2> extent2 = {mpoDim,mpoDim};
+            Eigen::array<long, 4> offset4 = {i,i,0,0};
+            Eigen::array<long, 4> extent4 = {1,1,mpoDim,mpoDim};
+            block.slice(offset4, extent4).reshape(extent2) =  double_edge;
+        }
     }
     if(side == "R"){
-        int mpsDim = MPS.get_chiR();
-        int mpoDim = MPO.MPO().dimension(1);
+        long mpsDim = MPS.get_chiR();
+        long mpoDim = MPO.MPO().dimension(1);
         block.resize(array4{mpsDim,mpsDim, mpoDim, mpoDim});
         block.setZero();
-        for (long i = 0; i < mpsDim; i++)block(i,i,0,0) = 1;
+        Eigen::Tensor<Scalar,2> double_edge = MPO.get_MPO_edge_right().contract(MPO.get_MPO_edge_right(),Textra::idx());
+        for (long i = 0; i < mpsDim; i++){
+            Eigen::array<long, 2> extent2 = {mpoDim,mpoDim};
+            Eigen::array<long, 4> offset4 = {i,i,0,0};
+            Eigen::array<long, 4> extent4 = {1,1,mpoDim,mpoDim};
+            block.slice(offset4, extent4).reshape(extent2) =  double_edge;
+        }
     }
     sites = 0;
     edge_has_been_set = true;

@@ -14,6 +14,9 @@ source/io/class_settings_reader.cpp
 source/io/nmspc_logger.cpp
 source/main.cpp
 source/math/arpack_extra/arpackpp_solver.cpp
+source/math/arpack_extra/matrix_product_dense.cpp
+source/math/arpack_extra/matrix_product_hamiltonian.cpp
+source/math/arpack_extra/matrix_product_sparse.cpp
 source/math/arpack_extra/matrix_product_stl.cpp
 source/math/arpack_extra/matrix_recast.cpp
 source/math/class_eigsolver.cpp
@@ -23,7 +26,6 @@ source/math/nmspc_random.cpp
 source/model/class_model_base.cpp
 source/model/class_model_factory.cpp
 source/model/class_selfdual_tf_rf_ising.cpp
-source/model/class_selfdual_tf_rf_ising_normal.cpp
 source/model/class_tf_ising.cpp
 source/simulation/class_simulation_status.cpp
 source/simulation/nmspc_settings.cpp
@@ -106,7 +108,6 @@ source/model/class_hamiltonian_h5tables.h
 source/model/class_model_base.h
 source/model/class_model_factory.h
 source/model/class_selfdual_tf_rf_ising.h
-source/model/class_selfdual_tf_rf_ising_normal.h
 source/model/class_tf_ising.h
 source/simulation/class_simulation_status.h
 source/simulation/enums.h

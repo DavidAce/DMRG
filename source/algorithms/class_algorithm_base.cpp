@@ -3,6 +3,7 @@
 //
 
 #include <fstream>
+#include <sstream>
 #include <complex>
 #include "class_algorithm_base.h"
 #include <io/class_h5table_buffer.h>

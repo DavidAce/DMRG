@@ -40,6 +40,7 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
     // increase the size on all Lambdas by chi*mpoDim
     tools::log->trace("Applying MPO's");
     state.clear_measurements();
+    if(state.hasNaN()) throw std::runtime_error("State has NAN's before applying MPO's");
     tools::log->trace("Bond dimensions before applying MPO's = {}", tools::finite::measure::bond_dimensions(state));
     tools::log->trace("Norm before applying MPO's = {:.16f}", tools::finite::measure::norm(state));
 
@@ -79,6 +80,7 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
         state.MPS_R.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
     }
     state.clear_measurements();
+    if(state.hasNaN()) throw std::runtime_error("State has NAN's after applying MPO's");
     tools::log->trace("Bond dimensions after applying MPO's = {}", tools::finite::measure::bond_dimensions(state));
     tools::log->trace("Norm after  applying MPO's = {:.16f}", tools::finite::measure::norm(state));//    std::cout << "Norm              (after mpos): " << tools::finite::measure::norm(state)  << std::endl;
 //    std::cout << "Spin component sx (after mpos): " << tools::finite::measure::spin_component(state, qm::spinOneHalf::sx)  << std::endl;

@@ -80,9 +80,9 @@ class_algorithm_launcher::class_algorithm_launcher()
 
     if (createMode == h5pp::CreateMode::TRUNCATE or createMode == h5pp::CreateMode::RENAME){
         //Put git revision in file attribute
-        h5ppFile->writeAttributeToFile(GIT::BRANCH      , "GIT BRANCH");
-        h5ppFile->writeAttributeToFile(GIT::COMMIT_HASH , "GIT COMMIT");
-        h5ppFile->writeAttributeToFile(GIT::REVISION    , "GIT REVISION");
+        h5ppFile->writeAttribute(GIT::BRANCH      , "GIT BRANCH", "/");
+        h5ppFile->writeAttribute(GIT::COMMIT_HASH , "GIT COMMIT", "/");
+        h5ppFile->writeAttribute(GIT::REVISION    , "GIT REVISION", "/");
     }
 
 

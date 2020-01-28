@@ -19,6 +19,7 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
     indata.find_parameter<long>       ("model::seed"                                , model::seed);
     indata.find_parameter<long>       ("model::state_number"                        , model::state_number);
+    indata.find_parameter<bool>       ("model::quench_chi_when_stuck"               , model::quench_chi_when_stuck);
     indata.find_parameter<bool>       ("model::projection_when_growing_chi"         , model::projection_when_growing_chi);
     indata.find_parameter<bool>       ("model::projection_trial_when_stuck"         , model::projection_trial_when_stuck);
     indata.find_parameter<bool>       ("model::projection_on_every_sweep"           , model::projection_on_every_sweep);
@@ -34,11 +35,13 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<double>     ("model::tf_nn_ising::g"                      , model::tf_nn_ising::g);
     indata.find_parameter<size_t>     ("model::tf_nn_ising::d"                      , model::tf_nn_ising::d);
     indata.find_parameter<double>     ("model::tf_nn_ising::w"                      , model::tf_nn_ising::w);
-    indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::J_log_mean"    , model::selfdual_tf_rf_ising::J_log_mean);
-    indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::h_log_mean"    , model::selfdual_tf_rf_ising::h_log_mean);
+    indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::J_mean"        , model::selfdual_tf_rf_ising::J_mean);
+    indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::h_mean"        , model::selfdual_tf_rf_ising::h_mean);
     indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::J_sigma"       , model::selfdual_tf_rf_ising::J_sigma);
     indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::h_sigma"       , model::selfdual_tf_rf_ising::h_sigma);
     indata.find_parameter<double>     ("model::selfdual_tf_rf_ising::lambda"        , model::selfdual_tf_rf_ising::lambda);
+    indata.find_parameter<bool>       ("model::selfdual_tf_rf_ising::parity_sep"    , model::selfdual_tf_rf_ising::parity_sep);
+    indata.find_parameter<std::string>("model::selfdual_tf_rf_ising::distribution"  , model::selfdual_tf_rf_ising::distribution);
     indata.find_parameter<size_t>     ("model::selfdual_tf_rf_ising::d"             , model::selfdual_tf_rf_ising::d);
     indata.find_parameter<size_t>     ("precision::eig_max_iter"                    , precision::eig_max_iter);
     indata.find_parameter<double>     ("precision::eig_threshold"                   , precision::eig_threshold);
@@ -52,7 +55,7 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<double>     ("precision::min_subspace_error"              , precision::min_subspace_error);
     indata.find_parameter<size_t>     ("precision::max_sites_multidmrg"             , precision::max_sites_multidmrg);
     indata.find_parameter<size_t>     ("precision::max_size_full_diag"              , precision::max_size_full_diag);
-    indata.find_parameter<size_t>     ("precision::min_size_part_diag"              , precision::min_size_part_diag);
+    indata.find_parameter<size_t>     ("precision::max_size_part_diag"              , precision::max_size_part_diag);
     indata.find_parameter<size_t>     ("precision::max_size_direct"                 , precision::max_size_direct);
     indata.find_parameter<double>     ("precision::max_norm_error"                  , precision::max_norm_error);
     indata.find_parameter<size_t>     ("precision::max_resets"                      , precision::max_resets);
