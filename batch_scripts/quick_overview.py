@@ -174,7 +174,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                                                                                                               "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
     entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
-        np.int(np.sum(chainlen)/len(chainlen)),
+        np.nanmax(chainlen),
         len(seed),
         np.nanmean(iter),
         np.nanmean(step),

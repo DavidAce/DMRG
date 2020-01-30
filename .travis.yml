@@ -5,7 +5,7 @@ notifications:
 branches:
   only:
     - master
-    - multisite_dmrg
+#    - multisite_dmrg
 
 matrix:
   fast_finish: true
