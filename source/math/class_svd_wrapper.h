@@ -48,7 +48,7 @@ public:
     decompose(const Eigen::Tensor<Scalar,2> &tensor, std::optional<long> rank_max = std::nullopt);
 
     template<typename Derived>
-    std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>,MatrixType<typename Derived::Scalar>, long>
+    std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>,MatrixType<typename Derived::Scalar>>
     decompose(const Eigen::DenseBase<Derived> &matrix, std::optional<long> rank_max = std::nullopt);
 
     template<typename Scalar>
@@ -59,9 +59,9 @@ public:
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
     schmidt  (const Eigen::Tensor<Scalar,rank> &tensor, long dL, long dR, long chiL, long chiR, std::optional<long> rank_max = std::nullopt);
 
-    template<typename Scalar>
-    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-    schmidt  (const Eigen::Tensor<Scalar,3> &tensor, long rows, long cols,std::optional<long> rank_max = std::nullopt);
+//    template<typename Scalar>
+//    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
+//    schmidt  (const Eigen::Tensor<Scalar,3> &tensor, long rows, long cols,std::optional<long> rank_max = std::nullopt);
 
     template<typename Scalar>
     std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
@@ -118,7 +118,7 @@ class_SVD::decompose(const Eigen::Tensor<Scalar,3> &tensor,const long rows,const
 }
 
 template<typename Derived>
-std::tuple<class_SVD::MatrixType<typename Derived::Scalar>, class_SVD::VectorType<typename Derived::Scalar>,class_SVD::MatrixType<typename Derived::Scalar>, long>
+std::tuple<class_SVD::MatrixType<typename Derived::Scalar>, class_SVD::VectorType<typename Derived::Scalar>,class_SVD::MatrixType<typename Derived::Scalar>>
 class_SVD::decompose(const Eigen::DenseBase<Derived> &matrix, std::optional<long> rank_max){
     auto[U,S,V,rank] = do_svd(matrix.derived().data(),matrix.rows(),matrix.cols(),rank_max);
     return std::make_tuple(U,
