@@ -147,13 +147,13 @@ void class_xDMRG::single_xDMRG_step()
 //            threshold = settings::precision::max_size_direct;
 //        }
 
+
+        state->activate_sites(threshold, max_num_sites);
         if(force_overlap > 0 and optSpace == opt::OptSpace::DIRECT){
-            log->debug("Sites are too big for OVERLAP. Moving to next site");
+            log->debug("Problem too big for OVERLAP. Moving to next site");
             theta = state->get_multitheta();
             break;
         }
-        state->activate_sites(threshold, max_num_sites);
-
 
         if( state->active_sites.size()   == old_num_sites and
             state->active_problem_size() == old_prob_size){
