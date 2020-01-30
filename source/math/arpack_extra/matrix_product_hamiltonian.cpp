@@ -5,6 +5,7 @@
 
 template<typename T>
 void DenseHamiltonianProduct<T>::MultAx(T* theta_in_, T* theta_out_) {
+    if(counter == 0) omp = std::make_shared<OMP>(num_threads);
     t_mul.tic();
     Eigen::TensorMap<Eigen::Tensor<const T, 3>>       Lblock_map(Lblock,shape_theta4[1], shape_theta4[1], shape_mpo4[0] );
     Eigen::TensorMap<Eigen::Tensor<const T, 3>>       Rblock_map(Rblock,shape_theta4[3], shape_theta4[3], shape_mpo4[1] );
@@ -16,8 +17,7 @@ void DenseHamiltonianProduct<T>::MultAx(T* theta_in_, T* theta_out_) {
 
 
     //Best yet! I have shown this to be the fastest contraction ordering
-//    theta_out.device(omp->dev) = Lblock_map
-    theta_out = Lblock_map
+    theta_out.device(omp->dev) = Lblock_map
         .contract(theta_in,    Textra::idx({0},{1}))
         .contract(HA_map ,     Textra::idx({1,2},{0,2}))//  idx({1,2,3},{0,4,5}))
         .contract(HB_map ,     Textra::idx({3,1},{0,2}))//  idx({1,2,3},{0,4,5}))

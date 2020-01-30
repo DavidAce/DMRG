@@ -36,25 +36,25 @@ double class_selfdual_tf_rf_ising::get_coupling(double J_rnd_, double J_ptb_, do
 double class_selfdual_tf_rf_ising::get_field(double h_rnd_, double h_ptb_, double beta_) const { return std::pow(h_rnd_ + h_ptb_, 1 - beta_); }
 
 void class_selfdual_tf_rf_ising::set_parameters(const Parameters &parameters) {
-    spin_dim     = get_val<size_t>(parameters, "spin_dim");
-    position     = get_val<size_t>(parameters, "position");
-    distribution = get_val<std::string>(parameters, "distribution");
-    parity_sep   = get_val<bool>(parameters, "parity_sep");
-    J_rnd        = get_val<double>(parameters, "J_rnd");
-    J_ptb        = get_val<double>(parameters, "J_ptb");
-    h_rnd        = get_val<double>(parameters, "h_rnd");
-    h_ptb        = get_val<double>(parameters, "h_ptb");
-    J_avg        = get_val<double>(parameters, "J_avg");
-    h_avg        = get_val<double>(parameters, "h_avg");
-    J_mean       = get_val<double>(parameters, "J_mean");
-    h_mean       = get_val<double>(parameters, "h_mean");
-    J_sigma      = get_val<double>(parameters, "J_sigma");
-    h_sigma      = get_val<double>(parameters, "h_sigma");
-    lambda       = get_val<double>(parameters, "lambda");
-    delta        = get_val<double>(parameters, "delta");
-    alpha        = get_val<double>(parameters, "alpha");
-    beta         = get_val<double>(parameters, "beta");
-    e_reduced    = get_val<double>(parameters, "e_reduced");
+    spin_dim                         = get_val<size_t>(parameters, "spin_dim");
+    position                         = get_val<size_t>(parameters, "position");
+    distribution                     = get_val<std::string>(parameters, "distribution");
+    parity_sep                       = get_val<bool>(parameters, "parity_sep");
+    J_rnd                            = get_val<double>(parameters, "J_rnd");
+    J_ptb                            = get_val<double>(parameters, "J_ptb");
+    h_rnd                            = get_val<double>(parameters, "h_rnd");
+    h_ptb                            = get_val<double>(parameters, "h_ptb");
+    J_avg                            = get_val<double>(parameters, "J_avg");
+    h_avg                            = get_val<double>(parameters, "h_avg");
+    J_mean                           = get_val<double>(parameters, "J_mean");
+    h_mean                           = get_val<double>(parameters, "h_mean");
+    J_sigma                          = get_val<double>(parameters, "J_sigma");
+    h_sigma                          = get_val<double>(parameters, "h_sigma");
+    lambda                           = get_val<double>(parameters, "lambda");
+    delta                            = get_val<double>(parameters, "delta");
+    alpha                            = get_val<double>(parameters, "alpha");
+    beta                             = get_val<double>(parameters, "beta");
+    e_reduced                        = get_val<double>(parameters, "e_reduced");
     psfactor                         = get_val<double>(parameters, "psfactor");
     all_mpo_parameters_have_been_set = true;
     build_mpo();
@@ -86,6 +86,18 @@ class_selfdual_tf_rf_ising::Parameters class_selfdual_tf_rf_ising::get_parameter
     return parameters;
     /* clang-format on */
 }
+
+void class_selfdual_tf_rf_ising::register_h5_parameters() {}
+//
+//    H5ParameterType = H5Tcreate(H5T_COMPOUND, sizeof(Particle));
+//    H5Tinsert(MY_HDF5_PARTICLE_TYPE, "x", HOFFSET(Particle, x), H5T_NATIVE_DOUBLE);
+//    H5Tinsert(MY_HDF5_PARTICLE_TYPE, "y", HOFFSET(Particle, y), H5T_NATIVE_DOUBLE);
+//    H5Tinsert(MY_HDF5_PARTICLE_TYPE, "z", HOFFSET(Particle, z), H5T_NATIVE_DOUBLE);
+//    H5Tinsert(MY_HDF5_PARTICLE_TYPE, "t", HOFFSET(Particle, t), H5T_NATIVE_DOUBLE);
+//    H5Tinsert(MY_HDF5_PARTICLE_TYPE, "name", HOFFSET(Particle, name), MY_HDF5_NAME_TYPE);
+//
+//
+//}
 
 void class_selfdual_tf_rf_ising::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
@@ -152,13 +164,13 @@ void class_selfdual_tf_rf_ising::randomize_hamiltonian() {
 }
 
 void class_selfdual_tf_rf_ising::set_coupling_damping(double alpha_) {
-    alpha                            = alpha_;
+    alpha = alpha_;
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_coupling() * sz);
     }
 }
 void class_selfdual_tf_rf_ising::set_field_damping(double beta_) {
-    beta                             = beta_;
+    beta = beta_;
     if(all_mpo_parameters_have_been_set) {
         mpo_internal.slice(Eigen::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(-get_field() * sx - e_reduced * Id);
     }
@@ -195,7 +207,6 @@ void class_selfdual_tf_rf_ising::set_perturbation(double coupling_ptb, double fi
 
 bool class_selfdual_tf_rf_ising::is_perturbed() const { return J_ptb != 0.0 or h_ptb != 0.0; }
 bool class_selfdual_tf_rf_ising::is_damped() const { return alpha != 0.0 or beta != 0.0; }
-
 
 Eigen::Tensor<Scalar, 4> class_selfdual_tf_rf_ising::MPO_reduced_view() const {
     if(e_reduced == 0) {
