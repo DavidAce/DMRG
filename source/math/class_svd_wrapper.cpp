@@ -49,37 +49,27 @@ void class_SVD::setThreshold(double newThreshold) {
 */
 template<typename Scalar>
 std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>,class_SVD::MatrixType<Scalar> , long>
-class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
+class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<long> rank_max){
     if (use_lapacke) return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
+    if(not rank_max.has_value()) rank_max = std::min(rows,cols);
 
     MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows,cols);
-//    auto mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows,cols);
     if (rows <= 0)              throw std::runtime_error("SVD error: rows() == 0");
     if (cols <= 0)              throw std::runtime_error("SVD error: cols() == 0");
     if (not mat.allFinite())    throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if (mat.isZero(0))          throw std::runtime_error("SVD error: matrix is all zeros");
 
-    //Debugging, save matrix into h5 file
-//    std::string outputFilename      = "svdmatrix_" + std::to_string(settings::model::seed_model) + ".h5";
-//    size_t      logLevel  = 2;
-//    h5pp::File file(outputFilename,h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE,logLevel);
-//
-//    file.writeDataset(mat, "svdmatrix");
-
-
-//    return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
-    long max_size =  std::min(SVD.singularValues().size(),rank_max);
+    long max_size =  std::min(SVD.singularValues().size(),rank_max.value());
     long rank     = (SVD.singularValues().head(max_size).array() >= SVDThreshold).count();
     if(rank == SVD.singularValues().size()){
         truncation_error = 0;
     }else{
         truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).squaredNorm();
     }
-//    truncation_error = SVD.singularValues().normalized().tail(SVD.nonzeroSingularValues()-rank).squaredNorm();
 
     if (SVD.rank() <= 0
     or not SVD.matrixU().leftCols(rank).allFinite()
@@ -95,28 +85,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
                     << "  V all finite     : " << std::boolalpha << SVD.matrixV().leftCols(rank).allFinite() << '\n'
                     << "Trying SVD with LAPACKE instead \n";
         return do_svd_lapacke(mat_ptr, rows,cols,rank_max);
-//        throw std::runtime_error("SVD error:  Erroneous results");
     }
-
-//    auto [U_lapacke, S_lapacke,V_lapacke ,rank_lapacke] = do_svd_lapacke(mat_ptr, rows,cols,rank_max);
-//    long rank_common = std::min(rank_lapacke,rank);
-//    if ( (SVD.singularValues().head(rank_common) - S_lapacke).array().cwiseAbs().sum() > 1e-12 ){
-//        std::cerr   << "SVD Eigen - Lapacke mismatch" << std::endl;
-//        std::cerr   << std::setw(48) << "Eigen" << std::setw(48) << "Lapacke"  << std::setw(48) << "Diff" << std::endl;
-//        for(int i = 0; i < rank_common; i++){
-//            std::cerr   << std::setw(48) <<  std::setprecision(16)  << SVD.singularValues()(i)
-//                        << std::setw(48) <<  std::setprecision(16)  << S_lapacke(i)
-//                        << std::setw(48) <<  std::setprecision(16)  << std::abs(SVD.singularValues()(i)  - S_lapacke(i))
-//                        << std::endl;
-//        }
-//    }
-
-
-//    std::cout << "Singular values           : " << SVD.singularValues().transpose() << std::endl;
-//    std::cout << "Singular values after norm: " << SVD.singularValues().head(rank).normalized().transpose() << std::endl;
-//    std::cout << "Rank                      : " << rank << std::endl;
-//    std::cout << "Threshold                 : " << svd_threshold << std::endl;
-//    std::cout << "Truncation error          : " << truncation_error << std::endl;
 
     return std::make_tuple(
             SVD.matrixU().leftCols(rank),
@@ -129,7 +98,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, long rank_max){
 //! \relates class_SVD
 //! \brief force instantiation of do_svd for type 'double'
 template std::tuple<class_SVD::MatrixType<double>, class_SVD::VectorType<double>,class_SVD::MatrixType<double> , long>
-class_SVD::do_svd(const double *, long, long, long);
+class_SVD::do_svd(const double *, long, long, std::optional<long>);
 
 
 
@@ -138,7 +107,7 @@ using cplx = std::complex<double>;
 //! \relates class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
 template std::tuple<class_SVD::MatrixType<cplx>, class_SVD::VectorType<cplx>,class_SVD::MatrixType<cplx> , long>
-class_SVD::do_svd(const cplx *, long, long, long);
+class_SVD::do_svd(const cplx *, long, long, std::optional<long>);
 
 
 

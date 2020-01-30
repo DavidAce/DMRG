@@ -20,7 +20,8 @@
 
 template<typename Scalar>
 std::tuple<class_SVD::MatrixType<Scalar>, class_SVD::VectorType<Scalar>,class_SVD::MatrixType<Scalar> , long>
-class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long rank_max){
+class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::optional<long> rank_max){
+    if(not rank_max.has_value()) rank_max = std::min(rows,cols);
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>> (mat_ptr,rows,cols);
 
     if (rows <= 0)              throw std::runtime_error("SVD error: rows() == 0");
@@ -65,7 +66,7 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long ran
         info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork,rwork.data());
     }
 
-    long max_size    =  std::min(S.size(),rank_max);
+    long max_size    =  std::min(S.size(),rank_max.value());
     long rank        = (S.head(max_size).array() >= SVDThreshold).count();
     if(rank == S.size()){
         truncation_error = 0;
@@ -102,7 +103,7 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, long ran
 //! \relates class_SVD
 //! \brief force instantiation of do_svd_lapacke for type 'double'
 template std::tuple<class_SVD::MatrixType<double>, class_SVD::VectorType<double>,class_SVD::MatrixType<double> , long>
-class_SVD::do_svd_lapacke(const double *, long, long, long);
+class_SVD::do_svd_lapacke(const double *, long, long, std::optional<long>);
 
 
 
@@ -111,5 +112,5 @@ using cplx = std::complex<double>;
 //! \relates class_SVD
 //! \brief force instantiation of do_svd_lapacke for type 'std::complex<double>'
 template std::tuple<class_SVD::MatrixType<cplx>, class_SVD::VectorType<cplx>,class_SVD::MatrixType<cplx> , long>
-class_SVD::do_svd_lapacke(const cplx *, long, long, long);
+class_SVD::do_svd_lapacke(const cplx *, long, long, std::optional<long>);
 

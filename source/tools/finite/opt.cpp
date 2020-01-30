@@ -54,12 +54,12 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
-    if(sim_status.simulation_has_got_stuck){
-        ceres_default_options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-        ceres_default_options.max_num_iterations = 1000;
-        ceres_default_options.gradient_tolerance = 1e-4;
-        ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
-    }
+//    if(sim_status.simulation_has_got_stuck){
+//        ceres_default_options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
+//        ceres_default_options.max_num_iterations = 1000;
+//        ceres_default_options.gradient_tolerance = 1e-4;
+//        ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
+//    }
 
     if(optSpace.option == opt::SPACE::SUBSPACE){
         ceres_default_options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance

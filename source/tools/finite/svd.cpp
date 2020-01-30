@@ -8,7 +8,7 @@
 #include <state/class_state_finite.h>
 #include <tools/nmspc_tools.h>
 
-void tools::finite::mps::normalize(class_state_finite & state, const std::optional<size_t> chi_lim_opt){
+void tools::finite::mps::normalize(class_state_finite & state, std::optional<size_t> chi_lim){
 
     tools::log->trace("Normalizing state");
     using namespace Textra;
@@ -16,8 +16,7 @@ void tools::finite::mps::normalize(class_state_finite & state, const std::option
     state.clear_measurements();
     tools::common::profile::t_svd.tic();
     size_t num_moves = 2*(state.get_length()-2);
-    size_t chi_lim = state.get_chi_lim();
-    if(chi_lim_opt.has_value()) chi_lim = chi_lim_opt.value();
+    if(not chi_lim.has_value()) chi_lim = state.get_chi_lim();
     if(state.hasNaN()) throw std::runtime_error("State has NAN's before normalization");
     tools::log->trace("Norm before normalization = {:.16f}", tools::finite::measure::norm(state));
     tools::log->trace("Bond dimensions before normalization: {}", tools::finite::measure::bond_dimensions(state));
@@ -67,8 +66,9 @@ void tools::finite::mps::normalize(class_state_finite & state, const std::option
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_state_finite & state, const std::optional<size_t> chi_lim){
+void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_state_finite & state, std::optional<size_t> chi_lim){
     state.clear_measurements();
+    if(not chi_lim.has_value()) chi_lim = state.get_chi_lim();
     if (state.active_sites.empty()) throw std::runtime_error("truncate_theta: No active sites to truncate");
     if (theta.size() == 0)          throw std::runtime_error("truncate_theta: Theta is empty");
     auto theta_map = Eigen::Map<Eigen::VectorXcd>(theta.data(),theta.size());
@@ -117,14 +117,13 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<Scalar,3> &theta, class_st
 
 
 
-void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &theta, class_state_finite & state, const std::optional<size_t> chi_lim_opt){
+void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &theta, class_state_finite & state, std::optional<size_t> chi_lim){
     tools::log->trace("Truncating multitheta from left to right");
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
     using Scalar = class_state_finite::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
-    size_t chi_lim = state.get_chi_lim();
-    if(chi_lim_opt.has_value()) chi_lim = chi_lim_opt.value();
+    if(not chi_lim.has_value()) chi_lim = state.get_chi_lim();
     Eigen::Tensor<Scalar,4> theta4;
     Eigen::Tensor<Scalar,3> U;
     Eigen::Tensor<Scalar,3> V = theta;
@@ -204,14 +203,13 @@ void tools::finite::opt::truncate_right(Eigen::Tensor<std::complex<double>,3> &t
 }
 
 
-void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_state_finite & state, const std::optional<size_t> chi_lim_opt){
+void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &theta, class_state_finite & state, std::optional<size_t> chi_lim){
     tools::log->trace("Truncating multitheta from right to left");
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
     using Scalar = class_state_finite::Scalar;
     using VectorType = Eigen::Matrix<Scalar,Eigen::Dynamic,1>;
-    size_t chi_lim = state.get_chi_lim();
-    if(chi_lim_opt.has_value()) chi_lim = chi_lim_opt.value();
+    if(not chi_lim.has_value()) chi_lim = state.get_chi_lim();
     Eigen::Tensor<Scalar,4> theta4;
     Eigen::Tensor<Scalar,3> U = theta;
     Eigen::Tensor<Scalar,3> V;
@@ -291,13 +289,13 @@ void tools::finite::opt::truncate_left(Eigen::Tensor<std::complex<double>,3> &th
 }
 
 
-void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state,const std::optional<size_t> chi_lim_opt) {
+void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state, std::optional<size_t> chi_lim) {
     tools::common::profile::t_svd.tic();
+    if(not chi_lim.has_value())  chi_lim = state.get_chi_lim();
+
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
-    size_t chi_lim = state.get_chi_lim();
-    if(chi_lim_opt.has_value())  chi_lim = chi_lim_opt.value();
-    auto[U, S, V] = SVD.schmidt(theta, chi_lim);
+    auto[U, S, V] = SVD.schmidt(theta, chi_lim.value());
     state.set_truncation_error(SVD.get_truncation_error());
     state.MPS_L.back().set_M(U);
     state.MPS_L.back().set_LC(S);
@@ -308,8 +306,10 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &t
 
 
 
-int tools::finite::mps::move_center_point(class_state_finite & state){
+int tools::finite::mps::move_center_point(class_state_finite & state, std::optional<size_t> chi_lim){
     //Take current MPS and generate an Lblock one larger and store it in list for later loading
+    if(not chi_lim.has_value())  chi_lim = state.get_chi_max();
+
 
     auto & MPS_L  = state.MPS_L;
     auto & MPS_R  = state.MPS_R;
@@ -327,22 +327,13 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
     if(MPS_R.front().get_position() != ENV_R.front().get_position()) throw std::runtime_error("MPSR and ENVR have mismatching positions");
     if(ENV_L.size() + ENV_R.size() != state.get_length()) throw std::runtime_error("ENVL + ENVR sizes do not add up to chain length");
     if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length");
-    assert(ENV_L.size() + ENV_R.size() == state.get_length());
+    if(MPO_L.size() + MPO_R.size() != state.get_length()) throw std::runtime_error("MPOL + MPOR sizes do not add up to chain length");
     assert(ENV_L.back().sites + ENV_R.front().sites == state.get_length() - 2);
     //Store the special LC bond in a temporary.
     Eigen::Tensor<Scalar,1> LC = MPS_L.back().get_LC();
     MPS_L.back().unset_LC();
 
     if (state.get_direction() == 1){
-//        class_environment     L  = ENV_L.back();
-//        class_environment_var L2 = ENV2_L.back();
-//        ENV_L .back().enlarge(MPS_L.back(), MPO_L.back());
-//        ENV2_L.back().enlarge(MPS_L.back(), MPO_L.back());
-
-//        tools::log->debug("Clearing damping on site {}", MPO_R.front()->get_position());
-//        MPO_R.front()->set_coupling_damping(0.0); // Clear damping as you go
-//        MPO_R.front()->set_field_damping(0.0);   // Clear damping as you go
-
         ENV_L .emplace_back(ENV_L .back().enlarge(MPS_L.back(), *MPO_L.back()));
         ENV2_L.emplace_back(ENV2_L.back().enlarge(MPS_L.back(), *MPO_L.back()));
         MPS_L.emplace_back(class_mps_site(MPS_R.front().get_M(), LC, MPS_R.front().get_position()));
@@ -358,16 +349,6 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
                 .shuffle(Textra::array4{1,0,2,3});
         tools::finite::opt::truncate_theta(theta,state);
     }else{
-
-//        class_environment     R  = ENV_R.front();
-//        class_environment_var R2 = ENV2_R.front();
-//        R .enlarge(MPS_R.front(), MPO_R.front()->MPO());
-//        R2.enlarge(MPS_R.front(), MPO_R.front()->MPO());
-
-//        tools::log->debug("Clearing damping on site {}", MPO_L.back()->get_position());
-//        MPO_L.back()->set_coupling_damping(0.0); // Clear damping as you go
-//        MPO_L.back()->set_field_damping(0.0);   // Clear damping as you go
-
         ENV_R .emplace_front(ENV_R .front().enlarge(MPS_R.front(), *MPO_R.front()));
         ENV2_R.emplace_front(ENV2_R.front().enlarge(MPS_R.front(), *MPO_R.front()));
         MPS_R.emplace_front(class_mps_site(MPS_L.back().get_M(), LC, MPS_L.back().get_position()));
@@ -380,8 +361,10 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
                 state.MPS_L.back().get_M()
                 .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                 .contract(Textra::asDiagonal(LC), Textra::idx({3},{0}));
-        tools::finite::opt::truncate_theta(theta,state);
+        tools::finite::opt::truncate_theta(theta,state,chi_lim);
     }
+    size_t pos = state.get_position();
+    tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", pos, std::log10(state.get_truncation_error(pos)),state.get_chi_lim(), tools::finite::measure::bond_dimension_current(state));
 
     assert(MPO_L.size() + MPO_R.size() == state.get_length());
     if(ENV_L.empty()) throw std::runtime_error("ENVL became empty");
@@ -392,6 +375,8 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
     if(MPS_R.front().get_position() != ENV_R.front().get_position()) throw std::runtime_error("MPSR and ENVR got mismatching positions");
     if(ENV_L.size() + ENV_R.size() != state.get_length()) throw std::runtime_error("ENVL + ENVR sizes do not add up to chain length anymore");
     if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length anymore");
+    if(MPO_L.size() + MPO_R.size() != state.get_length()) throw std::runtime_error("MPOL + MPOR sizes do not add up to chain length anymore");
+
     //    Check edge
     if (state.position_is_any_edge()){
         state.flip_direction();
@@ -403,23 +388,23 @@ int tools::finite::mps::move_center_point(class_state_finite & state){
     state.clear_measurements();
     state.active_sites.clear();
 
-    tools::finite::debug::check_integrity(state);
+//    tools::finite::debug::check_integrity(state);
 
     return state.get_sweeps();
 }
 
 
 
-void tools::finite::mps::truncate_all_sites(class_state_finite & state, std::optional<size_t> chi_lim_opt, size_t period, size_t offset){
-    //If chi_lim_opt is not given, and period == 0 or 1 this should be equivalent to "move_center_point(...)"
-    //If chi_lim_opt is not given, it is set to state.get_chi_lim()
-    //If chi_lim_opt is given, it is enforced on every site if stride == 0, on every other site if stride == 1, and so on.
+void tools::finite::mps::truncate_all_sites(class_state_finite & state, std::optional<size_t> chi_lim, size_t period, size_t offset){
+    //If chi_lim is not given, and period == 0 or 1 this should be equivalent to "move_center_point(...)"
+    //If chi_lim is not given, it is set to state.get_chi_lim()
+    //If chi_lim is given, it is enforced on every site if stride == 0, on every other site if stride == 1, and so on.
     tools::log->debug("Truncating chain: sites {} | period {} | offset {}",state.get_length(), period,offset);
 
-    if(not chi_lim_opt) chi_lim_opt = state.get_chi_lim();
+    if(not chi_lim) chi_lim = state.get_chi_lim();
     std::vector<size_t> chi_lim_vec (state.get_length(),state.get_chi_lim());
     for(size_t pos = 0; pos < chi_lim_vec.size(); pos++){
-        if(math::mod(pos+offset,period) == 0) chi_lim_vec[pos] = chi_lim_opt.value();
+        if(math::mod(pos+offset,period) == 0) chi_lim_vec[pos] = chi_lim.value();
     }
 
 

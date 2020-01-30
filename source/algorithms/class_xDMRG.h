@@ -17,8 +17,7 @@ class class_state_finite;
 class class_xDMRG : public class_algorithm_finite {
 private:
     double energy_window_growth_factor = 1.0;
-    size_t force_overlap = 0;
-    size_t num_chi_quenches = 0;
+
 
     public:
     //Inherit the constructor of class_algorithm_base
@@ -30,8 +29,6 @@ private:
     void inflate_initial_state();
     void single_xDMRG_step();
     void reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason );
-    void try_projection();
-    void try_chi_quench();
     void run_preprocessing()                final;
     void run_simulation()                   final;
     void check_convergence()                final;
