@@ -79,13 +79,11 @@ conan_cmake_run(CONANFILE conanfile.txt
         BUILD missing)
 
 
-
+message("CONAN TARGETS: ${CONAN_TARGETS}")
 ##################################################################
 ### Link all the things!                                       ###
 ##################################################################
-target_link_libraries(project-settings INTERFACE CONAN_PKG::ceres-solver)
-target_link_libraries(project-settings INTERFACE CONAN_PKG::h5pp)
-target_link_libraries(project-settings INTERFACE CONAN_PKG::Eigen3)
+target_link_libraries(project-settings INTERFACE ${CONAN_TARGETS})
 target_link_libraries(project-settings INTERFACE arpack::arpack++) # Last to use blas
 
 

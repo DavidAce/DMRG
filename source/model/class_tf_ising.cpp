@@ -189,6 +189,9 @@ class_tf_ising::Parameters class_tf_ising::get_parameters() const {
     /* clang-format on */
 }
 
+void class_tf_ising::register_h5_parameters() {}
+
+
 void class_tf_ising::set_full_lattice_parameters([[maybe_unused]] std::vector<Parameters> lattice_parameters, bool reverse) {
     if(reverse) {
         std::reverse(lattice_parameters.begin(), lattice_parameters.end());

@@ -22,6 +22,8 @@
 
 #define profile_matrix_product_hamiltonian 0
 
+class OMP;
+
 template<class Scalar_>
 class DenseHamiltonianProduct {
     public:
@@ -39,7 +41,8 @@ class DenseHamiltonianProduct {
     std::array<long, 4>        shape_mpo4;
     eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC;
     eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R;
-    //    std::shared_ptr<OMP> omp;
+    std::shared_ptr<OMP> omp;
+    size_t num_threads = 1; /*!< Number of threads */
     public:
     DenseHamiltonianProduct(const Scalar_ *           Lblock_,        /*!< The left block tensor.  */
                             const Scalar_ *           Rblock_,        /*!< The right block tensor.  */
@@ -47,7 +50,7 @@ class DenseHamiltonianProduct {
                             const Scalar_ *           HB_,            /*!< The right Hamiltonian MPO's */
                             const std::array<long, 4> shape_theta4_,  /*!< An array containing the shapes of theta  */
                             const std::array<long, 4> shape_mpo4_,    /*!< An array containing the shapes of the MPO  */
-                            const size_t              num_threads = 1 /*!< Number of threads */
+                            const size_t              num_threads_ = 1 /*!< Number of threads */
     );
 
     // Functions used in in Arpack++ solver
@@ -75,12 +78,10 @@ DenseHamiltonianProduct<T>::DenseHamiltonianProduct(const Scalar *            Lb
                                                     const Scalar *            HB_,           /*!< The right Hamiltonian MPO's */
                                                     const std::array<long, 4> shape_theta4_, /*!< An array containing the shapes of theta  */
                                                     const std::array<long, 4> shape_mpo4_,   /*!< An array containing the shapes of the MPO  */
-                                                    const size_t              num_threads)
+                                                    const size_t              num_threads_)
     : Lblock(Lblock_), Rblock(Rblock_), HA(HA_), HB(HB_), shape_theta4(shape_theta4_),
       shape_theta2({shape_theta4[0] * shape_theta4[1], shape_theta4[2] * shape_theta4[3]}),
-      shape_theta1({shape_theta4[0] * shape_theta4[1] * shape_theta4[2] * shape_theta4[3]}), shape_mpo4(shape_mpo4_)
-//    omp(std::make_shared<OMP>(num_threads));
-
+      shape_theta1({shape_theta4[0] * shape_theta4[1] * shape_theta4[2] * shape_theta4[3]}), shape_mpo4(shape_mpo4_), num_threads(num_threads_)
 {
     t_mul.set_properties(profile_matrix_product_hamiltonian, 10, "Time multiplying");
     if(Lblock == nullptr) throw std::runtime_error("Lblock is a nullptr!");
@@ -88,16 +89,3 @@ DenseHamiltonianProduct<T>::DenseHamiltonianProduct(const Scalar *            Lb
     if(HA == nullptr) throw std::runtime_error("HA is a nullptr!");
     if(HB == nullptr) throw std::runtime_error("HB is a nullptr!");
 }
-
-#ifdef EIGEN_USE_BLAS_SUSPEND
-    #define EIGEN_USE_BLAS
-    #undef EIGEN_USE_BLAS_SUSPEND
-#endif
-#ifdef EIGEN_USE_MKL_ALL_SUSPEND
-    #define EIGEN_USE_MKL_ALL
-    #undef EIGEN_USE_MKL_ALL_SUSPEND
-#endif
-#ifdef EIGEN_USE_LAPACKE_STRICT_SUSPEND
-    #define EIGEN_USE_LAPACKE_STRICT
-    #undef EIGEN_USE_LAPACKE_STRICT_SUSPEND
-#endif

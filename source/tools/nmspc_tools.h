@@ -52,6 +52,7 @@ namespace tools{
             extern void normalize                           (class_state_finite & state, const std::optional<size_t> chi_lim = std::nullopt);
             extern void rebuild_environments                (class_state_finite & state);
             extern int  move_center_point                   (class_state_finite & state); /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
+            extern void truncate_all_sites                  (class_state_finite & state, std::optional<size_t> chi_lim_opt = std::nullopt, size_t period = 1, size_t offset = 0);
             extern void project_to_closest_parity_sector    (class_state_finite & state, std::string paulistring);
 
             namespace internals{
@@ -96,9 +97,9 @@ namespace tools{
 
             extern Eigen::Tensor<Scalar,3> find_excited_state(const class_state_finite & state, const class_simulation_status & sim_status, OptMode optMode, OptSpace optSpace, OptType optType);
             extern Eigen::Tensor<Scalar,4> find_ground_state (const class_state_finite & state, std::string ritz = "SR");
-            extern void truncate_theta(Eigen::Tensor<Scalar,3> & theta, class_state_finite & state);
-            extern void truncate_left (Eigen::Tensor<Scalar,3> & theta, class_state_finite & state);
-            extern void truncate_right(Eigen::Tensor<Scalar,3> & theta, class_state_finite & state);
+            extern void truncate_theta(Eigen::Tensor<Scalar,3> & theta, class_state_finite & state,const std::optional<size_t> chi_lim = std::nullopt);
+            extern void truncate_left (Eigen::Tensor<Scalar,3> & theta, class_state_finite & state,const std::optional<size_t> chi_lim = std::nullopt);
+            extern void truncate_right(Eigen::Tensor<Scalar,3> & theta, class_state_finite & state,const std::optional<size_t> chi_lim = std::nullopt);
             extern void truncate_theta(Eigen::Tensor<Scalar,4> & theta, class_state_finite & state,const std::optional<size_t> chi_lim = std::nullopt);
         }
 

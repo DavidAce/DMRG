@@ -19,21 +19,28 @@
 #endif
 
 
+// save diagnostic state
+#pragma clang diagnostic push
+// turn off the specific warning. Can also use "-Wall"
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+
 #if __has_include(<arpackpp/arcomp.h>)
-#include <arpackpp/arcomp.h>
-#include <arpackpp/ardscomp.h>
-#include <arpackpp/ardnsmat.h>
-#include <arpackpp/arsnsym.h>
-#include <arpackpp/arssym.h>
+    #include <arpackpp/arcomp.h>
+    #include <arpackpp/ardscomp.h>
+    #include <arpackpp/ardnsmat.h>
+    #include <arpackpp/arsnsym.h>
+    #include <arpackpp/arssym.h>
 #elif __has_include(<arpack++/arcomp.h>)
-#include <arpack++/ardscomp.h>
-#include <arpack++/ardnsmat.h>
-#include <arpack++/arsnsym.h>
-#include <arpack++/arssym.h>
+    #include <arpack++/ardscomp.h>
+    #include <arpack++/ardnsmat.h>
+    #include <arpack++/arsnsym.h>
+    #include <arpack++/arssym.h>
 #else
 #error Could not include arpack headers correctly
 #endif
 
+// turn the warnings back on
+#pragma clang diagnostic pop
 
 
 namespace tc = TypeCheck;

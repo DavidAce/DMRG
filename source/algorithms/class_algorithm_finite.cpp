@@ -228,7 +228,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
                 log->debug("Truncation errors: {}", state->get_truncation_errors());
                 log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
                 log->debug("Truncated bond count: {} ", trunc_bond_count);
-                log->debug("Bond at limit  count: {} ", bond_at_lim_count);
+                log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
                 if(state->is_bond_limited()){
                     if(state->is_damped()){
                         log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");

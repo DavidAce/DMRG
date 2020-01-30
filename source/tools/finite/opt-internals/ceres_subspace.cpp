@@ -326,7 +326,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
     using Scalar = class_state_finite::Scalar;
     using namespace eigutils::eigSetting;
     auto options = ceres_default_options;
-    options.max_num_iterations = 2000; // We need a lot of iterations to recover from initial guesses
+//    options.max_num_iterations = 2000; // We need a lot of iterations to recover from initial guesses
 //    options.function_tolerance = 1e-12;
 
 

@@ -6,6 +6,7 @@
 
 #include "class_model_parameter_type.h"
 #include <any>
+#include <h5pp/h5pp.h>
 #include <io/nmspc_logger.h>
 #include <map>
 #include <memory>
@@ -25,9 +26,9 @@ class class_model_base {
     std::optional<size_t>           position;      /*!< Position on a finite chain */
     double                          e_reduced = 0; /*!< "Reduced" energy offset for this mpo (to make "reduced" MPO views) */
     //    ParameterType<double> e_reduced = {"e_reduced",0.0}; /*!< "Reduced" energy offset for this mpo (to make "reduced" MPO views) */
-    Eigen::Tensor<Scalar, 4> mpo_internal;
-    [[nodiscard]] std::any &               find_val(Parameters &parameters, std::string_view key) const;
-    [[nodiscard]] const std::any &         find_val(const Parameters &parameters, std::string_view key) const;
+    Eigen::Tensor<Scalar, 4>      mpo_internal;
+    [[nodiscard]] std::any &      find_val(Parameters &parameters, std::string_view key) const;
+    [[nodiscard]] const std::any &find_val(const Parameters &parameters, std::string_view key) const;
     template<typename T>
     [[nodiscard]] T &get_val(Parameters &parameters, std::string_view key) {
         return std::any_cast<T &>(find_val(parameters, key));
@@ -38,6 +39,8 @@ class class_model_base {
     }
 
     public:
+    h5pp::hid::h5t H5ParameterType;
+
     bool all_mpo_parameters_have_been_set = false;
 
     explicit class_model_base(size_t position_);
@@ -55,24 +58,25 @@ class class_model_base {
     void                            print_parameter_names() const;
     void                            print_parameter_values() const;
 
-    virtual std::unique_ptr<class_model_base> clone() const                                                                                 = 0;
-    virtual Eigen::Tensor<Scalar, 4>          MPO_reduced_view() const                                                                      = 0;
-    virtual Eigen::Tensor<Scalar, 4>          MPO_reduced_view(double single_site_energy) const                                             = 0;
-    virtual Eigen::Tensor<Scalar, 1>          get_MPO_edge_left() const                                                                     = 0;
-    virtual Eigen::Tensor<Scalar, 1>          get_MPO_edge_right() const                                                                    = 0;
-    virtual size_t                            get_spin_dimension() const                                                                    = 0;
-    virtual Parameters                        get_parameters() const                                                                        = 0;
-    virtual void                              set_parameters(const Parameters &parameters)                                                  = 0;
-    virtual void                              set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode)                  = 0;
-    virtual void                              set_coupling_damping(double alpha)                                                            = 0;
-    virtual void                              set_field_damping(double beta)                                                                = 0;
-    virtual void                              build_mpo()                                                                                   = 0;
-    virtual void                              randomize_hamiltonian()                                                                       = 0;
-    virtual bool                              is_perturbed() const                                                                          = 0;
-    virtual bool                              is_damped() const                                                                             = 0;
+    virtual std::unique_ptr<class_model_base> clone() const                                                                             = 0;
+    virtual Eigen::Tensor<Scalar, 4>          MPO_reduced_view() const                                                                  = 0;
+    virtual Eigen::Tensor<Scalar, 4>          MPO_reduced_view(double single_site_energy) const                                         = 0;
+    virtual Eigen::Tensor<Scalar, 1>          get_MPO_edge_left() const                                                                 = 0;
+    virtual Eigen::Tensor<Scalar, 1>          get_MPO_edge_right() const                                                                = 0;
+    virtual size_t                            get_spin_dimension() const                                                                = 0;
+    virtual Parameters                        get_parameters() const                                                                    = 0;
+    virtual void                              set_parameters(const Parameters &parameters)                                              = 0;
+    virtual void                              register_h5_parameters()                                                                  = 0;
+    virtual void                              set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode)              = 0;
+    virtual void                              set_coupling_damping(double alpha)                                                        = 0;
+    virtual void                              set_field_damping(double beta)                                                            = 0;
+    virtual void                              build_mpo()                                                                               = 0;
+    virtual void                              randomize_hamiltonian()                                                                   = 0;
+    virtual bool                              is_perturbed() const                                                                      = 0;
+    virtual bool                              is_damped() const                                                                         = 0;
     virtual void                              set_full_lattice_parameters(std::vector<Parameters> all_parameters, bool reverse = false) = 0;
     virtual Eigen::MatrixXcd single_site_hamiltonian(int position, int sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd> &SY,
-                                                     std::vector<Eigen::MatrixXcd> &SZ) const                                               = 0;
+                                                     std::vector<Eigen::MatrixXcd> &SZ) const                                           = 0;
 
     virtual ~class_model_base() = default;
 };

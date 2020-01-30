@@ -107,6 +107,7 @@ void class_xDMRG::single_xDMRG_step()
     optSpace        = sim_status.simulation_has_stuck_for >= 2                                         ? opt::SPACE::SUBSPACE  : optSpace;
     optSpace        = state->size_2site()  > settings::precision::max_size_part_diag ? opt::SPACE::DIRECT : optSpace.option;
     optSpace        = sim_status.variance_mpo_has_converged                                            ? opt::SPACE::DIRECT    : optSpace;
+
     optType         = state->isReal()                                                                  ? opt::TYPE::REAL       : optType;
     long threshold = 0;
     switch(optSpace.option){
@@ -117,10 +118,14 @@ void class_xDMRG::single_xDMRG_step()
     Eigen::Tensor<Scalar,3> theta;
     // Generate a list of maximum number of active sites to try
     std::list<size_t> max_num_sites_list = {2,4,8};
-    if(sim_status.simulation_has_stuck_for >= 2) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
+//    if(sim_status.simulation_has_stuck_for >= 2) max_num_sites_list.push_back(settings::precision::max_sites_multidmrg);
     if(max_num_sites_list.size() > 1 and optMode == opt::MODE::OVERLAP)            max_num_sites_list.pop_front(); //You can take many sites in the beginning
-    if(max_num_sites_list.size() > 1 and sim_status.simulation_has_stuck_for >= 1) max_num_sites_list.pop_front(); //Take more sites if stuck
-//    if(optMode == opt::MODE::OVERLAP)            max_num_sites_list= {settings::precision::max_sites_multidmrg}; //You can take many sites in the beginning
+//    if(max_num_sites_list.size() > 1 and sim_status.simulation_has_stuck_for >= 1) max_num_sites_list.pop_front(); //Take more sites if stuck
+    if(force_overlap > 0) {
+        max_num_sites_list= {settings::precision::max_sites_multidmrg};
+        threshold = 6144;
+    }
+    //    if(optMode == opt::MODE::OVERLAP)            max_num_sites_list= {settings::precision::max_sites_multidmrg}; //You can take many sites in the beginning
 //    max_num_sites_list.sort();
     max_num_sites_list.unique();
     max_num_sites_list.remove_if([](auto &elem){return elem > settings::precision::max_sites_multidmrg;});
@@ -142,7 +147,13 @@ void class_xDMRG::single_xDMRG_step()
 //            threshold = settings::precision::max_size_direct;
 //        }
 
+        if(force_overlap > 0 and optSpace == opt::OptSpace::DIRECT){
+            log->debug("Sites are too big for OVERLAP. Moving to next site");
+            theta = state->get_multitheta();
+            break;
+        }
         state->activate_sites(threshold, max_num_sites);
+
 
         if( state->active_sites.size()   == old_num_sites and
             state->active_problem_size() == old_prob_size){
@@ -158,7 +169,7 @@ void class_xDMRG::single_xDMRG_step()
                 break;
             }
         }
-        if(optSpace ==  opt::OptSpace::SUBSPACE and optMode == opt::OptMode::VARIANCE and max_num_sites > 2)
+        if(optSpace ==  opt::OptSpace::SUBSPACE and optMode == opt::OptMode::VARIANCE and state->active_sites.size() > 2)
             log->warn("About to do subspace with too many sites!");
         theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         if(optSpace ==  opt::OptSpace::DIRECT){
@@ -222,16 +233,24 @@ void class_xDMRG::single_xDMRG_step()
     }
 
 
-    log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
-    opt::truncate_theta(theta, *state);
-    log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
-
     if(force_overlap > 0ul) {
+        size_t temp_chi = std::min(state->get_chi_max(),2*state->get_chi_lim());
+        log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+        opt::truncate_theta(theta, *state,temp_chi);
+        log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
+
+
         log->debug("Forced overlap steps current {}", force_overlap);
-        force_overlap = force_overlap - std::min(force_overlap, state->active_sites.size() - 2ul);
+        force_overlap = force_overlap - std::min(force_overlap, std::max(1ul,state->active_sites.size() - 2ul));
         log->debug("Forced overlap steps reduced {}", force_overlap);
+        if(force_overlap > 2*state->get_length() or force_overlap < 0) throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap));
+    }else{
+
+        log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+        opt::truncate_theta(theta, *state);
+        log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
+
     }
-    if(force_overlap > state->get_length() or force_overlap < 0) throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap));
 
 
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){
@@ -349,28 +368,7 @@ void class_xDMRG::check_convergence(){
     log->debug("Simulation has stuck for: {}", sim_status.simulation_has_stuck_for);
     log->debug("Simulation has to stop  : {}", sim_status.simulation_has_to_stop);
 
-    // EXPERIMENTAL AREA
-    if(settings::model::quench_chi_when_stuck
-    and not state->is_bond_limited(0.5*settings::precision::svd_threshold)
-    and state->position_is_any_edge()
-    and sim_status.simulation_has_stuck_for >= 1
-    and force_overlap == 0)
-    {
-        tools::log->info("HERE STARTS EXPERIMENT");
-        auto current_chi_lim  = state->get_chi_lim();
-        auto smaller_chi_lim  = std::min(16l, state->get_chi_lim()/2);
-        auto greater_chi_lim  = std::min(state->get_chi_max(),state->get_chi_lim()*2);
-        state->set_chi_lim(smaller_chi_lim);
-        move_center_point(2*(state->get_length()-2)); //Truncate the whole chain and come back
-//        tools::finite::mps::normalize(*state);
-//        tools::finite::mps::rebuild_environments(*state);
-//        state->set_chi_lim(greater_chi_lim);
-        state->set_chi_lim(current_chi_lim);
-        clear_saturation_status();
-        force_overlap = state->get_length();
-    }
-    if(force_overlap > state->get_length() or force_overlap < 0) throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap));
-
+    try_chi_quench();
 
 
 //    if (    sim_status.num_resets < settings::precision::max_resets
@@ -415,6 +413,48 @@ void class_xDMRG::try_projection(){
         }
     }
 }
+
+
+void class_xDMRG::try_chi_quench(){
+    if(not settings::model::quench_chi_when_stuck) return;
+    if(not state->position_is_any_edge()) return;
+    if(force_overlap > 0) return;
+    if(sim_status.simulation_has_stuck_for == 0){
+        tools::log->info("Chi quench skipped: simulation isn't stuck yet");
+        return;
+    }
+    if(num_chi_quenches >= 1){
+        tools::log->info("Chi quench skipped: max number of chi quenches have been done already");
+        return;
+    }
+    size_t trunc_bond_count = state->num_sites_truncated(2*settings::precision::svd_threshold);
+    size_t bond_at_lim_count = state->num_bonds_at_limit();
+    log->debug("Truncation errors: {}", state->get_truncation_errors());
+    log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
+    log->debug("Entanglement entr: {}", tools::finite::measure::entanglement_entropies(*state));
+    log->debug("Truncated bond count: {} ", trunc_bond_count);
+    log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
+    log->debug("threshold: {} ", 2*settings::precision::svd_threshold);
+    if(trunc_bond_count > 0){
+        tools::log->info("Chi quench skipped: some sites are truncated");
+        return;
+    }
+
+
+
+    tools::log->info("Chi quench started");
+    auto current_chi_lim  = state->get_chi_lim();
+    auto smaller_chi_lim  = std::min(16l, state->get_chi_lim()/2);
+//    auto greater_chi_lim  = std::min(state->get_chi_max(),state->get_chi_lim()*2);
+//    move_center_point(2*(state->get_length()-2)); //Truncate the whole chain and come back
+    tools::finite::mps::truncate_all_sites(*state,smaller_chi_lim,1,0);
+    clear_saturation_status();
+    force_overlap = 2*(state->get_length() - 2);
+    num_chi_quenches++;
+    if(force_overlap > 2*state->get_length() or force_overlap < 0) throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap));
+
+}
+
 
 
 void class_xDMRG::inflate_initial_state(){

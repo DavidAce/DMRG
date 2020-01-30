@@ -520,8 +520,9 @@ const std::vector<double> &class_state_finite::get_truncation_errors() const { r
 //0.5*settings::precision::svd_threshold
 size_t class_state_finite::num_sites_truncated(double threshold) const {
     auto truncation_errors = get_truncation_errors();
+    double threshold_sq = std::pow(threshold, 2);
     size_t trunc_bond_count = (size_t)  std::count_if(truncation_errors.begin(), truncation_errors.end(),
-                                                      [threshold](auto const& val){ return val > std::pow(threshold, 2); });
+                                                      [threshold_sq](auto const& val){ return val > threshold_sq ; });
     return trunc_bond_count;
 }
 

@@ -40,6 +40,7 @@ class class_tf_ising : public class_model_base {
     size_t                            get_spin_dimension() const override;
     Parameters                        get_parameters() const override;
     void                              set_parameters(const Parameters &parameters) override;
+    void                              register_h5_parameters() override;
     void                              set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) override;
     void                              set_coupling_damping(double alpha) override;
     void                              set_field_damping(double beta) override;
