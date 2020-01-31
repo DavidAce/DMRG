@@ -31,14 +31,14 @@ namespace tools::finite::opt::internal{
                                                                              OptType optType);
         extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_state_finite &state,
                                                                                const class_simulation_status &sim_status,
-                                                                               OptType optType);
+                                                                               OptType optType, OptMode optMode,OptSpace optSpace);
         extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_state_finite &state,
                                                                                const Eigen::Tensor<std::complex<double>,3> &theta,
                                                                                const class_simulation_status &sim_status,
-                                                                               OptType optType);
+                                                                               OptType optType, OptMode optMode,OptSpace optSpace);
         extern Eigen::Tensor<std::complex<double>,3> ceres_subspace_optimization   (const class_state_finite & state,
                                                                                     const class_simulation_status & sim_status,
-                                                                                    OptType optType, OptMode optMode);
+                                                                                    OptType optType, OptMode optMode,OptSpace optSpace);
         extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_state_finite & state, const class_simulation_status & sim_status);
         extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_state_finite & state, std::string ritzstring = "SR");
         extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const class_state_finite & state);

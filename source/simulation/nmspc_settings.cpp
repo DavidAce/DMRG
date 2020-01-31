@@ -53,13 +53,15 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<double>     ("precision::subspace_error_factor"           , precision::subspace_error_factor);
     indata.find_parameter<double>     ("precision::max_subspace_error"              , precision::max_subspace_error);
     indata.find_parameter<double>     ("precision::min_subspace_error"              , precision::min_subspace_error);
-    indata.find_parameter<size_t>     ("precision::max_sites_multidmrg"             , precision::max_sites_multidmrg);
     indata.find_parameter<size_t>     ("precision::max_size_full_diag"              , precision::max_size_full_diag);
     indata.find_parameter<size_t>     ("precision::max_size_part_diag"              , precision::max_size_part_diag);
     indata.find_parameter<size_t>     ("precision::max_size_direct"                 , precision::max_size_direct);
     indata.find_parameter<double>     ("precision::max_norm_error"                  , precision::max_norm_error);
     indata.find_parameter<size_t>     ("precision::max_resets"                      , precision::max_resets);
     indata.find_parameter<bool>       ("precision::use_reduced_energy"              , precision::use_reduced_energy);
+    indata.find_parameter<size_t>     ("precision::max_sites_multidmrg"             , precision::max_sites_multidmrg);
+    indata.find_parameter<std::string>("precision::move_sites_multidmrg"            , precision::move_sites_multidmrg);
+
     indata.find_parameter<int>        ("threading::num_threads_eigen"               , threading::num_threads_eigen);
     indata.find_parameter<int>        ("threading::num_threads_omp"                 , threading::num_threads_omp);
     indata.find_parameter<int>        ("threading::num_threads_blas"                , threading::num_threads_blas);

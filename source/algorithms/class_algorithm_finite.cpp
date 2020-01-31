@@ -159,13 +159,22 @@ void class_algorithm_finite::run_postprocessing() {
     log->info("Finished {} postprocessing", sim_name);
 }
 
-void class_algorithm_finite::move_center_point(size_t num_moves) {
-    log->trace("Moving center point ");
-    size_t move_steps = state->active_sites.empty() ? num_moves : std::max(1ul, state->active_sites.size() - 2ul);
+void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) {
+    if(not num_moves.has_value()){
+        if(state->active_sites.empty()) num_moves = 1ul;
+        else if(settings::precision::move_sites_multidmrg == "one") num_moves = 1ul;
+        else if(settings::precision::move_sites_multidmrg == "mid") num_moves = std::max(1ul, (state->active_sites.size() - 2ul)/2);
+        else if(settings::precision::move_sites_multidmrg == "max") num_moves = std::max(1ul, state->active_sites.size() - 2ul);
+        else{
+            throw std::logic_error("Choose how many sites you should move! Expected one of {one,mid,max}, got [" + settings::precision::move_sites_multidmrg +"]");
+        }
+    }
+    log->trace("Moving center point {} steps", num_moves.value());
     state->clear_cache();
     try {
-        for(size_t i = 0; i < move_steps; i++) {
+        for(size_t i = 0; i < num_moves.value(); i++) {
             tools::finite::mps::move_center_point(*state);
+            if(force_overlap_steps > 0) force_overlap_steps--;
         }
     } catch(std::exception &e) {
         tools::finite::print::print_state(*state);
@@ -196,62 +205,60 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
     sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() >= chi_max();
     if(not sim_status.chi_lim_has_reached_chi_max) {
         if(chi_grow()) {
-            // Here the settings specify to grow the bond dimension limit progressively during the simulation
-            // Only do this if the state is limited by bond dimension when
-            // * the simulation has just started (bond dimension < 16)
-            // * the simulation is stuck
-            bool try_grow = (state->get_chi_lim() < 16 and state->position_is_any_edge()) or sim_status.simulation_has_stuck_for >= max_stuck_iters;
+            sim_status.chi_lim = state->get_chi_lim();
 
-            if(try_grow) { // Do a bond-dim update only when the bond limit is the reason for no progress
+            // If we got here we want grow the bond dimension limit progressively during the simulation
+            // Only increment the bond dimension if
+            // * No experiments are on-going like perturbation or damping
+            // * the simulation is stuck
+            // * the state is limited by bond dimension
+            if(not state->position_is_any_edge()) return;
+            if(state->is_damped()) {
+                log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");
+                return;
+            }
+            if(state->is_perturbed()) {
+                log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
+                return;
+            }
+            if(not sim_status.simulation_has_got_stuck and state->get_chi_lim() >= 16){
+                log->info("State is not stuck yet. Kept current limit {}", state->get_chi_lim());
+                return;
+            }
+
+            if(log->level() <= spdlog::level::info){
                 size_t trunc_bond_count  = state->num_sites_truncated(2 * settings::precision::svd_threshold);
                 size_t bond_at_lim_count = state->num_bonds_at_limit();
-                log->debug("Truncation errors: {}", state->get_truncation_errors());
-                log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
-                log->debug("Truncated bond count: {} ", trunc_bond_count);
-                log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
-                if(state->is_bond_limited(2 * settings::precision::svd_threshold)) {
-                    if(state->is_damped()) {
-                        log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");
-                        return;
-                    }
-                    if(state->is_perturbed()) {
-                        log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
-                        return;
-                    }
-                    // Write current results before updating bond dimension
-                    write_state(true);
-                    write_measurements(true);
-                    write_sim_status(true);
-                    write_profiling(true);
-                    long chi_lim_new;
-                    if(state->get_chi_lim() < 16)
-                        chi_lim_new = std::min(state->get_chi_max(), state->get_chi_lim() + 1);
-                    else
-                        chi_lim_new = std::min(state->get_chi_max(), state->get_chi_lim() * 2);
-                    log->info("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_lim_new);
-                    state->set_chi_lim(chi_lim_new);
-                    clear_saturation_status();
-                    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == chi_max();
-                    if(sim_status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
-
-                    if(settings::model::projection_when_growing_chi) {
-                        log->info("Projecting at site {} to direction {} after updating bond dimension to χ = {} ", state->get_position(),
-                                  settings::model::target_parity_sector, chi_lim_new);
-                        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-                        write_projection(*state, settings::model::target_parity_sector);
-                    }
-                    copy_from_tmp(true);
-
-                } else {
-                    log->debug(
-                        "chi_grow is ON, and simulation is stuck, but there is no reason to increase bond dimension -> Kept current bond dimension limit {}",
-                        state->get_chi_lim());
-                }
-            } else {
-                log->debug("Not stuck for long enough. Stuck sweeps = {}, will increase bond dimensions when stuck sweeps = {}",
-                           sim_status.simulation_has_stuck_for, max_stuck_iters);
-                log->debug("Kept current bond dimension limit {}", state->get_chi_lim());
+                log->debug("Truncation errors     : {}", state->get_truncation_errors());
+                log->debug("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*state));
+                log->debug("Truncated bond count  : {} ", trunc_bond_count);
+                log->debug("Bonds at limit  count : {} ", bond_at_lim_count);
+                log->debug("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*state));
             }
+            bool state_is_bond_limited = state->is_bond_limited(5 * settings::precision::svd_threshold);
+            if(not state_is_bond_limited){
+                log->info("State is not limited by its bond dimension. Kept current limit {}", state->get_chi_lim());
+                return;
+            }
+
+            // Write current results before updating bond dimension
+            write_state(true);
+            write_measurements(true);
+            write_sim_status(true);
+            write_profiling(true);
+            long chi_lim_new = std::min(state->get_chi_max(), state->get_chi_lim() * 2);
+            log->info("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_lim_new);
+            state->set_chi_lim(chi_lim_new);
+            clear_saturation_status();
+            sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == chi_max();
+            if(sim_status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
+            log->info("Projecting at site {} to direction {} after updating bond dimension to χ = {} ", state->get_position(),
+                      settings::model::target_parity_sector, chi_lim_new);
+            auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+            write_projection(*state, settings::model::target_parity_sector);
+            if(settings::model::projection_when_growing_chi) *state = state_projected;
+
+            copy_from_tmp(true);
         } else {
             // Here the settings specify to just set the limit to maximum chi directly
             log->info("Setting bond dimension limit to maximum = {}", chi_max());
@@ -313,23 +320,23 @@ void class_algorithm_finite::try_chi_quench() {
     if(not settings::model::quench_chi_when_stuck) return;
     if(not state->position_is_any_edge()) return;
     if(force_overlap_steps > 0) return;
-    if(sim_status.simulation_has_stuck_for < max_stuck_iters) {
-        tools::log->info("Chi quench skipped: only stuck for {} iters (will quench when stuck {} iters)", sim_status.simulation_has_stuck_for, max_stuck_iters);
+    if(not sim_status.simulation_has_got_stuck) {
+        tools::log->info("Chi quench skipped: simulation not stuck");
         return;
     }
     if(num_chi_quenches >= max_chi_quenches) {
         tools::log->info("Chi quench skipped: max number of chi quenches ({}) have been made already", num_chi_quenches);
         return;
     }
-    size_t trunc_bond_count  = state->num_sites_truncated(2 * settings::precision::svd_threshold);
+    size_t trunc_bond_count  = state->num_sites_truncated(5 * settings::precision::svd_threshold);
     size_t bond_at_lim_count = state->num_bonds_at_limit();
     log->debug("Truncation errors: {}", state->get_truncation_errors());
     log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
     log->debug("Entanglement entr: {}", tools::finite::measure::entanglement_entropies(*state));
     log->debug("Truncated bond count: {} ", trunc_bond_count);
     log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
-    log->debug("threshold: {} ", 2 * settings::precision::svd_threshold);
-    if(state->is_bond_limited(2 * settings::precision::svd_threshold)) {
+    log->debug("threshold: {} ", std::pow(5 * settings::precision::svd_threshold,2));
+    if(state->is_bond_limited(5 * settings::precision::svd_threshold)) {
         tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
         return;
     }
@@ -654,24 +661,24 @@ void class_algorithm_finite::print_status_update() {
 
     using namespace tools::finite::measure;
     std::string report;
-    report + fmt::format("{:<} ", sim_name);
-    report + fmt::format("iter: {:<4} ", sim_status.iteration);
-    report + fmt::format("step: {:<5} ", sim_status.step);
-    report + fmt::format("L: {} l: {:<2} ", state->get_length(), state->get_position());
-    report + fmt::format("E/L: {:<20.16f} ", energy_per_site(*state));
+    report += fmt::format("{:<} ", sim_name);
+    report += fmt::format("iter: {:<4} ", sim_status.iteration);
+    report += fmt::format("step: {:<5} ", sim_status.step);
+    report += fmt::format("L: {} l: {:<2} ", state->get_length(), state->get_position());
+    report += fmt::format("E/L: {:<20.16f} ", energy_per_site(*state));
     if(sim_type == SimulationType::xDMRG) {
         report + fmt::format("ε: {:<6.4f} ", sim_status.energy_dens);
     }
-    report + fmt::format("Sₑ(l): {:<10.8f} ", entanglement_entropy_current(*state));
-    report + fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(energy_variance_per_site(*state)),
+    report += fmt::format("Sₑ(l): {:<10.8f} ", entanglement_entropy_current(*state));
+    report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(energy_variance_per_site(*state)),
                          std::log10(state->lowest_recorded_variance / state->get_length()));
-    report + fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", chi_max(), state->get_chi_lim(), bond_dimension_current(*state));
-    report + fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(state->get_truncation_error(state->get_position())));
-    report + fmt::format("stk: {:<1} ", sim_status.simulation_has_stuck_for);
-    report + fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", sim_status.variance_mpo_saturated_for, sim_status.entanglement_saturated_for);
-    report + fmt::format("con: {:<5} ", sim_status.simulation_has_converged);
-    report + fmt::format("time: {:<8.2f}s ", tools::common::profile::t_tot.get_age());
-    report + fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] ", process_memory_in_mb("VmRSS"), process_memory_in_mb("VmHWM"),
+    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", chi_max(), state->get_chi_lim(), bond_dimension_current(*state));
+    report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(state->get_truncation_error(state->get_position())));
+    report += fmt::format("stk: {:<1} ", sim_status.simulation_has_stuck_for);
+    report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", sim_status.variance_mpo_saturated_for, sim_status.entanglement_saturated_for);
+    report += fmt::format("con: {:<5} ", sim_status.simulation_has_converged);
+    report += fmt::format("time: {:<8.2f}s ", tools::common::profile::t_tot.get_age());
+    report += fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] ", process_memory_in_mb("VmRSS"), process_memory_in_mb("VmHWM"),
                          process_memory_in_mb("VmPeak"));
     log->info(report);
 }

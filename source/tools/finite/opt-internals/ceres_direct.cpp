@@ -12,15 +12,15 @@
 Eigen::Tensor<class_state_finite::Scalar,3>
 tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite &state,
                                                          const class_simulation_status &sim_status,
-                                                         OptType optType){
-    return ceres_direct_optimization(state,state.get_multitheta(),sim_status,optType);
+                                                         OptType optType, OptMode optMode, OptSpace optSpace){
+    return ceres_direct_optimization(state,state.get_multitheta(),sim_status,optType,optMode,optSpace);
 }
 
 
 Eigen::Tensor<class_state_finite::Scalar,3>
 tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite &state,
                                                          const Eigen::Tensor<class_state_finite::Scalar,3> & theta_initial,
-                                                         const class_simulation_status &sim_status, OptType optType){
+                                                         const class_simulation_status &sim_status, OptType optType, OptMode optMode, OptSpace optSpace){
     tools::log->trace("Optimizing in DIRECT mode");
     tools::common::profile::t_opt.tic();
     using Scalar = std::complex<double>;
@@ -49,8 +49,8 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite
     int counter,iter;
     t_opt->tic();
     Eigen::VectorXcd theta_new;
-    switch (optType.option){
-        case opt::TYPE::CPLX:{
+    switch (optType){
+        case OptType::CPLX:{
             Eigen::VectorXd  theta_start_cast = Eigen::Map<const Eigen::VectorXd>(reinterpret_cast<const double*> (theta_initial_vec.data()), 2 * theta_initial_vec.size());
             auto * functor = new ceres_direct_functor<std::complex<double>>(state, sim_status);
             ceres::GradientProblem problem(functor);
@@ -64,7 +64,7 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite
             theta_new    = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size() / 2).normalized();
             break;
         }
-        case opt::TYPE::REAL:{
+        case OptType::REAL:{
             Eigen::VectorXd  theta_start_cast = theta_initial_vec.real();
             auto * functor = new ceres_direct_functor<double>(state, sim_status);
             ceres::GradientProblem problem(functor);
@@ -104,18 +104,21 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite
     tools::log->debug("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
 //    tools::log->trace("Finished Ceres. Exit status: {}. Message: {}", ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
 //    std::cout << summary.FullReport() << "\n";
-    reports::print_report(opt_log);
-    reports::print_report(std::make_tuple(
+    if(optSpace == OptSpace::DIRECT){
+        reports::print_report(opt_log);
+        reports::print_report(std::make_tuple(
             tools::finite::opt::internal::t_vH2v->get_measured_time(),
             tools::finite::opt::internal::t_vHv->get_measured_time(),
             tools::finite::opt::internal::t_vH2->get_measured_time(),
             tools::finite::opt::internal::t_vH->get_measured_time(),
             tools::finite::opt::internal::t_op->get_measured_time()
-    ));
+        ));
+    }
+
 
     tools::common::profile::t_opt.toc();
 
-    tools::log->debug("Returning new theta from DIRECT optimization");
+    tools::log->debug("Returning theta from DIRECT optimization");
     return  Textra::MatrixTensorMap(theta_new, state.active_dimensions());
 
 
