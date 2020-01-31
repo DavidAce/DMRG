@@ -92,42 +92,74 @@ void class_xDMRG::run_simulation()    {
 void class_xDMRG::single_xDMRG_step()
 {
     using namespace tools::finite;
-
+    using namespace tools::finite::opt;
     tools::common::profile::t_sim.tic();
     log->trace("Starting single xDMRG step");
-    auto optMode    = opt::OptMode(opt::MODE::OVERLAP);
-    auto optSpace   = opt::OptSpace(opt::SPACE::DIRECT);
-    auto optType    = opt::OptType(opt::TYPE::CPLX);
-    optMode         = measure::energy_variance_per_site(*state) < 1e-8          ? opt::MODE::VARIANCE   : optMode;
-    optMode         = sim_status.iteration  >= 6                                ? opt::MODE::VARIANCE   : optMode;
-    optMode         = sim_status.simulation_has_got_stuck
-                      and optMode == opt::MODE::OVERLAP                         ? opt::MODE::VARIANCE   : optMode;
-    optMode         = force_overlap_steps > 0                                         ? opt::MODE::OVERLAP    : optMode;
-    optSpace        = optMode == opt::MODE::OVERLAP                             ? opt::SPACE::SUBSPACE  : optSpace;
-    optSpace        = sim_status.simulation_has_stuck_for >= min_stuck_iters    ? opt::SPACE::SUBSPACE  : optSpace;
-    optSpace        = sim_status.variance_mpo_has_converged                     ? opt::SPACE::DIRECT    : optSpace;
+    // Set the fastest mode by default
+    opt::OptMode optMode    = opt::OptMode::VARIANCE;
+    opt::OptSpace optSpace  = opt::OptSpace::DIRECT;
+    opt::OptType optType    = opt::OptType::CPLX;
+    // Setup normal conditions
+    if(sim_status.iteration  <  4){
+        optMode  = OptMode::VARIANCE;
+        optSpace = OptSpace::SUBSPACE_ONLY;
+    }
+    if(sim_status.iteration  <  2){
+        optMode  = OptMode::OVERLAP;
+        optSpace = OptSpace::SUBSPACE_ONLY;
+    }
 
+    if(sim_status.simulation_has_stuck_for > 1 and force_overlap_steps == 0){
+        optMode  = OptMode::VARIANCE;
+        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
+    }
 
-    optType         = state->isReal()                                           ? opt::TYPE::REAL       : optType;
+    //Setup strong overrides to normal conditions
+    if(force_overlap_steps > 0 and num_chi_quenches == 1){
+        optMode  = OptMode::OVERLAP;
+        optSpace = OptSpace::SUBSPACE_ONLY;
+    }
+    if(force_overlap_steps > 0 and num_chi_quenches == 2){
+        optMode  = OptMode::VARIANCE;
+        optSpace = OptSpace::SUBSPACE_ONLY;
+    }
+    if(optMode == OptMode::OVERLAP ) {
+        optSpace = OptSpace::SUBSPACE_ONLY;
+    }
+    if(sim_status.variance_mpo_has_converged){
+        optMode  = OptMode::VARIANCE;
+        optSpace = OptSpace::DIRECT;
+    }
+
+    if(state->isReal())    optType  = OptType::REAL;
+
     long threshold = 0;
-    switch(optSpace.option){
-        case  opt::SPACE::SUBSPACE : threshold = settings::precision::max_size_part_diag; break;
-        case  opt::SPACE::DIRECT   : threshold = settings::precision::max_size_direct  ; break;
+    switch(optSpace){
+        case  OptSpace::DIRECT   : threshold = settings::precision::max_size_direct  ; break;
+        case  OptSpace::SUBSPACE_ONLY: threshold = settings::precision::max_size_part_diag; break;
+        case  OptSpace::SUBSPACE_AND_DIRECT: threshold = settings::precision::max_size_part_diag; break;
     }
     if(force_overlap_steps > 0) {
         threshold = std::max(6144ul,settings::precision::max_size_part_diag) ;
     }
-    // Make sure not to use SUBSPACE if the 2-site problem size is huge
-    optSpace        = state->size_2site()  > threshold ? opt::SPACE::DIRECT    : optSpace;
 
+    // Make sure not to use SUBSPACE if the 2-site problem size is huge
+    if(state->size_2site()  > threshold) optSpace = OptSpace::DIRECT;
 
     Eigen::Tensor<Scalar,3> theta;
     std::list<size_t> max_num_sites_list;
 
     // Generate a list of maximum number of active sites to try
-    switch(optSpace.option){
-        case  opt::SPACE::DIRECT   : max_num_sites_list = {2,4,8}; break;
-        case  opt::SPACE::SUBSPACE : max_num_sites_list = {settings::precision::max_sites_multidmrg}; break;
+    switch(optSpace){
+        case  OptSpace::DIRECT    : {
+            if(sim_status.simulation_has_got_stuck)
+                max_num_sites_list = {settings::precision::max_sites_multidmrg};
+            else
+                max_num_sites_list = {2};
+            break;
+        }
+        case  OptSpace::SUBSPACE_ONLY : max_num_sites_list = {settings::precision::max_sites_multidmrg}; break;
+        case  OptSpace::SUBSPACE_AND_DIRECT : max_num_sites_list = {settings::precision::max_sites_multidmrg}; break;
     }
 
     max_num_sites_list.sort();
@@ -152,7 +184,7 @@ void class_xDMRG::single_xDMRG_step()
 
         if(state->active_sites.size()   == old_num_sites and
             state->active_problem_size() == old_prob_size){
-            if(optSpace == opt::OptSpace::SUBSPACE){
+            if(optSpace == opt::OptSpace::SUBSPACE_AND_DIRECT){
                 if(optMode == opt::OptMode::VARIANCE){
                     log->debug("Changing to DIRECT optimization to activate more sites");
                     optSpace = opt::OptSpace::DIRECT;
@@ -172,7 +204,7 @@ void class_xDMRG::single_xDMRG_step()
         }
 
 
-        if(optSpace ==  opt::OptSpace::SUBSPACE and optMode == opt::OptMode::VARIANCE and state->active_sites.size() > 2)
+        if(optSpace ==  OptSpace::SUBSPACE_ONLY and optMode == opt::OptMode::VARIANCE and state->active_sites.size() > 2)
             log->warn("About to do subspace with too many sites!");
 
 
@@ -180,56 +212,50 @@ void class_xDMRG::single_xDMRG_step()
 
 
         if(optSpace == opt::OptSpace::DIRECT){
-            double variance_direct   = measure::energy_variance_per_site(*state,theta);
+            double variance_new      = measure::energy_variance_per_site(*state,theta);
             double variance_old      = measure::energy_variance_per_site(*state);
-            if (variance_direct < (1.0-1e-3) * variance_old ) {
+            if (std::log10(variance_new) < std::log10(variance_old) - 1e-2) {
                 log->debug("Keeping DIRECT optimized state");
                 state->tag_active_sites_have_been_updated(true);
             }else{
                 log->debug("DIRECT optimization did not improve variance. Keep trying.");
                 state->tag_active_sites_have_been_updated(false);
             }
-
         }
 
-        if(optSpace == opt::OptSpace::SUBSPACE){
-            if(optMode == opt::OptMode::OVERLAP){
+        if(optSpace == OptSpace::SUBSPACE_ONLY or optSpace == OptSpace::SUBSPACE_AND_DIRECT){
+            if(optMode == opt::OptMode::OVERLAP and optSpace == OptSpace::SUBSPACE_ONLY){
                 log->debug("Keeping OVERLAP state");
                 state->tag_active_sites_have_been_updated(true);
-//                double variance_overlap  = measure::energy_variance_per_site(*state,theta);
-//                double variance_old      = measure::energy_variance_per_site(*state);
-//                if (variance_overlap < (1.0-1e-3) * variance_old or force_overlap > 0) {
-//                    log->debug("Keeping OVERLAP state");
-//                    state->tag_active_sites_have_been_updated(true);
-//                }else{
-//                    log->debug("OVERLAP state did not improve variance. Keeping previous state.");
-//                    state->tag_active_sites_have_been_updated(false);
-//                    theta = state->get_multitheta();
-//                    break;
-//                }
             }else{
                 // Check if you ended up with a better state
                 double variance_new   = measure::energy_variance_per_site(*state,theta);
                 double variance_old   = measure::energy_variance_per_site(*state);
-                if (variance_new >= variance_old){
+                if (std::log10(variance_new) < std::log10(variance_old) - 1e-2) {
                     // State got worse.
-                    log->debug("State got worse during SUBSPACE optimization");
-                    if (sim_status.simulation_has_got_stuck){
-                        //  Keep the bad state anyway (use this state as a perturbation to jump out of local minima)
-                        log->debug("Keeping state anyway due to saturation");
-                        state->tag_active_sites_have_been_updated(true);
-                    }else{
+                    log->debug("State got worse during {} optimization", optSpace);
+//                    if (sim_status.simulation_has_got_stuck){
+//                        //  Keep the bad state anyway (use this state as a perturbation to jump out of local minima)
+//                        log->debug("Keeping state anyway due to saturation");
+//                        state->tag_active_sites_have_been_updated(true);
+//                    }
+//                    else
+                    if (optSpace == OptSpace::SUBSPACE_ONLY){
+                        // Try more sites (or if not possible, keep previous theta)
+                        log->debug("{} optimization did not improve enough. Trying more sites", optSpace);
+                        state->tag_active_sites_have_been_updated(false);
+                    }
+                    else{
                         // Check what DIRECT optimization has to offer
                         log->debug("Checking what DIRECT optimization can achieve");
-
-                        auto theta_direct        = opt::find_excited_state(*state, sim_status, optMode, opt::OptSpace(opt::SPACE::DIRECT),optType);
+                        auto theta_direct        = opt::find_excited_state(*state, sim_status, optMode, OptSpace::DIRECT,optType);
                         double variance_direct   = measure::energy_variance_per_site(*state,theta_direct);
                         if (variance_direct < (1.0-1e-3) * variance_old ){
                             log->debug("Keeping DIRECT optimized state");
                             state->tag_active_sites_have_been_updated(true);
                             theta = theta_direct;
                         }else{
-                            log->debug("DIRECT optimization did not improve enough. Try more sites");
+                            log->debug("DIRECT optimization did not improve enough. Trying more sites");
                             state->tag_active_sites_have_been_updated(false);
                         }
                     }
@@ -245,29 +271,21 @@ void class_xDMRG::single_xDMRG_step()
             break;
         }
         if(& max_num_sites == &max_num_sites_list.back()){
-            log->debug("Keeping current theta: reached max number of sites");
+            log->debug("Keeping last computed theta: reached max number of sites");
             break;
         }
     }
 
 
     if(force_overlap_steps > 0) {
-        size_t temp_chi = state->get_chi_max();//std::min(state->get_chi_max(),2*state->get_chi_lim());
+//        size_t temp_chi = state->get_chi_max();//std::min(state->get_chi_max(),2*state->get_chi_lim());
         log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
-        opt::truncate_theta(theta, *state,temp_chi);
+        opt::truncate_theta(theta, *state, 16);
         log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
-
-
-        log->debug("Forced overlap steps current {}", force_overlap_steps);
-        force_overlap_steps = force_overlap_steps - std::min(force_overlap_steps, std::max(1ul,state->active_sites.size() - 2ul));
-        log->debug("Forced overlap steps reduced {}", force_overlap_steps);
-        if(force_overlap_steps > 2*state->get_length() or force_overlap_steps < 0) throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap_steps));
     }else{
-
         log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
         opt::truncate_theta(theta, *state);
         log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
-
     }
 
 
@@ -330,11 +348,9 @@ void class_xDMRG::check_convergence(){
     sim_status.simulation_has_converged = sim_status.variance_mpo_has_converged and
                                           sim_status.entanglement_has_converged;
 
-    //TODO: When we don't use chi_grow it may be safer to actually require saturation on both variance and entanglement
-    sim_status.simulation_has_saturated = (sim_status.variance_mpo_saturated_for >= min_saturation_iters and
-                                           sim_status.entanglement_saturated_for >= min_saturation_iters);// or
-//                                          (sim_status.variance_mpo_saturated_for >= max_saturation_iters  or
-//                                           sim_status.entanglement_saturated_for >= max_saturation_iters)   ;
+    sim_status.simulation_has_saturated = ((sim_status.variance_mpo_saturated_for >= min_saturation_iters and
+                                           sim_status.entanglement_saturated_for >= min_saturation_iters) or
+                                           (state->get_sweeps() > 0 and not state->any_sites_updated()));
 
 
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and
@@ -503,7 +519,8 @@ void class_xDMRG::find_energy_range() {
     log->info("Energy target  (per site) = {}", sim_status.energy_target);
     log->info("Energy lbound  (per site) = {}", sim_status.energy_lbound);
     log->info("Energy ubound  (per site) = {}", sim_status.energy_ubound);
-
+    state->reset_moves();
+    state->reset_sweeps();
 }
 
 

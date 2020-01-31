@@ -174,6 +174,7 @@ class class_state_finite {
     void                      tag_active_sites_have_been_updated(bool tag) const;
     void                      tag_all_sites_have_been_updated(bool tag) const;
     bool                      all_sites_updated() const;
+    bool                      any_sites_updated() const;
     bool                      active_sites_updated() const;
     mutable std::vector<bool> site_update_tags;
 

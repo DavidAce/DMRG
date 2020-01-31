@@ -296,7 +296,10 @@ void tools::finite::opt::truncate_theta(Eigen::Tensor<std::complex<double>,4> &t
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
     auto[U, S, V] = SVD.schmidt(theta, chi_lim.value());
-    state.set_truncation_error(SVD.get_truncation_error());
+
+    if(chi_lim.value() <= state.get_chi_lim())
+        state.set_truncation_error(SVD.get_truncation_error());
+
     state.MPS_L.back().set_M(U);
     state.MPS_L.back().set_LC(S);
     state.MPS_R.front().set_M(V);

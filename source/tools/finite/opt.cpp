@@ -24,9 +24,9 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     std::stringstream problem_report;
     auto dims = state.active_dimensions();
     problem_report << fmt::format("Starting optimization: ")
-                   << fmt::format("mode [ {} ] "             , optMode.str())
-                   << fmt::format("space [ {} ] "            , optSpace.str())
-                   << fmt::format("type [ {} ] "             , optType.str())
+                   << fmt::format("mode [ {} ] "             , optMode)
+                   << fmt::format("space [ {} ] "            , optSpace)
+                   << fmt::format("type [ {} ] "             , optType)
                    << fmt::format("position [ {} ] "         , state.get_position())
                    << fmt::format("shape [ {} {} {} ] = {} " , dims[0],dims[1],dims[2], state.active_problem_size());
     tools::log->debug(problem_report.str());
@@ -54,14 +54,14 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
-//    if(sim_status.simulation_has_got_stuck){
-//        ceres_default_options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
-//        ceres_default_options.max_num_iterations = 1000;
-//        ceres_default_options.gradient_tolerance = 1e-4;
-//        ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
-//    }
+    if(sim_status.simulation_has_got_stuck){
+        ceres_default_options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
+        ceres_default_options.max_num_iterations = 1000;
+        ceres_default_options.gradient_tolerance = 1e-4;
+        ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
+    }
 
-    if(optSpace.option == opt::SPACE::SUBSPACE){
+    if(optSpace == OptSpace::SUBSPACE_ONLY){
         ceres_default_options.function_tolerance = 1e-6; //Operations are cheap in subspace, so you can afford low tolerance
         ceres_default_options.max_num_iterations = 1000;
         ceres_default_options.gradient_tolerance = 1e-4;
@@ -78,11 +78,10 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
 //    tt is the total time taken by the minimizer.
 
 
-    switch (optSpace.option){
-        case opt::SPACE::SUBSPACE:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode);
-        case opt::SPACE::DIRECT:      return internal::ceres_direct_optimization(state,sim_status, optType);
-//        case opt::SPACE::SUBSPACE:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode);
-//        case opt::SPACE::DIRECT:      return internal::ceres_rosenbrock_optimization(state);
+    switch (optSpace){
+        case OptSpace::SUBSPACE_ONLY:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode,optSpace);
+        case OptSpace::SUBSPACE_AND_DIRECT:  return internal::ceres_subspace_optimization(state,sim_status, optType, optMode,optSpace);
+        case OptSpace::DIRECT:      return internal::ceres_direct_optimization(state,sim_status, optType,optMode,optSpace);
     }
     throw std::logic_error("No valid optimization type given");
 }

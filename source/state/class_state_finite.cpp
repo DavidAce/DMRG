@@ -578,6 +578,11 @@ bool class_state_finite::all_sites_updated() const {
     return std::all_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
 }
 
+bool class_state_finite::any_sites_updated() const {
+    if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
+    return get_sweeps() > 0 and std::any_of(site_update_tags.begin(), site_update_tags.end(), [](bool v) { return v; });
+}
+
 bool class_state_finite::active_sites_updated() const {
     if(site_update_tags.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
     if(active_sites.empty()) return false;

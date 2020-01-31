@@ -41,7 +41,7 @@ class class_algorithm_finite : public class_algorithm_base {
     virtual bool store_wave_function() = 0;
     void         try_projection();
     void         try_chi_quench();
-    void         move_center_point(size_t num_moves = 1ul);
+    void         move_center_point(std::optional<size_t> num_moves = std::nullopt);
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         run() final;
     void         clear_saturation_status() override;

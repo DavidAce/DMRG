@@ -46,6 +46,7 @@ NOTE                        : Order of argument matters. In particular, set seed
 -l                          : Enables loading from the given output file (i.e., from a previous simulation)
 -r <seed>                   : Positive number that seeds the random number generator (default = 1)
 -s <state number>           : Positive number whose bitfield sets the initial product state. Negative is unused (default -1)
+-t <num threads>            : Number of OpenMP threads
 -o <output file>            : Full or relative path to the output file (output)
 -x                          : Do not append seed to the output filename.
 
@@ -96,7 +97,7 @@ int main(int argc, char* argv[]) {
     bool append_seed = true;
     bool load_previous = false;
     while(true){
-        char opt = getopt(argc, argv, "hi:lr:s:o:x");
+        char opt = getopt(argc, argv, "hi:lr:s:t:o:x");
         if (opt == EOF) break;
         if(optarg == nullptr) log->info("Parsing input argument: -{}",opt);
         else                  log->info("Parsing input argument: -{} {}",opt,optarg);
@@ -127,6 +128,14 @@ int main(int argc, char* argv[]) {
                 if(state_number >= 0) {
                     log->info("Replacing model::seed_state {} -> {}", settings::model::state_number,state_number);
                     settings::model::state_number = state_number;
+                }
+                continue;
+            }
+            case 't': {
+                int num_threads = std::strtol(optarg,nullptr,10);
+                if(num_threads > 0) {
+                    log->info("Setting OpenMP threads to {}", num_threads);
+                    settings::threading::num_threads_eigen = num_threads;
                 }
                 continue;
             }
