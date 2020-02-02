@@ -15,7 +15,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -f <config file/path>               : File or path to files containing simulation config files (suffixed .cfg) (default = input/ )
 -g <seeds  file/path>               : File or path to files containing a list of seeds (suffixed .seed). Basenames should match the corresponding input files in -f (default = )
 -J <job name>                       : Job name. (default = DMRG)
--m <memory (MB)>                    : Reserved amount of ram for each task in MB. (default = 4000)
+-m <memory (MB)>                    : Reserved amount of ram for each task in MB.
 -n <ntasks (sims in parallel)>      : Number of simulations that are run in parallel on each node per job (default = 32)
 -N <num sims per cfg>               : Number of simulations per config file (default = 10)
 -o <other>                          : Other options passed to sbatch
@@ -24,6 +24,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -s <sims per sbatch>                : Number of tasks/realizations per invocation of sbatch  (default = 10)
 -S <start seed>                     : Starting seed, if you don't want to start from 0.
 -t <time>                           : Time for each run (default = 1:00:00, i.e. 1 hour)
+-v <vv...>                          : Sets verbosity for sbatch
 EOF
   exit 1
 }
@@ -32,33 +33,33 @@ execname=DMRG++
 build=Release
 jobname=DMRG
 configpath=input/
-mem=4000
 startseed=0
 time=--time=0-1:00:00
-cluster_list=""
 ntasks_parallel=32
 simspercfg=10
 simspersbatch=10
-while getopts ha:b:c:def:g:J:m:n:N:o:p:rs:S:t: o; do
+
+while getopts ha:b:c:def:g:J:m:n:N:o:p:rs:S:t:v: o; do
     case $o in
         (h) usage ;;
         (a) execname=$OPTARG;;
         (b) build=$OPTARG;;
-        (c) cluster_list="$OPTARG";;
+        (c) cluster="--cluster=$OPTARG";;
         (d) dryrun=true;;
         (e) exclusive=--exclusive;;
         (f) configpath=$OPTARG;;
         (g) seedpath=$OPTARG;;
         (J) jobname=$OPTARG;;
-        (m) mem=$OPTARG;;
+        (m) mempercpu="--mem-per-cpu=$OPTARG";;
         (n) ntasks_parallel=$OPTARG;;
         (N) simspercfg=$OPTARG;;
         (o) other=$OPTARG;;
-        (p) partition=--partition=$OPTARG;;
+        (p) partition="--partition=$OPTARG";;
         (r) requeue=--requeue;;
         (s) simspersbatch=$OPTARG;;
         (S) startseed=$OPTARG;;
-        (t) time=--time=0-$OPTARG;;
+        (t) time="--time=0-$OPTARG";;
+        (v) verbosity="-v$OPTARG";;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
@@ -157,10 +158,12 @@ echo "Finding config path... OK"
 
 # Parse seed path
 if [ -n "$seedpath" ] ; then
-    echo "Finding seed files in given path..."
     if [ -d "$seedpath" ];then
+        echo "Finding seed files in given path..."
         seedfiles=$(find -L $seedpath -type f -name '*.seed' |  sort -g )
+        echo "Finding seed files in given path... OK"
     elif [ -f "$seedpath" ]; then
+        echo "Found seed file in given path: $seedpath"
         seedfiles=$seedpath
         seedpath=$(dirname $seedpath)
     elif [ ! -e "$seedpath" ]; then
@@ -170,18 +173,18 @@ if [ -n "$seedpath" ] ; then
         echo "Input file path cannot be parsed: $seedpath "
         exit 1
     fi
-    echo "Finding seed files in given path... OK"
     echo "Pairing seed files with config files..."
-    for configfile in $configfiles; do
-        echo "Matching config: $configfile"
-        configbase=$(basename $configfile .cfg)
-        match=$(find -L $seedpath -type f -name $configbase.seed |  sort -g )
+    for seedfile in $seedfiles; do
+        echo "Matching seed file: $seedfile"
+        seedbase=$(basename $seedfile .seed)
+        match=$(find -L $configpath -type f -name $seedbase.cfg |  sort -g )
         num=$(echo $match | wc -w)
-        if [ -z "$match" ]  ; then echo "Could find a matching seed file for config [ $configfile ]. Searched with: find -L $seedpath -type f -name '$configbase.seed' | Found: $match" ; exit 1; fi
-        if [ "$num" -gt 1 ] ; then echo "Too many seed files correspond to config file [ $configfile ]. Found $num files: $match"; exit 1; fi
+        if [ -z "$match" ]  ; then echo "Could not find a config file matching the given seed file [ $seedfile ]. Searched with: find -L $configpath -type f -name '$seedbase.cfg' | Found: $match" ; exit 1; fi
+        if [ "$num" -gt 1 ] ; then echo "Too many config files correspond to seed file [ $seedfile ]. Found $num files: $match"; exit 1; fi
     done
     echo "Pairing seed files with config files... OK"
 fi
+
 
 
 # Generate seeds, distribute them to config files, randomize and then split into .seed files
@@ -213,17 +216,17 @@ if [ -n "$configfiles" ] && [ -n  "$seedfiles" ] ; then
     rm -rf seeds
     mkdir -p seeds
     touch $masterfile
-    for configfile in $configfiles; do
-        configbase=$(basename $configfile .cfg)
-        seedfile=$(find -L $seedpath -type f -name $configbase.seed |  sort -g )
-        if [ -z "$seedfile" ]; then echo "Could find a matching seed file for config [ $configfile ]. Searched with: find -L $seedpath -type f -name '$configbase.seed' | Found: $match" ; exit 1; fi
+    for seedfile in $seedfiles; do
+        seedbase=$(basename $seedfile .seed)
+        configfile=$(find -L $configpath -type f -name $seedbase.cfg |  sort -g )
+        if [ -z "$configfile" ]; then echo "Could not find a matching config file for seed file [ $seedfile ]. Searched with: find -L $configpath -type f -name $seedbase.cfg | Found: $match" ; exit 1; fi
         for seed in $(cat $seedfile); do
             echo "$configfile $seed" >> $masterfile
         done
     done
     echo "Generating master file with config paths and given seeds... OK"
-
 fi
+
 
 
 if [ -e "$masterfile" ] ; then
@@ -252,12 +255,10 @@ fi
 
 for simfile in $simfiles; do
     if [ -n "$dryrun" ] ; then
-        echo "sbatch $partition $requeue $exclusive $time $other --mem-per-cpu=$mem --job-name=$jobname --cluster=$cluster_list --ntasks=$ntasks_parallel run_parallel.sh -e $exec -f $simfile"
+        echo "sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity --job-name=$jobname --ntasks=$ntasks_parallel run_parallel.sh -e $exec -f $simfile"
     else
-        sbatch $partition $requeue $exclusive $time $other \
-            --mem-per-cpu=$mem \
+        sbatch $cluster $partition $mempercpu $requeue $exclusive $time $other $verbosity \
             --job-name=$jobname \
-            --cluster=$cluster_list \
             --ntasks=$ntasks_parallel \
             run_parallel.sh -e $exec -f $simfile
     fi
