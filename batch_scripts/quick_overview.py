@@ -12,12 +12,18 @@ parser = argparse.ArgumentParser(description='Quick overview of batch simulation
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
 parser.add_argument('-f', '--filename', type=str, help='Save to file with filename', default='experiment')
+parser.add_argument('-F', '--finished', type=bool, help='Only consider finished simulations', default=False)
 parser.add_argument('-t', '--timestamp', action='store_true', help='Add timestamp to filename')
 parser.add_argument('-d', '--directory', type=str, help='Search for hdf5 files in directory', default='output')
 parser.add_argument('-o', '--outdir', type=str, help='Save output to directory', default='experiments')
 parser.add_argument('-x', '--suffix', type=str, help='Append suffix', default='.log')
 args = parser.parse_args()
 
+def get_data(h5obj,name,idx=-1):
+    try:
+        return h5obj[name][idx]
+    except Exception as er:
+        return 0
 
 if args.timestamp:
     args.filename = args.filename + '-' + datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
@@ -63,8 +69,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary:
-        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "VarNow", "VarLow","Ent.Entr.", "Time",
+        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "VarNow", "VarLow","Ent.Entr.", "Time",
                                                                                                            "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
+
         print(header)
         if args.save:
             file.write(header + '\n')
@@ -101,13 +108,22 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
         # print(table_path,step_journal, step_results)
         try:
+            try:
+                finished.append(h5file['common/finOK'][-1])
+            except:
+                finished.append(0)
+            if(args.finished and finished[-1] == 0):
+                continue
+
+
             realization_name = h5path.replace('.h5', '')
             chainlen       .append(h5file[table_path].get('measurements')['length'][-1])
             seed           .append([int(x) for x in regex.findall(realization_name)][-1])
             iter           .append(h5file[table_path].get('sim_status')['iteration'][-1])
             step           .append(h5file[table_path].get('sim_status')['step'][-1])
             variance       .append(h5file[table_path].get('measurements')['energy_variance_per_site'][-1])
-            variancel       .append(h5file[table_path].get('measurements')['energy_variance_per_site_lowest'][-1])
+            #variancel       .append(h5file[table_path].get('measurements')['energy_variance_per_site_lowest'][-1])
+            variancel       .append(get_data(h5file[table_path].get('measurements'),'energy_variance_per_site_lowest'))
             ententrp       .append(h5file[table_path].get('measurements')['entanglement_entropy_midchain'][-1])
             walltime       .append(h5file[table_path].get('sim_status')['wall_time'][-1])
             resets         .append(h5file[table_path].get('sim_status')['num_resets'][-1])
@@ -116,10 +132,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             converged      .append(h5file[table_path].get('sim_status')['simulation_has_converged'][-1])
             succeeded      .append(h5file[table_path].get('sim_status')['simulation_has_succeeded'][-1])
 
-            try:
-                finished.append(h5file['common/finOK'][-1])
-            except:
-                finished.append(0)
+
 
             h5file.close()
 
@@ -170,7 +183,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as er:
             print("Could not read dataset. Reason: ", er)
             continue
-    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>11} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
+    if not fileList:
+        continue
+    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
                                                                                                               "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
     entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
