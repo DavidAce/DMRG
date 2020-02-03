@@ -100,11 +100,11 @@ void class_xDMRG::single_xDMRG_step()
     opt::OptSpace optSpace  = opt::OptSpace::DIRECT;
     opt::OptType optType    = opt::OptType::CPLX;
     // Setup normal conditions
-    if(sim_status.iteration  <  4){
+    if(sim_status.iteration  <  4 or state->get_chi_lim() < 16){
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_ONLY;
     }
-    if(sim_status.iteration  <  2){
+    if(sim_status.iteration  <  2 or state->get_chi_lim() < 8){
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_ONLY;
     }
@@ -112,10 +112,6 @@ void class_xDMRG::single_xDMRG_step()
     if(sim_status.simulation_has_stuck_for > 1 and force_overlap_steps == 0){
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
-
-    if(force_overlap_steps > 0) {
-        mps::truncate_next_sites(*state, 8, (size_t) (settings::precision::max_sites_multidmrg/2));
     }
 
     //Setup strong overrides to normal conditions
@@ -134,6 +130,11 @@ void class_xDMRG::single_xDMRG_step()
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::DIRECT;
     }
+
+//    if(force_overlap_steps > 0 or optMode == OptMode::OVERLAP) {
+//        mps::truncate_next_sites(*state, 8, (size_t) (settings::precision::max_sites_multidmrg));
+//    }
+
 
     if(state->isReal())    optType  = OptType::REAL;
 
@@ -280,8 +281,10 @@ void class_xDMRG::single_xDMRG_step()
         }
     }
 
+    size_t chi_lim = state->get_chi_lim();
+    if(force_overlap_steps > 0) chi_lim = 16;
     log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
-    opt::truncate_theta(theta, *state);
+    opt::truncate_theta(theta, *state,chi_lim);
     log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){
