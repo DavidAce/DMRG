@@ -520,6 +520,7 @@ void tools::finite::mps::truncate_next_sites(class_state_finite & state, std::op
     } else
         throw std::runtime_error("Can't truncate next sites with unknown direction: "+ std::to_string(state.get_direction()));
     tools::log->debug("Truncating next sites from position {} | num sites {} ",state.get_position(), sites);
+    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
 
 
     size_t num_moves = 2*sites;
@@ -538,37 +539,44 @@ void tools::finite::mps::truncate_next_sites(class_state_finite & state, std::op
         //Store the special LC bond in a temporary.
         Eigen::Tensor<Scalar,1> LC = MPS_L.back().get_LC();
         MPS_L.back().unset_LC();
-
+        std::string status = fmt::format("Enlarging environment at site {} ", ENV_L.back().get_position());
         if (state.get_direction() == 1){
             ENV_L .emplace_back(ENV_L .back().enlarge(MPS_L.back(), *MPO_L.back()));
             ENV2_L.emplace_back(ENV2_L.back().enlarge(MPS_L.back(), *MPO_L.back()));
             MPS_L.emplace_back(class_mps_site(MPS_R.front().get_M(), LC, MPS_R.front().get_position()));
             MPO_L.emplace_back(MPO_R.front()->clone());
+            status += fmt::format("| Popping old site {} on right side", MPS_R.front().get_position());
             MPS_R.pop_front();
             MPO_R.pop_front();
             ENV_R.pop_front();
             ENV2_R.pop_front();
+            status += fmt::format("| Building theta out of sites {}-{}, chi {} ", MPS_L.back().get_position(), MPS_R.front().get_position(),MPS_L.back().get_chiR());
             Eigen::Tensor<Scalar,4> theta =
                 Textra::asDiagonal(LC)
                     .contract(state.MPS_L.back().get_M(), Textra::idx({1},{1}))
                     .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                     .shuffle(Textra::array4{1,0,2,3});
             tools::finite::opt::truncate_theta(theta,state,chi_lim);
+
         }else{
             ENV_R .emplace_front(ENV_R .front().enlarge(MPS_R.front(), *MPO_R.front()));
             ENV2_R.emplace_front(ENV2_R.front().enlarge(MPS_R.front(), *MPO_R.front()));
             MPS_R.emplace_front(class_mps_site(MPS_L.back().get_M(), LC, MPS_L.back().get_position()));
             MPO_R.emplace_front(MPO_L.back()->clone());
+            status += fmt::format("| Popping old site {} on left side", MPS_L.back().get_position());
             MPS_L.pop_back();
             MPO_L.pop_back();
             ENV_L.pop_back();
             ENV2_L.pop_back();
+            status += fmt::format("| Building theta out of sites {}-{}, chi {} ", MPS_L.back().get_position(), MPS_R.front().get_position(),MPS_L.back().get_chiR());
             Eigen::Tensor<Scalar,4> theta =
                 state.MPS_L.back().get_M()
                     .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                     .contract(Textra::asDiagonal(LC), Textra::idx({3},{0}));
             tools::finite::opt::truncate_theta(theta,state,chi_lim);
         }
+        status += fmt::format("| Truncated down to {}", MPS_L.back().get_chiR());
+        tools::log->debug(status);
 
         if(ENV_L.empty()) throw std::runtime_error("ENVL became empty");
         if(ENV_R.empty()) throw std::runtime_error("ENVR became empty");
@@ -589,10 +597,11 @@ void tools::finite::mps::truncate_next_sites(class_state_finite & state, std::op
 
     state.clear_cache();
     state.clear_measurements();
-//    tools::finite::debug::check_integrity(state);
+    tools::finite::debug::check_integrity(state);
 
     tools::log->debug("Finished truncation of mps");
     tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
+    tools::finite::print::print_state(state);
 
 }
 

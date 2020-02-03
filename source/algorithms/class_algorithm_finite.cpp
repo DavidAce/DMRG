@@ -212,7 +212,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
             // * No experiments are on-going like perturbation or damping
             // * the simulation is stuck
             // * the state is limited by bond dimension
-            if(not state->position_is_any_edge()) return;
+            if(not state->position_is_the_left_edge()) return;
             if(state->is_damped()) {
                 log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");
                 return;
@@ -342,10 +342,10 @@ void class_algorithm_finite::try_chi_quench() {
     }
 
     tools::log->info("Chi quench started");
-//    long smaller_chi_lim = std::min(16l, state->get_chi_lim() / 2);
-//    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
+    long smaller_chi_lim = std::min(8l, state->get_chi_lim() / 2);
+    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
     clear_saturation_status();
-    force_overlap_steps = 1 * (state->get_length() - 2);
+    force_overlap_steps = 2 * (state->get_length() - 2);
     num_chi_quenches++;
     if(force_overlap_steps > 2 * state->get_length() or force_overlap_steps < 0)
         throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap_steps));
