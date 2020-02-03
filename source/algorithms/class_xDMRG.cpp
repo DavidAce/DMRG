@@ -115,14 +115,16 @@ void class_xDMRG::single_xDMRG_step()
     }
 
     //Setup strong overrides to normal conditions
-    if(force_overlap_steps > 0 and num_chi_quenches == 1){
-        optMode  = OptMode::OVERLAP;
-        optSpace = OptSpace::SUBSPACE_ONLY;
-    }
-    if(force_overlap_steps > 0 and num_chi_quenches == 2){
+    if(force_overlap_steps > 0){
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_ONLY;
     }
+
+    if(force_overlap_steps > state->get_length() - 2){
+        optMode  = OptMode::OVERLAP;
+        optSpace = OptSpace::SUBSPACE_ONLY;
+    }
+
     if(optMode == OptMode::OVERLAP ) {
         optSpace = OptSpace::SUBSPACE_ONLY;
     }
@@ -282,7 +284,7 @@ void class_xDMRG::single_xDMRG_step()
     }
 
     size_t chi_lim = state->get_chi_lim();
-    if(force_overlap_steps > 0) chi_lim = 16;
+    if(force_overlap_steps > 0) chi_lim = 8;
     log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
     opt::truncate_theta(theta, *state,chi_lim);
     log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
@@ -310,14 +312,14 @@ void class_xDMRG::single_xDMRG_step()
 
 void class_xDMRG::check_convergence(){
     tools::common::profile::t_con.tic();
-    if(state->position_is_the_left_edge()){
+    if(state->position_is_any_edge()){
         check_convergence_variance();
         check_convergence_entg_entropy();
     }
 
     sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  > sim_status.energy_dens_window;
-    if (sim_status.iteration > 2 and state->position_is_the_left_edge())
+    if (sim_status.iteration > 2 and state->position_is_any_edge())
     {
         if (    outside_of_window
             and (sim_status.variance_mpo_has_saturated or
@@ -359,7 +361,7 @@ void class_xDMRG::check_convergence(){
                                           sim_status.simulation_has_succeeded;
 
 
-    if(state->position_is_the_left_edge()) {
+    if(state->position_is_any_edge()) {
         sim_status.simulation_has_stuck_for = sim_status.simulation_has_got_stuck ? sim_status.simulation_has_stuck_for + 1 : 0;
     }
 
