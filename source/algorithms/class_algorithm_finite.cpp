@@ -163,7 +163,7 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
     if(not num_moves.has_value()){
         if(state->active_sites.empty()) num_moves = 1ul;
         else if(settings::precision::move_sites_multidmrg == "one") num_moves = 1ul;
-        else if(settings::precision::move_sites_multidmrg == "mid") num_moves = std::max(1ul, (state->active_sites.size() - 2ul)/2);
+        else if(settings::precision::move_sites_multidmrg == "mid") num_moves = std::max(1ul, (state->active_sites.size())/2);
         else if(settings::precision::move_sites_multidmrg == "max") num_moves = std::max(1ul, state->active_sites.size() - 2ul);
         else{
             throw std::logic_error("Choose how many sites you should move! Expected one of {one,mid,max}, got [" + settings::precision::move_sites_multidmrg +"]");
