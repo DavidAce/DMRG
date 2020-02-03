@@ -102,7 +102,7 @@ void class_xDMRG::single_xDMRG_step()
     // Setup normal conditions
     if(sim_status.iteration  <  4 or state->get_chi_lim() < 16){
         optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::SUBSPACE_ONLY;
+        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
     if(sim_status.iteration  <  2 or state->get_chi_lim() < 8){
         optMode  = OptMode::OVERLAP;
@@ -163,7 +163,7 @@ void class_xDMRG::single_xDMRG_step()
             break;
         }
         case  OptSpace::SUBSPACE_ONLY : {
-            if(sim_status.iteration == 0 or force_overlap_steps > 0)
+            if(optMode == OptMode::OVERLAP or force_overlap_steps > 0)
                 max_num_sites_list = {settings::precision::max_sites_multidmrg};
             else
                 max_num_sites_list = {2, settings::precision::max_sites_multidmrg};
