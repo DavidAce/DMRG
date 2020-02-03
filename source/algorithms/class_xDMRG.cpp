@@ -146,9 +146,6 @@ void class_xDMRG::single_xDMRG_step()
         case  OptSpace::SUBSPACE_ONLY: threshold = settings::precision::max_size_part_diag; break;
         case  OptSpace::SUBSPACE_AND_DIRECT: threshold = settings::precision::max_size_part_diag; break;
     }
-    if(force_overlap_steps > 0) {
-        threshold = std::max(6144ul,settings::precision::max_size_part_diag) ;
-    }
 
     // Make sure not to use SUBSPACE if the 2-site problem size is huge
     if(state->size_2site()  > threshold) optSpace = OptSpace::DIRECT;
@@ -160,13 +157,25 @@ void class_xDMRG::single_xDMRG_step()
     switch(optSpace){
         case  OptSpace::DIRECT    : {
             if(sim_status.simulation_has_got_stuck)
-                max_num_sites_list = {settings::precision::max_sites_multidmrg};
+                max_num_sites_list = {2,settings::precision::max_sites_multidmrg};
             else
                 max_num_sites_list = {2};
             break;
         }
-        case  OptSpace::SUBSPACE_ONLY : max_num_sites_list = {settings::precision::max_sites_multidmrg}; break;
-        case  OptSpace::SUBSPACE_AND_DIRECT : max_num_sites_list = {settings::precision::max_sites_multidmrg}; break;
+        case  OptSpace::SUBSPACE_ONLY : {
+            if(sim_status.iteration == 0 or force_overlap_steps > 0)
+                max_num_sites_list = {settings::precision::max_sites_multidmrg};
+            else
+                max_num_sites_list = {2, settings::precision::max_sites_multidmrg};
+            break;
+        }
+        case  OptSpace::SUBSPACE_AND_DIRECT : {
+            if(sim_status.simulation_has_got_stuck)
+                max_num_sites_list = {settings::precision::max_sites_multidmrg};
+            else
+                max_num_sites_list = {2, settings::precision::max_sites_multidmrg};
+            break;
+        }
     }
 
     max_num_sites_list.sort();
@@ -231,10 +240,10 @@ void class_xDMRG::single_xDMRG_step()
         }
 
         if(optSpace == OptSpace::SUBSPACE_ONLY or optSpace == OptSpace::SUBSPACE_AND_DIRECT){
-            if(optMode == opt::OptMode::OVERLAP and optSpace == OptSpace::SUBSPACE_ONLY){
-                log->debug("Keeping OVERLAP state");
-                state->tag_active_sites_have_been_updated(true);
-            }else{
+//            if(optMode == opt::OptMode::OVERLAP and optSpace == OptSpace::SUBSPACE_ONLY){
+//                log->debug("Keeping OVERLAP state");
+//                state->tag_active_sites_have_been_updated(true);
+//            }else{
                 // Check if you ended up with a better state
                 double variance_new   = measure::energy_variance_per_site(*state,theta);
                 double variance_old   = measure::energy_variance_per_site(*state);
@@ -270,7 +279,7 @@ void class_xDMRG::single_xDMRG_step()
                     log->debug("State got better during SUBSPACE optimization");
                     state->tag_active_sites_have_been_updated(true);
                 }
-            }
+//            }
         }
 
 
@@ -284,7 +293,7 @@ void class_xDMRG::single_xDMRG_step()
     }
 
     size_t chi_lim = state->get_chi_lim();
-    if(force_overlap_steps > 0) chi_lim = 8;
+    if(force_overlap_steps > 0) chi_lim = chi_lim_quench;
     log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
     opt::truncate_theta(theta, *state,chi_lim);
     log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
