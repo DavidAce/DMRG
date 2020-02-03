@@ -212,7 +212,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
             // * No experiments are on-going like perturbation or damping
             // * the simulation is stuck
             // * the state is limited by bond dimension
-            if(not state->position_is_the_left_edge()) return;
+            if(not state->position_is_any_edge()) return;
             if(state->is_damped()) {
                 log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");
                 return;
