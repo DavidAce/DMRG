@@ -114,6 +114,10 @@ void class_xDMRG::single_xDMRG_step()
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
+    if(force_overlap_steps > 0) {
+        mps::truncate_next_sites(*state, 8, (size_t) (settings::precision::max_sites_multidmrg/2));
+    }
+
     //Setup strong overrides to normal conditions
     if(force_overlap_steps > 0 and num_chi_quenches == 1){
         optMode  = OptMode::OVERLAP;
@@ -165,7 +169,7 @@ void class_xDMRG::single_xDMRG_step()
     max_num_sites_list.sort();
     max_num_sites_list.unique();
     max_num_sites_list.remove_if([](auto &elem){return elem > settings::precision::max_sites_multidmrg;});
-    if(max_num_sites_list.empty()) max_num_sites_list = {settings::precision::max_sites_multidmrg}; //Just make sure the list isn't empty...
+    if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
     log->debug("Possible multisite step sizes: {}", max_num_sites_list);
 
@@ -276,18 +280,9 @@ void class_xDMRG::single_xDMRG_step()
         }
     }
 
-
-    if(force_overlap_steps > 0) {
-//        size_t temp_chi = state->get_chi_max();//std::min(state->get_chi_max(),2*state->get_chi_lim());
-        log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
-        opt::truncate_theta(theta, *state, 16);
-        log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
-    }else{
-        log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
-        opt::truncate_theta(theta, *state);
-        log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
-    }
-
+    log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+    opt::truncate_theta(theta, *state);
+    log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){
         tools::log->warn("Norm too large: {:.18f}",tools::finite::measure::norm(*state) );
