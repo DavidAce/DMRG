@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser(description='Quick overview of batch simulation
 parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
 parser.add_argument('-f', '--filename', type=str, help='Save to file with filename', default='experiment')
-parser.add_argument('-F', '--finished', type=bool, help='Only consider finished simulations', default=False)
+parser.add_argument('-F', '--finished', action='store_true', help='Only consider finished simulations')
 parser.add_argument('-t', '--timestamp', action='store_true', help='Add timestamp to filename')
 parser.add_argument('-d', '--directory', type=str, help='Search for hdf5 files in directory', default='output')
 parser.add_argument('-o', '--outdir', type=str, help='Save output to directory', default='experiments')
