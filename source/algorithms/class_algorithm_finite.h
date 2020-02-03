@@ -31,6 +31,7 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t              force_overlap_steps  = 0;     /*!< Number of steps left while forcing overlap. */
     size_t              num_chi_quenches     = 0;     /*!< Number of bond dimension quench trials that have occurred */
     size_t              max_chi_quenches     = 2;     /*!< Maximum number of bond dimension quench trials allowed */
+    size_t              chi_lim_quench       = 16;    /*!< Bond dimension during a quench */
     std::vector<double> damping_exponents;            /*!< Exponents for for the damping trials */
 
     public:

@@ -342,7 +342,7 @@ void class_algorithm_finite::try_chi_quench() {
     }
 
     tools::log->info("Chi quench started");
-    long smaller_chi_lim = std::min(8l, state->get_chi_lim() / 2);
+    size_t smaller_chi_lim = std::min(chi_lim_quench, (size_t)state->get_chi_lim() / 2);
     tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
     clear_saturation_status();
     force_overlap_steps = 2 * (state->get_length() - 2);
