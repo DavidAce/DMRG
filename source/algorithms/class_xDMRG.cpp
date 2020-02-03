@@ -310,14 +310,14 @@ void class_xDMRG::single_xDMRG_step()
 
 void class_xDMRG::check_convergence(){
     tools::common::profile::t_con.tic();
-    if(state->position_is_any_edge()){
+    if(state->position_is_the_left_edge()){
         check_convergence_variance();
         check_convergence_entg_entropy();
     }
 
     sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  > sim_status.energy_dens_window;
-    if (sim_status.iteration > 2 and state->position_is_any_edge())
+    if (sim_status.iteration > 2 and state->position_is_the_left_edge())
     {
         if (    outside_of_window
             and (sim_status.variance_mpo_has_saturated or
@@ -359,7 +359,7 @@ void class_xDMRG::check_convergence(){
                                           sim_status.simulation_has_succeeded;
 
 
-    if(state->position_is_any_edge()) {
+    if(state->position_is_the_left_edge()) {
         sim_status.simulation_has_stuck_for = sim_status.simulation_has_got_stuck ? sim_status.simulation_has_stuck_for + 1 : 0;
     }
 
