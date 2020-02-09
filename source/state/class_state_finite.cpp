@@ -152,11 +152,11 @@ size_t class_state_finite::size_2site() const {
 bool class_state_finite::position_is_the_middle() const { return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0) and direction == 1; }
 bool class_state_finite::position_is_the_middle_any_direction() const { return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0); }
 
-bool class_state_finite::position_is_the_left_edge() const { return get_position() == 0; }
+bool class_state_finite::position_is_left_edge() const { return get_position() == 0 and direction == -1; }
 
-bool class_state_finite::position_is_the_right_edge() const { return get_position() == get_length() - 2; }
+bool class_state_finite::position_is_right_edge() const { return get_position() == get_length() - 2 and direction == 1; }
 
-bool class_state_finite::position_is_any_edge() const { return position_is_the_left_edge() or position_is_the_right_edge(); }
+bool class_state_finite::position_is_any_edge() const { return position_is_left_edge() or position_is_right_edge(); }
 
 bool class_state_finite::position_is_at(size_t pos) const { return get_position() == pos; }
 

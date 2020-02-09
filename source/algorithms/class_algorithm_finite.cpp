@@ -166,16 +166,19 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
         else if(settings::precision::move_sites_multidmrg == "mid") num_moves = std::max(1ul, (state->active_sites.size())/2);
         else if(settings::precision::move_sites_multidmrg == "max") num_moves = std::max(1ul, state->active_sites.size() - 2ul);
         else{
-            throw std::logic_error("Choose how many sites you should move! Expected one of {one,mid,max}, got [" + settings::precision::move_sites_multidmrg +"]");
+            throw std::logic_error("Specify how many sites multisite should move! Expected one of {one,mid,max}, got [" + settings::precision::move_sites_multidmrg +"]");
         }
     }
     log->trace("Moving center point {} steps", num_moves.value());
     state->clear_cache();
     try {
         for(size_t i = 0; i < num_moves.value(); i++) {
+            if(state->position_is_any_edge()) state->increment_sweeps();
             tools::finite::mps::move_center_point(*state);
-            if(force_overlap_steps > 0) force_overlap_steps--;
+            state->increment_moves();
+            if(chi_quench_steps > 0) chi_quench_steps--;
         }
+        state->active_sites.clear();
     } catch(std::exception &e) {
         tools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
@@ -256,7 +259,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
                       settings::model::target_parity_sector, chi_lim_new);
             auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
             write_projection(*state, settings::model::target_parity_sector);
-            if(settings::model::projection_when_growing_chi) *state = state_projected;
+            if(settings::model::project_when_growing_chi) *state = state_projected;
 
             copy_from_tmp(true);
         } else {
@@ -295,12 +298,12 @@ void class_algorithm_finite::reset_to_random_state(const std::string &parity_sec
 
 void class_algorithm_finite::try_projection() {
     bool try_when_stuck =
-        settings::model::projection_trial_when_stuck and sim_status.simulation_has_got_stuck and not has_projected and state->position_is_any_edge();
+        settings::model::project_when_stuck and sim_status.simulation_has_got_stuck and not has_projected and state->position_is_any_edge();
 
-    bool try_every_sweep = settings::model::projection_on_every_sweep and sim_status.iteration >= 2 and state->position_is_any_edge();
+    bool try_every_sweep = settings::model::project_on_every_sweep and sim_status.iteration >= 2 and state->position_is_any_edge();
 
     if(try_every_sweep or try_when_stuck) {
-        log->debug("Trying projection to {}", settings::model::target_parity_sector);
+        log->info("Trying projection to {}", settings::model::target_parity_sector);
         auto   state_projected    = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
         double variance_original  = tools::finite::measure::energy_variance_per_site(*state);
         double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
@@ -309,17 +312,22 @@ void class_algorithm_finite::try_projection() {
 
         if(variance_projected < variance_original) {
             log->info("Projection: variance improved {:.8} -> {:.8}", std::log10(variance_original), std::log10(variance_projected));
-            *state = state_projected;
         } else {
-            log->info("Projection: variance would have worsened {:.8} -> {:.8}", std::log10(variance_original), std::log10(variance_projected));
+            log->info("Projection: variance worsened {:.8} -> {:.8}", std::log10(variance_original), std::log10(variance_projected));
         }
+        *state = state_projected;
+
     }
 }
 
 void class_algorithm_finite::try_chi_quench() {
-    if(not settings::model::quench_chi_when_stuck) return;
+    if(not settings::model::chi_quench_when_stuck) return;
     if(not state->position_is_any_edge()) return;
-    if(force_overlap_steps > 0) return;
+    if(damping_steps > 0) return;
+    if(perturbation_steps > 0) return;
+    if(chi_quench_steps > 0) return;
+    if(state->is_perturbed()) return;
+
     if(not sim_status.simulation_has_got_stuck) {
         tools::log->info("Chi quench skipped: simulation not stuck");
         return;
@@ -342,14 +350,125 @@ void class_algorithm_finite::try_chi_quench() {
     }
 
     tools::log->info("Chi quench started");
-    size_t smaller_chi_lim = std::min(chi_lim_quench, (size_t)state->get_chi_lim() / 2);
-    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
+//    size_t smaller_chi_lim = std::min(chi_lim_quench, (size_t)state->get_chi_lim() / 2);
+//    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
     clear_saturation_status();
-    force_overlap_steps = 2 * (state->get_length() - 2);
+    chi_quench_steps = 4 * state->get_length();
     num_chi_quenches++;
-    if(force_overlap_steps > 2 * state->get_length() or force_overlap_steps < 0)
-        throw std::runtime_error("Force overlap out of range: " + std::to_string(force_overlap_steps));
 }
+
+
+void class_algorithm_finite::try_perturbation() {
+    if(not settings::model::perturb_when_stuck) return;
+    if(not state->position_is_any_edge()) return;
+    if(state->is_perturbed()) return;
+    if(damping_steps > 0) return;
+    if(perturbation_steps > 0) return;
+    if(chi_quench_steps > 0) return;
+       if(not sim_status.simulation_has_got_stuck) {
+        tools::log->info("Perturbation skipped: simulation not stuck");
+        return;
+    }
+    if(num_chi_quenches >= max_chi_quenches) {
+        tools::log->info("Perturbation skipped: max number of perturbation trials ({}) have been made already", num_perturbations);
+        return;
+    }
+    size_t trunc_bond_count  = state->num_sites_truncated(5 * settings::precision::svd_threshold);
+    size_t bond_at_lim_count = state->num_bonds_at_limit();
+    log->debug("Truncation errors: {}", state->get_truncation_errors());
+    log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
+    log->debug("Entanglement entr: {}", tools::finite::measure::entanglement_entropies(*state));
+    log->debug("Truncated bond count: {} ", trunc_bond_count);
+    log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
+    log->debug("threshold: {} ", std::pow(5 * settings::precision::svd_threshold,2));
+    if(state->is_bond_limited(5 * settings::precision::svd_threshold)) {
+        tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
+        return;
+    }
+
+    tools::log->info("Chi quench started");
+//    size_t smaller_chi_lim = std::min(chi_lim_quench, (size_t)state->get_chi_lim() / 2);
+//    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
+    clear_saturation_status();
+    chi_quench_steps = 4 * state->get_length();
+    num_chi_quenches++;
+}
+
+
+void class_algorithm_finite::try_damping() {
+    if(not state->position_is_any_edge()) return;
+
+    // If there are damping exponents to process, do so
+    if(not damping_exponents.empty()){
+        log->info("Setting damping exponent = {}", damping_exponents.back());
+        state->damp_hamiltonian(damping_exponents.back(),0);
+        damping_exponents.pop_back();
+        if(damping_exponents.empty() and state->is_damped())
+            throw std::logic_error("Damping trial ended but the state is still damped");
+    }
+    if(not settings::model::damping_when_stuck) return;
+    if(state->is_damped()) return;
+    if(not sim_status.simulation_has_got_stuck) {
+        tools::log->info("Damping skipped: simulation not stuck");
+        return;
+    }
+    if(num_dampings >= max_dampings) {
+        tools::log->info("Damping skipped: max number of damping trials ({}) have been made already", num_dampings);
+        return;
+    }
+    // damping_exponents = math::LogSpaced(6,0.0,0.25,0.001);
+    // damping_exponents = {0.0,0.1};
+    damping_exponents = {0.0,0.01,0.02};
+    log->info("Generating damping exponents = {}", damping_exponents);
+    has_damped = true;
+    clear_saturation_status();
+
+    log->info("Setting damping exponent = {}", damping_exponents.back());
+    state->damp_hamiltonian(damping_exponents.back(),0);
+    damping_exponents.pop_back();
+    if(damping_exponents.empty() and state->is_damped())
+        throw std::logic_error("Damping trial ended but the state is still damped");
+
+//    if (state->position_is_any_edge()
+//        and sim_status.simulation_has_stuck_for >= 2
+//        and not state->is_bond_limited(0.5*settings::precision::svd_threshold)
+//        and damping_exponents.empty()
+//        and not has_damped)
+//    {
+//    }
+//
+//    if (state->position_is_any_edge() and not damping_exponents.empty() ){
+//
+//    }
+
+
+
+
+
+
+
+
+    size_t trunc_bond_count  = state->num_sites_truncated(5 * settings::precision::svd_threshold);
+    size_t bond_at_lim_count = state->num_bonds_at_limit();
+    log->debug("Truncation errors: {}", state->get_truncation_errors());
+    log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
+    log->debug("Entanglement entr: {}", tools::finite::measure::entanglement_entropies(*state));
+    log->debug("Truncated bond count: {} ", trunc_bond_count);
+    log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
+    log->debug("threshold: {} ", std::pow(5 * settings::precision::svd_threshold,2));
+    if(state->is_bond_limited(5 * settings::precision::svd_threshold)) {
+        tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
+        return;
+    }
+
+    tools::log->info("Chi quench started");
+//    size_t smaller_chi_lim = std::min(chi_lim_quench, (size_t)state->get_chi_lim() / 2);
+//    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
+    clear_saturation_status();
+    chi_quench_steps = 4 * state->get_length();
+    num_chi_quenches++;
+}
+
 
 void class_algorithm_finite::check_convergence_variance(double threshold, double slope_threshold) {
     // Based on the the slope of the variance
@@ -664,10 +783,16 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("{:<} ", sim_name);
     report += fmt::format("iter: {:<4} ", sim_status.iteration);
     report += fmt::format("step: {:<5} ", sim_status.step);
-    report += fmt::format("L: {} l: {:<2} ", state->get_length(), state->get_position());
+    report += fmt::format("L: {} ", state->get_length());
+    if(state->active_sites.empty())
+        report += fmt::format("l: {:<2} ", state->get_position());
+    else if(state->get_direction() > 0)
+        report += fmt::format("l: [{:>2}-{:<2}] ", state->active_sites.front(), state->active_sites.back());
+    else if(state->get_direction() < 0)
+        report += fmt::format("l: [{:>2}-{:<2}] ", state->active_sites.back(), state->active_sites.front());
     report += fmt::format("E/L: {:<20.16f} ", energy_per_site(*state));
     if(sim_type == SimulationType::xDMRG) {
-        report + fmt::format("ε: {:<6.4f} ", sim_status.energy_dens);
+        report += fmt::format("ε: {:<6.4f} ", sim_status.energy_dens);
     }
     report += fmt::format("Sₑ(l): {:<10.8f} ", entanglement_entropy_current(*state));
     report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(energy_variance_per_site(*state)),

@@ -185,6 +185,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
             continue
     if not fileList:
         continue
+    if len(chainlen) == 0:
+        continue
     header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
                                                                                                               "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")

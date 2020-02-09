@@ -28,10 +28,16 @@ class class_algorithm_finite : public class_algorithm_base {
     size_t              max_saturation_iters = 3;     /*!< If either var or ent saturated this long -> got_stuck: true */
     bool                has_projected        = false; /*!< True if projection has already been tried */
     bool                has_damped           = false; /*!< True if damping of hamiltonian parameters is ongoing */
-    size_t              force_overlap_steps  = 0;     /*!< Number of steps left while forcing overlap. */
+    size_t              chi_quench_steps     = 0;     /*!< Number of steps left doing chi-quenching */
     size_t              num_chi_quenches     = 0;     /*!< Number of bond dimension quench trials that have occurred */
     size_t              max_chi_quenches     = 2;     /*!< Maximum number of bond dimension quench trials allowed */
     size_t              chi_lim_quench       = 16;    /*!< Bond dimension during a quench */
+    size_t              num_perturbations    = 0;     /*!< Number of perturbation trials done */
+    size_t              max_perturbations    = 2;     /*!< Maximum number of perturbation trials allowed */
+    size_t              perturbation_steps   = 0;     /*!< Number of steps left doing perturbation of MPOs */
+    size_t              damping_steps        = 0;     /*!< Number of steps left doing disorder damping of MPOs */
+    size_t              num_dampings         = 0;     /*!< Number of damping trials done */
+    size_t              max_dampings         = 2;     /*!< Maximum number of damping trials allowed */
     std::vector<double> damping_exponents;            /*!< Exponents for for the damping trials */
 
     public:
@@ -42,6 +48,8 @@ class class_algorithm_finite : public class_algorithm_base {
     virtual bool store_wave_function() = 0;
     void         try_projection();
     void         try_chi_quench();
+    void         try_perturbation();
+    void         try_damping();
     void         move_center_point(std::optional<size_t> num_moves = std::nullopt);
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         run() final;
