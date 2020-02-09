@@ -62,7 +62,6 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<lo
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
     SVD.setThreshold(SVDThreshold);
     SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
-
     long max_size =  std::min(SVD.singularValues().size(),rank_max.value());
     long rank     = (SVD.singularValues().head(max_size).array() >= SVDThreshold).count();
     if(rank == SVD.singularValues().size()){

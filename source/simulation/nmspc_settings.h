@@ -54,10 +54,12 @@ namespace settings {
         inline std::string  model_type                              = "tf_ising";         /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising selfdual_tf_rf_ising_normal}  */
         inline long         seed                                    = 1;                  /*!< Main seed for the random number generator. */
         inline long         state_number                            = -1;                 /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Only positive state numbers are used */
-        inline bool         quench_chi_when_stuck                   = false;              /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
-        inline bool         projection_when_growing_chi             = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
-        inline bool         projection_trial_when_stuck             = true;               /*!< Project to target parity sector at each sweep when stuck. */
-        inline bool         projection_on_every_sweep               = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
+        inline bool         chi_quench_when_stuck                   = false;              /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
+        inline bool         perturb_when_stuck                      = false;              /*!< Perturb MPO parameters to get unstuck from local minima */
+        inline bool         damping_when_stuck                      = false;              /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
+        inline bool         project_when_stuck                      = true;               /*!< Project to target parity sector at each sweep when stuck. */
+        inline bool         project_when_growing_chi                = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
+        inline bool         project_on_every_sweep                  = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
         inline bool         use_pauli_eigvecs                       = true;               /*!< Use random pauli eigenvectors to initialize spinors in x,y or z  */
         inline std::string  initial_parity_sector                   = "x";                /*!< Initialize in a global parity sector: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
         inline std::string  target_parity_sector                    = "x";                /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */

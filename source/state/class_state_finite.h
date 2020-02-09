@@ -89,8 +89,8 @@ class class_state_finite {
 
     bool position_is_the_middle() const;
     bool position_is_the_middle_any_direction() const;
-    bool position_is_the_left_edge() const;
-    bool position_is_the_right_edge() const;
+    bool position_is_left_edge() const;
+    bool position_is_right_edge() const;
     bool position_is_any_edge() const;
     bool position_is_at(size_t pos) const;
     bool isReal() const;

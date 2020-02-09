@@ -19,10 +19,12 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
     indata.find_parameter<long>       ("model::seed"                                , model::seed);
     indata.find_parameter<long>       ("model::state_number"                        , model::state_number);
-    indata.find_parameter<bool>       ("model::quench_chi_when_stuck"               , model::quench_chi_when_stuck);
-    indata.find_parameter<bool>       ("model::projection_when_growing_chi"         , model::projection_when_growing_chi);
-    indata.find_parameter<bool>       ("model::projection_trial_when_stuck"         , model::projection_trial_when_stuck);
-    indata.find_parameter<bool>       ("model::projection_on_every_sweep"           , model::projection_on_every_sweep);
+    indata.find_parameter<bool>       ("model::chi_quench_when_stuck"               , model::chi_quench_when_stuck);
+    indata.find_parameter<bool>       ("model::perturb_when_stuck"                  , model::perturb_when_stuck);
+    indata.find_parameter<bool>       ("model::damping_when_stuck"                  , model::damping_when_stuck);
+    indata.find_parameter<bool>       ("model::project_when_growing_chi"            , model::project_when_growing_chi);
+    indata.find_parameter<bool>       ("model::project_trial_when_stuck"            , model::project_when_stuck);
+    indata.find_parameter<bool>       ("model::project_on_every_sweep"              , model::project_on_every_sweep);
     indata.find_parameter<bool>       ("model::use_pauli_eigvecs"                   , model::use_pauli_eigvecs);
     indata.find_parameter<std::string>("model::initial_parity_sector"               , model::initial_parity_sector);
     indata.find_parameter<std::string>("model::target_parity_sector"                , model::target_parity_sector);

@@ -26,9 +26,10 @@ private:
 
     template<typename Derived>
     std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>,MatrixType<typename Derived::Scalar>, long>
-    do_svd(const Eigen::DenseBase<Derived> & mat, std::optional<long> rank_max = std::nullopt);
-
-
+    do_svd(const Eigen::DenseBase<Derived> & mat, std::optional<long> rank_max = std::nullopt){
+        if(not rank_max.has_value()) rank_max = std::min(mat.rows(),mat.cols());
+        return do_svd(mat.derived().data(), mat.rows(),mat.cols(),rank_max);
+    }
 
 public:
 
@@ -40,137 +41,94 @@ public:
     template<typename Scalar>
     Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar,2> &tensor);
 
-//    template<typename Scalar>
-//    std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
-//    decompose(const Eigen::Tensor<Scalar,2> &tensor);
+
+
+
+
+
+
     template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
-    decompose(const Eigen::Tensor<Scalar,2> &tensor, std::optional<long> rank_max = std::nullopt);
+    decompose(const Eigen::Tensor<Scalar,2> &tensor, std::optional<long> rank_max = std::nullopt) {
+        auto[U,S,V,rank] = do_svd(tensor.data(),tensor.dimension(0), tensor.dimension(1), rank_max );
+        return std::make_tuple(Textra::MatrixTensorMap(U),
+                               Textra::MatrixTensorMap(S.normalized().template cast<Scalar>()),
+                               Textra::MatrixTensorMap(V)
+        );
+    }
+
+
+
+    template<typename Scalar>
+    std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
+    decompose(const Eigen::Tensor<Scalar,3> &tensor, const long rows,const long cols, std::optional<long> rank_max = std::nullopt){
+        auto[U,S,V,rank] = do_svd(tensor.data(),rows,cols, rank_max );
+        return std::make_tuple(Textra::MatrixTensorMap(U),
+                               Textra::MatrixTensorMap(S.normalized().template cast<Scalar>()),
+                               Textra::MatrixTensorMap(V)
+        );
+    }
 
     template<typename Derived>
     std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>,MatrixType<typename Derived::Scalar>>
-    decompose(const Eigen::DenseBase<Derived> &matrix, std::optional<long> rank_max = std::nullopt);
+    decompose(const Eigen::DenseBase<Derived> &matrix, std::optional<long> rank_max = std::nullopt){
+        auto[U,S,V,rank] = do_svd(matrix.derived().data(),matrix.rows(),matrix.cols(),rank_max);
+        return std::make_tuple(U,
+                               S.normalized().template cast<typename Derived::Scalar>(),
+                               V
+        );
+    }
 
-    template<typename Scalar>
-    std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
-    decompose(const Eigen::Tensor<Scalar,3> &tensor, const long rows,const long cols, std::optional<long> rank_max = std::nullopt);
 
-    template<typename Scalar,auto rank>
+    template<typename Scalar,auto N>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-    schmidt  (const Eigen::Tensor<Scalar,rank> &tensor, long dL, long dR, long chiL, long chiR, std::optional<long> rank_max = std::nullopt);
+    schmidt  (const Eigen::Tensor<Scalar,N> &tensor, long dL, long dR, long chiL, long chiR, std::optional<long> rank_max = std::nullopt){
+        if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt error: tensor size does not match given dimensions.");}
+        auto [U,S,V,rank] = do_svd(tensor.data(),dL*chiL, dR*chiR,rank_max);
+        return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
+                               Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
+                               Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 })
+        );
+    }
 
-//    template<typename Scalar>
-//    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-//    schmidt  (const Eigen::Tensor<Scalar,3> &tensor, long rows, long cols,std::optional<long> rank_max = std::nullopt);
 
     template<typename Scalar>
     std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-    schmidt  (const Eigen::Tensor<Scalar,4> &tensor, std::optional<long> rank_max = std::nullopt);
+    schmidt  (const Eigen::Tensor<Scalar,4> &tensor, std::optional<long> rank_max = std::nullopt){
+        long dL   = tensor.dimension(0);
+        long chiL = tensor.dimension(1);
+        long dR   = tensor.dimension(2);
+        long chiR = tensor.dimension(3);
+        if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt error: tensor size does not match given dimensions.");}
+        auto [U,S,V,rank] = do_svd(tensor.data(),dL*chiL, dR*chiR,rank_max);
+        return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
+                               Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
+                               Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 })
+        );
+    }
 
-//    template<typename Scalar>
-//    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-//    schmidt  (const Eigen::Tensor<Scalar,4> &tensor);
-//
+
     template<typename Scalar>
     std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>, double >
-    schmidt_with_norm  (const Eigen::Tensor<Scalar,4> &tensor,std::optional<long> rank_max = std::nullopt);
+    schmidt_with_norm  (const Eigen::Tensor<Scalar,4> &tensor,std::optional<long> rank_max = std::nullopt) {
+        long dL   = tensor.dimension(0);
+        long chiL = tensor.dimension(1);
+        long dR   = tensor.dimension(2);
+        long chiR = tensor.dimension(3);
+        if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");}
+        auto [U,S,V,rank] = do_svd(tensor.data(),dL*chiL, dR*chiR,rank_max);
+        return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
+                               Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
+                               Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 }),
+                               S.norm()
+        );
 
-//    template<typename Scalar>
-//    std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>, double >
-//    schmidt_with_norm  (const Eigen::Tensor<Scalar,4> &tensor, long chi_max);
+    }
+
 
 };
 
 
-//
-// Definitions
-//
-
-template<typename Derived>
-std::tuple<class_SVD::MatrixType<typename Derived::Scalar>, class_SVD::VectorType<typename Derived::Scalar>,class_SVD::MatrixType<typename Derived::Scalar>, long>
-class_SVD::do_svd(const Eigen::DenseBase<Derived> & mat , std::optional<long> rank_max){
-    if(not rank_max.has_value()) rank_max = std::min(mat.rows(),mat.cols());
-    return do_svd(mat.derived().data(), mat.rows(),mat.cols(),rank_max);
-}
-
-
-
-
-
-template<typename Scalar>
-std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
-class_SVD::decompose(const Eigen::Tensor<Scalar,2> &tensor, std::optional<long> rank_max) {
-    auto[U,S,V,rank] = do_svd(tensor.data(),tensor.dimension(0), tensor.dimension(1), rank_max );
-    return std::make_tuple(Textra::MatrixTensorMap(U),
-                           Textra::MatrixTensorMap(S.normalized().template cast<Scalar>()),
-                           Textra::MatrixTensorMap(V)
-    );
-}
-
-template<typename Scalar>
-std::tuple<Eigen::Tensor<Scalar, 2> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2> >
-class_SVD::decompose(const Eigen::Tensor<Scalar,3> &tensor,const long rows,const long cols,std::optional<long> rank_max) {
-    auto[U,S,V,rank] = do_svd(tensor.data(),rows,cols, rank_max );
-    return std::make_tuple(Textra::MatrixTensorMap(U),
-                           Textra::MatrixTensorMap(S.normalized().template cast<Scalar>()),
-                           Textra::MatrixTensorMap(V)
-    );
-}
-
-template<typename Derived>
-std::tuple<class_SVD::MatrixType<typename Derived::Scalar>, class_SVD::VectorType<typename Derived::Scalar>,class_SVD::MatrixType<typename Derived::Scalar>>
-class_SVD::decompose(const Eigen::DenseBase<Derived> &matrix, std::optional<long> rank_max){
-    auto[U,S,V,rank] = do_svd(matrix.derived().data(),matrix.rows(),matrix.cols(),rank_max);
-    return std::make_tuple(U,
-                           S.normalized().template cast<typename Derived::Scalar>(),
-                           V
-    );
-}
-
-
-template<typename Scalar, auto tensor_rank>
-std::tuple<Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-class_SVD::schmidt(const Eigen::Tensor<Scalar,tensor_rank> &tensor, long dL, long dR, long chiL, long chiR, std::optional<long> rank_max) {
-    if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt error: tensor size does not match given dimensions.");}
-    auto [U,S,V,rank] = do_svd(tensor.data(),dL*chiL, dR*chiR,rank_max);
-    return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
-                           Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
-                           Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 })
-    );
-}
-
-
-template<typename Scalar>
-std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3> >
-class_SVD::schmidt(const Eigen::Tensor<Scalar,4> &tensor,std::optional<long> rank_max) {
-    long dL   = tensor.dimension(0);
-    long chiL = tensor.dimension(1);
-    long dR   = tensor.dimension(2);
-    long chiR = tensor.dimension(3);
-    if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt error: tensor size does not match given dimensions.");}
-    auto [U,S,V,rank] = do_svd(tensor.data(),dL*chiL, dR*chiR,rank_max);
-    return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
-                           Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
-                           Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 })
-    );
-}
-
-template<typename Scalar>
-std::tuple <Eigen::Tensor<Scalar, 3> ,Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 3>,double  >
-class_SVD::schmidt_with_norm(const Eigen::Tensor<Scalar,4> &tensor, std::optional<long> rank_max) {
-    long dL   = tensor.dimension(0);
-    long chiL = tensor.dimension(1);
-    long dR   = tensor.dimension(2);
-    long chiR = tensor.dimension(3);
-    if (dL*chiL * dR*chiR != tensor.size()){throw std::range_error("schmidt_with_norm error: tensor size does not match given dimensions.");}
-    auto [U,S,V,rank] = do_svd(tensor.data(),dL*chiL, dR*chiR,rank_max);
-    return std::make_tuple(Textra::MatrixTensorMap(U, dL, chiL, rank),
-                           Textra::MatrixTensorMap(S.normalized().template cast<Scalar>(), rank),
-                           Textra::MatrixTensorMap(V,  rank, dR, chiR ).shuffle(Textra::array3{ 1, 0, 2 }),
-                           S.norm()
-    );
-
-}
 
 
 
