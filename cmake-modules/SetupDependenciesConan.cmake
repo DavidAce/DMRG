@@ -20,7 +20,7 @@ if(NOT TARGET blas::blas)
 endif()
 include(cmake-modules/FindLapacke.cmake)                        # Lapacke needed by arpack++
 include(cmake-modules/Fetch_arpack-ng.cmake)                    # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
-include(cmake-modules/Fetch_arpack++.cmake)                     # LC++ frontend for arpack-ng
+include(cmake-modules/Fetch_arpack++.cmake)                     # C++ frontend for arpack-ng
 
 
 ##################################################################

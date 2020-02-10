@@ -10,6 +10,7 @@ doxygen_log.txt
 test*.cfg
 *.log
 *.err
+.directory
 batch_scripts/logs/*
 batch_scripts/input/*
 batch_scripts/output/*
