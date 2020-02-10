@@ -57,6 +57,7 @@ void class_xDMRG::run_simulation()    {
         update_bond_dimension_limit(); //Will only update if the state is being limited by bond dimension
         try_projection();
         try_chi_quench();
+        try_damping();
         try_perturbation();
         // It's important not to perform the last move.
         // That last state would not get optimized
@@ -219,7 +220,7 @@ void class_xDMRG::single_xDMRG_step()
     size_t chi_lim = state->get_chi_lim();
 
     //Truncate even more if doing chi quench
-//    if(force_overlap_steps > 0) chi_lim = chi_lim_quench;
+    if(chi_quench_steps > 0) chi_lim = chi_lim_quench;
 
     //Do the truncation with SVD
     log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));

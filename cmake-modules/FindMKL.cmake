@@ -66,15 +66,19 @@ set(MKL_ROOT_SEARCH_PATHS
         $ENV{EBROOTIMKL}
         /opt/intel/mkl
         /opt/intel
+        /opt
         $ENV{BLAS_DIR}
         $ENV{CONDA_PREFIX}
         /usr/lib/x86_64-linux-gnu
+        /usr
         /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
         "Program Files (x86)/Intel/ComposerXE-2011/mkl"
         )
+
 set(MKL_PATH_SUFFIXES
         mkl
         intel/mkl
+        intel
         )
 if(BUILD_SHARED_LIBS)
     set(MKL_LIB_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
@@ -87,23 +91,12 @@ find_path(MKL_ROOT_DIR
         include/mkl.h
         HINTS ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS}
         PATHS
-        $ENV{MKL_DIR}  ${MKL_DIR}
-        $ENV{MKLDIR}   ${MKLDIR}
-        $ENV{MKLROOT}  ${MKLROOT}
-        $ENV{MKL_ROOT} ${MKL_ROOT}
-        $ENV{mkl_root} ${mkl_root}
-        $ENV{EBROOTIMKL}
-        $ENV{HOME}/intel/mkl
-        /opt/intel/mkl
-        /opt/intel
-        $ENV{BLAS_DIR}
-        /usr/lib/x86_64-linux-gnu
-        /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
-        "Program Files (x86)/Intel/ComposerXE-2011/mkl"
+        ${MKL_ROOT_SEARCH_PATHS}
         PATH_SUFFIXES
-        intel intel/mkl mkl
+        ${MKL_PATH_SUFFIXES}
         )
 if(MKL_ROOT_DIR)
+    message(STATUS "Found MKL ROOT: ${MKL_ROOT_DIR}")
     find_path(MKL_INCLUDE_DIR
             mkl.h
             HINTS ${MKL_ROOT_DIR}/include
@@ -307,7 +300,7 @@ if(MKL_ROOT_DIR)
                             ${MKL_CORE_LIBRARY}
                             ${MKL_LAPACK_LIBRARY}
                             ${MKL_IOMP5_LIBRARY})
-    #                message("${FORTRANVAR} ${MODEVAR} ${THREADVAR} ${MKL_${FORTRANVAR}_${MODEVAR}_${THREADVAR}_LIBRARIES}") # for debug
+                    message("${FORTRANVAR} ${MODEVAR} ${THREADVAR} ${MKL_${FORTRANVAR}_${MODEVAR}_${THREADVAR}_LIBRARIES}") # for debug
                 endif()
             endforeach()
         endforeach()

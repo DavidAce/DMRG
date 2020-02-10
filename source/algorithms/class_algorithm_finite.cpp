@@ -323,10 +323,7 @@ void class_algorithm_finite::try_projection() {
 void class_algorithm_finite::try_chi_quench() {
     if(not settings::model::chi_quench_when_stuck) return;
     if(not state->position_is_any_edge()) return;
-    if(damping_steps > 0) return;
-    if(perturbation_steps > 0) return;
     if(chi_quench_steps > 0) return;
-    if(state->is_perturbed()) return;
 
     if(not sim_status.simulation_has_got_stuck) {
         tools::log->info("Chi quench skipped: simulation not stuck");
@@ -362,42 +359,21 @@ void class_algorithm_finite::try_perturbation() {
     if(not settings::model::perturb_when_stuck) return;
     if(not state->position_is_any_edge()) return;
     if(state->is_perturbed()) return;
-    if(damping_steps > 0) return;
     if(perturbation_steps > 0) return;
-    if(chi_quench_steps > 0) return;
        if(not sim_status.simulation_has_got_stuck) {
         tools::log->info("Perturbation skipped: simulation not stuck");
         return;
     }
-    if(num_chi_quenches >= max_chi_quenches) {
+    if(num_perturbations >= max_perturbations) {
         tools::log->info("Perturbation skipped: max number of perturbation trials ({}) have been made already", num_perturbations);
         return;
     }
-    size_t trunc_bond_count  = state->num_sites_truncated(5 * settings::precision::svd_threshold);
-    size_t bond_at_lim_count = state->num_bonds_at_limit();
-    log->debug("Truncation errors: {}", state->get_truncation_errors());
-    log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
-    log->debug("Entanglement entr: {}", tools::finite::measure::entanglement_entropies(*state));
-    log->debug("Truncated bond count: {} ", trunc_bond_count);
-    log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
-    log->debug("threshold: {} ", std::pow(5 * settings::precision::svd_threshold,2));
-    if(state->is_bond_limited(5 * settings::precision::svd_threshold)) {
-        tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
-        return;
-    }
 
-    tools::log->info("Chi quench started");
-//    size_t smaller_chi_lim = std::min(chi_lim_quench, (size_t)state->get_chi_lim() / 2);
-//    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
-    clear_saturation_status();
-    chi_quench_steps = 4 * state->get_length();
-    num_chi_quenches++;
 }
 
 
 void class_algorithm_finite::try_damping() {
-    if(not state->position_is_any_edge()) return;
-
+    if(not state->position_is_left_edge()) return;
     // If there are damping exponents to process, do so
     if(not damping_exponents.empty()){
         log->info("Setting damping exponent = {}", damping_exponents.back());
@@ -418,55 +394,15 @@ void class_algorithm_finite::try_damping() {
     }
     // damping_exponents = math::LogSpaced(6,0.0,0.25,0.001);
     // damping_exponents = {0.0,0.1};
-    damping_exponents = {0.0,0.01,0.02};
+    damping_exponents = {0.0,0.01,0.02,0.04,0.08, 0.16,0.256};
     log->info("Generating damping exponents = {}", damping_exponents);
     has_damped = true;
     clear_saturation_status();
-
     log->info("Setting damping exponent = {}", damping_exponents.back());
     state->damp_hamiltonian(damping_exponents.back(),0);
     damping_exponents.pop_back();
     if(damping_exponents.empty() and state->is_damped())
         throw std::logic_error("Damping trial ended but the state is still damped");
-
-//    if (state->position_is_any_edge()
-//        and sim_status.simulation_has_stuck_for >= 2
-//        and not state->is_bond_limited(0.5*settings::precision::svd_threshold)
-//        and damping_exponents.empty()
-//        and not has_damped)
-//    {
-//    }
-//
-//    if (state->position_is_any_edge() and not damping_exponents.empty() ){
-//
-//    }
-
-
-
-
-
-
-
-
-    size_t trunc_bond_count  = state->num_sites_truncated(5 * settings::precision::svd_threshold);
-    size_t bond_at_lim_count = state->num_bonds_at_limit();
-    log->debug("Truncation errors: {}", state->get_truncation_errors());
-    log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
-    log->debug("Entanglement entr: {}", tools::finite::measure::entanglement_entropies(*state));
-    log->debug("Truncated bond count: {} ", trunc_bond_count);
-    log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
-    log->debug("threshold: {} ", std::pow(5 * settings::precision::svd_threshold,2));
-    if(state->is_bond_limited(5 * settings::precision::svd_threshold)) {
-        tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
-        return;
-    }
-
-    tools::log->info("Chi quench started");
-//    size_t smaller_chi_lim = std::min(chi_lim_quench, (size_t)state->get_chi_lim() / 2);
-//    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
-    clear_saturation_status();
-    chi_quench_steps = 4 * state->get_length();
-    num_chi_quenches++;
 }
 
 

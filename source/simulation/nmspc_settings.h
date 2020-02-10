@@ -123,7 +123,7 @@ namespace settings {
     namespace idmrg {
         inline bool on           = true;                           /*!< Turns iDMRG simulation on/off. */
         inline size_t max_steps  = 5000;                           /*!< Final length of 1D quantum chain. */
-        inline long chi_max      = 8;                              /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline long chi_max      = 32;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline bool chi_grow     = true;                           /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
         inline long chi_init     = 16;                             /*!< Initial chi limit. Only used when chi_grow == true. */
         inline size_t print_freq = 1000;                           /*!< Print frequency for console output. (0 = off). */

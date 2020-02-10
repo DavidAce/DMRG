@@ -179,6 +179,7 @@ class_tf_ising::Parameters class_tf_ising::get_parameters() const {
     parameters.push_back({"J_nnn", J_nnn});
     parameters.push_back({"h_field", h_field});
     parameters.push_back({"h_rnd", h_rnd});
+    parameters.push_back({"h_ptb", h_ptb});
     parameters.push_back({"h_mean", h_mean});
     parameters.push_back({"h_sigma", h_sigma});
     parameters.push_back({"alpha", alpha});
