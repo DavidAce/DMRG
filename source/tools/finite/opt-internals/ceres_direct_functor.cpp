@@ -18,7 +18,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(
     tools::log->trace("Constructing direct functor");
 
     #ifdef _OPENMP
-        tools::log->trace("Parallelizing with {} threads", omp.num_threads);
+        tools::log->info("Parallelizing with {} threads", omp.num_threads);
     #endif
     tools::log->trace("Generating multi components");
     energy_reduced  = state.get_energy_reduced();
@@ -81,6 +81,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
     auto Hv      = Eigen::Map<VectorType>(Hv_tensor.data() ,Hv_tensor.size());
     auto H2v     = Eigen::Map<VectorType>(H2v_tensor.data(),H2v_tensor.size());
+
 
     print_path   = false;
     vHv          = v.dot(Hv);
@@ -167,11 +168,14 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
     size_t log2chiR  = std::log2(dsizes[2]);
     size_t log2spin  = std::log2(dsizes[0]);
     Eigen::Tensor<Scalar,3> vH2;
+    Eigen::ThreadPool       tp(4);
+    Eigen::ThreadPoolDevice dev(&tp,4);
+
     if (log2spin > log2chiL + log2chiR){
         if (log2chiL > log2chiR){
             if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-            H2v_tensor.device(omp.dev) =
+            H2v_tensor.device(dev) =
                     theta
                             .contract(env2L, Textra::idx({0}, {0}))
                             .contract(mpo  , Textra::idx({0,3}, {2,0}))
@@ -183,7 +187,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
         else{
             if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
-            H2v_tensor.device(omp.dev) =
+            H2v_tensor.device(dev) =
                     theta
                             .contract(env2R, Textra::idx({0}, {0}))
                             .contract(mpo  , Textra::idx({0,3}, {2,1}))
@@ -195,7 +199,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
     }else{
         if (print_path) tools::log->trace("get_H2v path: log2spin <= log2chiL + log2chiR");
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-        H2v_tensor.device(omp.dev) =
+        H2v_tensor.device(dev) =
                 theta
                         .contract(env2L, Textra::idx({0}, {0}))
                         .contract(mpo  , Textra::idx({0,3}, {2,0}))
@@ -214,12 +218,14 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
     t_vH->tic();
     size_t log2chiL  = std::log2(dsizes[1]);
     size_t log2chiR  = std::log2(dsizes[2]);
+    Eigen::ThreadPool       tp(4);
+    Eigen::ThreadPoolDevice dev(&tp,4);
 //            size_t log2spin  = std::log2(multiComponents.dsizes[0]);
     if (log2chiL > log2chiR){
         if (print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
 
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-        Hv_tensor.device(omp.dev) =
+        Hv_tensor.device(dev) =
                 theta
                         .contract(envL, Textra::idx({0}, {0}))
                         .contract(mpo , Textra::idx({0,3}, {2,0}))
@@ -229,7 +235,7 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
         if (print_path) tools::log->trace("get_Hv path: log2chiL <= log2chiR ");
 
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
-        Hv_tensor.device(omp.dev) =
+        Hv_tensor.device(dev) =
                 theta
                         .contract(envR, Textra::idx({0}, {0}))
                         .contract(mpo , Textra::idx({0,3}, {2,1}))

@@ -122,6 +122,7 @@ class class_state_finite {
     // For multisite
     std::list<size_t>      active_sites;
     std::list<size_t>      activate_sites(const long threshold, const size_t max_sites, const size_t min_sites = 2);
+    std::list<size_t>      activate_truncated_sites(const long threshold,const size_t chi_lim, const size_t max_sites, const size_t min_sites = 2);
     Eigen::DSizes<long, 3> active_dimensions() const;
     size_t                 active_problem_size() const;
 

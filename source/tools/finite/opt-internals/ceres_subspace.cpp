@@ -312,13 +312,6 @@ find_subspace(const class_state_finite & state, OptMode optMode){
 
 
 
-
-
-
-
-
-
-
 Eigen::Tensor<class_state_finite::Scalar,3>
 tools::finite::opt::internal::ceres_subspace_optimization(const class_state_finite &state, const class_simulation_status &sim_status, OptType optType, OptMode optMode, OptSpace optSpace){
     tools::log->trace("Optimizing in SUBSPACE mode");
@@ -368,7 +361,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 //    double subspace_error_unfiltered = 1.0 - overlaps.cwiseAbs2().sum();
     double subspace_error_filtered;
 
-    std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 128);
+    std::tie(eigvecs,eigvals,overlaps,subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 256);
     eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
 //    bool force_accept = false;
 

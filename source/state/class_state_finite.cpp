@@ -420,6 +420,11 @@ std::list<size_t> class_state_finite::activate_sites(const long threshold, const
     return active_sites = tools::finite::multisite::generate_site_list(*this, threshold, max_sites, min_sites);
 }
 
+std::list<size_t> class_state_finite::activate_truncated_sites(const long threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites) {
+    clear_cache();
+    return active_sites = tools::finite::multisite::generate_truncated_site_list(*this, threshold,chi_lim, max_sites, min_sites);
+}
+
 Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
 
 size_t class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }

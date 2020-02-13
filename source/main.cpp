@@ -191,6 +191,7 @@ int main(int argc, char* argv[]) {
 
         omp_set_num_threads(settings::threading::num_threads_omp);
         Eigen::setNbThreads(settings::threading::num_threads_eigen);
+        Eigen::initParallel();
         log->info("Using Eigen  with {} threads",Eigen::nbThreads());
         log->info("Using OpenMP with {} threads",omp_get_max_threads());
 

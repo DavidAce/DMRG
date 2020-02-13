@@ -169,7 +169,7 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
             throw std::logic_error("Specify how many sites multisite should move! Expected one of {one,mid,max}, got [" + settings::precision::move_sites_multidmrg +"]");
         }
     }
-    log->trace("Moving center point {} steps", num_moves.value());
+    log->trace("Moving center point {} steps in direction {}", num_moves.value(), state->get_direction());
     state->clear_cache();
     try {
         for(size_t i = 0; i < num_moves.value(); i++) {
@@ -178,6 +178,7 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
             state->increment_moves();
             if(chi_quench_steps > 0) chi_quench_steps--;
         }
+        tools::finite::debug::check_integrity(*state);
         state->active_sites.clear();
     } catch(std::exception &e) {
         tools::finite::print::print_state(*state);
@@ -228,15 +229,20 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
                 log->info("State is not stuck yet. Kept current limit {}", state->get_chi_lim());
                 return;
             }
-
+//            if(sim_status.simulation_has_stuck_for <= 1 and state->get_chi_lim() >= 16){
+//                log->info("State has not been stuck for long enough. Kept current limit {}", state->get_chi_lim());
+//                return;
+//            }
             if(log->level() <= spdlog::level::info){
-                size_t trunc_bond_count  = state->num_sites_truncated(2 * settings::precision::svd_threshold);
+                double truncation_threshold = 5 * settings::precision::svd_threshold;
+                size_t trunc_bond_count  = state->num_sites_truncated(truncation_threshold);
                 size_t bond_at_lim_count = state->num_bonds_at_limit();
-                log->debug("Truncation errors     : {}", state->get_truncation_errors());
-                log->debug("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*state));
-                log->debug("Truncated bond count  : {} ", trunc_bond_count);
-                log->debug("Bonds at limit  count : {} ", bond_at_lim_count);
-                log->debug("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*state));
+                log->info("Truncation threshold : {:<.8e}", std::pow(truncation_threshold,2));
+                log->info("Truncation errors     : {}", state->get_truncation_errors());
+                log->info("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*state));
+                log->info("Truncated bond count  : {} ", trunc_bond_count);
+                log->info("Bonds at limit  count : {} ", bond_at_lim_count);
+                log->info("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*state));
             }
             bool state_is_bond_limited = state->is_bond_limited(5 * settings::precision::svd_threshold);
             if(not state_is_bond_limited){
@@ -250,6 +256,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
             write_sim_status(true);
             write_profiling(true);
             long chi_lim_new = std::min(state->get_chi_max(), state->get_chi_lim() * 2);
+            if(state->get_chi_lim() < 16) chi_lim_new = std::min(state->get_chi_max(), state->get_chi_lim() + 1);
             log->info("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_lim_new);
             state->set_chi_lim(chi_lim_new);
             clear_saturation_status();
@@ -297,8 +304,10 @@ void class_algorithm_finite::reset_to_random_state(const std::string &parity_sec
 }
 
 void class_algorithm_finite::try_projection() {
+    if(tools::finite::measure::energy_variance_per_site(*state) < 1e-12) return;
+
     bool try_when_stuck =
-        settings::model::project_when_stuck and sim_status.simulation_has_got_stuck and not has_projected and state->position_is_any_edge();
+            settings::model::project_when_stuck and sim_status.simulation_has_got_stuck and not has_projected and state->position_is_any_edge();
 
     bool try_every_sweep = settings::model::project_on_every_sweep and sim_status.iteration >= 2 and state->position_is_any_edge();
 
@@ -321,36 +330,45 @@ void class_algorithm_finite::try_projection() {
 }
 
 void class_algorithm_finite::try_chi_quench() {
+    if(tools::finite::measure::energy_variance_per_site(*state) < 1e-12) return;
     if(not settings::model::chi_quench_when_stuck) return;
     if(not state->position_is_any_edge()) return;
-    if(chi_quench_steps > 0) return;
+    if(chi_quench_steps >= state->get_length()){
+        tools::log->info("Chi quench continues -- {} steps left", chi_quench_steps);
+        tools::finite::mps::truncate_all_sites(*state, chi_lim_quench_ahead);
+        return;
+    }
 
     if(not sim_status.simulation_has_got_stuck) {
         tools::log->info("Chi quench skipped: simulation not stuck");
         return;
     }
+//    if(sim_status.simulation_has_stuck_for <= 1) {
+//        tools::log->info("Chi quench skipped: simulation not been stuck for long enough");
+//        return;
+//    }
     if(num_chi_quenches >= max_chi_quenches) {
         tools::log->info("Chi quench skipped: max number of chi quenches ({}) have been made already", num_chi_quenches);
         return;
     }
-    size_t trunc_bond_count  = state->num_sites_truncated(5 * settings::precision::svd_threshold);
+    double truncation_threshold = 5 * settings::precision::svd_threshold;
+    size_t trunc_bond_count  = state->num_sites_truncated(truncation_threshold);
     size_t bond_at_lim_count = state->num_bonds_at_limit();
-    log->debug("Truncation errors: {}", state->get_truncation_errors());
-    log->debug("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
-    log->debug("Entanglement entr: {}", tools::finite::measure::entanglement_entropies(*state));
-    log->debug("Truncated bond count: {} ", trunc_bond_count);
-    log->debug("Bonds at limit  count: {} ", bond_at_lim_count);
-    log->debug("threshold: {} ", std::pow(5 * settings::precision::svd_threshold,2));
-    if(state->is_bond_limited(5 * settings::precision::svd_threshold)) {
+    log->info("Truncation threshold : {:.4e}", std::pow(truncation_threshold,2));
+    log->info("Truncation errors    : {}", state->get_truncation_errors());
+    log->info("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
+    log->info("Entanglement entr    : {}", tools::finite::measure::entanglement_entropies(*state));
+    log->info("Truncated bond count : {} ", trunc_bond_count);
+    log->info("Bonds at limit  count: {} ", bond_at_lim_count);
+    if(state->is_bond_limited(truncation_threshold)) {
         tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
         return;
     }
 
     tools::log->info("Chi quench started");
-//    size_t smaller_chi_lim = std::min(chi_lim_quench, (size_t)state->get_chi_lim() / 2);
-//    tools::finite::mps::truncate_all_sites(*state, smaller_chi_lim, 1, 0);
+    tools::finite::mps::truncate_all_sites(*state, chi_lim_quench_ahead);
     clear_saturation_status();
-    chi_quench_steps = 4 * state->get_length();
+    chi_quench_steps = 1 * state->get_length();
     num_chi_quenches++;
 }
 
@@ -426,17 +444,17 @@ void class_algorithm_finite::check_convergence_variance(double threshold, double
         size_t saturated_count                = (size_t) std::distance(V_mpo_slopes.rbegin(), last_nonsaturated_ptr);
         sim_status.variance_mpo_has_saturated = report.slope < slope_threshold; // or saturated_count >= min_saturation_iters;
         sim_status.variance_mpo_saturated_for = std::max(converged_count, saturated_count);
-        log->debug("Variance slope details:");
-        log->debug(" -- relative slope    = {} %", report.slope);
-        log->debug(" -- tolerance         = {} %", slope_threshold);
-        log->debug(" -- last var average  = {} ", report.avgY);
-        log->debug(" -- check from        = {} ", report.check_from);
-        log->debug(" -- var history       = {} ", V_mpo_vec);
-        log->debug(" -- slope history     = {} ", V_mpo_slopes);
-        log->debug(" -- has saturated     = {} ", sim_status.variance_mpo_has_saturated);
-        log->debug(" -- has saturated for = {} ", sim_status.variance_mpo_saturated_for);
-        log->debug(" -- has converged     = {} ", sim_status.variance_mpo_has_converged);
-        log->debug(" -- has converged for = {} ", converged_count);
+        log->info("Variance slope details:");
+        log->info(" -- relative slope    = {} %", report.slope);
+        log->info(" -- tolerance         = {} %", slope_threshold);
+        log->info(" -- last var average  = {} ", report.avgY);
+        log->info(" -- check from        = {} ", report.check_from);
+        log->info(" -- var history       = {} ", V_mpo_vec);
+        log->info(" -- slope history     = {} ", V_mpo_slopes);
+        log->info(" -- has saturated     = {} ", sim_status.variance_mpo_has_saturated);
+        log->info(" -- has saturated for = {} ", sim_status.variance_mpo_saturated_for);
+        log->info(" -- has converged     = {} ", sim_status.variance_mpo_has_converged);
+        log->info(" -- has converged for = {} ", converged_count);
         if(V_mpo_vec.back() < threshold and sim_status.variance_mpo_saturated_for == 0) throw std::logic_error("Variance should have saturated");
         if(V_mpo_vec.back() < threshold and not sim_status.variance_mpo_has_converged) throw std::logic_error("Variance should have converged");
     }
@@ -480,18 +498,18 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
         std::vector<double> all_slopes;
         for(auto &r : reports) all_avergs.push_back(r.avgY);
         for(auto &r : reports) all_slopes.push_back(r.slope);
-        log->debug("Max slope of entanglement entropy at site {}: {:.8f} %", idx_max_slope, S_slopes.back());
-        log->debug("Entanglement slope details of worst slope:");
-        log->debug(" -- site              = {}", idx_max_slope);
-        log->debug(" -- relative slope    = {} %", reports[idx_max_slope].slope);
-        log->debug(" -- tolerance         = {} %", slope_threshold);
-        log->debug(" -- check from        = {} ", reports[idx_max_slope].check_from);
-        log->debug(" -- ent history       = {} ", S_mat[idx_max_slope]);
-        log->debug(" -- slope history     = {} ", S_slopes);
-        log->debug(" -- has saturated     = {} ", sim_status.entanglement_has_saturated);
-        log->debug(" -- has saturated for = {} (site {} )", sim_status.entanglement_saturated_for, saturated_count);
-        log->debug(" -- all averages      = {} ", all_avergs);
-        log->debug(" -- all slopes        = {} ", all_slopes);
+        log->info("Max slope of entanglement entropy at site {}: {:.8f} %", idx_max_slope, S_slopes.back());
+        log->info("Entanglement slope details of worst slope:");
+        log->info(" -- site              = {}", idx_max_slope);
+        log->info(" -- relative slope    = {} %", reports[idx_max_slope].slope);
+        log->info(" -- tolerance         = {} %", slope_threshold);
+        log->info(" -- check from        = {} ", reports[idx_max_slope].check_from);
+        log->info(" -- ent history       = {} ", S_mat[idx_max_slope]);
+        log->info(" -- slope history     = {} ", S_slopes);
+        log->info(" -- has saturated     = {} ", sim_status.entanglement_has_saturated);
+        log->info(" -- has saturated for = {} (site {} )", sim_status.entanglement_saturated_for, saturated_count);
+        log->info(" -- all averages      = {} ", all_avergs);
+        log->info(" -- all slopes        = {} ", all_slopes);
         if(reports[idx_max_slope].slope > slope_threshold and sim_status.entanglement_has_saturated) throw std::logic_error("Not supposed to be saturated!!");
     }
     sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;

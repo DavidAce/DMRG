@@ -301,6 +301,17 @@ void tools::finite::opt::truncate_left(const Eigen::Tensor<std::complex<double>,
 void tools::finite::opt::truncate_theta(const Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state, std::optional<size_t> chi_lim) {
     tools::common::profile::t_svd.tic();
     if(not chi_lim.has_value())  chi_lim = state.get_chi_lim();
+    // Calculate the minimum chi for this position
+    // We always need to make sure we aren't truncating too aggressively.
+    // We can only truncate down by a factor of d = {spin dimension} compared to adjacent sites.
+
+    size_t chiL = theta.dimension(1);
+    size_t chiR = theta.dimension(3);
+    size_t dimL = theta.dimension(0);
+    size_t dimR = theta.dimension(2);
+    size_t chi_min = (size_t) std::ceil(std::max(chiL,chiR)/std::min(dimL,dimR));
+    chi_lim = std::max(chi_min,chi_lim.value());
+
 
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
@@ -318,125 +329,20 @@ void tools::finite::opt::truncate_theta(const Eigen::Tensor<std::complex<double>
 
 
 
-int tools::finite::mps::move_center_point(class_state_finite & state, std::optional<size_t> chi_lim){
+void tools::finite::mps::move_center_point(class_state_finite & state, std::optional<size_t> chi_lim){
     if (state.position_is_any_edge()){
         // Instead of moving out of the chain, just flip the direction and return
         state.flip_direction();
-        return state.get_sweeps();
-    }
-
-    if(not chi_lim.has_value())  chi_lim = state.get_chi_max();
-    auto & MPS_L  = state.MPS_L;
-    auto & MPS_R  = state.MPS_R;
-    auto & MPO_L  = state.MPO_L;
-    auto & MPO_R  = state.MPO_R;
-    auto & ENV_L  = state.ENV_L;
-    auto & ENV_R  = state.ENV_R;
-    auto & ENV2_L = state.ENV2_L;
-    auto & ENV2_R = state.ENV2_R;
-    if(ENV_L.empty()) throw std::runtime_error("ENVL is empty");
-    if(ENV_R.empty()) throw std::runtime_error("ENVR is empty");
-    if(MPS_L.empty()) throw std::runtime_error("MPSL is empty");
-    if(MPS_R.empty()) throw std::runtime_error("MPSR is empty");
-    if(MPS_L.back().get_position()  != ENV_L.back().get_position())  throw std::runtime_error("MPSL and ENVL have mismatching positions");
-    if(MPS_R.front().get_position() != ENV_R.front().get_position()) throw std::runtime_error("MPSR and ENVR have mismatching positions");
-    if(ENV_L.size() + ENV_R.size() != state.get_length()) throw std::runtime_error("ENVL + ENVR sizes do not add up to chain length");
-    if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length");
-    if(MPO_L.size() + MPO_R.size() != state.get_length()) throw std::runtime_error("MPOL + MPOR sizes do not add up to chain length");
-    assert(ENV_L.back().sites + ENV_R.front().sites == state.get_length() - 2);
-    //Store the special LC bond in a temporary.
-    Eigen::Tensor<Scalar,1> LC = MPS_L.back().get_LC();
-    MPS_L.back().unset_LC();
-
-    if (state.get_direction() == 1){
-        ENV_L .emplace_back(ENV_L .back().enlarge(MPS_L.back(), *MPO_L.back()));
-        ENV2_L.emplace_back(ENV2_L.back().enlarge(MPS_L.back(), *MPO_L.back()));
-        MPS_L.emplace_back(class_mps_site(MPS_R.front().get_M(), LC, MPS_R.front().get_position()));
-        MPO_L.emplace_back(MPO_R.front()->clone());
-        MPS_R.pop_front();
-        MPO_R.pop_front();
-        ENV_R.pop_front();
-        ENV2_R.pop_front();
-        Eigen::Tensor<Scalar,4> theta =
-                Textra::asDiagonal(LC)
-                .contract(state.MPS_L.back().get_M(), Textra::idx({1},{1}))
-                .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
-                .shuffle(Textra::array4{1,0,2,3});
-        tools::finite::opt::truncate_theta(theta,state);
     }else{
-        ENV_R .emplace_front(ENV_R .front().enlarge(MPS_R.front(), *MPO_R.front()));
-        ENV2_R.emplace_front(ENV2_R.front().enlarge(MPS_R.front(), *MPO_R.front()));
-        MPS_R.emplace_front(class_mps_site(MPS_L.back().get_M(), LC, MPS_L.back().get_position()));
-        MPO_R.emplace_front(MPO_L.back()->clone());
-        MPS_L.pop_back();
-        MPO_L.pop_back();
-        ENV_L.pop_back();
-        ENV2_L.pop_back();
-        Eigen::Tensor<Scalar,4> theta =
-                state.MPS_L.back().get_M()
-                .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
-                .contract(Textra::asDiagonal(LC), Textra::idx({3},{0}));
-        tools::finite::opt::truncate_theta(theta,state,chi_lim);
-    }
-    size_t pos = state.get_position();
-    tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", pos, std::log10(state.get_truncation_error(pos)),state.get_chi_lim(), tools::finite::measure::bond_dimension_current(state));
-
-    assert(MPO_L.size() + MPO_R.size() == state.get_length());
-    if(ENV_L.empty()) throw std::runtime_error("ENVL became empty");
-    if(ENV_R.empty()) throw std::runtime_error("ENVR became empty");
-    if(MPS_L.empty()) throw std::runtime_error("MPSL became empty");
-    if(MPS_R.empty()) throw std::runtime_error("MPSR became empty");
-    if(MPS_L.back().get_position()  != ENV_L.back().get_position())  throw std::runtime_error("MPSL and ENVL got mismatching positions");
-    if(MPS_R.front().get_position() != ENV_R.front().get_position()) throw std::runtime_error("MPSR and ENVR got mismatching positions");
-    if(ENV_L.size() + ENV_R.size() != state.get_length()) throw std::runtime_error("ENVL + ENVR sizes do not add up to chain length anymore");
-    if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length anymore");
-    if(MPO_L.size() + MPO_R.size() != state.get_length()) throw std::runtime_error("MPOL + MPOR sizes do not add up to chain length anymore");
-
-    state.clear_cache();
-    state.clear_measurements();
-
-
-//    tools::finite::debug::check_integrity(state);
-
-    return state.get_sweeps();
-}
-
-
-
-void tools::finite::mps::truncate_all_sites(class_state_finite & state, std::optional<size_t> chi_lim, size_t period, size_t offset){
-    //If chi_lim is not given, and period == 0 or 1 this should be equivalent to "move_center_point(...)"
-    //If chi_lim is not given, it is set to state.get_chi_lim()
-    //If chi_lim is given, it is enforced on every site if stride == 0, on every other site if stride == 1, and so on.
-    tools::log->debug("Truncating chain: sites {} | period {} | offset {}",state.get_length(), period,offset);
-    if(not chi_lim) chi_lim = state.get_chi_lim();
-    std::vector<size_t> chi_lim_vec (state.get_length(),state.get_chi_lim());
-    for(size_t pos = 0; pos < chi_lim_vec.size(); pos++){
-        if(math::mod(pos+offset,period) == 0) chi_lim_vec[pos] = chi_lim.value();
-    }
-
-
-    auto & MPS_L  = state.MPS_L;
-    auto & MPS_R  = state.MPS_R;
-    auto & MPO_L  = state.MPO_L;
-    auto & MPO_R  = state.MPO_R;
-    auto & ENV_L  = state.ENV_L;
-    auto & ENV_R  = state.ENV_R;
-    auto & ENV2_L = state.ENV2_L;
-    auto & ENV2_R = state.ENV2_R;
-    // We always need to make sure we aren't truncating too aggressively.
-    // We can only truncate down by a factor of d = {spin dimension} compared to
-    // adjacent sites.
-    size_t chi_minimum = std::ceil(std::max(MPS_L.back().get_chiL(),MPS_R.front().get_chiR()) / std::min(MPS_L.back().get_spin_dim(),MPS_R.back().get_spin_dim()));
-    chi_minimum = std::max(chi_minimum,chi_lim_vec[state.get_position()]);
-
-    // Start by truncating at the current position.
-    tools::finite::opt::truncate_theta(state.get_theta(), state,chi_minimum);
-
-    size_t num_moves = 2*(state.get_length()-2);
-    for(size_t move = 0; move < num_moves; move++){
-        //    Check edge
-        if (state.position_is_any_edge()) state.flip_direction();
-
+        if(not chi_lim.has_value())  chi_lim = state.get_chi_max();
+        auto & MPS_L  = state.MPS_L;
+        auto & MPS_R  = state.MPS_R;
+        auto & MPO_L  = state.MPO_L;
+        auto & MPO_R  = state.MPO_R;
+        auto & ENV_L  = state.ENV_L;
+        auto & ENV_R  = state.ENV_R;
+        auto & ENV2_L = state.ENV2_L;
+        auto & ENV2_R = state.ENV2_R;
         if(ENV_L.empty()) throw std::runtime_error("ENVL is empty");
         if(ENV_R.empty()) throw std::runtime_error("ENVR is empty");
         if(MPS_L.empty()) throw std::runtime_error("MPSL is empty");
@@ -447,10 +353,6 @@ void tools::finite::mps::truncate_all_sites(class_state_finite & state, std::opt
         if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length");
         if(MPO_L.size() + MPO_R.size() != state.get_length()) throw std::runtime_error("MPOL + MPOR sizes do not add up to chain length");
         assert(ENV_L.back().sites + ENV_R.front().sites == state.get_length() - 2);
-
-        chi_minimum = std::ceil(std::max(MPS_L.back().get_chiL(),MPS_R.front().get_chiR()) / std::min(MPS_L.back().get_spin_dim(),MPS_R.back().get_spin_dim()));
-        chi_minimum = std::max(chi_minimum,chi_lim_vec[state.get_position()]);
-
         //Store the special LC bond in a temporary.
         Eigen::Tensor<Scalar,1> LC = MPS_L.back().get_LC();
         MPS_L.back().unset_LC();
@@ -469,7 +371,7 @@ void tools::finite::mps::truncate_all_sites(class_state_finite & state, std::opt
                     .contract(state.MPS_L.back().get_M(), Textra::idx({1},{1}))
                     .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                     .shuffle(Textra::array4{1,0,2,3});
-            tools::finite::opt::truncate_theta(theta,state,chi_minimum);
+            tools::finite::opt::truncate_theta(theta,state,chi_lim);
         }else{
             ENV_R .emplace_front(ENV_R .front().enlarge(MPS_R.front(), *MPO_R.front()));
             ENV2_R.emplace_front(ENV2_R.front().enlarge(MPS_R.front(), *MPO_R.front()));
@@ -483,9 +385,12 @@ void tools::finite::mps::truncate_all_sites(class_state_finite & state, std::opt
                 state.MPS_L.back().get_M()
                     .contract(state.MPS_R.front().get_M(), Textra::idx({2},{1}))
                     .contract(Textra::asDiagonal(LC), Textra::idx({3},{0}));
-            tools::finite::opt::truncate_theta(theta,state,chi_minimum);
+            tools::finite::opt::truncate_theta(theta,state,chi_lim);
         }
+        size_t pos = state.get_position();
+        tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", pos, std::log10(state.get_truncation_error(pos)),state.get_chi_lim(), tools::finite::measure::bond_dimension_current(state));
 
+        assert(MPO_L.size() + MPO_R.size() == state.get_length());
         if(ENV_L.empty()) throw std::runtime_error("ENVL became empty");
         if(ENV_R.empty()) throw std::runtime_error("ENVR became empty");
         if(MPS_L.empty()) throw std::runtime_error("MPSL became empty");
@@ -495,69 +400,103 @@ void tools::finite::mps::truncate_all_sites(class_state_finite & state, std::opt
         if(ENV_L.size() + ENV_R.size() != state.get_length()) throw std::runtime_error("ENVL + ENVR sizes do not add up to chain length anymore");
         if(MPS_L.size() + MPS_R.size() != state.get_length()) throw std::runtime_error("MPSL + MPSR sizes do not add up to chain length anymore");
         if(MPO_L.size() + MPO_R.size() != state.get_length()) throw std::runtime_error("MPOL + MPOR sizes do not add up to chain length anymore");
+
+        state.clear_cache();
+        state.clear_measurements();
     }
-
-
-    state.clear_cache();
-    state.clear_measurements();
-    tools::finite::debug::check_integrity(state);
-
-    tools::log->debug("Finished truncation of mps");
-    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
-
 }
 
 
 
-void tools::finite::mps::truncate_active_sites(class_state_finite & state, std::optional<size_t> chi_lim){
-    //If chi_lim is not given, and period == 0 or 1 this should be equivalent to "move_center_point(...)"
+void tools::finite::mps::truncate_all_sites(class_state_finite & state, const size_t & chi_lim){
+    tools::log->trace("Truncating all sites to bond dimension {}",chi_lim);
 
-
-    if(state.active_sites.empty()) return;
-
-    state.clear_cache();
-    state.clear_measurements();
-    if(not chi_lim) chi_lim = state.get_chi_lim();
-
-
-    auto & MPS_L  = state.MPS_L;
-    auto & MPS_R  = state.MPS_R;
-
-    tools::log->debug("Truncating active sites {}", state.active_sites);
-    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
-
-    // We always need to make sure we aren't truncating too aggressively.
-    // We can only truncate down by a factor of d = {spin dimension} compared to
-    // adjacent sites.
-    size_t chi_minimum = std::ceil(std::max(MPS_L.back().get_chiL(),MPS_R.front().get_chiR()) / std::min(MPS_L.back().get_spin_dim(),MPS_R.back().get_spin_dim()));
-    chi_minimum = std::max(chi_minimum,chi_lim.value());
-    //Start by truncating at the current position.
-    tools::finite::opt::truncate_theta(state.get_theta(), state,chi_minimum);
-    size_t original_position  = state.get_position();
-    size_t original_direction = state.get_direction();
-    size_t num_moves = 0;
-    while(num_moves != 0 and original_position != state.get_position() and original_direction != state.get_direction()){
-        // Calculate the minimum chi for this position
-        chi_minimum = std::ceil(std::max(MPS_L.back().get_chiL(),MPS_R.front().get_chiR()) / std::min(MPS_L.back().get_spin_dim(),MPS_R.back().get_spin_dim()));
-        chi_minimum = std::max(chi_minimum,chi_lim.value());
-
-        tools::finite::mps::move_center_point(state,chi_minimum);
-        // The current direction flips automatically when reaching the end of the chain.
-        // In addition, we must explicitly flip when we reach the end of currently active sites,
-        // unless that happens to be an edge site.
-        if(not state.position_is_any_edge()){
-            if(state.get_direction() > 0 and state.get_position() == state.active_sites.back()) state.flip_direction();
-            if(state.get_direction() < 0 and state.get_position() == state.active_sites.front()) state.flip_direction();
+    auto original_position = state.get_position();
+    auto original_direction = state.get_direction();
+    // Start by truncating at the current position.
+    while(true){
+        move_center_point(state,chi_lim);
+        if(state.get_position() == original_position and state.get_direction() == original_direction){
+            // Check if all bond dimensions less than or equal to below chi_lim
+            auto bond_dimensions = tools::finite::measure::bond_dimensions(state);
+            if (std::all_of(bond_dimensions.begin(), bond_dimensions.end(),
+                           [chi_lim](const size_t &chi){return chi <= chi_lim;}))
+                break;
         }
-        num_moves++;
     }
+
+    tools::log->trace("Truncated all sites");
+    tools::log->trace("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
+}
+
+
+
+void tools::finite::mps::truncate_active_sites(class_state_finite & state, const size_t & chi_lim){
+    if(state.active_sites.empty()) return;
+    if(state.active_sites.size() < 2) throw std::runtime_error("Need 2 or more active sites");
+
+    tools::log->trace("Currently active sites {}", state.active_sites);
+
+    auto target_sites = state.active_sites;
+    // When going to the right, we shouldn't truncate the last site since
+    // the corresponding LC will not be part of the update.
+    target_sites.pop_back();
+
+    if(target_sites.size() <= 1){
+        //We only got two active, sites, this is simple.
+        tools::finite::opt::truncate_theta(state.get_theta(),state,chi_lim);
+        return;
+    }
+    tools::log->trace("Truncating interior sites {}", target_sites);
+    tools::log->trace("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
+
+
+    size_t original_position  = state.get_position();
+    int original_direction    = state.get_direction();
+    auto last_bond_dimensions = tools::finite::measure::bond_dimensions(state);
+    while(true){
+        size_t next_position = state.get_position() + state.get_direction();
+        bool next_position_is_interior = std::find(target_sites.begin(), target_sites.end(), next_position) != target_sites.end();
+        if(next_position_is_interior)
+            tools::finite::mps::move_center_point(state,chi_lim);
+        else
+            tools::finite::mps::move_center_point(state,state.get_chi_lim());
+
+        //Check if we are done
+        if(state.get_position() == original_position and state.get_direction() == original_direction){
+            // Check if all bond dimensions less than or equal to below chi_lim
+            auto prev_bond_dimensions = last_bond_dimensions;
+            last_bond_dimensions = tools::finite::measure::bond_dimensions(state);
+            if (last_bond_dimensions == prev_bond_dimensions) break;
+        }
+
+        //We don't need to go too far away from the active sites, you can come back earlier
+        if(state.get_direction() > 0 and state.get_position()  >  state.active_sites.back()) state.flip_direction();
+        if(state.get_direction() < 0 and state.get_position()  <  state.active_sites.front()) state.flip_direction();
+
+//        tools::log->info("Pos {} dir {} active_sites {}", state.get_position(), state.get_direction(),state.active_sites);
+    }
+    tools::log->trace("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
+
+}
+
+void tools::finite::mps::truncate_next_sites(class_state_finite & state, const size_t & chi_lim, size_t num_sites){
     state.clear_cache();
     state.clear_measurements();
-    tools::finite::debug::check_integrity(state);
+    if(not state.active_sites.empty()) throw std::logic_error("Make sure the active site list is empty before reaching this point");
 
-    tools::log->debug("Finished truncation of mps");
-    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
+    int from = state.get_direction() > 0 ? state.get_position() : state.get_position() + 1;
+    int upto = from + (int) (state.get_direction() * (num_sites - 1));
+    from = std::max(from,0);
+    from = std::min(from,(int)state.get_length()-1);
+    upto = std::max(upto,0);
+    upto = std::min(upto,(int)state.get_length()-1);
+    tools::log->trace("Truncating starting from {} upto {}, num sites = {}",from,upto,num_sites);
 
+    auto sites  =  math::range(std::min(from,upto),std::max(from,upto),1);
+    state.active_sites = std::list<size_t>(sites.begin(),sites.end());
+    truncate_active_sites(state,chi_lim);
+    state.active_sites.clear();
 }
 
 

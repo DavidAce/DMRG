@@ -70,7 +70,7 @@ void class_xDMRG::run_simulation()    {
         }
 //        log->info("Truncation errors: {}", state->get_truncation_errors());
 //        log->info("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
-        log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iteration, state->get_direction());
+        log->trace("Finished step {}, iteration {}, position {}, direction {}", sim_status.step, sim_status.iteration, state->get_position(), state->get_direction());
         move_center_point();
 
         sim_status.iteration     = state->get_sweeps();
@@ -95,8 +95,6 @@ void class_xDMRG::single_xDMRG_step()
     using namespace tools::finite;
     using namespace tools::finite::opt;
     tools::common::profile::t_sim.tic();
-    log->trace("");
-    log->trace("Starting xDMRG step {} | iteration {} | position {} | direction {}", sim_status.step, sim_status.iteration,state->get_position(), state->get_direction());
 
     // Set the fastest mode by default
     opt::OptMode optMode    = opt::OptMode::VARIANCE;
@@ -105,30 +103,38 @@ void class_xDMRG::single_xDMRG_step()
 
 
     // Setup normal conditions
-    if(state->get_chi_lim() < 16){
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
-    if(state->get_chi_lim() < 8){
+//    if(state->get_chi_lim() <= 32){
+//        optMode  = OptMode::VARIANCE;
+//        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
+//    }
+//    if(state->get_chi_lim() <= 12){
+//        optMode  = OptMode::VARIANCE;
+//        optSpace = OptSpace::SUBSPACE_ONLY;
+//    }
+
+    if(state->get_chi_lim() < 12){
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_ONLY;
     }
-
-    if(sim_status.simulation_has_stuck_for > 1){
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
+//
+//    if(sim_status.simulation_has_stuck_for > 1){
+//        optMode  = OptMode::VARIANCE;
+//        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
+//    }
 
     //Setup strong overrides to normal conditions, e.g., for experiments like chi quench
+//    if(chi_quench_steps > 0 and chi_quench_steps <= state->get_length() + 1){
+//        optMode  = OptMode::VARIANCE;
+//        optSpace = OptSpace::DIRECT;
+//    }
+
     if(chi_quench_steps > 0){
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_ONLY;
+//        optMode  = OptMode::VARIANCE;
+//        optSpace = OptSpace::DIRECT;
     }
 
-//    if(force_overlap_steps > state->get_length() - 2){
-//        optMode  = OptMode::OVERLAP;
-//        optSpace = OptSpace::SUBSPACE_ONLY;
-//    }
 
     if(sim_status.variance_mpo_has_converged){
         optMode  = OptMode::VARIANCE;
@@ -150,7 +156,7 @@ void class_xDMRG::single_xDMRG_step()
     if(chi_quench_steps > 0)
         max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else if(sim_status.simulation_has_got_stuck)
-        max_num_sites_list = {2,4,settings::precision::max_sites_multidmrg};
+        max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else
         max_num_sites_list = {2};
 
@@ -179,7 +185,12 @@ void class_xDMRG::single_xDMRG_step()
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
         state->activate_sites(threshold, max_num_sites);
+        log->info("Starting xDMRG step {} | iteration {} | position {} | direction {} | mode {} | space {} | quench {} | size {} | sites {}", sim_status.step, sim_status.iteration,state->get_position(), state->get_direction(),optMode,optSpace,chi_quench_steps,state->active_problem_size(),state->active_sites);
 
+//        if(chi_quench_steps == 0) state->activate_sites(threshold, max_num_sites);
+//        else state->activate_truncated_sites(threshold,chi_lim_quench_ahead, max_num_sites);
+        // Reduce bond dimensions for some sites ahead
+//        if(chi_quench_steps > 0) tools::finite::mps::truncate_active_sites(*state, chi_lim_quench_ahead);
 
         //Check that we are not about to solve the same problem again
         if(not results.empty() and
@@ -189,8 +200,8 @@ void class_xDMRG::single_xDMRG_step()
             log->debug("Can't activate more sites");
             break;
         }
-        // Reduce bond dimensions for some sites ahead
-        if(chi_quench_steps > 0) tools::finite::mps::truncate_active_sites(*state, chi_lim_quench);
+
+
         auto theta          = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         double variance_new = measure::energy_variance_per_site(*state,theta);
         results.insert({variance_new,{theta,state->active_sites}});
@@ -220,7 +231,7 @@ void class_xDMRG::single_xDMRG_step()
     size_t chi_lim = state->get_chi_lim();
 
     //Truncate even more if doing chi quench
-    if(chi_quench_steps > 0) chi_lim = chi_lim_quench;
+    if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     //Do the truncation with SVD
     log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
@@ -453,7 +464,10 @@ void class_xDMRG::single_xDMRG_step_old()
     }
 
     size_t chi_lim = state->get_chi_lim();
-    if(chi_quench_steps > 0) chi_lim = chi_lim_quench;
+    if(chi_quench_steps > 0) {
+        clear_saturation_status();
+        chi_lim = chi_lim_quench_trail;
+    }
     log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
     opt::truncate_theta(theta, *state,chi_lim);
     log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
@@ -519,7 +533,7 @@ void class_xDMRG::check_convergence(){
 
     sim_status.simulation_has_saturated = ((sim_status.variance_mpo_saturated_for >= min_saturation_iters and
                                            sim_status.entanglement_saturated_for >= min_saturation_iters) or
-                                           (state->get_sweeps() > 0 and not state->any_sites_updated()));
+                                           (state->get_sweeps() > settings::xdmrg::min_sweeps and not state->any_sites_updated()));
 
 
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and

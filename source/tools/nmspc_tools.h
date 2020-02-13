@@ -51,9 +51,10 @@ namespace tools{
             extern void randomize                           (class_state_finite & state, const std::string &parity_sector, const long state_number, const bool use_pauli_eigenstates = false);
             extern void normalize                           (class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
             extern void rebuild_environments                (class_state_finite & state);
-            extern int  move_center_point                   (class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt); /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
-            extern void truncate_all_sites                  (class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, size_t period = 1, size_t offset = 0);
-            extern void truncate_active_sites               (class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
+            extern void move_center_point                   (class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt); /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
+            extern void truncate_all_sites                  (class_state_finite & state, const size_t & chi_lim);
+            extern void truncate_active_sites               (class_state_finite & state, const size_t & chi_lim);
+            extern void truncate_next_sites                 (class_state_finite & state, const size_t & chi_lim, size_t num_sites = 4);
             extern void project_to_closest_parity_sector    (class_state_finite & state, std::string paulistring);
 
             namespace internals{
@@ -108,6 +109,7 @@ namespace tools{
             extern Eigen::DSizes<long,3> get_dimensions  (const class_state_finite &state, const std::list<size_t> &list_of_sites);
             extern size_t                get_problem_size(const class_state_finite &state, const std::list<size_t> &list_of_sites);
             extern std::list<size_t>     generate_site_list(class_state_finite &state, const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
+            extern std::list<size_t>     generate_truncated_site_list(class_state_finite &state, const size_t threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites = 2);
         }
 
 
