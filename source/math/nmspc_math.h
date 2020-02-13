@@ -135,14 +135,14 @@ namespace math
     /*! \brief Python-style range generator, including edges
     *   \return Range of T's. Example, <code> range(0,8,2) </code> gives a std::vector<int>: <code> [0,2,4,6,8] </code>
     */
-    template<typename T1, typename T2, typename T3>
-    std::vector<T3> range(T1 first, T2 last, T3 step){
+    template<typename T1 ,typename T2>
+    std::vector<T2> range(T1 first, T1 last, T2 step){
         if (step == 0) throw std::runtime_error("Range cannot have step size zero");
         if (first > last and step > 0 ) return range(first,last,-step);
         if (first < last and step < 0 ) return range(first,last,-step);
-        if (first == last) return std::vector<T3>{first};
-        T3 current = first;
-        std::vector<T3> vec;
+        if (first == last) return std::vector<T2>{first};
+        T1 current = first;
+        std::vector<T2> vec;
         size_t num_steps = std::abs(int((last-first+step) / step));
         if(num_steps > 1000000) throw std::runtime_error("Too many steps");
         while(current <= last){

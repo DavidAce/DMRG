@@ -8,7 +8,7 @@
 #include <simulation/nmspc_settings.h>
 
 
-Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions  (const class_state_finite &state, const std::list<size_t> &list_of_sites){
+Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state_finite &state, const std::list<size_t> &list_of_sites){
     if (list_of_sites.empty()) return  Eigen::DSizes<long,3>{0,0,0};
     Eigen::DSizes<long,3> dimensions;
     int direction = list_of_sites.back() >= list_of_sites.front() ? 1 : -1;
@@ -76,12 +76,43 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
         }
     }
     if (direction == -1){std::reverse(sites.begin(),sites.end());}
-//    tools::log->debug("Chosen sites {}. Reason: {}", sites, reason);
-    state.active_sites = sites;
     tools::log->debug("Activating sites. Current site: {} Direction: {} Threshold : {}  Max sites = {}, Min sites = {}, Chosen sites {}, Final cost: {}, Reason: {}",
                      state.get_position(), state.get_direction(), threshold,max_sites,min_sites,sites, costs.back(),reason );
     return sites;
 }
+
+
+
+std::list<size_t> tools::finite::multisite::generate_truncated_site_list(class_state_finite &state, const size_t threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites){
+    auto active_sites = generate_site_list(state,threshold,max_sites,min_sites);
+    if(active_sites.size() == max_sites) return active_sites; // Fastest outcome
+    state.active_sites.clear();
+
+    // Consider that the active site list may be limited by the edge
+    if(state.get_direction()>0 and active_sites.back() == state.get_length()-1) return active_sites;
+    if(state.get_direction()<0 and active_sites.front() == 0) return active_sites;
+
+
+    //Try activating more sites by truncating some sites ahead.
+    size_t best_num_sites = min_sites;
+    for(size_t num_sites = min_sites; num_sites <= max_sites; num_sites++){
+        auto state_copy = state;
+        tools::finite::mps::truncate_next_sites(state_copy,chi_lim,num_sites);
+        auto new_active_sites = generate_site_list(state_copy,threshold,num_sites,min_sites);
+        if(new_active_sites.size() > active_sites.size()) {
+            best_num_sites = num_sites;
+            active_sites = new_active_sites;
+        }
+    }
+    tools::finite::mps::truncate_next_sites(state,chi_lim,best_num_sites);
+    auto resulting_sites = generate_site_list(state,threshold,max_sites,min_sites);
+    tools::log->info("Problem size {} | active sites: {}", get_problem_size(state,resulting_sites), resulting_sites);
+    tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(state));
+    return resulting_sites;
+}
+
+
+
 
 
 using namespace Textra;
