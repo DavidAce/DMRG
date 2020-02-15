@@ -4,6 +4,8 @@
 
 #include <string>
 #include <tools/finite/opt.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 #include <state/class_state_finite.h>
 #include <simulation/class_simulation_status.h>
 #include <model/class_model_base.h>
@@ -91,15 +93,15 @@ Eigen::Tensor<std::complex<double>,4> tools::finite::opt::find_ground_state(
 
 
 void tools::finite::opt::internal::reset_timers(){
-    t_opt-> reset();
-    t_eig-> reset();
-    t_ham-> reset();
-    t_tot-> reset();
-    t_vH2v->reset();
-    t_vHv ->reset();
-    t_vH2 ->reset();
-    t_vH  ->reset();
-    t_op  ->reset();
+//    tools::common::profile::t_opt-> reset();
+//    tools::common::profile::t_eig-> reset();
+//    tools::common::profile::t_tot-> reset();
+    tools::common::profile::t_ham-> reset();
+    tools::common::profile::t_vH2v->reset();
+    tools::common::profile::t_vHv ->reset();
+    tools::common::profile::t_vH2 ->reset();
+    tools::common::profile::t_vH  ->reset();
+    tools::common::profile::t_op  ->reset();
 }
 
 

@@ -7,8 +7,8 @@
 #include <complex>
 #include "class_algorithm_base.h"
 #include <io/class_h5table_buffer.h>
-#include <io/nmspc_logger.h>
-#include <tools/nmspc_tools.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 #include <h5pp/h5pp.h>
 #include <simulation/nmspc_settings.h>
 #include <math/nmspc_math.h>

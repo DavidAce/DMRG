@@ -1,7 +1,9 @@
 //
 // Created by david on 2019-11-07.
 //
-#include <tools/nmspc_tools.h>
+#include <tools/common/io.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 #include <io/table_types.h>
 #include <io/class_h5table_buffer.h>
 
@@ -23,21 +25,19 @@ void tools::common::io::h5table::write_profiling(const class_simulation_status &
 
 
 
-    profiling_entry.t_eig           = tools::common::profile::t_eig.get_measured_time();
-    profiling_entry.t_svd           = tools::common::profile::t_svd.get_measured_time();
-    profiling_entry.t_ene           = tools::common::profile::t_ene.get_measured_time();
-    profiling_entry.t_var           = tools::common::profile::t_var.get_measured_time();
-    profiling_entry.t_ent           = tools::common::profile::t_ent.get_measured_time();
-    profiling_entry.t_hdf           = tools::common::profile::t_hdf.get_measured_time();
-    profiling_entry.t_prj           = tools::common::profile::t_prj.get_measured_time();
-    profiling_entry.t_opt           = tools::common::profile::t_opt.get_measured_time();
-    profiling_entry.t_chk           = tools::common::profile::t_chk.get_measured_time();
-//    profiling_entry.t_ene_mpo       = tools::common::profile::t_ene_mpo.get_measured_time();
-    profiling_entry.t_ene_ham       = tools::common::profile::t_ene_ham.get_measured_time();
-    profiling_entry.t_ene_mom       = tools::common::profile::t_ene_mom.get_measured_time();
-//    profiling_entry.t_var_mpo       = tools::common::profile::t_var_mpo.get_measured_time();
-    profiling_entry.t_var_ham       = tools::common::profile::t_var_ham.get_measured_time();
-    profiling_entry.t_var_mom       = tools::common::profile::t_var_mom.get_measured_time();
+    profiling_entry.t_eig           = tools::common::profile::t_eig->get_measured_time();
+    profiling_entry.t_svd           = tools::common::profile::t_svd->get_measured_time();
+    profiling_entry.t_ene           = tools::common::profile::t_ene->get_measured_time();
+    profiling_entry.t_var           = tools::common::profile::t_var->get_measured_time();
+    profiling_entry.t_ent           = tools::common::profile::t_ent->get_measured_time();
+    profiling_entry.t_hdf           = tools::common::profile::t_hdf->get_measured_time();
+    profiling_entry.t_prj           = tools::common::profile::t_prj->get_measured_time();
+    profiling_entry.t_opt           = tools::common::profile::t_opt->get_measured_time();
+    profiling_entry.t_chk           = tools::common::profile::t_chk->get_measured_time();
+    profiling_entry.t_ene_ham       = tools::common::profile::t_ene_ham->get_measured_time();
+    profiling_entry.t_ene_mom       = tools::common::profile::t_ene_mom->get_measured_time();
+    profiling_entry.t_var_ham       = tools::common::profile::t_var_ham->get_measured_time();
+    profiling_entry.t_var_mom       = tools::common::profile::t_var_mom->get_measured_time();
 
 
     profiling_entry.t_env = 0;
@@ -50,6 +50,6 @@ void tools::common::io::h5table::write_profiling(const class_simulation_status &
     profiling_entry.t_chi = 0;
 
     h5tbuf.append_record(profiling_entry);
-    log->trace("Appending profiling data to table: {}... OK",h5tbuf.get_table_name());
+    tools::log->trace("Appending profiling data to table: {}... OK",h5tbuf.get_table_name());
 
 }

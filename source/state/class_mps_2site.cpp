@@ -9,7 +9,7 @@
 #include <math/nmspc_random.h>
 #include <simulation/nmspc_settings.h>
 #include <iomanip>
-#include <tools/nmspc_tools.h>
+#include <tools/common/log.h>
 using namespace std;
 using namespace Textra;
 

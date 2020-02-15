@@ -5,6 +5,7 @@
 #include <tools/finite/opt.h>
 #include <state/class_state_finite.h>
 #include <simulation/nmspc_settings.h>
+#include <tools/common/log.h>
 
 Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_state_finite & state){
     auto mpo = state.get_multimpo();
@@ -17,7 +18,7 @@ Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamilt
     long dim0 = mpo.dimension(2);
     long dim1 = envL.block.dimension(0);
     long dim2 = envR.block.dimension(0);
-    OMP omp(settings::threading::num_threads_eigen);
+    OMP omp(settings::threading::num_threads);
     Eigen::Tensor<std::complex<double>,6> ham(dim0, dim1, dim2, dim0, dim1, dim2);
     ham.device(omp.dev) =
             envL.block
@@ -53,7 +54,7 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hami
     long dim0 = mpo.dimension(2);
     long dim1 = env2L.block.dimension(0);
     long dim2 = env2R.block.dimension(0);
-    OMP omp(settings::threading::num_threads_eigen);
+    OMP omp(settings::threading::num_threads);
     Eigen::Tensor<std::complex<double>,6> ham_sq(dim0, dim1, dim2, dim0, dim1, dim2);
     ham_sq.device(omp.dev) =
             env2L.block
@@ -115,7 +116,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     Eigen::Tensor<Scalar,3> Hv(dims);
     Eigen::MatrixXcd H2(eignum,eignum);
 
-    OMP omp(settings::threading::num_threads_eigen);
+    OMP omp(settings::threading::num_threads);
 
     if(log2spin > log2chiL + log2chiR){
         if (log2chiL >= log2chiR){

@@ -1,7 +1,6 @@
 #include "matrix_product_hamiltonian.h"
 #include <general/nmspc_tensor_extra.h>
-#include <general/nmspc_omp.h>
-
+#include <general/nmspc_tensor_omp.h>
 
 template<typename T>
 void DenseHamiltonianProduct<T>::MultAx(T* theta_in_, T* theta_out_) {

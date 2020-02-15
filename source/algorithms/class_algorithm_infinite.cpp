@@ -1,10 +1,12 @@
 //
 // Created by david on 2019-06-24.
 //
-
 #include "class_algorithm_infinite.h"
+#include <tools/infinite.h>
+#include <tools/common/io.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 #include <state/class_state_infinite.h>
-#include <tools/nmspc_tools.h>
 #include <io/class_h5table_buffer.h>
 #include <math/nmspc_math.h>
 #include <h5pp/h5pp.h>
@@ -38,31 +40,31 @@ class_algorithm_infinite::class_algorithm_infinite(
 
 void class_algorithm_infinite::run() {
     if (not sim_on()) { return; }
-    tools::common::profile::t_tot.tic();
+    tools::common::profile::t_tot->tic();
     run_preprocessing();
     run_simulation();
     run_postprocessing();
-    tools::common::profile::t_tot.toc();
+    tools::common::profile::t_tot->toc();
 }
 
 void class_algorithm_infinite::run_preprocessing() {
-    tools::common::profile::t_pre.tic();
+    tools::common::profile::t_pre->tic();
     state->set_chi_max(chi_max());
     sim_status.chi_max = chi_max();
     update_bond_dimension_limit(chi_init());
 
-    tools::common::profile::t_pre.toc();
+    tools::common::profile::t_pre->toc();
 }
 
 void class_algorithm_infinite::run_postprocessing(){
-    tools::common::profile::t_pos.tic();
+    tools::common::profile::t_pos->tic();
     write_state(true);
     write_measurements(true);
     write_sim_status(true);
     write_profiling(true);
     copy_from_tmp(true);
     print_status_full();
-    tools::common::profile::t_pos.toc();
+    tools::common::profile::t_pos->toc();
     tools::common::profile::print_profiling();
 }
 
@@ -496,7 +498,7 @@ void class_algorithm_infinite::print_status_update() {
         default: throw std::runtime_error("Wrong simulation type");
     }
     report << left  << "]";
-    report << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << tools::common::profile::t_tot.get_age() ;
+    report << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << tools::common::profile::t_tot->get_age() ;
     report << left << " Memory [";
     report << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
     report << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
@@ -571,7 +573,7 @@ void class_algorithm_infinite::print_status_full(){
         default: throw std::runtime_error("Wrong simulation type");
     }
     log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
-    log->info("Time                  = {:<16.16f}" , tools::common::profile::t_tot.get_age());
+    log->info("Time                  = {:<16.16f}" , tools::common::profile::t_tot->get_age());
     log->info("Peak memory           = {:<6.1f} MB" , process_memory_in_mb("VmPeak"));
 }
 

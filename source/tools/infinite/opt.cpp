@@ -2,7 +2,8 @@
 // Created by david on 2019-07-06.
 //
 
-#include <tools/nmspc_tools.h>
+#include <tools/infinite/opt.h>
+#include <tools/common/prof.h>
 #include <state/class_state_infinite.h>
 #include <state/class_environment.h>
 #include <state/class_mps_2site.h>
@@ -12,14 +13,14 @@
 #include <math/class_svd_wrapper.h>
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 
-
-Eigen::Tensor<tools::infinite::Scalar,4>
-        tools::infinite::opt::find_ground_state(const class_state_infinite & state, std::string ritzstring){
+using Scalar = tools::infinite::opt::Scalar;
+Eigen::Tensor<Scalar,4>
+        tools::infinite::opt::find_ground_state(const class_state_infinite & state, const std::string & ritzstring){
     auto theta = state.get_theta();
     std::array<long,4> shape_theta4 = theta.dimensions();
     std::array<long,4> shape_mpo4   = state.HA->MPO().dimensions();
 
-    tools::common::profile::t_eig.tic();
+    tools::common::profile::t_eig->tic();
     int nev = 1;
     using namespace settings::precision;
     using namespace eigutils::eigSetting;
@@ -27,12 +28,12 @@ Eigen::Tensor<tools::infinite::Scalar,4>
 
     DenseHamiltonianProduct<Scalar>  matrix (state.Lblock->block.data(), state.Rblock->block.data(),
             state.HA->MPO().data(), state.HB->MPO().data(), shape_theta4, shape_mpo4,
-            settings::threading::num_threads_eigen);
+            settings::threading::num_threads);
     class_eigsolver solver;
     solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
     auto eigvec  = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
-    tools::common::profile::t_eig.toc();
+    tools::common::profile::t_eig->toc();
 
     return eigvec.reshape(theta.dimensions());
 
@@ -44,7 +45,7 @@ Eigen::Tensor<tools::infinite::Scalar,4>
 //============================================================================//
 
 
-Eigen::Tensor<tools::infinite::Scalar, 4> tools::infinite::opt::time_evolve_theta(const class_state_infinite & state, const Eigen::Tensor<Scalar, 4> &U)
+Eigen::Tensor<Scalar, 4> tools::infinite::opt::time_evolve_theta(const class_state_infinite & state, const Eigen::Tensor<Scalar, 4> &U)
 /*!
 @verbatim
   1--[ Θ ]--3

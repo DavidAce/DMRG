@@ -1,13 +1,16 @@
 //
 // Created by david on 2019-02-17.
 //
+#include <tools/finite/debug.h>
+#include <tools/finite/print.h>
+#include <tools/finite/measure.h>
+#include <tools/finite/mps.h>
+#include <tools/finite/ops.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 #include <iostream>
-#include <iomanip>
-#include <simulation/class_simulation_status.h>
-#include <tools/nmspc_tools.h>
 #include <state/class_state_finite.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <spdlog/fmt/fmt.h>
 #include <simulation/nmspc_settings.h>
 
 void tools::finite::debug::check_integrity(const class_state_finite &state)
@@ -32,7 +35,7 @@ void tools::finite::debug::check_integrity(const class_state_finite &state)
 void tools::finite::debug::check_integrity_of_mps(const class_state_finite &state){
     tools::log->trace("Checking integrity of MPS");
     try{
-        tools::common::profile::t_chk.tic();
+        tools::common::profile::t_chk->tic();
 
         if(state.MPS_L.size() + state.MPS_R.size() != state.get_length() )
             throw std::runtime_error(fmt::format("Mismatch in MPS sizes: {} + {} != {}", state.MPS_L.size(), state.MPS_R.size(), state.get_length()));
@@ -237,13 +240,13 @@ void tools::finite::debug::check_integrity_of_mps(const class_state_finite &stat
         throw std::runtime_error(fmt::format("Integrity check of MPS failed: {}", ex.what()));
     }
     tools::log->trace("MPS OK");
-    tools::common::profile::t_chk.toc();
+    tools::common::profile::t_chk->toc();
 
 }
 
 
 void tools::finite::debug::check_integrity_of_mpo(const class_state_finite &state) {
-    tools::common::profile::t_chk.tic();
+    tools::common::profile::t_chk->tic();
 
     try{
         for (auto &mpo : state.MPO_L){
@@ -258,7 +261,7 @@ void tools::finite::debug::check_integrity_of_mpo(const class_state_finite &stat
     catch(std::exception &ex){
         throw std::runtime_error(fmt::format("Integrity check of MPO failed: {}", ex.what()));
     }
-    tools::common::profile::t_chk.toc();
+    tools::common::profile::t_chk->toc();
 
 }
 

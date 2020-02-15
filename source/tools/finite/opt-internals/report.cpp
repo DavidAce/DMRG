@@ -3,6 +3,7 @@
 //
 
 #include <tools/finite/opt.h>
+#include <tools/common/log.h>
 #include <iomanip>
 void tools::finite::opt::internal::reports::print_report(const std::vector<direct_opt_tuple> &opt_log){
     if (tools::log->level() > spdlog::level::debug) return;

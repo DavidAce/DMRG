@@ -25,13 +25,10 @@
 #include <lapacke.h>
 #endif
 
-
-#include <general/nmspc_omp.h>
 #include <Eigen/Core>
+#include <general/nmspc_tensor_omp.h>
 #include <h5pp/h5pp.h>
 #include <math/class_eigsolver.h>
-
-
 
 int eig_dsyevd(double *matrix2eigvecs, double * eigvals, int L){
     //These nice values are inspired from armadillo. The prefactors give good performance.

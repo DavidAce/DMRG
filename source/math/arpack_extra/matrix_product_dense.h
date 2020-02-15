@@ -18,13 +18,14 @@ class DenseMatrixProduct {
     constexpr static bool can_shift = true;
 
     private:
-    const Scalar *             A_ptr; // The actual matrix. Given matrices will be copied into this one.
+    const Scalar *             A_ptr;
+    std::vector<Scalar>        A_stl; // The actual matrix. Given matrices will be copied into this one.
     const int                  L;     // The linear matrix dimension
     eigutils::eigSetting::Form form;  // Chooses SYMMETRIC / NONSYMMETRIC mode
     eigutils::eigSetting::Side side;  // Chooses whether to find (R)ight or (L)eft eigenvectors
 
     // Shift-invert mode stuff
-    //    std::shared_ptr<Eigen::PartialPivLU<MatrixType>> lu;                    // Object for dense LU decomposition used in shift-invert mode
+    //    std::shared_ptr<Eigen::PartialPivLU<MatrixType>> lu;                    // Object for dense_lu LU decomposition used in shift-invert mode
     double sigmaR        = 0.0;   // The real part of the shift
     double sigmaI        = 0.0;   // The imag part of the shift
     bool   readyFactorOp = false; // Flag to make sure LU factorization has occurred

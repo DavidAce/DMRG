@@ -3,13 +3,11 @@
 //
 
 
-#include <iomanip>
+#include "class_fDMRG.h"
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
-#include <tools/nmspc_tools.h>
-//#include <math/nmspc_math.h>
-//#include <h5pp/h5pp.h>
-#include "class_fDMRG.h"
+#include <tools/common/prof.h>
+#include <tools/finite/ops.h>
 
 
 using namespace std;
@@ -62,7 +60,7 @@ void class_fDMRG::run_simulation(){
 
 
 void class_fDMRG::check_convergence(){
-    tools::common::profile::t_con.tic();
+    tools::common::profile::t_con->tic();
 
     if(state->position_is_any_edge()){
         check_convergence_variance();
@@ -108,7 +106,7 @@ void class_fDMRG::check_convergence(){
     }
 
 
-    tools::common::profile::t_con.toc();
+    tools::common::profile::t_con->toc();
 
 }
 

@@ -1,9 +1,6 @@
-//
-// Created by david on 2018-01-18.
-//
 
 #pragma once
-
+#include <general/nmspc_tensor_omp.h>
 #include "class_algorithm_infinite.h"
 class class_h5table_tebd;
 

@@ -1,7 +1,4 @@
-//
-// Created by david on 2019-10-03.
-//
-
+#pragma once
 #include <iostream>
 #include <sstream>
 
@@ -22,6 +19,7 @@ namespace tools::finite::opt{
                 case EnumType::REAL : return "REAL";
                 case EnumType::CPLX : return "CPLX";
             }
+            return "ERROR";
         }
 
         operator std::string() const {
@@ -60,6 +58,7 @@ namespace tools::finite::opt{
                 case EnumMode::OVERLAP  : return "OVERLAP";
                 case EnumMode::VARIANCE : return "VARIANCE";
             }
+            return "ERROR";
         }
         operator std::string() const {
             return this->string();
@@ -101,6 +100,7 @@ namespace tools::finite::opt{
                 case EnumSpace::SUBSPACE_AND_DIRECT : return "SUBSPACE_AND_DIRECT";
                 case EnumSpace::DIRECT : return "DIRECT";
             }
+            return "ERROR";
         }
         operator std::string() const {
             return this->string();

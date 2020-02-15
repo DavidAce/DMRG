@@ -13,8 +13,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <general/nmspc_omp.h>
-
+#include <general/nmspc_tensor_omp.h>
 
 #ifdef OpenBLAS_AVAILABLE
 #include <cblas.h>
@@ -135,7 +134,7 @@ int main(int argc, char* argv[]) {
                 int num_threads = std::strtol(optarg,nullptr,10);
                 if(num_threads > 0) {
                     log->info("Setting OpenMP threads to {}", num_threads);
-                    settings::threading::num_threads_eigen = num_threads;
+                    settings::threading::num_threads = num_threads;
                 }
                 continue;
             }
@@ -185,18 +184,15 @@ int main(int argc, char* argv[]) {
 
 
     #ifdef _OPENMP
-        if(settings::threading::num_threads_omp   <= 0) { settings::threading::num_threads_omp   = (int)std::thread::hardware_concurrency(); }
-        if(settings::threading::num_threads_eigen <= 0) { settings::threading::num_threads_eigen = (int)std::thread::hardware_concurrency(); }
-        if(settings::threading::num_threads_blas  <= 0) { settings::threading::num_threads_blas  = (int)std::thread::hardware_concurrency(); }
+        if(settings::threading::num_threads <= 0) { settings::threading::num_threads = (int)std::thread::hardware_concurrency(); }
 
-        omp_set_num_threads(settings::threading::num_threads_omp);
-        Eigen::setNbThreads(settings::threading::num_threads_eigen);
-        Eigen::initParallel();
+        omp_set_num_threads(settings::threading::num_threads);
+        Eigen::setNbThreads(settings::threading::num_threads);
         log->info("Using Eigen  with {} threads",Eigen::nbThreads());
         log->info("Using OpenMP with {} threads",omp_get_max_threads());
 
         #ifdef OpenBLAS_AVAILABLE
-                openblas_set_num_threads(settings::threading::num_threads_blas);
+                openblas_set_num_threads(settings::threading::num_threads);
                 std::cout << OPENBLAS_VERSION
                           << " compiled with parallel mode " << openblas_get_parallel()
                           << " for target " << openblas_get_corename()
@@ -206,7 +202,7 @@ int main(int argc, char* argv[]) {
         #endif
 
         #ifdef MKL_AVAILABLE
-            mkl_set_num_threads(settings::threading::num_threads_blas);
+            mkl_set_num_threads(settings::threading::num_threads);
             log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
         #endif
 

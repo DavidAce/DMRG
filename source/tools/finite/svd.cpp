@@ -1,12 +1,15 @@
 //
 // Created by david on 2019-06-29.
 //
-//#include <tools/finite/opt.h>
+#include <tools/finite/mps.h>
+#include <tools/finite/opt.h>
+#include <tools/finite/measure.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 #include <math/class_svd_wrapper.h>
 #include <math/nmspc_math.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
-#include <tools/nmspc_tools.h>
 
 void tools::finite::mps::normalize(class_state_finite & state, std::optional<size_t> chi_lim){
     tools::log->trace("Normalizing state");
@@ -14,7 +17,7 @@ void tools::finite::mps::normalize(class_state_finite & state, std::optional<siz
     using Scalar = class_state_finite::Scalar;
     state.clear_cache();
     state.clear_measurements();
-    tools::common::profile::t_svd.tic();
+    tools::common::profile::t_svd->tic();
     size_t num_moves = 2*(state.get_length()-2);
     if(not chi_lim.has_value()) chi_lim = state.get_chi_lim();
     if(state.hasNaN()) throw std::runtime_error("State has NAN's before normalization");
@@ -63,7 +66,7 @@ void tools::finite::mps::normalize(class_state_finite & state, std::optional<siz
 //        tools::log->trace("Bond dimension  after normalization: {}", tools::finite::measure::bond_dimension_current(state));
 //        tools::log->trace("Bond dimensions after normalization: {}", tools::finite::measure::bond_dimensions(state));
     }
-    tools::common::profile::t_svd.toc();
+    tools::common::profile::t_svd->toc();
     state.clear_measurements();
     if(state.hasNaN()) throw std::runtime_error("State has NAN's after normalization");
     tools::log->trace("Norm after normalization = {:.16f}", tools::finite::measure::norm(state));
@@ -139,7 +142,7 @@ void tools::finite::opt::truncate_right(const Eigen::Tensor<std::complex<double>
     Eigen::Tensor<Scalar,1> S;
     auto active_sites = state.active_sites;
     double norm;
-    tools::common::profile::t_svd.tic();
+    tools::common::profile::t_svd->tic();
     while (active_sites.size() >= 2){
         size_t site = active_sites.front();
         long dim0 = state.get_MPS(site).get_spin_dim();
@@ -206,7 +209,7 @@ void tools::finite::opt::truncate_right(const Eigen::Tensor<std::complex<double>
         throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
     }
     tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
-    tools::common::profile::t_svd.toc();
+    tools::common::profile::t_svd->toc();
 
 
 }
@@ -226,7 +229,7 @@ void tools::finite::opt::truncate_left(const Eigen::Tensor<std::complex<double>,
     auto reverse_active_sites = state.active_sites;
     std::reverse(reverse_active_sites.begin(),reverse_active_sites.end());
     double norm;
-    tools::common::profile::t_svd.tic();
+    tools::common::profile::t_svd->tic();
     while (reverse_active_sites.size() >= 2){
         size_t site = reverse_active_sites.front();
         long dim0 = U.dimension(0) /  state.get_MPS(site).get_spin_dim();
@@ -293,13 +296,13 @@ void tools::finite::opt::truncate_left(const Eigen::Tensor<std::complex<double>,
             .contract(state.get_MPS(site).get_M_bare().conjugate(), Textra::idx({0,1},{0,1}) );
     if(not Textra::TensorMatrixMap(leftID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12", site));
     tools::log->trace("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
-    tools::common::profile::t_svd.toc();
+    tools::common::profile::t_svd->toc();
 
 }
 
 
 void tools::finite::opt::truncate_theta(const Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state, std::optional<size_t> chi_lim) {
-    tools::common::profile::t_svd.tic();
+    tools::common::profile::t_svd->tic();
     if(not chi_lim.has_value())  chi_lim = state.get_chi_lim();
     // Calculate the minimum chi for this position
     // We always need to make sure we aren't truncating too aggressively.
@@ -317,14 +320,14 @@ void tools::finite::opt::truncate_theta(const Eigen::Tensor<std::complex<double>
     SVD.setThreshold(settings::precision::svd_threshold);
     auto[U, S, V] = SVD.schmidt(theta, chi_lim.value());
 
-    if(chi_lim.value() <= state.get_chi_lim())
+    if(chi_lim.value() <= (size_t) state.get_chi_lim())
         state.set_truncation_error(SVD.get_truncation_error());
 
     state.MPS_L.back().set_M(U);
     state.MPS_L.back().set_LC(S);
     state.MPS_R.front().set_M(V);
     state.clear_measurements();
-    tools::common::profile::t_svd.toc();
+    tools::common::profile::t_svd->toc();
 }
 
 

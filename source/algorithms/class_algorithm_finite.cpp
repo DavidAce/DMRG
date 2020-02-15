@@ -3,12 +3,15 @@
 //
 
 #include "class_algorithm_finite.h"
+#include <tools/finite.h>
+#include <tools/common/io.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 #include <h5pp/h5pp.h>
 #include <io/class_h5table_buffer.h>
 #include <math/nmspc_math.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
-#include <tools/nmspc_tools.h>
 
 class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites)
     : class_algorithm_base(std::move(h5ppFile_), sim_name, sim_type)
@@ -62,7 +65,7 @@ void class_algorithm_finite::run()
         return;
     }
     log->info("Starting {}", sim_name);
-    tools::common::profile::t_tot.tic();
+    tools::common::profile::t_tot->tic();
     if(h5pp_file and h5pp_file->getCreateMode() == h5pp::CreateMode::OPEN) {
         // This is case 1
         bool finOK_exists = h5pp_file->linkExists("common/finOK");
@@ -110,17 +113,17 @@ void class_algorithm_finite::run()
         run_preprocessing();
         run_simulation();
     }
-    tools::common::profile::t_tot.toc();
+    tools::common::profile::t_tot->toc();
     run_postprocessing();
 }
 
 void class_algorithm_finite::run_preprocessing() {
     log->info("Running {} preprocessing (base)", sim_name);
-    tools::common::profile::t_pre.tic();
+    tools::common::profile::t_pre->tic();
     state->set_chi_max(chi_max());
     sim_status.chi_max = chi_max();
     update_bond_dimension_limit(chi_init());
-    tools::common::profile::t_pre.toc();
+    tools::common::profile::t_pre->toc();
     log->info("Finished {} preprocessing (base)", sim_name);
 }
 
@@ -129,18 +132,18 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz) {
      * \fn void single_DMRG_step(std::string ritz)
      */
     log->trace("Starting single xDMRG step");
-    tools::common::profile::t_sim.tic();
+    tools::common::profile::t_sim->tic();
     Eigen::Tensor<Scalar, 4> theta = tools::finite::opt::find_ground_state(*state, ritz);
     tools::finite::opt::truncate_theta(theta, *state);
     state->clear_measurements();
-    tools::common::profile::t_sim.toc();
-    sim_status.wall_time = tools::common::profile::t_tot.get_age();
-    sim_status.simu_time = tools::common::profile::t_sim.get_measured_time();
+    tools::common::profile::t_sim->toc();
+    sim_status.wall_time = tools::common::profile::t_tot->get_age();
+    sim_status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
 
 void class_algorithm_finite::run_postprocessing() {
     log->info("Running {} postprocessing", sim_name);
-    tools::common::profile::t_pos.tic();
+    tools::common::profile::t_pos->tic();
     tools::finite::debug::check_integrity(*state);
     state->clear_measurements();
     print_status_update();
@@ -154,7 +157,7 @@ void class_algorithm_finite::run_postprocessing() {
     write_projection(state_projected, settings::model::target_parity_sector);
 
     print_status_full();
-    tools::common::profile::t_pos.toc();
+    tools::common::profile::t_pos->toc();
     tools::common::profile::print_profiling();
     log->info("Finished {} postprocessing", sim_name);
 }
@@ -368,7 +371,7 @@ void class_algorithm_finite::try_chi_quench() {
     tools::log->info("Chi quench started");
     tools::finite::mps::truncate_all_sites(*state, chi_lim_quench_ahead);
     clear_saturation_status();
-    chi_quench_steps = 1 * state->get_length();
+    chi_quench_steps = (num_chi_quenches + 1) * state->get_length();
     num_chi_quenches++;
 }
 
@@ -756,7 +759,7 @@ void class_algorithm_finite::print_status_update() {
     report += fmt::format("stk: {:<1} ", sim_status.simulation_has_stuck_for);
     report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", sim_status.variance_mpo_saturated_for, sim_status.entanglement_saturated_for);
     report += fmt::format("con: {:<5} ", sim_status.simulation_has_converged);
-    report += fmt::format("time: {:<8.2f}s ", tools::common::profile::t_tot.get_age());
+    report += fmt::format("time: {:<8.2f}s ", tools::common::profile::t_tot->get_age());
     report += fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] ", process_memory_in_mb("VmRSS"), process_memory_in_mb("VmHWM"),
                          process_memory_in_mb("VmPeak"));
     log->info(report);
@@ -771,8 +774,8 @@ void class_algorithm_finite::print_status_full() {
     log->info("Sites                              = {}", state->get_length());
     log->info("Iterations (sweeps)                = {}", sim_status.iteration);
     log->info("Steps                              = {}", sim_status.step);
-    log->info("Simulation time                    = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot.get_age(),
-              tools::common::profile::t_tot.get_age() / 60);
+    log->info("Simulation time                    = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot->get_age(),
+              tools::common::profile::t_tot->get_age() / 60);
     log->info("Energy per site E/L                = {:<.16f}", energy_per_site(*state));
     if(sim_type == SimulationType::xDMRG) {
         log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}", energy_normalized(*state, sim_status));

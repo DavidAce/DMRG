@@ -15,16 +15,11 @@
 #include <mkl.h>
 #endif
 
-#include <iostream>
-#include <complex>
-#include <general/nmspc_omp.h>
-#include <general/nmspc_tensor_extra.h>
 #include <Eigen/Core>
-
-
-
-
-
+#include <complex>
+#include <general/nmspc_tensor_extra.h>
+#include <general/nmspc_tensor_omp.h>
+#include <iostream>
 
 int main(){
 

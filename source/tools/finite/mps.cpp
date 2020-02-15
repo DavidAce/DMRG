@@ -3,13 +3,10 @@
 //
 
 
-#include <tools/nmspc_tools.h>
+#include <tools/finite/mps.h>
+#include <tools/finite/ops.h>
+#include <tools/common/log.h>
 #include <state/class_state_finite.h>
-#include <state/class_mps_2site.h>
-#include <state/class_environment.h>
-#include <math/nmspc_random.h>
-#include <general/nmspc_quantum_mechanics.h>
-#include <simulation/nmspc_settings.h>
 
 
 void tools::finite::mps::initialize(class_state_finite &state, const size_t length){

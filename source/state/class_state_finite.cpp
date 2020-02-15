@@ -3,9 +3,11 @@
 //
 
 #include "class_state_finite.h"
-#include <general/nmspc_quantum_mechanics.h>
-#include <tools/nmspc_tools.h>
-
+#include <tools/finite/measure.h>
+#include <tools/finite/mpo.h>
+#include <tools/finite/mps.h>
+#include <tools/finite/multisite.h>
+#include <tools/common/log.h>
 // We need to make a destructor manually for the enclosing class "class_state_finite"
 // that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
 // own default deleter.
@@ -98,16 +100,16 @@ void class_state_finite::set_positions() {
 size_t class_state_finite::get_length() const { return MPS_L.size() + MPS_R.size(); }
 size_t class_state_finite::get_position() const { return MPS_L.size() - 1u; }
 
-int class_state_finite::get_sweeps() const { return num_sweeps; }
-int class_state_finite::reset_sweeps() {
+size_t class_state_finite::get_sweeps() const { return num_sweeps; }
+size_t class_state_finite::reset_sweeps() {
     num_sweeps = 0;
     return num_sweeps;
 }
 void class_state_finite::set_sweeps(int num_sweeps_) { num_sweeps = num_sweeps_; }
 void class_state_finite::increment_sweeps() { num_sweeps++; }
 
-int class_state_finite::get_moves() const { return num_moves; }
-int class_state_finite::reset_moves() {
+size_t class_state_finite::get_moves() const { return num_moves; }
+size_t class_state_finite::reset_moves() {
     num_moves = 0;
     return num_moves;
 }

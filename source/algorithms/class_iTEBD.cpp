@@ -1,18 +1,16 @@
 //
 // Created by david on 2018-01-18.
 //
-
-#include <iomanip>
+#include "class_iTEBD.h"
+#include <tools/common/prof.h>
+#include <tools/infinite/opt.h>
 #include <io/class_h5table_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_infinite.h>
 #include <state/class_mps_2site.h>
-#include <tools/nmspc_tools.h>
 #include <model/class_model_base.h>
-//#include <math/nmspc_math.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <h5pp/h5pp.h>
-#include "class_iTEBD.h"
 using namespace std;
 using namespace Textra;
 
@@ -29,10 +27,10 @@ class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
 
 
 void class_iTEBD::run_preprocessing() {
-    tools::common::profile::t_pre.tic();
+    tools::common::profile::t_pre->tic();
     sim_status.delta_t = settings::itebd::delta_t0;
     unitary_time_evolving_operators = qm::timeEvolution::get_2site_evolution_gates(sim_status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
-    tools::common::profile::t_pre.toc();
+    tools::common::profile::t_pre->toc();
 }
 
 
@@ -54,9 +52,9 @@ void class_iTEBD::run_simulation()    {
 
 
 void class_iTEBD::run_postprocessing(){
-    tools::common::profile::t_pos.tic();
+    tools::common::profile::t_pos->tic();
     print_status_full();
-    tools::common::profile::t_pos.toc();
+    tools::common::profile::t_pos->toc();
     tools::common::profile::print_profiling();
 }
 
@@ -65,7 +63,7 @@ void class_iTEBD::single_TEBD_step(){
  * \fn single_TEBD_step(class_superblock &state)
  * \brief infinite Time evolving block decimation.
  */
-    tools::common::profile::t_sim.tic();
+    tools::common::profile::t_sim->tic();
     for (auto &U: unitary_time_evolving_operators){
         Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::time_evolve_theta(*state ,U);
         tools::infinite::opt::truncate_theta(theta, *state);
@@ -73,15 +71,15 @@ void class_iTEBD::single_TEBD_step(){
             state->swap_AB();        }
     }
     state->unset_measurements();
-    tools::common::profile::t_sim.toc();
-    sim_status.wall_time = tools::common::profile::t_tot.get_age();
-    sim_status.simu_time = tools::common::profile::t_sim.get_measured_time();
+    tools::common::profile::t_sim->toc();
+    sim_status.wall_time = tools::common::profile::t_tot->get_age();
+    sim_status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
 
 
 
 void class_iTEBD::check_convergence(){
-    tools::common::profile::t_con.tic();
+    tools::common::profile::t_con->tic();
     check_convergence_entg_entropy();
     check_convergence_variance_ham();
     check_convergence_variance_mom();
@@ -95,7 +93,7 @@ void class_iTEBD::check_convergence(){
     {
         sim_status.simulation_has_converged = true;
     }
-    tools::common::profile::t_con.toc();
+    tools::common::profile::t_con->toc();
 }
 
 void class_iTEBD::check_convergence_time_step(){
@@ -114,7 +112,7 @@ void class_iTEBD::check_convergence_time_step(){
 //        if (math::mod(sim_status.iteration, settings::itebd::write_freq) != 0) {return;}
 //    }
 //    compute_observables();
-//    t_sto.tic();
+//    t_sto->tic();
 //    log_itebd->append_record(
 //            sim_status.iteration,
 //            state->measurements.bond_dimension.value(),
@@ -131,7 +129,7 @@ void class_iTEBD::check_convergence_time_step(){
 //            sim_status.phys_time,
 //            t_tot.get_age());
 //
-//    t_sto.toc();
+//    t_sto->toc();
 //}
 
 

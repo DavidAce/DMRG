@@ -107,12 +107,23 @@ endif()
 ################################
 ###  Add all source files    ###
 ################################
+#file(GLOB_RECURSE SRCS source/*.cpp)
+#file(GLOB_RECURSE HDRS source/*.h)
+#foreach(src ${SRCS})
+##    get_filename_component(filename ${src}  NAME)
+#    message("${src}")
+#endforeach()
+#foreach(hdr ${HDRS})
+##    get_filename_component(filename ${hdr} NAME)
+#    message("${hdr}")
+#endforeach()
+
+
 include(source_list.txt)
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
 
-add_library(project-settings INTERFACE) # A helper target
-
+add_library(project-settings INTERFACE)
 ##################################################################
 ###  Force cmake to find .a library suffixes on static builds  ###
 ##################################################################
@@ -280,7 +291,7 @@ message("")
 #############################
 ## UNIT TEST
 #############################
-if(ENABLE_TESTS)
+if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests/arpack++_simple)
     add_subdirectory(tests/arpack++_mps   )

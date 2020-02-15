@@ -7,13 +7,15 @@
 #include <state/class_environment.h>
 #include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>
-#include <tools/nmspc_tools.h>
-#include <iomanip>
 #include <math/class_eigsolver.h>
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <simulation/nmspc_settings.h>
 #include <model/class_model_factory.h>
 #include <math/nmspc_math.h>
+#include <tools/infinite/measure.h>
+#include <tools/common/log.h>
+#include <tools/common/views.h>
+#include <iomanip>
 
 #define profile_optimization 0
 

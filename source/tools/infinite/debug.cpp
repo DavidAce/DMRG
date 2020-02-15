@@ -1,12 +1,12 @@
 //
 // Created by david on 2019-06-24.
 //
-#include <iostream>
-#include <iomanip>
-#include <simulation/class_simulation_status.h>
-#include <tools/nmspc_tools.h>
+
+#include <tools/infinite/debug.h>
+#include <tools/infinite/print.h>
+#include <tools/infinite/measure.h>
+#include <tools/common/log.h>
 #include <state/class_state_infinite.h>
-#include <general/nmspc_quantum_mechanics.h>
 
 void tools::infinite::debug::check_integrity(const class_state_infinite & state)
 {

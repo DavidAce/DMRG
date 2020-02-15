@@ -64,9 +64,7 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<size_t>     ("precision::max_sites_multidmrg"             , precision::max_sites_multidmrg);
     indata.find_parameter<std::string>("precision::move_sites_multidmrg"            , precision::move_sites_multidmrg);
 
-    indata.find_parameter<int>        ("threading::num_threads_eigen"               , threading::num_threads_eigen);
-    indata.find_parameter<int>        ("threading::num_threads_omp"                 , threading::num_threads_omp);
-    indata.find_parameter<int>        ("threading::num_threads_blas"                , threading::num_threads_blas);
+    indata.find_parameter<int>        ("threading::num_threads"               , threading::num_threads);
 
 
     //Parameters controlling infinite-DMRG

@@ -3,10 +3,8 @@
 //
 
 
-#include <tools/nmspc_tools.h>
+#include <tools/finite/print.h>
 #include <state/class_state_finite.h>
-#include <state/class_environment.h>
-#include <general/nmspc_tensor_extra.h>
 #include <string>
 #include <iomanip>
 

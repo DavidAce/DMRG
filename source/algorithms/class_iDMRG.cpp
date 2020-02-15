@@ -2,14 +2,13 @@
 // Created by david on 2018-01-18.
 //
 
-#include <iomanip>
+#include "class_iDMRG.h"
 #include <h5pp/h5pp.h>
+#include <tools/infinite/opt.h>
+#include <tools/common/prof.h>
 #include <io/class_h5table_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_infinite.h>
-#include <tools/nmspc_tools.h>
-#include <math/nmspc_math.h>
-#include "class_iDMRG.h"
 using namespace std;
 using namespace Textra;
 
@@ -63,20 +62,20 @@ void class_iDMRG::single_DMRG_step(std::string ritz){
  * \fn void single_DMRG_step(class_superblock &state)
  */
     log->trace("Starting infinite DMRG step");
-    tools::common::profile::t_sim.tic();
+    tools::common::profile::t_sim->tic();
     Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
     tools::infinite::opt::truncate_theta(theta, *state);
     state->unset_measurements();
-    tools::common::profile::t_sim.toc();
-    sim_status.wall_time = tools::common::profile::t_tot.get_age();
-    sim_status.simu_time = tools::common::profile::t_sim.get_measured_time();
+    tools::common::profile::t_sim->toc();
+    sim_status.wall_time = tools::common::profile::t_tot->get_age();
+    sim_status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
 
 
 
 void class_iDMRG::check_convergence(){
     log->trace("Checking convergence");
-    tools::common::profile::t_con.tic();
+    tools::common::profile::t_con->tic();
     check_convergence_entg_entropy();
     check_convergence_variance_mpo();
     check_convergence_variance_ham();
@@ -89,7 +88,7 @@ void class_iDMRG::check_convergence(){
     {
         sim_status.simulation_has_converged = true;
     }
-    tools::common::profile::t_con.toc();
+    tools::common::profile::t_con->toc();
 }
 
 

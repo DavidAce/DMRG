@@ -3,6 +3,8 @@
 //
 
 #include <tools/finite/opt.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 #include <state/class_state_finite.h>
 #include <simulation/nmspc_settings.h>
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
@@ -21,7 +23,7 @@ Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground
     std::array<long,4> shape_theta4  = {dimsL[0], dimsL[1], dimsR[0], dimsR[2]};
     std::array<long,4> shape_mpo4    =  state.MPO_L.back()->MPO().dimensions();
 
-    t_eig->tic();
+    tools::common::profile::t_eig->tic();
     int nev = 1;
     DenseHamiltonianProduct<Scalar>  matrix (
             state.ENV_L.back().block.data(),
@@ -30,7 +32,7 @@ Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground
             state.MPO_R.front()->MPO().data(),
             shape_theta4,
             shape_mpo4,
-            settings::threading::num_threads_eigen);
+            settings::threading::num_threads);
 
     class_eigsolver solver;
     solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
@@ -38,7 +40,7 @@ Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground
     [[maybe_unused]] auto eigvals           = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
     [[maybe_unused]] auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
-    t_eig->toc();
+    tools::common::profile::t_eig->toc();
 
     return eigvecs.reshape(shape_theta4);
 }

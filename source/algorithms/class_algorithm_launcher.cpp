@@ -10,10 +10,11 @@
 #include <algorithms/class_fDMRG.h>
 #include <algorithms/class_xDMRG.h>
 #include <algorithms/class_iTEBD.h>
-#include <spdlog/spdlog.h>
+#include <tools/common/log.h>
+#include <tools/common/io.h>
 #include <h5pp/h5pp.h>
+#include <memory>
 #include <gitversion.h>
-#include <tools/nmspc_tools.h>
 
 //#include <stdlib.h>
 #include <cstdlib>
