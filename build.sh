@@ -21,7 +21,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -s | --enable-shared            : Enable shared library linking (default is static)
    | --enable-openmp            : Enable OpenMP
    | --enable-mkl               : Enable Intel MKL
--t | --build-target [=args]     : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
+-t | --target [=args]           : Select build target [ CMakeTemplate | all-tests | test-<name> ]  (default = none)
    | --enable-tests             : Enable CTest tests
    | --prefer-conda             : Prefer libraries from anaconda
    | --no-modules               : Disable use of "module load"
