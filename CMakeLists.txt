@@ -16,7 +16,7 @@ option(ENABLE_OPENMP            "Use OpenMP"                                    
 option(ENABLE_MKL               "Enable Intel Math Kernel Library"                    OFF)
 option(ENABLE_LTO               "Enable link time optimization"                       OFF)
 option(BUILD_SHARED_LIBS        "Sets shared linking on/off"                          OFF)
-option(BUILD_TESTS              "Builds ctests"                                       OFF)
+option(ENABLE_TESTS             "Enable unit testing with ctest"                      OFF)
 option(BUILD_EXAMPLES           "Build examples"                                      OFF)
 option(DMRG_PRINT_INFO          "Print information during cmake configure"            OFF)
 
@@ -241,7 +241,7 @@ message(STATUS "ENABLE_OPENMP                : ${ENABLE_OPENMP}")
 message(STATUS "ENABLE_MKL                   : ${ENABLE_MKL}")
 message(STATUS "ENABLE_LTO                   : ${ENABLE_LTO}")
 message(STATUS "BUILD_SHARED_LIBS            : ${BUILD_SHARED_LIBS}")
-message(STATUS "BUILD_TESTS                  : ${BUILD_TESTS}")
+message(STATUS "ENABLE_TESTS                  : ${ENABLE_TESTS}")
 message(STATUS "BUILD_EXAMPLES               : ${BUILD_EXAMPLES}")
 message("=============================================================================")
 
@@ -291,7 +291,7 @@ message("")
 #############################
 ## UNIT TEST
 #############################
-if(BUILD_TESTS)
+if(ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests/arpack++_simple)
     add_subdirectory(tests/arpack++_mps   )
