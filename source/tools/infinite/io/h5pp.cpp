@@ -2,7 +2,7 @@
 // Created by david on 2019-03-09.
 //
 
-#include <tools/nmspc_tools.h>
+#include <tools/infinite/io.h>
 #include <state/class_state_infinite.h>
 #include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>

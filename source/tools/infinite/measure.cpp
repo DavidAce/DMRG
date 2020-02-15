@@ -2,7 +2,10 @@
 // Created by david on 2019-02-01.
 //
 
-#include <tools/nmspc_tools.h>
+#include <tools/infinite/measure.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
+#include <tools/common/views.h>
 #include <state/class_state_infinite.h>
 #include <state/class_mps_site.h>
 #include <state/class_mps_2site.h>
@@ -34,14 +37,14 @@ using namespace Textra;
 //
 //Scalar moment_generating_function(const class_mps_2site &MPS_original,
 //                                                     std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
-////    t_temp1.tic();
+////    t_temp1->tic();
 //    std::unique_ptr<class_mps_2site> MPS_evolved = std::make_unique<class_mps_2site>(MPS_original);
 //
 //    class_SVD<Scalar> SVD;
 //    SVD.setThreshold(settings::precision::svd_threshold);
 
 //    long chi_lim = 5*MPS_evolved->chiC();
-////    t_temp2.tic();
+////    t_temp2->tic();
 //    for (auto &Op: Op_vec) {
 //        //Evolve
 //        Eigen::Tensor<Scalar, 4> theta_evo = Op.contract(MPS_evolved->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
@@ -56,20 +59,20 @@ using namespace Textra;
 //            MPS_evolved->swap_AB();
 //        }
 //    }
-////    t_temp2.toc();
+////    t_temp2->toc();
 //
 //    long sizeLB = MPS_evolved->chiB() * MPS_evolved->chiB();
 //    //Normalize
-////    t_temp3.tic();
+////    t_temp3->tic();
 //    Eigen::Tensor<Scalar,2> transfer_matrix_theta_evn       = tools::common::views::get_transfer_matrix_theta_evn(*MPS_evolved).reshape(array2{sizeLB,sizeLB});
-////    t_temp3.toc();
+////    t_temp3->toc();
 //    using namespace settings::precision;
 //
-////    t_temp4.tic();
+////    t_temp4->tic();
 //    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
 //    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eig_max_ncv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
 //    auto new_theta_evn_normalized        = tools::common::views::get_theta_evn(*MPS_evolved, sqrt(solver.ref_eigvals()[0]));
-////    t_temp4.toc();
+////    t_temp4->toc();
 //    long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original.chiA();// theta_evn_normalized.dimension(1);
 //    long sizeR = new_theta_evn_normalized.dimension(3) * MPS_original.chiB();// theta_evn_normalized.dimension(3);
 //
@@ -80,7 +83,7 @@ using namespace Textra;
 //    //Compute the characteristic function G(a).
 //    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eig_max_ncv, Ritz::LM, Side::R, false);
 //    Scalar lambdaG = solver.ref_eigvals()[0];
-////    t_temp1.toc();
+////    t_temp1->toc();
 //    return lambdaG;
 //}
 //
@@ -95,10 +98,10 @@ using namespace Textra;
 //
 //
 //double tools::infinite::measure::energy(const class_state_infinite & state){
-////    state.t_ene_mpo.tic();
+////    state.t_ene_mpo->tic();
 //    double energy = tools::finite::measure::energy(state);
 //    double L      = tools::finite::measure::length(state);
-////    state.t_ene_mpo.toc();
+////    state.t_ene_mpo->toc();
 //    return energy / L;
 //
 //}
@@ -128,14 +131,14 @@ using namespace Textra;
 //            .contract(l_odd,                           idx({0, 2}, {0, 1}))
 //            .contract(r_odd,                           idx({0, 1}, {0, 1}));
 //    assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
-////    t_ene_ham.toc();
+////    t_ene_ham->toc();
 //    return 0.5*std::real(E_evn(0) + E_odd(0));
 //
 //}
 //
 //
 //double tools::infinite::measure::energy_per_site_mom(const class_state_infinite & state){
-////    t_var_gen.tic();
+////    t_var_gen->tic();
 //    Scalar a  = (0.0 + 1.0i) *5e-3;
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
 //    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -155,7 +158,7 @@ using namespace Textra;
 ////    Scalar VarO     = 2.0*log(abs(G))/ (a*a);
 //    return std::real(O);
 ////    variance_mom    = real(VarO);
-////    t_var_gen.toc();
+////    t_var_gen->toc();
 //
 //}
 //
@@ -168,7 +171,7 @@ using namespace Textra;
 //}
 //
 //double tools::infinite::measure::energy_variance_per_site_ham(const class_state_infinite &state) {
-////    t_var_ham.tic();
+////    t_var_ham->tic();
 //    using namespace tools::common::views;
 //
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -306,13 +309,13 @@ using namespace Textra;
 //    Scalar e2lrpbaab      = E2LRP_BAAB(0);
 //
 //    return std::real(0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab) ;
-////    t_var_ham.toc();
+////    t_var_ham->toc();
 //}
 //
 //
 //
 //double tools::infinite::measure::energy_variance_per_site_mom(const class_state_infinite &state){
-////    t_var_gen.tic();
+////    t_var_gen->tic();
 //    Scalar a  = (0.0 + 1.0i) *5e-3;
 //    auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
 //    auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -332,7 +335,7 @@ using namespace Textra;
 //    Scalar VarO     = 2.0*log(abs(G))/ (a*a);
 ////    return std::real(O);
 //    return  real(VarO);
-////    t_var_gen.toc();
+////    t_var_gen->toc();
 //
 //}
 //
@@ -343,14 +346,14 @@ using namespace Textra;
 
 Scalar moment_generating_function(const class_mps_2site &MPS_original,
                                   std::vector<Eigen::Tensor<Scalar, 4>> &Op_vec){
-//    t_temp1.tic();
+//    t_temp1->tic();
     std::unique_ptr<class_mps_2site> MPS_evolved = std::make_unique<class_mps_2site>(MPS_original);
 
     class_SVD SVD;
     SVD.setThreshold(settings::precision::svd_threshold);
 
     long chi_max = 5*MPS_evolved->chiC();
-//    t_temp2.tic();
+//    t_temp2->tic();
     for (auto &Op: Op_vec) {
         //Evolve
         Eigen::Tensor<Scalar, 4> theta_evo = Op.contract(MPS_evolved->get_theta(), idx({0, 1}, {0, 2})).shuffle(array4{0, 2, 1, 3});
@@ -363,16 +366,16 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
             MPS_evolved->swap_AB();
         }
     }
-//    t_temp2.toc();
+//    t_temp2->toc();
 
     long sizeLB = MPS_evolved->chiB() * MPS_evolved->chiB();
     //Normalize
-//    t_temp3.tic();
+//    t_temp3->tic();
     Eigen::Tensor<Scalar,2> transfer_matrix_theta_evn       = tools::common::views::get_transfer_matrix_theta_evn(*MPS_evolved).reshape(array2{sizeLB,sizeLB});
-//    t_temp3.toc();
+//    t_temp3->toc();
     using namespace settings::precision;
     using namespace eigutils::eigSetting;
-//    t_temp4.tic();
+//    t_temp4->tic();
 //    class_eigsolver_arpack<Scalar, Form::GENERAL> solver;
     class_eigsolver solver;
     solver.eigs<Storage::DENSE>(transfer_matrix_theta_evn.data(), (int)sizeLB, 1, eig_max_ncv, NAN, Form::NONSYMMETRIC, Ritz::LM, Side::R, false);
@@ -380,7 +383,7 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
 //    solver.eig(transfer_matrix_theta_evn.data(),(int)sizeLB, 1, eig_max_ncv, eigsolver_properties::Ritz::LM, eigsolver_properties::Side::R, false);
     auto new_theta_evn_normalized        = tools::common::views::get_theta_evn(*MPS_evolved, sqrt(solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0]));
     auto old_theta_evn_normalized        = tools::common::views::get_theta_evn(MPS_original);
-//    t_temp4.toc();
+//    t_temp4->toc();
     long sizeL = new_theta_evn_normalized.dimension(1) * MPS_original.chiA();// theta_evn_normalized.dimension(1);
     long sizeR = new_theta_evn_normalized.dimension(3) * MPS_original.chiB();// theta_evn_normalized.dimension(3);
 
@@ -393,7 +396,7 @@ Scalar moment_generating_function(const class_mps_2site &MPS_original,
     solver.eigs<Storage::DENSE>(transfer_matrix_G.data(), (int)transfer_matrix_G.dimension(0), 1, eig_max_ncv, NAN, Form::NONSYMMETRIC, Ritz::LM, Side::R, false);
 //    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eig_max_ncv, Ritz::LM, Side::R, false);
     Scalar lambdaG = solver.solution.get_eigvals<Form::NONSYMMETRIC>()[0];
-//    t_temp1.toc();
+//    t_temp1->toc();
     return lambdaG;
 }
 
@@ -426,19 +429,19 @@ double tools::infinite::measure::truncation_error(const class_state_infinite & s
 
 double tools::infinite::measure::entanglement_entropy(const class_state_infinite & state){
     tools::log->trace("Measuring entanglement entropy from state");
-    tools::common::profile::t_ent.tic();
+    tools::common::profile::t_ent->tic();
     if(state.measurements.current_entanglement_entropy){return state.measurements.current_entanglement_entropy.value();}
     auto & LC = state.MPS->MPS_A->get_LC();
     Eigen::Tensor<Scalar,0> SA  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
-    tools::common::profile::t_ent.toc();
+    tools::common::profile::t_ent->toc();
     return std::real(SA(0));
 }
 
 
 double tools::infinite::measure::energy_mpo(const class_state_infinite & state, const Eigen::Tensor<Scalar,4> &theta){
     tools::log->trace("Measuring energy mpo from state");
-    tools::common::profile::t_ene.tic();
+    tools::common::profile::t_ene->tic();
     Eigen::Tensor<Scalar, 0>  E =
             state.Lblock->block
                     .contract(theta,                                idx({0},{1}))
@@ -451,7 +454,7 @@ double tools::infinite::measure::energy_mpo(const class_state_infinite & state, 
 //        throw std::runtime_error("Energy has an imaginary part: " + std::to_string(std::real(E(0))) + " + i " + std::to_string(std::imag(E(0))));
     }
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part");
-    tools::common::profile::t_ene.toc();
+    tools::common::profile::t_ene->toc();
     return std::real(E(0)) ;
 }
 
@@ -482,7 +485,7 @@ double tools::infinite::measure::energy_per_site_ham(const class_state_infinite 
     if (state.MPS->chiA() != state.MPS->chiC()){return std::numeric_limits<double>::quiet_NaN();}
     if (state.MPS->chiB() != state.MPS->chiC()){return std::numeric_limits<double>::quiet_NaN();}
 
-    tools::common::profile::t_ene_ham.tic();
+    tools::common::profile::t_ene_ham->tic();
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
     auto SZ = qm::gen_manybody_spin(qm::spinOneHalf::sz,2);
@@ -505,7 +508,7 @@ double tools::infinite::measure::energy_per_site_ham(const class_state_infinite 
             .contract(l_odd,                           idx({0, 2}, {0, 1}))
             .contract(r_odd,                           idx({0, 1}, {0, 1}));
     assert(abs(imag(E_evn(0)+ E_odd(0))) < 1e-10 and "Energy has an imaginary part!!!" );
-    tools::common::profile::t_ene_ham.toc();
+    tools::common::profile::t_ene_ham->toc();
     state.measurements.energy_per_site_ham =  0.5*std::real(E_evn(0) + E_odd(0));
     return state.measurements.energy_per_site_ham.value();
 
@@ -521,7 +524,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_state_infinite 
         state.measurements.energy_variance_per_site_mom = std::numeric_limits<double>::quiet_NaN();
         return state.measurements.energy_per_site_mom.value();
     }
-    tools::common::profile::t_ene_mom.tic();
+    tools::common::profile::t_ene_mom->tic();
     Scalar a  = Scalar(0.0 , 1.0) * 5e-3;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -541,7 +544,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_state_infinite 
     Scalar VarO     = 2.0*std::log(abs(G))/ (a*a);
     state.measurements.energy_per_site_mom           = std::real(O);
     state.measurements.energy_variance_per_site_mom  = std::real(VarO);
-    tools::common::profile::t_ene_mom.toc();
+    tools::common::profile::t_ene_mom->toc();
     return state.measurements.energy_per_site_mom.value();
 }
 
@@ -549,7 +552,7 @@ double tools::infinite::measure::energy_per_site_mom(const class_state_infinite 
 double tools::infinite::measure::energy_variance_mpo(const class_state_infinite & state, const Eigen::Tensor<std::complex<double>,4> &theta , double &energy_mpo) {
     if (state.sim_type == SimulationType::iTEBD){return std::numeric_limits<double>::quiet_NaN();}
     tools::log->trace("Measuring energy variance mpo from state");
-    tools::common::profile::t_var.tic();
+    tools::common::profile::t_var->tic();
     Eigen::Tensor<Scalar, 0> H2 =
             state.Lblock2->block
                     .contract(theta              ,               idx({0}  ,{1}))
@@ -559,7 +562,7 @@ double tools::infinite::measure::energy_variance_mpo(const class_state_infinite 
                     .contract(state.HB->MPO(),              idx({4,3},{0,2}))
                     .contract(theta.conjugate()  ,               idx({0,3,5},{1,0,2}))
                     .contract(state.Rblock2->block,         idx({0,3,1,2},{0,1,2,3}));
-    tools::common::profile::t_var.toc();
+    tools::common::profile::t_var->toc();
     if(std::abs(std::imag(H2(0))) > 1e-10 ){
         throw std::runtime_error("H2 has an imaginary part: " + std::to_string(std::real(H2(0))) + " + i " + std::to_string(std::imag(H2(0))));
     }
@@ -608,7 +611,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_state_
 
     tools::log->trace("Measuring energy variance ham from state");
 
-    tools::common::profile::t_var_ham.tic();
+    tools::common::profile::t_var_ham->tic();
     using namespace tools::common::views;
 
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
@@ -742,7 +745,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const class_state_
     Scalar e2lrpabba      = E2LRP_ABBA(0);
     Scalar e2lrpbaba      = E2LRP_BABA(0);
     Scalar e2lrpbaab      = E2LRP_BAAB(0);
-    tools::common::profile::t_var_ham.toc();
+    tools::common::profile::t_var_ham->toc();
     state.measurements.energy_variance_per_site_ham = std::real(0.5*(e2ab + e2ba) + 0.5*(e2aba_1  + e2bab_1  + e2aba_2  + e2bab_2 )  + e2lrpabab + e2lrpabba + e2lrpbaba  + e2lrpbaab) ;
     return state.measurements.energy_variance_per_site_ham.value();
 }

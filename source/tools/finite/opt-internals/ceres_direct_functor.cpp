@@ -4,7 +4,8 @@
 
 #include "ceres_direct_functor.h"
 #include <state/class_state_finite.h>
-
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 
 
 using namespace tools::finite::opt::internal;
@@ -66,7 +67,7 @@ template<typename Scalar>
 bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
                                             double* fx,
                                             double* grad_double_double) const {
-    t_op->tic();
+    tools::common::profile::t_op->tic();
     Scalar ene,ene2,var;
     Scalar vHv, vH2v;
     double vv,log10var;
@@ -154,7 +155,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
 
     counter++;
-    t_op->toc();
+    tools::common::profile::t_op->toc();
     return true;
 }
 
@@ -163,19 +164,17 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
-    t_vH2->tic();
+    tools::common::profile::t_vH2->tic();
     size_t log2chiL  = std::log2(dsizes[1]);
     size_t log2chiR  = std::log2(dsizes[2]);
     size_t log2spin  = std::log2(dsizes[0]);
     Eigen::Tensor<Scalar,3> vH2;
-    Eigen::ThreadPool       tp(4);
-    Eigen::ThreadPoolDevice dev(&tp,4);
 
     if (log2spin > log2chiL + log2chiR){
         if (log2chiL > log2chiR){
             if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-            H2v_tensor.device(dev) =
+            H2v_tensor.device(omp.dev) =
                     theta
                             .contract(env2L, Textra::idx({0}, {0}))
                             .contract(mpo  , Textra::idx({0,3}, {2,0}))
@@ -187,7 +186,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
         else{
             if (print_path) tools::log->trace("get_H2v path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
             Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
-            H2v_tensor.device(dev) =
+            H2v_tensor.device(omp.dev) =
                     theta
                             .contract(env2R, Textra::idx({0}, {0}))
                             .contract(mpo  , Textra::idx({0,3}, {2,1}))
@@ -199,7 +198,7 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
     }else{
         if (print_path) tools::log->trace("get_H2v path: log2spin <= log2chiL + log2chiR");
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-        H2v_tensor.device(dev) =
+        H2v_tensor.device(omp.dev) =
                 theta
                         .contract(env2L, Textra::idx({0}, {0}))
                         .contract(mpo  , Textra::idx({0,3}, {2,0}))
@@ -208,24 +207,22 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
                         .shuffle(Textra::array3{1, 0, 2});
     }
 
-    t_vH2->toc();
+    tools::common::profile::t_vH2->toc();
 }
 
 
 
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
-    t_vH->tic();
+    tools::common::profile::t_vH->tic();
     size_t log2chiL  = std::log2(dsizes[1]);
     size_t log2chiR  = std::log2(dsizes[2]);
-    Eigen::ThreadPool       tp(4);
-    Eigen::ThreadPoolDevice dev(&tp,4);
 //            size_t log2spin  = std::log2(multiComponents.dsizes[0]);
     if (log2chiL > log2chiR){
         if (print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
 
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{1,0,2});
-        Hv_tensor.device(dev) =
+        Hv_tensor.device(omp.dev) =
                 theta
                         .contract(envL, Textra::idx({0}, {0}))
                         .contract(mpo , Textra::idx({0,3}, {2,0}))
@@ -235,7 +232,7 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
         if (print_path) tools::log->trace("get_Hv path: log2chiL <= log2chiR ");
 
         Eigen::Tensor<Scalar,3> theta = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(v.derived().data(), dsizes).shuffle(Textra::array3{2,0,1});
-        Hv_tensor.device(dev) =
+        Hv_tensor.device(omp.dev) =
                 theta
                         .contract(envR, Textra::idx({0}, {0}))
                         .contract(mpo , Textra::idx({0,3}, {2,1}))
@@ -243,7 +240,7 @@ void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
                         .shuffle(Textra::array3{1, 2, 0});
     }
 
-    t_vH->toc();
+    tools::common::profile::t_vH->toc();
 }
 
 

@@ -10,8 +10,7 @@
 #include "nmspc_quantum_mechanics.h"
 #include "nmspc_tensor_extra.h"
 
-
-
+using Scalar = std::complex<double>;
 using namespace Eigen;
 
 std::vector<Eigen::MatrixXcd> qm::gen_manybody_spin(const Eigen::MatrixXcd &s, int sites) {
@@ -181,9 +180,9 @@ namespace qm::timeEvolution{
 
 
 std::tuple<
-        Eigen::Tensor<qm::mpo::Scalar,4>,
-        Eigen::Tensor<qm::mpo::Scalar,3>,
-        Eigen::Tensor<qm::mpo::Scalar,3>>
+        Eigen::Tensor<Scalar,4>,
+        Eigen::Tensor<Scalar,3>,
+        Eigen::Tensor<Scalar,3>>
 qm::mpo::pauli_mpo(const Eigen::MatrixXcd paulimatrix)
 /*! Builds the MPO for measuring parity on spin systems.
  *      P = Π  s_{i}
@@ -220,9 +219,9 @@ qm::mpo::pauli_mpo(const Eigen::MatrixXcd paulimatrix)
 
 
 std::tuple<
-        Eigen::Tensor<qm::mpo::Scalar,4>,
-        Eigen::Tensor<qm::mpo::Scalar,3>,
-        Eigen::Tensor<qm::mpo::Scalar,3>>
+        Eigen::Tensor<Scalar,4>,
+        Eigen::Tensor<Scalar,3>,
+        Eigen::Tensor<Scalar,3>>
 qm::mpo::parity_selector_mpo(const Eigen::MatrixXcd paulimatrix, const int sector)
 /*! Builds the MPO that projects out the MPS component in a parity sector.
  *      |psi+->  = O |psi>=  (1 +- P) |psi>
@@ -263,9 +262,9 @@ qm::mpo::parity_selector_mpo(const Eigen::MatrixXcd paulimatrix, const int secto
 
 std::tuple<
         std::list<
-        Eigen::Tensor<qm::mpo::Scalar,4>>,
-        Eigen::Tensor<qm::mpo::Scalar,3>,
-        Eigen::Tensor<qm::mpo::Scalar,3>>
+        Eigen::Tensor<Scalar,4>>,
+        Eigen::Tensor<Scalar,3>,
+        Eigen::Tensor<Scalar,3>>
 qm::mpo::parity_projector_mpos(const Eigen::MatrixXcd paulimatrix, const size_t sites, const int sector)/*! Builds the MPO that projects out the MPS component in a parity sector.
  *      |psi+->  = O |psi>=  (1/2) (1 +- P) |psi>
  *      Here 1 = outer product of 2x2 identity matrices, "sites" times.

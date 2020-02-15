@@ -2,16 +2,18 @@
 // Created by david on 2019-03-09.
 //
 
+#include <tools/finite/io.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
+#include <h5pp/h5pp.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
-#include <h5pp/h5pp.h>
 #include <model/class_model_factory.h>
 #include <simulation/class_simulation_status.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
 #include <state/class_state_infinite.h>
 #include <stdexcept>
-#include <tools/nmspc_tools.h>
 
 using Scalar = std::complex<double>;
 
@@ -24,7 +26,7 @@ H5D_layout_t decide_layout(std::string_view prefix_path) {
 
 void tools::finite::io::h5dset::write_all_state(const class_state_finite &state, h5pp::File &h5ppFile, const std::string &prefix_path) {
     tools::log->trace("Writing state to datasets in path: {}...", prefix_path + "/state");
-    tools::common::profile::t_hdf.tic();
+    tools::common::profile::t_hdf->tic();
 
     if(settings::output::storage_level >= StorageLevel::LIGHT) {
         write_bond_matrix(state, h5ppFile, prefix_path);
@@ -39,7 +41,7 @@ void tools::finite::io::h5dset::write_all_state(const class_state_finite &state,
         write_full_mpo(state, h5ppFile, prefix_path);
     }
 
-    tools::common::profile::t_hdf.toc();
+    tools::common::profile::t_hdf->toc();
     tools::log->trace("Writing state to datasets in path: {}... OK", prefix_path + "/state");
 }
 
@@ -123,10 +125,10 @@ void tools::finite::io::h5dset::write_model(const class_state_finite &state, h5p
 void tools::finite::io::h5dset::write_array_measurements(const class_state_finite &state, h5pp::File &h5ppFile, const std::string &prefix_path) {
     state.do_all_measurements();
     tools::log->trace("Writing all measurements...");
-    tools::common::profile::t_hdf.tic();
+    tools::common::profile::t_hdf->tic();
     h5ppFile.writeDataset(state.measurements.bond_dimensions.value(), prefix_path + "/bond_dimensions");
     h5ppFile.writeDataset(state.measurements.entanglement_entropies.value(), prefix_path + "/entanglement_entropies");
     h5ppFile.writeDataset(state.measurements.spin_components.value(), prefix_path + "/spin_components");
-    tools::common::profile::t_hdf.toc();
+    tools::common::profile::t_hdf->toc();
     tools::log->trace("Writing all measurements... OK");
 }

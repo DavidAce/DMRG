@@ -27,6 +27,14 @@ namespace stl_lu{
         lu_real.reset();
         lu_cplx.reset();
     }
+    template<typename Scalar>
+    void init(){
+        if constexpr (std::is_same_v<Scalar,double>)
+            stl_lu::lu_real = Eigen::PartialPivLU<MatrixType<Scalar>>();
+        if constexpr (std::is_same_v<Scalar,std::complex<double>>)
+            stl_lu::lu_cplx = Eigen::PartialPivLU<MatrixType<Scalar>>();
+    }
+
 }
 
 
@@ -52,11 +60,8 @@ StlMatrixProduct<Scalar>::StlMatrixProduct(
         std::copy(A_ptr,A_ptr + L*L, A_stl.begin());
         A_ptr = A_stl.data();
     }
+    stl_lu::init<Scalar>();
     init_profiling();
-    if constexpr (std::is_same_v<Scalar,double>)
-        stl_lu::lu_real =  Eigen::PartialPivLU<MatrixType<double>>();
-    if constexpr (std::is_same_v<Scalar,std::complex<double>>)
-        stl_lu::lu_cplx = Eigen::PartialPivLU<MatrixType<std::complex<double>>>();
 }
 
 template<typename Scalar>
@@ -78,12 +83,10 @@ void StlMatrixProduct<Scalar>::FactorOP()
     Eigen::Map<const MatrixType<Scalar>> A_matrix (A_ptr,L,L);
     t_factorOp.tic();
     assert(readyShift and "Shift value sigma has not been set.");
-    if constexpr(std::is_same_v<Scalar,double>)
-    {
+    if constexpr(std::is_same_v<Scalar,double>){
         stl_lu::lu_real.value().compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L,L));
     }
-    if constexpr(std::is_same_v<Scalar,std::complex<double>>)
-    {
+    if constexpr(std::is_same_v<Scalar,std::complex<double>>){
         Scalar sigma = std::complex<double>(sigmaR,sigmaI);
         stl_lu::lu_cplx.value().compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L,L));
     }

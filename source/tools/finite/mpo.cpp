@@ -1,8 +1,11 @@
 //
 // Created by david on 2019-06-25.
 //
+#include <tools/finite/mpo.h>
+#include <tools/finite/mps.h>
+#include <tools/finite/measure.h>
+#include <tools/common/log.h>
 #include <state/class_state_finite.h>
-#include <tools/nmspc_tools.h>
 #include <model/class_model_base.h>
 #include <model/class_model_factory.h>
 #include <math/nmspc_random.h>

@@ -19,6 +19,5 @@ namespace Logger{
     extern size_t getLogLevel(std::shared_ptr<spdlog::logger> &log);
     extern void setLogger(std::shared_ptr<spdlog::logger> &log, std::string name, size_t levelZeroToSix = 2, bool timestamp = true);
     extern std::shared_ptr<spdlog::logger>  setLogger(std::string name, size_t levelZeroToSix = 2, bool timestamp = true);
-
 }
 

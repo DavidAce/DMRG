@@ -3,6 +3,8 @@
 //
 #include "ceres_subspace_functor.h"
 #include <state/class_state_finite.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 
 using namespace tools::finite::opt::internal;
 

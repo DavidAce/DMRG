@@ -3,14 +3,13 @@
 //
 
 #pragma once
-
+#include <general/nmspc_tensor_omp.h>
+#include <general/nmspc_type_check.h>
 #include <Eigen/Core>
 #include <Eigen/Sparse>
-#include <unsupported/Eigen/CXX11/Tensor>
 #include <iterator>
 #include <iostream>
 #include <iomanip>
-#include <general/nmspc_type_check.h>
 
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/

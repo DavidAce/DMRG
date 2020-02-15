@@ -186,15 +186,18 @@ void class_selfdual_tf_rf_ising::set_perturbation(double coupling_ptb, double fi
         case PerturbMode::PERCENTAGE: {
             J_ptb = J_rnd * coupling_ptb;
             h_ptb = h_rnd * field_ptb;
+            break;
         }
 
         case PerturbMode::UNIFORM_RANDOM_ABSOLUTE: {
             J_ptb = rn::uniform_double_box(-coupling_ptb, coupling_ptb);
             h_ptb = rn::uniform_double_box(-field_ptb, field_ptb);
+            break;
         }
         case PerturbMode::UNIFORM_RANDOM_PERCENTAGE: {
             J_ptb = J_rnd * rn::uniform_double_box(-coupling_ptb, coupling_ptb);
             h_ptb = h_rnd * rn::uniform_double_box(-field_ptb, field_ptb);
+            break;
         }
     }
     if(all_mpo_parameters_have_been_set) {

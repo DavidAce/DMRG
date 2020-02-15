@@ -2,11 +2,12 @@
 // Created by david on 2019-10-24.
 //
 
+#include <tools/infinite/mpo.h>
+#include <tools/common/log.h>
 #include <state/class_state_infinite.h>
-#include <tools/nmspc_tools.h>
 #include <model/class_model_base.h>
 #include <model/class_model_factory.h>
-#include <math/nmspc_random.h>
+
 void tools::infinite::mpo::initialize(class_state_infinite & state, const std::string  & model_type){
     tools::log->trace("Initializing mpo");
     //Generate MPO

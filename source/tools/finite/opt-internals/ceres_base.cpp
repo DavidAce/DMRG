@@ -14,7 +14,7 @@ using namespace tools::finite::opt::internal;
 ceres_base_functor::ceres_base_functor(
         const class_state_finite & state,
         const class_simulation_status & sim_status):
-        omp(settings::threading::num_threads_eigen)
+        omp(settings::threading::num_threads)
 {
     reset_timers();
     length                   = state.get_length();

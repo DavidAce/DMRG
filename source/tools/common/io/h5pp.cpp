@@ -2,14 +2,16 @@
 // Created by david on 2019-03-09.
 //
 
-#include <tools/nmspc_tools.h>
+#include <tools/common/io.h>
+#include <tools/common/prof.h>
 #include <simulation/class_simulation_status.h>
 #include <h5pp/h5pp.h>
 #include <simulation/nmspc_settings.h>
 
 void tools::common::io::h5dset::write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile,
-                                                std::string sim_name) {
+                                               const std::string & sim_name) {
     if (settings::output::storage_level <= StorageLevel::LIGHT) return;
+    tools::common::profile::t_hdf->tic();
     h5ppFile.writeDataset(sim_status.iteration                     ,sim_name + "/sim_status/iteration");
     h5ppFile.writeDataset(sim_status.moves                         ,sim_name + "/sim_status/moves");
     h5ppFile.writeDataset(sim_status.step                          ,sim_name + "/sim_status/step");
@@ -50,6 +52,7 @@ void tools::common::io::h5dset::write_simulation_status(const class_simulation_s
     h5ppFile.writeDataset(sim_status.variance_mom_saturated_for    ,sim_name + "/sim_status/variance_mom_saturated_for");
     h5ppFile.writeDataset(sim_status.variance_mom_has_converged    ,sim_name + "/sim_status/variance_mom_has_converged");
     h5ppFile.writeDataset(sim_status.variance_mom_has_saturated    ,sim_name + "/sim_status/variance_mom_has_saturated");
+    tools::common::profile::t_hdf->toc();
 }
 
 
@@ -58,7 +61,7 @@ class_simulation_status tools::common::io::h5restore::load_sim_status_from_hdf5 
     class_simulation_status sim_status;
     // common variables
     try{
-        tools::common::profile::t_hdf.tic();
+        tools::common::profile::t_hdf->tic();
         h5ppFile.readDataset(sim_status.iteration                      , sim_name + "/sim_status/iteration");
         h5ppFile.readDataset(sim_status.moves                          , sim_name + "/sim_status/moves");
         h5ppFile.readDataset(sim_status.step                           , sim_name + "/sim_status/step");
@@ -99,6 +102,7 @@ class_simulation_status tools::common::io::h5restore::load_sim_status_from_hdf5 
         h5ppFile.readDataset(sim_status.variance_mpo_saturated_for     , sim_name + "/sim_status/variance_mpo_saturated_for");
         h5ppFile.readDataset(sim_status.variance_ham_saturated_for     , sim_name + "/sim_status/variance_ham_saturated_for");
         h5ppFile.readDataset(sim_status.variance_mom_saturated_for     , sim_name + "/sim_status/variance_mom_saturated_for");
+        tools::common::profile::t_hdf->toc();
     }catch(std::exception &ex){
         throw std::runtime_error("Failed to load sim_status from output: " + std::string(ex.what()));
     }

@@ -2,15 +2,17 @@
 // Created by david on 2019-01-30.
 //
 
-
-#include <tools/nmspc_tools.h>
-#include <state/class_state_finite.h>
-#include <model/class_model_base.h>
-#include <general/nmspc_tensor_extra.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <iomanip>
+#include <general/nmspc_tensor_extra.h>
 #include <math/nmspc_random.h>
-
+#include <model/class_model_base.h>
+#include <state/class_state_finite.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
+#include <tools/finite/measure.h>
+#include <tools/finite/mps.h>
+#include <tools/finite/ops.h>
+#include <tools/finite/debug.h>
 
 using Scalar         = std::complex<double>;
 using namespace Textra;
@@ -97,14 +99,14 @@ class_state_finite tools::finite::ops::get_projection_to_parity_sector(const cla
     tools::log->trace("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
     tools::log->trace("Current reqstd spin component  :     {:.16f}", requested_spin_component );
 
-    tools::common::profile::t_prj.tic();
+    tools::common::profile::t_prj->tic();
     class_state_finite state_projected = state;
     state_projected.clear_measurements();
     state_projected.clear_cache();
 
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
-    tools::common::profile::t_prj.toc();
+    tools::common::profile::t_prj->toc();
     tools::finite::mps::normalize(state_projected);
     tools::finite::mps::rebuild_environments(state_projected);
     tools::finite::debug::check_integrity_of_mps(state_projected);
@@ -181,7 +183,6 @@ double tools::finite::ops::overlap(const class_state_finite & state1, const clas
     }
 
     double norm_chain = std::real(Textra::TensorMatrixMap(overlap).trace());
-//    std::cout << "Overlap state1 and state2: " << std::setprecision(16) << norm_chain << std::endl;
     return norm_chain;
 }
 

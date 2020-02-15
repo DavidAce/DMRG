@@ -8,18 +8,24 @@
 // overridden and causing trouble at compile time.
 #include <complex.h>
 #undef I
-
-// It is VERY IMPORTANT to set this flag when using CERES
-// For some reason the Eigen destructor starts calling std::free instead of
-// the handmade allocator free in calls inside CERES. I do not know the reason.
-// Setting this flag here or globally helps.
-#define EIGEN_MALLOC_ALREADY_ALIGNED 0
-#include <tools/nmspc_tools.h>
-#include <general/class_tic_toc.h>
-#include <general/nmspc_omp.h>
+#include <general/nmspc_tensor_omp.h>
 #include <ceres/ceres.h>
+#include <simulation/enums.h>
+#include <tools/finite/opt-internals/enum_classes.h>
 
-class class_tic_toc;
+class class_state_finite;
+class class_simulation_status;
+
+namespace tools::finite::opt{
+    using Scalar = std::complex<double>;
+    extern Eigen::Tensor<Scalar,3> find_excited_state(const class_state_finite & state, const class_simulation_status & sim_status, OptMode optMode, OptSpace optSpace, OptType optType);
+    extern Eigen::Tensor<Scalar,4> find_ground_state (const class_state_finite & state, std::string ritz = "SR");
+    extern void truncate_theta(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
+    extern void truncate_left (const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
+    extern void truncate_right(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
+    extern void truncate_theta(const Eigen::Tensor<Scalar,4> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
+}
+
 
 
 namespace tools::finite::opt::internal{
@@ -96,15 +102,6 @@ namespace tools::finite::opt::internal{
         }
 
         void reset_timers();
-        inline std::unique_ptr<class_tic_toc> t_opt  =  std::make_unique<class_tic_toc>(true,5,"t_opt ");
-        inline std::unique_ptr<class_tic_toc> t_eig  =  std::make_unique<class_tic_toc>(true,5,"t_eig ");
-        inline std::unique_ptr<class_tic_toc> t_ham  =  std::make_unique<class_tic_toc>(true,5,"t_ham ");
-        inline std::unique_ptr<class_tic_toc> t_tot  =  std::make_unique<class_tic_toc>(true,5,"t_tot ");
-        inline std::unique_ptr<class_tic_toc> t_vH2v =  std::make_unique<class_tic_toc>(true,5,"t_vH2v");
-        inline std::unique_ptr<class_tic_toc> t_vHv  =  std::make_unique<class_tic_toc>(true,5,"t_vHv ");
-        inline std::unique_ptr<class_tic_toc> t_vH2  =  std::make_unique<class_tic_toc>(true,5,"t_vH2 ");
-        inline std::unique_ptr<class_tic_toc> t_vH   =  std::make_unique<class_tic_toc>(true,5,"t_vH  ");
-        inline std::unique_ptr<class_tic_toc> t_op   =  std::make_unique<class_tic_toc>(true,5,"t_op  ");
 
         class ceres_base_functor : public ceres::FirstOrderFunction{
         public:

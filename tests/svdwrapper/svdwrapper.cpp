@@ -11,7 +11,7 @@ int main(){
     using reciter = fs::recursive_directory_iterator;
     for (auto & item : reciter(std::string(TEST_DIR) + "/testmatrices")){
         std::cout <<  "item: " << item << std::endl;
-        int logLevel = 0;
+        int logLevel = 2;
         h5pp::File file(item.path().string(), h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN, logLevel);
         Eigen::MatrixXcd matrix;
         file.readDataset(matrix,"svdmatrix");

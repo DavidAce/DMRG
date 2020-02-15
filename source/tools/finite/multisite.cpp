@@ -1,12 +1,15 @@
 //
 // Created by david on 2019-06-24.
 //
-#include <tools/nmspc_tools.h>
-#include <general/nmspc_tensor_extra.h>
-#include <general/nmspc_omp.h> // For multithreaded computation
-#include <state/class_state_finite.h>
-#include <simulation/nmspc_settings.h>
 
+#include <tools/finite/multisite.h>
+#include <tools/finite/mps.h>
+#include <tools/finite/measure.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
+#include <general/nmspc_tensor_extra.h>
+#include <simulation/nmspc_settings.h>
+#include <state/class_state_finite.h>
 
 Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state_finite &state, const std::list<size_t> &list_of_sites){
     if (list_of_sites.empty()) return  Eigen::DSizes<long,3>{0,0,0};
@@ -135,7 +138,7 @@ double tools::finite::measure::multisite::energy_minus_energy_reduced(const clas
     // Else
     //      < H > = E
 
-    tools::common::profile::t_ene.tic();
+    tools::common::profile::t_ene->tic();
     auto multimpo   = state.get_multimpo();
     auto & envL     = state.get_ENVL(state.active_sites.front()).block;
     auto & envR     = state.get_ENVR(state.active_sites.back()).block;
@@ -154,7 +157,7 @@ double tools::finite::measure::multisite::energy_minus_energy_reduced(const clas
     assert(abs(imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
     double ene = std::real(E(0));
     if (std::isnan(ene) or std::isinf(ene)) throw std::runtime_error(fmt::format("Energy is invalid: {}", ene));
-    tools::common::profile::t_ene.toc();
+    tools::common::profile::t_ene->toc();
     return  ene;
 }
 
@@ -186,7 +189,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
     //      because E_red != E necessarily (though they are supposed to be very close)
     // Else:
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
-    tools::common::profile::t_var.tic();
+    tools::common::profile::t_var->tic();
     auto multimpo   = state.get_multimpo();
     auto & env2L    = state.get_ENV2L(state.active_sites.front()).block;
     auto & env2R    = state.get_ENV2R(state.active_sites.back()).block;
@@ -197,7 +200,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
     size_t log2chiR  = std::log2(dsizes[2]);
     size_t log2spin  = std::log2(dsizes[0]);
     Eigen::Tensor<Scalar, 0> H2;
-    OMP omp(settings::threading::num_threads_eigen);
+    OMP omp(settings::threading::num_threads);
     if (log2spin > log2chiL + log2chiR){
         if (log2chiL > log2chiR){
 //            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
@@ -248,7 +251,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
 //            .contract(multimpo                   , idx({4,1},{2,0}))
 //            .contract(multitheta.conjugate()     , idx({4,0},{0,1}))
 //            .contract(env2R                      , idx({0,3,1,2},{0,1,2,3}));
-    tools::common::profile::t_var.toc();
+    tools::common::profile::t_var->toc();
     double energy;
     if (state.isReduced()){
         energy = multisite::energy_minus_energy_reduced(state,multitheta);
@@ -275,9 +278,9 @@ double tools::finite::measure::multisite::energy_variance_per_site(const class_s
 double tools::finite::measure::multisite::energy(const class_state_finite &state){
     if (state.measurements.energy)  return state.measurements.energy.value();
     if (state.active_sites.empty()) return tools::finite::measure::energy(state);
-    tools::common::profile::t_ene.tic();
+    tools::common::profile::t_ene->tic();
     auto theta = state.get_multitheta();
-    tools::common::profile::t_ene.toc();
+    tools::common::profile::t_ene->toc();
     state.measurements.energy = multisite::energy(state,theta);
     return state.measurements.energy.value();
 }
@@ -295,12 +298,13 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
     if (state.measurements.energy_variance){return state.measurements.energy_variance.value();}
     else{
         if (state.active_sites.empty()) return tools::finite::measure::energy_variance(state);
-        tools::common::profile::t_var.tic();
+        tools::common::profile::t_var->tic();
         auto theta = state.get_multitheta();
-        tools::common::profile::t_var.toc();
+        tools::common::profile::t_var->toc();
         state.measurements.energy_variance = multisite::energy_variance(state, theta);
         return state.measurements.energy_variance.value();
-    }}
+    }
+}
 
 double tools::finite::measure::multisite::energy_variance_per_site(const class_state_finite &state){
     if (state.measurements.energy_variance_per_site){return state.measurements.energy_variance_per_site.value();}

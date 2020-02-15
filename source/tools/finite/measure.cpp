@@ -7,19 +7,17 @@
 //
 
 
+#include "measure.h"
 
 #include <iomanip>
-#include <tools/nmspc_tools.h>
 #include <simulation/nmspc_settings.h>
-#include <state/class_environment.h>
-//#include <state/class_mps_2site.h>
-#include <state/class_state_finite.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
-#include <general/nmspc_omp.h>
+#include <general/nmspc_tensor_omp.h>
 #include <simulation/class_simulation_status.h>
-
-
+#include <state/class_state_finite.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 
 using namespace std;
 using namespace Textra;
@@ -92,8 +90,8 @@ double tools::finite::measure::twosite::energy_minus_energy_reduced(const class_
     // Else
     //      < H > = E
 
-    tools::common::profile::t_ene.tic();
-    OMP omp(settings::threading::num_threads_eigen);
+    tools::common::profile::t_ene->tic();
+    OMP omp(settings::threading::num_threads);
     Eigen::Tensor<Scalar, 0>  E;
     E.device(omp.dev) =
                 state.ENV_L.back().block
@@ -108,7 +106,7 @@ double tools::finite::measure::twosite::energy_minus_energy_reduced(const class_
     assert(std::abs(std::imag(E(0))) < 1e-10 and "Energy has an imaginary part!!!");
     double ene = std::real(E(0));
     if (std::isnan(ene) or std::isinf(ene)) throw std::runtime_error(fmt::format("Energy is invalid: {}", ene));
-    tools::common::profile::t_ene.toc();
+    tools::common::profile::t_ene->toc();
     return  ene;
 }
 
@@ -140,8 +138,8 @@ double tools::finite::measure::twosite::energy_variance(const class_state_finite
     // Else:
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
 
-    tools::common::profile::t_var.tic();
-    OMP omp(settings::threading::num_threads_eigen);
+    tools::common::profile::t_var->tic();
+    OMP omp(settings::threading::num_threads);
     Eigen::Tensor<Scalar, 0> H2;
     H2.device(omp.dev) =
                 state.ENV2_L.back().block
@@ -152,7 +150,7 @@ double tools::finite::measure::twosite::energy_variance(const class_state_finite
                     .contract(state.MPO_R.front()->MPO()   , idx({4,3},{0,2}))
                     .contract(theta.conjugate()            , idx({0,3,5},{1,0,2}))
                     .contract(state.ENV2_R.front().block   , idx({0,3,1,2},{0,1,2,3}));
-    tools::common::profile::t_var.toc();
+    tools::common::profile::t_var->toc();
     double energy;
     if (state.isReduced()){
         energy = tools::finite::measure::twosite::energy_minus_energy_reduced(state,theta);
@@ -179,15 +177,15 @@ double tools::finite::measure::twosite::energy_variance_per_site(const class_sta
 double tools::finite::measure::energy(const class_state_finite &state){
     if (state.measurements.energy)         return state.measurements.energy.value();
     if (state.active_sites.empty()){
-        tools::common::profile::t_ene.tic();
+        tools::common::profile::t_ene->tic();
         auto theta = state.get_theta();
-        tools::common::profile::t_ene.toc();
+        tools::common::profile::t_ene->toc();
         state.measurements.energy = twosite::energy(state,theta);
     }else
     {
-        tools::common::profile::t_ene.tic();
+        tools::common::profile::t_ene->tic();
         auto theta = state.get_multitheta();
-        tools::common::profile::t_ene.toc();
+        tools::common::profile::t_ene->toc();
         state.measurements.energy = multisite::energy(state,theta);
     }
     return state.measurements.energy.value();
@@ -206,14 +204,14 @@ double tools::finite::measure::energy_per_site(const class_state_finite &state){
 double tools::finite::measure::energy_variance(const class_state_finite &state){
     if (state.measurements.energy_variance) return state.measurements.energy_variance.value();
     if (state.active_sites.empty()){
-        tools::common::profile::t_var.tic();
+        tools::common::profile::t_var->tic();
         auto theta = state.get_theta();
-        tools::common::profile::t_var.toc();
+        tools::common::profile::t_var->toc();
         state.measurements.energy_variance = twosite::energy_variance(state, theta);
     }else{
-        tools::common::profile::t_var.tic();
+        tools::common::profile::t_var->tic();
         auto theta = state.get_multitheta();
-        tools::common::profile::t_var.toc();
+        tools::common::profile::t_var->toc();
         state.measurements.energy_variance = multisite::energy_variance(state, theta);
     }
     return state.measurements.energy_variance.value();
@@ -235,29 +233,29 @@ double tools::finite::measure::energy_normalized(const class_state_finite &state
 
 double tools::finite::measure::entanglement_entropy_current(const class_state_finite & state){
     if (state.measurements.entanglement_entropy_current){return state.measurements.entanglement_entropy_current.value();}
-    tools::common::profile::t_ent.tic();
+    tools::common::profile::t_ent->tic();
     auto & LC = state.current_bond();
     Eigen::Tensor<Scalar,0> SE  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     state.measurements.entanglement_entropy_current = std::real(SE(0));
-    tools::common::profile::t_ent.toc();
+    tools::common::profile::t_ent->toc();
     return state.measurements.entanglement_entropy_current.value();
 }
 
 double tools::finite::measure::entanglement_entropy_midchain(const class_state_finite & state){
     if (state.measurements.entanglement_entropy_midchain){return state.measurements.entanglement_entropy_midchain.value();}
-    tools::common::profile::t_ent.tic();
+    tools::common::profile::t_ent->tic();
     auto & LC = state.midchain_bond();
     Eigen::Tensor<Scalar,0> SE  = -LC.square()
             .contract(LC.square().log().eval(), idx({0},{0}));
     state.measurements.entanglement_entropy_midchain =  std::real(SE(0));
-    tools::common::profile::t_ent.toc();
+    tools::common::profile::t_ent->toc();
     return state.measurements.entanglement_entropy_midchain.value();
 }
 
 std::vector<double> tools::finite::measure::entanglement_entropies(const class_state_finite & state){
     if (state.measurements.entanglement_entropies){return state.measurements.entanglement_entropies.value();}
-    tools::common::profile::t_ent.tic();
+    tools::common::profile::t_ent->tic();
     std::vector<double> entanglement_entropies;
     for (size_t pos = 0; pos < state.get_length(); pos++){
         auto &L = state.get_MPS(pos).get_L();
@@ -271,7 +269,7 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const class_s
         }
     }
     state.measurements.entanglement_entropies = entanglement_entropies;
-    tools::common::profile::t_ent.toc();
+    tools::common::profile::t_ent->toc();
     return state.measurements.entanglement_entropies.value();
 }
 

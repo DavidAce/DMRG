@@ -8,20 +8,27 @@ template<typename T> using MatrixType  = Eigen::Matrix<T, Eigen::Dynamic, Eigen:
 template<typename T> using VectorType  = Eigen::Matrix<T, Eigen::Dynamic, 1, Eigen::ColMajor>;
 template<typename T> using VectorTypeT = Eigen::Matrix<T, 1, Eigen::Dynamic, Eigen::RowMajor>;
 
-namespace dense {
-    std::optional<Eigen::PartialPivLU<MatrixType<double>>>               lu_real_dense = std::nullopt;
-    std::optional<Eigen::PartialPivLU<MatrixType<std::complex<double>>>> lu_cplx_dense = std::nullopt;
+namespace dense_lu {
+    std::optional<Eigen::PartialPivLU<MatrixType<double>>>               lu_real       = std::nullopt;
+    std::optional<Eigen::PartialPivLU<MatrixType<std::complex<double>>>> lu_cplx       = std::nullopt;
 
     void reset(){
-        lu_real_dense.reset();
-        lu_cplx_dense.reset();
+        lu_real.reset();
+        lu_cplx.reset();
     }
-};
+    template<typename Scalar>
+    void init(){
+        if constexpr (std::is_same_v<Scalar,double>)
+            dense_lu::lu_real = Eigen::PartialPivLU<MatrixType<Scalar>>();
+        if constexpr (std::is_same_v<Scalar,std::complex<double>>)
+            dense_lu::lu_cplx = Eigen::PartialPivLU<MatrixType<Scalar>>();
+    }
+}
 
 
 template<typename Scalar>
 DenseMatrixProduct<Scalar>::~DenseMatrixProduct(){
-    dense::reset();
+    dense_lu::reset();
 }
 
 
@@ -30,7 +37,12 @@ DenseMatrixProduct<Scalar>::~DenseMatrixProduct(){
 template<typename Scalar>
 DenseMatrixProduct<Scalar>::DenseMatrixProduct(const Scalar *const A_, const int L_,const bool copy_data, const eigutils::eigSetting::Form form_, const eigutils::eigSetting::Side side_)
     : A_ptr(A_), L(L_), form(form_), side(side_) {
-
+    if (copy_data){
+        A_stl.resize(L*L);
+        std::copy(A_ptr,A_ptr + L*L, A_stl.begin());
+        A_ptr = A_stl.data();
+    }
+    dense_lu::init<Scalar>();
     init_profiling();
 }
 
@@ -58,13 +70,13 @@ void DenseMatrixProduct<Scalar>::FactorOP()
     assert(readyShift and "Shift value sigma has not been set.");
 
     if constexpr(std::is_same_v<Scalar, double>) {
-        dense::lu_real_dense = Eigen::PartialPivLU<MatrixType<Scalar>>();
-        dense::lu_real_dense.value().compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L, L));
+        dense_lu::lu_real = Eigen::PartialPivLU<MatrixType<Scalar>>();
+        dense_lu::lu_real.value().compute(A_matrix - sigmaR * Eigen::MatrixXd::Identity(L, L));
     }
     if constexpr(std::is_same_v<Scalar, std::complex<double>>) {
         Scalar sigma = std::complex<double>(sigmaR, sigmaI);
-        dense::lu_cplx_dense = Eigen::PartialPivLU<MatrixType<Scalar>>();
-        dense::lu_cplx_dense.value().compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L, L));
+        dense_lu::lu_cplx = Eigen::PartialPivLU<MatrixType<Scalar>>();
+        dense_lu::lu_cplx.value().compute(A_matrix - sigma * Eigen::MatrixXd::Identity(L, L));
     }
 
     readyFactorOp = true;
@@ -82,18 +94,18 @@ void DenseMatrixProduct<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
             Eigen::Map<VectorType<Scalar>> x_in(x_in_ptr, L);
             Eigen::Map<VectorType<Scalar>> x_out(x_out_ptr, L);
             if constexpr(std::is_same_v<Scalar, double>)
-                x_out.noalias() = dense::lu_real_dense.value().solve(x_in);
+                x_out.noalias() = dense_lu::lu_real.value().solve(x_in);
             if constexpr(std::is_same_v<Scalar, std::complex<double>>)
-                x_out.noalias() = dense::lu_cplx_dense.value().solve(x_in);
+                x_out.noalias() = dense_lu::lu_cplx.value().solve(x_in);
             break;
         }
         case Side::L: {
             Eigen::Map<VectorTypeT<Scalar>> x_in(x_in_ptr, L);
             Eigen::Map<VectorTypeT<Scalar>> x_out(x_out_ptr, L);
             if constexpr(std::is_same_v<Scalar, double>)
-                x_out.noalias() = x_in * dense::lu_real_dense.value().inverse();
+                x_out.noalias() = x_in * dense_lu::lu_real.value().inverse();
             if constexpr(std::is_same_v<Scalar, std::complex<double>>)
-                x_out.noalias() = x_in * dense::lu_cplx_dense.value().inverse();
+                x_out.noalias() = x_in * dense_lu::lu_cplx.value().inverse();
             break;
         }
     }

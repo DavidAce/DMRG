@@ -18,11 +18,12 @@
 #error LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
 #endif
 
-
-// save diagnostic state
+#if defined(__clang__)
 #pragma clang diagnostic push
-// turn off the specific warning. Can also use "-Wall"
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
+#elif defined(__GNUC__) || defined(__GNUG__)
+#endif
+
 
 #if __has_include(<arpackpp/arcomp.h>)
     #include <arpackpp/arcomp.h>
@@ -39,8 +40,11 @@
 #error Could not include arpack headers correctly
 #endif
 
+#if defined(__clang__)
 // turn the warnings back on
 #pragma clang diagnostic pop
+#elif defined(__GNUC__) || defined(__GNUG__)
+#endif
 
 
 namespace tc = TypeCheck;

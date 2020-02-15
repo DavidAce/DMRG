@@ -3,14 +3,13 @@
 //
 
 #pragma once
-
-#include <Eigen/Core>
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <general/nmspc_tensor_omp.h>
 #include <complex>
 #include <vector>
 #include <list>
 
 namespace qm{
+    using Scalar = std::complex<double>;
     extern std::vector<Eigen::MatrixXcd> gen_manybody_spin(const Eigen::MatrixXcd &s, int sites);
     namespace spinOneHalf {
         extern Eigen::Matrix2cd sx;
@@ -47,7 +46,6 @@ namespace qm{
     }
 
     namespace mpo{
-        using Scalar = std::complex<double>;
         extern std::tuple<
                 Eigen::Tensor<Scalar,4>,
                 Eigen::Tensor<Scalar,3>,

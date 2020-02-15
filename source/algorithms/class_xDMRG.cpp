@@ -7,8 +7,14 @@
 #include <math/nmspc_random.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
+#include <tools/finite/mps.h>
+#include <tools/finite/mpo.h>
 #include <tools/finite/opt.h>
-#include <tools/nmspc_tools.h>
+#include <tools/finite/ops.h>
+#include <tools/finite/measure.h>
+#include <tools/finite/debug.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
 
 class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG, settings::xdmrg::num_sites) {
@@ -22,7 +28,7 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 void class_xDMRG::run_preprocessing() {
     log->info("Running {} preprocessing", sim_name);
     class_algorithm_finite::run_preprocessing();
-    tools::common::profile::t_pre.tic();
+    tools::common::profile::t_pre->tic();
     sim_status.energy_dens_target = settings::xdmrg::energy_density_target;
     sim_status.energy_dens_window = settings::xdmrg::energy_density_window;
     find_energy_range();
@@ -37,7 +43,7 @@ void class_xDMRG::run_preprocessing() {
     auto spin_components = tools::finite::measure::spin_components(*state);
     log->info("Initial spin components: {}", spin_components);
 
-    tools::common::profile::t_pre.toc();
+    tools::common::profile::t_pre->toc();
     log->info("Finished {} preprocessing", sim_name);
 }
 
@@ -94,7 +100,7 @@ void class_xDMRG::single_xDMRG_step()
 {
     using namespace tools::finite;
     using namespace tools::finite::opt;
-    tools::common::profile::t_sim.tic();
+    tools::common::profile::t_sim->tic();
 
     // Set the fastest mode by default
     opt::OptMode optMode    = opt::OptMode::VARIANCE;
@@ -253,9 +259,9 @@ void class_xDMRG::single_xDMRG_step()
 
 
 
-    tools::common::profile::t_sim.toc();
-    sim_status.wall_time = tools::common::profile::t_tot.get_age();
-    sim_status.simu_time = tools::common::profile::t_sim.get_measured_time();
+    tools::common::profile::t_sim->toc();
+    sim_status.wall_time = tools::common::profile::t_tot->get_age();
+    sim_status.simu_time = tools::common::profile::t_sim->get_measured_time();
 
 }
 
@@ -264,7 +270,7 @@ void class_xDMRG::single_xDMRG_step_old()
 {
     using namespace tools::finite;
     using namespace tools::finite::opt;
-    tools::common::profile::t_sim.tic();
+    tools::common::profile::t_sim->tic();
     log->trace("Starting single xDMRG step");
     // Set the fastest mode by default
     opt::OptMode optMode    = opt::OptMode::VARIANCE;
@@ -486,15 +492,15 @@ void class_xDMRG::single_xDMRG_step_old()
 
 
 
-    tools::common::profile::t_sim.toc();
-    sim_status.wall_time = tools::common::profile::t_tot.get_age();
-    sim_status.simu_time = tools::common::profile::t_sim.get_measured_time();
+    tools::common::profile::t_sim->toc();
+    sim_status.wall_time = tools::common::profile::t_tot->get_age();
+    sim_status.simu_time = tools::common::profile::t_sim->get_measured_time();
 
 }
 
 
 void class_xDMRG::check_convergence(){
-    tools::common::profile::t_con.tic();
+    tools::common::profile::t_con->tic();
     if(state->position_is_any_edge()){
         check_convergence_variance();
         check_convergence_entg_entropy();
@@ -576,7 +582,7 @@ void class_xDMRG::check_convergence(){
 
 
 
-    tools::common::profile::t_con.toc();
+    tools::common::profile::t_con->toc();
 }
 
 
