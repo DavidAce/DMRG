@@ -30,7 +30,7 @@ namespace sparse {
         lu_cplx_dense.reset();
     }
 
-};
+}
 
 template<typename Scalar, bool sparseLU>
 SparseMatrixProduct<Scalar, sparseLU>::~SparseMatrixProduct(){
