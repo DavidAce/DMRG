@@ -39,7 +39,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:st:v \
                 help\
                 arch:\
                 build-type:\
-                build-target:\
+                target:\
                 clear-cmake\
                 clear-libs:\
                 compiler:\
@@ -65,7 +65,7 @@ if [ $? -ne 0 ]; then exit 1 ; fi
 eval set -- "$PARSED_OPTIONS"
 
 build_type="Release"
-build_target="all"
+target="all"
 march="haswell"
 enable_shared="OFF"
 download_missing="OFF"
@@ -97,7 +97,7 @@ do
     -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
     -s|--enable-shared)             enable_shared="ON"              ; echo " * Link shared libraries    : ON"      ; shift   ;;
        --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
-    -t|--build-target)              build_target=$2                 ; echo " * Build target             : $2"      ; shift 2 ;;
+    -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
        --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
        --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
@@ -238,7 +238,7 @@ cat << EOF >&2
           -DGCC_TOOLCHAIN=$gcc_toolchain
            -G $generator
            ../../
-    cmake --build . --target $build_target --parallel $make_threads
+    cmake --build . --target $target --parallel $make_threads
 EOF
 
 if [ -z "$dry_run" ] ;then
@@ -266,7 +266,7 @@ if [ -z "$dry_run" ] ;then
             cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
-    cmake --build . --target $build_target --parallel $make_threads
+    cmake --build . --target $target --parallel $make_threads
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
             echo ""
@@ -279,8 +279,8 @@ if [ -z "$dry_run" ] ;then
 fi
 
 if [ "$enable_tests" = "ON" ] ;then
-    if [[ "$build_target" == *"test-"* ]]; then
-        ctest -C $build_type --verbose -R $build_target
+    if [[ "$target" == *"test-"* ]]; then
+        ctest -C $build_type --verbose -R $target
     else
        ctest -C $build_type --output-on-failure
     fi
