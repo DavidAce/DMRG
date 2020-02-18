@@ -75,7 +75,7 @@ namespace tools::finite::opt::internal{
         inline ceres::GradientProblemSolver::Options ceres_default_options;
 
         inline bool no_state_in_window = false;
-        inline double subspace_error_threshold = 1e-8;
+        inline double subspace_error_threshold = 1e-12;
 
         extern std::vector<int> generate_size_list(size_t shape);
 
