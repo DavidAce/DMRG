@@ -115,12 +115,12 @@ void class_xDMRG::single_xDMRG_step()
 //        optMode  = OptMode::VARIANCE;
 //        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
 //    }
-//    if(state->get_chi_lim() <= 12){
-//        optMode  = OptMode::VARIANCE;
-//        optSpace = OptSpace::SUBSPACE_ONLY;
-//    }
+    if(state->get_chi_lim() <= 12){
+        optMode  = OptMode::VARIANCE;
+        optSpace = OptSpace::SUBSPACE_ONLY;
+    }
 
-    if(state->get_chi_lim() < 12){
+    if(state->get_chi_lim() < 8){
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_ONLY;
     }
