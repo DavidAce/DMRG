@@ -49,8 +49,15 @@ std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_f
 std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string &output_filename) {
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
-         temp_path = settings::output::temp_dir/ fs::path(get_dirname());
+        temp_path = settings::output::temp_dir / fs::path(get_dirname());
+    else if (fs::exists("/dev/shm"))
+        temp_path = "/dev/shm" / fs::path(get_dirname());
+    else if (fs::exists("/scratch/local"))
+        temp_path = "/scratch/local" / fs::path(get_dirname());
     else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
+
+
+
 
     std::string::size_type pos = output_filename.find(temp_path.string());
     if (pos != std::string::npos){
@@ -119,6 +126,10 @@ void tools::common::io::h5tmp::remove_from_temp(const std::string output_filenam
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
         temp_path = settings::output::temp_dir / fs::path(get_dirname());
+    else if (fs::exists("/dev/shm"))
+        temp_path = "/dev/shm" / fs::path(get_dirname());
+    else if (fs::exists("/scratch/local"))
+        temp_path = "/scratch/local" / fs::path(get_dirname());
     else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
 
 

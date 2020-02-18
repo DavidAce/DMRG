@@ -347,16 +347,16 @@ const class_environment_var &class_state_finite::get_ENV2R(size_t pos) const {
 // For reduced energy MPO's
 
 bool class_state_finite::isReduced() const {
-    bool reduced = MPO_L.front()->isReduced();
+    bool reduced = MPO_L.front()->is_reduced();
     for(auto &mpo : MPO_L)
-        if(reduced != mpo->isReduced()) {
+        if(reduced != mpo->is_reduced()) {
             throw std::runtime_error(
-                fmt::format("First MPO has isReduce: {}, but MPO at pos {} has isReduce: {}", reduced, mpo->get_position(), mpo->isReduced()));
+                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
         }
     for(auto &mpo : MPO_R)
-        if(reduced != mpo->isReduced()) {
+        if(reduced != mpo->is_reduced()) {
             throw std::runtime_error(
-                fmt::format("First MPO has isReduce: {}, but MPO at pos {} has isReduce: {}", reduced, mpo->get_position(), mpo->isReduced()));
+                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
         }
     return reduced;
 }

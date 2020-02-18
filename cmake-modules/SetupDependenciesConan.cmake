@@ -27,7 +27,7 @@ include(cmake-modules/Fetch_arpack++.cmake)                     # C++ frontend f
 ### Install conan-modules/conanfile.txt dependencies          ###
 ### This uses conan to get spdlog,eigen3,h5pp,ceres-solver    ###
 ###    ceres-solver/2.0.0@davidace/development                ###
-###    h5pp/1.1.0@davidace/stable                             ###
+###    h5pp/1.5.1@davidace/stable                             ###
 ###    eigen/3.3.7@davidace/patched                           ###
 ##################################################################
 
