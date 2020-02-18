@@ -152,7 +152,7 @@ std::vector<std::pair<double,int>> get_best_candidates_in_window(const Eigen::Ve
         if(overlaps_in_window.empty()) break;
         double sq_sum_overlap = std::accumulate(candidates.begin(),candidates.end(), 0.0, lambda_sq_sum);
         tools::log->debug("Sq_sum_overlap:  {:.16f}",sq_sum_overlap);
-        if(sq_sum_overlap  > 0.999) break; // Half means cat state.
+        if(sq_sum_overlap  > 0.99999) break; // Half means cat state.
         else {
             candidates.emplace_back(overlaps_in_window.back());
             overlaps_in_window.pop_back();
@@ -571,7 +571,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 
 
 
-        tools::log->debug("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
+        tools::log->trace("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
         //    std::cout << summary.FullReport() << "\n";
 
         tools::common::profile::t_opt->toc();
@@ -601,10 +601,10 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
     // Finish up and print reports
     reports::print_report(opt_log);
 
-    //Sort thetas in ascending order
+    //Sort thetas in ascending order in variance
     std::sort(optimized_results.begin(), optimized_results.end(), [](auto &left, auto &right) {return left.first < right.first;});
     //Return the best theta
-    return optimized_results.back().second;
+    return optimized_results.front().second;
 
 
 
