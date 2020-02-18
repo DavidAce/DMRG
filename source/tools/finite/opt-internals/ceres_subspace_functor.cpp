@@ -21,7 +21,6 @@ tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_fun
 {
 
     energy_reduced  = state.get_energy_reduced();
-    double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
     num_parameters = eigvals.size();
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){num_parameters *= 2;}
 }
