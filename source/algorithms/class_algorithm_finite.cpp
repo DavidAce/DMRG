@@ -371,7 +371,7 @@ void class_algorithm_finite::try_chi_quench() {
     tools::log->info("Chi quench started");
     tools::finite::mps::truncate_all_sites(*state, chi_lim_quench_ahead);
     clear_saturation_status();
-    chi_quench_steps = (num_chi_quenches + 1) * state->get_length();
+    chi_quench_steps = 1 * state->get_length();
     num_chi_quenches++;
 }
 

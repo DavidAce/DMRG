@@ -152,7 +152,7 @@ std::vector<std::pair<double,int>> get_best_candidates_in_window(const Eigen::Ve
         if(overlaps_in_window.empty()) break;
         double sq_sum_overlap = std::accumulate(candidates.begin(),candidates.end(), 0.0, lambda_sq_sum);
         tools::log->debug("Sq_sum_overlap:  {:.16f}",sq_sum_overlap);
-        if(sq_sum_overlap  > 0.9) break; // Just a bit more than half, to catch near cat states. Half means cat state.
+        if(sq_sum_overlap  > 0.999) break; // Half means cat state.
         else {
             candidates.emplace_back(overlaps_in_window.back());
             overlaps_in_window.pop_back();

@@ -220,7 +220,7 @@ void class_xDMRG::single_xDMRG_step()
         results.insert({variance_new,{theta,state->active_sites}});
 
         // We can now decide if we are happy with the result or not.
-        if (std::log10(variance_new) < std::log10(variance_old) - 1e-2) {
+        if (variance_new < variance_old) {
             log->debug("State improved during {} optimization",optSpace);
             break;
         }else{
