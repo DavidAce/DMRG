@@ -237,7 +237,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
 //                return;
 //            }
             if(log->level() <= spdlog::level::info){
-                double truncation_threshold = 5 * settings::precision::svd_threshold;
+                double truncation_threshold = 2 * settings::precision::svd_threshold;
                 size_t trunc_bond_count  = state->num_sites_truncated(truncation_threshold);
                 size_t bond_at_lim_count = state->num_bonds_at_limit();
                 log->info("Truncation threshold : {:<.8e}", std::pow(truncation_threshold,2));
@@ -342,14 +342,14 @@ void class_algorithm_finite::try_chi_quench() {
         return;
     }
 
-    if(not sim_status.simulation_has_got_stuck) {
-        tools::log->trace("Chi quench skipped: simulation not stuck");
-        return;
-    }
-//    if(sim_status.simulation_has_stuck_for <= 1) {
-//        tools::log->info("Chi quench skipped: simulation not been stuck for long enough");
+//    if(not sim_status.simulation_has_got_stuck) {
+//        tools::log->trace("Chi quench skipped: simulation not stuck");
 //        return;
 //    }
+    if(sim_status.simulation_has_stuck_for <= 1) {
+        tools::log->info("Chi quench skipped: simulation not been stuck for long enough");
+        return;
+    }
     if(num_chi_quenches >= max_chi_quenches) {
         tools::log->trace("Chi quench skipped: max number of chi quenches ({}) have been made already", num_chi_quenches);
         return;
