@@ -102,10 +102,9 @@ source/math/class_svd_wrapper.h
 source/math/nmspc_eigutils.h
 source/math/nmspc_math.h
 source/math/nmspc_random.h
-source/model/class_hamiltonian_h5tables.h
 source/model/class_model_base.h
 source/model/class_model_factory.h
-source/model/class_model_parameter_type.h
+source/model/class_model_parameters.h
 source/model/class_selfdual_tf_rf_ising.h
 source/model/class_tf_ising.h
 source/simulation/class_simulation_status.h

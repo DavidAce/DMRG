@@ -44,14 +44,6 @@ void class_model_base::assertValidity() const {
     if(Textra::hasNaN(mpo_internal, "MPO")) throw std::runtime_error("MPO has NAN on position " + std::to_string(get_position()));
 }
 
-bool class_model_base::isReduced() const { return e_reduced != 0.0; }
-
-double class_model_base::get_reduced_energy() const { return e_reduced; }
-
-void class_model_base::set_reduced_energy(double site_energy) {
-    e_reduced    = site_energy;
-    mpo_internal = MPO_reduced_view();
-}
 
 void class_model_base::set_position(size_t position_) { position = position_; }
 
@@ -73,6 +65,18 @@ size_t class_model_base::get_position() const {
         throw std::runtime_error("Position of MPO has not been set");
     }
 }
+
+bool class_model_base::is_damped() const { return alpha != 0.0 or beta != 0.0; }
+
+bool class_model_base::is_reduced() const { return e_reduced != 0.0; }
+
+double class_model_base::get_reduced_energy() const { return e_reduced; }
+
+void class_model_base::set_reduced_energy(double site_energy) {
+    e_reduced    = site_energy;
+    mpo_internal = MPO_reduced_view();
+}
+
 
 void class_model_base::print_parameter_names() const {
     std::cout << std::setprecision(10);

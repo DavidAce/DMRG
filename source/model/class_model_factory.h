@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "class_hamiltonian_h5tables.h"
 #include "class_model_base.h"
 #include <iostream>
 #include <memory>

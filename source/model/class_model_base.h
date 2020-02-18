@@ -4,14 +4,18 @@
 
 #pragma once
 
-#include "class_model_parameter_type.h"
+#include "class_model_parameters.h"
 #include <any>
-#include <h5pp/h5pp.h>
 #include <io/nmspc_logger.h>
 #include <map>
 #include <memory>
 #include <simulation/enums.h>
 #include <unsupported/Eigen/CXX11/Tensor>
+
+
+namespace h5pp {
+    class File;
+}
 
 class class_model_base {
     public:
@@ -20,13 +24,19 @@ class class_model_base {
     using Parameters = std::vector<Parameter>;
 
     protected:
+    // Common parameters
+    double      alpha        = 0;             /*!< Damping factor [0,1] on couplings, std::pow(J_rnd + J_ptb,1-alpha)  */
+    double      beta         = 0;             /*!< Damping factor [0,1] on fields, std::pow(h_rnd + h_ptb,1-alpha)  */
+    double      e_reduced    = 0;             /*!< "Reduced" energy offset for this mpo (to make energy-reduced MPO views) */
+    double      psfactor     = 0;             /*!< Parity sector separation factor */
+    bool        parity_sep   = false;         /*!< Parity sector separation on/off */
+
+
     std::shared_ptr<spdlog::logger> log;
     Eigen::array<size_t, 4>         extent4;       /*!< Extent of pauli matrices in a rank-4 tensor */
     Eigen::array<size_t, 2>         extent2;       /*!< Extent of pauli matrices in a rank-2 tensor */
     std::optional<size_t>           position;      /*!< Position on a finite chain */
-    double                          e_reduced = 0; /*!< "Reduced" energy offset for this mpo (to make "reduced" MPO views) */
-    //    ParameterType<double> e_reduced = {"e_reduced",0.0}; /*!< "Reduced" energy offset for this mpo (to make "reduced" MPO views) */
-    Eigen::Tensor<Scalar, 4>      mpo_internal;
+    Eigen::Tensor<Scalar, 4>        mpo_internal;
     [[nodiscard]] std::any &      find_val(Parameters &parameters, std::string_view key) const;
     [[nodiscard]] const std::any &find_val(const Parameters &parameters, std::string_view key) const;
     template<typename T>
@@ -39,7 +49,6 @@ class class_model_base {
     }
 
     public:
-    h5pp::hid::h5t H5ParameterType;
 
     bool all_mpo_parameters_have_been_set = false;
 
@@ -47,17 +56,17 @@ class class_model_base {
     const Eigen::Tensor<Scalar, 4> &MPO() const;
     bool                            isReal() const;
     bool                            hasNaN() const;
-    bool                            isReduced() const;
     void                            assertValidity() const;
     void                            set_position(size_t new_pos);
     size_t                          get_position() const;
-    void                            set_reduced_energy(double site_energy);
-    double                          get_reduced_energy() const;
     std::vector<std::string>        get_parameter_names() const;
     std::vector<std::any>           get_parameter_values() const;
+    void                            set_reduced_energy(double site_energy);
+    bool                            is_damped() const;
+    bool                            is_reduced() const;
+    double                          get_reduced_energy() const;
     void                            print_parameter_names() const;
     void                            print_parameter_values() const;
-
     virtual std::unique_ptr<class_model_base> clone() const                                                                             = 0;
     virtual Eigen::Tensor<Scalar, 4>          MPO_reduced_view() const                                                                  = 0;
     virtual Eigen::Tensor<Scalar, 4>          MPO_reduced_view(double single_site_energy) const                                         = 0;
@@ -66,17 +75,18 @@ class class_model_base {
     virtual size_t                            get_spin_dimension() const                                                                = 0;
     virtual Parameters                        get_parameters() const                                                                    = 0;
     virtual void                              set_parameters(const Parameters &parameters)                                              = 0;
-    virtual void                              register_h5_parameters()                                                                  = 0;
     virtual void                              set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode)              = 0;
     virtual void                              set_coupling_damping(double alpha)                                                        = 0;
     virtual void                              set_field_damping(double beta)                                                            = 0;
     virtual void                              build_mpo()                                                                               = 0;
     virtual void                              randomize_hamiltonian()                                                                   = 0;
     virtual bool                              is_perturbed() const                                                                      = 0;
-    virtual bool                              is_damped() const                                                                         = 0;
     virtual void                              set_full_lattice_parameters(std::vector<Parameters> all_parameters, bool reverse = false) = 0;
     virtual Eigen::MatrixXcd single_site_hamiltonian(int position, int sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd> &SY,
                                                      std::vector<Eigen::MatrixXcd> &SZ) const                                           = 0;
 
     virtual ~class_model_base() = default;
+    virtual void  write_parameters (h5pp::File & file, std::string_view table_name ) const = 0;
+    virtual void  read_parameters (h5pp::File & file, std::string_view table_name, size_t position ) = 0;
+
 };

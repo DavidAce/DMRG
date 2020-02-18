@@ -11,26 +11,26 @@ location    = "input"
 os.makedirs(location, exist_ok=True)
 
 
-# sites        = np.array([20]) #np.linspace(16,36,6, dtype=int)
-sites        = np.linspace(16,36,6, dtype=int)
+sites        = np.array([16,20]) #np.linspace(16,36,6, dtype=int)
+# sites        = np.linspace(16,36,6, dtype=int)
 lambdas      = [0] # np.linspace(0,0.2,3)
 deltas       = [0] # np.linspace(-1.0,1.0,5)
-J_log_mean   = np.array([1])
-h_log_mean   = J_log_mean - deltas
+J_mean   = np.array([1])
+h_mean   = J_mean - deltas
 # h_log_mean   = np.flipud(np.arange(-1, 1.5, 0.5)+1)
 num_total = 0
 settings = []
 input_filenames = []
-print("Generating", len(sites) * len(lambdas) * len(J_log_mean) * len(h_log_mean) , "input files")
+print("Generating", len(sites) * len(lambdas) * len(J_mean) * len(h_mean) , "input files")
 for num_L in sites:
     for num_l in range(len(lambdas)):
-        for num_j in range(len(J_log_mean)):
-            for num_h in range(len(h_log_mean)):
+        for num_j in range(len(J_mean)):
+            for num_h in range(len(h_mean)):
                 os.makedirs(location, exist_ok=True)
                 input_filename = location + '/' + basename + '_L'+ str(num_L) + '_l' + str(num_l) + '_J'+ str(num_j) + '_h'+ str(num_h) + '.cfg'
                 settings = {
-                    "model::selfdual_tf_rf_ising::J_log_mean"     : "{:.2f}".format(J_log_mean[num_j]),
-                    "model::selfdual_tf_rf_ising::h_log_mean"     : "{:.2f}".format(h_log_mean[num_h]),
+                    "model::selfdual_tf_rf_ising::J_mean"         : "{:.2f}".format(J_mean[num_j]),
+                    "model::selfdual_tf_rf_ising::h_mean"         : "{:.2f}".format(h_mean[num_h]),
                     "model::selfdual_tf_rf_ising::lambda"         : "{:.2f}".format(lambdas[num_l]),
                     "model::selfdual_tf_rf_ising::J_sigma"        : "1.0",
                     "model::selfdual_tf_rf_ising::h_sigma"        : "1.0",

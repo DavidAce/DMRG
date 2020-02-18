@@ -19,7 +19,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(
     tools::log->trace("Constructing direct functor");
 
     #ifdef _OPENMP
-        tools::log->info("Parallelizing with {} threads", omp.num_threads);
+        tools::log->trace("Parallelizing with {} threads", omp.num_threads);
     #endif
     tools::log->trace("Generating multi components");
     energy_reduced  = state.get_energy_reduced();

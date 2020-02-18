@@ -51,7 +51,6 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,Eigen::VectorXd,double> filter_state
     double epsilon           = std::numeric_limits<double>::epsilon();
     double subspace_error    = 1.0 - overlaps.cwiseAbs2().sum();
     maximum_subspace_error   = epsilon + std::min(subspace_error, maximum_subspace_error); //Make sure you don't actually increase the allowed subspace error
-    tools::log->debug("Filtering states keeping between {} to {}, max subspace error (log10) = {}", min_accept,max_accept, std::log10(maximum_subspace_error));
 
 
     while(true){
@@ -79,8 +78,8 @@ std::tuple<Eigen::MatrixXcd,Eigen::VectorXd,Eigen::VectorXd,double> filter_state
         overlaps_filtered   (col_num) = overlaps(idx);
         col_num++;
     }
-    tools::log->debug("Filtered from {} down to {} states", eigvals.size(), eigvals_filtered.size());
-    tools::log->debug("Subspace error after filter log10(1-eps) = {}", std::log10(epsilon + subspace_error));
+    tools::log->trace("Filtered from {} down to {} states", eigvals.size(), eigvals_filtered.size());
+    tools::log->trace("Subspace error after filter log10(1-eps) = {}", std::log10(epsilon + subspace_error));
     return std::make_tuple(eigvecs_filtered, eigvals_filtered,overlaps_filtered, subspace_error);
 }
 
@@ -98,7 +97,7 @@ get_best_variance_in_window(const class_state_finite &state, const Eigen::Matrix
     }
 
     if (variances.minCoeff() == std::numeric_limits<double>::infinity()) {
-        tools::log->debug("No eigenstates in with good variance in given energy window {} to {}.", lbound,ubound);
+        tools::log->debug("No eigenstates with good variance in given energy window {} to {}.", lbound,ubound);
         tools::log->debug("Subspace energy range is {} to {}.", energies_per_site.minCoeff(), energies_per_site.maxCoeff());
         return std::make_pair(std::numeric_limits<double>::quiet_NaN(), -1);
     }
@@ -392,7 +391,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             auto   best_overlap_theta              = Textra::MatrixTensorMap(eigvecs.col(best_overlap_idx), state.active_dimensions());
             double best_overlap_energy             = eigvals_per_site_unreduced(best_overlap_idx);
             double best_overlap_variance           = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
-            tools::log->info("Candidate {:<2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",
+            tools::log->trace("Candidate {:<2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",
                     best_overlap_idx ,overlaps(best_overlap_idx) ,best_overlap_energy  ,std::log10(best_overlap_variance) );
             return best_overlap_theta;
         }

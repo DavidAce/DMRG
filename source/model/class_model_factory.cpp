@@ -3,8 +3,8 @@
 //
 
 #include "class_model_factory.h"
-#include "class_hamiltonian_h5tables.h"
 #include "class_model_base.h"
+#include "class_model_parameters.h"
 #include "class_selfdual_tf_rf_ising.h"
 #include "class_tf_ising.h"
 #include <math/nmspc_math.h>

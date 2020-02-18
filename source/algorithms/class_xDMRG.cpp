@@ -98,6 +98,8 @@ void class_xDMRG::run_simulation()    {
 
 void class_xDMRG::single_xDMRG_step()
 {
+    log->debug("Starting xDMRG step {} | iteration {} | position {} | direction {}", sim_status.step, sim_status.iteration,state->get_position(), state->get_direction());
+
     using namespace tools::finite;
     using namespace tools::finite::opt;
     tools::common::profile::t_sim->tic();
@@ -135,7 +137,7 @@ void class_xDMRG::single_xDMRG_step()
 //    }
 
     if(chi_quench_steps > 0){
-        optMode  = OptMode::OVERLAP;
+        optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_ONLY;
 //        optMode  = OptMode::VARIANCE;
 //        optSpace = OptSpace::DIRECT;
@@ -191,7 +193,6 @@ void class_xDMRG::single_xDMRG_step()
         auto old_num_sites = state->active_sites.size();
         auto old_prob_size = state->active_problem_size();
         state->activate_sites(threshold, max_num_sites);
-        log->info("Starting xDMRG step {} | iteration {} | position {} | direction {} | mode {} | space {} | quench {} | size {} | sites {}", sim_status.step, sim_status.iteration,state->get_position(), state->get_direction(),optMode,optSpace,chi_quench_steps,state->active_problem_size(),state->active_sites);
 
 //        if(chi_quench_steps == 0) state->activate_sites(threshold, max_num_sites);
 //        else state->activate_truncated_sites(threshold,chi_lim_quench_ahead, max_num_sites);
@@ -205,6 +206,12 @@ void class_xDMRG::single_xDMRG_step()
             // If we reached this point we have exhausted the number of sites available
             log->debug("Can't activate more sites");
             break;
+        }
+
+        // If the problem is small enough we can use a safer OVERLAP step
+        if(state->active_problem_size() <= settings::precision::max_size_part_diag){
+            optMode  = OptMode::VARIANCE;
+            optSpace = OptSpace::SUBSPACE_ONLY;
         }
 
 
@@ -240,9 +247,9 @@ void class_xDMRG::single_xDMRG_step()
     if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     //Do the truncation with SVD
-    log->debug("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
+    log->trace("Variance check before truncate  : {:.16f}", std::log10(measure::energy_variance_per_site(*state,theta)));
     opt::truncate_theta(theta, *state,chi_lim);
-    log->debug("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
+    log->trace("Variance check after truncate   : {:.16f}", std::log10(measure::energy_variance_per_site(*state)));
 
     //Normalize if unity was lost for some reason (numerical error buildup)
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){
@@ -360,7 +367,7 @@ void class_xDMRG::single_xDMRG_step_old()
     max_num_sites_list.remove_if([](auto &elem){return elem > settings::precision::max_sites_multidmrg;});
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
-    log->debug("Possible multisite step sizes: {}", max_num_sites_list);
+    log->trace("Possible multisite step sizes: {}", max_num_sites_list);
 
     for (auto & max_num_sites : max_num_sites_list){
         auto old_num_sites = state->active_sites.size();
@@ -370,7 +377,7 @@ void class_xDMRG::single_xDMRG_step_old()
 
         if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT){
             // Decision to do overlap got switched because 2site is bigger than OVERLAP can handle
-            log->debug("Problem too big for OVERLAP. Moving to next site");
+            log->info("Problem too big for OVERLAP. Moving to next site");
             theta = state->get_multitheta();
             break;
         }
@@ -562,14 +569,14 @@ void class_xDMRG::check_convergence(){
 
     sim_status.simulation_has_to_stop = sim_status.simulation_has_stuck_for >= max_stuck_iters;
 
-
-    log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);
-    log->debug("Simulation has saturated: {}", sim_status.simulation_has_saturated);
-    log->debug("Simulation has succeeded: {}", sim_status.simulation_has_succeeded);
-    log->debug("Simulation has got stuck: {}", sim_status.simulation_has_got_stuck);
-    log->debug("Simulation has stuck for: {}", sim_status.simulation_has_stuck_for);
-    log->debug("Simulation has to stop  : {}", sim_status.simulation_has_to_stop);
-
+    if(state->position_is_any_edge()) {
+        log->debug("Simulation has converged: {}", sim_status.simulation_has_converged);
+        log->debug("Simulation has saturated: {}", sim_status.simulation_has_saturated);
+        log->debug("Simulation has succeeded: {}", sim_status.simulation_has_succeeded);
+        log->debug("Simulation has got stuck: {}", sim_status.simulation_has_got_stuck);
+        log->debug("Simulation has stuck for: {}", sim_status.simulation_has_stuck_for);
+        log->debug("Simulation has to stop  : {}", sim_status.simulation_has_to_stop);
+    }
 
 
 //    if (    sim_status.num_resets < settings::precision::max_resets

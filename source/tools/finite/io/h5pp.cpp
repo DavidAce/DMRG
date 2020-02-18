@@ -108,6 +108,12 @@ void tools::finite::io::h5dset::write_model(const class_state_finite &state, h5p
     // Write down the Hamiltonian model type and site info as attributes
     if(settings::output::storage_level == StorageLevel::NONE) return;
     h5ppFile.writeDataset(settings::model::model_type, prefix_path + "/model/model_type");
+    std::string table_name = prefix_path + "/model/Hamiltonian";
+    for(auto site = 0ul; site < state.get_length(); site++)
+        state.get_MPO(site).write_parameters(h5ppFile,table_name);
+
+
+
     for(auto site = 0ul; site < state.get_length(); site++) {
         // Write MPO properties as attributes
         std::string dataset_name = prefix_path + "/model/hamiltonian_" + std::to_string(site);
