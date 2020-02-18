@@ -143,18 +143,22 @@ std::vector<std::pair<double,int>> get_best_candidates_in_window(const Eigen::Ve
     std::sort(overlaps_in_window.begin(),overlaps_in_window.end()); // Sort in ascending order of overlap
     std::vector<std::pair<double,int>> candidates;
 
+    // We have a list of states in the energy window. We collect "candidates"
+    // from this list until the squared sum of their overlaps goes above a certain threshold.
+    // Note that the squared sum overlap = 1 if the states in the list form a complete basis for the current state.
+    tools::log->debug("Collecting initial guesses");
     auto lambda_sq_sum = [&](double acc, std::pair<double,int> & p){return acc + p.first * p.first; };
     while(true){
         if(overlaps_in_window.empty()) break;
         double sq_sum_overlap = std::accumulate(candidates.begin(),candidates.end(), 0.0, lambda_sq_sum);
-        tools::log->debug("Sq_sum_overlap:  {}",sq_sum_overlap);
-        if(sq_sum_overlap  > 0.55) break; // Just a bit more than half, to catch near cat states. Half means cat state.
+        tools::log->debug("Sq_sum_overlap:  {:.16f}",sq_sum_overlap);
+        if(sq_sum_overlap  > 0.9) break; // Just a bit more than half, to catch near cat states. Half means cat state.
         else {
             candidates.emplace_back(overlaps_in_window.back());
             overlaps_in_window.pop_back();
         }
     }
-    tools::log->debug("Found {} candidates.",candidates.size());
+    tools::log->debug("Found {} candidates with good overlap in energy window",candidates.size());
     return candidates;
 
 }
@@ -325,9 +329,10 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 
 
     double theta_old_variance    = tools::finite::measure::energy_variance_per_site(state);
-    subspace_error_threshold     = settings::precision::subspace_error_factor * theta_old_variance;
-    subspace_error_threshold     = std::min(subspace_error_threshold, settings::precision::max_subspace_error);
-    subspace_error_threshold     = std::max(subspace_error_threshold, settings::precision::min_subspace_error);
+//    subspace_error_threshold     = settings::precision::subspace_error_factor * theta_old_variance;
+//    subspace_error_threshold     = std::min(subspace_error_threshold, settings::precision::max_subspace_error);
+//    subspace_error_threshold     = std::max(subspace_error_threshold, settings::precision::min_subspace_error);
+    subspace_error_threshold     = settings::precision::min_subspace_error;
 
 
     auto & theta_old               = state.get_multitheta();
@@ -408,8 +413,9 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 
 
 
-
-    std::vector<Eigen::Tensor<Scalar,3>> initial_guess_thetas;// = {theta_old};
+    // We should try different initial guesses when doing subspace optimization
+    // All the candidates with significant overlap should be considered, including the current theta
+    std::vector<Eigen::Tensor<Scalar,3>> initial_guess_thetas = {theta_old};
     for(auto &candidate : list_of_candidates){
         auto   candidate_theta              = Textra::MatrixTensorMap(eigvecs.col(candidate.second), state.active_dimensions());
         double candidate_energy             = eigvals_per_site_unreduced(candidate.second);
@@ -433,7 +439,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         opt_log.emplace_back("Current state", theta_old.size(), energy_old, std::log10(variance_old), 1.0 , theta_old_vec.norm(), 0, 0, tools::common::profile::t_opt->get_last_time_interval());
     }
 
-    tools::log->debug("Optimizing");
+    tools::log->debug("Optimizing mode {} space {} using subspace size {} with {} initial guesses", optMode, optSpace, eigvecs.cols(), initial_guess_thetas.size() );
     tools::common::profile::t_opt->tic();
     Eigen::MatrixXcd H2_subspace = tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(state, eigvecs);
     if(optType == OptType::REAL) H2_subspace = H2_subspace.real();
@@ -451,14 +457,12 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         double energy_new,variance_new;
         [[maybe_unused]] double norm;
         // Note that alpha_i = <theta_initial | theta_new_i> is not supposed to be squared!
-//        Eigen::VectorXcd theta_start      = (theta_initial_map.adjoint() * eigvecs).normalized()  ;
         Eigen::VectorXcd theta_start      = (eigvecs.adjoint() * theta_initial_map).normalized()  ;
 
 
-        if (tools::log->level() <= spdlog::level::debug){
+        if (tools::log->level() <= spdlog::level::trace){
             // Initial sanity check
             tools::common::profile::t_opt->tic();
-//            Eigen::VectorXcd theta_0 = (eigvecs * theta_start.conjugate().asDiagonal() ).rowwise().sum().normalized();
             Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal() ).rowwise().sum().normalized();
             auto theta_0_tensor      = Textra::MatrixTensorMap(theta_0,state.active_dimensions());
             double energy_0          = tools::finite::measure::energy_per_site(state,theta_0_tensor);
@@ -526,9 +530,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
                 energy_new   = functor->get_energy();
                 variance_new = functor->get_variance();
                 theta_start  = Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<Scalar*> (theta_start_cast.data()), theta_start_cast.size()/2).normalized();
-//                theta_new    = (eigvecs * theta_start.conjugate().asDiagonal()).rowwise().sum().normalized();
                 theta_new    = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
-//            delete functor;
                 break;
             }
             case OptType::REAL:{
@@ -545,7 +547,6 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
                 variance_new = functor->get_variance();
                 theta_start  = theta_start_cast.normalized().cast<Scalar>();
                 theta_new    = (eigvecs.real() * theta_start.real().asDiagonal()).rowwise().sum().normalized();
-//            delete functor;
                 break;
             }
         }
@@ -553,7 +554,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 
 
 
-        if (tools::log->level() <= spdlog::level::debug){
+        if (tools::log->level() <= spdlog::level::trace){
             // Print results of Ceres LBFGS
             overlap_new = (theta_old_vec.adjoint() * theta_new).cwiseAbs().sum();
             opt_log.emplace_back("Ceres L-BFGS", theta_old.size(), energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), iter, counter, tools::common::profile::t_opt->get_last_time_interval());
@@ -601,10 +602,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
     reports::print_report(opt_log);
 
     //Sort thetas in ascending order
-//    std::sort(optimized_results.begin(),optimized_results.end());
-    std::sort(optimized_results.begin(), optimized_results.end(), [](auto &left, auto &right) {
-        return left.first < right.first;
-    });
+    std::sort(optimized_results.begin(), optimized_results.end(), [](auto &left, auto &right) {return left.first < right.first;});
     //Return the best theta
     return optimized_results.back().second;
 

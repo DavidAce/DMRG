@@ -209,10 +209,10 @@ void class_xDMRG::single_xDMRG_step()
         }
 
         // If the problem is small enough we can use a safer OVERLAP step
-        if(state->active_problem_size() <= settings::precision::max_size_part_diag){
-            optMode  = OptMode::VARIANCE;
-            optSpace = OptSpace::SUBSPACE_ONLY;
-        }
+//        if(state->active_problem_size() <= settings::precision::max_size_part_diag){
+//            optMode  = OptMode::VARIANCE;
+//            optSpace = OptSpace::SUBSPACE_ONLY;
+//        }
 
 
         auto theta          = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
