@@ -67,7 +67,7 @@ class_SVD::do_svd(const Scalar * mat_ptr, long rows, long cols, std::optional<lo
     if(rank == SVD.singularValues().size()){
         truncation_error = 0;
     }else{
-        truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).squaredNorm();
+        truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).norm();
     }
 
     if (SVD.rank() <= 0

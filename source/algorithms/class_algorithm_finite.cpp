@@ -189,6 +189,22 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
     }
 }
 
+
+void class_algorithm_finite::update_truncation_limit(){
+    if(not state->position_is_any_edge()) return;
+    //Will update SVD threshold iff the energy variance is being limited by truncation error
+    size_t bond_at_lim_count = state->num_bonds_at_limit();
+    if(bond_at_lim_count > 0) return;  // Return because we should rather increase bond dimension than lower the svd threshold
+    tools::log->info("Truncated variances: {}",state->get_truncated_variances());
+//
+//    double truncation_threshold = settings::precision::svd_threshold;
+//    size_t trunc_bond_count  = state->num_sites_truncated(truncation_threshold);
+//    if(trunc_bond_count > 0) settings::precision::svd_threshold *= 0.5;
+//    tools::log->info("Lowered SVD threshold to {}",settings::precision::svd_threshold);
+
+}
+
+
 void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
     if(tmp_bond_limit.has_value()) {
         state->set_chi_lim(tmp_bond_limit.value());
@@ -208,7 +224,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
         sim_status.chi_lim = chi_init();
         return;
     }
-
+    if(not state->position_is_any_edge()) return;
     sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() >= chi_max();
     if(not sim_status.chi_lim_has_reached_chi_max) {
         if(chi_grow()) {
@@ -219,7 +235,6 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
             // * No experiments are on-going like perturbation or damping
             // * the simulation is stuck
             // * the state is limited by bond dimension
-            if(not state->position_is_any_edge()) return;
             if(state->is_damped()) {
                 log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");
                 return;
@@ -240,7 +255,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
                 double truncation_threshold = 2 * settings::precision::svd_threshold;
                 size_t trunc_bond_count  = state->num_sites_truncated(truncation_threshold);
                 size_t bond_at_lim_count = state->num_bonds_at_limit();
-                log->info("Truncation threshold : {:<.8e}", std::pow(truncation_threshold,2));
+                log->info("Truncation threshold  : {:<.8e}", truncation_threshold);
                 log->info("Truncation errors     : {}", state->get_truncation_errors());
                 log->info("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*state));
                 log->info("Truncated bond count  : {} ", trunc_bond_count);
@@ -304,6 +319,9 @@ void class_algorithm_finite::reset_to_random_state(const std::string &parity_sec
     clear_saturation_status();
     state->lowest_recorded_variance = 1;
     sim_status.iteration            = state->reset_sweeps();
+    auto spin_components = tools::finite::measure::spin_components(*state);
+    log->info("Successfully reset to product state with global spin components: {}", spin_components);
+
 }
 
 void class_algorithm_finite::try_projection() {
@@ -333,8 +351,9 @@ void class_algorithm_finite::try_projection() {
 }
 
 void class_algorithm_finite::try_chi_quench() {
-    if(tools::finite::measure::energy_variance(*state) < 1e-12) return;
+    if(tools::finite::measure::energy_variance(*state) < 10 * settings::precision::variance_convergence_threshold) return;
     if(not settings::model::chi_quench_when_stuck) return;
+    if(chi_quench_steps > 0) clear_saturation_status();
     if(not state->position_is_any_edge()) return;
     if(chi_quench_steps >= state->get_length()){
         tools::log->info("Chi quench continues -- {} steps left", chi_quench_steps);
@@ -370,8 +389,9 @@ void class_algorithm_finite::try_chi_quench() {
 
     tools::log->info("Chi quench started");
     tools::finite::mps::truncate_all_sites(*state, chi_lim_quench_ahead);
+    log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
     clear_saturation_status();
-    chi_quench_steps = 1 * state->get_length();
+    chi_quench_steps = 2 * state->get_length();
     num_chi_quenches++;
 }
 

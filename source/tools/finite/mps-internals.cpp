@@ -12,6 +12,7 @@
 #include <tools/common/log.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
+#include <tools/finite/measure.h>
 
 using Scalar = tools::finite::mps::Scalar;
 int get_sign(const std::string & parity_sector){
@@ -38,6 +39,10 @@ int get_elem(const std::string & parity_sector){
     throw std::runtime_error("Invalid sign in get_elem.");
 }
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 
 Eigen::Vector2cd get_eigvec(const std::string & parity, const int sign){
 
@@ -51,6 +56,7 @@ Eigen::Vector2cd get_eigvec(const std::string & parity, const int sign){
 }
 
 void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bitset(class_state_finite & state, const std::string &parity_sector, const long state_number){
+    tools::log->trace("Setting product state from bitset of number {} in sector {}", state_number,parity_sector);
     if (state_number < 0){
         throw std::runtime_error(fmt::format("Can't set sector from bitset with negative state number: {}", state_number));
     }
@@ -104,34 +110,33 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
 
 
 void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(class_state_finite & state, const std::string &parity_sector){
+    tools::log->debug("Setting product state randomly in parity sector {}", parity_sector);
 
     Eigen::Tensor<Scalar,1> L (1);
     std::string axis = get_axis(parity_sector);
     int sector       = get_sign(parity_sector);
-    int carry_sign = 1;
-    int last_sign  = 1;
+    int sign  = 1;
 
     L.setConstant(1.0);
     for (auto &mpsL : state.MPS_L ){
-        int sign = 2* rn::uniform_integer_01() - 1;
-        carry_sign *= sign;
+        sign = 2* rn::uniform_integer_01() - 1;
         mpsL.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
     }
     state.MPS_L.back().set_LC(L);
     for (auto &mpsR : state.MPS_R ){
-        int sign = 2* rn::uniform_integer_01() - 1;
-        carry_sign *= sign;
-        last_sign = sign;
+        sign = 2* rn::uniform_integer_01() - 1;
         mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
     }
+    state.clear_measurements();
+    auto spin_component   = tools::finite::measure::spin_component(state,axis);
+    if(axis == "x" and spin_component * sector < 0 ){
+        state.MPS_R.back().set_mps(Textra::MatrixTensorMap(get_eigvec(axis,-sign).normalized(), 2, 1, 1), L);
+        state.clear_measurements();
+        spin_component   = tools::finite::measure::spin_component(state,axis);
+    }
+    log->info("Done reset to product state with global spin component {} = {}",axis, spin_component);
+    if (spin_component * sector < 0) throw std::logic_error("Could not initialize in the correct parity sector");
 
-    if(sector * carry_sign == -1){
-        //Flip the last spin to get the correct total sign.
-        auto &mpsR = state.MPS_R.back();
-        int sign = -last_sign;
-        sign *= -1;
-        mpsR.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
-    }
 }
 
 

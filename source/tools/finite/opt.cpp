@@ -58,7 +58,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
 
     if(sim_status.simulation_has_got_stuck or optSpace == OptSpace::SUBSPACE_ONLY or optSpace == OptSpace::SUBSPACE_AND_DIRECT){
         ceres_default_options.function_tolerance = 1e-5; //Operations are cheap in subspace, so you can afford low tolerance
-        ceres_default_options.max_num_iterations = 500;
+        ceres_default_options.max_num_iterations = 2000;
         ceres_default_options.gradient_tolerance = 1e-6;
         ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
     }

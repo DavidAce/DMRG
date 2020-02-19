@@ -2,12 +2,12 @@
 // Created by david on 2018-11-16.
 //
 
-
-#include <Eigen/Core>
-#include <Eigen/Sparse>
-#include <Eigen/LU>
-#include <memory>
 #include "matrix_product_stl.h"
+#include <Eigen/Core>
+#include <Eigen/LU>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <memory>
 
 // Function definitions
 template <typename Scalar>
@@ -29,8 +29,9 @@ namespace stl_lu{
     }
     template<typename Scalar>
     void init(){
-        if constexpr (std::is_same_v<Scalar,double>)
-            stl_lu::lu_real = Eigen::PartialPivLU<MatrixType<Scalar>>();
+        if constexpr (std::is_same_v<Scalar,double>){
+            stl_lu::lu_real   = Eigen::PartialPivLU<MatrixType<Scalar>>();
+        }
         if constexpr (std::is_same_v<Scalar,std::complex<double>>)
             stl_lu::lu_cplx = Eigen::PartialPivLU<MatrixType<Scalar>>();
     }
@@ -153,7 +154,7 @@ void StlMatrixProduct<Scalar>::MultAx(Scalar* x_in, Scalar* x_out) {
         case Form::SYMMETRIC: {
             Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
             Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
-            x_vec_out.noalias() = A_matrix.template selfadjointView<Eigen::Upper>() * x_vec_in;
+            x_vec_out.noalias() = A_matrix.template selfadjointView<Eigen::Lower>() * x_vec_in;
             break;
         }
     }

@@ -52,6 +52,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void         try_perturbation();
     void         try_damping();
     void         move_center_point(std::optional<size_t> num_moves = std::nullopt);
+    void         update_truncation_limit() final;
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         run() final;
     void         clear_saturation_status() override;

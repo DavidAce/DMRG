@@ -71,7 +71,7 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::opt
     if(rank == S.size()){
         truncation_error = 0;
     }else{
-        truncation_error = S.tail(S.size()-rank).squaredNorm();
+        truncation_error = S.tail(S.size()-rank).norm();
     }
 
     if (rank <= 0

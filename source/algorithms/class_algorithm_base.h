@@ -67,6 +67,7 @@ public:
     virtual void   reset_to_random_state(const std::string & parity = "random")                               = 0;
     virtual void   reset_to_initial_state()                                                                   = 0;
     virtual void   clear_saturation_status()                                                                  = 0;
+    virtual void update_truncation_limit()                                                                    = 0;
     virtual void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                 = 0;
 
     //common functions
