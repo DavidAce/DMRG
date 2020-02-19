@@ -32,6 +32,7 @@ public:
     void swap();
     void run()                                                                                  override;
 //    void compute_observables()                                                                  final;
+    void update_truncation_limit()                                                              final;
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
     void reset_to_random_state(const std::string & parity_sector = "random")                    final;
     void reset_to_initial_state()                                                               final;

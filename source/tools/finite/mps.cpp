@@ -56,7 +56,7 @@ void tools::finite::mps::randomize(class_state_finite &state, const std::string 
  * Note: we "use" the seed_state only once. Subsequent calls do not keep resetting the seed.
 */
 {
-    tools::log->trace("Randomizing mps");
+    tools::log->debug("Randomizing mps into sector {}",parity_sector);
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_have_been_updated(false);
@@ -65,6 +65,7 @@ void tools::finite::mps::randomize(class_state_finite &state, const std::string 
          internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, state_number);
     else internals::set_product_state_randomly(state, parity_sector, use_pauli_eigenstates);
     tools::finite::mps::rebuild_environments(state);
+
 }
 
 

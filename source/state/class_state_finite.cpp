@@ -37,6 +37,7 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
 
     this->active_sites     = other.active_sites;
     this->truncation_error = other.truncation_error;
+    this->truncated_variance = other.truncated_variance;
     this->measurements     = other.measurements;
     this->site_update_tags = other.site_update_tags;
     this->cache            = other.cache;
@@ -524,12 +525,39 @@ double class_state_finite::get_truncation_error(size_t left_site) const {
 double class_state_finite::get_truncation_error() const { return get_truncation_error(get_position()); }
 
 const std::vector<double> &class_state_finite::get_truncation_errors() const { return truncation_error; }
-//0.5*settings::precision::svd_threshold
+
+void class_state_finite::set_truncated_variance(size_t left_site, double error)
+{
+/*! The truncated variance vector has length + 1 elements, as many as there are bond matrices.
+*  Obviously, the edge matrices are always 1, so we expect these to have truncated variance = 0.
+*  Any schmidt decomposition involves two neighboriing sites, so "left_site" is the site number of the
+*  site on the left of the decomposition.
+*/
+        if(truncated_variance.empty()) {
+            tools::log->debug("Resizing truncated_variance container to size: {}", get_length() + 1);
+            truncated_variance = std::vector<double>(get_length() + 1, 0.0);
+        }
+        truncated_variance[left_site + 1] = error;
+}
+void class_state_finite::set_truncated_variance(double error){
+    set_truncated_variance(get_position(), error);
+}
+
+double class_state_finite::get_truncated_variance(size_t left_site) const{
+    if(truncated_variance.empty() or truncated_variance.size() < get_length() + 1) {
+        tools::log->warn("Truncated variance container hasn't been initialized! You called this function prematurely");
+        return std::numeric_limits<double>::infinity();
+    }
+    return truncated_variance[left_site + 1];
+}
+double class_state_finite::get_truncated_variance() const { return get_truncated_variance(get_position()); }
+const std::vector<double> &class_state_finite::get_truncated_variances() const{return truncated_variance;}
+
+
 size_t class_state_finite::num_sites_truncated(double threshold) const {
     auto truncation_errors = get_truncation_errors();
-    double threshold_sq = std::pow(threshold, 2);
     size_t trunc_bond_count = (size_t)  std::count_if(truncation_errors.begin(), truncation_errors.end(),
-                                                      [threshold_sq](auto const& val){ return val > threshold_sq ; });
+                                                      [threshold](auto const& val){ return val > threshold ; });
     return trunc_bond_count;
 }
 

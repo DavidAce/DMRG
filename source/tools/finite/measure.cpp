@@ -306,6 +306,21 @@ double tools::finite::measure::spin_component(const class_state_finite &state,
 }
 
 
+double tools::finite::measure::spin_component(const class_state_finite &state,
+                                              const std::string & parity_sector){
+    if (parity_sector.find('x') != parity_sector.npos)
+        return measure::spin_component(state, qm::spinOneHalf::sx);
+    if (parity_sector.find('y') != parity_sector.npos)
+        return measure::spin_component(state, qm::spinOneHalf::sy);
+    if (parity_sector.find('z') != parity_sector.npos)
+        return measure::spin_component(state, qm::spinOneHalf::sz);
+
+    throw std::runtime_error("Unexpected parity sector: " + parity_sector);
+
+}
+
+
+
 Eigen::Tensor<Scalar,1> tools::finite::measure::mps_wavefn(const class_state_finite & state){
 
     Eigen::Tensor<Scalar,2> chain(1,1);

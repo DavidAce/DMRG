@@ -133,6 +133,7 @@ class class_state_finite {
 
     private:
     std::vector<double> truncation_error;
+    std::vector<double> truncated_variance;
 
     public:
     void                       set_truncation_error(size_t left_site, double error);
@@ -140,6 +141,13 @@ class class_state_finite {
     double                     get_truncation_error(size_t left_site) const;
     double                     get_truncation_error() const;
     const std::vector<double> &get_truncation_errors() const;
+
+    void                       set_truncated_variance(size_t left_site, double error);
+    void                       set_truncated_variance(double error);
+    double                     get_truncated_variance(size_t left_site) const;
+    double                     get_truncated_variance() const;
+    const std::vector<double> &get_truncated_variances() const;
+
     size_t                     num_sites_truncated(double threshold = 1e-8) const;
     size_t                     num_bonds_at_limit() const;
     bool                       is_bond_limited(double threshold = 1e-8) const;

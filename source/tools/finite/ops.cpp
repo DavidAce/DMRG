@@ -93,11 +93,11 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
 
 class_state_finite tools::finite::ops::get_projection_to_parity_sector(const class_state_finite & state, const Eigen::MatrixXcd  & paulimatrix, int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
-    tools::log->trace("Generating parity projected state with sign {}", sign);
+    tools::log->debug("Generating parity projected state with sign {}", sign);
     auto spin_components = tools::finite::measure::spin_components(state);
     double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
-    tools::log->trace("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
-    tools::log->trace("Current reqstd spin component  :     {:.16f}", requested_spin_component );
+    tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
+    tools::log->debug("Current reqstd spin component  :     {:.16f}", requested_spin_component );
 
     tools::common::profile::t_prj->tic();
     class_state_finite state_projected = state;
@@ -113,8 +113,8 @@ class_state_finite tools::finite::ops::get_projection_to_parity_sector(const cla
     state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation
     spin_components          = tools::finite::measure::spin_components(state_projected);
     requested_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
-    tools::log->trace("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
-    tools::log->trace("Resulting reqstd spin component  :     {:.16f}", requested_spin_component );
+    tools::log->debug("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
+    tools::log->debug("Resulting reqstd spin component  :     {:.16f}", requested_spin_component );
     return state_projected;
 }
 

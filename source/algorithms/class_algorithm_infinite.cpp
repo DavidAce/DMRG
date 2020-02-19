@@ -73,6 +73,15 @@ void class_algorithm_infinite::run_postprocessing(){
 //    state->do_all_measurements();
 //}
 
+
+void class_algorithm_infinite::update_truncation_limit(){
+    //Will update SVD threshold iff the state precision is being limited by truncation error
+
+
+}
+
+
+
 void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit){
     if(tmp_bond_limit.has_value()) {
         state->set_chi_lim(tmp_bond_limit.value());
@@ -104,7 +113,7 @@ void class_algorithm_infinite::update_bond_dimension_limit(std::optional<long> t
             if(sim_status.simulation_has_got_stuck){
                 log->debug("Truncation error : {}", state->get_truncation_error());
                 log->debug("Bond dimensions  : {}", tools::infinite::measure::bond_dimension(*state) );
-                if(state->get_truncation_error() > std::pow(0.5*settings::precision::svd_threshold, 2) and
+                if(state->get_truncation_error() > 0.5*settings::precision::svd_threshold and
                     tools::infinite::measure::bond_dimension(*state) >=state->get_chi_lim() )
                 {
                     //Write final results before updating bond dimension chi

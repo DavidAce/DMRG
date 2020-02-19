@@ -22,6 +22,7 @@ namespace tools::finite::measure{
 
 
     extern double spin_component                              (const class_state_finite & state, const Eigen::Matrix2cd &paulimatrix);
+    extern double spin_component                              (const class_state_finite & state, const std::string & parity_sector);
     extern Eigen::Tensor<Scalar,1> mps_wavefn                 (const class_state_finite & state);
     extern double entanglement_entropy_current                (const class_state_finite & state);
     extern double entanglement_entropy_midchain               (const class_state_finite & state);

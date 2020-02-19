@@ -20,10 +20,10 @@ namespace tools::finite::opt{
     using Scalar = std::complex<double>;
     extern Eigen::Tensor<Scalar,3> find_excited_state(const class_state_finite & state, const class_simulation_status & sim_status, OptMode optMode, OptSpace optSpace, OptType optType);
     extern Eigen::Tensor<Scalar,4> find_ground_state (const class_state_finite & state, std::string ritz = "SR");
-    extern void truncate_theta(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
-    extern void truncate_left (const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
-    extern void truncate_right(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
-    extern void truncate_theta(const Eigen::Tensor<Scalar,4> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt);
+    extern void truncate_theta(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
+    extern void truncate_left (const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
+    extern void truncate_right(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
+    extern void truncate_theta(const Eigen::Tensor<Scalar,4> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
 }
 
 
@@ -75,7 +75,6 @@ namespace tools::finite::opt::internal{
         inline ceres::GradientProblemSolver::Options ceres_default_options;
 
         inline bool no_state_in_window = false;
-        inline double subspace_error_threshold = 1e-12;
 
         extern std::vector<int> generate_size_list(size_t shape);
 
@@ -93,7 +92,7 @@ namespace tools::finite::opt::internal{
             using direct_opt_tuple = std::tuple<std::string,int,double,std::complex<double>,double,double,int,int,double>;
             using subspc_opt_tuple = std::tuple<std::string,int,double,double,double,double,int,int,double>;
             using lbfgs_tuple      = std::tuple<double,double,double,double,double>;
-            using eig_tuple        = std::tuple<int,double,double,double,double,double,double>;
+            using eig_tuple        = std::tuple<int,double,double,double,double,double>;
 //            std::vector<log_tuple> opt_log;
             void print_report(const std::vector<direct_opt_tuple> &opt_log);
             void print_report(const std::vector<subspc_opt_tuple> &opt_log);
