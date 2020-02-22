@@ -8,6 +8,7 @@
 #include "matrix_product_sparse.h"
 #include "matrix_product_stl.h"
 #include "matrix_product_hamiltonian.h"
+#include "matrix_product_hamiltonian_sq.h"
 #include <general/nmspc_type_check.h>
 
 #if defined(_MKL_LAPACK_H_)
@@ -356,3 +357,5 @@ template class arpackpp_solver<StlMatrixProduct<double>>;
 template class arpackpp_solver<StlMatrixProduct<std::complex<double>>>;
 template class arpackpp_solver<DenseHamiltonianProduct<double>>;
 template class arpackpp_solver<DenseHamiltonianProduct<std::complex<double>>>;
+template class arpackpp_solver<DenseHamiltonianSqProduct<double>>;
+template class arpackpp_solver<DenseHamiltonianSqProduct<std::complex<double>>>;

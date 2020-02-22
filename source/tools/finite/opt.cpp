@@ -4,6 +4,7 @@
 
 #include <string>
 #include <tools/finite/opt.h>
+#include <tools/finite/measure.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <state/class_state_finite.h>
@@ -42,25 +43,28 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.max_lbfgs_rank     = 250;
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
     ceres_default_options.max_line_search_step_expansion = 10;
-    ceres_default_options.min_line_search_step_size = 1e-14;//  std::numeric_limits<double>::epsilon();
+    ceres_default_options.min_line_search_step_size = 1e-9;//  std::numeric_limits<double>::epsilon();
     ceres_default_options.max_line_search_step_contraction = 1e-3;
     ceres_default_options.min_line_search_step_contraction = 0.6;
-    ceres_default_options.max_num_line_search_step_size_iterations  = 50;//20;
+    ceres_default_options.max_num_line_search_step_size_iterations  = 20;//20;
     ceres_default_options.max_num_line_search_direction_restarts    = 20;//2;
     ceres_default_options.line_search_sufficient_function_decrease  = 1e-2;
     ceres_default_options.line_search_sufficient_curvature_decrease = 0.4; //0.5;
     ceres_default_options.max_solver_time_in_seconds = 60*2;//60*2;
-    ceres_default_options.function_tolerance = 1e-4;
-    ceres_default_options.gradient_tolerance = 1e-2;
-    ceres_default_options.parameter_tolerance = 1e-14;//std::numeric_limits<double>::epsilon();//1e-12;
+    ceres_default_options.function_tolerance = 1e-5;
+    ceres_default_options.gradient_tolerance = 1e-1;
+    ceres_default_options.parameter_tolerance = std::min(1e-8, 0.1*tools::finite::measure::energy_variance(state));//std::numeric_limits<double>::epsilon();//1e-12;
     ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
     if(sim_status.simulation_has_got_stuck or optSpace == OptSpace::SUBSPACE_ONLY or optSpace == OptSpace::SUBSPACE_AND_DIRECT){
-        ceres_default_options.function_tolerance = 1e-5; //Operations are cheap in subspace, so you can afford low tolerance
-        ceres_default_options.max_num_iterations = 2000;
-        ceres_default_options.gradient_tolerance = 1e-6;
+        ceres_default_options.function_tolerance = 1e-10; //Operations are cheap in subspace, so you can afford low tolerance
+        ceres_default_options.max_num_iterations = 4000;
+        ceres_default_options.gradient_tolerance = 1e-2;
         ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
+        ceres_default_options.parameter_tolerance = 1e-28;//std::numeric_limits<double>::epsilon();//1e-12;
+        ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
+
     }
 
 

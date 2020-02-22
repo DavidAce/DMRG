@@ -6,7 +6,7 @@
 #include <state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-
+#include <math/nmspc_math.h>
 
 using namespace tools::finite::opt::internal;
 
@@ -77,8 +77,13 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     Eigen::Map<const VectorType> v (reinterpret_cast<const Scalar*>(v_double_double)   , vecSize);
     vv    = v.squaredNorm();
     norm  = std::sqrt(vv);
+
+    if(!grad_double_double or grad_double_double == nullptr){
+        tools::log->warn("Gradient ptr is null at step {}", counter);
+    }
     get_H2v(v);
     get_Hv(v);
+
 
     auto Hv      = Eigen::Map<VectorType>(Hv_tensor.data() ,Hv_tensor.size());
     auto H2v     = Eigen::Map<VectorType>(H2v_tensor.data(),H2v_tensor.size());
@@ -164,6 +169,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
+
     tools::common::profile::t_vH2->tic();
     size_t log2chiL  = std::log2(dsizes[1]);
     size_t log2chiR  = std::log2(dsizes[2]);

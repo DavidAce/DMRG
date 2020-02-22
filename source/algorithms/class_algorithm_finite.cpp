@@ -365,7 +365,7 @@ void class_algorithm_finite::try_chi_quench() {
 //        tools::log->trace("Chi quench skipped: simulation not stuck");
 //        return;
 //    }
-    if(sim_status.simulation_has_stuck_for <= 1) {
+    if(sim_status.simulation_has_stuck_for <= 2) {
         tools::log->info("Chi quench skipped: simulation not been stuck for long enough");
         return;
     }
@@ -386,9 +386,10 @@ void class_algorithm_finite::try_chi_quench() {
         tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
         return;
     }
-
+    auto bond_dimensions = tools::finite::measure::bond_dimensions(*state);
+    auto max_bond_dimension = *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
     tools::log->info("Chi quench started");
-    tools::finite::mps::truncate_all_sites(*state, chi_lim_quench_ahead);
+    tools::finite::mps::truncate_all_sites(*state, max_bond_dimension/2);
     log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
     clear_saturation_status();
     chi_quench_steps = 2 * state->get_length();
