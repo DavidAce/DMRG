@@ -16,6 +16,7 @@ source/main.cpp
 source/math/arpack_extra/arpackpp_solver.cpp
 source/math/arpack_extra/matrix_product_dense.cpp
 source/math/arpack_extra/matrix_product_hamiltonian.cpp
+source/math/arpack_extra/matrix_product_hamiltonian_sq.cpp
 source/math/arpack_extra/matrix_product_sparse.cpp
 source/math/arpack_extra/matrix_product_stl.cpp
 source/math/arpack_extra/matrix_recast.cpp
@@ -58,6 +59,7 @@ source/tools/finite/opt-internals/ceres_subspace_functor.cpp
 source/tools/finite/opt-internals/ceres_subspace_hamiltonian.cpp
 source/tools/finite/opt-internals/enum_classes.cpp
 source/tools/finite/opt-internals/ground_state.cpp
+source/tools/finite/opt-internals/ham_sq_optimization.cpp
 source/tools/finite/opt-internals/report.cpp
 source/tools/finite/opt.cpp
 source/tools/finite/print.cpp
@@ -94,6 +96,7 @@ source/math/arpack_extra/arpackpp_solver.h
 source/math/arpack_extra/matrix_product_dense.h
 source/math/arpack_extra/matrix_product_fwd_decl.h
 source/math/arpack_extra/matrix_product_hamiltonian.h
+source/math/arpack_extra/matrix_product_hamiltonian_sq.h
 source/math/arpack_extra/matrix_product_sparse.h
 source/math/arpack_extra/matrix_product_stl.h
 source/math/arpack_extra/matrix_recast.h
@@ -132,6 +135,7 @@ source/tools/finite/opt-internals/ceres_direct_functor.h
 source/tools/finite/opt-internals/ceres_rosenbrock.h
 source/tools/finite/opt-internals/ceres_subspace_functor.h
 source/tools/finite/opt-internals/enum_classes.h
+source/tools/finite/opt-internals/ham_sq_optimization.cpp
 source/tools/finite/opt.h
 source/tools/finite/print.h
 source/tools/infinite.h

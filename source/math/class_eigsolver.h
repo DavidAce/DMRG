@@ -13,6 +13,7 @@ template<typename T> class DenseMatrixProduct;
 template<typename T> class StlMatrixProduct;
 template<typename T,bool> class SparseMatrixProduct;
 template<typename T> class DenseHamiltonianProduct;
+template<typename T> class DenseHamiltonianSqProduct;
 
 
 class class_eigsolver {
@@ -160,8 +161,20 @@ public:
                     const bool remove_phase_              = false,
                     Scalar *residual_                     = nullptr);
 
-    template<typename Scalar>
-    void eigs_dense(DenseHamiltonianProduct<Scalar> &matrix,
+   template<typename Scalar>
+   void eigs_dense(DenseHamiltonianProduct<Scalar> &matrix,
+                    const int nev,
+                    const int ncv,
+                    const std::complex<double> sigma      = std::numeric_limits<std::complex<double>>::quiet_NaN(),
+                    const eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC,
+                    const eigutils::eigSetting::Ritz ritz = eigutils::eigSetting::Ritz::LM,
+                    const eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R,
+                    const bool compute_eigvecs_           = false,
+                    const bool remove_phase_              = false,
+                    Scalar *residual_                     = nullptr);
+
+   template<typename Scalar>
+   void eigs_dense(DenseHamiltonianSqProduct<Scalar> &matrix,
                     const int nev,
                     const int ncv,
                     const std::complex<double> sigma      = std::numeric_limits<std::complex<double>>::quiet_NaN(),
@@ -173,8 +186,8 @@ public:
                     Scalar *residual_                     = nullptr);
 
 
-    template<typename Scalar>
-    void eigs_sparse(const Scalar *matrix,
+   template<typename Scalar>
+   void eigs_sparse(const Scalar *matrix,
                      const int L,
                      const int nev,
                      const int ncv,
@@ -187,8 +200,8 @@ public:
                      Scalar *residual_                     = nullptr);
 
 
-    template<typename Scalar>
-    void eigs_sparse(SparseMatrixProduct<Scalar> &matrix,
+   template<typename Scalar>
+   void eigs_sparse(SparseMatrixProduct<Scalar> &matrix,
                      const int nev,
                      const int ncv,
                      const std::complex<double> sigma      = std::numeric_limits<std::complex<double>>::quiet_NaN(),
@@ -200,8 +213,8 @@ public:
                      Scalar *residual_                     = nullptr);
 
 
-    template<typename Scalar>
-    void eigs_stl(const Scalar *matrix,
+   template<typename Scalar>
+   void eigs_stl(const Scalar *matrix,
                   const int L,
                   const int nev,
                   const int ncv,
@@ -214,8 +227,8 @@ public:
                   Scalar *residual_                     = nullptr);
 
 
-    template<typename Scalar>
-    void eigs_stl(StlMatrixProduct<Scalar> &matrix,
+   template<typename Scalar>
+   void eigs_stl(StlMatrixProduct<Scalar> &matrix,
                   const int nev,
                   const int ncv,
                   const std::complex<double> sigma      = std::numeric_limits<std::complex<double>>::quiet_NaN(),
@@ -448,6 +461,29 @@ void class_eigsolver::eigs_dense      (DenseHamiltonianProduct<Scalar> &matrix,
     Storage storage = Storage::STL;
     eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
     arpackpp_solver<DenseHamiltonianProduct<Scalar>> solver(matrix, solverConf, solution,residual_);
+    solver.eigs();
+}
+
+
+template<typename Scalar>
+void class_eigsolver::eigs_dense      (DenseHamiltonianSqProduct<Scalar> &matrix,
+                                       const int nev,
+                                       const int ncv,
+                                       const std::complex<double> sigma,
+                                       const eigutils::eigSetting::Form form,
+                                       const eigutils::eigSetting::Ritz ritz,
+                                       const eigutils::eigSetting::Side side,
+                                       const bool compute_eigvecs_,
+                                       const bool remove_phase_,
+                                       Scalar *residual_)
+{
+    using namespace eigutils::eigSetting;
+    int L = matrix.rows();
+    bool is_cplx = std::is_same<std::complex<double>,Scalar>::value;
+    Type type = is_cplx ? Type::CPLX : Type::REAL;
+    Storage storage = Storage::STL;
+    eigs_init(L, nev, ncv, sigma, type, form, ritz, side, storage, compute_eigvecs_, remove_phase_);
+    arpackpp_solver<DenseHamiltonianSqProduct<Scalar>> solver(matrix, solverConf, solution,residual_);
     solver.eigs();
 }
 

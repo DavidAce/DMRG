@@ -23,14 +23,14 @@ class class_algorithm_finite : public class_algorithm_base {
 
     // Control behavior when stuck
     size_t              min_stuck_iters      = 1;     /*!< If stuck for this many sweeps -> do subspace instead of direct */
-    size_t              max_stuck_iters      = 2;     /*!< If stuck for this many sweeps -> try stuff, or stop. */
+    size_t              max_stuck_iters      = 3;     /*!< If stuck for this many sweeps -> try stuff, or stop. */
     size_t              min_saturation_iters = 1;     /*!< If both var and ent saturated  this long -> got_stuck: true */
     size_t              max_saturation_iters = 3;     /*!< If either var or ent saturated this long -> got_stuck: true */
     bool                has_projected        = false; /*!< True if projection has already been tried */
     bool                has_damped           = false; /*!< True if damping of hamiltonian parameters is ongoing */
     size_t              chi_quench_steps     = 0;     /*!< Number of steps left doing chi-quenching */
     size_t              num_chi_quenches     = 0;     /*!< Number of bond dimension quench trials that have occurred */
-    size_t              max_chi_quenches     = 4;     /*!< Maximum number of bond dimension quench trials allowed */
+    size_t              max_chi_quenches     = 2;     /*!< Maximum number of bond dimension quench trials allowed */
     size_t              chi_lim_quench_ahead = 32;    /*!< Bond dimension during a quench */
     size_t              chi_lim_quench_trail = 32;    /*!< Bond dimension during a quench */
     size_t              num_perturbations    = 0;     /*!< Number of perturbation trials done */

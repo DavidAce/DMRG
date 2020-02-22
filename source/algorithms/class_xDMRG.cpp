@@ -134,10 +134,10 @@ void class_xDMRG::single_xDMRG_step()
 
     //Setup strong overrides to normal conditions, e.g., for experiments like chi quench
 
-    if(chi_quench_steps > 0){
-        optMode  = OptMode::VARIANCE;
-        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-    }
+//    if(chi_quench_steps > 0){
+//        optMode  = OptMode::VARIANCE;
+//        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
+//    }
 
 
     if(sim_status.variance_mpo_has_converged){
@@ -179,9 +179,9 @@ void class_xDMRG::single_xDMRG_step()
     if(max_num_sites_list.empty()) throw std::runtime_error("No sites selected for multisite xDMRG");
 
     log->debug("Possible multisite step sizes: {}", max_num_sites_list);
-
+    size_t theta_count = 0;
     double variance_old = measure::energy_variance_per_site(*state);
-    std::map<double,std::pair<Eigen::Tensor<Scalar,3>, std::list<size_t>>> results;
+    std::map<double,std::tuple<Eigen::Tensor<Scalar,3>, std::list<size_t>, size_t>> results;
     for (auto & max_num_sites : max_num_sites_list){
         if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT)
             throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
@@ -209,10 +209,33 @@ void class_xDMRG::single_xDMRG_step()
 //            optSpace = OptSpace::SUBSPACE_ONLY;
 //        }
 
-
-        auto theta          = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
+//        Eigen::Tensor<Scalar,3> theta;
+//        if(chi_quench_steps > 0)
+//            theta = tools::finite::opt::internal::ham_sq_optimization(*state,optType, optMode,optSpace,"SR");
+//        else
+        auto theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         double variance_new = measure::energy_variance_per_site(*state,theta);
-        results.insert({variance_new,{theta,state->active_sites}});
+        results.insert({variance_new,{theta,state->active_sites,theta_count++}});
+
+//        if(chi_quench_steps > 0){
+//            double energy_new = measure::energy_per_site(*state,theta);
+//            Eigen::Tensor<Scalar,3> theta_random(state->active_dimensions());
+//            Eigen::Map<Eigen::VectorXcd> theta_random_map(theta_random.data(),theta_random.size());
+//            Eigen::Map<Eigen::VectorXcd> theta_map(theta.data(),theta.size());
+//            for (int trial = 0; trial < 10; trial++){
+//                theta_random.setRandom();
+//                theta_random_map = (theta_map + variance_new * theta_random_map.real()).normalized();
+//                theta_random = opt::internal::ceres_direct_optimization(*state,theta_random, sim_status, optType, OptMode::VARIANCE, OptSpace::DIRECT);
+//                double variance_random = measure::energy_variance_per_site(*state,theta_random);
+//                double energy_random   = measure::energy_per_site(*state,theta_random);
+//                double energy_diff = std::abs(energy_random - energy_new);
+//                double overlap = std::real(theta_map.dot(theta_random_map));
+//                if(energy_diff < std::sqrt(variance_new) and overlap > 0.9)
+//                    results.insert({variance_random,{theta_random,state->active_sites,theta_count++}});
+//            }
+//        }
+
+
 
         // We can now decide if we are happy with the result or not.
         if (variance_new < variance_old) {
@@ -223,14 +246,17 @@ void class_xDMRG::single_xDMRG_step()
             continue;
         }
     }
-
+    int result_count = 0;
+    for (auto & result : results){
+        tools::log->info("Result {:3} candidate {:3} variance {:.16f}", result_count++, std::get<2>(result.second),std::log10(result.first));
+    }
     //Check the contents of results.
 //    auto[variance_new,theta] = std::make_pair(results.begin()->first,results.begin()->second);
     state->clear_cache();
     state->clear_measurements();
     auto variance_new = results.begin()->first;
-    const auto &theta = results.begin()->second.first;
-    state->active_sites = results.begin()->second.second;
+    const auto &theta = std::get<0>(results.begin()->second);
+    state->active_sites = std::get<1>(results.begin()->second);
 
     if(std::log10(variance_new) < std::log10(variance_old) - 1e-2)
         state->tag_active_sites_have_been_updated(true);
@@ -239,7 +265,7 @@ void class_xDMRG::single_xDMRG_step()
     size_t chi_lim = state->get_chi_lim();
 
     //Truncate even more if doing chi quench
-    if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
+//    if(chi_quench_steps > 0) chi_lim = chi_lim_quench_trail;
 
     //Do the truncation with SVD
     auto variance_before_svd = tools::finite::measure::energy_variance_per_site(*state,theta);

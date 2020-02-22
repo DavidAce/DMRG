@@ -84,7 +84,7 @@ namespace eigutils{
                     ritz==Ritz::BE
                         )
                 {
-                    std::cerr << "WARNING: Invalid ritz for nonsym problem: " << RitzToString.at(ritz) << std::endl;
+                    std::cerr << "WARNING: Invalid ritz for cplx or nonsym problem: " << RitzToString.at(ritz) << std::endl;
                     if (ritz==Ritz::LA){ritz = Ritz::LR;}
                     if (ritz==Ritz::SA){ritz = Ritz::SR;}
                     if (ritz==Ritz::BE){ritz = Ritz::LM;}
@@ -97,7 +97,7 @@ namespace eigutils{
                     ritz==Ritz::SI
                         )
                 {
-                    std::cerr << "WARNING: Invalid ritz for nonsym problem: " << RitzToString.at(ritz)<< std::endl;
+                    std::cerr << "WARNING: Invalid ritz for real and sym problem: " << RitzToString.at(ritz)<< std::endl;
                     if (ritz==Ritz::LR){ritz = Ritz::LA;}
                     if (ritz==Ritz::SR){ritz = Ritz::SA;}
                     if (ritz==Ritz::LI){ritz = Ritz::LM;}
