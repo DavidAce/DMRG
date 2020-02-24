@@ -27,7 +27,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --no-modules               : Disable use of "module load"
 -v | --verbose                  : Verbose makefiles
 EXAMPLE:
-./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-missing
+./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-method=native
 EOF
   exit 1
 }
@@ -44,13 +44,13 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o ha:b:cl:df:g:G:j:st:v \
                 clear-libs:\
                 compiler:\
                 dry-run\
+                download-method:\
                 enable-tests\
                 enable-shared\
                 gcc-toolchain:\
                 make-threads:\
                 enable-openmp\
                 enable-mkl\
-                download-method:\
                 no-modules\
                 prefer-conda\
                 verbose\
@@ -68,7 +68,6 @@ build_type="Release"
 target="all"
 march="haswell"
 enable_shared="OFF"
-download_missing="OFF"
 download_method="native"
 enable_tests="OFF"
 enable_openmp="OFF"
@@ -90,6 +89,7 @@ do
     -l|--clear-libs)
             clear_libs=($(echo "$2" | tr ',' ' '))                  ; echo " * Clear libraries          : $2"      ; shift 2 ;;
     -d|--dry-run)                   dry_run="ON"                    ; echo " * Dry run                  : ON"      ; shift   ;;
+       --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
     -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
     -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
     -G|--generator)                 generator=$2                    ; echo " * CMake generator          : $2"      ; shift 2 ;;
@@ -100,7 +100,6 @@ do
     -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
        --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
        --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
-       --download-method)           download_method=$2              ; echo " * Download method          : $2"      ; shift 2 ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs:    : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles        : ON"      ; shift   ;;
