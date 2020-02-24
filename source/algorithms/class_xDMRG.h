@@ -28,7 +28,7 @@ private:
     void find_energy_range();
     void inflate_initial_state();
     void single_xDMRG_step();
-    void single_xDMRG_step_old();
+    bool state_is_within_energy_window(Eigen::Tensor<Scalar,3> & theta);
     void reset_to_random_state_in_energy_window(const std::string &parity_sector,bool inflate, std::string reason );
     void run_preprocessing()                final;
     void run_simulation()                   final;
