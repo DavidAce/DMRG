@@ -160,7 +160,7 @@ void class_xDMRG::single_xDMRG_step()
     if(chi_quench_steps > 0)
         max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else if(sim_status.simulation_has_got_stuck)
-        max_num_sites_list = {settings::precision::max_sites_multidmrg};
+        max_num_sites_list = {2,settings::precision::max_sites_multidmrg};
     else
         max_num_sites_list = {2};
 
@@ -214,8 +214,15 @@ void class_xDMRG::single_xDMRG_step()
 //            theta = tools::finite::opt::internal::ham_sq_optimization(*state,optType, optMode,optSpace,"SR");
 //        else
         auto theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
-        double variance_new = measure::energy_variance_per_site(*state,theta);
-        results.insert({variance_new,{theta,state->active_sites,theta_count++}});
+        double variance_new;
+        if(state_is_within_energy_window(theta)) {
+            variance_new = measure::energy_variance_per_site(*state, theta);
+            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
+        }else{
+            theta = state->get_multitheta();
+            variance_new = measure::energy_variance_per_site(*state);
+            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
+        }
 
 //        if(chi_quench_steps > 0){
 //            double energy_new = measure::energy_per_site(*state,theta);
@@ -238,7 +245,7 @@ void class_xDMRG::single_xDMRG_step()
 
 
         // We can now decide if we are happy with the result or not.
-        if (variance_new < variance_old) {
+        if (std::log10(variance_new) < 0.99*std::log10(variance_old)) {
             log->debug("State improved during {} optimization",optSpace);
             break;
         }else{
@@ -417,9 +424,10 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
         if (inflate) inflate_initial_state();
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window      = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
+        tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", sim_status.energy_dens,sim_status.energy_dens_window ,outside_of_window);
         if(not outside_of_window) break;
         counter++;
-        if(counter >= 2000) throw std::runtime_error(fmt::format("Failed to find initial state in energy window after {}. retries: ", counter));
+        if(counter >= 200) throw std::runtime_error(fmt::format("Failed to find initial state in energy window after {}. retries: ", counter));
         if (counter % 10 == 0 and energy_window_growth_factor != 1.0) {
             double old_energy_dens_window = sim_status.energy_dens_window;
             double new_energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
@@ -436,6 +444,33 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
 
     log->info("Number of product state resets: {}",sim_status.num_resets );
 }
+
+
+
+bool class_xDMRG::state_is_within_energy_window(Eigen::Tensor<Scalar, 3> &theta) {
+    double energy_std      = tools::finite::measure::energy_variance_per_site(*state);
+    double energy_old      = tools::finite::measure::energy_per_site(*state);
+    double energy_new      = tools::finite::measure::energy_per_site(*state,theta);
+    double energy_dif      = std::abs(energy_old - energy_new);
+    // We can accept a new candidate state if it is less than +-2 standard deviation away from the current energy
+    if (energy_dif < 2*energy_std){
+        sim_status.energy_target      = energy_new;
+        sim_status.energy_ubound      = std::min(sim_status.energy_ubound, sim_status.energy_target + 2*energy_std);
+        sim_status.energy_lbound      = std::max(sim_status.energy_lbound, sim_status.energy_target - 2*energy_std);
+        sim_status.energy_dens_target = (sim_status.energy_target - sim_status.energy_lbound)/(sim_status.energy_max - sim_status.energy_min);
+        sim_status.energy_dens_window = (sim_status.energy_ubound - sim_status.energy_lbound)/(sim_status.energy_max - sim_status.energy_min)  ;
+
+        log->info("Energy minimum (per site) = {}", sim_status.energy_min);
+        log->info("Energy maximum (per site) = {}", sim_status.energy_max);
+        log->info("Energy target  (per site) = {}", sim_status.energy_target);
+        log->info("Energy lbound  (per site) = {}", sim_status.energy_lbound);
+        log->info("Energy ubound  (per site) = {}", sim_status.energy_ubound);
+        return true;
+    }else{
+        return false;
+    }
+}
+
 
 
 void class_xDMRG::find_energy_range() {
@@ -502,6 +537,3 @@ size_t class_xDMRG::print_freq()          {return settings::xdmrg::print_freq;}
 bool   class_xDMRG::chi_grow()            {return settings::xdmrg::chi_grow;}
 long   class_xDMRG::chi_init()            {return settings::xdmrg::chi_init;}
 bool   class_xDMRG::store_wave_function() {return settings::xdmrg::store_wavefn;}
-
-
-
