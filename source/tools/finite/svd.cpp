@@ -178,7 +178,7 @@ void tools::finite::opt::truncate_right(const Eigen::Tensor<std::complex<double>
             //Always set LC on the last "A" matrix
             state.get_MPS(site).set_LC(S);
         }
-        tools::log->debug("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
+        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
         active_sites.pop_front();
     }
 
@@ -201,7 +201,7 @@ void tools::finite::opt::truncate_right(const Eigen::Tensor<std::complex<double>
         std::cout << "rightID: \n" << rightID << std::endl;
         throw std::runtime_error(fmt::format("Not right normalized at site {} with threshold 1e-12", site));
     }
-    tools::log->debug("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
+    tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
     tools::common::profile::t_svd->toc();
 
 
@@ -271,7 +271,7 @@ void tools::finite::opt::truncate_left(const Eigen::Tensor<std::complex<double>,
         }else{
             state.get_MPS(site-1).set_LC(S);
         }
-        tools::log->debug("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
+        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
         reverse_active_sites.pop_front();
 
         if (not Eigen::Map<VectorType>(V.data(),V.size()).allFinite() )
@@ -292,7 +292,7 @@ void tools::finite::opt::truncate_left(const Eigen::Tensor<std::complex<double>,
     Eigen::Tensor<Scalar,2> leftID = state.get_MPS(site).get_M_bare()
             .contract(state.get_MPS(site).get_M_bare().conjugate(), Textra::idx({0,1},{0,1}) );
     if(not Textra::TensorMatrixMap(leftID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12", site));
-    tools::log->debug("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
+    tools::log->trace("SVD site log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
     tools::common::profile::t_svd->toc();
 
 }
@@ -391,7 +391,7 @@ void tools::finite::mps::move_center_point(class_state_finite & state, std::opti
             tools::finite::opt::truncate_theta(theta,state,chi_lim,svd_threshold);
         }
         size_t pos = state.get_position();
-        tools::log->debug("Site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", pos, std::log10(state.get_truncation_error(pos)),state.get_chi_lim(), tools::finite::measure::bond_dimension_current(state));
+        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", pos, std::log10(state.get_truncation_error(pos)),state.get_chi_lim(), tools::finite::measure::bond_dimension_current(state));
 
         assert(MPO_L.size() + MPO_R.size() == state.get_length());
         if(ENV_L.empty()) throw std::runtime_error("ENVL became empty");

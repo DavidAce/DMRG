@@ -152,7 +152,7 @@ std::vector<std::pair<double,int>> get_best_candidates_in_window(const Eigen::Ve
         if(overlaps_in_window.empty()) break;
         double sq_sum_overlap = std::accumulate(candidates.begin(),candidates.end(), 0.0, lambda_sq_sum);
         tools::log->debug("Sq_sum_overlap:  {:.16f}",sq_sum_overlap);
-        if(sq_sum_overlap  > 0.99) break; // Half means cat state.
+        if(sq_sum_overlap  > 0.8) break; // Half means cat state.
         else {
             candidates.emplace_back(overlaps_in_window.back());
             overlaps_in_window.pop_back();
@@ -325,14 +325,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
     using Scalar = class_state_finite::Scalar;
     using namespace eigutils::eigSetting;
     auto options = ceres_default_options;
-//    options.max_num_iterations = 2000; // We need a lot of iterations to recover from initial guesses
-//    options.function_tolerance = 1e-12;
-
-
     double theta_old_variance    = tools::finite::measure::energy_variance_per_site(state);
-//    subspace_error_threshold     = settings::precision::subspace_error_factor * theta_old_variance;
-//    subspace_error_threshold     = std::min(subspace_error_threshold, settings::precision::max_subspace_error);
-//    subspace_error_threshold     = std::max(subspace_error_threshold, settings::precision::min_subspace_error);
     double subspace_error_threshold     = settings::precision::min_subspace_error;
 
 
@@ -346,9 +339,6 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         case OptType::REAL:     std::tie (eigvecs,eigvals)  = find_subspace<double>(state,subspace_error_threshold,optMode,optSpace); break;
     }
     Eigen::VectorXd eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window comparisons
-//    if(state.get_position() < 2){
-//        std::cout << "eigvals: \n" << eigvals_per_site_unreduced << std::endl;
-//    }
     tools::log->trace("Subspace found with {} eigenvectors", eigvecs.cols());
     Eigen::VectorXd overlaps = (theta_old_vec.adjoint() * eigvecs).cwiseAbs().real();
 

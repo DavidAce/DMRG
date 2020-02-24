@@ -392,7 +392,7 @@ void class_algorithm_finite::try_chi_quench() {
     tools::finite::mps::truncate_all_sites(*state, max_bond_dimension/2);
     log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
     clear_saturation_status();
-    chi_quench_steps = 2 * state->get_length();
+    chi_quench_steps = 1 * state->get_length();
     num_chi_quenches++;
 }
 
