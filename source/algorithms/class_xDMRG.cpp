@@ -112,21 +112,12 @@ void class_xDMRG::single_xDMRG_step()
 
 
     // Setup normal conditions
-//    if(state->get_chi_lim() <= 32){
-//        optMode  = OptMode::VARIANCE;
-//        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-//    }
     if(state->get_chi_lim() <= 12){
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
-//    if(state->get_chi_lim() <= 8){
-//        optMode  = OptMode::VARIANCE;
-//        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-//    }
-
-    if(state->get_chi_lim() <= 6 or sim_status.iteration < 2){
+    if(state->get_chi_lim() <= 8 or sim_status.iteration < 4){
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_ONLY;
     }
@@ -160,7 +151,11 @@ void class_xDMRG::single_xDMRG_step()
     if(chi_quench_steps > 0)
         max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else if(sim_status.simulation_has_got_stuck)
-        max_num_sites_list = {2,settings::precision::max_sites_multidmrg};
+        max_num_sites_list = {settings::precision::max_sites_multidmrg};
+    else if(optSpace == OptSpace::SUBSPACE_AND_DIRECT)
+        max_num_sites_list = {settings::precision::max_sites_multidmrg};
+    else if(optSpace == OptSpace::SUBSPACE_ONLY)
+        max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else
         max_num_sites_list = {2};
 
@@ -203,47 +198,17 @@ void class_xDMRG::single_xDMRG_step()
             break;
         }
 
-        // If the problem is small enough we can use a safer OVERLAP step
-//        if(state->active_problem_size() <= settings::precision::max_size_part_diag){
-//            optMode  = OptMode::VARIANCE;
-//            optSpace = OptSpace::SUBSPACE_ONLY;
-//        }
-
-//        Eigen::Tensor<Scalar,3> theta;
-//        if(chi_quench_steps > 0)
-//            theta = tools::finite::opt::internal::ham_sq_optimization(*state,optType, optMode,optSpace,"SR");
-//        else
         auto theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         double variance_new;
         if(state_is_within_energy_window(theta)) {
             variance_new = measure::energy_variance_per_site(*state, theta);
             results.insert({variance_new, {theta, state->active_sites, theta_count++}});
         }else{
+            tools::log->info("Rejecting state found out of energy window");
             theta = state->get_multitheta();
             variance_new = measure::energy_variance_per_site(*state);
             results.insert({variance_new, {theta, state->active_sites, theta_count++}});
         }
-
-//        if(chi_quench_steps > 0){
-//            double energy_new = measure::energy_per_site(*state,theta);
-//            Eigen::Tensor<Scalar,3> theta_random(state->active_dimensions());
-//            Eigen::Map<Eigen::VectorXcd> theta_random_map(theta_random.data(),theta_random.size());
-//            Eigen::Map<Eigen::VectorXcd> theta_map(theta.data(),theta.size());
-//            for (int trial = 0; trial < 10; trial++){
-//                theta_random.setRandom();
-//                theta_random_map = (theta_map + variance_new * theta_random_map.real()).normalized();
-//                theta_random = opt::internal::ceres_direct_optimization(*state,theta_random, sim_status, optType, OptMode::VARIANCE, OptSpace::DIRECT);
-//                double variance_random = measure::energy_variance_per_site(*state,theta_random);
-//                double energy_random   = measure::energy_per_site(*state,theta_random);
-//                double energy_diff = std::abs(energy_random - energy_new);
-//                double overlap = std::real(theta_map.dot(theta_random_map));
-//                if(energy_diff < std::sqrt(variance_new) and overlap > 0.9)
-//                    results.insert({variance_random,{theta_random,state->active_sites,theta_count++}});
-//            }
-//        }
-
-
-
         // We can now decide if we are happy with the result or not.
         if (std::log10(variance_new) < 0.99*std::log10(variance_old)) {
             log->debug("State improved during {} optimization",optSpace);
@@ -313,7 +278,7 @@ void class_xDMRG::check_convergence(){
         check_convergence_entg_entropy();
     }
 
-    sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
+//    sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
     bool outside_of_window = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  > sim_status.energy_dens_window;
     if (sim_status.iteration > 2 and state->position_is_any_edge())
     {
@@ -324,7 +289,7 @@ void class_xDMRG::check_convergence(){
         {
             double old_energy_dens_window = sim_status.energy_dens_window;
             double new_energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
-            std::string reason = fmt::format("saturated outside of energy window {} ± {}", sim_status.energy_dens_target,sim_status.energy_dens_window);
+            std::string reason = fmt::format("energy {:.16f} saturated outside of energy window {} ± {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens_target,sim_status.energy_dens_window);
             log->info("Increasing energy window: {} --> {}",old_energy_dens_window, new_energy_dens_window);
             sim_status.energy_dens_window = new_energy_dens_window;
             reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
@@ -448,23 +413,25 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
 
 
 bool class_xDMRG::state_is_within_energy_window(Eigen::Tensor<Scalar, 3> &theta) {
-    double energy_std      = tools::finite::measure::energy_variance_per_site(*state);
-    double energy_old      = tools::finite::measure::energy_per_site(*state);
-    double energy_new      = tools::finite::measure::energy_per_site(*state,theta);
+    double energy_std      = std::sqrt(tools::finite::measure::energy_variance(*state));
+    double energy_old      = tools::finite::measure::energy(*state);
+    double energy_new      = tools::finite::measure::energy(*state,theta);
     double energy_dif      = std::abs(energy_old - energy_new);
     // We can accept a new candidate state if it is less than +-2 standard deviation away from the current energy
-    if (energy_dif < 2*energy_std){
-        sim_status.energy_target      = energy_new;
-        sim_status.energy_ubound      = std::min(sim_status.energy_ubound, sim_status.energy_target + 2*energy_std);
-        sim_status.energy_lbound      = std::max(sim_status.energy_lbound, sim_status.energy_target - 2*energy_std);
-        sim_status.energy_dens_target = (sim_status.energy_target - sim_status.energy_lbound)/(sim_status.energy_max - sim_status.energy_min);
+    if (energy_dif < 1*energy_std){
+        sim_status.energy_target      = energy_new/state->get_length();
+        sim_status.energy_ubound      = std::min(sim_status.energy_ubound, sim_status.energy_target + 1*energy_std/state->get_length());
+        sim_status.energy_lbound      = std::max(sim_status.energy_lbound, sim_status.energy_target - 1*energy_std/state->get_length());
+        sim_status.energy_ubound      = std::max(sim_status.energy_ubound,sim_status.energy_lbound);
+        sim_status.energy_lbound      = std::min(sim_status.energy_ubound,sim_status.energy_lbound);
+        sim_status.energy_dens        = (sim_status.energy_target - sim_status.energy_min)/(sim_status.energy_max - sim_status.energy_min);
+        sim_status.energy_dens_target = (sim_status.energy_target - sim_status.energy_min)/(sim_status.energy_max - sim_status.energy_min);
         sim_status.energy_dens_window = (sim_status.energy_ubound - sim_status.energy_lbound)/(sim_status.energy_max - sim_status.energy_min)  ;
-
-        log->info("Energy minimum (per site) = {}", sim_status.energy_min);
-        log->info("Energy maximum (per site) = {}", sim_status.energy_max);
-        log->info("Energy target  (per site) = {}", sim_status.energy_target);
-        log->info("Energy lbound  (per site) = {}", sim_status.energy_lbound);
-        log->info("Energy ubound  (per site) = {}", sim_status.energy_ubound);
+        log->info("Energy maximum (per site) = {:.16f}", sim_status.energy_max);
+        log->info("Energy minimum (per site) = {:.16f}", sim_status.energy_min);
+        log->info("Energy target  (per site) = {:.16f}", sim_status.energy_target);
+        log->info("Energy ubound  (per site) = {:.16f}", sim_status.energy_ubound);
+        log->info("Energy lbound  (per site) = {:.16f}", sim_status.energy_lbound);
         return true;
     }else{
         return false;
@@ -522,6 +489,8 @@ void class_xDMRG::find_energy_range() {
     log->info("Energy target  (per site) = {}", sim_status.energy_target);
     log->info("Energy lbound  (per site) = {}", sim_status.energy_lbound);
     log->info("Energy ubound  (per site) = {}", sim_status.energy_ubound);
+
+    move_center_point(); // Move once more to flip the initial direction to +1
     state->reset_moves();
     state->reset_sweeps();
 }
