@@ -114,7 +114,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)/length;
     norm_offset    = std::abs(vv) - 1.0 ;
-    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.1);
+    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
     log10var       = std::log10(variance);
 
     if(fx != nullptr){

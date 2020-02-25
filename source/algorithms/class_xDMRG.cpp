@@ -111,17 +111,28 @@ void class_xDMRG::single_xDMRG_step()
     opt::OptType optType    = opt::OptType::CPLX;
 
 
+//    IDEA:
+//        Try converging to some state from a product state.
+//        We know this is a biased state because it was generated  from a product state of low entanglement.
+//        After converging, apply randomly either identity or pauli_x MPO operators on some sites, to generate
+//        a new initial guess for some other state. Make sure the parity sector is honored. Converging again now
+//        should erase the any biasing that may have occurred due to the selection of initial product state.
+
     // Setup normal conditions
     if(state->get_chi_lim() <= 12){
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
-    if(state->get_chi_lim() <= 8 or sim_status.iteration < 4){
-        optMode  = OptMode::OVERLAP;
-        optSpace = OptSpace::SUBSPACE_ONLY;
-    }
+//    if(state->get_chi_lim() <= 8 or sim_status.iteration < 4){
+//        optMode  = OptMode::OVERLAP;
+//        optSpace = OptSpace::SUBSPACE_ONLY;
+//    }
 
+    if(state->get_chi_lim() <= 8 or sim_status.iteration < 2){
+        optMode  = OptMode::OVERLAP;
+        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
+    }
 
     //Setup strong overrides to normal conditions, e.g., for experiments like chi quench
 
@@ -199,16 +210,18 @@ void class_xDMRG::single_xDMRG_step()
         }
 
         auto theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
-        double variance_new;
-        if(state_is_within_energy_window(theta)) {
-            variance_new = measure::energy_variance_per_site(*state, theta);
-            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
-        }else{
-            tools::log->info("Rejecting state found out of energy window");
-            theta = state->get_multitheta();
-            variance_new = measure::energy_variance_per_site(*state);
-            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
-        }
+        double variance_new = measure::energy_variance_per_site(*state, theta);
+        results.insert({variance_new, {theta, state->active_sites, theta_count++}});
+//
+//        if(state_is_within_energy_window(theta)) {
+//            variance_new = measure::energy_variance_per_site(*state, theta);
+//            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
+//        }else{
+//            tools::log->info("Rejecting state found out of energy window");
+//            theta = state->get_multitheta();
+//            variance_new = measure::energy_variance_per_site(*state);
+//            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
+//        }
         // We can now decide if we are happy with the result or not.
         if (std::log10(variance_new) < 0.99*std::log10(variance_old)) {
             log->debug("State improved during {} optimization",optSpace);

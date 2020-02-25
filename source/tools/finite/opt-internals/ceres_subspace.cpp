@@ -225,7 +225,6 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     double t_lu = hamiltonian.t_factorOp.get_last_time_interval();
     tools::common::profile::t_eig->toc();
 
-    double max_overlap_threshold = optMode == OptMode::OVERLAP ? 1.0/std::sqrt(2.0) : 1.0;
     class_eigsolver solver;
     solver.solverConf.eigThreshold = settings::precision::eig_threshold;
     std::string reason = "exhausted";
@@ -254,9 +253,10 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
         if(max_overlap            > 1.0 + 1e-6)                                  throw std::runtime_error("max_overlap larger than one : "  + std::to_string(max_overlap));
         if(sq_sum_overlap         > 1.0 + 1e-6)                                  throw std::runtime_error("eps larger than one : "          + std::to_string(sq_sum_overlap));
         if(min_overlap            < 0.0)                                         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
-        if(max_overlap            >= max_overlap_threshold )                    {reason = "overlap is good enough"; break;}
         if(subspace_error < subspace_error_threshold)                           {reason = "subspace error is low enough"; break;}
         if(optSpace == OptSpace::SUBSPACE_AND_DIRECT and subspace_error < 1e-3) {reason = "subspace error sufficient for SUBSPACE_AND_DIRECT"; break;}
+        if(optSpace == OptSpace::SUBSPACE_ONLY and optMode == OptMode::OVERLAP  and max_overlap >= 1.0/std::sqrt(2.0))
+            {reason = "Overlap sufficient for OVERLAP and SUBSPACE_ONLY"; break;}
     }
     tools::log->debug("Finished partial eigensolver -- reason: {}",reason);
     tools::common::profile::t_eig->toc();
@@ -566,7 +566,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         //    std::cout << summary.FullReport() << "\n";
 
         tools::common::profile::t_opt->toc();
-//        if(optSpace == OptSpace::SUBSPACE_ONLY)
+        if(optSpace == OptSpace::SUBSPACE_ONLY)
         {
             auto optimized_theta    = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
             auto optimized_energy   = tools::finite::measure::energy_per_site(state,optimized_theta);
