@@ -30,8 +30,10 @@ void tools::finite::io::h5dset::write_all_state(const class_state_finite &state,
 
     if(settings::output::storage_level >= StorageLevel::LIGHT) {
         write_bond_matrix(state, h5ppFile, prefix_path);
+        auto middle = (size_t)(state.get_length() / 2);
         h5ppFile.writeDataset(state.get_length(), prefix_path + "/state/sites");
         h5ppFile.writeDataset(state.get_position(), prefix_path + "/state/position");
+        h5ppFile.writeDataset(state.get_truncation_error(middle), prefix_path + "/state/truncation_error");
     }
     if(settings::output::storage_level >= StorageLevel::NORMAL) {
         write_bond_matrices(state, h5ppFile, prefix_path);
@@ -50,12 +52,11 @@ void tools::finite::io::h5dset::write_bond_matrices(const class_state_finite &st
  */
 {
     H5D_layout_t layout = decide_layout(prefix_path);
-    auto         middle = (size_t)(state.get_length() / 2);
+    size_t count = 0; // There should be one more sites+1 number of L's, because there is also a center bond
     for(size_t i = 0; i < state.get_length(); i++) {
-        h5ppFile.writeDataset(state.get_MPS(i).get_L(), prefix_path + "/state/mps/L_" + std::to_string(i), layout);
-        if(i == middle) {
-            h5ppFile.writeDataset(state.midchain_bond(), prefix_path + "/state/mps/L_C", layout);
-        }
+        h5ppFile.writeDataset(state.get_MPS(i).get_L(), prefix_path + "/state/mps/L_" + std::to_string(count++), layout);
+        if(state.get_MPS(i).isCenter())
+            h5ppFile.writeDataset(state.get_MPS(i).get_LC(), prefix_path + "/state/mps/L_" + std::to_string(count++), layout);
     }
     h5ppFile.writeDataset(state.get_truncation_errors(), prefix_path + "/state/truncation_errors", layout);
 }
@@ -65,9 +66,7 @@ void tools::finite::io::h5dset::write_bond_matrix(const class_state_finite &stat
  */
 {
     H5D_layout_t layout = decide_layout(prefix_path);
-    auto         middle = (size_t)(state.get_length() / 2);
     h5ppFile.writeDataset(state.midchain_bond(), prefix_path + "/state/mps/L_C", layout);
-    h5ppFile.writeDataset(state.get_truncation_error(middle), prefix_path + "/state/truncation_error", layout);
 }
 
 void tools::finite::io::h5dset::write_full_mps(const class_state_finite &state, h5pp::File &h5ppFile, const std::string &prefix_path)
@@ -77,9 +76,11 @@ void tools::finite::io::h5dset::write_full_mps(const class_state_finite &state, 
  */
 {
     H5D_layout_t layout = decide_layout(prefix_path);
-    write_bond_matrices(state, h5ppFile, prefix_path);
+    std::string mpstype = "A";
     for(size_t i = 0; i < state.get_length(); i++) {
-        h5ppFile.writeDataset(state.get_MPS(i).get_M(), prefix_path + "/state/mps/M_" + std::to_string(i), layout);
+        h5ppFile.writeDataset(state.get_MPS(i).get_M(), prefix_path + "/state/mps/" + mpstype + "_" + std::to_string(i), layout);
+        if(state.get_MPS(i).isCenter())
+            mpstype = "B";
     }
 }
 
@@ -112,20 +113,6 @@ void tools::finite::io::h5dset::write_model(const class_state_finite &state, h5p
     for(auto site = 0ul; site < state.get_length(); site++)
         state.get_MPO(site).write_parameters(h5ppFile,table_name);
 
-
-
-    for(auto site = 0ul; site < state.get_length(); site++) {
-        // Write MPO properties as attributes
-        std::string dataset_name = prefix_path + "/model/hamiltonian_" + std::to_string(site);
-        h5ppFile.writeDataset(site, dataset_name);
-        for(auto &params : state.get_MPO(site).get_parameters()) {
-            if(params.second.type() == typeid(double)) h5ppFile.writeAttribute(std::any_cast<double>(params.second), params.first, dataset_name);
-            if(params.second.type() == typeid(size_t)) h5ppFile.writeAttribute(std::any_cast<size_t>(params.second), params.first, dataset_name);
-            if(params.second.type() == typeid(int)) h5ppFile.writeAttribute(std::any_cast<int>(params.second), params.first, dataset_name);
-            if(params.second.type() == typeid(bool)) h5ppFile.writeAttribute(std::any_cast<bool>(params.second), params.first, dataset_name);
-            if(params.second.type() == typeid(std::string)) h5ppFile.writeAttribute(std::any_cast<std::string>(params.second), params.first, dataset_name);
-        }
-    }
 }
 
 void tools::finite::io::h5dset::write_array_measurements(const class_state_finite &state, h5pp::File &h5ppFile, const std::string &prefix_path) {
