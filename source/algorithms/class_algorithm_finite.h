@@ -6,9 +6,9 @@
 
 #include <algorithms/class_algorithm_base.h>
 
-class class_h5table_measurements_finite;
+//class class_h5table_measurements_finite;
 class class_state_finite;
-
+//class h5pp_table_measurements_finite;
 class class_algorithm_finite : public class_algorithm_base {
     public:
     // Inherit the constructor of class_algorithm_base
@@ -16,7 +16,8 @@ class class_algorithm_finite : public class_algorithm_base {
     explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites);
 
     // Tables
-    std::shared_ptr<class_h5table_buffer<class_h5table_measurements_finite>> h5tbuf_measurements; // Written every sweep
+//    std::shared_ptr<h5pp_table_measurements_finite> h5pp_measurements; // Written every sweep
+//    std::shared_ptr<class_h5table_buffer<class_h5table_measurements_finite>> h5tbuf_measurements; // Written every sweep
 
     // MPS
     std::unique_ptr<class_state_finite> state;
@@ -56,7 +57,8 @@ class class_algorithm_finite : public class_algorithm_base {
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         run() final;
     void         clear_saturation_status() override;
-    void         reset_to_random_state(const std::string &parity_sector = "random") final;
+    void         reset_to_random_product_state(const std::string &parity_sector = "random") final;
+    void         reset_to_random_current_state() final;
     void         reset_to_initial_state() final;
     void         write_state(bool result = false) final;
     void         write_measurements(bool result = false) final;

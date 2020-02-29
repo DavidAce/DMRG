@@ -9,7 +9,6 @@ source/algorithms/class_iTEBD.cpp
 source/algorithms/class_xDMRG.cpp
 source/general/class_tic_toc.cpp
 source/general/nmspc_quantum_mechanics.cpp
-source/io/class_h5table_buffer.cpp
 source/io/class_settings_reader.cpp
 source/io/nmspc_logger.cpp
 source/main.cpp
@@ -86,7 +85,6 @@ source/general/nmspc_quantum_mechanics.h
 source/general/nmspc_tensor_extra.h
 source/general/nmspc_tensor_omp.h
 source/general/nmspc_type_check.h
-source/io/class_h5table_buffer.h
 source/io/class_settings_reader.h
 source/io/nmspc_filesystem.h
 source/io/nmspc_logger.h

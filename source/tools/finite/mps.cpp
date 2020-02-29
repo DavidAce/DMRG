@@ -7,7 +7,7 @@
 #include <tools/finite/ops.h>
 #include <tools/common/log.h>
 #include <state/class_state_finite.h>
-
+#include <general/nmspc_quantum_mechanics.h>
 
 void tools::finite::mps::initialize(class_state_finite &state, const size_t length){
     log->info("Initializing mps");
@@ -28,9 +28,10 @@ void tools::finite::mps::initialize(class_state_finite &state, const size_t leng
 
 
 
-void tools::finite::mps::randomize(class_state_finite &state, const std::string &parity_sector, long state_number, bool use_pauli_eigenstates)
+void tools::finite::mps::random_product_state(class_state_finite &state, const std::string &parity_sector, const long state_number,
+                                              const bool use_pauli_eigenstates)
 /*!
- * There are many ways to randomize an initial product state state, based on the
+ * There are many ways to random_product_state an initial product state state, based on the
  * arguments (parity_sector,state_number,use_pauli_eigenstates) = (string,long,true/false).
  * Let "+-sector" mean one of {"x","+x","-x","y","+y","-y", "z","+z","-z"}.
 
@@ -49,7 +50,7 @@ void tools::finite::mps::randomize(class_state_finite &state, const std::string 
                                     full state will have always have nonzero imaginary part.
 
         d) ("randomAxis",+- ,f,f)   Randomly select one of {"x","y","z"} and go to case a).
-        e) ("none"      ,+- ,f,f)   Does not randomize
+        e) ("none"      ,+- ,f,f)   Does not random_product_state
         f) ("+-sector"  ,>=0,?,t)   Interpret seed_state as bitfield "01100010110..." and interpret these as
                                     up(0)/down(1) of either sx, sy or sz pauli matrices (same pauli for all sites)
  * Note: seed_state is only used if >= 0.
@@ -67,6 +68,18 @@ void tools::finite::mps::randomize(class_state_finite &state, const std::string 
     tools::finite::mps::rebuild_environments(state);
 
 }
+
+void tools::finite::mps::random_current_state(class_state_finite &state, const std::string & parity_sector){
+    Eigen::MatrixXcd paulimatrix;
+    if  (parity_sector == "x")  paulimatrix = qm::spinOneHalf::sx;
+    else if (parity_sector == "y")  paulimatrix = qm::spinOneHalf::sy;
+    else if (parity_sector == "z")  paulimatrix = qm::spinOneHalf::sz;
+    auto [mpos,L,R] = qm::mpo::random_pauli_mpos(paulimatrix,state.get_length());
+    tools::finite::ops::apply_mpos(state,mpos,L,R);
+    tools::finite::mps::normalize(state);
+    tools::finite::mps::rebuild_environments(state);
+}
+
 
 
 void tools::finite::mps::rebuild_environments(class_state_finite &state){

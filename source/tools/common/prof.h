@@ -25,7 +25,6 @@ namespace tools::common::profile{
     inline std::unique_ptr<class_tic_toc> t_ene_mom;
     inline std::unique_ptr<class_tic_toc> t_var_ham;
     inline std::unique_ptr<class_tic_toc> t_var_mom;
-
     inline std::unique_ptr<class_tic_toc> t_ham ;
     inline std::unique_ptr<class_tic_toc> t_vH2v;
     inline std::unique_ptr<class_tic_toc> t_vHv ;

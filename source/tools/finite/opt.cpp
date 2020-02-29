@@ -39,7 +39,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     ceres_default_options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
     ceres_default_options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::FLETCHER_REEVES;
-    ceres_default_options.max_num_iterations = 500;
+    ceres_default_options.max_num_iterations = 1000;
     ceres_default_options.max_lbfgs_rank     = 250;
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
     ceres_default_options.max_line_search_step_expansion = 10;

@@ -20,7 +20,7 @@ public:
     );
     std::shared_ptr<class_state_infinite> state;
     // Tables
-    std::shared_ptr<class_h5table_buffer<class_h5table_measurements_infinite>>  h5tbuf_measurements; //Written every iteration
+//    std::shared_ptr<class_h5table_buffer<class_h5table_measurements_infinite>>  h5tbuf_measurements; //Written every iteration
 
 
     virtual void run_simulation()         = 0;
@@ -34,7 +34,8 @@ public:
 //    void compute_observables()                                                                  final;
     void update_truncation_limit()                                                              final;
     void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
-    void reset_to_random_state(const std::string & parity_sector = "random")                    final;
+    void reset_to_random_product_state(const std::string & parity_sector = "random")            final;
+    void reset_to_random_current_state()                                                        final;
     void reset_to_initial_state()                                                               final;
     void clear_saturation_status()                                                              override;
 

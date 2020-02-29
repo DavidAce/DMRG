@@ -57,16 +57,20 @@ namespace qm{
                 Eigen::Tensor<Scalar,4>,
                 Eigen::Tensor<Scalar,3>,
                 Eigen::Tensor<Scalar,3>>
-        parity_selector_mpo(const Eigen::MatrixXcd paulimatrix, const int sector = 1);
+        parity_selector_mpo(const Eigen::MatrixXcd &paulimatrix, const int sector = 1);
 
 
         extern std::tuple<
                 std::list<Eigen::Tensor<Scalar,4>>,
                 Eigen::Tensor<Scalar,3>,
                 Eigen::Tensor<Scalar,3>>
-        parity_projector_mpos(const Eigen::MatrixXcd paulimatrix, const size_t sites, const int sector = 1);
+        parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix, const size_t sites, const int sector = 1);
 
-
+        extern std::tuple<
+            std::list<Eigen::Tensor<Scalar,4>>,
+            Eigen::Tensor<Scalar,3>,
+            Eigen::Tensor<Scalar,3>>
+        random_pauli_mpos(const Eigen::MatrixXcd &paulimatrices, const size_t sites);
 
 
     }

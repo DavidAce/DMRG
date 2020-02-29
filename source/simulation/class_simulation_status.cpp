@@ -22,6 +22,7 @@ std::ostream & operator << (std::ostream& os, const class_simulation_status & si
             << std::string("position                       : ") << sim_status.position << '\n'
             << std::string("moves                          : ") << sim_status.moves << '\n'
             << std::string("num_resets                     : ") << sim_status.num_resets << '\n'
+            << std::string("num_states                     : ") << sim_status.num_states << '\n'
             << std::string("chi_max                        : ") << sim_status.chi_max << '\n'
             << std::string("chi_lim                        : ") << sim_status.chi_lim << '\n'
             << std::string("min_sweeps                     : ")  << sim_status.min_sweeps                                        << '\n'

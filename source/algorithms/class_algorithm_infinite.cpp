@@ -7,7 +7,6 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <state/class_state_infinite.h>
-#include <io/class_h5table_buffer.h>
 #include <math/nmspc_math.h>
 #include <h5pp/h5pp.h>
 
@@ -26,11 +25,6 @@ class_algorithm_infinite::class_algorithm_infinite(
     tools::infinite::mpo::randomize(*state);
     tools::infinite::env::initialize(*state);
     tools::infinite::debug::check_integrity(*state);
-
-    if (settings::output::storage_level >= StorageLevel::NORMAL){
-        log->trace("Constructing table buffers in infinite base");
-        h5tbuf_measurements  = std::make_shared<class_h5table_buffer<class_h5table_measurements_infinite>> (h5pp_file, sim_name + "/progress/measurements");
-    }
     state->assert_positions();
 
 }
@@ -210,13 +204,18 @@ void class_algorithm_infinite::reset_to_initial_state() {
     clear_saturation_status();
 }
 
-void class_algorithm_infinite::reset_to_random_state(const std::string &parity) {
+void class_algorithm_infinite::reset_to_random_product_state(const std::string &parity) {
     log->trace("Resetting MPS to random product state");
     sim_status.iteration = 0;
 
     // Randomize state
     *state = tools::infinite::mps::set_random_state(*state,parity);
     clear_saturation_status();
+}
+
+void class_algorithm_infinite::reset_to_random_current_state() {
+    log->critical("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
+    throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
 }
 
 
@@ -407,17 +406,15 @@ void class_algorithm_infinite::write_profiling(bool result){
         // Either the simulation has converged successfully or
         // it has finalized some stage, like saturated at the
         // current bond dimension.
-        class_h5table_buffer<class_h5table_profiling> h5tbuf_profiling_results(h5pp_file, sim_name + "/results/profiling");
         log->trace("Appending profiling to table (result)");
-        tools::infinite::io::h5table::write_profiling(sim_status, h5tbuf_profiling_results);
+        tools::infinite::io::h5table::write_profiling(sim_status, *h5pp_file,  sim_name + "/results/profiling");
         log->trace("Appending profiling to table (result)... OK");
+        return;
     }
-
-    if (h5tbuf_profiling == nullptr){return;}
     if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
     if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
     log->trace("Appending profiling to table");
-    tools::infinite::io::h5table::write_profiling(sim_status,*h5tbuf_profiling);
+    tools::infinite::io::h5table::write_profiling(sim_status, *h5pp_file,  sim_name + "/results/profiling");
     log->trace("Appending profiling to table... OK");
 }
 

@@ -300,7 +300,7 @@ if(MKL_ROOT_DIR)
                             ${MKL_CORE_LIBRARY}
                             ${MKL_LAPACK_LIBRARY}
                             ${MKL_IOMP5_LIBRARY})
-                    message("${FORTRANVAR} ${MODEVAR} ${THREADVAR} ${MKL_${FORTRANVAR}_${MODEVAR}_${THREADVAR}_LIBRARIES}") # for debug
+                    #message("${FORTRANVAR} ${MODEVAR} ${THREADVAR} ${MKL_${FORTRANVAR}_${MODEVAR}_${THREADVAR}_LIBRARIES}") # for debug
                 endif()
             endforeach()
         endforeach()

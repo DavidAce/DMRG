@@ -35,9 +35,10 @@ public:
 //    void set_profiling_labels ();
 
     std::shared_ptr<h5pp::File>                                             h5pp_file;
-    std::shared_ptr<class_h5table_buffer<class_h5table_profiling>>          h5tbuf_profiling;
-    std::shared_ptr<class_h5table_buffer<class_h5table_simulation_status>>  h5tbuf_sim_status;
+//    std::shared_ptr<class_h5table_buffer<class_h5table_profiling>>          h5tbuf_profiling;
+//    std::shared_ptr<class_h5table_buffer<class_h5table_simulation_status>>  h5tbuf_sim_status;
 
+    std::string              sim_tag;
     std::string              sim_name;
     SimulationType           sim_type;
     class_simulation_status  sim_status;
@@ -64,7 +65,8 @@ public:
     virtual long   chi_init()                                                                                 = 0;
     virtual void   print_status_update()                                                                      = 0;
     virtual void   print_status_full()                                                                        = 0;
-    virtual void   reset_to_random_state(const std::string & parity = "random")                               = 0;
+    virtual void   reset_to_random_product_state(const std::string & parity = "random")                       = 0;
+    virtual void   reset_to_random_current_state()                                                            = 0;
     virtual void   reset_to_initial_state()                                                                   = 0;
     virtual void   clear_saturation_status()                                                                  = 0;
     virtual void update_truncation_limit()                                                                    = 0;
