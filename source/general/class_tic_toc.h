@@ -31,6 +31,7 @@ public:
 
     void tic();
     void toc();
+    void print_age();
     void print_time();
     double get_age();
     double get_last_time_interval();

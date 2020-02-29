@@ -153,6 +153,7 @@ namespace settings {
         inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         inline double   energy_density_target   = 0.5;              /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
         inline double   energy_density_window   = 0.05;             /*!< Accept states inside of energy_target +- energy_window. */
+        inline size_t   max_states              = 4;                /*!< Max number of random states to find using xDMRG on a single disorder realization */
     }
 
     //Parameters controlling iTEBD

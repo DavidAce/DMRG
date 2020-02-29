@@ -64,7 +64,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)  / length;
     norm_offset    = std::abs(vv) - 1.0 ;
-    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.0);
+    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.05);
     log10var       = std::log10(variance);
 
     if (fx != nullptr){

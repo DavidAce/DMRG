@@ -7,7 +7,7 @@
 
 void tools::common::profile::print_profiling(){
     if (settings::profiling::on) {
-        t_tot    ->print_time();
+        t_tot    ->print_age();
         t_pre    ->print_time_w_percent_if_nonzero(*t_tot);
         t_pos    ->print_time_w_percent_if_nonzero(*t_tot);
         t_sim    ->print_time_w_percent_if_nonzero(*t_tot);

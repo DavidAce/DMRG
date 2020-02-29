@@ -107,6 +107,7 @@ void settings::load_from_file(class_settings_reader &indata){
         indata.find_parameter<bool>   ("xdmrg::store_wavefn"           , xdmrg::store_wavefn);
         indata.find_parameter<double> ("xdmrg::energy_density_target"  , xdmrg::energy_density_target);
         indata.find_parameter<double> ("xdmrg::energy_density_window"  , xdmrg::energy_density_window);
+        indata.find_parameter<size_t> ("xdmrg::max_states"             , xdmrg::max_states);
     }
 
 

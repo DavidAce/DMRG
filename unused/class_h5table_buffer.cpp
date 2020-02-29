@@ -33,7 +33,6 @@ class_h5table_buffer<table_type>::class_h5table_buffer(
     table_name = h5pp::fs::path(table_path).filename();
     log = Logger::setLogger(logName,logLevel);
     table_entries      = std::make_unique<table_type>();
-    initialize_table();
     set_buffer_size(table_entries->meta.chunk_size);
 }
 
@@ -71,7 +70,8 @@ void class_h5table_buffer<table_type>::initialize_table(){
 
 template<typename table_type>
 void class_h5table_buffer<table_type>:: write_buffer_to_file() {
-    if (!table_entries->buffer.empty() and table_is_initialized) {
+    if(not table_is_initialized) initialize_table();
+    if (!table_entries->buffer.empty()) {
         log->trace("Writing buffer to output table: {}", table_name);
         hsize_t NRECORDS = get_num_buffered_entries();
         h5ppFile->createGroup(group_name);

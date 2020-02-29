@@ -1,13 +1,11 @@
 #pragma once
 #include <string>
+
+class class_simulation_status;
 namespace h5pp{
     class File;
 }
 
-template <typename table_type> class class_h5table_buffer;
-class class_h5table_profiling;
-class class_h5table_simulation_status;
-class class_simulation_status;
 
 
 namespace tools::common::io {
@@ -15,8 +13,8 @@ namespace tools::common::io {
         extern void write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile, const std::string &sim_name);
     }
     namespace h5table{
-        extern void write_sim_status                         (const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_simulation_status> &h5tbuf);
-        extern void write_profiling                          (const class_simulation_status &sim_status, class_h5table_buffer<class_h5table_profiling> &h5tbuf);
+        extern void write_sim_status                         (const class_simulation_status &sim_status, h5pp::File & h5ppFile , const std::string & table_path);
+        extern void write_profiling                          (const class_simulation_status &sim_status, h5pp::File & h5ppFile , const std::string & table_path);
     }
 
     namespace h5restore{

@@ -6,7 +6,6 @@
 #include <h5pp/h5pp.h>
 #include <tools/infinite/opt.h>
 #include <tools/common/prof.h>
-#include <io/class_h5table_buffer.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_infinite.h>
 using namespace std;
@@ -53,7 +52,6 @@ void class_iDMRG::run_simulation() {
         case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
         default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
     }
-
 }
 
 

@@ -35,15 +35,13 @@ double class_tic_toc::get_measured_time(){
 }
 
 void class_tic_toc::tic(){
-    if (profiling) {
-        tic_timepoint = std::chrono::high_resolution_clock::now();
-    }
+    if (profiling) tic_timepoint = std::chrono::high_resolution_clock::now();
 }
 
 void class_tic_toc::toc(){
     if (profiling) {
-        delta_time       = std::chrono::high_resolution_clock::now() - tic_timepoint;
-        measured_time   += delta_time;
+        delta_time     = std::chrono::high_resolution_clock::now() - tic_timepoint;
+        measured_time += delta_time;
     }
 }
 
@@ -54,6 +52,15 @@ void class_tic_toc::print_delta(){
              << std::chrono::duration_cast<std::chrono::duration<double>>(delta_time).count();
     }
 }
+
+void class_tic_toc::print_age(){
+    if (profiling) {
+        std::cout << name
+                  << std::fixed << std::setprecision(print_precision) << std::setw(print_precision + padding) << std::left
+                  << get_age() << " s\n";
+    }
+}
+
 
 void class_tic_toc::print_time(){
     if (profiling) {

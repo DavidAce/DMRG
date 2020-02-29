@@ -20,6 +20,9 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
         : class_algorithm_finite(std::move(h5ppFile_), "xDMRG",SimulationType::xDMRG, settings::xdmrg::num_sites) {
     log->trace("Constructing class_xDMRG");
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
+    if(settings::xdmrg::max_states > 0){
+        sim_tag = "state_" + std::to_string(sim_status.num_states);
+    }
 }
 
 
@@ -51,47 +54,54 @@ void class_xDMRG::run_preprocessing() {
 
 void class_xDMRG::run_simulation()    {
     log->info("Starting {} simulation", sim_name);
-    while(true) {
-        single_xDMRG_step();
-        print_status_update();
-        write_state();
-        write_measurements();
-        write_sim_status();
-        write_profiling();
-        copy_from_tmp();
-        check_convergence();
-        update_truncation_limit();     //Will update SVD threshold iff the state precision is being limited by truncation error
-        update_bond_dimension_limit(); //Will update bond dimension if the state precision is being limited by bond dimension
-        try_projection();
-        try_chi_quench();
-        try_damping();
-        try_perturbation();
-        // It's important not to perform the last move.
-        // That last state would not get optimized
-        if (state->position_is_any_edge() and not state->is_perturbed() and not state->is_damped())
-        {
-            if (sim_status.iteration >= settings::xdmrg::max_sweeps)    {stop_reason = StopReason::MAX_ITERS; break;}
-            if (sim_status.simulation_has_succeeded)                    {stop_reason = StopReason::SUCCEEDED; break;}
-            if (sim_status.simulation_has_to_stop)                      {stop_reason = StopReason::SATURATED; break;}
-            if (sim_status.num_resets > settings::precision::max_resets){stop_reason = StopReason::MAX_RESET; break;}
+    while(true){
+        //Reset counters
+        while(true) {
+            single_xDMRG_step();
+            print_status_update();
+            write_state();
+            write_measurements();
+            write_sim_status();
+            write_profiling();
+            copy_from_tmp();
+            check_convergence();
+            update_truncation_limit();     //Will update SVD threshold iff the state precision is being limited by truncation error
+            update_bond_dimension_limit(); //Will update bond dimension if the state precision is being limited by bond dimension
+            try_projection();
+            try_chi_quench();
+            try_damping();
+            try_perturbation();
+            // It's important not to perform the last move.
+            // That last state would not get optimized
+            if (state->position_is_any_edge() and not state->is_perturbed() and not state->is_damped())
+            {
+                if (sim_status.iteration >= settings::xdmrg::max_sweeps)    {stop_reason = StopReason::MAX_ITERS; break;}
+                if (sim_status.simulation_has_succeeded)                    {stop_reason = StopReason::SUCCEEDED; break;}
+                if (sim_status.simulation_has_to_stop)                      {stop_reason = StopReason::SATURATED; break;}
+                if (sim_status.num_resets > settings::precision::max_resets){stop_reason = StopReason::MAX_RESET; break;}
+            }
+            log->trace("Finished step {}, iteration {}, position {}, direction {}", sim_status.step, sim_status.iteration, state->get_position(), state->get_direction());
+            move_center_point();
+
+            sim_status.iteration     = state->get_sweeps();
+            sim_status.position      = state->get_position();
+            sim_status.moves         = state->get_moves();
+            sim_status.step++;
         }
-//        log->info("Truncation errors: {}", state->get_truncation_errors());
-//        log->info("Bond dimensions  : {}", tools::finite::measure::bond_dimensions(*state));
-        log->trace("Finished step {}, iteration {}, position {}, direction {}", sim_status.step, sim_status.iteration, state->get_position(), state->get_direction());
-        move_center_point();
 
-        sim_status.iteration     = state->get_sweeps();
-        sim_status.position      = state->get_position();
-        sim_status.moves         = state->get_moves();
-        sim_status.step++;
-    }
-
-    switch(stop_reason){
-        case StopReason::MAX_ITERS : log->info("Finished {} simulation -- reason: MAX ITERS",sim_name) ;break;
-        case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED",sim_name) ;break;
-        case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
-        case StopReason::MAX_RESET : log->info("Finished {} simulation -- reason: MAX RESET",sim_name) ;break;
-        default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
+        switch(stop_reason){
+            case StopReason::MAX_ITERS : log->info("Finished {} simulation -- reason: MAX ITERS",sim_name) ;break;
+            case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED",sim_name) ;break;
+            case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
+            case StopReason::MAX_RESET : log->info("Finished {} simulation -- reason: MAX RESET",sim_name) ;break;
+            default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
+        }
+        if(++sim_status.num_states >= settings::xdmrg::max_states) break;
+        else{
+            run_postprocessing(); //Saves and prints full status update
+            reset_to_random_current_state();
+            sim_tag = "state_" + std::to_string(sim_status.num_states);
+        }
     }
 }
 
@@ -119,28 +129,32 @@ void class_xDMRG::single_xDMRG_step()
 //        should erase the any biasing that may have occurred due to the selection of initial product state.
 
     // Setup normal conditions
-    if(state->get_chi_lim() <= 12){
+    if(sim_status.num_states == 0 and state->get_chi_lim() <= 12){
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
-//    if(state->get_chi_lim() <= 8 or sim_status.iteration < 4){
-//        optMode  = OptMode::OVERLAP;
-//        optSpace = OptSpace::SUBSPACE_ONLY;
-//    }
-
-    if(state->get_chi_lim() <= 8 or sim_status.iteration < 2){
+    if(sim_status.num_states == 0 and (state->get_chi_lim() <= 8 or sim_status.iteration < 2)){
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
     //Setup strong overrides to normal conditions, e.g., for experiments like chi quench
 
-//    if(chi_quench_steps > 0){
-//        optMode  = OptMode::VARIANCE;
-//        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
-//    }
+    if(state->size_2site() < settings::precision::max_size_part_diag and chi_quench_steps > 0 ){
+        optMode  = OptMode::VARIANCE;
+        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
+    }
 
+    if(state->size_2site() < settings::precision::max_size_part_diag and tools::finite::measure::energy_variance(*state) > 1e-4){
+        optMode  = OptMode::VARIANCE;
+        optSpace = OptSpace::SUBSPACE_AND_DIRECT;
+    }
+
+    if(state->size_2site() < settings::precision::max_size_part_diag and tools::finite::measure::energy_variance(*state) > 1e-2){
+        optMode  = OptMode::OVERLAP;
+        optSpace = OptSpace::SUBSPACE_ONLY;
+    }
 
     if(sim_status.variance_mpo_has_converged){
         optMode  = OptMode::VARIANCE;
@@ -162,7 +176,7 @@ void class_xDMRG::single_xDMRG_step()
     if(chi_quench_steps > 0)
         max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else if(sim_status.simulation_has_got_stuck)
-        max_num_sites_list = {settings::precision::max_sites_multidmrg};
+        max_num_sites_list = {2,4,settings::precision::max_sites_multidmrg};
     else if(optSpace == OptSpace::SUBSPACE_AND_DIRECT)
         max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else if(optSpace == OptSpace::SUBSPACE_ONLY)
@@ -223,11 +237,12 @@ void class_xDMRG::single_xDMRG_step()
 //            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
 //        }
         // We can now decide if we are happy with the result or not.
-        if (std::log10(variance_new) < 0.99*std::log10(variance_old)) {
-            log->debug("State improved during {} optimization",optSpace);
+        double decrease = std::log10(variance_old)/std::log10(variance_new);
+        if (decrease < 0.99) {
+            log->debug("State improved during {} optimization. Variance decrease: {:.4f}",optSpace,decrease);
             break;
         }else{
-            log->debug("State did not improve during {} optimization", optSpace);
+            log->debug("State did not improve during {} optimization. Variance decrease {:.4f}", optSpace, decrease);
             continue;
         }
     }
@@ -279,9 +294,7 @@ void class_xDMRG::single_xDMRG_step()
     tools::common::profile::t_sim->toc();
     sim_status.wall_time = tools::common::profile::t_tot->get_age();
     sim_status.simu_time = tools::common::profile::t_sim->get_measured_time();
-
 }
-
 
 
 void class_xDMRG::check_convergence(){
@@ -339,12 +352,6 @@ void class_xDMRG::check_convergence(){
         sim_status.simulation_has_stuck_for = sim_status.simulation_has_got_stuck ? sim_status.simulation_has_stuck_for + 1 : 0;
     }
 
-
-
-
-
-
-
     sim_status.simulation_has_to_stop = sim_status.simulation_has_stuck_for >= max_stuck_iters;
 
     if(state->position_is_any_edge()) {
@@ -365,11 +372,8 @@ void class_xDMRG::check_convergence(){
 //        reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
 //    }
 
-
-
     tools::common::profile::t_con->toc();
 }
-
 
 
 void class_xDMRG::inflate_initial_state(){
@@ -398,7 +402,7 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
 
 
     while(true){
-        reset_to_random_state(parity_sector);
+        reset_to_random_product_state(parity_sector);
         if (inflate) inflate_initial_state();
         sim_status.energy_dens = (tools::finite::measure::energy_per_site(*state) - sim_status.energy_min ) / (sim_status.energy_max - sim_status.energy_min);
         outside_of_window      = std::abs(sim_status.energy_dens - sim_status.energy_dens_target)  >= sim_status.energy_dens_window;
@@ -422,7 +426,6 @@ void class_xDMRG::reset_to_random_state_in_energy_window(const std::string &pari
 
     log->info("Number of product state resets: {}",sim_status.num_resets );
 }
-
 
 
 bool class_xDMRG::state_is_within_energy_window(Eigen::Tensor<Scalar, 3> &theta) {
@@ -459,7 +462,7 @@ void class_xDMRG::find_energy_range() {
     size_t max_sweeps_during_f_range = 4;
     sim_status.iteration  = state->reset_sweeps();
     sim_status.moves      = state->reset_moves();
-    reset_to_random_state("random");
+    reset_to_random_product_state("random");
     update_bond_dimension_limit(16);
     // Find energy minimum
     while(true) {
@@ -477,7 +480,7 @@ void class_xDMRG::find_energy_range() {
 
     }
     sim_status.energy_min = tools::finite::measure::energy_per_site(*state);
-    reset_to_random_state("random");
+    reset_to_random_product_state("random");
     // Find energy maximum
     while(true) {
         class_algorithm_finite::single_DMRG_step("LR");

@@ -6,7 +6,6 @@
 #include <sstream>
 #include <complex>
 #include "class_algorithm_base.h"
-#include <io/class_h5table_buffer.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <h5pp/h5pp.h>
@@ -29,11 +28,11 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
     tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     log->trace("Constructing class_algorithm_base");
     tools::common::profile::init_profiling();
-    if (settings::output::storage_level >= StorageLevel::NORMAL){
-        log->trace("Constructing table buffers in base");
-        h5tbuf_profiling  = std::make_unique<class_h5table_buffer<class_h5table_profiling>>        (h5pp_file, sim_name + "/journal/profiling");
-        h5tbuf_sim_status = std::make_unique<class_h5table_buffer<class_h5table_simulation_status>>(h5pp_file, sim_name + "/journal/sim_status");
-    }
+//    if (settings::output::storage_level >= StorageLevel::NORMAL){
+//        log->trace("Constructing table buffers in base");
+//        h5tbuf_profiling  = std::make_unique<class_h5table_buffer<class_h5table_profiling>>        (h5pp_file, sim_name + "/journal/profiling");
+//        h5tbuf_sim_status = std::make_unique<class_h5table_buffer<class_h5table_simulation_status>>(h5pp_file, sim_name + "/journal/sim_status");
+//    }
 
 
     if(h5pp_file) log->trace("Writing input file");
