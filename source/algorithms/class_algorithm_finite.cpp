@@ -322,7 +322,7 @@ void class_algorithm_finite::reset_to_random_current_state() {
     auto max_bond_dimension = *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
     log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
     tools::log->info("Reducing max bond dimension by half");
-    tools::finite::mps::truncate_all_sites(*state, 32, 1e-6);
+    tools::finite::mps::truncate_all_sites(*state, max_bond_dimension/2, 1e-6);
     log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
 
     // Randomize state
