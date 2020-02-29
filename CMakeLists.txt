@@ -241,7 +241,7 @@ message(STATUS "ENABLE_OPENMP                : ${ENABLE_OPENMP}")
 message(STATUS "ENABLE_MKL                   : ${ENABLE_MKL}")
 message(STATUS "ENABLE_LTO                   : ${ENABLE_LTO}")
 message(STATUS "BUILD_SHARED_LIBS            : ${BUILD_SHARED_LIBS}")
-message(STATUS "ENABLE_TESTS                  : ${ENABLE_TESTS}")
+message(STATUS "ENABLE_TESTS                 : ${ENABLE_TESTS}")
 message(STATUS "BUILD_EXAMPLES               : ${BUILD_EXAMPLES}")
 message("=============================================================================")
 
