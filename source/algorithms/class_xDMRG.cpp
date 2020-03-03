@@ -173,10 +173,12 @@ void class_xDMRG::single_xDMRG_step()
 
     std::list<size_t> max_num_sites_list;
     // Generate a list of maximum number of active sites to try
+    if(sim_status.simulation_has_stuck_for > 0)
+        max_num_sites_list = {2,4};
+    else if(sim_status.simulation_has_stuck_for > 1)
+        max_num_sites_list = {4,settings::precision::max_sites_multidmrg};
     if(chi_quench_steps > 0)
         max_num_sites_list = {settings::precision::max_sites_multidmrg};
-    else if(sim_status.simulation_has_got_stuck)
-        max_num_sites_list = {2,4,settings::precision::max_sites_multidmrg};
     else if(optSpace == OptSpace::SUBSPACE_AND_DIRECT)
         max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else if(optSpace == OptSpace::SUBSPACE_ONLY)
@@ -201,7 +203,7 @@ void class_xDMRG::single_xDMRG_step()
     log->debug("Possible multisite step sizes: {}", max_num_sites_list);
     size_t theta_count = 0;
     double variance_old = measure::energy_variance_per_site(*state);
-    std::map<double,std::tuple<Eigen::Tensor<Scalar,3>, std::list<size_t>, size_t>> results;
+    std::map<double,std::tuple<Eigen::Tensor<Scalar,3>, std::list<size_t>, size_t,double>> results;
     for (auto & max_num_sites : max_num_sites_list){
         if(optMode == opt::OptMode::OVERLAP and optSpace == opt::OptSpace::DIRECT)
             throw std::logic_error("OVERLAP mode and DIRECT space are incompatible");
@@ -225,7 +227,7 @@ void class_xDMRG::single_xDMRG_step()
 
         auto theta = opt::find_excited_state(*state, sim_status, optMode, optSpace,optType);
         double variance_new = measure::energy_variance_per_site(*state, theta);
-        results.insert({variance_new, {theta, state->active_sites, theta_count++}});
+        results.insert({variance_new, {theta, state->active_sites, theta_count++, tools::common::profile::t_opt->get_last_time_interval()}});
 //
 //        if(state_is_within_energy_window(theta)) {
 //            variance_new = measure::energy_variance_per_site(*state, theta);
@@ -247,9 +249,9 @@ void class_xDMRG::single_xDMRG_step()
         }
     }
     int result_count = 0;
-    for (auto & result : results){
-        tools::log->info("Result {:3} candidate {:3} variance {:.16f}", result_count++, std::get<2>(result.second),std::log10(result.first));
-    }
+    for (auto & result : results)
+        tools::log->debug("Result {:3} candidate {:3} | variance {:.16f} | time {:.4f} ms", result_count++, std::get<2>(result.second),std::log10(result.first), 1000 * std::get<3>(result.second));
+
     //Check the contents of results.
 //    auto[variance_new,theta] = std::make_pair(results.begin()->first,results.begin()->second);
     state->clear_cache();
@@ -269,12 +271,12 @@ void class_xDMRG::single_xDMRG_step()
 
     //Do the truncation with SVD
     auto variance_before_svd = tools::finite::measure::energy_variance_per_site(*state,theta);
-    log->trace("Variance check before truncate  : {:.16f}", std::log10(variance_before_svd));
+    log->trace("Variance check before SVD: {:.16f}", std::log10(variance_before_svd));
     opt::truncate_theta(theta, *state,chi_lim);
     auto variance_after_svd = tools::finite::measure::energy_variance_per_site(*state);
     state->set_truncated_variance( (variance_after_svd - variance_before_svd) / variance_after_svd );
-    log->trace("Variance check after truncate   : {:.16f}", std::log10(variance_after_svd));
-    log->debug("Variance loss {:.16f}", state->get_truncated_variance() );
+    log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
+    log->trace("Variance loss due to  SVD: {:.16f}", state->get_truncated_variance() );
 
     //Normalize if unity was lost for some reason (numerical error buildup)
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){

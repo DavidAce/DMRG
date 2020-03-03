@@ -16,7 +16,7 @@ void DenseHamiltonianSqProduct<T>::MultAx(T* theta_in_, T* theta_out_) {
     size_t log2chiL  = std::log2(shape_theta[1]);
     size_t log2chiR  = std::log2(shape_theta[2]);
 
-    if (log2spin > log2chiL + log2chiR){
+    if (log2spin >= std::max(log2chiL, log2chiR)){
         if (log2chiL > log2chiR){
             Eigen::Tensor<Scalar,3> theta = theta_in.shuffle(Textra::array3{1,0,2});
             theta_out.device(omp->dev) =

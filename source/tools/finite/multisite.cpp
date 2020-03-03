@@ -201,9 +201,9 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
     size_t log2spin  = std::log2(dsizes[0]);
     Eigen::Tensor<Scalar, 0> H2;
     OMP omp(settings::threading::num_threads);
-    if (log2spin > log2chiL + log2chiR){
+    if (log2spin >= std::max(log2chiL, log2chiR)){
         if (log2chiL > log2chiR){
-//            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL > log2chiR ");
+//            tools::log->trace("H2 path: log2spin > std::max(log2chiL , log2chiR)  and  log2chiL > log2chiR ");
             Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{1,0,2});
             H2.device(omp.dev) =
                     theta
@@ -215,7 +215,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
         }
 
         else{
-//            tools::log->trace("H2 path: log2spin > log2chiL + log2chiR  and  log2chiL <= log2chiR ");
+//            tools::log->trace("H2 path: log2spin >= std::max(log2chiL , log2chiR) and  log2chiL <= log2chiR ");
             Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{2,0,1});
             H2.device(omp.dev) =
                     theta
@@ -227,7 +227,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
         }
 
     }else{
-//        tools::log->trace("H2 path: log2spin <= log2chiL + log2chiR");
+//        tools::log->trace("H2 path: log2spin < std::max(log2chiL , log2chiR)");
         Eigen::Tensor<Scalar,3> theta = multitheta.shuffle(Textra::array3{1,0,2});
         H2.device(omp.dev) =
                 theta

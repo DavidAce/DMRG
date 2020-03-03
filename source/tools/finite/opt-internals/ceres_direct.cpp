@@ -30,26 +30,26 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite
     auto   theta_old_vec      = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta_old.data(),theta_old.size());
     auto   theta_initial_vec  = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,1>>(theta_initial.data(), theta_initial.size());
     std::vector<reports::direct_opt_tuple> opt_log;
-
+    class_tic_toc t_local(true,5,"");
     if (tools::log->level() <= spdlog::level::debug){
-        tools::common::profile::t_opt->tic();
+        t_local.tic();
         double energy_old   = tools::finite::measure::energy_per_site(state,theta_old);
         double variance_old = tools::finite::measure::energy_variance_per_site(state,theta_old);
-        tools::common::profile::t_opt->toc();
-        opt_log.emplace_back("Current state" ,theta_old.size(), energy_old, std::log10(variance_old), 1.0, theta_old_vec.norm(), 0 ,0, tools::common::profile::t_opt->get_last_time_interval());
+        t_local.toc();
+        opt_log.emplace_back("Current state" ,theta_old.size(), energy_old, std::log10(variance_old), 1.0, theta_old_vec.norm(), 0 ,0, t_local.get_last_time_interval());
 
-        tools::common::profile::t_opt->tic();
+        t_local.tic();
         double energy_initial   = tools::finite::measure::multisite::energy_per_site(state,theta_initial);
         double variance_initial = tools::finite::measure::multisite::energy_variance_per_site(state,theta_initial);
-        tools::common::profile::t_opt->toc();
-        opt_log.emplace_back("Initial guess" , theta_initial.size(), energy_initial, std::log10(variance_initial), 1.0, theta_initial_vec.norm(), 0 , 0, tools::common::profile::t_opt->get_last_time_interval());
+        t_local.toc();
+        opt_log.emplace_back("Initial guess" , theta_initial.size(), energy_initial, std::log10(variance_initial), 1.0, theta_initial_vec.norm(), 0 , 0, t_local.get_last_time_interval());
     }
 
     auto options = ceres_default_options;
     ceres::GradientProblemSolver::Summary summary;
     int counter,iter;
     double variance_ceres, energy_ceres;
-    tools::common::profile::t_opt->tic();
+    t_local.tic();
     Eigen::VectorXcd theta_new;
     switch (optType){
         case OptType::CPLX:{
@@ -79,19 +79,19 @@ tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite
             break;
         }
     }
-    tools::common::profile::t_opt->toc();
+    t_local.toc();
 
     double overlap_new  = std::abs(theta_old_vec.dot(theta_new));
 
-    opt_log.emplace_back("LBFGS direct", theta_new.size(), energy_ceres, std::log10(variance_ceres), overlap_new, theta_new.norm(), iter, counter,tools::common::profile::t_opt->get_last_time_interval());
+    opt_log.emplace_back("LBFGS direct", theta_new.size(), energy_ceres, std::log10(variance_ceres), overlap_new, theta_new.norm(), iter, counter,t_local.get_last_time_interval());
     if (tools::log->level() <= spdlog::level::debug) {
-        tools::common::profile::t_opt->tic();
+        t_local.tic();
         auto theta_new_map  = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
         double energy_new   = tools::finite::measure::energy_per_site(state,theta_new_map);
         double variance_new = tools::finite::measure::energy_variance_per_site(state,theta_new_map);
-        tools::common::profile::t_opt->toc();
+        t_local.toc();
         opt_log.emplace_back("LBFGS check", theta_new.size(), energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), 0,0,
-                             tools::common::profile::t_opt->get_last_time_interval());
+                             t_local.get_last_time_interval());
     }
     // Finish up and print reports
     tools::log->debug("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());

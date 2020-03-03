@@ -13,6 +13,7 @@ parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
 parser.add_argument('-f', '--filename', type=str, help='Save to file with filename', default='experiment')
 parser.add_argument('-F', '--finished', action='store_true', help='Only consider finished simulations')
+parser.add_argument('-L', '--length', type=str, help='Consider only a certain chain length', default='')
 parser.add_argument('-t', '--timestamp', action='store_true', help='Add timestamp to filename')
 parser.add_argument('-d', '--directory', type=str, help='Search for hdf5 files in directory', default='output')
 parser.add_argument('-o', '--outdir', type=str, help='Save output to directory', default='experiments')
@@ -50,11 +51,16 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         subdirList.sort()
     if not fileList:
         continue
+
+    if not args.length in dirName:
+        continue
+
     fileList.sort()
     chainlen  = []
     seed      = []
     iter      = []
     step      = []
+    energy    = []
     variance  = []
     variancel = []
     ententrp  = []
@@ -69,7 +75,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary:
-        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "VarNow", "VarLow","Ent.Entr.", "Time",
+        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Time",
                                                                                                            "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
 
         print(header)
@@ -131,6 +137,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 seed           .append([int(x) for x in regex.findall(realization_name)][-1])
                 iter           .append(h5file[table_path].get('sim_status')['iteration'][-1])
                 step           .append(h5file[table_path].get('sim_status')['step'][-1])
+                energy         .append(h5file[table_path].get('measurements')['energy_per_site'][-1])
                 variance       .append(h5file[table_path].get('measurements')['energy_variance_per_site'][-1])
                 #variancel       .append(h5file[table_path].get('measurements')['energy_variance_per_site_lowest'][-1])
                 variancel       .append(get_data(h5file[table_path].get('measurements'),'energy_variance_per_site_lowest'))
@@ -141,9 +148,6 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 saturated      .append(h5file[table_path].get('sim_status')['simulation_has_saturated'][-1])
                 converged      .append(h5file[table_path].get('sim_status')['simulation_has_converged'][-1])
                 succeeded      .append(h5file[table_path].get('sim_status')['simulation_has_succeeded'][-1])
-
-
-
 
 
                 style = ''
@@ -170,11 +174,12 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
                 if not args.summary:
-                    entry.append("{:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+                    entry.append("{:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
                         chainlen[-1],
                         seed[-1],
                         iter[-1],
                         step[-1],
+                        energy[-1],
                         np.log10(variance[-1]),
                         np.log10(variancel[-1]),
                         ententrp[-1],
@@ -198,14 +203,15 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         continue
     if len(chainlen) == 0:
         continue
-    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
+    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
                                                                                                               "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
-    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
         np.nanmax(chainlen),
         len(seed),
         np.nanmean(iter),
         np.nanmean(step),
+        np.nanmean(energy),
         np.nanmean(np.log10(variance)),
         np.nanmean(np.log10(variancel)),
         np.mean(ententrp),

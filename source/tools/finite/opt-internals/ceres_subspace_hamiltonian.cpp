@@ -118,9 +118,9 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
 
     OMP omp(settings::threading::num_threads);
 
-    if(log2spin > log2chiL + log2chiR){
+    if(log2spin >= std::max(log2chiL,log2chiR)){
         if (log2chiL >= log2chiR){
-            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR");
+            tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL >= log2chiR");
             for (size_t col = 0; col < eignum; col++ ){
                 auto theta_j = map(eigvecs.data() + col*eigdim, dims);
                 Hv.device(omp.dev) =
@@ -138,7 +138,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
             }
         }
         else{
-            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR");
+            tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL < log2chiR");
             for (size_t col = 0; col < eignum; col++ ){
                 auto theta_j = map(eigvecs.data() + col*eigdim, dims);
                 Hv.device(omp.dev) =
@@ -208,9 +208,9 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     long dimH2 = eigvecs.cols();
     Eigen::Tensor<Scalar,2> H2(dimH2,dimH2);
 
-    if(log2spin > log2chiL + log2chiR){
+    if(log2spin >= std::max(log2chiL, log2chiR)){
         if (log2chiL >= log2chiR){
-            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL >= log2chiR ");
+            tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL >= log2chiR ");
             H2 =
                 eigvecs_tensor
                         .contract(env2L,                      Textra::idx({1},{0}))
@@ -221,7 +221,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                         .shuffle(                             Textra::array2{1,0});
         }
         else{
-            tools::log->trace("get_H2 path: log2spin > log2chiL + log2chiR  and  log2chiL < log2chiR ");
+            tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL < log2chiR ");
             H2 =
                 eigvecs_tensor
                         .contract(env2R,                      Textra::idx({2},{0}))
@@ -232,7 +232,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                         .shuffle(                             Textra::array2{1,0});
         }
     }else{
-        tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
+        tools::log->trace("get_H2 path: log2spin < std::max(log2chiL, log2chiR)");
         H2 =
 //            eigvecs_tensor.conjugate()
 //                    .contract(env2L,                      Textra::idx({1},{1}))
