@@ -321,13 +321,15 @@ void class_algorithm_finite::reset_to_random_current_state() {
     auto bond_dimensions    = tools::finite::measure::bond_dimensions(*state);
     auto max_bond_dimension = *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
     log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
-    tools::log->info("Reducing max bond dimension by half");
-    tools::finite::mps::truncate_all_sites(*state, max_bond_dimension/2, 1e-6);
-    log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
-
     // Randomize state
     log->info("Flipping random spins");
-    tools::finite::mps::random_current_state(*state,"x");
+//    tools::finite::mps::random_current_state(*state,"x");
+    tools::finite::mps::random_current_state(*state,"z");
+
+    tools::log->info("Reducing max bond dimension by half");
+    tools::finite::mps::truncate_all_sites(*state, max_bond_dimension, 1e-4);
+    log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
+
     clear_saturation_status();
     state->lowest_recorded_variance = 1;
     sim_status.iteration            = state->reset_sweeps();
