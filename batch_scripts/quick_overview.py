@@ -13,6 +13,7 @@ parser.add_argument('-S', '--summary', action='store_true', help='Summary only')
 parser.add_argument('-s', '--save', action='store_true', help='Save to file')
 parser.add_argument('-f', '--filename', type=str, help='Save to file with filename', default='experiment')
 parser.add_argument('-F', '--finished', action='store_true', help='Only consider finished simulations')
+parser.add_argument('-r', '--state', type=str, help='Consider only a certain state number', default='')
 parser.add_argument('-L', '--length', type=str, help='Consider only a certain chain length', default='')
 parser.add_argument('-t', '--timestamp', action='store_true', help='Add timestamp to filename')
 parser.add_argument('-d', '--directory', type=str, help='Search for hdf5 files in directory', default='output')
@@ -102,6 +103,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         entry = []
         ententrp_zero = []
         for state_num,state_key in enumerate(state_keys):
+            if len(args.state) > 0 and not args.state in state_key:
+                continue
+
             table_path = ''
             step_results = 0
             step_journal = 0
@@ -152,11 +156,11 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 succeeded      .append(h5file[table_path].get('sim_status')['simulation_has_succeeded'][-1])
 
                 ententrp_curr = h5file[table_path]['entanglement_entropies'][()]
-                if state_num == 0:
+                if len(entdiff) == 0:
                     ententrp_zero = h5file[table_path]['entanglement_entropies'][()]
                     entdiff.append(np.nan)
                 else:
-                    entdiff.append(np.sum((ententrp_curr-ententrp_zero )/chainlen[-1]))
+                    entdiff.append(np.sum((ententrp_curr-ententrp_zero )/np.log(2)))
 
 
 
@@ -214,6 +218,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         continue
     if len(chainlen) == 0:
         continue
+    if np.isnan(entdiff).all():
+        entdiff = np.zeros(len(entdiff))
+
     header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Entgl-diff>","<Time>",
                                                                                                               "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
