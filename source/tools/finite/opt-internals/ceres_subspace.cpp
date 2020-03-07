@@ -152,7 +152,7 @@ std::vector<std::pair<double,int>> get_best_candidates_in_window(const Eigen::Ve
         if(overlaps_in_window.empty()) break;
         double sq_sum_overlap = std::accumulate(candidates.begin(),candidates.end(), 0.0, lambda_sq_sum);
         tools::log->debug("Sq_sum_overlap:  {:.16f}",sq_sum_overlap);
-        if(sq_sum_overlap  > 0.8) break; // Half means cat state.
+        if(sq_sum_overlap  > 0.6) break; // Half means cat state.
         else {
             candidates.emplace_back(overlaps_in_window.back());
             overlaps_in_window.pop_back();
@@ -413,7 +413,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         double candidate_variance           = tools::finite::measure::energy_variance_per_site(state, candidate_theta);
         tools::log->trace("Candidate {:<2} has good overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",candidate.second ,candidate.first ,candidate_energy  ,std::log10(candidate_variance) );
         initial_guess_thetas.emplace_back(candidate_theta);
-        if(initial_guess_thetas.size() > 20) break;
+        if(initial_guess_thetas.size() > 5) break;
     }
 
 

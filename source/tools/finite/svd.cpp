@@ -21,8 +21,10 @@ void tools::finite::mps::normalize(class_state_finite & state, std::optional<siz
     size_t num_moves = 2*(state.get_length()-2);
     if(not chi_lim.has_value()) chi_lim = state.get_chi_lim();
     if(state.hasNaN()) throw std::runtime_error("State has NAN's before normalization");
-    tools::log->trace("Norm before normalization = {:.16f}", tools::finite::measure::norm(state));
-    tools::log->trace("Bond dimensions before normalization: {}", tools::finite::measure::bond_dimensions(state));
+    tools::log->info("Norm                 before normalization: {:.16f}", tools::finite::measure::norm(state));
+    tools::log->info("Spin components      before normalization: {}", tools::finite::measure::spin_components(state));
+    tools::log->info("Bond dimensions      before normalization: {}", tools::finite::measure::bond_dimensions(state));
+    tools::log->info("Entanglement entropy before normalization: {}", tools::finite::measure::entanglement_entropies(state));
 
     //Start by truncating at the current position.
     tools::finite::opt::truncate_theta(state.get_theta(), state,chi_lim, svd_threshold);
@@ -69,8 +71,10 @@ void tools::finite::mps::normalize(class_state_finite & state, std::optional<siz
     tools::common::profile::t_svd->toc();
     state.clear_measurements();
     if(state.hasNaN()) throw std::runtime_error("State has NAN's after normalization");
-    tools::log->trace("Norm after normalization = {:.16f}", tools::finite::measure::norm(state));
-    tools::log->trace("Bond dimensions after  normalization: {}", tools::finite::measure::bond_dimensions(state));
+    tools::log->info("Norm                 after  normalization: {:.16f}", tools::finite::measure::norm(state));
+    tools::log->info("Spin components      after  normalization: {}", tools::finite::measure::spin_components(state));
+    tools::log->info("Bond dimensions      after  normalization: {}", tools::finite::measure::bond_dimensions(state));
+    tools::log->info("Entanglement entropy after  normalization: {}", tools::finite::measure::entanglement_entropies(state));
 }
 
 

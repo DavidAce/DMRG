@@ -100,8 +100,8 @@ void class_fDMRG::check_convergence(){
         and not sim_status.simulation_has_converged
         and not has_projected)
     {
-        log->info("Projecting to {} due to saturation", settings::model::target_parity_sector);
-        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+        log->info("Projecting to {} due to saturation", settings::strategy::target_parity_sector);
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
         has_projected = true;
     }
 

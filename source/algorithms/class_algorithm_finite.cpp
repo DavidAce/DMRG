@@ -24,7 +24,7 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mps::initialize(*state, num_sites);
     tools::finite::mpo::randomize(*state);
-    tools::finite::mps::random_product_state(*state, settings::model::initial_parity_sector, settings::model::state_number);
+    tools::finite::mps::random_product_state(*state, settings::strategy::initial_parity_sector, settings::model::state_number);
     tools::finite::mps::rebuild_environments(*state);
 
     tools::finite::debug::check_integrity(*state);
@@ -145,8 +145,8 @@ void class_algorithm_finite::run_postprocessing() {
     write_sim_status(true);
     write_profiling(true);
 
-    auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-    write_projection(state_projected, settings::model::target_parity_sector);
+    auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
+    write_projection(state_projected, settings::strategy::target_parity_sector);
 
     print_status_full();
     tools::common::profile::t_pos->toc();
@@ -273,12 +273,13 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
             sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == chi_max();
             if(sim_status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
             log->info("Projecting at site {} to direction {} after updating bond dimension to χ = {} ", state->get_position(),
-                      settings::model::target_parity_sector, chi_lim_new);
-            auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
-            write_projection(*state, settings::model::target_parity_sector);
-            if(settings::model::project_when_growing_chi) *state = state_projected;
-
+                      settings::strategy::target_parity_sector, chi_lim_new);
+            auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
+            write_projection(*state, settings::strategy::target_parity_sector);
             copy_from_tmp(true);
+            if(not state->position_is_any_edge()) throw std::runtime_error("Update bond dimension: no longer at edge!");
+            if(settings::strategy::project_on_chi_update) *state = state_projected;
+            if(settings::strategy::randomize_on_chi_update and state->get_chi_lim() >= 32 ) reset_to_random_current_state();
         } else {
             // Here the settings specify to just set the limit to maximum chi directly
             log->info("Setting bond dimension limit to maximum = {}", chi_max());
@@ -293,11 +294,11 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
 }
 
 void class_algorithm_finite::reset_to_initial_state() {
-    log->trace("Resetting MPS to initial product state in parity sector: {}, state number {}", settings::model::initial_parity_sector,
-               settings::model::state_number, settings::model::use_pauli_eigvecs);
+    log->trace("Resetting MPS to initial product state in parity sector: {}, state number {}", settings::strategy::initial_parity_sector,
+               settings::model::state_number, settings::strategy::use_pauli_eigvecs);
     if(state->get_length() != (size_t) num_sites()) throw std::range_error("System size mismatch");
     // Initialize state
-    tools::finite::mps::random_product_state(*state, settings::model::initial_parity_sector, settings::model::state_number, settings::model::use_pauli_eigvecs);
+    tools::finite::mps::random_product_state(*state, settings::strategy::initial_parity_sector, settings::model::state_number, settings::strategy::use_pauli_eigvecs);
     clear_saturation_status();
     state->lowest_recorded_variance = 1;
     sim_status.iteration            = state->reset_sweeps();
@@ -307,7 +308,7 @@ void class_algorithm_finite::reset_to_random_product_state(const std::string &pa
     log->trace("Resetting MPS to random product state in parity sector: {}", parity_sector);
     if(state->get_length() != (size_t) num_sites()) throw std::range_error("System size mismatch");
     // Randomize state
-    tools::finite::mps::random_product_state(*state, parity_sector, -1, settings::model::use_pauli_eigvecs);
+    tools::finite::mps::random_product_state(*state, parity_sector, -1, settings::strategy::use_pauli_eigvecs);
     clear_saturation_status();
     state->lowest_recorded_variance = 1;
     sim_status.iteration            = state->reset_sweeps();
@@ -316,6 +317,7 @@ void class_algorithm_finite::reset_to_random_product_state(const std::string &pa
 }
 
 void class_algorithm_finite::reset_to_random_current_state() {
+    if(not state->position_is_any_edge()) return;
     log->info("Resetting MPS by flipping random spins on current state");
     if(state->get_length() != (size_t) num_sites()) throw std::range_error("System size mismatch");
     auto bond_dimensions    = tools::finite::measure::bond_dimensions(*state);
@@ -335,21 +337,21 @@ void class_algorithm_finite::reset_to_random_current_state() {
     sim_status.iteration            = state->reset_sweeps();
     auto spin_components = tools::finite::measure::spin_components(*state);
     log->info("Successfully reset to random state based on current state. New components: {}", spin_components);
+    if(not state->position_is_any_edge()) throw std::runtime_error("Update bond dimension: no longer at edge!");
 }
 
 
 
 void class_algorithm_finite::try_projection() {
-    if(tools::finite::measure::energy_variance(*state) < 1e-12) return;
-
+    if(tools::finite::measure::energy_variance(*state) < 10 * settings::precision::variance_convergence_threshold) return;
     bool try_when_stuck =
-            settings::model::project_when_stuck and sim_status.simulation_has_got_stuck and not has_projected and state->position_is_any_edge();
+            settings::strategy::project_when_stuck and sim_status.simulation_has_got_stuck and not has_projected and state->position_is_any_edge();
 
-    bool try_every_sweep = settings::model::project_on_every_sweep and sim_status.iteration >= 2 and state->position_is_any_edge();
+    bool try_every_sweep = settings::strategy::project_on_every_sweep and sim_status.iteration >= 2 and state->position_is_any_edge();
 
     if(try_every_sweep or try_when_stuck) {
-        log->info("Trying projection to {}", settings::model::target_parity_sector);
-        auto   state_projected    = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::target_parity_sector);
+        log->info("Trying projection to {}", settings::strategy::target_parity_sector);
+        auto   state_projected    = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
         double variance_original  = tools::finite::measure::energy_variance_per_site(*state);
         double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
 
@@ -367,7 +369,7 @@ void class_algorithm_finite::try_projection() {
 
 void class_algorithm_finite::try_chi_quench() {
     if(tools::finite::measure::energy_variance(*state) < 10 * settings::precision::variance_convergence_threshold) return;
-    if(not settings::model::chi_quench_when_stuck) return;
+    if(not settings::strategy::chi_quench_when_stuck) return;
     if(chi_quench_steps > 0) clear_saturation_status();
     if(not state->position_is_any_edge()) return;
     if(chi_quench_steps >= state->get_length()){
@@ -413,7 +415,7 @@ void class_algorithm_finite::try_chi_quench() {
 
 
 void class_algorithm_finite::try_perturbation() {
-    if(not settings::model::perturb_when_stuck) return;
+    if(not settings::strategy::perturb_when_stuck) return;
     if(not state->position_is_any_edge()) return;
     if(state->is_perturbed()) return;
     if(perturbation_steps > 0) return;
@@ -439,7 +441,7 @@ void class_algorithm_finite::try_damping() {
         if(damping_exponents.empty() and state->is_damped())
             throw std::logic_error("Damping trial ended but the state is still damped");
     }
-    if(not settings::model::damping_when_stuck) return;
+    if(not settings::strategy::damping_when_stuck) return;
     if(state->is_damped()) return;
     if(not sim_status.simulation_has_got_stuck) {
         tools::log->info("Damping skipped: simulation not stuck");
@@ -766,7 +768,7 @@ void class_algorithm_finite::write_projection(const class_state_finite &state_pr
 
 void class_algorithm_finite::copy_from_tmp(bool result) {
     if(settings::output::storage_level == StorageLevel::NONE) return;
-    if(result) tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
+    if(result){tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath()); return;}
     if(not state->position_is_any_edge()) return;
     if(math::mod(sim_status.iteration, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
     tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());

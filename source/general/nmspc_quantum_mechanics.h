@@ -70,8 +70,13 @@ namespace qm{
             std::list<Eigen::Tensor<Scalar,4>>,
             Eigen::Tensor<Scalar,3>,
             Eigen::Tensor<Scalar,3>>
-        random_pauli_mpos(const Eigen::MatrixXcd &paulimatrices, const size_t sites);
+        random_pauli_mpos(const Eigen::MatrixXcd &paulimatrix, const size_t sites);
 
+        extern std::tuple<
+            std::list<Eigen::Tensor<Scalar,4>>,
+            Eigen::Tensor<Scalar,3>,
+            Eigen::Tensor<Scalar,3>>
+        random_pauli_mpos_x2(const Eigen::MatrixXcd &paulimatrix1, const Eigen::MatrixXcd &paulimatrix2, const size_t sites);
 
     }
 

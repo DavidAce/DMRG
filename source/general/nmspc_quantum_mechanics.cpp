@@ -267,10 +267,11 @@ std::tuple<
         Eigen::Tensor<Scalar,4>>,
         Eigen::Tensor<Scalar,3>,
         Eigen::Tensor<Scalar,3>>
-qm::mpo::parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix, const size_t sites, const int sector)/*! Builds the MPO that projects out the MPS component in a parity sector.
+qm::mpo::parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix, const size_t sites, const int sector)
+/*! Builds the MPO that projects out the MPS component in a parity sector.
  *      |psi+->  = O |psi>=  (1/2) (1 +- P) |psi>
- *      Here 1 = outer product of 2x2 identity matrices, "sites" times.
- *      Also P = outer product of 2x2 pauli matrices, "sites" times.
+ *      Here 1 = outer product of 2x2 identity matrices, "sites" times, i.e. Kron_i=0^sites I_(2x2)
+ *      Also P = outer product of 2x2 pauli matrices, "sites" times, i.e. Kron_i=0^sites s_(2x2)
  *      The sign in "sector" and the factor 1/2 is put into the left edge at the end.
  *
  *            | I   0  |
@@ -366,3 +367,84 @@ qm::mpo::random_pauli_mpos(const Eigen::MatrixXcd &paulimatrix, const size_t sit
     return std::make_tuple(mpos,Ledge,Redge);
 
 }
+
+
+std::tuple<
+    std::list<
+        Eigen::Tensor<Scalar,4>>,
+    Eigen::Tensor<Scalar,3>,
+    Eigen::Tensor<Scalar,3>>
+qm::mpo::random_pauli_mpos_x2(const Eigen::MatrixXcd &paulimatrix1,const Eigen::MatrixXcd &paulimatrix2, const size_t sites)
+/*! Builds a string of random pauli matrix MPO's
+ *      P = Π  O_i
+ * where Π is the product over all sites, and O_i is one of {S, I} on site i.
+ * S is the sum of pauli matrices s1 and s2, and where I is an identity matrix of the same size
+ *            | s1  0  |
+ * S   =      | 0   s2 |
+ *
+ *            | id  0  |
+ * I   =      | 0   id |
+ *
+ * MPO = | s |
+ *
+ *        2
+ *        |
+ *    0---O---1
+ *        |
+ *        3
+ *
+ */
+{
+    if (paulimatrix1.rows() != paulimatrix2.rows()) throw std::logic_error("Pauli matrices must be of equal size");
+    long spin_dim = paulimatrix1.rows();
+    auto I = Eigen::MatrixXcd::Identity(spin_dim,spin_dim);
+    Eigen::array<long, 4> extent4 = {1, 1, spin_dim, spin_dim};                    /*!< Extent of pauli matrices in a rank-4 tensor */
+    Eigen::array<long, 2> extent2 = {spin_dim, spin_dim};                          /*!< Extent of pauli matrices in a rank-2 tensor */
+    Eigen::Tensor<Scalar,4> MPO_S(2, 2, spin_dim, spin_dim);
+    Eigen::Tensor<Scalar,4> MPO_I(2, 2, spin_dim, spin_dim);
+    Eigen::Tensor<Scalar,4> MPO_P(2, 2, spin_dim, spin_dim);
+    MPO_S.setZero();
+    MPO_I.setZero();
+    MPO_P.setZero();
+
+    MPO_S.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix1);
+    MPO_S.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix2);
+    MPO_I.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
+    MPO_I.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
+    MPO_P.slice(Eigen::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(I);
+    MPO_P.slice(Eigen::array<long, 4>{1, 1, 0, 0}, extent4).reshape(extent2) = Textra::MatrixTensorMap(paulimatrix1);
+
+    // Push in an even number of operators
+    std::vector<int> binary(sites,-1);
+    int sum = 0;
+    while(true){
+        binary[rn::uniform_integer_box(0,sites)] *= -1;
+        sum = std::accumulate(binary.begin(),binary.end(), 0);
+        if((math::mod(sites,2) == 0 and sum == 0) or( math::mod(sites,2) == 1 and sum == 1 ) ) break;
+    }
+    if (binary.size() != sites) throw std::logic_error("Size mismatch");
+    // Generate the list
+    std::list<Eigen::Tensor<Scalar,4>> mpos;
+    for(auto & val : binary){
+        if(val < 0) mpos.push_back(MPO_S);
+        else        mpos.push_back(MPO_I);
+    }
+
+//    std::list<Eigen::Tensor<Scalar,4>> mpos(sites,MPO_P);
+    //Create compatible edges
+    Eigen::Tensor<Scalar,3> Ledge(1,1,2); // The left  edge
+    Eigen::Tensor<Scalar,3> Redge(1,1,2); // The right edge
+    Ledge(0,0,0) = 1.0/2.0;
+    Ledge(0,0,1) = 1.0/2.0 ;
+    Redge(0,0,0) = 1;
+    Redge(0,0,1) = 1;
+    return std::make_tuple(mpos,Ledge,Redge);
+
+
+
+
+
+
+
+}
+

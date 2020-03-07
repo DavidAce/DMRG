@@ -102,10 +102,6 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     ene2             = std::real(ene2) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(ene2);
 
     var             = ene2 - ene*ene;
-//    tools::log->info("log10var/L = {:<24.18f} + i{:<24.18f} | ene = {:<24.18f} + i {:<24.18f}",
-//            std::log10(std::abs(std::real(var))/length),  std::log10(std::abs(std::imag(var))/length),
-//            std::real(ene), std::imag(ene)
-//            );
     if (std::real(var)  < 0.0 ) tools::log->debug("Counter = {}. var  is negative:  {:.16f} + i {:.16f}" , counter, std::real(var)  , std::imag(var));
     var             = std::real(var) <  0.0 ? std::abs(var)                          : std::real(var);
     var             = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
@@ -114,8 +110,10 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)/length;
     norm_offset    = std::abs(vv) - 1.0 ;
-    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.05);
-    log10var       = std::log10(variance);
+//    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0);
+    norm_func = 0; norm_grad = 0;
+    double epsilon = 1e-14;
+    log10var       = std::log10(epsilon+variance);
 
     if(fx != nullptr){
         fx[0] = log10var + norm_func;
@@ -124,7 +122,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     Eigen::Map<VectorType>  grad (reinterpret_cast<      Scalar*>(grad_double_double), vecSize);
     if (grad_double_double != nullptr){
         auto vv_1  = std::pow(vv,-1);
-        auto var_1 = 1.0/var/std::log(10);
+        auto var_1 = (1.0/(epsilon+var)/std::log(10));
         grad = var_1 * vv_1 * (H2v - 2.0*ene*Hv - (ene2 - 2.0*ene*ene)*v);
         if constexpr (std::is_same<Scalar,double>::value){
             grad *= 2.0;
@@ -132,16 +130,16 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
         grad += norm_grad * v;
     }
 
-//    tools::log->trace("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad|_inf: {:<24.18f} SqNorm: {:<24.18f} Norm: {:<24.18f} Norm_func: {:<24.18f} |Norm_grad *v|: {:<24.18f} fx: {:<24.18f}",
-//                      std::log10(std::abs(var)/length),
-//                      std::real(ene + energy_reduced) / length,
-//                      grad.norm(),
-//                      grad.cwiseAbs().maxCoeff(),
-//                      vv,
-//                      norm,
-//                      norm_func,
-//                      (norm_grad * v).norm(),
-//                      fx[0]);
+    tools::log->debug("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad|_inf: {:<24.18f} SqNorm: {:<24.18f} |H2v|_max: {:<24.18f} |ene2|: {:<24.18f} ene: {:<24.18f} fx: {:<24.18f}",
+                      std::log10(std::abs(var)/length),
+                      std::real(ene + energy_reduced) / length,
+                      grad.norm(),
+                      grad.cwiseAbs().maxCoeff(),
+                      vv,
+                      H2v.real().maxCoeff(),
+                      std::real(ene2),
+                      std::real(ene),
+                      fx[0]);
 
 
     if(std::isnan(log10var) or std::isinf(log10var)){
