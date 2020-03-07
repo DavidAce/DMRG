@@ -64,6 +64,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
     variance  = []
     variancel = []
     ententrp  = []
+    entdiff   = []
     walltime  = []
     resets    = []
     got_stuck = []
@@ -75,7 +76,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary:
-        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Time",
+        header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Ent.Diff", "Time",
                                                                                                            "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
 
         print(header)
@@ -99,7 +100,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         except Exception as err:
             print("Could not read keys in h5file. Reason:", err)
         entry = []
-        for state_key in state_keys:
+        ententrp_zero = []
+        for state_num,state_key in enumerate(state_keys):
             table_path = ''
             step_results = 0
             step_journal = 0
@@ -149,6 +151,14 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 converged      .append(h5file[table_path].get('sim_status')['simulation_has_converged'][-1])
                 succeeded      .append(h5file[table_path].get('sim_status')['simulation_has_succeeded'][-1])
 
+                ententrp_curr = h5file[table_path]['entanglement_entropies'][()]
+                if state_num == 0:
+                    ententrp_zero = h5file[table_path]['entanglement_entropies'][()]
+                    entdiff.append(np.nan)
+                else:
+                    entdiff.append(np.sqrt(np.sum( (ententrp_zero - ententrp_curr)**2)))
+
+
 
                 style = ''
                 if finished[-1] == 1 and succeeded[-1] == 1:
@@ -174,7 +184,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
                 if not args.summary:
-                    entry.append("{:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+                    entry.append("{:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
                         chainlen[-1],
                         seed[-1],
                         iter[-1],
@@ -183,6 +193,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                         np.log10(variance[-1]),
                         np.log10(variancel[-1]),
                         ententrp[-1],
+                        entdiff[-1],
                         walltime[-1] / 60,
                         resets[-1],
                         got_stuck[-1],
@@ -203,10 +214,10 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         continue
     if len(chainlen) == 0:
         continue
-    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Time>",
+    header = "{:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Length","Sims", "<iter>","<step>","<Energy>", "<VarNow>","<VarLow>","<Entgl>","<Entgl-diff>","<Time>",
                                                                                                               "Resets","Stk", "Sat", "Con",
                                                                                                               "Suc", "Fin")
-    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>11.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+    entry = "{:<8} {:<6} {:<6.1f} {:<6.1f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.3f} {:>8.1f} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
         np.nanmax(chainlen),
         len(seed),
         np.nanmean(iter),
@@ -214,8 +225,9 @@ for dirName, subdirList, fileList in os.walk(args.directory):
         np.nanmean(energy),
         np.nanmean(np.log10(variance)),
         np.nanmean(np.log10(variancel)),
-        np.mean(ententrp),
-        np.mean(walltime) / 60,
+        np.nanmean(ententrp),
+        np.nanmean(entdiff),
+        np.nanmean(walltime) / 60,
         np.sum(resets),
         np.sum(got_stuck),
         np.sum(saturated),
