@@ -229,24 +229,3 @@ double tools::finite::ops::exp_sq_value     (const class_state_finite & state1, 
     Eigen::Tensor<Scalar,0> H2_all_sites = L.contract(Redge, idx({0,1,2,3},{0,1,2,3}));
     return std::real(H2_all_sites(0));
 }
-
-
-
-[2020-03-07 10:08:26][xDMRG][  info  ] Norm                 before applying mpos: 1.0000000000000093
-[2020-03-07 10:08:26][xDMRG][  info  ] Spin components      before applying mpos: {1.0, 0.0824155, 0.0824155}
-[2020-03-07 10:08:26][xDMRG][  info  ] Bond dimensions      before applying mpos: {1, 2, 4, 8, 16, 26, 32, 26, 16, 8, 4, 2, 1}
-[2020-03-07 10:08:26][xDMRG][  info  ] Entanglement entropy before applying mpos: {-0.0, 0.281693, 0.508217, 0.827095, 0.76734, 0.843494, 1.0352, 0.932291, 0.77944, 0.569979, 0.344093, 0.244693, -0.0}
-[2020-03-07 10:08:26][xDMRG][warning ] Measure: Norm far from unity: 0.4982680881275912
-[2020-03-07 10:08:26][xDMRG][  info  ] Norm                 after  applying mpos: 0.4982680881275912
-[2020-03-07 10:08:26][xDMRG][  info  ] Spin components      after  applying mpos: {0.498268, 0.0399623, 0.0399623}
-[2020-03-07 10:08:26][xDMRG][  info  ] Bond dimensions      after  applying mpos: {1, 4, 8, 16, 32, 52, 64, 52, 32, 16, 8, 4, 1}
-[2020-03-07 10:08:26][xDMRG][  info  ] Entanglement entropy after  applying mpos: {-0.0, 0.563385, 1.01643, 1.65419, 1.53468, 1.68699, 2.07041, 1.86458, 1.55888, 1.13996, 0.688187, 0.489386, -0.0}
-[2020-03-07 10:08:26][xDMRG][warning ] Measure: Norm far from unity: 0.4982680881275912
-[2020-03-07 10:08:26][xDMRG][  info  ] Norm                 before normalization: 0.4982680881275912
-[2020-03-07 10:08:26][xDMRG][  info  ] Spin components      before normalization: {0.498268, 0.0399623, 0.0399623}
-[2020-03-07 10:08:26][xDMRG][  info  ] Bond dimensions      before normalization: {1, 4, 8, 16, 32, 52, 64, 52, 32, 16, 8, 4, 1}
-[2020-03-07 10:08:26][xDMRG][  info  ] Entanglement entropy before normalization: {-0.0, 0.563385, 1.01643, 1.65419, 1.53468, 1.68699, 2.07041, 1.86458, 1.55888, 1.13996, 0.688187, 0.489386, -0.0}
-[2020-03-07 10:08:26][xDMRG][  info  ] Norm                 after  normalization: 1.0000000000000031
-[2020-03-07 10:08:26][xDMRG][  info  ] Spin components      after  normalization: {1.0, 0.0802023, 0.0802023}
-[2020-03-07 10:08:26][xDMRG][  info  ] Bond dimensions      after  normalization: {1, 2, 4, 8, 16, 32, 44, 32, 16, 8, 4, 2, 1}
-[2020-03-07 10:08:26][xDMRG][  info  ] Entanglement entropy after  normalization: {-0.0, 0.693147, 1.13166, 1.46564, 1.4138, 1.49427, 1.70350, 1.59905, 1.41826, 1.16638, 0.883862, 0.245587, -0.0}
