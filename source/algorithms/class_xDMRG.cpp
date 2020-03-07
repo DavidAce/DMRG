@@ -41,7 +41,7 @@ void class_xDMRG::run_preprocessing() {
     if(settings::model::state_number >= 0){
         reset_to_initial_state();
     }else{
-        reset_to_random_state_in_energy_window(settings::model::initial_parity_sector,false, "Initializing");
+        reset_to_random_state_in_energy_window(settings::strategy::initial_parity_sector,false, "Initializing");
     }
     auto spin_components = tools::finite::measure::spin_components(*state);
     log->info("Initial spin components: {}", spin_components);
@@ -71,6 +71,7 @@ void class_xDMRG::run_simulation()    {
             try_chi_quench();
             try_damping();
             try_perturbation();
+
             // It's important not to perform the last move.
             // That last state would not get optimized
             if (state->position_is_any_edge() and not state->is_perturbed() and not state->is_damped())
@@ -151,10 +152,10 @@ void class_xDMRG::single_xDMRG_step()
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
-    if(state->size_2site() < settings::precision::max_size_part_diag and tools::finite::measure::energy_variance(*state) > 1e-2){
-        optMode  = OptMode::OVERLAP;
-        optSpace = OptSpace::SUBSPACE_ONLY;
-    }
+//    if(state->size_2site() < settings::precision::max_size_part_diag and tools::finite::measure::energy_variance(*state) > 1e-2){
+//        optMode  = OptMode::OVERLAP;
+//        optSpace = OptSpace::SUBSPACE_ONLY;
+//    }
 
     if(sim_status.variance_mpo_has_converged){
         optMode  = OptMode::VARIANCE;
@@ -174,15 +175,15 @@ void class_xDMRG::single_xDMRG_step()
     std::list<size_t> max_num_sites_list;
     // Generate a list of maximum number of active sites to try
     if(sim_status.simulation_has_stuck_for > 0)
-        max_num_sites_list = {2,4};
+        max_num_sites_list = {4};
     else if(sim_status.simulation_has_stuck_for > 1)
-        max_num_sites_list = {4,settings::precision::max_sites_multidmrg};
-    if(chi_quench_steps > 0)
+        max_num_sites_list = {settings::precision::max_sites_multidmrg};
+    else if(chi_quench_steps > 0)
         max_num_sites_list = {settings::precision::max_sites_multidmrg};
     else if(optSpace == OptSpace::SUBSPACE_AND_DIRECT)
-        max_num_sites_list = {settings::precision::max_sites_multidmrg};
+        max_num_sites_list = {2};
     else if(optSpace == OptSpace::SUBSPACE_ONLY)
-        max_num_sites_list = {settings::precision::max_sites_multidmrg};
+        max_num_sites_list = {2};
     else
         max_num_sites_list = {2};
 
@@ -276,7 +277,7 @@ void class_xDMRG::single_xDMRG_step()
     auto variance_after_svd = tools::finite::measure::energy_variance_per_site(*state);
     state->set_truncated_variance( (variance_after_svd - variance_before_svd) / variance_after_svd );
     log->trace("Variance check after  SVD: {:.16f}", std::log10(variance_after_svd));
-    log->trace("Variance loss due to  SVD: {:.16f}", state->get_truncated_variance() );
+    log->debug("Variance loss due to  SVD: {:.16f}", state->get_truncated_variance() );
 
     //Normalize if unity was lost for some reason (numerical error buildup)
     if(std::abs(tools::finite::measure::norm(*state) - 1.0) > settings::precision::max_norm_error){
@@ -320,7 +321,7 @@ void class_xDMRG::check_convergence(){
             std::string reason = fmt::format("energy {:.16f} saturated outside of energy window {} ± {}", tools::finite::measure::energy_per_site(*state), sim_status.energy_dens_target,sim_status.energy_dens_window);
             log->info("Increasing energy window: {} --> {}",old_energy_dens_window, new_energy_dens_window);
             sim_status.energy_dens_window = new_energy_dens_window;
-            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
+            reset_to_random_state_in_energy_window(settings::strategy::initial_parity_sector, false, reason);
         }
 //        else
 //        if( not     state->all_sites_updated()
@@ -330,7 +331,7 @@ void class_xDMRG::check_convergence(){
 //            sim_status.energy_dens_window = std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5);
 //            std::string reason = fmt::format("could not update all sites. Energy density: {}, Energy window: {} --> {}",
 //                     sim_status.energy_dens, sim_status.energy_dens_window, std::min(energy_window_growth_factor*sim_status.energy_dens_window, 0.5) );
-//            reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
+//            reset_to_random_state_in_energy_window(settings::strategy::initial_parity_sector, false, reason);
 //        }
     }
 
@@ -371,7 +372,7 @@ void class_xDMRG::check_convergence(){
 //    {
 //        std::string reason = fmt::format("simulation has saturated with bad precision",
 //                                         sim_status.energy_dens, sim_status.energy_dens_window, sim_status.energy_dens_window);
-//        reset_to_random_state_in_energy_window(settings::model::initial_parity_sector, false, reason);
+//        reset_to_random_state_in_energy_window(settings::strategy::initial_parity_sector, false, reason);
 //    }
 
     tools::common::profile::t_con->toc();
@@ -385,7 +386,7 @@ void class_xDMRG::inflate_initial_state(){
         *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, "random" );
         log->debug("χ = {}"         , tools::finite::measure::bond_dimensions(*state));
     }
-    *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::model::initial_parity_sector);
+    *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::initial_parity_sector);
 }
 
 

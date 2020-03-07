@@ -200,7 +200,7 @@ void class_algorithm_infinite::reset_to_initial_state() {
     sim_status.iteration = 0;
 
     // Randomize state
-    *state = tools::infinite::mps::set_random_state(*state,settings::model::initial_parity_sector);
+    *state = tools::infinite::mps::set_random_state(*state,settings::strategy::initial_parity_sector);
     clear_saturation_status();
 }
 

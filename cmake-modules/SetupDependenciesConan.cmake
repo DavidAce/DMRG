@@ -38,8 +38,8 @@ find_program (
         PATHS $ENV{HOME}/anaconda3 $ENV{HOME}/miniconda3 $ENV{HOME}/.conda $ENV{HOME}/.local
         PATH_SUFFIXES bin envs/dmrg/bin
 )
-message("Found conan: ${CONAN_COMMAND}")
-message("Searched for conan in: ${CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONAN_PREFIX} $ENV{CONDA_PREFIX}
+message(STATUS "Found conan: ${CONAN_COMMAND}")
+message(STATUS "Searched for conan in: ${CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONAN_PREFIX} $ENV{CONDA_PREFIX}
 $ENV{HOME}/anaconda3 $ENV{HOME}/miniconda3 $ENV{HOME}/.conda $ENV{HOME}.local")
 
 # Download automatically, you can also just copy the conan.cmake file

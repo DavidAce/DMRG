@@ -44,20 +44,14 @@ namespace settings {
         inline std::string  temp_dir             = "/scratch/local";             /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
     }
 
+
+
+
     //Parameters for the model Hamiltonian
     namespace model {
         inline std::string  model_type                              = "tf_ising";         /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising selfdual_tf_rf_ising_normal}  */
         inline long         seed                                    = 1;                  /*!< Main seed for the random number generator. */
         inline long         state_number                            = -1;                 /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Only positive state numbers are used */
-        inline bool         chi_quench_when_stuck                   = false;              /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
-        inline bool         perturb_when_stuck                      = false;              /*!< Perturb MPO parameters to get unstuck from local minima */
-        inline bool         damping_when_stuck                      = false;              /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
-        inline bool         project_when_stuck                      = true;               /*!< Project to target parity sector at each sweep when stuck. */
-        inline bool         project_when_growing_chi                = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
-        inline bool         project_on_every_sweep                  = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
-        inline bool         use_pauli_eigvecs                       = true;               /*!< Use random pauli eigenvectors to initialize spinors in x,y or z  */
-        inline std::string  initial_parity_sector                   = "x";                /*!< Initialize in a global parity sector: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
-        inline std::string  target_parity_sector                    = "x";                /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
 
         //Parameters for the transverse-field Ising model
         namespace tf_ising {
@@ -89,13 +83,28 @@ namespace settings {
         }
     }
 
+    // Options that affect convergence
+    namespace strategy {
+        inline bool         chi_quench_when_stuck                   = false;              /*!< Reduce chi during a sweep when stuck and increasing bond dimension would not help */
+        inline bool         perturb_when_stuck                      = false;              /*!< Perturb MPO parameters to get unstuck from local minima */
+        inline bool         damping_when_stuck                      = false;              /*!< Modify MPO parameters, e.g. by reducing disorder, to get unstuck from local minima */
+        inline bool         project_when_stuck                      = true;               /*!< Project to target parity sector at each sweep when stuck. */
+        inline bool         project_on_every_sweep                  = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
+        inline bool         project_on_chi_update                   = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
+        inline bool         randomize_on_chi_update                 = true;               /*!< Randomize MPS by flipping random spins when growing chi */
+        inline bool         use_pauli_eigvecs                       = true;               /*!< Use random pauli eigenvectors to initialize spinors in x,y or z  */
+        inline std::string  initial_parity_sector                   = "x";                /*!< Initialize in a global parity sector: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
+        inline std::string  target_parity_sector                    = "x";                /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
+    }
+
+
     //Parmaters that control MPS, eigensolver and SVD precision
     namespace precision {
         inline size_t   eig_max_iter                    = 1000  ;   /*!< Maximum number of steps for eigenvalue solver. */
         inline double   eig_threshold                   = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
         inline size_t   eig_max_ncv                     = 16    ;   /*!< Parameter controlling the column space? of the Lanczos solver. */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
-        inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Variance convergence threshold. The MPS state is considered good enough when its variance reaches below this value */
+        inline double   variance_convergence_threshold = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_slope_threshold        = 5     ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
         inline double   entropy_slope_threshold         = 0.1   ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/
         inline double   subspace_error_factor           = 1     ;   /*!< The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the subspace error is too high, direct optimization is done instead */
