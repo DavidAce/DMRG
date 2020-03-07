@@ -156,11 +156,11 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                 succeeded      .append(h5file[table_path].get('sim_status')['simulation_has_succeeded'][-1])
 
                 ententrp_curr = h5file[table_path]['entanglement_entropies'][()]
-                if len(entdiff) == 0:
+                if len(entdiff) == 0 or len(ententrp_zero) == 0:
                     ententrp_zero = h5file[table_path]['entanglement_entropies'][()]
                     entdiff.append(np.nan)
                 else:
-                    entdiff.append(np.sum((ententrp_curr-ententrp_zero )/np.log(2)))
+                    entdiff.append(np.sum((ententrp_curr-ententrp_zero)/np.log(2)))
 
 
 
