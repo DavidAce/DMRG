@@ -156,7 +156,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
                     ententrp_zero = h5file[table_path]['entanglement_entropies'][()]
                     entdiff.append(np.nan)
                 else:
-                    entdiff.append(np.sum((ententrp_zero - ententrp_curr)/chainlen[-1]))
+                    entdiff.append(np.sum((ententrp_curr-ententrp_zero )/chainlen[-1]))
 
 
 
