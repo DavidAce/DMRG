@@ -75,7 +75,6 @@ void tools::finite::mps::random_current_state(class_state_finite &state, const s
     else if (parity_sector == "y")  paulimatrix = qm::spinOneHalf::sy;
     else if (parity_sector == "z")  paulimatrix = qm::spinOneHalf::sz;
 //    auto [mpos,L,R] = qm::mpo::random_pauli_mpos(paulimatrix,state.get_length());
-//    auto [mpos,L,R] = qm::mpo::parity_projector_mpos(qm::spinOneHalf::sx, state.get_length());
     auto [mpos,L,R] = qm::mpo::random_pauli_mpos_x2(qm::spinOneHalf::sx,qm::spinOneHalf::sz, state.get_length());
     tools::finite::ops::apply_mpos(state,mpos,L,R);
     tools::finite::mps::normalize(state);
