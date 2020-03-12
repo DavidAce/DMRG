@@ -141,7 +141,7 @@ void class_state_infinite::assert_positions() const {
 //    auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 //
 //    t_eig.toc();
-//    t_eig.print_delta();
+//    t_eig.print_last_time_interval();
 //
 //    E_optimal = std::real(eigvals(0));
 //    return eigvecs.reshape(theta.dimensions());

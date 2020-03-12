@@ -30,22 +30,20 @@ public:
 
     void enlarge_environment();
     void swap();
-    void run()                                                                                  override;
-//    void compute_observables()                                                                  final;
-    void update_truncation_limit()                                                              final;
-    void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)           final;
-    void reset_to_random_product_state(const std::string & parity_sector = "random")            final;
-    void reset_to_random_current_state()                                                        final;
-    void reset_to_initial_state()                                                               final;
-    void clear_saturation_status()                                                              override;
-
-    void write_state        (bool result = false)                                               final;
-    void write_measurements (bool result = false)                                               final;
-    void write_sim_status   (bool result = false)                                               final;
-    void write_profiling    (bool result = false)                                               final;
-    void copy_from_tmp      (bool result = false)                                               final;
-    void print_status_update()                                                                  final;
-    void print_status_full()                                                                    final;
+    void run()                                                                                          override;
+    void update_truncation_limit()                                                                      final;
+    void update_bond_dimension_limit(std::optional<long> max_bond_dim = std::nullopt)                   final;
+    void reset_to_random_product_state(const std::string & parity_sector = "random")                    final;
+    void reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt)                    final;
+    void reset_to_initial_state()                                                                       final;
+    void clear_saturation_status()                                                                      override;
+    void write_state        (bool result = false)                                                       final;
+    void write_measurements (bool result = false)                                                       final;
+    void write_sim_status   (bool result = false)                                                       final;
+    void write_profiling    (bool result = false)                                                       final;
+    void copy_from_tmp      (bool result = false)                                                       final;
+    void print_status_update()                                                                          final;
+    void print_status_full()                                                                            final;
 
 
 
