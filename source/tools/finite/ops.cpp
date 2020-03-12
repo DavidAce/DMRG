@@ -93,28 +93,40 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
 
 class_state_finite tools::finite::ops::get_projection_to_parity_sector(const class_state_finite & state, const Eigen::MatrixXcd  & paulimatrix, int sign) {
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
+    tools::common::profile::t_prj->tic();
     tools::log->debug("Generating parity projected state with sign {}", sign);
+    auto chi_lim = state.find_largest_chi();
     auto spin_components = tools::finite::measure::spin_components(state);
     double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
     tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
     tools::log->debug("Current reqstd spin component  :     {:.16f}", requested_spin_component );
+    double variance_original  = tools::finite::measure::energy_variance_per_site(state);
 
-    tools::common::profile::t_prj->tic();
+    // Make a temporary state
     class_state_finite state_projected = state;
     state_projected.clear_measurements();
     state_projected.clear_cache();
-
+    // Do the projection
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
-    tools::common::profile::t_prj->toc();
-    tools::finite::mps::normalize(state_projected);
-    tools::finite::mps::rebuild_environments(state_projected);
-    tools::finite::debug::check_integrity_of_mps(state_projected);
+    // Normalize and truncate back to original bond dimension
+    tools::finite::mps::normalize(state_projected,chi_lim);
+    double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
+    tools::log->info("Norm                 after  projection   : {:.16f}", tools::finite::measure::norm(state_projected));
+    tools::log->info("Spin components      after  projection   : {}", tools::finite::measure::spin_components(state_projected));
+    tools::log->info("Bond dimensions      after  projection   : {}", tools::finite::measure::bond_dimensions(state_projected));
+    tools::log->info("Entanglement entropy after  projection   : {}", tools::finite::measure::entanglement_entropies(state_projected));
+
+    // Check that the calculations went fine
+    tools::finite::debug::check_integrity(state_projected);
     state_projected.tag_all_sites_have_been_updated(true); // All sites change in this operation
     spin_components          = tools::finite::measure::spin_components(state_projected);
     requested_spin_component = tools::finite::measure::spin_component(state_projected, paulimatrix);
     tools::log->debug("Resulting global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
     tools::log->debug("Resulting reqstd spin component  :     {:.16f}", requested_spin_component );
+
+    log->info("Projection: variance updated: | original {:.8} | projected {:.8}", std::log10(variance_original), std::log10(variance_projected));
+    tools::common::profile::t_prj->toc();
     return state_projected;
 }
 
