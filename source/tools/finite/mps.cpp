@@ -2,25 +2,37 @@
 // Created by david on 2019-01-29.
 //
 
-
+#include <general/nmspc_quantum_mechanics.h>
+#include <simulation/nmspc_settings.h>
+#include <state/class_state_finite.h>
+#include <tools/common/log.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
-#include <tools/common/log.h>
-#include <state/class_state_finite.h>
-#include <general/nmspc_quantum_mechanics.h>
+#include <tools/finite/debug.h>
 
-void tools::finite::mps::initialize(class_state_finite &state, const size_t length){
+void tools::finite::mps::initialize(class_state_finite &state, const size_t length,const std::string &model_type){
     log->info("Initializing mps");
     using Scalar = class_state_finite::Scalar;
-    //Generate MPS
-    Eigen::Tensor<Scalar,3> A;
-    Eigen::Tensor<Scalar,3> B;
-    Eigen::Tensor<Scalar,1> L = {1};
+    size_t spin_dim = 2; //Default is a two-level system
+    if(model_type == "tf_ising")
+        spin_dim = settings::model::tf_ising::d;
+    if(model_type == "tf_nn_ising")
+        spin_dim = settings::model::tf_nn_ising::d;
+    if(model_type == "selfdual_tf_rf_ising")
+        spin_dim = settings::model::selfdual_tf_rf_ising::d;
+
+
+    //Generate a simple MPS with all spins equal
+    Eigen::Tensor<Scalar,3> M(spin_dim,1,1);
+    Eigen::Tensor<Scalar,1> L(1);
+    M(0,0,0) = 0;
+    M(1,0,0) = 1;
+    L(0) = 1;
     size_t pos = 0;
-    state.MPS_L.emplace_back(class_mps_site(A, L, pos++));
+    state.MPS_L.emplace_back(class_mps_site(M, L, pos++));
     state.MPS_L.back().set_LC(L);
     while(true){
-        state.MPS_R.emplace_back(class_mps_site(B, L, pos++));
+        state.MPS_R.emplace_back(class_mps_site(M, L, pos++));
         if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
     }
     state.site_update_tags = std::vector<bool>(length,false);
@@ -66,19 +78,25 @@ void tools::finite::mps::random_product_state(class_state_finite &state, const s
          internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, state_number);
     else internals::set_product_state_randomly(state, parity_sector, use_pauli_eigenstates);
     tools::finite::mps::rebuild_environments(state);
-
 }
 
-void tools::finite::mps::random_current_state(class_state_finite &state, const std::string & parity_sector){
-    Eigen::MatrixXcd paulimatrix;
-    if  (parity_sector == "x")  paulimatrix = qm::spinOneHalf::sx;
-    else if (parity_sector == "y")  paulimatrix = qm::spinOneHalf::sy;
-    else if (parity_sector == "z")  paulimatrix = qm::spinOneHalf::sz;
+void tools::finite::mps::random_current_state(class_state_finite &state, const std::string & parity_sector1,const std::string & parity_sector2){
+    Eigen::MatrixXcd paulimatrix1;
+    Eigen::MatrixXcd paulimatrix2;
+    if  (parity_sector1 == "x")  paulimatrix1 = qm::spinOneHalf::sx;
+    else if (parity_sector1 == "y")  paulimatrix1 = qm::spinOneHalf::sy;
+    else if (parity_sector1 == "z")  paulimatrix1 = qm::spinOneHalf::sz;
+    else paulimatrix1 = qm::spinOneHalf::Id;
+    if  (parity_sector2 == "x")  paulimatrix2 = qm::spinOneHalf::sx;
+    else if (parity_sector2 == "y")  paulimatrix2 = qm::spinOneHalf::sy;
+    else if (parity_sector2 == "z")  paulimatrix2 = qm::spinOneHalf::sz;
+    else paulimatrix2 = qm::spinOneHalf::Id;
 //    auto [mpos,L,R] = qm::mpo::random_pauli_mpos(paulimatrix,state.get_length());
-    auto [mpos,L,R] = qm::mpo::random_pauli_mpos_x2(qm::spinOneHalf::sx,qm::spinOneHalf::sz, state.get_length());
+    auto chi_lim = state.find_largest_chi();
+    auto [mpos,L,R] = qm::mpo::random_pauli_mpos_x2(paulimatrix1,paulimatrix2, state.get_length());
     tools::finite::ops::apply_mpos(state,mpos,L,R);
-    tools::finite::mps::normalize(state);
-    tools::finite::mps::rebuild_environments(state);
+    tools::finite::mps::normalize(state,chi_lim);
+    tools::finite::debug::check_integrity(state);
     state = tools::finite::ops::get_projection_to_closest_parity_sector(state, "x");
 }
 

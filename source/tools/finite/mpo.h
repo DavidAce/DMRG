@@ -4,7 +4,7 @@
 
 class class_state_finite;
 namespace tools::finite::mpo {
-    extern void initialize                 (class_state_finite & state, size_t length, std::string model_type);
+    extern void initialize                 (class_state_finite & state, size_t length, const std::string &model_type);
     extern void randomize                  (class_state_finite & state);
     extern void perturb_hamiltonian        (class_state_finite & state, double coupling_ptb, double field_ptb, PerturbMode PerturbMode);
     extern void damp_hamiltonian           (class_state_finite & state, double coupling_damp, double field_damp);

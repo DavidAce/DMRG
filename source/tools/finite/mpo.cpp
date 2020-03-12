@@ -4,13 +4,14 @@
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/measure.h>
+#include <tools/finite/debug.h>
 #include <tools/common/log.h>
 #include <state/class_state_finite.h>
 #include <model/class_model_base.h>
 #include <model/class_model_factory.h>
 #include <math/nmspc_random.h>
 
-void tools::finite::mpo::initialize(class_state_finite & state, const size_t length, std::string model_type){
+void tools::finite::mpo::initialize(class_state_finite & state, const size_t length, const std::string &model_type){
     tools::log->trace("Initializing mpo");
     //Generate MPO
     size_t pos = 0;
@@ -19,6 +20,8 @@ void tools::finite::mpo::initialize(class_state_finite & state, const size_t len
         state.MPO_R.emplace_back(class_model_factory::create_mpo(pos++,model_type));
         if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
     }
+    tools::finite::mpo::randomize(state);
+    tools::finite::debug::check_integrity(state);
 }
 
 
@@ -45,6 +48,9 @@ void tools::finite::mpo::randomize(class_state_finite &state) {
     for (size_t pos = 0; pos < state.get_length(); pos++){
         if(state.get_MPO(pos).hasNaN()) throw std::runtime_error("MPO " + std::to_string(pos) + " has initialized with NAN's");
     }
+
+    tools::finite::mps::rebuild_environments(state);
+    tools::finite::debug::check_integrity(state);
 }
 
 
