@@ -15,6 +15,8 @@
 
 void tools::finite::debug::check_integrity(const class_state_finite &state)
 {
+    if(not settings::debug) return;
+
     tools::log->trace("Checking integrity of state");
     state.clear_measurements();
 
@@ -33,9 +35,10 @@ void tools::finite::debug::check_integrity(const class_state_finite &state)
 
 
 void tools::finite::debug::check_integrity_of_mps(const class_state_finite &state){
+    if constexpr (not settings::debug) return;
     tools::log->trace("Checking integrity of MPS");
+    tools::common::profile::t_chk->tic();
     try{
-        tools::common::profile::t_chk->tic();
 
         if(state.MPS_L.size() + state.MPS_R.size() != state.get_length() )
             throw std::runtime_error(fmt::format("Mismatch in MPS sizes: {} + {} != {}", state.MPS_L.size(), state.MPS_R.size(), state.get_length()));
@@ -241,11 +244,11 @@ void tools::finite::debug::check_integrity_of_mps(const class_state_finite &stat
     }
     tools::log->trace("MPS OK");
     tools::common::profile::t_chk->toc();
-
 }
 
 
 void tools::finite::debug::check_integrity_of_mpo(const class_state_finite &state) {
+    if constexpr (not settings::debug) return;
     tools::common::profile::t_chk->tic();
 
     try{
