@@ -8,6 +8,7 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/multisite.h>
 #include <tools/common/log.h>
+#include <tools/common/prof.h>
 // We need to make a destructor manually for the enclosing class "class_state_finite"
 // that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
 // own default deleter.
@@ -136,7 +137,10 @@ void class_state_finite::set_chi_max(long chi_max_) {
     if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
     chi_max = chi_max_;
 }
-
+long class_state_finite::find_largest_chi() const {
+    auto bond_dimensions    = tools::finite::measure::bond_dimensions(*this);
+    return *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
+}
 int  class_state_finite::get_direction() const { return direction; }
 void class_state_finite::flip_direction() { direction *= -1; }
 
@@ -464,6 +468,7 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
 
 const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_multimpo() const {
     if(cache.multimpo) return cache.multimpo.value();
+    tools::common::profile::t_mpo->tic();
     tools::log->trace("Contracting multi mpo...");
     if(active_sites.empty()) {
         throw std::runtime_error("No active sites on which to build multimpo");
@@ -486,6 +491,7 @@ const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_mult
         multimpo = temp;
     }
     tools::log->trace("Contracting multi mpo... OK");
+    tools::common::profile::t_mpo->toc();
     cache.multimpo = multimpo;
     return cache.multimpo.value();
 }

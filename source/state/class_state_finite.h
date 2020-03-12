@@ -79,6 +79,7 @@ class class_state_finite {
     void                   set_chi_lim(long chi_lim_);
     long                   get_chi_max() const;
     void                   set_chi_max(long chi_max_);
+    long                   find_largest_chi() const;
     void                   set_positions();
     size_t                 get_length() const;
     size_t                 get_position() const;
