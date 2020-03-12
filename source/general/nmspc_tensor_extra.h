@@ -4,13 +4,12 @@
 
 #pragma once
 #include <general/nmspc_tensor_omp.h>
-#include <general/nmspc_type_check.h>
+#include <general/nmspc_sfinae.h>
 #include <Eigen/Core>
 #include <Eigen/Sparse>
-#include <iterator>
-#include <iostream>
 #include <iomanip>
-
+#include <iostream>
+#include <iterator>
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
@@ -316,7 +315,7 @@ namespace Textra {
     template<typename Derived>
     bool isReal(const Eigen::EigenBase<Derived> &obj,[[maybe_unused]]const std::string &name = "", double threshold = 1e-14) {
         using Scalar = typename Derived::Scalar;
-        if constexpr (TypeCheck::is_specialization<Scalar, std::complex>::value){
+        if constexpr (sfinae::is_specialization<Scalar, std::complex>::value){
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
 //            std::cout <<"imag sum " << name << " :" << std::fixed << std::setprecision(16)<< imag_sum << std::endl;
             return imag_sum < threshold;
