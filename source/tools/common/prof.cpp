@@ -8,25 +8,28 @@
 void tools::common::profile::print_profiling(){
     if (settings::profiling::on) {
         t_tot    ->print_age();
-        t_pre    ->print_time_w_percent_if_nonzero(*t_tot);
-        t_pos    ->print_time_w_percent_if_nonzero(*t_tot);
-        t_sim    ->print_time_w_percent_if_nonzero(*t_tot);
-        t_con    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_eig    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_svd    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_opt    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_evo    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_env    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_ent    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_ene    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_var    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_prj    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_chk    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_hdf    ->print_time_w_percent_if_nonzero(*t_sim);
-        t_ene_ham->print_time_w_percent_if_nonzero(*t_sim);
-        t_ene_mom->print_time_w_percent_if_nonzero(*t_sim);
-        t_var_ham->print_time_w_percent_if_nonzero(*t_sim);
-        t_var_mom->print_time_w_percent_if_nonzero(*t_sim);
+        t_pre->print_measured_time_w_percent_if_nonzero(*t_tot);
+        t_pos->print_measured_time_w_percent_if_nonzero(*t_tot);
+        t_sim->print_measured_time_w_percent_if_nonzero(*t_tot);
+        t_con->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_eig->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_svd->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_mpo->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_ham->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_ham_sq->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_opt->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_evo->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_env->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_ent->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_ene->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_var->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_prj->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_chk->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_hdf->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_ene_ham->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_ene_mom->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_var_ham->print_measured_time_w_percent_if_nonzero(*t_sim);
+        t_var_mom->print_measured_time_w_percent_if_nonzero(*t_sim);
     }
 }
 
@@ -40,6 +43,9 @@ void tools::common::profile::init_profiling(){
     t_con     =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Convergence checks    ");
     t_eig     =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Eig. decomp.          ");
     t_svd     =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Svd. decomp.          ");
+    t_ham     =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Hamiltonian Matrix    ");
+    t_ham_sq  =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Hamiltonian Matrix Sq ");
+    t_mpo     =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Multisite-MPO         ");
     t_opt     =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Optimization (Ceres)  ");
     t_evo     =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Time evolution        ");
     t_env     =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Environment upd.      ");
@@ -54,8 +60,7 @@ void tools::common::profile::init_profiling(){
     t_var_ham =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Variance (HAM)        ");
     t_var_mom =  std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision," ↳ Variance (MOM)        ");
 
-
-    t_ham  =  std::make_unique<class_tic_toc>(settings::profiling::on,settings::profiling::precision,"t_ham ");
+//    t_ham  =  std::make_unique<class_tic_toc>(settings::profiling::on,settings::profiling::precision,"t_ham ");
     t_vH2v =  std::make_unique<class_tic_toc>(settings::profiling::on,settings::profiling::precision,"t_vH2v");
     t_vHv  =  std::make_unique<class_tic_toc>(settings::profiling::on,settings::profiling::precision,"t_vHv ");
     t_vH2  =  std::make_unique<class_tic_toc>(settings::profiling::on,settings::profiling::precision,"t_vH2 ");
