@@ -98,6 +98,11 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
          * [      ]                      |
          * [      ]--1 0--[LB]--1  1--[GA conj ]--2
          */
+
+        if(MPS.dimension(0) != MPO.dimension  (2)) throw std::runtime_error(fmt::format("ENV L pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{})]:{}",position.value(),0,MPS.dimension(0) ,2,MPO.dimension  (2)));
+        if(MPS.dimension(1) != block.dimension(0)) throw std::runtime_error(fmt::format("ENV L pos {} dimension mismatch: MPS dim[{}]:{} != block dim[{})]:{}",position.value(),1,MPS.dimension(1) ,0,block.dimension(0)));
+        if(MPO.dimension(0) != block.dimension(2)) throw std::runtime_error(fmt::format("ENV L pos {} dimension mismatch: MPO dim[{}]:{} != block dim[{})]:{}",position.value(),0,MPO.dimension(0) ,2,block.dimension(2)));
+
         sites++;
         Eigen::Tensor<Scalar,3>
                 block_enlarged =
@@ -123,6 +128,9 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
          *    1--[  GB   ]--2 0--[LB]--1  1--[      ]
         */
 
+        if(MPS.dimension(0) != MPO.dimension  (2)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{})]:{}",position.value(),0,MPS.dimension(0) ,2,MPO.dimension  (2)));
+        if(MPS.dimension(2) != block.dimension(0)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPS dim[{}]:{} != block dim[{})]:{}",position.value(),2,MPS.dimension(2) ,0,block.dimension(0)));
+        if(MPO.dimension(1) != block.dimension(2)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPO dim[{}]:{} != block dim[{})]:{}",position.value(),1,MPO.dimension(1) ,2,block.dimension(2)));
         sites++;
         Eigen::Tensor<Scalar,3>
                 block_enlarged =
@@ -217,6 +225,10 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
          * [      ]                      |
          * [      ]--1 0--[LB]--1  1--[GA conj ]--2
          */
+        if(MPS.dimension(0) != MPO.dimension  (2)) throw std::runtime_error(fmt::format("ENV2 L pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{})]:{}",position.value(),0,MPS.dimension(0) ,2,MPO.dimension  (2)));
+        if(MPS.dimension(1) != block.dimension(0)) throw std::runtime_error(fmt::format("ENV2 L pos {} dimension mismatch: MPS dim[{}]:{} != block dim[{})]:{}",position.value(),1,MPS.dimension(1) ,0,block.dimension(0)));
+        if(MPO.dimension(0) != block.dimension(2)) throw std::runtime_error(fmt::format("ENV2 L pos {} dimension mismatch: MPO dim[{}]:{} != block dim[{})]:{}",position.value(),0,MPO.dimension(0) ,2,block.dimension(2)));
+
         sites++;
         block_enlarged =
                 block.contract(MPS,                    idx({0},{1}))
@@ -248,6 +260,9 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
          *          |                        [      ]
          *  1--[ GB conj ]--2 0--[LB]--1  1--[      ]
         */
+        if(MPS.dimension(0) != MPO.dimension  (2)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPS dim[{}]:{} != MPO   dim[{})]:{}",position.value(),0,MPS.dimension(0) ,2,MPO.dimension  (2)));
+        if(MPS.dimension(2) != block.dimension(0)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPS dim[{}]:{} != block dim[{})]:{}",position.value(),2,MPS.dimension(2) ,0,block.dimension(0)));
+        if(MPO.dimension(1) != block.dimension(2)) throw std::runtime_error(fmt::format("ENV R pos {} dimension mismatch: MPO dim[{}]:{} != block dim[{})]:{}",position.value(),1,MPO.dimension(1) ,2,block.dimension(2)));
 
         sites++;
         block_enlarged =
