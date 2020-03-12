@@ -32,6 +32,8 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
                                                                              double* fx,
                                                                              double* grad_double_double) const
 {
+    using namespace tools::common::profile;
+    t_op->tic();
     Scalar vH2v,vHv;
     Scalar ene,ene2,var;
     double vv, log10var;
@@ -43,10 +45,21 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     vv = v.squaredNorm();
     norm = std::sqrt(vv);
 
+    t_vH->tic();
     Hv  = eigvals.asDiagonal() * v;
+    t_vH->toc();
+
+    t_vHv->tic();
     vHv = v.dot(Hv);
+    t_vHv->toc();
+
+    t_vH2->tic();
     H2v  = H2.template selfadjointView<Eigen::Upper>()*v;
+    t_vH2->toc();
+
+    t_vH2v->tic();
     vH2v = v.dot(H2v);
+    t_vH2v->toc();
 
 
     // Do this next bit carefully to avoid negative variance when numbers are very small
@@ -110,6 +123,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     }
 
     counter++;
+    t_op->toc();
     return true;
 }
 
