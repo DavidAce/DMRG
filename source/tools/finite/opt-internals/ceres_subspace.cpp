@@ -419,7 +419,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
         double energy_old        = tools::finite::measure::energy_per_site(state,theta_old);
         double variance_old      = tools::finite::measure::energy_variance_per_site(state,theta_old);
         tools::common::profile::t_opt->toc();
-        reports::bfgs_log.emplace_back("Current state", theta_old.size(), 0, energy_old, std::log10(variance_old), 1.0 , theta_old_vec.norm(), 0, 0, tools::common::profile::t_opt->get_last_time_interval());
+        reports::bfgs_log.emplace_back("Current state", theta_old.size(), 0, energy_old, std::log10(variance_old), 1.0 , theta_old_vec.norm(), 1,1, tools::common::profile::t_opt->get_last_time_interval());
     }
 
     tools::log->debug("Optimizing mode {} space {} using subspace size {} with {} initial guesses", optMode, optSpace, eigvecs.cols(), theta_candidates.size() );
@@ -450,7 +450,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             double variance_0        = tools::finite::measure::energy_variance_per_site(state,theta_0_tensor);
             double overlap_0         = std::abs(theta_old_vec.dot(theta_0));
             tools::common::profile::t_opt->toc();
-            reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count) , theta_old.size(),0, energy_0, std::log10(variance_0), overlap_0, theta_0.norm(), 0, 0, tools::common::profile::t_opt->get_last_time_interval());
+            reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count) , theta_old.size(),0, energy_0, std::log10(variance_0), overlap_0, theta_0.norm(), 1,1, tools::common::profile::t_opt->get_last_time_interval());
         }
         if (tools::log->level() <= spdlog::level::trace and settings::debug){
             // Check using explicit matrix
@@ -467,7 +467,7 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             double ene_init_san = std::real(ene+state.get_energy_reduced())/state.get_length();
             double var_init_san = std::real(var)/state.get_length();
             tools::common::profile::t_opt->toc();
-            reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count) + " (matrix)",theta_start.size(),0, ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), 0,0, t_H2_subspace+tools::common::profile::t_opt->get_last_time_interval());
+            reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count) + " (matrix)",theta_start.size(),0, ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), 1,1, t_H2_subspace+tools::common::profile::t_opt->get_last_time_interval());
 //            if(not H2_subspace.isApprox(H2_subspace_old,1e-4)){
 //                std::cout << "H2 new = \n" << H2_subspace.topLeftCorner(6,6) << std::endl;
 //                std::cout << "H2 old = \n" << H2_subspace_old.topLeftCorner(6,6) << std::endl;
