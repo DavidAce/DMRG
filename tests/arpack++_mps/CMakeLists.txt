@@ -13,7 +13,8 @@ add_executable(test-arpack++_mps arpack++_mps.cpp
                             ../../source/general/class_tic_toc.cpp
 
         )
-target_include_directories(test-arpack++_mps PRIVATE ${CMAKE_SOURCE_DIR}/source)
-target_include_directories(test-arpack++_mps PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(test-arpack++_mps PRIVATE project-settings )
-add_test(NAME test-arpack++_mps COMMAND test-arpack++_mps)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE project-settings )
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/ignore:4099")
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})

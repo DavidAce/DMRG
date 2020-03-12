@@ -6,7 +6,7 @@ find_Arpackpp()
 
 if (TARGET arpack::arpack++)
     message(STATUS "Arpack++ found")
-elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
+elseif(NOT ${DMRG_DOWNLOAD_METHOD} MATCHES "none")
     message(STATUS "Arpack++ will be installed into ${CMAKE_BINARY_DIR}/dmrg-deps-install/arpack++ on first build.")
     include(ExternalProject)
     ExternalProject_Add(external_ARPACK++
@@ -29,7 +29,7 @@ elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
     target_include_directories(arpack::arpack++ SYSTEM INTERFACE ${INSTALL_DIR}/include)
     add_dependencies(arpack::arpack++ external_ARPACK++)
 else()
-    message(FATAL_ERROR "Dependency Arpack++ not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
+    message(FATAL_ERROR "Dependency Arpack++ not found and DMRG_DOWNLOAD_METHOD = ${DMRG_DOWNLOAD_METHOD}")
 endif()
 
 
