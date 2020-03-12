@@ -84,7 +84,8 @@ source/general/class_tic_toc.h
 source/general/nmspc_quantum_mechanics.h
 source/general/nmspc_tensor_extra.h
 source/general/nmspc_tensor_omp.h
-source/general/nmspc_type_check.h
+source/general/nmspc_sfinae.h
+source/general/nmspc_sfinae_eigen.h
 source/io/class_settings_reader.h
 source/io/nmspc_filesystem.h
 source/io/nmspc_logger.h
