@@ -11,7 +11,7 @@ set(GFLAGS_HINTS $ENV{EBROOTGFLAGS} ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS})
 if(TARGET gflags)
     message(STATUS "gflags found")
 
-elseif(NOT "${DOWNLOAD_METHOD}" MATCHES "none" )
+elseif(NOT "${DMRG_DOWNLOAD_METHOD}" MATCHES "none" )
     message(STATUS "gflags will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")
@@ -26,7 +26,7 @@ elseif(NOT "${DOWNLOAD_METHOD}" MATCHES "none" )
     endif()
 
 else()
-    message(FATAL_ERROR "Dependency gflags not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
+    message(FATAL_ERROR "Dependency gflags not found and DMRG_DOWNLOAD_METHOD = ${DMRG_DOWNLOAD_METHOD}")
 endif()
 
 if(TARGET gflags)

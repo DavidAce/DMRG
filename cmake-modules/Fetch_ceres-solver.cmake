@@ -60,7 +60,7 @@ endif()
 
 if(TARGET ceres::ceres OR TARGET ceres)
     message(STATUS "ceres found")
-elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
+elseif(NOT ${DMRG_DOWNLOAD_METHOD} MATCHES "none")
     message(STATUS "Ceres will be installed into ${CMAKE_INSTALL_PREFIX} on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
@@ -121,7 +121,7 @@ elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
         message(FATAL_ERROR "ceres could not be downloaded.")
     endif()
 else()
-    message(FATAL_ERROR "Dependency ceres not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
+    message(FATAL_ERROR "Dependency ceres not found and DMRG_DOWNLOAD_METHOD = ${DMRG_DOWNLOAD_METHOD}")
 endif()
 
 

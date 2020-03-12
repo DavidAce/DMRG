@@ -20,11 +20,11 @@ find_OpenBLAS()
 if(TARGET openblas::openblas)
 #    message(STATUS "OpenBLAS found")
 
-elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
+elseif(NOT ${DMRG_DOWNLOAD_METHOD} MATCHES "none")
     message(STATUS "OpenBLAS will be installed into ${CMAKE_INSTALL_PREFIX}/OpenBLAS")
     set(OpenBLAS_MULTITHREADED 1 )
-    if(OpenMP_FOUND)
-        set(OpenBLAS_ENABLE_OPENMP 0) # Openmp doesnt work on clang it seems
+    if(TARGET openmp::openmp)
+        set(OpenBLAS_ENABLE_OPENMP 1) # Openmp doesnt work on clang it seems
     else()
         set(OpenBLAS_ENABLE_OPENMP 0) # Openmp doesnt work on clang it seems
     endif()
@@ -53,5 +53,5 @@ elseif(NOT ${DOWNLOAD_METHOD} MATCHES "none")
     endif()
 
 else()
-    message(FATAL_ERROR "Dependency OpenBLAS not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
+    message(FATAL_ERROR "Dependency OpenBLAS not found and DMRG_DOWNLOAD_METHOD = ${DMRG_DOWNLOAD_METHOD}")
 endif()

@@ -11,24 +11,24 @@ list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
 ################################################################
 ### Set options for compilation                              ###
 ################################################################
-option(PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"         OFF)
-option(ENABLE_OPENMP            "Use OpenMP"                                          OFF)
-option(ENABLE_MKL               "Enable Intel Math Kernel Library"                    OFF)
-option(ENABLE_LTO               "Enable link time optimization"                       OFF)
-option(BUILD_SHARED_LIBS        "Sets shared linking on/off"                          OFF)
-option(ENABLE_TESTS             "Enable unit testing with ctest"                      OFF)
-option(BUILD_EXAMPLES           "Build examples"                                      OFF)
-option(DMRG_PRINT_INFO          "Print information during cmake configure"            OFF)
+option(BUILD_SHARED_LIBS             "Sets shared linking on/off"                          OFF)
+option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"         OFF)
+option(DMRG_ENABLE_OPENMP            "Use OpenMP"                                          OFF)
+option(DMRG_ENABLE_MKL               "Enable Intel Math Kernel Library"                    OFF)
+option(DMRG_ENABLE_LTO               "Enable link time optimization"                       OFF)
+option(DMRG_ENABLE_TESTS             "Enable unit testing with ctest"                      OFF)
+option(DMRG_BUILD_EXAMPLES           "Build examples"                                      OFF)
+option(DMRG_PRINT_INFO               "Print information during cmake configure"            OFF)
 
 
 #################################################################
 ### Make an "enum" for valid download methods                 ###
 #################################################################
-set(VALID_DOWNLOAD_METHODS none find-only conan native)
-set(DOWNLOAD_METHOD find-only CACHE STRING "Download method for external dependencies")
-set_property(CACHE DOWNLOAD_METHOD  PROPERTY STRINGS ${VALID_DOWNLOAD_METHODS})
-if(NOT DOWNLOAD_METHOD IN_LIST VALID_DOWNLOAD_METHODS)
-    message(FATAL_ERROR "DOWNLOAD_METHOD must be one of ${VALID_DOWNLOAD_METHODS}")
+set(VALID_DMRG_DOWNLOAD_METHODS none find-only conan native)
+set(DMRG_DOWNLOAD_METHOD find-only CACHE STRING "Download method for external dependencies")
+set_property(CACHE DMRG_DOWNLOAD_METHOD  PROPERTY STRINGS ${VALID_DMRG_DOWNLOAD_METHODS})
+if(NOT DMRG_DOWNLOAD_METHOD IN_LIST VALID_DMRG_DOWNLOAD_METHODS)
+    message(FATAL_ERROR "DMRG_DOWNLOAD_METHOD must be one of ${VALID_DMRG_DOWNLOAD_METHODS}")
 endif()
 
 #################################################################
@@ -107,18 +107,6 @@ endif()
 ################################
 ###  Add all source files    ###
 ################################
-#file(GLOB_RECURSE SRCS source/*.cpp)
-#file(GLOB_RECURSE HDRS source/*.h)
-#foreach(src ${SRCS})
-##    get_filename_component(filename ${src}  NAME)
-#    message("${src}")
-#endforeach()
-#foreach(hdr ${HDRS})
-##    get_filename_component(filename ${hdr} NAME)
-#    message("${hdr}")
-#endforeach()
-
-
 include(source_list.txt)
 target_include_directories(${PROJECT_NAME} PUBLIC source)
 
@@ -143,26 +131,30 @@ endif()
 ##############################
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
-
-#######################################################
-###  Check  #include<filesystem> or                 ###
-###  or     #include<experimental/filesystem>       ###
-#######################################################
-include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXFilesystem.cmake)
-CheckCXXFilesystem()
-
-#######################################################
-###  Check  #include<experimental/type_traits>      ###
-#######################################################
-include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckTypeTraits.cmake)
-CheckTypeTraits()
-
 #######################################################
 ###  Check  #include<optional> or                   ###
 ###  or     #include<experimental/optional>         ###
 #######################################################
 include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXOptional.cmake)
 CheckCXXOptional()
+
+
+# DMRG++ requires the filesystem header (and possibly stdc++fs library)
+find_package(Filesystem COMPONENTS Final Experimental)
+if (TARGET std::filesystem)
+    target_link_libraries(project-settings INTERFACE std::filesystem)
+elseif (DMRG_DMRG_DOWNLOAD_METHOD MATCHES "find|none")
+    message(STATUS "Your compiler lacks std::filesystem. Set DMRG_DMRG_DOWNLOAD_METHOD to 'conan' or 'native' to get the ghc::filesystem replacement")
+    message(STATUS "Read more about ghc::filesystem here: https://github.com/gulrak/filesystem")
+    message(FATAL_ERROR "<filesystem> header and/or library not found")
+else ()
+    message(STATUS "Your compiler lacks std::filesystem. Getting ghc::filesystem replacement")
+    message(STATUS "Read more about ghc::filesystem here: https://github.com/gulrak/filesystem")
+    include(cmake/Fetch_ghcFilesystem.cmake)
+    target_link_libraries(project-settings INTERFACE ghcFilesystem::ghc_filesystem)
+    list(APPEND DMRG_DIRECTORY_HINTS ${ghcfilesystem_install_prefix})
+endif ()
+
 
 
 
@@ -177,7 +169,6 @@ target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -g  -DNDEBUG  -lprofiler  -ftime-report>)
 target_compile_features(project-settings INTERFACE cxx_std_17)
 
-
 #######################################
 ### Compiler-dependent linker flags ###
 #######################################
@@ -190,7 +181,7 @@ endif()
 ##################################################################
 ### Check if we can enable Link Time Optimization              ###
 ##################################################################
-if(ENABLE_LTO)
+if(DMRG_ENABLE_LTO)
     include(CheckIPOSupported)
     check_ipo_supported(RESULT supported OUTPUT error)
     if(supported)
@@ -198,7 +189,7 @@ if(ENABLE_LTO)
         set_target_properties(${PROJECT_NAME} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
     else()
         message(STATUS "IPO / LTO not supported: <${error}>, will not enable")
-        set(ENABLE_LTO OFF CACHE)
+        set(DMRG_ENABLE_LTO OFF CACHE)
     endif()
 endif()
 
@@ -220,7 +211,7 @@ endif()
 #################################################################
 ### Prepend conda dirs for hints when using find_package      ###
 #################################################################
-if(PREFER_CONDA_LIBS)
+if(DMRG_PREFER_CONDA_LIBS)
     list(APPEND CONDA_HINTS
             $ENV{CONDA_PREFIX}
             $ENV{HOME}/anaconda3
@@ -234,15 +225,15 @@ endif()
 message("=============================================================================")
 message("===               DMRG++: SUMMARY OF CMAKE CONFIGURATION                  ===")
 message("=============================================================================")
-message(STATUS "CMAKE_INSTALL_PREFIX         : ${CMAKE_INSTALL_PREFIX}")
-message(STATUS "PREFER_CONDA_LIBS            : ${PREFER_CONDA_LIBS}")
-message(STATUS "DOWNLOAD_METHOD              : ${DOWNLOAD_METHOD}")
-message(STATUS "ENABLE_OPENMP                : ${ENABLE_OPENMP}")
-message(STATUS "ENABLE_MKL                   : ${ENABLE_MKL}")
-message(STATUS "ENABLE_LTO                   : ${ENABLE_LTO}")
-message(STATUS "BUILD_SHARED_LIBS            : ${BUILD_SHARED_LIBS}")
-message(STATUS "ENABLE_TESTS                 : ${ENABLE_TESTS}")
-message(STATUS "BUILD_EXAMPLES               : ${BUILD_EXAMPLES}")
+message(STATUS "CMAKE_INSTALL_PREFIX            : ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "BUILD_SHARED_LIBS               : ${BUILD_SHARED_LIBS}")
+message(STATUS "DMRG_PREFER_CONDA_LIBS          : ${DMRG_PREFER_CONDA_LIBS}")
+message(STATUS "DMRG_DOWNLOAD_METHOD            : ${DMRG_DOWNLOAD_METHOD}")
+message(STATUS "DMRG_ENABLE_OPENMP              : ${DMRG_ENABLE_OPENMP}")
+message(STATUS "DMRG_ENABLE_OPENMP              : ${DMRG_ENABLE_OPENMP}")
+message(STATUS "DMRG_ENABLE_LTO                 : ${DMRG_ENABLE_LTO}")
+message(STATUS "DMRG_ENABLE_TESTS               : ${DMRG_ENABLE_TESTS}")
+message(STATUS "DMRG_BUILD_EXAMPLES             : ${DMRG_BUILD_EXAMPLES}")
 message("=============================================================================")
 
 
@@ -264,9 +255,9 @@ endif()
 ###########################################
 ### Fetch or find all the dependencies  ###
 ###########################################
-if(DOWNLOAD_METHOD MATCHES "conan")
+if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     include(cmake-modules/SetupDependenciesConan.cmake)
-elseif(DOWNLOAD_METHOD MATCHES "find|native")
+elseif(DMRG_DOWNLOAD_METHOD MATCHES "find|native")
     include(cmake-modules/SetupDependenciesNative.cmake)
 endif()
 include(cmake-modules/PrintTargetInfo.cmake)
@@ -290,7 +281,7 @@ message("")
 #############################
 ## UNIT TEST
 #############################
-if(ENABLE_TESTS)
+if(DMRG_ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests/arpack++_simple)
     add_subdirectory(tests/arpack++_mps   )

@@ -7,7 +7,7 @@ find_package(Eigen3
 if(TARGET Eigen3::Eigen)
     message(STATUS "Eigen3 found")
 else()
-    if("${DOWNLOAD_METHOD}" MATCHES "none")
+    if("${DMRG_DOWNLOAD_METHOD}" MATCHES "none")
         message(WARNING "Eigen3 will be downloaded anyway because we need a patched version, "
                 "which isn't available through any systems package manager")
     endif()
@@ -25,7 +25,7 @@ else()
     endif()
 
 #else()
-#    message(FATAL_ERROR "Dependency Eigen3 not found and DOWNLOAD_METHOD = ${DOWNLOAD_METHOD}")
+#    message(FATAL_ERROR "Dependency Eigen3 not found and DMRG_DOWNLOAD_METHOD = ${DMRG_DOWNLOAD_METHOD}")
 endif()
 
 
@@ -43,6 +43,9 @@ if(TARGET Eigen3::Eigen AND TARGET blas::blas )
         target_link_libraries         (Eigen3::Eigen INTERFACE blas::blas)
     endif()
 
+    if(TARGET openmp::openmp)
+        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_THREADS)
+    endif()
     # Use this flag if Ceres is giving you trouble!
     # For some reason it starts mixing aligned and hand-made aligned malloc and freeing them willy nilly
     # This flag forces its hand and avoids a segfault in some cases.

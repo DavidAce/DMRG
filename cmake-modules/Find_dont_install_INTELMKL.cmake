@@ -20,23 +20,20 @@
 # can put it outside. Check with cmake verbose ON that the linking goes through as above.
 #########################
 
-if (ENABLE_MKL)
-    #    set(MKL_USE_STATIC_LIBS ON)
-    if(TARGET openmp::openmp)
-        set(MKL_MULTI_THREADED ON)
-    endif()
-    set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason... You need to use the mkl_set_interface_layer(int) to select at runtime, which is not good when building dependencies!
-    if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND NOT BUILD_SHARED_LIBS)
-        message(WARNING "Disabling single dynamic mkl library\nCan't use MKL_USE_SINGLE_DYNAMIC_LIBRARY and -static simultaneously.")
-    endif()
+#    set(MKL_USE_STATIC_LIBS ON)
+if(TARGET openmp::openmp)
+    set(MKL_MULTI_THREADED ON)
+endif()
+set(MKL_USE_SINGLE_DYNAMIC_LIBRARY OFF) # This doesn't work for some reason... You need to use the mkl_set_interface_layer(int) to select at runtime, which is not good when building dependencies!
+if (MKL_USE_SINGLE_DYNAMIC_LIBRARY AND NOT BUILD_SHARED_LIBS)
+    message(WARNING "Disabling single dynamic mkl library\nCan't use MKL_USE_SINGLE_DYNAMIC_LIBRARY and -static simultaneously.")
+endif()
 
-    find_package(MKL)
-    if (NOT MKL_FOUND)
-        message(FATAL_ERROR "\
+find_package(MKL)
+if (NOT MKL_FOUND)
+    message(FATAL_ERROR "\
         Could not find Intel MKL library as requested by
-        passing \"-DENABLE_MKL:BOOL=ON\" to CMake.")
-    endif()
-
+        passing \"-DDMRG_ENABLE_MKL:BOOL=ON\" to CMake.")
 endif()
 
 
