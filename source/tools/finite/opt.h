@@ -90,15 +90,15 @@ namespace tools::finite::opt::internal{
 
 
         namespace reports{
-            using direct_opt_tuple = std::tuple<std::string,int,double,std::complex<double>,double,double,int,int,double>;
-            using subspc_opt_tuple = std::tuple<std::string,int,double,double,double,double,int,int,double>;
-            using lbfgs_tuple      = std::tuple<double,double,double,double,double>;
-            using eig_tuple        = std::tuple<int,double,double,double,double,double>;
-//            std::vector<log_tuple> opt_log;
-            void print_report(const std::vector<direct_opt_tuple> &opt_log);
-            void print_report(const std::vector<subspc_opt_tuple> &opt_log);
-            void print_report(const std::vector<eig_tuple> &eig_log);
-            void print_report(const lbfgs_tuple lbfgs_log);
+            using bfgs_tuple       = std::tuple<std::string,int,int,double,std::complex<double>,double,double,int,int,double>;
+            using time_tuple       = std::tuple<double,double,double,double,double>;
+            using eigs_tuple       = std::tuple<int,double,double,double,double,double,double>;
+            inline std::vector<bfgs_tuple> bfgs_log;
+            inline std::vector<time_tuple> time_log;
+            inline std::vector<eigs_tuple> eigs_log;
+            void print_bfgs_report();
+            void print_time_report();
+            void print_eigs_report();
         }
 
         void reset_timers();
