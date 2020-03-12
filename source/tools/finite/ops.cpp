@@ -95,7 +95,6 @@ class_state_finite tools::finite::ops::get_projection_to_parity_sector(const cla
     if (std::abs(sign) != 1) throw std::runtime_error("Expected 'sign' +1 or -1. Got: " + std::to_string(sign));
     tools::common::profile::t_prj->tic();
     tools::log->debug("Generating parity projected state with sign {}", sign);
-    auto chi_lim = state.find_largest_chi();
     auto spin_components = tools::finite::measure::spin_components(state);
     double requested_spin_component = tools::finite::measure::spin_component(state, paulimatrix);
     tools::log->debug("Current global spin components : X = {:.16f}  Y = {:.16f}  Z = {:.16f}",spin_components[0],spin_components[1],spin_components[2] );
@@ -110,7 +109,9 @@ class_state_finite tools::finite::ops::get_projection_to_parity_sector(const cla
     const auto [mpo,L,R]    = qm::mpo::parity_projector_mpos(paulimatrix,state_projected.get_length(), sign);
     apply_mpos(state_projected,mpo, L,R);
     // Normalize and truncate back to original bond dimension
-    tools::finite::mps::normalize(state_projected,chi_lim);
+    tools::finite::mps::normalize(state_projected,state.find_largest_chi());
+    tools::log->info("Bond dimensions      after  normalization0: {}", tools::finite::measure::bond_dimensions(state_projected));
+
     double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
     tools::log->info("Norm                 after  projection   : {:.16f}", tools::finite::measure::norm(state_projected));
     tools::log->info("Spin components      after  projection   : {}", tools::finite::measure::spin_components(state_projected));
