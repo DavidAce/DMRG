@@ -34,6 +34,9 @@ void tools::common::io::h5table::write_profiling(const class_simulation_status &
     profiling_entry.t_con           = tools::common::profile::t_con->get_measured_time();
     profiling_entry.t_eig           = tools::common::profile::t_eig->get_measured_time();
     profiling_entry.t_svd           = tools::common::profile::t_svd->get_measured_time();
+    profiling_entry.t_ham           = tools::common::profile::t_ham->get_measured_time();
+    profiling_entry.t_ham_sq        = tools::common::profile::t_ham_sq->get_measured_time();
+    profiling_entry.t_mpo           = tools::common::profile::t_mpo->get_measured_time();
     profiling_entry.t_opt           = tools::common::profile::t_opt->get_measured_time();
     profiling_entry.t_evo           = tools::common::profile::t_evo->get_measured_time();
     profiling_entry.t_env           = tools::common::profile::t_env->get_measured_time();
@@ -47,7 +50,6 @@ void tools::common::io::h5table::write_profiling(const class_simulation_status &
     profiling_entry.t_ene_mom       = tools::common::profile::t_ene_mom->get_measured_time();
     profiling_entry.t_var_ham       = tools::common::profile::t_var_ham->get_measured_time();
     profiling_entry.t_var_mom       = tools::common::profile::t_var_mom->get_measured_time();
-    profiling_entry.t_ham           = tools::common::profile::t_ham->get_measured_time();
     profiling_entry.t_vH2v          = tools::common::profile::t_vH2v->get_measured_time();
     profiling_entry.t_vHv           = tools::common::profile::t_vHv->get_measured_time();
     profiling_entry.t_vH2           = tools::common::profile::t_vH2->get_measured_time();
