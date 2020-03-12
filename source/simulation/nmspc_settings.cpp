@@ -43,6 +43,7 @@ void settings::load_from_file(class_settings_reader &indata){
     indata.find_parameter<bool>       ("strategy::project_on_every_sweep"           , strategy::project_on_every_sweep);
     indata.find_parameter<bool>       ("strategy::project_on_chi_update"            , strategy::project_on_chi_update);
     indata.find_parameter<bool>       ("strategy::randomize_on_chi_update"          , strategy::randomize_on_chi_update);
+    indata.find_parameter<bool>       ("strategy::randomize_early"                  , strategy::randomize_early);
     indata.find_parameter<bool>       ("strategy::use_pauli_eigvecs"                , strategy::use_pauli_eigvecs);
     indata.find_parameter<std::string>("strategy::initial_parity_sector"            , strategy::initial_parity_sector);
     indata.find_parameter<std::string>("strategy::target_parity_sector"             , strategy::target_parity_sector);

@@ -45,8 +45,6 @@ namespace settings {
     }
 
 
-
-
     //Parameters for the model Hamiltonian
     namespace model {
         inline std::string  model_type                              = "tf_ising";         /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising selfdual_tf_rf_ising_normal}  */
@@ -92,6 +90,7 @@ namespace settings {
         inline bool         project_on_every_sweep                  = true;               /*!< Project to target parity sector at each sweep. This implies doing it when stuck also. */
         inline bool         project_on_chi_update                   = true;               /*!< Project to target parity sector when bond dimension is increased (only works if chi_grow == true). */
         inline bool         randomize_on_chi_update                 = true;               /*!< Randomize MPS by flipping random spins when growing chi */
+        inline bool         randomize_early                         = true;               /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool         use_pauli_eigvecs                       = true;               /*!< Use random pauli eigenvectors to initialize spinors in x,y or z  */
         inline std::string  initial_parity_sector                   = "x";                /*!< Initialize in a global parity sector: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
         inline std::string  target_parity_sector                    = "x";                /*!< Project to in a global parity sector upon saturation: {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
@@ -191,4 +190,11 @@ namespace settings {
         inline size_t verbosity  = 2;                    /*!< Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
         inline bool   timestamp  = false;                /*!< Whether to put a timestamp on console outputs */
     }
+
+    #ifdef NDEBUG
+        inline constexpr bool debug = false;
+    #else
+        inline constexpr bool debug = true;
+    #endif
+
 }
