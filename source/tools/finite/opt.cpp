@@ -38,50 +38,37 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.line_search_type = ceres::LineSearchType::WOLFE;
     ceres_default_options.line_search_interpolation_type = ceres::LineSearchInterpolationType::CUBIC;
     ceres_default_options.line_search_direction_type = ceres::LineSearchDirectionType::LBFGS;
-    ceres_default_options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::POLAK_RIBIERE;
+    ceres_default_options.nonlinear_conjugate_gradient_type = ceres::NonlinearConjugateGradientType::FLETCHER_REEVES;
     ceres_default_options.max_num_iterations = 2000;
-    ceres_default_options.max_lbfgs_rank     = 250;
-    ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
+    ceres_default_options.max_lbfgs_rank     = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~256
+    ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
     ceres_default_options.min_line_search_step_size = 1e-64;//  std::numeric_limits<double>::epsilon();
     ceres_default_options.max_line_search_step_contraction = 1e-3;
     ceres_default_options.min_line_search_step_contraction = 0.6;
     ceres_default_options.max_line_search_step_expansion = 10;
     ceres_default_options.max_num_line_search_step_size_iterations  = 40;//20;
     ceres_default_options.max_num_line_search_direction_restarts    = 50;//2;
-    ceres_default_options.line_search_sufficient_function_decrease  = 1e-4; //This one should be below 1e-4
-    ceres_default_options.line_search_sufficient_curvature_decrease = 0.9; //This one should be above 0.5 (or it may fail to produce a new descent direction
-    ceres_default_options.max_solver_time_in_seconds = 60*4;//60*2;
-    ceres_default_options.function_tolerance = 1e-8;
-    ceres_default_options.gradient_tolerance = 1e-6;
-    ceres_default_options.parameter_tolerance = 1e-64;
+    ceres_default_options.line_search_sufficient_function_decrease  = 1e-3; //Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
+    ceres_default_options.line_search_sufficient_curvature_decrease = 0.8; //This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit.
+    ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
+    ceres_default_options.function_tolerance = 1e-6; // Tested, 1e-6 seems to be a sweetspot
+    ceres_default_options.gradient_tolerance = 1e-4; // Not tested yet
+    ceres_default_options.parameter_tolerance = 1e-6;
     ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
     ceres_default_options.logging_type = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
 
-    if(optSpace == OptSpace::SUBSPACE_ONLY or optSpace == OptSpace::SUBSPACE_AND_DIRECT){
-        ceres_default_options.max_num_iterations = 2000;
-        ceres_default_options.function_tolerance = 1e-8; //Operations are cheap in subspace, so you can afford low tolerance
-        ceres_default_options.gradient_tolerance = 1e-8;
-        ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
-        ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::trace;
-
-    }
-
-    if(sim_status.simulation_has_stuck_for == 1){
-        ceres_default_options.max_num_iterations = 4000;
-        ceres_default_options.function_tolerance = 1e-10;
-        ceres_default_options.gradient_tolerance = 1e-8;
-        ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
+    if(sim_status.simulation_has_got_stuck){
+        ceres_default_options.max_num_iterations  = 4000;
+        ceres_default_options.function_tolerance  = 1e-8;
+        ceres_default_options.gradient_tolerance  = 1e-6;
+        ceres_default_options.parameter_tolerance = 1e-8;
+        ceres_default_options.max_solver_time_in_seconds = 60*20;//60*2;
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
         ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
     }
     if(sim_status.simulation_has_stuck_for > 1){
-        ceres_default_options.max_num_iterations = 4000;
-        ceres_default_options.function_tolerance = 1e-12;
-        ceres_default_options.gradient_tolerance = 1e-10;
-        ceres_default_options.max_solver_time_in_seconds = 60*10;//60*2;
-        ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = false;  // True makes a huge difference, takes longer steps at each iteration!!
-        ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
+        ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration. May not always be optimal according to library.
     }
 
 
