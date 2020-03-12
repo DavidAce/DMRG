@@ -6,15 +6,18 @@
 #include <state/class_state_finite.h>
 #include <simulation/nmspc_settings.h>
 #include <tools/common/log.h>
+#include <tools/common/prof.h>
 
 Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_state_finite & state){
     auto mpo = state.get_multimpo();
+    tools::common::profile::t_ham->tic();
     tools::log->trace("Contracting multisite hamiltonian...");
     auto & envL = state.get_ENVL(state.active_sites.front());
     auto & envR = state.get_ENVR(state.active_sites.back());
     if (envL.get_position() != state.active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", envL.get_position() , state.active_sites.front()));
     if (envR.get_position() != state.active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", envR.get_position() , state.active_sites.back()));
-//    cache.ham =
+
+
     long dim0 = mpo.dimension(2);
     long dim1 = envL.block.dimension(0);
     long dim2 = envR.block.dimension(0);
@@ -40,17 +43,19 @@ Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamilt
     if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}",non_hermiticity);
     if(ham_map.hasNaN())        throw std::runtime_error("multisite hamiltonian has NaN's!");
     tools::log->trace("multisite hamiltonian nonzeros: {:.8f} %", sparcity*100);
-
+    tools::common::profile::t_ham->toc();
     return ham;
 }
 
 Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(const class_state_finite & state) {
     auto mpo = state.get_multimpo();
+    tools::common::profile::t_ham_sq->tic();
     tools::log->trace("Contracting multisite hamiltonian squared...");
     auto & env2L = state.get_ENV2L(state.active_sites.front());
     auto & env2R = state.get_ENV2R(state.active_sites.back());
     if (env2L.get_position() != state.active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , state.active_sites.front()));
     if (env2R.get_position() != state.active_sites.back())  throw std::runtime_error(fmt::format("Mismatch in ENVR and active site positions: {} != {}", env2R.get_position() , state.active_sites.back()));
+
     long dim0 = mpo.dimension(2);
     long dim1 = env2L.block.dimension(0);
     long dim2 = env2R.block.dimension(0);
@@ -78,7 +83,7 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hami
     if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
     if(ham_sq_map.hasNaN())     throw std::runtime_error("multisite hamiltonian squared has NaN's!");
     tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity*100);
-
+    tools::common::profile::t_ham_sq->toc();
     return ham_sq;
 }
 
@@ -100,6 +105,7 @@ Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_ham
 
 Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs ){
     auto mpo = state.get_multimpo();
+    tools::common::profile::t_ham_sq->tic();
     auto & env2L = state.get_ENV2L(state.active_sites.front()).block;
     auto & env2R = state.get_ENV2R(state.active_sites.back()).block;
 
@@ -184,7 +190,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
     if(H2.hasNaN())     throw std::runtime_error("subspace hamiltonian squared has NaN's!");
     tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity*100);
-
+    tools::common::profile::t_ham_sq->toc();
     return H2;
 
 }
