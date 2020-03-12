@@ -213,7 +213,7 @@ void class_algorithm_infinite::reset_to_random_product_state(const std::string &
     clear_saturation_status();
 }
 
-void class_algorithm_infinite::reset_to_random_current_state() {
+void class_algorithm_infinite::reset_to_random_current_state(std::optional<double> chi_lim) {
     log->critical("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
     throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
 }

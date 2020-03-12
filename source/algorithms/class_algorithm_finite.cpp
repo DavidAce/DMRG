@@ -21,14 +21,11 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     state->set_chi_lim(2); // Can't call chi_init() <-- it's a pure virtual function
     if(state->hasNaN()) throw std::runtime_error("State has NAN's before initializing it");
 
+    tools::finite::mps::initialize(*state, num_sites, settings::model::model_type);
     tools::finite::mpo::initialize(*state, num_sites, settings::model::model_type);
-    tools::finite::mps::initialize(*state, num_sites);
-    tools::finite::mpo::randomize(*state);
+
     tools::finite::mps::random_product_state(*state, settings::strategy::initial_parity_sector, settings::model::state_number);
-    tools::finite::mps::rebuild_environments(*state);
-
     tools::finite::debug::check_integrity(*state);
-
     S_mat.resize(state->get_length() + 1);
     X_mat.resize(state->get_length() + 1);
 
@@ -144,9 +141,12 @@ void class_algorithm_finite::run_postprocessing() {
     write_measurements(true);
     write_sim_status(true);
     write_profiling(true);
-
-    auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
-    write_projection(state_projected, settings::strategy::target_parity_sector);
+    if(has_projected)
+        write_projection(*state, settings::strategy::target_parity_sector);
+    else{
+        auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
+        write_projection(state_projected, settings::strategy::target_parity_sector);
+    }
 
     print_status_full();
     tools::common::profile::t_pos->toc();
@@ -168,7 +168,10 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
     state->clear_cache();
     try {
         for(size_t i = 0; i < num_moves.value(); i++) {
-            if(state->position_is_any_edge()) state->increment_sweeps();
+            if(state->position_is_any_edge()) {
+                state->increment_sweeps();
+                has_projected = false;
+            }
             tools::finite::mps::move_center_point(*state);
             state->increment_moves();
             if(chi_quench_steps > 0) chi_quench_steps--;
@@ -316,21 +319,22 @@ void class_algorithm_finite::reset_to_random_product_state(const std::string &pa
     log->info("Successfully reset to product state with global spin components: {}", spin_components);
 }
 
-void class_algorithm_finite::reset_to_random_current_state() {
+void class_algorithm_finite::reset_to_random_current_state(std::optional<double> chi_lim) {
     if(not state->position_is_any_edge()) return;
     log->info("Resetting MPS by flipping random spins on current state");
     if(state->get_length() != (size_t) num_sites()) throw std::range_error("System size mismatch");
-    auto bond_dimensions    = tools::finite::measure::bond_dimensions(*state);
-    auto max_bond_dimension = *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
-    log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
+    log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
     // Randomize state
     log->info("Flipping random spins");
 //    tools::finite::mps::random_current_state(*state,"x");
-    tools::finite::mps::random_current_state(*state,"z");
+    tools::finite::mps::random_current_state(*state,"x","z");
 
-    tools::log->info("Reducing max bond dimension by half");
-    tools::finite::mps::truncate_all_sites(*state, max_bond_dimension, 1e-4);
-    log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
+    //Truncate even more on explicit request
+    if(chi_lim) {
+        size_t chi_lim_parsed = chi_lim.value() < 1 ? (size_t) (chi_lim.value() * (double) state->find_largest_chi()) : (size_t)chi_lim.value();
+        tools::finite::mps::truncate_all_sites(*state, chi_lim_parsed);
+    }
+    log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
 
     clear_saturation_status();
     state->lowest_recorded_variance = 1;
@@ -343,31 +347,18 @@ void class_algorithm_finite::reset_to_random_current_state() {
 
 
 void class_algorithm_finite::try_projection() {
-    if(tools::finite::measure::energy_variance(*state) < 10 * settings::precision::variance_convergence_threshold) return;
-    bool try_when_stuck =
-            settings::strategy::project_when_stuck and sim_status.simulation_has_got_stuck and not has_projected and state->position_is_any_edge();
-
-    bool try_every_sweep = settings::strategy::project_on_every_sweep and sim_status.iteration >= 2 and state->position_is_any_edge();
-
-    if(try_every_sweep or try_when_stuck) {
+    if(not state->position_is_any_edge()) return;
+    if(has_projected) return;
+    if(settings::strategy::project_on_every_sweep or
+      (settings::strategy::project_when_stuck and sim_status.simulation_has_got_stuck))
+    {
         log->info("Trying projection to {}", settings::strategy::target_parity_sector);
-        auto   state_projected    = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
-        double variance_original  = tools::finite::measure::energy_variance_per_site(*state);
-        double variance_projected = tools::finite::measure::energy_variance_per_site(state_projected);
-
+        *state = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
         has_projected = true;
-
-        if(variance_projected < variance_original) {
-            log->debug("Projection: variance improved {:.8} -> {:.8}", std::log10(variance_original), std::log10(variance_projected));
-        } else {
-            log->debug("Projection: variance worsened {:.8} -> {:.8}", std::log10(variance_original), std::log10(variance_projected));
-        }
-        *state = state_projected;
-
     }
 }
 
-void class_algorithm_finite::try_chi_quench() {
+void class_algorithm_finite::try_bond_dimension_quench() {
     if(tools::finite::measure::energy_variance(*state) < 10 * settings::precision::variance_convergence_threshold) return;
     if(not settings::strategy::chi_quench_when_stuck) return;
     if(chi_quench_steps > 0) clear_saturation_status();
@@ -407,14 +398,14 @@ void class_algorithm_finite::try_chi_quench() {
     auto max_bond_dimension = *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
     tools::log->info("Chi quench started");
     tools::finite::mps::truncate_all_sites(*state, max_bond_dimension/2);
-    log->debug("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
+    log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
     clear_saturation_status();
     chi_quench_steps = 1 * state->get_length();
     num_chi_quenches++;
 }
 
 
-void class_algorithm_finite::try_perturbation() {
+void class_algorithm_finite::try_hamiltonian_perturbation() {
     if(not settings::strategy::perturb_when_stuck) return;
     if(not state->position_is_any_edge()) return;
     if(state->is_perturbed()) return;
@@ -431,7 +422,7 @@ void class_algorithm_finite::try_perturbation() {
 }
 
 
-void class_algorithm_finite::try_damping() {
+void class_algorithm_finite::try_disorder_damping() {
     if(not state->position_is_left_edge()) return;
     // If there are damping exponents to process, do so
     if(not damping_exponents.empty()){
