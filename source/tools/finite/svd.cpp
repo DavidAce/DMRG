@@ -69,11 +69,13 @@ void tools::finite::mps::normalize(class_state_finite & state, std::optional<siz
     }
     tools::common::profile::t_svd->toc();
     state.clear_measurements();
+    state.clear_cache(); //IMPORTANT, because we generate a theta earlier in this function and it needs to be invalidated
     if(state.hasNaN()) throw std::runtime_error("State has NAN's after normalization");
     tools::log->info("Norm                 after  normalization: {:.16f}", tools::finite::measure::norm(state));
     tools::log->info("Spin components      after  normalization: {}", tools::finite::measure::spin_components(state));
     tools::log->info("Bond dimensions      after  normalization: {}", tools::finite::measure::bond_dimensions(state));
     tools::log->info("Entanglement entropy after  normalization: {}", tools::finite::measure::entanglement_entropies(state));
+    tools::finite::mps::rebuild_environments(state);
 }
 
 
@@ -315,12 +317,12 @@ void tools::finite::opt::truncate_theta(const Eigen::Tensor<std::complex<double>
     size_t dimL = theta.dimension(0);
     size_t dimR = theta.dimension(2);
     size_t chi_min = (size_t) std::ceil(std::max(chiL,chiR)/std::min(dimL,dimR));
-    chi_lim = std::max(chi_min,chi_lim.value());
-
+    chi_min = std::max(chi_min,chi_lim.value());
+    if(chi_min == 0 or chi_min > 10000) throw std::logic_error("Chi lim out of bounds for truncation: " + std::to_string(chi_min));
 
     class_SVD SVD;
     SVD.setThreshold(svd_threshold.value());
-    auto[U, S, V] = SVD.schmidt(theta, chi_lim.value());
+    auto[U, S, V] = SVD.schmidt(theta, chi_min);
 
     if(chi_lim.value() <= (size_t) state.get_chi_lim())
         state.set_truncation_error(SVD.get_truncation_error());
@@ -391,7 +393,7 @@ void tools::finite::mps::move_center_point(class_state_finite & state, std::opti
                     .contract(Textra::asDiagonal(LC), Textra::idx({3},{0}));
             tools::finite::opt::truncate_theta(theta,state,chi_lim,svd_threshold);
         }
-        size_t pos = state.get_position();
+//        size_t pos = state.get_position();
 //        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", pos, std::log10(state.get_truncation_error(pos)),state.get_chi_lim(), tools::finite::measure::bond_dimension_current(state));
 
         assert(MPO_L.size() + MPO_R.size() == state.get_length());
