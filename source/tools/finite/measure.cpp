@@ -138,6 +138,18 @@ double tools::finite::measure::twosite::energy_variance(const class_state_finite
     // Else:
     //      Var H = <(H - 0)^2> - <H - 0>^2 = H2 - E^2
 
+//    auto dims_theta = theta.dimensions();
+//    auto dims_MPO_L = state.MPO_L.back()->MPO().dimensions();
+//    auto dims_MPO_R = state.MPO_R.front()->MPO().dimensions();
+//    auto dims_ENV2_L = state.ENV2_L.back().block.dimensions();
+//    auto dims_ENV2_R = state.ENV2_R.front().block.dimensions();
+//
+//    tools::log->warn("dims theta {}", dims_theta);
+//    tools::log->warn("dims MPO_L {}", dims_MPO_L);
+//    tools::log->warn("dims MPO_R {}", dims_MPO_R);
+//    tools::log->warn("dims ENV2_L {}", dims_ENV2_L);
+//    tools::log->warn("dims ENV2_R {}", dims_ENV2_R);
+
     tools::common::profile::t_var->tic();
     OMP omp(settings::threading::num_threads);
     Eigen::Tensor<Scalar, 0> H2;
