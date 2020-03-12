@@ -2,14 +2,13 @@
 // Created by david on 2018-10-30.
 //
 
-
 #include "arpackpp_solver.h"
 #include "matrix_product_dense.h"
-#include "matrix_product_sparse.h"
-#include "matrix_product_stl.h"
 #include "matrix_product_hamiltonian.h"
 #include "matrix_product_hamiltonian_sq.h"
-#include <general/nmspc_type_check.h>
+#include "matrix_product_sparse.h"
+#include "matrix_product_stl.h"
+#include <general/nmspc_sfinae.h>
 
 #if defined(_MKL_LAPACK_H_)
 #error MKL_LAPACK IS NOT SUPPOSED TO BE DEFINED HERE
@@ -48,7 +47,7 @@
 #endif
 
 
-namespace tc = TypeCheck;
+namespace tc = sfinae;
 using namespace eigutils::eigSetting;
 
 
