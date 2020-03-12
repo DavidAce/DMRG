@@ -4,12 +4,13 @@
 
 #pragma once
 
-
 #ifdef _OPENMP
 #include <omp.h>
-#define EIGEN_USE_THREADS
 #endif
 
+// Make sure EIGEN_USE_THREADS is defined globally already
+#include <thread>
+//#include <Eigen/Core>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 class OMP{
