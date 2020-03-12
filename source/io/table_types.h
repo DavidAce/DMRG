@@ -147,6 +147,9 @@ class h5pp_table_profiling {
         double t_con = 0;
         double t_eig = 0;
         double t_svd = 0;
+        double t_ham = 0;
+        double t_ham_sq = 0;
+        double t_mpo = 0;
         double t_opt = 0;
         double t_evo = 0;
         double t_env = 0;
@@ -160,7 +163,6 @@ class h5pp_table_profiling {
         double t_ene_mom = 0;
         double t_var_ham = 0;
         double t_var_mom = 0;
-        double t_ham = 0;
         double t_vH2v = 0;
         double t_vHv = 0;
         double t_vH2 = 0;
@@ -182,6 +184,9 @@ class h5pp_table_profiling {
         H5Tinsert(h5_type, "t_con", HOFFSET(table, t_con), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_eig", HOFFSET(table, t_eig), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_svd", HOFFSET(table, t_svd), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_ham", HOFFSET(table, t_ham), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_ham_sq", HOFFSET(table, t_ham_sq), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_mpo", HOFFSET(table, t_mpo), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt", HOFFSET(table, t_opt), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_evo", HOFFSET(table, t_evo), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_env", HOFFSET(table, t_env), H5T_NATIVE_DOUBLE);
@@ -195,7 +200,6 @@ class h5pp_table_profiling {
         H5Tinsert(h5_type, "t_ene_mom", HOFFSET(table, t_ene_mom), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_var_ham", HOFFSET(table, t_var_ham), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_var_mom", HOFFSET(table, t_var_mom), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "t_ham", HOFFSET(table, t_ham), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_vH2v", HOFFSET(table, t_vH2v), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_vHv", HOFFSET(table, t_vHv), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_vH2", HOFFSET(table, t_vH2), H5T_NATIVE_DOUBLE);
