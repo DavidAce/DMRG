@@ -13,7 +13,7 @@ find_package(OpenMP) # Uses DMRG's own find module
 
 
 include(cmake-modules/FindGFortran.cmake)
-if(ENABLE_MKL)
+if(DMRG_ENABLE_MKL)
     include(cmake-modules/Find_dont_install_INTELMKL.cmake)    # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 endif()
 if(NOT TARGET blas::blas)
