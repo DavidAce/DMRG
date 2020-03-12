@@ -67,7 +67,8 @@ template<typename Scalar>
 bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
                                             double* fx,
                                             double* grad_double_double) const {
-    tools::common::profile::t_op->tic();
+    using namespace tools::common::profile;
+    t_op->tic();
     Scalar ene,ene2,var;
     Scalar vHv, vH2v;
     double vv,log10var;
@@ -90,9 +91,13 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
 
 
     print_path   = false;
-    vHv          = v.dot(Hv);
-    vH2v         = v.dot(H2v);
 
+    t_vHv->tic();
+    vHv = v.dot(Hv);
+    t_vHv->toc();
+    t_vH2v->tic();
+    vH2v = v.dot(H2v);
+    t_vH2v->toc();
 
     // Do this next bit carefully to avoid negative variance when numbers are very small
     ene             = vHv/vv;
@@ -110,8 +115,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     energy         = std::real(ene + energy_reduced) / length;
     variance       = std::abs(var)/length;
     norm_offset    = std::abs(vv) - 1.0 ;
-//    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0);
-    norm_func = 0; norm_grad = 0;
+    std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.2);
     double epsilon = 1e-14;
     log10var       = std::log10(epsilon+variance);
 
@@ -129,18 +133,18 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
         }
         grad += norm_grad * v;
     }
-
-    tools::log->debug("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad|_inf: {:<24.18f} SqNorm: {:<24.18f} |H2v|_max: {:<24.18f} |ene2|: {:<24.18f} ene: {:<24.18f} fx: {:<24.18f}",
-                      std::log10(std::abs(var)/length),
-                      std::real(ene + energy_reduced) / length,
-                      grad.norm(),
-                      grad.cwiseAbs().maxCoeff(),
-                      vv,
-                      H2v.real().maxCoeff(),
-                      std::real(ene2),
-                      std::real(ene),
-                      fx[0]);
-
+//
+//    tools::log->debug("log10 var: {:<24.18f} Energy: {:<24.18f} |Grad|: {:<24.18f} |Grad|_inf: {:<24.18f} SqNorm: {:<24.18f} |H2v|_max: {:<24.18f} |ene2|: {:<24.18f} ene: {:<24.18f} fx: {:<24.18f}",
+//                      std::log10(std::abs(var)/length),
+//                      std::real(ene + energy_reduced) / length,
+//                      grad.norm(),
+//                      grad.cwiseAbs().maxCoeff(),
+//                      vv,
+//                      H2v.real().maxCoeff(),
+//                      std::real(ene2),
+//                      std::real(ene),
+//                      fx[0]);
+//
 
     if(std::isnan(log10var) or std::isinf(log10var)){
         tools::log->warn("log10 variance is invalid");

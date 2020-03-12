@@ -166,15 +166,15 @@ std::vector<std::pair<double,int>> get_best_candidates_in_window(const Eigen::Ve
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, std::vector<reports::eig_tuple> &eig_log){
-    tools::log->trace("Finding subspace -- full");
+find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta){
     using namespace eigutils::eigSetting;
-    tools::common::profile::t_eig->tic();
-    tools::common::profile::t_eig->tic();
+    using namespace tools::common::profile;
+    tools::log->trace("Finding subspace -- full");
     Eigen::VectorXd   eigvals;
     Eigen::MatrixXcd  eigvecs;
-    class_eigsolver solver;
+    class_eigsolver   solver;
 
+    t_eig->tic();
     if constexpr (!std::is_same<Scalar, double>::value)
     {
         solver.eig<Type::CPLX, Form::SYMMETRIC>(H_local, true, false);
@@ -191,9 +191,9 @@ find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
         eigvecs = Eigen::Map<const Eigen::MatrixXd>(solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),
                                                     solver.solution.meta.rows, solver.solution.meta.cols);
     }
-    tools::common::profile::t_eig->toc();
-    tools::common::profile::t_eig->toc();
+    t_eig->toc();
     tools::log->debug("Finished eigensolver -- reason: Full diagonalization");
+
     Eigen::Map<const Eigen::VectorXcd> theta_vec   (theta.data(),theta.size());
     Eigen::VectorXd overlaps = (theta_vec.adjoint() * eigvecs).cwiseAbs().real();
     int idx;
@@ -202,8 +202,7 @@ find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
     double subspace_error    = 1.0 - sq_sum_overlap;
     int nev = eigvecs.cols();
-    eig_log.emplace_back(nev, max_overlap, min_overlap, std::log10(subspace_error), tools::common::profile::t_eig->get_last_time_interval(), 0);
-
+    reports::eigs_log.emplace_back(nev, max_overlap, min_overlap, std::log10(subspace_error),t_ham->get_last_time_interval(), t_eig->get_last_time_interval(), 0);
     return std::make_tuple(eigvecs,eigvals);
 }
 
@@ -211,18 +210,16 @@ find_subspace_full(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
 
 template<typename Scalar>
 std::tuple<Eigen::MatrixXcd, Eigen::VectorXd>
-find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, double energy_target, double subspace_error_threshold, std::vector<reports::eig_tuple> &eig_log, OptMode optMode, OptSpace optSpace){
+find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::complex<double>,3> &theta, double energy_target, double subspace_error_threshold, OptMode optMode, OptSpace optSpace){
     using namespace eigutils::eigSetting;
+    using namespace tools::common::profile;
     tools::log->trace("Finding subspace -- partial");
-
-
-    tools::common::profile::t_eig->tic();
-    tools::common::profile::t_eig->tic();
     // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
     StlMatrixProduct<Scalar> hamiltonian(H_local.data(),H_local.rows(),true,Form::SYMMETRIC,Side::R);
     hamiltonian.set_shift(energy_target);
     hamiltonian.FactorOP();
-    double t_lu = hamiltonian.t_factorOp.get_last_time_interval();
+    double time_lu  = hamiltonian.t_factorOp.get_last_time_interval();
+    double time_ham = tools::common::profile::t_ham->get_last_time_interval();
     tools::common::profile::t_eig->toc();
 
     class_eigsolver solver;
@@ -232,9 +229,9 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
     Eigen::MatrixXcd eigvecs;
     Eigen::Map<const Eigen::VectorXcd> theta_vec   (theta.data(),theta.size());
     for (auto nev : generate_size_list(theta.size())){
-        tools::common::profile::t_eig->tic();
+        t_eig->tic();
         solver.eigs_stl(hamiltonian,nev,-1, energy_target,Form::SYMMETRIC,Ritz::LM,Side::R, true,false);
-        tools::common::profile::t_eig->toc();
+        t_eig->toc();
 
         eigvals = Eigen::Map<const Eigen::VectorXd > (solver.solution.get_eigvals<Form::SYMMETRIC>().data()      ,solver.solution.meta.cols);
         if constexpr (std::is_same<std::complex<double>, Scalar >::value){
@@ -248,8 +245,9 @@ find_subspace_part(const MatrixType<Scalar> & H_local, Eigen::Tensor<std::comple
         double min_overlap       = overlaps.minCoeff();
         double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
         double subspace_error    = 1.0 - sq_sum_overlap;
-        eig_log.emplace_back(nev, max_overlap, min_overlap, std::log10(subspace_error), tools::common::profile::t_eig->get_last_time_interval(), t_lu);
-        t_lu = 0;
+        reports::eigs_log.emplace_back(nev, max_overlap, min_overlap, std::log10(subspace_error), time_ham, t_eig->get_last_time_interval(), time_lu);
+        time_lu  = 0;
+        time_ham = 0;
         if(max_overlap            > 1.0 + 1e-6)                                  throw std::runtime_error("max_overlap larger than one : "  + std::to_string(max_overlap));
         if(sq_sum_overlap         > 1.0 + 1e-6)                                  throw std::runtime_error("eps larger than one : "          + std::to_string(sq_sum_overlap));
         if(min_overlap            < 0.0)                                         throw std::runtime_error("min_overlap smaller than zero: " + std::to_string(min_overlap));
@@ -281,12 +279,11 @@ find_subspace(const class_state_finite & state, double subspace_error_threshold,
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
-    std::vector<reports::eig_tuple> eig_log;
 
 
     // If multitheta is small enough you can afford full diag.
     if   ((size_t)multitheta.size() <= settings::precision::max_size_full_diag) {
-        std::tie(eigvecs, eigvals) = find_subspace_full(H_local, multitheta, eig_log);
+        std::tie(eigvecs, eigvals) = find_subspace_full(H_local, multitheta);
     }else{
         double energy_target;
         if (state.isReduced()) energy_target = tools::finite::measure::energy_minus_energy_reduced(state, multitheta);
@@ -297,14 +294,14 @@ find_subspace(const class_state_finite & state, double subspace_error_threshold,
                 state.get_energy_reduced()/state.get_length(),
                 (energy_target + state.get_energy_reduced())/state.get_length());
 
-        std::tie(eigvecs, eigvals) = find_subspace_part(H_local, multitheta, energy_target, subspace_error_threshold, eig_log, optMode,optSpace);
+        std::tie(eigvecs, eigvals) = find_subspace_part(H_local, multitheta, energy_target, subspace_error_threshold, optMode,optSpace);
     }
     tools::log->trace("Eigenvalue range: {} --> {}",
             (eigvals.minCoeff() + state.get_energy_reduced())/state.get_length(),
             (eigvals.maxCoeff() + state.get_energy_reduced())/state.get_length());
 //    eigvals = eigvals.array() + state.get_energy_reduced();
 //    tools::log->debug("Eigenvalue range: {} --> {}", eigvals.minCoeff()/state.get_length(),eigvals.maxCoeff()/state.get_length());
-    reports::print_report(eig_log);
+    reports::print_eigs_report();
 
     if constexpr(std::is_same<Scalar,double>::value){
         Textra::subtract_phase(eigvecs);
@@ -406,31 +403,26 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
 
     // We should try different initial guesses when doing subspace optimization
     // All the candidates with significant overlap should be considered, including the current theta
-    std::vector<Eigen::Tensor<Scalar,3>> initial_guess_thetas = {theta_old};
+    std::vector<Eigen::Tensor<Scalar,3>> theta_candidates = {theta_old};
     for(auto &candidate : list_of_candidates){
         auto   candidate_theta              = Textra::MatrixTensorMap(eigvecs.col(candidate.second), state.active_dimensions());
         double candidate_energy             = eigvals_per_site_unreduced(candidate.second);
         double candidate_variance           = tools::finite::measure::energy_variance_per_site(state, candidate_theta);
         tools::log->trace("Candidate {:<2} has good overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}",candidate.second ,candidate.first ,candidate_energy  ,std::log10(candidate_variance) );
-        initial_guess_thetas.emplace_back(candidate_theta);
-        if(initial_guess_thetas.size() > 5) break;
+        theta_candidates.emplace_back(candidate_theta);
+        if(theta_candidates.size() > 5) break;
     }
 
-
-
-
-    std::vector<reports::subspc_opt_tuple> opt_log;
-
-    if (tools::log->level() <= spdlog::level::debug){
+    if (tools::log->level() <= spdlog::level::debug ){
         // Initial sanity check
         tools::common::profile::t_opt->tic();
         double energy_old        = tools::finite::measure::energy_per_site(state,theta_old);
         double variance_old      = tools::finite::measure::energy_variance_per_site(state,theta_old);
         tools::common::profile::t_opt->toc();
-        opt_log.emplace_back("Current state", theta_old.size(), energy_old, std::log10(variance_old), 1.0 , theta_old_vec.norm(), 0, 0, tools::common::profile::t_opt->get_last_time_interval());
+        reports::bfgs_log.emplace_back("Current state", theta_old.size(), 0, energy_old, std::log10(variance_old), 1.0 , theta_old_vec.norm(), 0, 0, tools::common::profile::t_opt->get_last_time_interval());
     }
 
-    tools::log->debug("Optimizing mode {} space {} using subspace size {} with {} initial guesses", optMode, optSpace, eigvecs.cols(), initial_guess_thetas.size() );
+    tools::log->debug("Optimizing mode {} space {} using subspace size {} with {} initial guesses", optMode, optSpace, eigvecs.cols(), theta_candidates.size() );
     tools::common::profile::t_opt->tic();
     Eigen::MatrixXcd H2_subspace = tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(state, eigvecs);
     if(optType == OptType::REAL) H2_subspace = H2_subspace.real();
@@ -439,20 +431,18 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
     tools::common::profile::t_opt->toc();
     double t_H2_subspace = tools::common::profile::t_opt->get_last_time_interval();
     std::vector<std::pair<double,Eigen::Tensor<Scalar,3>>> optimized_results;
-
-    for(auto &theta_initial: initial_guess_thetas){
-        auto theta_initial_map             = Eigen::Map<const Eigen::VectorXcd>  (theta_initial.data(),theta_initial.size());
-
+    size_t candidate_count = 0;
+    for(auto &theta_candidate : theta_candidates){
+        auto theta_candidate_map = Eigen::Map<const Eigen::VectorXcd>  (theta_candidate.data(), theta_candidate.size());
         Eigen::VectorXcd theta_new;
         double overlap_new  = 0;
         double energy_new,variance_new;
         [[maybe_unused]] double norm;
         // Note that alpha_i = <theta_initial | theta_new_i> is not supposed to be squared!
-        Eigen::VectorXcd theta_start      = (eigvecs.adjoint() * theta_initial_map).normalized()  ;
-
+        Eigen::VectorXcd theta_start      = (eigvecs.adjoint() * theta_candidate_map).normalized()  ;
 
         if (tools::log->level() <= spdlog::level::trace){
-            // Initial sanity check
+            // Check current candidate
             tools::common::profile::t_opt->tic();
             Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal() ).rowwise().sum().normalized();
             auto theta_0_tensor      = Textra::MatrixTensorMap(theta_0,state.active_dimensions());
@@ -460,28 +450,13 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             double variance_0        = tools::finite::measure::energy_variance_per_site(state,theta_0_tensor);
             double overlap_0         = std::abs(theta_old_vec.dot(theta_0));
             tools::common::profile::t_opt->toc();
-            opt_log.emplace_back("Initial guess", theta_old.size(), energy_0, std::log10(variance_0), overlap_0, theta_0.norm(), 0, 0, tools::common::profile::t_opt->get_last_time_interval());
-
-            // Initial sanity check 2
-//            t_opt->tic();
-//            Eigen::MatrixXcd H2_subspace_old = tools::finite::opt::internal::get_multi_hamiltonian2_subspace_matrix(state, eigvecs);
-//            {
-//                Eigen::VectorXcd Hv = eigvals.asDiagonal() * theta_start;
-//                Eigen::VectorXcd H2v = H2_subspace_old * theta_start;
-//                Scalar vHv = theta_start.dot(Hv);
-//                Scalar vH2v = theta_start.dot(H2v);
-//                double vv = theta_start.squaredNorm();
-//                Scalar ene = vHv / vv;
-//                Scalar var = vH2v / vv - ene * ene;
-//                double ene_init_san = std::real(ene + state.get_energy_reduced()) / state.get_length();
-//                double var_init_san = std::real(var) / state.get_length();
-//                t_opt->toc();
-//                opt_log.emplace_back("Initial (matrix) old", theta_start.size(), ene_init_san, std::log10(var_init_san),overlap_0, theta_start.norm(), 0, 0, t_opt->get_last_time_interval());
-//            }
-
-            {
-            // Initial sanity check 3
+            reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count) , theta_old.size(),0, energy_0, std::log10(variance_0), overlap_0, theta_0.norm(), 0, 0, tools::common::profile::t_opt->get_last_time_interval());
+        }
+        if (tools::log->level() <= spdlog::level::trace and settings::debug){
+            // Check using explicit matrix
             tools::common::profile::t_opt->tic();
+            Eigen::VectorXcd theta_0 = (eigvecs * theta_start.asDiagonal() ).rowwise().sum().normalized();
+            double overlap_0         = std::abs(theta_old_vec.dot(theta_0));
             Eigen::VectorXcd Hv  = eigvals.asDiagonal() * theta_start;
             Eigen::VectorXcd H2v = H2_subspace.template selfadjointView<Eigen::Upper>()*theta_start;
             Scalar vHv  = theta_start.dot(Hv);
@@ -492,17 +467,16 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             double ene_init_san = std::real(ene+state.get_energy_reduced())/state.get_length();
             double var_init_san = std::real(var)/state.get_length();
             tools::common::profile::t_opt->toc();
-            opt_log.emplace_back("Initial (matrix) new",theta_start.size(), ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), 0,0, t_H2_subspace+tools::common::profile::t_opt->get_last_time_interval());
-            }
-
+            reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count) + " (matrix)",theta_start.size(),0, ene_init_san, std::log10(var_init_san), overlap_0,theta_start.norm(), 0,0, t_H2_subspace+tools::common::profile::t_opt->get_last_time_interval());
 //            if(not H2_subspace.isApprox(H2_subspace_old,1e-4)){
 //                std::cout << "H2 new = \n" << H2_subspace.topLeftCorner(6,6) << std::endl;
 //                std::cout << "H2 old = \n" << H2_subspace_old.topLeftCorner(6,6) << std::endl;
 //                tools::log->warn("H2 subspace mismatch: {:.16f}", (H2_subspace - H2_subspace_old).cwiseAbs().sum());
 //            }
-
-
         }
+
+
+
 
         ceres::GradientProblemSolver::Summary summary;
         tools::common::profile::t_opt->tic();
@@ -542,14 +516,19 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             }
         }
         tools::common::profile::t_opt->toc();
+        reports::time_log.emplace_back(tools::common::profile::t_vH2v->get_measured_time_and_reset(),
+                                       tools::common::profile::t_vHv->get_measured_time_and_reset(),
+                                       tools::common::profile::t_vH2->get_measured_time_and_reset(),
+                                       tools::common::profile::t_vH->get_measured_time_and_reset(),
+                                       tools::common::profile::t_op->get_measured_time_and_reset());
 
 
-
-        if (tools::log->level() <= spdlog::level::trace){
+        if (tools::log->level() <= spdlog::level::debug){
             // Print results of Ceres LBFGS
             overlap_new = (theta_old_vec.adjoint() * theta_new).cwiseAbs().sum();
-            opt_log.emplace_back("LBFGS", theta_old.size(), energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), iter, counter, tools::common::profile::t_opt->get_last_time_interval());
-
+            reports::bfgs_log.emplace_back("LBFGS subspace", theta_old.size(),options.max_lbfgs_rank, energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), iter, counter, tools::common::profile::t_opt->get_last_time_interval());
+        }
+        if (tools::log->level() <= spdlog::level::trace and settings::debug){
             // Sanity check
             tools::common::profile::t_opt->tic();
             auto theta_san      = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
@@ -557,15 +536,12 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             double variance_san = tools::finite::measure::energy_variance_per_site(state,theta_san);
             tools::common::profile::t_opt->toc();
             if(std::abs((variance_san - variance_new) / variance_san ) > 0.01 ) tools::log->warn("Variance mismatch in sanity check: {:.16f} != {:.16f}", variance_san, variance_new);
-            opt_log.emplace_back("Sanity check",theta_san.size(), energy_san, std::log10(variance_san), overlap_new,theta_new.norm(), 0,0, tools::common::profile::t_opt->get_last_time_interval());
+            reports::bfgs_log.emplace_back("Sanity check",theta_san.size(),0, energy_san, std::log10(variance_san), overlap_new,theta_new.norm(), 1,1, tools::common::profile::t_opt->get_last_time_interval());
         }
-
-
 
         tools::log->trace("Finished LBFGS after {} seconds ({} iters). Exit status: {}. Message: {}",summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type) , summary.message.c_str());
         //    std::cout << summary.FullReport() << "\n";
 
-        tools::common::profile::t_opt->toc();
         if(optSpace == OptSpace::SUBSPACE_ONLY)
         {
             auto optimized_theta    = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
@@ -574,24 +550,23 @@ tools::finite::opt::internal::ceres_subspace_optimization(const class_state_fini
             auto optimized_vec      = Eigen::Map<const Eigen::VectorXcd>  (optimized_theta.data(),optimized_theta.size());
             auto optimized_overlap  = std::abs(theta_old_vec.dot(optimized_vec));
             optimized_results.emplace_back(std::make_pair(optimized_variance,optimized_theta));
-            opt_log.emplace_back("LBFGS subspace",optimized_theta.size(), optimized_energy, std::log10(optimized_variance), optimized_overlap,optimized_vec.norm(), 0,0, tools::common::profile::t_opt->get_last_time_interval());
+            reports::bfgs_log.emplace_back("LBFGS subspace",optimized_theta.size(),0, optimized_energy, std::log10(optimized_variance), optimized_overlap,optimized_vec.norm(), 1,1, tools::common::profile::t_opt->get_last_time_interval());
 
         }
         if(optSpace == OptSpace::SUBSPACE_AND_DIRECT)
         {
             tools::log->trace("Fine tuning new theta after SUBSPACE optimization");
             auto optimized_theta    = ceres_direct_optimization(state, Textra::MatrixTensorMap(theta_new, state.active_dimensions()) ,sim_status, optType,optMode,optSpace);
-            auto optimized_energy   = tools::finite::measure::energy_per_site(state,optimized_theta);
             auto optimized_variance = tools::finite::measure::energy_variance_per_site(state,optimized_theta);
-            auto optimized_vec      = Eigen::Map<const Eigen::VectorXcd>  (optimized_theta.data(),optimized_theta.size());
-            auto optimized_overlap  = std::abs(theta_old_vec.dot(optimized_vec));
-            opt_log.emplace_back("LBFGS direct ",optimized_theta.size(), optimized_energy, std::log10(optimized_variance), optimized_overlap,optimized_vec.norm(), 0,0, tools::common::profile::t_opt->get_last_time_interval());
             optimized_results.emplace_back(std::make_pair(optimized_variance,optimized_theta));
         }
+        candidate_count++;
     }
 
     // Finish up and print reports
-    reports::print_report(opt_log);
+    reports::print_bfgs_report();
+    reports::print_time_report();
+
 
     //Sort thetas in ascending order in variance
     std::sort(optimized_results.begin(), optimized_results.end(), [](auto &left, auto &right) {return left.first < right.first;});
