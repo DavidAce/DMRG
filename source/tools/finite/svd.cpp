@@ -19,7 +19,6 @@ void tools::finite::mps::normalize(class_state_finite & state, std::optional<siz
     state.clear_measurements();
     tools::common::profile::t_svd->tic();
     size_t num_moves = 2*(state.get_length()-2);
-    if(not chi_lim.has_value()) chi_lim = state.get_chi_lim();
     if(state.hasNaN()) throw std::runtime_error("State has NAN's before normalization");
     tools::log->info("Norm                 before normalization: {:.16f}", tools::finite::measure::norm(state));
     tools::log->info("Spin components      before normalization: {}", tools::finite::measure::spin_components(state));
@@ -296,7 +295,7 @@ void tools::finite::opt::truncate_left(const Eigen::Tensor<std::complex<double>,
     Eigen::Tensor<Scalar,2> leftID = state.get_MPS(site).get_M_bare()
             .contract(state.get_MPS(site).get_M_bare().conjugate(), Textra::idx({0,1},{0,1}) );
     if(not Textra::TensorMatrixMap(leftID).isIdentity(1e-12)) throw std::runtime_error(fmt::format("Not left normalized at site {} with threshold 1e-12", site));
-    tools::log->trace("SVD site log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
+    tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", site, std::log10(state.get_truncation_error(site)),state.get_chi_lim(), state.get_MPS(site).get_chiR());
     tools::common::profile::t_svd->toc();
 
 }
@@ -304,10 +303,9 @@ void tools::finite::opt::truncate_left(const Eigen::Tensor<std::complex<double>,
 
 void tools::finite::opt::truncate_theta(const Eigen::Tensor<std::complex<double>,4> &theta, class_state_finite & state, std::optional<size_t> chi_lim, std::optional<double> svd_threshold) {
     tools::common::profile::t_svd->tic();
-    if(not chi_lim.has_value())  chi_lim = state.get_chi_lim();
-    if(not svd_threshold.has_value()){
-        svd_threshold = settings::precision::svd_threshold;
-    }
+    if(not chi_lim.has_value()) chi_lim = state.get_chi_lim();
+    if(not svd_threshold.has_value()) svd_threshold = settings::precision::svd_threshold;
+
     // Calculate the minimum chi for this position
     // We always need to make sure we aren't truncating too aggressively.
     // We can only truncate down by a factor of d = {spin dimension} compared to adjacent sites.
@@ -341,7 +339,6 @@ void tools::finite::mps::move_center_point(class_state_finite & state, std::opti
         // Instead of moving out of the chain, just flip the direction and return
         state.flip_direction();
     }else{
-        if(not chi_lim.has_value())  chi_lim = state.get_chi_max();
         auto & MPS_L  = state.MPS_L;
         auto & MPS_R  = state.MPS_R;
         auto & MPO_L  = state.MPO_L;
@@ -395,7 +392,7 @@ void tools::finite::mps::move_center_point(class_state_finite & state, std::opti
             tools::finite::opt::truncate_theta(theta,state,chi_lim,svd_threshold);
         }
         size_t pos = state.get_position();
-        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", pos, std::log10(state.get_truncation_error(pos)),state.get_chi_lim(), tools::finite::measure::bond_dimension_current(state));
+//        tools::log->trace("SVD site {:2} log₁₀ trunc: {:12.8f} χlim: {:4} χ: {:4}", pos, std::log10(state.get_truncation_error(pos)),state.get_chi_lim(), tools::finite::measure::bond_dimension_current(state));
 
         assert(MPO_L.size() + MPO_R.size() == state.get_length());
         if(ENV_L.empty()) throw std::runtime_error("ENVL became empty");
@@ -433,7 +430,6 @@ void tools::finite::mps::truncate_all_sites(class_state_finite & state, const si
     }
 
     tools::log->trace("Truncated all sites");
-    tools::log->trace("Bond dimensions: {}", tools::finite::measure::bond_dimensions(state));
 }
 
 
