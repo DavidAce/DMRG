@@ -23,9 +23,13 @@ class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     if(settings::xdmrg::max_states > 0){
         sim_tag = "state_" + std::to_string(sim_status.num_states);
     }
+    log->set_error_handler([](const std::string& msg) {
+      throw std::runtime_error(msg);
+    });
+    tools::log->set_error_handler([](const std::string& msg) {
+      throw std::runtime_error(msg);
+    });
 }
-
-
 
 
 void class_xDMRG::run_preprocessing() {
@@ -67,10 +71,11 @@ void class_xDMRG::run_simulation()    {
             check_convergence();
             update_truncation_limit();     //Will update SVD threshold iff the state precision is being limited by truncation error
             update_bond_dimension_limit(); //Will update bond dimension if the state precision is being limited by bond dimension
+
             try_projection();
-            try_chi_quench();
-            try_damping();
-            try_perturbation();
+            try_bond_dimension_quench();
+            try_disorder_damping();
+            try_hamiltonian_perturbation();
 
             // It's important not to perform the last move.
             // That last state would not get optimized
@@ -80,6 +85,10 @@ void class_xDMRG::run_simulation()    {
                 if (sim_status.simulation_has_succeeded)                    {stop_reason = StopReason::SUCCEEDED; break;}
                 if (sim_status.simulation_has_to_stop)                      {stop_reason = StopReason::SATURATED; break;}
                 if (sim_status.num_resets > settings::precision::max_resets){stop_reason = StopReason::MAX_RESET; break;}
+                if(settings::strategy::randomize_early and
+                   sim_status.num_states == 0 and
+                   state->find_largest_chi() >= 32 and
+                   tools::finite::measure::energy_variance(*state) < 1e-4){stop_reason = StopReason::RANDOMIZE; break;}
             }
             log->trace("Finished step {}, iteration {}, position {}, direction {}", sim_status.step, sim_status.iteration, state->get_position(), state->get_direction());
             move_center_point();
@@ -95,12 +104,13 @@ void class_xDMRG::run_simulation()    {
             case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED",sim_name) ;break;
             case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
             case StopReason::MAX_RESET : log->info("Finished {} simulation -- reason: MAX RESET",sim_name) ;break;
+            case StopReason::RANDOMIZE : log->info("Finished {} simulation -- reason: RANDOMIZE",sim_name) ;break;
             default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
         }
         if(++sim_status.num_states >= settings::xdmrg::max_states) break;
         else{
             run_postprocessing(); //Saves and prints full status update
-            reset_to_random_current_state();
+            reset_to_random_current_state(32);
             sim_tag = "state_" + std::to_string(sim_status.num_states);
         }
     }
@@ -111,6 +121,8 @@ void class_xDMRG::run_simulation()    {
 void class_xDMRG::single_xDMRG_step()
 {
     log->debug("Starting xDMRG step {} | iteration {} | position {} | direction {}", sim_status.step, sim_status.iteration,state->get_position(), state->get_direction());
+
+
 
     using namespace tools::finite;
     using namespace tools::finite::opt;
