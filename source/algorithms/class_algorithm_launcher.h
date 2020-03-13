@@ -13,7 +13,6 @@ private:
     void setLogger(std::string name);
 public:
 
-//    std::shared_ptr <class_hdf5_file> output;
     std::shared_ptr<h5pp::File> h5ppFile;
 
     class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_);
@@ -25,10 +24,7 @@ public:
     void run_xDMRG();
     void run_iTEBD();
 
-//    static std::string hdf5_temp_path;
-//    static std::string hdf5_final_path;
     static void remove_temp_file();
-
 
 };
 

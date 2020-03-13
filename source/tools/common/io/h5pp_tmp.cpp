@@ -14,36 +14,18 @@ std::string get_dirname(){
     return "DMRG." + std::string(getenv("USER")) + "/";
 }
 
+
 std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_filename) {
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
          temp_path = settings::output::temp_dir/ fs::path(get_dirname());
     else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
 
-
     std::string::size_type pos = output_filename.find(temp_path.string());
-    if (pos != std::string::npos){
+    if (pos != std::string::npos)
         return output_filename;
-    }else{
-//        fs::path h5pp_path1 = fs::absolute(output_filename);
-//        fs::path h5pp_path2 = temp_path / fs::relative(h5pp_path1,fs::current_path());
-//        fs::path h5pp_path3 = temp_path / fs::relative(output_filename,fs::current_path());
-//        fs::path h5pp_path4 = temp_path / output_filename;
-//        fs::path h5pp_path5 = fs::absolute(temp_path / output_filename);
-////        fs::path h5pp_path6 = fs::canonical(temp_path / output_filename);
-//        fs::path h5pp_path7 = fs::relative(temp_path / output_filename);
-//        std::cout << "path1: "<< h5pp_path1 << std::endl;
-//        std::cout << "path2: "<< h5pp_path2 << std::endl;
-//        std::cout << "path3: "<< h5pp_path3 << std::endl;
-//        std::cout << "path4: "<< h5pp_path4 << std::endl;
-//        std::cout << "path5: "<< h5pp_path5 << std::endl;
-////        std::cout << "path6: "<< h5pp_path6 << std::endl;
-//        std::cout << "path7: "<< h5pp_path7 << std::endl;
-//        exit(0);
+    else
         return fs::absolute(temp_path / output_filename);
-    }
-
-
 }
 
 std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string &output_filename) {
@@ -55,9 +37,6 @@ std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string &output
     else if (fs::exists("/scratch/local"))
         temp_path = "/scratch/local" / fs::path(get_dirname());
     else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
-
-
-
 
     std::string::size_type pos = output_filename.find(temp_path.string());
     if (pos != std::string::npos){
@@ -95,10 +74,14 @@ void tools::common::io::h5tmp::create_directory(const std::string & path){
 
 void tools::common::io::h5tmp::copy_from_tmp(const std::string &output_filename){
     if(output_filename.empty()) return;
-    fs::path target_path = unset_tmp_prefix(output_filename);
-    fs::path source_path = output_filename;
+    copy_file(output_filename,unset_tmp_prefix(output_filename));
+}
 
-    if(target_path == source_path) return;
+
+void tools::common::io::h5tmp::copy_file(const std::string & src, const std::string & tgt ){
+    if(src == tgt) return;
+    fs::path target_path = src;
+    fs::path source_path = tgt;
 
     if(not fs::exists(target_path.parent_path())){
         tools::common::io::h5tmp::create_directory(target_path);
@@ -110,16 +93,15 @@ void tools::common::io::h5tmp::copy_from_tmp(const std::string &output_filename)
         if (std::equal(isbuf_it(target_stream.rdbuf()), isbuf_it(),
                        isbuf_it(source_stream.rdbuf()), isbuf_it()))
         {
-            tools::log->debug("Source and target files are equal... Skipping copy");
+            tools::log->debug("Source [{}] identical to target [{}] ... Skipping copy", src,tgt);
             return;
         }
     }
-    tools::log->debug("Copying hdf5 file to target path: {} -> {}",source_path.string(), target_path.string());
+    tools::log->debug("Copying hdf5 file: {} -> {}",src,tgt);
     fs::copy(source_path, target_path, fs::copy_options::update_existing);
-
-
-
 }
+
+
 
 void tools::common::io::h5tmp::remove_from_temp(const std::string output_filename){
     if(output_filename.empty()) {std::cout << "Nothing to delete" << std::endl << std::flush; return;}

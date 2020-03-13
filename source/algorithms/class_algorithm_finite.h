@@ -56,6 +56,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void         update_truncation_limit() final;
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
     void         run() final;
+    void         run_old() final;
     void         clear_saturation_status() override;
     void         reset_to_random_product_state(const std::string &parity_sector = "random") final;
     void         reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt) final;

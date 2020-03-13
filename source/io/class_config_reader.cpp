@@ -2,15 +2,14 @@
 // Created by david on 2018-01-12.
 //
 
-#include "class_settings_reader.h"
+#include "class_config_reader.h"
 #include <io/nmspc_logger.h>
 #include <sstream>
 namespace fs = tools::fs;
 
-
-class_settings_reader::class_settings_reader(const std::string &file_path_,std::string logName): file_path(file_path_) {
+class_config_reader::class_config_reader(const std::string &file_path_,std::string logName): file_path(file_path_) {
     log = Logger::setLogger(logName,2,true);
-    fs::path found_file =  find_input_file(file_path);
+    fs::path found_file = find_config_file(file_path);
     std::ifstream          file;
     if (not found_file.empty()){
         try {
@@ -70,17 +69,17 @@ class_settings_reader::class_settings_reader(const std::string &file_path_,std::
 
 }
 
-std::string class_settings_reader::get_input_file_as_string(){
+std::string class_config_reader::get_config_file_as_string(){
     return file_string;
 }
 
-std::string class_settings_reader::get_input_filename(){
+std::string class_config_reader::get_config_filename(){
     return file_path.string();
 }
 
 
 
-bool class_settings_reader::check_if_input_file_exists(const fs::path &path_to_file){
+bool class_config_reader::check_if_config_file_exists(const fs::path &path_to_file){
     if (path_to_file.has_filename()){
         if(fs::exists(path_to_file)){
             std::ifstream in(path_to_file.c_str());
@@ -96,17 +95,16 @@ bool class_settings_reader::check_if_input_file_exists(const fs::path &path_to_f
     return false;
 }
 
-fs::path class_settings_reader::find_input_file(const fs::path &given_path) {
+fs::path class_config_reader::find_config_file(const fs::path &given_path) {
 
     //Check if file exists in the given path.
-//    fs::path complete_path = fs::system_complete(given_path);
     fs::path complete_path = fs::absolute(given_path);
     if(fs::exists(given_path)){
         complete_path = fs::canonical(given_path);
     }
 
     log->debug("Checking for input file: [ {} ] in path: [ {} ]", given_path.string() ,complete_path.string());
-    if (check_if_input_file_exists(complete_path)){
+    if (check_if_config_file_exists(complete_path)){
         log->info("Found input file: [ {} ] in path: [ {} ]", given_path.string() ,fs::canonical(complete_path).string());
         found_file = true;
         return fs::canonical(complete_path);
@@ -116,7 +114,7 @@ fs::path class_settings_reader::find_input_file(const fs::path &given_path) {
     if (given_path.is_relative()) {
         complete_path = fs::absolute(fs::current_path() / given_path);
         log->debug("Checking for input file: [ {} ] in path: [ {} ]", given_path.string() ,complete_path.string());
-        if (check_if_input_file_exists(complete_path)) {
+        if (check_if_config_file_exists(complete_path)) {
             log->info("Found input file: [ {} ] in path: [ {} ]", given_path.string() ,fs::canonical(complete_path).string());
             found_file = true;
             return fs::canonical(complete_path);
@@ -126,7 +124,7 @@ fs::path class_settings_reader::find_input_file(const fs::path &given_path) {
     //Check if file exists in current directory
     complete_path = fs::absolute(fs::current_path()/given_path.filename());
     log->debug("Checking for input file: [ {} ] in path: [ {} ]", given_path.string() ,complete_path.string());
-    if(check_if_input_file_exists(complete_path)){
+    if(check_if_config_file_exists(complete_path)){
         log->info("Found input file: [ {} ] in path: [ {} ]", given_path.string() ,fs::canonical(complete_path).string());
         found_file = true;
         return fs::canonical(complete_path);
@@ -136,19 +134,19 @@ fs::path class_settings_reader::find_input_file(const fs::path &given_path) {
     return fs::path();
 }
 
-void class_settings_reader::remove_spaces(std::string &str){
+void class_config_reader::remove_spaces(std::string &str){
     str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
 }
 
-bool class_settings_reader::has_only_digits(const std::string s){
+bool class_config_reader::has_only_digits(const std::string s){
     return s.find_first_not_of( "+-0123456789" ) == std::string::npos;
 }
 
-bool class_settings_reader::is_parameterline(const std::string s){
+bool class_config_reader::is_parameterline(const std::string s){
     return s.find("=") != std::string::npos;
 }
 
-std::string::size_type class_settings_reader::find_comment_character(const std::string s){
+std::string::size_type class_config_reader::find_comment_character(const std::string s){
     std::vector<std::string> comment_symbols = {"//", "/*", "#"};
     for(auto &sym : comment_symbols){
         if(s.find(sym) != std::string::npos){

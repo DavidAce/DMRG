@@ -7,42 +7,64 @@
 #include <string>
 #include <vector>
 #include <simulation/enums.h>
+
 /*!
  *  \namespace settings
  *  This namespace contains settings such as time-step length, number of iterations and precision parameters for
  *  the different algorithms.
  */
 
-class class_settings_reader;
+class class_config_reader;
 namespace h5pp{
     class File;
 }
 
 
 namespace settings {
-    extern void load_from_file(class_settings_reader &indata);
+    extern void load_from_file(class_config_reader &indata);
     extern void load_from_hdf5(h5pp::File &h5ppFile);
 
     namespace threading{
-        inline int num_threads = 1;                                                        /*!< Number of threads for shared memory parallelism. num_threads <= 0 will try to use as many as possible */
+        inline int num_threads = 1;                                              /*!< Number of threads for shared memory parallelism. num_threads <= 0 will try to use as many as possible */
     }
 
     namespace input{
-        inline std::string input_filename = "input/input.cfg";
-        inline std::string input_file_raw;
+        inline std::string config_filename           = "input/input.cfg";
+        inline std::string config_file_contents;
+        inline std::string h5_load_filename;                                         /*!< File from which to load a previous simulation and possibly continue */
+
     }
 
     namespace output {
-        inline bool         save_logs            = true;                         /*!< If true, saves the history of the simulation in log files, not just the end results  (only enabled on storage level NORMAL and FULL.) */
-        inline bool         save_profiling       = true;                         /*!< Whether to save profiling information to file. (only enabled on storage level NORMAL and FULL.) */
-        inline std::string  access_mode          = "READWRITE" ;                 /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
-        inline std::string  create_mode          = "RENAME";                     /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
-        inline std::string  output_filename      = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
-        inline StorageLevel storage_level        = StorageLevel::NORMAL;         /*!< Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL */
-        inline bool         use_temp_dir         = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
-        inline size_t       copy_from_temp_freq  = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
-        inline std::string  temp_dir             = "/scratch/local";             /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
+        inline bool             save_logs            = true;                         /*!< If true, saves the history of the simulation in log files, not just the end results  (only enabled on storage level NORMAL and FULL.) */
+        inline bool             save_profiling       = true;                         /*!< Whether to save profiling information to file. (only enabled on storage level NORMAL and FULL.) */
+        inline h5pp::AccessMode access_mode          = h5pp::AccessMode::READWRITE;  /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
+        inline h5pp::CreateMode create_mode          = h5pp::CreateMode::OPEN;       /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
+        inline std::string      output_filename      = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
+        inline StorageLevel     storage_level        = StorageLevel::NORMAL;         /*!< Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL */
+        inline bool             use_temp_dir         = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
+        inline size_t           copy_from_temp_freq  = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
+        inline std::string      temp_dir             = "/scratch/local";             /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
     }
+
+
+    //Profiling
+    namespace profiling {
+        inline bool     on        = false;                         /*!< If true, turns on profiling and timings will be shown on console. */
+        inline size_t   precision = 5;                             /*!< Sets precision (number of decimals) of time output. */
+    }
+    //Console settings
+    namespace console {
+        inline size_t verbosity  = 2;                              /*!< Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
+        inline bool   timestamp  = false;                          /*!< Whether to put a timestamp on console outputs */
+    }
+
+    #ifdef NDEBUG
+        inline constexpr bool debug = false;
+    #else
+        inline constexpr bool debug = true;
+    #endif
+
 
 
     //Parameters for the model Hamiltonian
@@ -179,22 +201,5 @@ namespace settings {
 
     }
 
-
-    //Profiling
-    namespace profiling {
-        inline bool     on        = false;             /*!< If true, turns on profiling and timings will be shown on console. */
-        inline size_t   precision = 5;                 /*!< Sets precision (number of decimals) of time output. */
-    }
-    //Console settings
-    namespace console {
-        inline size_t verbosity  = 2;                    /*!< Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
-        inline bool   timestamp  = false;                /*!< Whether to put a timestamp on console outputs */
-    }
-
-    #ifdef NDEBUG
-        inline constexpr bool debug = false;
-    #else
-        inline constexpr bool debug = true;
-    #endif
 
 }

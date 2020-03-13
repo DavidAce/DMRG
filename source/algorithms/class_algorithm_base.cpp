@@ -36,8 +36,8 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
 
 
     if(h5pp_file) log->trace("Writing input file");
-    if(h5pp_file) h5pp_file->writeDataset(settings::input::input_filename  , "common/input_filename");
-    if(h5pp_file) h5pp_file->writeDataset(settings::input::input_file_raw  , "common/input_file");
+    if(h5pp_file) h5pp_file->writeDataset(settings::input::config_filename, "common/input_filename");
+    if(h5pp_file) h5pp_file->writeDataset(settings::input::config_file_contents, "common/input_file");
 }
 
 

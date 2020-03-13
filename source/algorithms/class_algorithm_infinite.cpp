@@ -41,6 +41,16 @@ void class_algorithm_infinite::run() {
     tools::common::profile::t_tot->toc();
 }
 
+void class_algorithm_infinite::run_old() {
+    if (not sim_on()) { return; }
+    tools::common::profile::t_tot->tic();
+    run_preprocessing();
+    run_simulation();
+    run_postprocessing();
+    tools::common::profile::t_tot->toc();
+}
+
+
 void class_algorithm_infinite::run_preprocessing() {
     tools::common::profile::t_pre->tic();
     state->set_chi_max(chi_max());

@@ -41,6 +41,7 @@ class class_algorithm_base {
 
     // Virtual Functions
     virtual void   run()                                                                                         = 0;
+    virtual void   run_old()                                                                                     = 0;
     virtual void   check_convergence()                                                                           = 0;
     virtual void   write_state(bool result = false)                                                              = 0;
     virtual void   write_measurements(bool result = false)                                                       = 0;

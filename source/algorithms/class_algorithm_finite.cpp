@@ -48,6 +48,89 @@ void class_algorithm_finite::run()
  *      d) a converged MPS                               -- not much to do... run postprocessing
  * 2) The hdf5 file did not exist                        -- run full simulation from scratch.
 
+         D1: output file exists: check option in settings::output::create_mode:
+            - case OPEN:        Load config and simulation state -> continue simulation
+            - case RENAME:      Rename output file -> go to D2
+            - case TRUNCATE:    Delete output file -> go to D2
+
+        D2: output file does not exist: Check if coming from A2
+            - Yes: load simulation state from given hdf5 file -> continue simulation
+            - No: start new simulation
+
+ */
+{
+    if(not sim_on()) return;
+
+
+
+
+    log->info("Starting {}", sim_name);
+    tools::common::profile::t_tot->tic();
+    if(h5pp_file and h5pp_file->getCreateMode() == h5pp::CreateMode::OPEN) {
+        // This is case 1
+        bool finOK_exists = h5pp_file->linkExists("common/finOK");
+        bool mps_exists   = h5pp_file->linkExists(sim_name + "/state/mps");
+        bool finOK        = false;
+        if(finOK_exists) finOK = h5pp_file->readDataset<bool>("common/finOK");
+
+        if(not finOK) {
+            // Case 1 a -- run full simulation from scratch.
+            log->trace("Case 1a");
+            run_preprocessing();
+            run_simulation();
+        } else if(not mps_exists) {
+            // Case 1 b
+            log->trace("Case 1b");
+            run_preprocessing();
+            run_simulation();
+        } else if(mps_exists) {
+            // We can go ahead and load the state from output
+            log->trace("Loading MPS from file");
+            try {
+                tools::finite::io::h5restore::load_from_hdf5(*h5pp_file, *state, sim_status, sim_name);
+            } catch(std::exception &ex) {
+                log->error("Failed to load from output: {}", ex.what());
+                throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
+            } catch(...) {
+                log->error("Unknown error when trying to resume from file.");
+            }
+
+            bool convergence_was_reached = h5pp_file->readDataset<bool>(sim_name + "/sim_status/simulation_has_converged");
+            if(not convergence_was_reached) {
+                // Case 1 c -- resume simulation, reset the number of sweeps first.
+                log->trace("Case 1c");
+                settings::xdmrg::max_sweeps += state->get_sweeps();
+                run_simulation();
+
+            } else {
+                // Case 1 d -- not much else to do.. redo postprocessing for good measure.
+                log->trace("Case 1d");
+            }
+        }
+    } else {
+        // This is case 2
+        log->trace("Case 2");
+        run_preprocessing();
+        run_simulation();
+    }
+    tools::common::profile::t_tot->toc();
+    run_postprocessing();
+}
+
+void class_algorithm_finite::run_old()
+/*!
+ * \brief Dispatches finite DMRG stages.
+ * This function manages the stages of simulation differently depending on whether
+ * the data already existed in hdf5 storage or not.
+ *
+ * There can be two main scenarios that split into cases:
+ * 1) The hdf5 file existed already and contains
+ *      a) nothing recognizeable (previous crash?)       -- run full simulation from scratch.
+ *      b) a converged simulation but no MPS             -- run full simulation from scratch.
+ *      c) a not-yet-converged MPS                       -- resume simulation, reset the number of sweeps first.
+ *      d) a converged MPS                               -- not much to do... run postprocessing
+ * 2) The hdf5 file did not exist                        -- run full simulation from scratch.
+
  *
  */
 {
@@ -106,6 +189,7 @@ void class_algorithm_finite::run()
     tools::common::profile::t_tot->toc();
     run_postprocessing();
 }
+
 
 void class_algorithm_finite::run_preprocessing() {
     log->info("Running {} preprocessing (base)", sim_name);
