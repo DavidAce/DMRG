@@ -9,7 +9,7 @@ source/algorithms/class_iTEBD.cpp
 source/algorithms/class_xDMRG.cpp
 source/general/class_tic_toc.cpp
 source/general/nmspc_quantum_mechanics.cpp
-source/io/class_settings_reader.cpp
+source/io/class_config_reader.cpp
 source/io/nmspc_logger.cpp
 source/main.cpp
 source/math/arpack_extra/arpackpp_solver.cpp
@@ -86,7 +86,7 @@ source/general/nmspc_tensor_extra.h
 source/general/nmspc_tensor_omp.h
 source/general/nmspc_sfinae.h
 source/general/nmspc_sfinae_eigen.h
-source/io/class_settings_reader.h
+source/io/class_config_reader.h
 source/io/nmspc_filesystem.h
 source/io/nmspc_logger.h
 source/io/table_types.h

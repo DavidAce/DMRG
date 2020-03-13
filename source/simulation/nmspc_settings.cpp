@@ -3,8 +3,8 @@
 //
 
 #include "nmspc_settings.h"
-#include <io/class_settings_reader.h>
 #include <h5pp/h5pp.h>
+#include <io/class_config_reader.h>
 using namespace std;
 
 /*
@@ -13,9 +13,9 @@ using namespace std;
 */
 
 
-void settings::load_from_file(class_settings_reader &indata){
-    input::input_filename             = indata.get_input_filename();
-    input::input_file_raw             = indata.get_input_file_as_string();
+void settings::load_from_file(class_config_reader &indata){
+    input::config_filename            = indata.get_config_filename();
+    input::config_file_contents       = indata.get_config_file_as_string();
     indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
     indata.find_parameter<long>       ("model::seed"                                , model::seed);
     indata.find_parameter<long>       ("model::state_number"                        , model::state_number);
@@ -128,21 +128,15 @@ void settings::load_from_file(class_settings_reader &indata){
     }
 
     //Save data_struct to output
-    indata.find_parameter<bool>   ("output::save_logs"               , output::save_logs );
-    indata.find_parameter<bool>   ("output::save_profiling"          , output::save_profiling);
-    indata.find_parameter<string> ("output::output_filename"         , output::output_filename);
-    indata.find_parameter<string> ("output::access_mode"             , output::access_mode);
-    indata.find_parameter<string> ("output::create_mode"             , output::create_mode);
-    indata.find_parameter<bool>   ("output::use_temp_dir"            , output::use_temp_dir);
-    indata.find_parameter<size_t> ("output::copy_from_temp_freq"     , output::copy_from_temp_freq);
-    indata.find_parameter<string> ("output::temp_dir"                , output::temp_dir);
-
-//    inline bool         use_temp_dir         = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
-//    inline size_t       copy_from_temp_freq  = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
-//    inline std::string  temp_dir             = "/scratch/local";             /*!< Local temp directory on the "local" system. If it doesn't exist we default to /tmp instead (or whatever is the default */
-    int storageLevelRead = 2;
-    indata.find_parameter<int>    ("output::storage_level"           , storageLevelRead );
-    output::storage_level            = static_cast<StorageLevel>     (storageLevelRead);
+    indata.find_parameter<bool>             ("output::save_logs"               , output::save_logs );
+    indata.find_parameter<bool>             ("output::save_profiling"          , output::save_profiling);
+    indata.find_parameter<string>           ("output::output_filename"         , output::output_filename);
+    indata.find_parameter<h5pp::AccessMode> ("output::access_mode"             , output::access_mode);
+    indata.find_parameter<h5pp::CreateMode> ("output::create_mode"             , output::create_mode);
+    indata.find_parameter<bool>             ("output::use_temp_dir"            , output::use_temp_dir);
+    indata.find_parameter<size_t>           ("output::copy_from_temp_freq"     , output::copy_from_temp_freq);
+    indata.find_parameter<string>           ("output::temp_dir"                , output::temp_dir);
+    indata.find_parameter<StorageLevel>     ("output::storage_level"           , output::storage_level );
 
     //Profiling
     indata.find_parameter<bool>   ("profiling::on"        , profiling::on        );
@@ -161,7 +155,7 @@ void settings::load_from_hdf5(h5pp::File & h5ppFile){
     std::ofstream temp_settings_file(temp_filename);
     temp_settings_file << settings_from_hdf5;
     temp_settings_file.close();
-    class_settings_reader indata(temp_filename);
+    class_config_reader indata(temp_filename);
     settings::load_from_file(indata);
 
 }

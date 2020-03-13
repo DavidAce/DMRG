@@ -25,6 +25,7 @@ namespace tools::common::io {
         extern std::string set_tmp_prefix(const std::string &output_filename);
         extern std::string unset_tmp_prefix(const std::string &output_filename);
         extern void copy_from_tmp(const std::string & output_filename);
+        extern void copy_file(const std::string & src, const std::string & tgt);
         extern void create_directory(const std::string & dir);
         extern void remove_from_temp(const std::string output_filename);
 
