@@ -89,6 +89,7 @@ target_link_libraries(project-settings INTERFACE arpack::arpack++) # Last to use
 
 if(TARGET openmp::openmp)
     target_link_libraries(project-settings INTERFACE openmp::openmp)
+    target_compile_definitions(project-settings INTERFACE -DEIGEN_USE_THREADS)
 else()
     message(WARNING "We need OpenMP when using conan libraries!")
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)

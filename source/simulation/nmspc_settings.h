@@ -21,8 +21,8 @@ namespace h5pp{
 
 
 namespace settings {
-    extern void load_from_file(class_config_reader &indata);
-    extern void load_from_hdf5(h5pp::File &h5ppFile);
+    extern void load_config_from_cfg(class_config_reader &indata);
+    extern void load_config_from_hdf5(h5pp::File &h5ppFile);
 
     namespace threading{
         inline int num_threads = 1;                                              /*!< Number of threads for shared memory parallelism. num_threads <= 0 will try to use as many as possible */

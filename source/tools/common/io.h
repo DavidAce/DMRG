@@ -9,6 +9,10 @@ namespace h5pp{
 
 
 namespace tools::common::io {
+    namespace h5find{
+        extern std::string find_table(const h5pp::File &h5ppFile, const std::string & sim_name, const std::string &table_name, const std::string & from = "last");
+    }
+
     namespace h5dset{
         extern void write_simulation_status(const class_simulation_status &sim_status, h5pp::File &h5ppFile, const std::string &sim_name);
     }
@@ -18,7 +22,8 @@ namespace tools::common::io {
     }
 
     namespace h5restore{
-        extern class_simulation_status load_sim_status_from_hdf5(const h5pp::File &h5ppFile, std::string sim_name);
+        extern class_simulation_status load_sim_status_from_hdf5(const h5pp::File &h5ppFile, const std::string & sim_name);
+        extern void load_profiling_from_hdf5(const h5pp::File &h5ppFile, const std::string & sim_name);
     }
 
     namespace h5tmp{
