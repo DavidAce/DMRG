@@ -67,7 +67,7 @@ void signal_callback_handler(int signum) {
     std::quick_exit(signum);
 }
 
-std::string filename_append_number(const std::string_view filename,const int number){
+std::string filename_append_number(const std::string_view filename,const long number){
     if(number < 0) return std::string(filename);
     auto log = Logger::setLogger("DMRG",0);
     //Append the seed_model to the output filename
@@ -176,7 +176,7 @@ int main(int argc, char* argv[]) {
         settings::input::h5_load_filename = h5_load_filename;
         // A2: If we were given a previous simulation file it must be loaded first
         h5pp::File h5file (settings::input::h5_load_filename, h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);
-        settings::load_from_hdf5(h5file);
+        settings::load_config_from_hdf5(h5file);
     }
 
     //B: Try loading given config file.
@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
         class_config_reader indata(settings::input::config_filename);
         if(indata.found_file){
             // B2
-            settings::load_from_file(indata);
+            settings::load_config_from_cfg(indata);
         }else{
             // Invalid file given
             throw std::runtime_error(fmt::format("Could not find config file: {}", settings::input::config_filename));

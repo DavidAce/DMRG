@@ -30,20 +30,22 @@ class class_tic_toc {
 
     void        set_properties(bool on_off, int prec, std::string output_text);
     void        set_label(std::string output_text);
-    std::string get_name();
-    double      get_age();
-    double      get_last_time_interval();
-    double      get_measured_time();
+    void        set_time(double measured_time);
+    std::string get_name() const;
+    double      get_age() const;
+    double      get_last_time_interval() const ;
+    double      get_measured_time() const;
     double      get_measured_time_and_reset();
 
-    void print_age();
-    void print_measured_time();
+    void print_age() const;
+    void print_measured_time() const;
     void print_measured_time_and_reset();
-    void print_last_time_interval();
-    void print_measured_time_w_percent();
-    void print_measured_time_w_percent(class_tic_toc &parent);
-    void print_measured_time_w_percent_if_nonzero(class_tic_toc &parent);
+    void print_last_time_interval() const;
+    void print_measured_time_w_percent() const;
+    void print_measured_time_w_percent(class_tic_toc &parent) const;
+    void print_measured_time_w_percent_if_nonzero(class_tic_toc &parent) const;
     void reset();
 
+    class_tic_toc & operator= (double measured_time);
     friend std::ostream &operator<<(std::ostream &, const class_tic_toc &);
 };

@@ -10,13 +10,12 @@
 
 // Make sure EIGEN_USE_THREADS is defined globally already
 #include <thread>
-//#include <Eigen/Core>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 class OMP{
 public:
     size_t num_threads;
-    #ifdef _OPENMP
+    #if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
     Eigen::ThreadPool       tp;
     Eigen::ThreadPoolDevice dev;
     explicit OMP(size_t num_threads_):

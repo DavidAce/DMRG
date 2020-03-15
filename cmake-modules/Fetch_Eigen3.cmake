@@ -29,6 +29,10 @@ else()
 endif()
 
 
+if(TARGET Eigen3::Eigen AND TARGET openmp::openmp)
+    target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_THREADS)
+endif()
+
 if(TARGET Eigen3::Eigen AND TARGET blas::blas )
     set(EIGEN3_USING_BLAS ON)
     if(TARGET mkl::mkl)
@@ -43,9 +47,7 @@ if(TARGET Eigen3::Eigen AND TARGET blas::blas )
         target_link_libraries         (Eigen3::Eigen INTERFACE blas::blas)
     endif()
 
-    if(TARGET openmp::openmp)
-        target_compile_definitions    (Eigen3::Eigen INTERFACE -DEIGEN_USE_THREADS)
-    endif()
+
     # Use this flag if Ceres is giving you trouble!
     # For some reason it starts mixing aligned and hand-made aligned malloc and freeing them willy nilly
     # This flag forces its hand and avoids a segfault in some cases.

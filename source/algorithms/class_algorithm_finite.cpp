@@ -42,13 +42,13 @@ void class_algorithm_finite::run()
  *
  * There can be two main scenarios that split into cases:
  * 1) The hdf5 file existed already and contains
- *      a) nothing recognizeable (previous crash?)       -- run full simulation from scratch.
+ *      a) nothing recognizable (previous crash?)        -- run full simulation from scratch.
  *      b) a converged simulation but no MPS             -- run full simulation from scratch.
  *      c) a not-yet-converged MPS                       -- resume simulation, reset the number of sweeps first.
  *      d) a converged MPS                               -- not much to do... run postprocessing
  * 2) The hdf5 file did not exist                        -- run full simulation from scratch.
 
-         D1: output file exists: check option in settings::output::create_mode:
+        D1: output file exists: check option in settings::output::create_mode:
             - case OPEN:        Load config and simulation state -> continue simulation
             - case RENAME:      Rename output file -> go to D2
             - case TRUNCATE:    Delete output file -> go to D2
@@ -60,9 +60,10 @@ void class_algorithm_finite::run()
  */
 {
     if(not sim_on()) return;
-
-
-
+    if(not settings::input::h5_load_filename.empty()){
+        h5pp::File h5pp_load(settings::input::h5_load_filename,h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);
+        tools::finite::io::h5restore::load_from_hdf5(h5pp_load, *state, sim_status, sim_name);
+    }
 
     log->info("Starting {}", sim_name);
     tools::common::profile::t_tot->tic();

@@ -13,7 +13,7 @@ using namespace std;
 */
 
 
-void settings::load_from_file(class_config_reader &indata){
+void settings::load_config_from_cfg(class_config_reader &indata){
     input::config_filename            = indata.get_config_filename();
     input::config_file_contents       = indata.get_config_file_as_string();
     indata.find_parameter<std::string>("model::model_type"                          , model::model_type);
@@ -146,7 +146,7 @@ void settings::load_from_file(class_config_reader &indata){
     indata.find_parameter<bool>   ("console::timestamp"   , console::timestamp);
 }
 
-void settings::load_from_hdf5(h5pp::File & h5ppFile){
+void settings::load_config_from_hdf5(h5pp::File & h5ppFile){
 
     std::string settings_from_hdf5;
     std::string temp_filename = "indata_temp.cfg";
@@ -156,6 +156,6 @@ void settings::load_from_hdf5(h5pp::File & h5ppFile){
     temp_settings_file << settings_from_hdf5;
     temp_settings_file.close();
     class_config_reader indata(temp_filename);
-    settings::load_from_file(indata);
+    settings::load_config_from_cfg(indata);
 
 }

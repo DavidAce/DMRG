@@ -26,11 +26,16 @@ void class_tic_toc::set_properties(bool on_off,int prec, std::string output_text
 void class_tic_toc::set_label(std::string output_text){
     *this = class_tic_toc(enable, print_precision, output_text);
 }
-std::string class_tic_toc::get_name(){
+
+void class_tic_toc::set_time(double other_time_in_seconds) {
+    measured_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+}
+
+std::string class_tic_toc::get_name() const {
     return name;
 }
 
-double class_tic_toc::get_measured_time(){
+double class_tic_toc::get_measured_time() const {
     return std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count();
 }
 
@@ -51,7 +56,7 @@ void class_tic_toc::toc(){
     }
 }
 
-void class_tic_toc::print_last_time_interval(){
+void class_tic_toc::print_last_time_interval() const {
     if (enable) {
         std::cout << std::setprecision(print_precision) << std::fixed << std::setw(print_precision + padding)
              << name
@@ -59,7 +64,7 @@ void class_tic_toc::print_last_time_interval(){
     }
 }
 
-void class_tic_toc::print_age(){
+void class_tic_toc::print_age() const {
     if (enable) {
         std::cout
             << name
@@ -69,13 +74,12 @@ void class_tic_toc::print_age(){
 }
 
 
-void class_tic_toc::print_measured_time(){
+void class_tic_toc::print_measured_time() const {
     if (enable) {
         std::cout
             << name
             << std::fixed << std::setprecision(print_precision)   << std::setw(print_precision + padding) << std::left
             << std::chrono::duration_cast<std::chrono::duration<double>>(measured_time).count() << " s\n";
-        reset();
     }
 }
 
@@ -89,7 +93,7 @@ void class_tic_toc::print_measured_time_and_reset(){
     }
 }
 
-void class_tic_toc::print_measured_time_w_percent(){
+void class_tic_toc::print_measured_time_w_percent() const{
     if (enable) {
         std::cout << name
              << std::fixed << std::setprecision(print_precision) << std::setw(print_precision + padding) << std::left
@@ -99,7 +103,7 @@ void class_tic_toc::print_measured_time_w_percent(){
     }
 }
 
-void class_tic_toc::print_measured_time_w_percent(class_tic_toc &parent){
+void class_tic_toc::print_measured_time_w_percent(class_tic_toc &parent) const {
     if (enable) {
         std::cout << name
              << std::fixed << std::setprecision(print_precision) << std::setw(print_precision + padding) << std::left
@@ -109,7 +113,7 @@ void class_tic_toc::print_measured_time_w_percent(class_tic_toc &parent){
     }
 }
 
-void class_tic_toc::print_measured_time_w_percent_if_nonzero(class_tic_toc &parent){
+void class_tic_toc::print_measured_time_w_percent_if_nonzero(class_tic_toc &parent) const {
     if (measured_time.count() > 0.0){
         print_measured_time_w_percent(parent);
     }
@@ -117,11 +121,11 @@ void class_tic_toc::print_measured_time_w_percent_if_nonzero(class_tic_toc &pare
 
 
 
-double class_tic_toc::get_age() {
+double class_tic_toc::get_age() const {
     return std::chrono::duration_cast<std::chrono::duration<double>> (std::chrono::high_resolution_clock::now() - start_timepoint).count();
 }
 
-double class_tic_toc::get_last_time_interval() {
+double class_tic_toc::get_last_time_interval() const {
     return std::chrono::duration_cast<std::chrono::duration<double>> (delta_time).count();
 }
 
@@ -133,6 +137,11 @@ void class_tic_toc::reset() {
     }
 }
 
+
+class_tic_toc & class_tic_toc::operator=(double other_time_in_seconds) {
+    this->measured_time = std::chrono::duration_cast<hresclock::duration>(std::chrono::duration<double>(other_time_in_seconds));
+    return *this;
+}
 
 std::ostream &operator<<(std::ostream &os, const class_tic_toc &t) {
     if (t.enable) {

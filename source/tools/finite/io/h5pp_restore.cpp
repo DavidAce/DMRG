@@ -19,9 +19,10 @@ void tools::finite::io::h5restore::load_from_hdf5(const h5pp::File &h5ppFile, cl
     try {
         sim_status = tools::common::io::h5restore::load_sim_status_from_hdf5(h5ppFile, prefix_path);
         state      = tools::finite::io::h5restore::load_state_from_hdf5(h5ppFile, prefix_path);
+        tools::common::io::h5restore::load_profiling_from_hdf5(h5ppFile,prefix_path);
         state.set_sweeps(sim_status.iteration);
         tools::finite::debug::check_integrity(state);
-    } catch(std::exception &ex) { throw std::runtime_error("Failed to load from hdf5 file: " + std::string(ex.what())); }
+    } catch(std::exception &ex) { throw std::runtime_error("Failed to load simulation from hdf5 file: " + std::string(ex.what())); }
 }
 
 
