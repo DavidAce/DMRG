@@ -234,6 +234,7 @@ message(STATUS "DMRG_ENABLE_OPENMP              : ${DMRG_ENABLE_OPENMP}")
 message(STATUS "DMRG_ENABLE_LTO                 : ${DMRG_ENABLE_LTO}")
 message(STATUS "DMRG_ENABLE_TESTS               : ${DMRG_ENABLE_TESTS}")
 message(STATUS "DMRG_BUILD_EXAMPLES             : ${DMRG_BUILD_EXAMPLES}")
+message(STATUS "DMRG_PRINT_INFO                 : ${DMRG_PRINT_INFO}")
 message("=============================================================================")
 
 

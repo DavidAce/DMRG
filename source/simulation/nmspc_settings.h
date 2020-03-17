@@ -36,15 +36,26 @@ namespace settings {
     }
 
     namespace output {
-        inline bool             save_logs            = true;                         /*!< If true, saves the history of the simulation in log files, not just the end results  (only enabled on storage level NORMAL and FULL.) */
-        inline bool             save_profiling       = true;                         /*!< Whether to save profiling information to file. (only enabled on storage level NORMAL and FULL.) */
-        inline h5pp::AccessMode access_mode          = h5pp::AccessMode::READWRITE;  /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
-        inline h5pp::CreateMode create_mode          = h5pp::CreateMode::OPEN;       /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
-        inline std::string      output_filename      = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
-        inline StorageLevel     storage_level        = StorageLevel::NORMAL;         /*!< Sets the storage level: choose "0=NONE,1=LIGHT,2=NORMAL,3=FULL */
-        inline bool             use_temp_dir         = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
-        inline size_t           copy_from_temp_freq  = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
-        inline std::string      temp_dir             = "/scratch/local";             /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
+        inline bool             save_profiling                  = true;                         /*!< Whether to save profiling information to file */
+        inline bool             results_save_on_chi_updates     = true;                         /*!< Saves state (to results) every time the bond dimension limit is increased */
+        inline bool             journal_keep_only_last_iter     = true;                         /*!< If true, journaling keeps a snapshot of the last iteration only. Otherwise, all iterations are kept (dramaticallay increases file size) */
+        inline h5pp::AccessMode access_mode                     = h5pp::AccessMode::READWRITE;  /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
+        inline h5pp::CreateMode create_mode                     = h5pp::CreateMode::OPEN;       /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
+        inline std::string      output_filename                 = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
+        inline bool             use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
+        inline size_t           copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
+        inline std::string      temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
+
+        // Storage Levels
+        //      NONE:   no data is saved at all
+        //      LIGHT:  Mainly mid-chain data (energy/variance/polarization, schmidt values, entanglement entropy, lambda matrix, truncation error) , simulation status, and profiling (if save_profiling == true)
+        //      NORMAL: Same as LIGHT + whole-chain measurements like entanglement entropies, truncation errors and schmidt values (gamma-matrices)
+        //      FULL:   Same as NORMAL + MPS (A/B matrices) at each site.
+        // NOTE: A simulation can only be resumed from FULL storage.
+
+        inline StorageLevel     storage_level_results    = StorageLevel::NORMAL;             /*!< Storage level for final results written when a simulation terminates or an important stage is reached (like bond dimension update) */
+        inline StorageLevel     storage_level_journal    = StorageLevel::LIGHT;              /*!< Storage level for journaling, a snapshot taken at the end of each iteration */
+        inline StorageLevel     storage_level_projection = StorageLevel::LIGHT;              /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
     }
 
 

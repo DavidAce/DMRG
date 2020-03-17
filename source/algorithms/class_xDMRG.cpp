@@ -64,9 +64,9 @@ void class_xDMRG::run_simulation()    {
             single_xDMRG_step();
             print_status_update();
             write_state();
-            write_measurements();
             write_sim_status();
             write_profiling();
+            write_measurements();
             copy_from_tmp();
             check_convergence();
             update_truncation_limit();     //Will update SVD threshold iff the state precision is being limited by truncation error
@@ -98,15 +98,7 @@ void class_xDMRG::run_simulation()    {
             sim_status.moves         = state->get_moves();
             sim_status.step++;
         }
-
-        switch(stop_reason){
-            case StopReason::MAX_ITERS : log->info("Finished {} simulation -- reason: MAX ITERS",sim_name) ;break;
-            case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED",sim_name) ;break;
-            case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
-            case StopReason::MAX_RESET : log->info("Finished {} simulation -- reason: MAX RESET",sim_name) ;break;
-            case StopReason::RANDOMIZE : log->info("Finished {} simulation -- reason: RANDOMIZE",sim_name) ;break;
-            default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
-        }
+        log->info("Finished {} simulation -- reason: {}",sim_name,enum2str(stop_reason));
         if(++sim_status.num_states >= settings::xdmrg::max_states) break;
         else{
             run_postprocessing(); //Saves and prints full status update

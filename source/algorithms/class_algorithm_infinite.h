@@ -38,11 +38,11 @@ public:
     void reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt)                    final;
     void reset_to_initial_state()                                                                       final;
     void clear_saturation_status()                                                                      override;
-    void write_state        (bool result = false)                                                       final;
-    void write_measurements (bool result = false)                                                       final;
-    void write_sim_status   (bool result = false)                                                       final;
-    void write_profiling    (bool result = false)                                                       final;
-    void copy_from_tmp      (bool result = false)                                                       final;
+    void write_state        (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+    void write_measurements (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+    void write_sim_status   (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+    void write_profiling    (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+    void copy_from_tmp      (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
     void print_status_update()                                                                          final;
     void print_status_full()                                                                            final;
 

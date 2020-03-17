@@ -128,7 +128,6 @@ void settings::load_config_from_cfg(class_config_reader &indata){
     }
 
     //Save data_struct to output
-    indata.find_parameter<bool>             ("output::save_logs"               , output::save_logs );
     indata.find_parameter<bool>             ("output::save_profiling"          , output::save_profiling);
     indata.find_parameter<string>           ("output::output_filename"         , output::output_filename);
     indata.find_parameter<h5pp::AccessMode> ("output::access_mode"             , output::access_mode);
@@ -136,7 +135,7 @@ void settings::load_config_from_cfg(class_config_reader &indata){
     indata.find_parameter<bool>             ("output::use_temp_dir"            , output::use_temp_dir);
     indata.find_parameter<size_t>           ("output::copy_from_temp_freq"     , output::copy_from_temp_freq);
     indata.find_parameter<string>           ("output::temp_dir"                , output::temp_dir);
-    indata.find_parameter<StorageLevel>     ("output::storage_level"           , output::storage_level );
+    indata.find_parameter<StorageLevel>     ("output::storage_level"           , output::storage_level_results);
 
     //Profiling
     indata.find_parameter<bool>   ("profiling::on"        , profiling::on        );

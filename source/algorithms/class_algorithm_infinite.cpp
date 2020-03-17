@@ -371,66 +371,64 @@ void class_algorithm_infinite::check_convergence_entg_entropy(double slope_thres
 
 
 
-void class_algorithm_infinite::write_state(bool force){
-    if(not force){
+void class_algorithm_infinite::write_state(StorageReason storage_reason){
+    switch(storage_reason){
+        case StorageReason::JOURNAL: {
+            if (math::mod(sim_status.iteration, write_freq()) != 0) break;
+            std::string prefix = sim_name + sim_tag
+            tools::infinite::io::h5dset::write_all_state(*h5pp_file, sim_name, settings::output::storage_level_results, *state);
+
+        }
+    }
+
+
+    if(not result){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (write_freq() == 0){return;}
-        if (settings::output::storage_level <= StorageLevel::NONE){return;}
+        if (settings::output::storage_level_results <= StorageLevel::NONE){return;}
     }
     log->trace("Writing state to file");
     h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::infinite::io::h5dset::write_all_state(*state, *h5pp_file, sim_name);
+    tools::infinite::io::h5dset::write_all_state(*h5pp_file, sim_name, settings::output::storage_level_results, *state);
     h5pp_file->writeDataset(true, sim_name + "/simOK");
 }
 
-void class_algorithm_infinite::write_measurements(bool force){
-    if(not force){
+void class_algorithm_infinite::write_measurements(StorageReason storage_reason){
+    if(not result){
         if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
         if (write_freq() == 0){return;}
     }
     log->trace("Writing all measurements to file");
     state->unset_measurements();
-//    compute_observables();
-    h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::infinite::io::h5dset::write_all_measurements(*state, *h5pp_file, sim_name);
-    h5pp_file->writeDataset(true, sim_name + "/simOK");
+    tools::infinite::io::h5dset::write_all_measurements(*h5pp_file, sim_name, settings::output::storage_level_results,sim_status, *state);
 }
 
-void class_algorithm_infinite::write_sim_status(bool force){
-    if (not force){
-        if (math::mod(sim_status.iteration, write_freq()) != 0) {return;}
-        if (write_freq() == 0){return;}
-        if (settings::output::storage_level <= StorageLevel::NONE){return;}
-    }
-    log->trace("Writing simulation status to file");
-    h5pp_file->writeDataset(false, sim_name + "/simOK");
-    tools::common::io::h5dset::write_simulation_status(sim_status, *h5pp_file, sim_name);
-    h5pp_file->writeDataset(true, sim_name + "/simOK");
-}
-
-void class_algorithm_infinite::write_profiling(bool result){
-    if (not settings::profiling::on ){return;}
-    if (settings::output::storage_level == StorageLevel::NONE){return;}
-    if(result){
-        // This means that we are writing an important result:
-        // Either the simulation has converged successfully or
-        // it has finalized some stage, like saturated at the
-        // current bond dimension.
-        log->trace("Appending profiling to table (result)");
-        tools::infinite::io::h5table::write_profiling(sim_status, *h5pp_file,  sim_name + "/results/profiling");
-        log->trace("Appending profiling to table (result)... OK");
-        return;
-    }
-    if (settings::output::storage_level <= StorageLevel::LIGHT){return;}
+void class_algorithm_infinite::write_sim_status(StorageReason storage_reason){
+    // "Result" means that either the simulation has converged successfully
+    // or it has finalized some stage, like saturated at the current bond dimension.
+    if(result)
+        tools::common::io::h5table::write_sim_status(*h5pp_file, sim_name + "results/sim_status", settings::output::storage_level_results, sim_status);
     if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
-    log->trace("Appending profiling to table");
-    tools::infinite::io::h5table::write_profiling(sim_status, *h5pp_file,  sim_name + "/results/profiling");
-    log->trace("Appending profiling to table... OK");
+        tools::infinite::io::h5table::write_sim_status(*h5pp_file, sim_name + "/journal/sim_status", settings::output::storage_level_journal, sim_status);
 }
 
 
-void class_algorithm_infinite::copy_from_tmp(bool result) {
-    if (settings::output::storage_level == StorageLevel::NONE){return;}
+void class_algorithm_infinite::write_profiling(StorageReason storage_reason){
+    if (not settings::profiling::on ) return;
+    // "Result" means that either the simulation has converged successfully
+    // or it has finalized some stage, like saturated at the current bond dimension.
+    if(result)
+        tools::infinite::io::h5table::write_profiling(*h5pp_file, sim_name + "/results/profiling", settings::output::storage_level_results, sim_status);
+    if (math::mod(sim_status.iteration, write_freq()) != 0) {return;} //Check that we write according to the frequency given
+    tools::infinite::io::h5table::write_profiling(*h5pp_file, sim_name + "/journal/profiling", settings::output::storage_level_journal, sim_status);
+}
+
+
+void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
+    if(settings::output::storage_level_results == StorageLevel::NONE and
+       settings::output::storage_level_journal == StorageLevel::NONE and
+       settings::output::storage_level_projection == StorageLevel::NONE)
+        return;
     if(result) tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
     if (math::mod(sim_status.iteration, settings::output::copy_from_temp_freq) != 0) {return;} //Check that we write according to the frequency given
     tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());

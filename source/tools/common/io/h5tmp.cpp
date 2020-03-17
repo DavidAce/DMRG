@@ -15,7 +15,7 @@ std::string get_dirname(){
 }
 
 
-std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_filename) {
+std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string & output_filename) {
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
          temp_path = settings::output::temp_dir/ fs::path(get_dirname());
@@ -23,12 +23,12 @@ std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &output_f
 
     std::string::size_type pos = output_filename.find(temp_path.string());
     if (pos != std::string::npos)
-        return output_filename;
+        return std::string(output_filename);
     else
-        return fs::absolute(temp_path / output_filename);
+        return fs::absolute(temp_path / output_filename).string();
 }
 
-std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string &output_filename) {
+std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string & output_filename) {
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
         temp_path = settings::output::temp_dir / fs::path(get_dirname());
@@ -40,7 +40,7 @@ std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string &output
 
     std::string::size_type pos = output_filename.find(temp_path.string());
     if (pos != std::string::npos){
-        std::string new_filename = output_filename;
+        std::string new_filename(output_filename);
         new_filename.erase(pos, temp_path.string().length());
         return fs::current_path() / fs::path(new_filename);
     }else{
@@ -72,7 +72,7 @@ void tools::common::io::h5tmp::create_directory(const std::string & path){
 }
 
 
-void tools::common::io::h5tmp::copy_from_tmp(const std::string &output_filename){
+void tools::common::io::h5tmp::copy_from_tmp(const std::string & output_filename){
     if(output_filename.empty()) return;
     copy_file(output_filename,unset_tmp_prefix(output_filename));
 }
@@ -80,8 +80,8 @@ void tools::common::io::h5tmp::copy_from_tmp(const std::string &output_filename)
 
 void tools::common::io::h5tmp::copy_file(const std::string & src, const std::string & tgt ){
     if(src == tgt) return;
-    fs::path target_path = src;
-    fs::path source_path = tgt;
+    fs::path target_path = tgt;
+    fs::path source_path = src;
 
     if(not fs::exists(target_path.parent_path())){
         tools::common::io::h5tmp::create_directory(target_path);
@@ -103,7 +103,7 @@ void tools::common::io::h5tmp::copy_file(const std::string & src, const std::str
 
 
 
-void tools::common::io::h5tmp::remove_from_temp(const std::string output_filename){
+void tools::common::io::h5tmp::remove_from_temp(const std::string & output_filename){
     if(output_filename.empty()) {std::cout << "Nothing to delete" << std::endl << std::flush; return;}
     fs::path temp_path;
     if(fs::exists(settings::output::temp_dir))
@@ -115,7 +115,7 @@ void tools::common::io::h5tmp::remove_from_temp(const std::string output_filenam
     else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
 
 
-    std::string::size_type pos = output_filename.find(temp_path.string());
+    std::string::size_type pos = output_filename.find(temp_path);
     if (pos != std::string::npos){
         // Path points to the temp directory!
         if(fs::exists(output_filename)){

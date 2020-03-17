@@ -529,6 +529,9 @@ double class_state_finite::get_truncation_error(size_t left_site) const {
 }
 
 double class_state_finite::get_truncation_error() const { return get_truncation_error(get_position()); }
+double class_state_finite::get_truncation_error_midchain() const {
+    size_t center_pos = (get_length() - 1) / 2;
+    return get_truncation_error(center_pos);}
 
 const std::vector<double> &class_state_finite::get_truncation_errors() const { return truncation_error; }
 

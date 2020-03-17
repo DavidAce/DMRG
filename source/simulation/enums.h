@@ -5,6 +5,8 @@
 #include <stdexcept>
 enum class SimulationType { iDMRG, fDMRG, xDMRG, iTEBD };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
+enum class StorageReason {FINISH, CHI_UPDATE, JOURNAL};
+enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE,NONE };
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
     ABSOLUTE,                  // J_ptb = couplingPtb
@@ -20,11 +22,24 @@ constexpr auto enum2str(T & item) {
         if (item == SimulationType::xDMRG) return "xDMRG";
         if (item == SimulationType::iTEBD) return "iDMRG";
     }
+    if constexpr (std::is_same_v<T,StopReason>) {
+        if (item == StopReason::SUCCEEDED)  return "SUCCEEDED";
+        if (item == StopReason::SATURATED)  return "SATURATED";
+        if (item == StopReason::MAX_ITERS)  return "MAX_ITERS";
+        if (item == StopReason::MAX_RESET)  return "MAX_RESET";
+        if (item == StopReason::RANDOMIZE)  return "RANDOMIZE";
+        if (item == StopReason::NONE)       return "NONE";
+    }
     if constexpr (std::is_same_v<T,StorageLevel>) {
         if (item == StorageLevel::NONE)     return "NONE";
         if (item == StorageLevel::LIGHT)    return "LIGHT";
         if (item == StorageLevel::NORMAL)   return "NORMAL";
         if (item == StorageLevel::FULL)     return "FULL";
+    }
+    if constexpr (std::is_same_v<T,StorageReason>) {
+        if (item == StorageReason::FINISH)      return "FINISH";
+        if (item == StorageReason::CHI_UPDATE)  return "CHI_UPDATE";
+        if (item == StorageReason::JOURNAL)     return "JOURNAL";
     }
     if constexpr (std::is_same_v<T,PerturbMode>){
         if (item == PerturbMode::PERCENTAGE               ) return "PERCENTAGE";
@@ -53,11 +68,24 @@ constexpr auto str2enum(std::string_view item) {
         if (item == "xDMRG") return SimulationType::xDMRG;
         if (item == "iDMRG") return SimulationType::iTEBD;
     }
+    if constexpr (std::is_same_v<T,StopReason>) {
+        if (item ==  "SUCCEEDED")  return StopReason::SUCCEEDED;
+        if (item ==  "SATURATED")  return StopReason::SATURATED;
+        if (item ==  "MAX_ITERS")  return StopReason::MAX_ITERS;
+        if (item ==  "MAX_RESET")  return StopReason::MAX_RESET;
+        if (item ==  "RANDOMIZE")  return StopReason::RANDOMIZE;
+        if (item ==  "NONE")       return StopReason::NONE;
+    }
     if constexpr (std::is_same_v<T,StorageLevel>) {
         if (item == "NONE"   ) return StorageLevel::NONE;
         if (item == "LIGHT"  ) return StorageLevel::LIGHT;
         if (item == "NORMAL" ) return StorageLevel::NORMAL;
         if (item == "FULL"   ) return StorageLevel::FULL;
+    }
+    if constexpr (std::is_same_v<T,StorageReason>) {
+        if (item == "FINISH")      return StorageReason::FINISH;
+        if (item == "CHI_UPDATE")  return StorageReason::CHI_UPDATE;
+        if (item == "JOURNAL")     return StorageReason::JOURNAL;
     }
     if constexpr (std::is_same_v<T,PerturbMode>){
         if (item == "PERCENTAGE"                ) return  PerturbMode::PERCENTAGE;
