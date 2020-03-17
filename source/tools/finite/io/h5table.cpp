@@ -12,11 +12,11 @@
 
 #include <h5pp/h5pp.h>
 
-void tools::finite::io::h5table::write_measurements(const class_state_finite &state, const class_simulation_status &sim_status, h5pp::File & h5ppFile , const std::string & table_path ) {
-    log->trace("Appending measurement entry to table: {}...",table_path);
+void tools::finite::io::h5table::write_measurements(h5pp::File & h5ppFile, const std::string &path, const StorageLevel & storage_level, const class_simulation_status & sim_status, const class_state_finite & state) {
+    log->trace("Appending measurement entry to table: {}...", path);
     h5pp_table_measurements_finite::register_table_type();
-    if(not h5ppFile.linkExists(table_path))
-        h5ppFile.createTable(h5pp_table_measurements_finite::h5_type,table_path, "measurements");
+    if(not h5ppFile.linkExists(path))
+        h5ppFile.createTable(h5pp_table_measurements_finite::h5_type, path, "measurements");
 
     h5pp_table_measurements_finite::table measurement_entry;
     measurement_entry.step                            = sim_status.step;
@@ -42,16 +42,16 @@ void tools::finite::io::h5table::write_measurements(const class_state_finite &st
     measurement_entry.truncation_error                = state.get_truncation_error();
     measurement_entry.wall_time                       = sim_status.wall_time;
 
-    h5ppFile.appendTableEntries(measurement_entry,table_path);
-    log->trace("Appending measurement entry to table: {}... OK",table_path);
+    h5ppFile.appendTableEntries(measurement_entry, path);
+    log->trace("Appending measurement entry to table: {}... OK", path);
 }
 
 
 
-void tools::finite::io::h5table::write_sim_status(const class_simulation_status &sim_status, h5pp::File & h5ppFile , const std::string & table_path) {
-    tools::common::io::h5table::write_sim_status(sim_status,h5ppFile,table_path);
+void tools::finite::io::h5table::write_sim_status(h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_simulation_status & sim_status) {
+    tools::common::io::h5table::write_sim_status(h5ppFile, table_path, storage_level, sim_status);
 }
 
-void tools::finite::io::h5table::write_profiling(const class_simulation_status &sim_status, h5pp::File & h5ppFile , const std::string & table_path) {
-    tools::common::io::h5table::write_profiling(sim_status,h5ppFile,table_path);
+void tools::finite::io::h5table::write_profiling(h5pp::File & h5ppFile, const std::string & table_path, const StorageLevel & storage_level, const class_simulation_status & sim_status) {
+    tools::common::io::h5table::write_profiling(h5ppFile, table_path, storage_level, sim_status);
 }

@@ -13,7 +13,6 @@
 #include <simulation/enums.h>
 #include <vector>
 
-enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE,NONE };
 
 namespace h5pp {
     class File;
@@ -43,11 +42,11 @@ class class_algorithm_base {
     virtual void   run()                                                                                         = 0;
     virtual void   run_old()                                                                                     = 0;
     virtual void   check_convergence()                                                                           = 0;
-    virtual void   write_state(bool result = false)                                                              = 0;
-    virtual void   write_measurements(bool result = false)                                                       = 0;
-    virtual void   write_sim_status(bool result = false)                                                         = 0;
-    virtual void   write_profiling(bool result = false)                                                          = 0;
-    virtual void   copy_from_tmp(bool result = false)                                                            = 0;
+    virtual void   write_state        (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
+    virtual void   write_measurements (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
+    virtual void   write_sim_status   (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
+    virtual void   write_profiling    (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
+    virtual void   copy_from_tmp      (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
     virtual bool   sim_on()                                                                                      = 0;
     virtual long   chi_max()                                                                                     = 0;
     virtual size_t num_sites()                                                                                   = 0;

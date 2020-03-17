@@ -6,22 +6,24 @@
 #include <tools/common/prof.h>
 #include <io/table_types.h>
 #include <h5pp/h5pp.h>
+#include <simulation/enums.h>
 
-void tools::common::io::h5table::write_sim_status(const class_simulation_status &sim_status, h5pp::File & h5ppFile , const std::string & table_path) {
-    log->trace("Appending simulation status table: {}...",table_path);
+void tools::common::io::h5table::write_sim_status(h5pp::File & h5ppFile, const std::string &path, const StorageLevel &storage_level, const class_simulation_status &sim_status) {
+    if(storage_level == StorageLevel::NONE) return;
+    log->trace("Appending simulation status table: {}...", path);
     h5pp_table_sim_status::register_table_type();
-    if(not h5ppFile.linkExists(table_path))
-        h5ppFile.createTable(h5pp_table_sim_status::h5_type,table_path, "simulation status");
-    h5ppFile.appendTableEntries(sim_status,table_path);
-    log->trace("Appending simulation status table: {}... OK",table_path);
+    if(not h5ppFile.linkExists(path))
+        h5ppFile.createTable(h5pp_table_sim_status::h5_type, path, "simulation status");
+    h5ppFile.appendTableEntries(sim_status, path);
+    log->trace("Appending simulation status table: {}... OK", path);
 }
 
 
-void tools::common::io::h5table::write_profiling(const class_simulation_status &sim_status, h5pp::File & h5ppFile , const std::string & table_path) {
-    log->trace("Appending profiling data to table: {}...",table_path);
+void tools::common::io::h5table::write_profiling(h5pp::File & h5ppFile, const std::string &path, const StorageLevel &storage_level, const class_simulation_status &sim_status) {
+    log->trace("Appending profiling data to table: {}...", path);
     h5pp_table_profiling::register_table_type();
-    if(not h5ppFile.linkExists(table_path))
-        h5ppFile.createTable(h5pp_table_profiling::h5_type,table_path, "profiling");
+    if(not h5ppFile.linkExists(path))
+        h5ppFile.createTable(h5pp_table_profiling::h5_type, path, "profiling");
 
     h5pp_table_profiling::table profiling_entry;
     profiling_entry.step            = sim_status.step;
@@ -55,7 +57,7 @@ void tools::common::io::h5table::write_profiling(const class_simulation_status &
     profiling_entry.t_vH2           = tools::common::profile::t_vH2->get_measured_time();
     profiling_entry.t_vH            = tools::common::profile::t_vH->get_measured_time();
     profiling_entry.t_op            = tools::common::profile::t_op->get_measured_time();
-    h5ppFile.appendTableEntries(profiling_entry,table_path);
-    tools::log->trace("Appending profiling data to table: {}... OK",table_path);
+    h5ppFile.appendTableEntries(profiling_entry, path);
+    tools::log->trace("Appending profiling data to table: {}... OK", path);
 
 }

@@ -46,12 +46,7 @@ void class_iDMRG::run_simulation() {
         sim_status.iteration++;
         sim_status.step++;
     }
-    switch(stop_reason){
-        case StopReason::MAX_ITERS : log->info("Finished {} simulation -- reason: MAX ITERS",sim_name) ;break;
-        case StopReason::SUCCEEDED : log->info("Finished {} simulation -- reason: SUCCEEDED",sim_name) ;break;
-        case StopReason::SATURATED : log->info("Finished {} simulation -- reason: SATURATED",sim_name) ;break;
-        default: log->info("Finished {} simulation -- reason: NONE GIVEN",sim_name);
-    }
+    log->info("Finished {} simulation -- reason: {}",sim_name,enum2str(stop_reason));
 }
 
 

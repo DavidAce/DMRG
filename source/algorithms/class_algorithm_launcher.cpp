@@ -57,7 +57,7 @@ class_algorithm_launcher::class_algorithm_launcher()
     setLogger("DMRG");
     std::at_quick_exit(class_algorithm_launcher::remove_temp_file);
 
-    if (settings::output::storage_level == StorageLevel::NONE){return;}
+    if (settings::output::storage_level_results == StorageLevel::NONE){return;}
 
     if(settings::output::use_temp_dir){
         hdf5_temp_path = tools::common::io::h5tmp::set_tmp_prefix(settings::output::output_filename);
