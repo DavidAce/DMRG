@@ -1,44 +1,25 @@
-//
-// Created by david on 2018-01-12.
-//
-
 #pragma once
-
-#include <algorithm>
-#include <cctype>
-#include <fstream>
 #include <io/nmspc_filesystem.h>
-#include <io/nmspc_logger.h>
-#include <iomanip>
-#include <iostream>
 #include <simulation/enums.h>
 #include <string>
 #include <tools/common/log.h>
+#include <unordered_map>
 
-class class_config_reader {
-    private:
-    fs::path                                     file_path;
-    std::string                                  file_string = "";
-    std::unordered_map<std::string, std::string> param_map;
-
-    [[nodiscard]] bool                   check_if_config_file_exists(const fs::path &path_to_file);
-    [[nodiscard]] fs::path               find_config_file(const fs::path &given_path);
-    [[nodiscard]] std::string            remove_spaces(std::string str);
-    [[nodiscard]] std::string            remove_leading_spaces(std::string str, const std::string &whitespace = " \t");
-    [[nodiscard]] bool                   has_only_digits(const std::string &s);
-    [[nodiscard]] bool                   is_parameterline(const std::string &s);
-    [[nodiscard]] std::string::size_type find_comment_character(const std::string &s);
-
+class class_dmrg_config {
     public:
-    bool found_file       = false;
-    class_config_reader() = default;
-    explicit class_config_reader(const std::string &file_path_);
+    bool               file_exists;
+    fs::path           file_path;
+    fs::file_time_type file_date;
 
+    explicit class_dmrg_config(const fs::path &cfg_or_h5_file);
+
+
+    void                      load();
+    void                      unload();
     [[nodiscard]] std::string get_config_file_as_string();
-    [[nodiscard]] std::string get_config_filename();
 
     template<typename T>
-    void find_parameter(T &param_value, const std::string &param_name) {
+    void load_parameter(const std::string &param_name, T &param_value) {
         try {
             T new_value = find_parameter<T>(param_name);
             param_value = new_value;
@@ -54,12 +35,26 @@ class class_config_reader {
     }
 
     private:
+    std::unordered_map<std::string, std::string> param_map;
+    [[nodiscard]] static std::string             remove_spaces(std::string str);
+    [[nodiscard]] static std::string             remove_leading_spaces(std::string str, const std::string &whitespace = " \t");
+    [[nodiscard]] static bool                    is_parameterline(const std::string &s);
+    [[nodiscard]] static std::string::size_type  find_comment_character(const std::string &s);
+
     template<typename T>
     [[nodiscard]] T parse_param(const std::string &param_val, const std::string &param_name) {
         try {
             if(param_val.empty()) throw std::range_error("Parameter [" + param_name + "] has no value");
+            if constexpr(std::is_same_v<T, unsigned int>) {
+                int val = (T) std::stoi(param_val);
+                if(val < 0) throw std::runtime_error("Read negative value for unsigned parameter: " + std::to_string(val));
+                return (T) val;
+            }
+            if constexpr(std::is_same_v<T, unsigned long>) return (T) std::stoul(param_val);
+            if constexpr(std::is_same_v<T, unsigned long long>) return (T) std::stoull(param_val);
             if constexpr(std::is_same_v<T, int>) return (T) std::stoi(param_val);
             if constexpr(std::is_same_v<T, long>) return (T) std::stol(param_val);
+            if constexpr(std::is_same_v<T, long long>) return (T) std::stoll(param_val);
             if constexpr(std::is_same_v<T, size_t>) return (T) std::stol(param_val);
             if constexpr(std::is_same_v<T, double>) return (T) std::stod(param_val);
             if constexpr(std::is_enum_v<T>) return str2enum<T>(param_val);
@@ -80,6 +75,7 @@ class class_config_reader {
     template<typename T>
     [[nodiscard]] T find_parameter(std::string param_requested) {
         param_requested = remove_spaces(param_requested);
+
         std::transform(param_requested.begin(), param_requested.end(), param_requested.begin(), ::tolower);
         try {
             if(param_map.find(param_requested) != param_map.end()) {
