@@ -24,48 +24,37 @@ class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_
           sim_name       (std::move(sim_name_)),
           sim_type       (sim_type_) {
 
-    log        = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
     tools::log = Logger::setLogger(sim_name,settings::console::verbosity,settings::console::timestamp);
-    log->trace("Constructing class_algorithm_base");
+    tools::log->trace("Constructing class_algorithm_base");
     tools::common::profile::init_profiling();
-//    if (settings::output::storage_level >= StorageLevel::NORMAL){
-//        log->trace("Constructing table buffers in base");
-//        h5tbuf_profiling  = std::make_unique<class_h5table_buffer<class_h5table_profiling>>        (h5pp_file, sim_name + "/journal/profiling");
-//        h5tbuf_sim_status = std::make_unique<class_h5table_buffer<class_h5table_simulation_status>>(h5pp_file, sim_name + "/journal/sim_status");
-//    }
 
-
-    if(h5pp_file) log->trace("Writing input file");
-    if(h5pp_file) h5pp_file->writeDataset(settings::input::config_filename, "common/input_filename");
-    if(h5pp_file) h5pp_file->writeDataset(settings::input::config_file_contents, "common/input_file");
+    if(h5pp_file) tools::log->trace("Writing input file: {}", settings::input::config_filename);
+    if(h5pp_file) h5pp_file->writeDataset(settings::input::config_filename, "common/config_filename");
+    if(h5pp_file) h5pp_file->writeDataset(settings::input::config_file_contents, "common/config_file_contents");
 }
 
 
 
-
-class_algorithm_base::SaturationReport
-class_algorithm_base::check_saturation_using_slope(
-//        std::list<bool>  & B_vec,
-        std::list<double> &Y_vec,
-        std::list<int> &X_vec,
-        double new_data,
-        int iter,
-        int rate,
-        double tolerance)
 /*! \brief Checks convergence based on slope.
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.
  * If the measurement happened less than rate iterations ago, return.
  * Otherwise, compute the slope of the last 25% of the measurements that have been made.
  * The slope here is defined as the relative slope, i.e. \f$ \frac{1}{ \langle y\rangle} * \frac{dy}{dx} \f$.
  */
-
-{
+class_algorithm_base::SaturationReport
+class_algorithm_base::check_saturation_using_slope(
+//        std::list<bool>  & B_vec,
+        std::list<double> &Y_vec,
+        std::list<size_t> &X_vec,
+        double new_data,
+        size_t iter,
+        size_t rate,
+        double tolerance){
     SaturationReport report;
-    int last_measurement = X_vec.empty() ? 0 : X_vec.back();
-    if (iter - last_measurement < rate){return report;}
+    size_t last_measurement = X_vec.empty() ? 0 : X_vec.back();
+    if (iter < rate + last_measurement){return report;}
 
     // It's time to check. Insert current numbers
-//    B_vec.push_back(false);
     Y_vec.push_back(new_data);
     X_vec.push_back(iter);
     size_t min_data_points = 2;
@@ -73,12 +62,18 @@ class_algorithm_base::check_saturation_using_slope(
     size_t start_point = 0;
     double band_size   = 2.0 + 2.0*tolerance;  // Between 2 and  4 standard deviations away
 
-    size_t recent_point   = std::floor(0.75*Y_vec.size());
+    // Consider Y_vec vs X_vec: a noisy signal decaying in the shape of a hockey-club, say.
+    // We want to identify the point at which the signal stabilizes. We use the fact that the
+    // standard deviation is high if it includes parts of the non-stable signal, and low if
+    // it includes only the stable part.
+    // Here we monitor the standard deviation of the signal between [some_point, X_vec.end()],
+    // and move "some_point" towards the end. If the standard deviation goes below a certain
+    // threshold, we've found the stabilization point.
+    auto recent_point   = (size_t) std::floor(0.75 * (double) Y_vec.size() );
     recent_point = std::min(Y_vec.size()-min_data_points , recent_point);
     double recent_point_std = math::stdev(Y_vec, recent_point); //Computes the standard dev of Y_vec from recent_point to end
     for(size_t some_point = 0; some_point < Y_vec.size(); some_point++){
         double some_point_std = math::stdev(Y_vec, some_point); //Computes the standard dev of Y_vec from some_point to end
-        std::string arrow = "";
         if(some_point_std < band_size * recent_point_std and start_point == 0){
             start_point = some_point;
             break;
