@@ -4,9 +4,9 @@
 
 #pragma once
 
+#include <simulation/enums.h>
 #include <string>
 #include <vector>
-#include <simulation/enums.h>
 
 /*!
  *  \namespace settings
@@ -15,47 +15,50 @@
  */
 
 class class_config_reader;
-namespace h5pp{
+class class_dmrg_config;
+namespace h5pp {
     class File;
 }
 
+/* clang-format off */
 
 namespace settings {
-    extern void load_config_from_cfg(class_config_reader &indata);
-    extern void load_config_from_hdf5(h5pp::File &h5ppFile);
+    extern void load_config(class_config_reader &indata);
+    extern void load_config(class_dmrg_config &dmrg_config);
+    extern void load_config(const std::string & config_filename);
 
     namespace threading{
         inline int num_threads = 1;                                              /*!< Number of threads for shared memory parallelism. num_threads <= 0 will try to use as many as possible */
     }
 
     namespace input{
-        inline std::string config_filename           = "input/input.cfg";
+        inline long        seed                                 = 1;                            /*!< Main seed for the random number generator. */
+        inline long        bitfield                             = -1;                           /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Only positive state numbers are used */
+        inline std::string config_filename                      = "input/input.cfg";            /*!< Default config filename. Can either be a .cfg file or a .h5 file with a config stored as a string in /common/config_file_contents */
         inline std::string config_file_contents;
-        inline std::string h5_load_filename;                                         /*!< File from which to load a previous simulation and possibly continue */
-
     }
 
     namespace output {
-        inline bool             save_profiling                  = true;                         /*!< Whether to save profiling information to file */
-        inline bool             results_save_on_chi_updates     = true;                         /*!< Saves state (to results) every time the bond dimension limit is increased */
-        inline bool             journal_keep_only_last_iter     = true;                         /*!< If true, journaling keeps a snapshot of the last iteration only. Otherwise, all iterations are kept (dramaticallay increases file size) */
-        inline h5pp::AccessMode access_mode                     = h5pp::AccessMode::READWRITE;  /*!< Choose access mode to the file. Choose between READWRITE, READONLY */
-        inline h5pp::CreateMode create_mode                     = h5pp::CreateMode::OPEN;       /*!< Choose access mode to the file. Choose between TRUNCATE, OPEN, RENAME */
-        inline std::string      output_filename                 = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
-        inline bool             use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
-        inline size_t           copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
-        inline std::string      temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
+        inline std::string         output_filepath                 = "output/default.h5";          /*!< Name of the output HDF5 file relative to the execution point  */
+        inline bool                save_profiling                  = true;                         /*!< Whether to save profiling information to file */
+        inline bool                journal_keep_only_last_iter     = true;                         /*!< If true, journaling keeps a snapshot of the last iteration only. Otherwise, all iterations are kept (dramaticallay increases file size) */
+        inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
+        inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
+        inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
+        inline size_t              compression_level               = 0;                            /*!< Attempt to use this compression level with HDF5. Choose between [0-9] (0 = off, 9 = max compression) */
+        inline FileCollisionPolicy file_collision_policy           = FileCollisionPolicy::RESUME;  /*!< What to do when a prior output file is found. Choose between RESUME,RENAME,DELETE */
 
-        // Storage Levels
+        // Storage Levels.  NOTE: A simulation can only be resumed from FULL storage.
         //      NONE:   no data is saved at all
         //      LIGHT:  Mainly mid-chain data (energy/variance/polarization, schmidt values, entanglement entropy, lambda matrix, truncation error) , simulation status, and profiling (if save_profiling == true)
         //      NORMAL: Same as LIGHT + whole-chain measurements like entanglement entropies, truncation errors and schmidt values (gamma-matrices)
         //      FULL:   Same as NORMAL + MPS (A/B matrices) at each site.
-        // NOTE: A simulation can only be resumed from FULL storage.
 
-        inline StorageLevel     storage_level_results    = StorageLevel::NORMAL;             /*!< Storage level for final results written when a simulation terminates or an important stage is reached (like bond dimension update) */
         inline StorageLevel     storage_level_journal    = StorageLevel::LIGHT;              /*!< Storage level for journaling, a snapshot taken at the end of each iteration */
+        inline StorageLevel     storage_level_results    = StorageLevel::NORMAL;             /*!< Storage level for final results written when a simulation terminates or an important stage is reached (like bond dimension update) */
+        inline StorageLevel     storage_level_chi_update = StorageLevel::LIGHT;              /*!< Storage level for snapshot taken right before updating the bond dimension */
         inline StorageLevel     storage_level_projection = StorageLevel::LIGHT;              /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
+
     }
 
 
@@ -80,10 +83,8 @@ namespace settings {
 
     //Parameters for the model Hamiltonian
     namespace model {
-        inline std::string  model_type                              = "tf_ising";         /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising selfdual_tf_rf_ising_normal}  */
-        inline long         seed                                    = 1;                  /*!< Main seed for the random number generator. */
-        inline long         state_number                            = -1;                 /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Only positive state numbers are used */
-
+        inline std::string  model_type    = "tf_ising";         /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising selfdual_tf_rf_ising_normal}  */
+        inline size_t       sites         = 16;                 /*!< Number of sites on the chain. Only relevant for finite algorithms: fDMRG and xDMRG */
         //Parameters for the transverse-field Ising model
         namespace tf_ising {
             inline double       J  = 1;                         /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
@@ -166,36 +167,7 @@ namespace settings {
         inline size_t write_freq = 100;                            /*!< Write frequency,for output file buffer. (0 = off). */
 
     }
-    //Parameters controlling fDMRG
-    namespace fdmrg {
-        inline bool     on           = true;                         /*!< Turns fDMRG simulation on/off. */
-        inline size_t   num_sites    = 16;                           /*!< Number of sites on the chain */
-        inline size_t   max_sweeps   = 10;                           /*!< Max number sweeps along the chain. */
-        inline size_t   min_sweeps   = 4;                            /*!< Min number sweeps along the chain. */
-        inline long     chi_max      = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_grow     = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_init     = 16;                           /*!< Initial chi limit. Only used when chi_grow == true. */
-        inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
-        inline size_t   write_freq   = 100;                          /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
-        inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-    }
 
-    //Parameters controlling xDMRG
-    namespace xdmrg {
-        inline bool     on                      = true;             /*!< Turns xDMRG simulation on/off. */
-        inline size_t   num_sites               = 16;               /*!< Number of sites on the chain */
-        inline size_t   max_sweeps              = 10;               /*!< Max number sweeps along the chain. */
-        inline size_t   min_sweeps              = 4;                /*!< Min number sweeps along the chain. */
-        inline long     chi_max                 = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline bool     chi_grow                = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
-        inline long     chi_init                = 16;               /*!< Initial chi limit. Only used when chi_grow == true. */
-        inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
-        inline size_t   write_freq              = 1;                /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
-        inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline double   energy_density_target   = 0.5;              /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
-        inline double   energy_density_window   = 0.05;             /*!< Accept states inside of energy_target +- energy_window. */
-        inline size_t   max_states              = 4;                /*!< Max number of random states to find using xDMRG on a single disorder realization */
-    }
 
     //Parameters controlling iTEBD
     namespace itebd {
@@ -212,5 +184,36 @@ namespace settings {
 
     }
 
+    //Parameters controlling fDMRG
+    namespace fdmrg {
+        inline bool     on           = true;                         /*!< Turns fDMRG simulation on/off. */
+//        inline size_t   num_sites    = 16;                           /*!< Number of sites on the chain */
+        inline size_t   max_sweeps   = 10;                           /*!< Max number sweeps along the chain. */
+        inline size_t   min_sweeps   = 4;                            /*!< Min number sweeps along the chain. */
+        inline long     chi_max      = 8;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline bool     chi_grow     = true;                         /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_init     = 16;                           /*!< Initial chi limit. Only used when chi_grow == true. */
+        inline size_t   print_freq   = 100;                          /*!< Print frequency for console output. In units of sweeps. (0 = off). */
+        inline size_t   write_freq   = 100;                          /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
+        inline bool     store_wavefn = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+    }
+
+    //Parameters controlling xDMRG
+    namespace xdmrg {
+        inline bool     on                      = true;             /*!< Turns xDMRG simulation on/off. */
+//        inline size_t   num_sites               = 16;               /*!< Number of sites on the chain */
+        inline size_t   max_sweeps              = 10;               /*!< Max number sweeps along the chain. */
+        inline size_t   min_sweeps              = 4;                /*!< Min number sweeps along the chain. */
+        inline long     chi_max                 = 16;               /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline bool     chi_grow                = true;             /*!< Whether to increase chi slowly up to chi_lim or go up to chi_lim directly. */
+        inline long     chi_init                = 16;               /*!< Initial chi limit. Only used when chi_grow == true. */
+        inline size_t   print_freq              = 1;                /*!< Print frequency for console output. In units of sweeps. (0 = off). */
+        inline size_t   write_freq              = 1;                /*!< Write frequency,for output file buffer. In units of sweeps. (0 = off). */
+        inline bool     store_wavefn            = false;            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        inline double   energy_density_target   = 0.5;              /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
+        inline double   energy_density_window   = 0.05;             /*!< Accept states inside of energy_target +- energy_window. */
+        inline size_t   max_states              = 4;                /*!< Max number of random states to find using xDMRG on a single disorder realization */
+    }
 
 }
+/* clang-format on */
