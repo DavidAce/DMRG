@@ -4,23 +4,14 @@ if(TARGET mkl::mkl)
     return()
 endif()
 
+if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
+    find_package(OpenBLAS)
+#    if(TARGET openblas::openblas)
+#        message(STATUS "Found OpenBLAS")
+#    endif()
+endif()
 
-include(cmake-modules/FindOpenBLAS.cmake)
-find_OpenBLAS()
-
-# To print all variables, use the code below:
-
-# get_cmake_property(_variableNames VARIABLES)
-# foreach (_variableName ${_variableNames})
-#     if("${_variableName}" MATCHES "BLAS" OR "${_variableName}" MATCHES "blas" OR "${_variableName}" MATCHES "Blas")
-#         message(STATUS "${_variableName}=${${_variableName}}")
-#     endif()
-# endforeach()
-
-if(TARGET openblas::openblas)
-#    message(STATUS "OpenBLAS found")
-
-elseif(NOT ${DMRG_DOWNLOAD_METHOD} MATCHES "none")
+if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
     message(STATUS "OpenBLAS will be installed into ${CMAKE_INSTALL_PREFIX}/OpenBLAS")
     set(OpenBLAS_MULTITHREADED 1 )
     if(TARGET openmp::openmp)
@@ -49,9 +40,6 @@ elseif(NOT ${DMRG_DOWNLOAD_METHOD} MATCHES "none")
     if(TARGET openblas::openblas)
         message(STATUS "OpenBLAS installed successfully")
     else()
-        message(FATAL_ERROR "OpenBLAS could not be downloaded.")
+        message(WARNING "OpenBLAS could not be installed")
     endif()
-
-else()
-    message(FATAL_ERROR "Dependency OpenBLAS not found and DMRG_DOWNLOAD_METHOD = ${DMRG_DOWNLOAD_METHOD}")
 endif()

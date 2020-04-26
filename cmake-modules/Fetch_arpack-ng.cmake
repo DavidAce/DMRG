@@ -1,42 +1,44 @@
-include(GNUInstallDirs)
-unset(arpack_ng_LIBRARIES)
-unset(arpack_ng_INCLUDE_DIRS)
-find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX} PATH_SUFFIXES lib lib/cmake arpack-ng/${CMAKE_INSTALL_LIBDIR} NO_DEFAULT_PATH )
-if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
-    message(STATUS "Found arpack-ng")
-    add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
-    set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${arpack_ng_LIBRARIES}")
-    target_include_directories(arpack::arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
-    target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack gfortran::gfortran)
-endif()
-
-if (NOT TARGET arpack::arpack)
-    message(STATUS "Searching for arpack-ng in system")
-    find_library(ARPACK_LIBRARIES
-            NAMES arpack
-            HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTARPACKMINNG}
-            PATH_SUFFIXES arpack-ng arpack arpack/lib arpack-ng/lib
-            )
-    if(NOT ARPACK_LIBRARIES)
-        message(STATUS "Searching for arpack-ng - failed")
-    else()
-        message(STATUS "Searching for arpack-ng - Success: ${ARPACK_LIBRARIES}")
+if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native|conan")
+    include(GNUInstallDirs)
+    unset(arpack_ng_LIBRARIES)
+    unset(arpack_ng_INCLUDE_DIRS)
+    find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX} PATH_SUFFIXES lib lib/cmake arpack-ng/${CMAKE_INSTALL_LIBDIR} NO_DEFAULT_PATH )
+    if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
+        message(STATUS "Found arpack-ng")
         add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
-        set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
-        target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack  gfortran::gfortran)
-        if("${ARPACK_LIBRARIES}" MATCHES "usr" AND BUILD_SHARED_LIBS)
-            target_link_libraries(arpack::arpack INTERFACE lapacke openblas )
-            message(WARNING "Found arpack-ng in system as shared library. "
-                            "Make sure to use correct libraries libblas.so.3 and liblapack.so.3 "
-                            "by using \n"
-                            "sudo update-alternatives --config libblas.so.3-x86_64-linux-gnu \n"
-                            "sudo update-alternatives --config liblapack.so.3-x86_64-linux-gnu ")
+        set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${arpack_ng_LIBRARIES}")
+        target_include_directories(arpack::arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
+        target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack gfortran::gfortran)
+    endif()
+
+    if (NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find")
+        message(STATUS "Searching for arpack-ng in system")
+        find_library(ARPACK_LIBRARIES
+                NAMES arpack
+                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTARPACKMINNG}
+                PATH_SUFFIXES arpack-ng arpack arpack/lib arpack-ng/lib
+                )
+        if(NOT ARPACK_LIBRARIES)
+            message(STATUS "Searching for arpack-ng - failed")
+        else()
+            message(STATUS "Searching for arpack-ng - Success: ${ARPACK_LIBRARIES}")
+            add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
+            set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
+            target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack  gfortran::gfortran)
+            if("${ARPACK_LIBRARIES}" MATCHES "usr" AND BUILD_SHARED_LIBS)
+                target_link_libraries(arpack::arpack INTERFACE openblas::openblas )
+                message(WARNING "Found arpack-ng in system as shared library. "
+                                "Make sure to use correct libraries libblas.so.3 and liblapack.so.3 "
+                                "by using \n"
+                                "sudo update-alternatives --config libblas.so.3-x86_64-linux-gnu \n"
+                                "sudo update-alternatives --config liblapack.so.3-x86_64-linux-gnu ")
+            endif()
         endif()
     endif()
 endif()
 
 
-if(NOT TARGET arpack::arpack)
+if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native|conan")
     message(STATUS "Arpack-ng will be installed into ${CMAKE_INSTALL_PREFIX}/arpack-ng")
     if(BUILD_SHARED_LIBS)
         set(ARPACK_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})

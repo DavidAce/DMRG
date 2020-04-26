@@ -1,34 +1,29 @@
-# Gflags comes in static flavor in conda also!
-set(GFLAGS_HINTS $ENV{EBROOTGFLAGS} ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS})
 
+if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
+    # Gflags comes in static flavor in conda also!
+    set(GFLAGS_HINTS $ENV{EBROOTGFLAGS} ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS})
+    find_package(gflags COMPONENTS nothreads_static
+            HINTS ${GFLAGS_HINTS}
+            PATH_SUFFIXES gflags gflags/lib
+            NO_CMAKE_PACKAGE_REGISTRY)
+    if(TARGET gflags)
+        message(STATUS "Found gflags")
+    endif()
+endif()
 
-find_package(gflags COMPONENTS nothreads_static HINTS ${GFLAGS_HINTS}
-        PATHS $ENV{EBROOTGFLAGS}
-        PATH_SUFFIXES gflags gflags/lib
-        NO_CMAKE_PACKAGE_REGISTRY
-        NO_DEFAULT_PATH
-        )
-
-
-if(TARGET gflags)
-    message(STATUS "gflags found")
-
-elseif(NOT "${DMRG_DOWNLOAD_METHOD}" MATCHES "none" )
+if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native" )
     message(STATUS "gflags will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")
     find_package(gflags
             HINTS ${CMAKE_INSTALL_PREFIX}
             PATH_SUFFIXES gflags gflags/lib
-            NO_DEFAULT_PATH)
+            NO_CMAKE_PACKAGE_REGISTRY NO_DEFAULT_PATH)
     if(TARGET gflags)
         message(STATUS "gflags installed successfully")
     else()
-        message(FATAL_ERROR "gflags could not be downloaded.")
+        message(WARNING "gflags could not be installed")
     endif()
-
-else()
-    message(FATAL_ERROR "Dependency gflags not found and DMRG_DOWNLOAD_METHOD = ${DMRG_DOWNLOAD_METHOD}")
 endif()
 
 if(TARGET gflags)
@@ -57,5 +52,4 @@ if(TARGET gflags)
         include(cmake-modules/CopyTarget.cmake)
         copy_target(gflags::gflags gflags)
     endif()
-
 endif()

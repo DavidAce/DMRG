@@ -1,5 +1,3 @@
-
-
 function(CheckLapackeCompiles TAG REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_LIBRARIES_UNPARSED REQUIRED_INCLUDES REQUIRED_TARGET)
 #    message(STATUS "Checking if lapacke headers are working")
     set(REQUIRED_LIBRARIES)
@@ -32,7 +30,7 @@ function(CheckLapackeCompiles TAG REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_L
     set(CMAKE_REQUIRED_DEFINITIONS  ${REQUIRED_DEFINITIONS})
     set(CMAKE_REQUIRED_LIBRARIES    ${REQUIRED_LIBRARIES})
     set(CMAKE_REQUIRED_INCLUDES     ${REQUIRED_INCLUDES})
-    if(DMRG_PRINT_INFO)
+    if(DMRG_PRINT_CHECKS OR Lapacke_FIND_VERBOSE)
         message(STATUS "LAPACKE TEST COMPILE CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
         message(STATUS "LAPACKE TEST COMPILE CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
         message(STATUS "LAPACKE TEST COMPILE CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
@@ -68,113 +66,142 @@ function(CheckLapackeCompiles TAG REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_L
 endfunction()
 
 
+function(find_Lapacke)
 
-
-if (NOT TARGET lapacke::lapacke)
-    # Find from MKL
-    if(TARGET mkl::mkl)
-        # Try finding lapacke in MKL library
-        message(STATUS "Searching for Lapacke in Intel MKL.")
-        if(MKL_INCLUDE_DIR)
-            CheckLapackeCompiles("MKL" ""  "-DMKL_AVAILABLE"  "" "" "mkl::mkl")
-        endif()
-
-        if(LAPACKE_COMPILES_MKL)
-            add_library(lapacke::lapacke INTERFACE IMPORTED)
-            target_link_libraries(lapacke::lapacke INTERFACE mkl::mkl)
-            message(STATUS "Searching for Lapacke in Intel MKL - Success")
-        else()
-            message(STATUS "Searching for Lapacke in Intel MKL - failed")
-        endif()
-    endif()
-endif()
-
-
-
-
-if (NOT TARGET lapacke::lapacke)
-    if (TARGET openblas::openblas)
-        message(STATUS "Searching for Lapacke in OpenBLAS")
-        if(LAPACKE_DEBUG)
-            include(cmake-modules/PrintTargetProperties.cmake)
-            print_target_properties(openblas::openblas)
-        endif()
-        CheckLapackeCompiles("OpenBLAS" "" "" "" "" "openblas::openblas")
-        if(LAPACKE_COMPILES_OpenBLAS)
-            add_library(lapacke::lapacke INTERFACE IMPORTED)
-            target_link_libraries(lapacke::lapacke INTERFACE openblas::openblas)
-            message(STATUS "Searching for Lapacke in OpenBLAS - Success")
-        else()
-            message(STATUS "Searching for Lapacke in OpenBLAS - failed")
-        endif()
-    endif()
-endif()
-
-
-
-if (NOT TARGET lapacke::lapacke)
-    if(TARGET lapack::lapack)
-        message(STATUS "Searching for Lapacke in system")
-        find_path(LAPACKE_INCLUDE_DIR
-                NAMES lapacke.h
-                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
-                PATHS $ENV{EBROOTBLAS} $ENV{BLAS_DIR} $ENV{BLAS_ROOT}
-                PATH_SUFFIXES
-                    OpenBLAS openblas openblas/include OpenBLAS/include lapack)
-        find_library(LAPACKE_LIBRARY
-                NAMES lapacke
-                HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
-                PATHS $ENV{EBROOTBLAS} $ENV{BLAS_DIR} $ENV{BLAS_ROOT}
-                PATH_SUFFIXES
-                    OpenBLAS openblas openblas/lib OpenBLAS/lib lapack lapack/lib blas blas/lib
-                )
-        if(LAPACKE_INCLUDE_DIR AND LAPACKE_LIBRARY)
-            CheckLapackeCompiles("lib_header" " "   " "
-                    "${LAPACKE_LIBRARY}"
-                    "${LAPACKE_INCLUDE_DIR}"
-                    "lapack::lapack"
-                    )
-            if(LAPACKE_COMPILES_lib_header)
-                add_library(lapacke::lapacke ${LINK_TYPE} IMPORTED)
-                set_target_properties(lapacke::lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
-                target_include_directories(lapacke::lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
+    if (NOT TARGET lapacke::lapacke)
+        # Find from MKL
+        if(TARGET mkl::mkl)
+            # Try finding lapacke in MKL library
+            if(Lapacke_FIND_VERBOSE)
+                message(STATUS "Searching for Lapacke in Intel MKL.")
             endif()
-        endif()
-        if(NOT TARGET lapacke::lapacke AND LAPACKE_INCLUDE_DIR)
-            CheckLapackeCompiles("header" " "   " "
-                    ""
-                    "${LAPACKE_INCLUDE_DIR}"
-                    "lapack::lapack"
-                    )
-            if(LAPACKE_COMPILES_header)
+            if(MKL_INCLUDE_DIR)
+                CheckLapackeCompiles("MKL" ""  "-DMKL_AVAILABLE"  "" "" "mkl::mkl")
+            endif()
+
+            if(LAPACKE_COMPILES_MKL)
                 add_library(lapacke::lapacke INTERFACE IMPORTED)
-                target_include_directories(lapacke::lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
+                target_link_libraries(lapacke::lapacke INTERFACE mkl::mkl)
+                if(Lapacke_FIND_VERBOSE)
+                    message(STATUS "Searching for Lapacke in Intel MKL - Success")
+                endif()
+            else()
+                if(Lapacke_FIND_VERBOSE)
+                    message(STATUS "Searching for Lapacke in Intel MKL - failed")
+                endif()
             endif()
-        endif()
-        if(NOT TARGET lapacke::lapacke AND LAPACKE_LIBRARY)
-            CheckLapackeCompiles("lib" " "   " "
-                    "${LAPACKE_LIBRARY}"
-                    ""
-                    "lapack::lapack"
-                    )
-            if(LAPACKE_COMPILES_lib)
-                add_library(lapacke::lapacke ${LINK_TYPE} IMPORTED)
-                set_target_properties(lapacke::lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
-            endif()
-        endif()
-        if(TARGET lapacke::lapacke)
-            target_link_libraries(lapacke::lapacke INTERFACE blas::blas lapack::lapack gfortran::gfortran)
-            message(STATUS "Searching for Lapacke in system - Success: ${LAPACKE_LIBRARY}")
-        else()
-            message(STATUS "Searching for Lapacke in system - failed")
-            message(STATUS "Tried LAPACKE_LIBRARY     : ${LAPACKE_LIBRARY} ")
-            message(STATUS "Tried LAPACKE_INCLUDE_DIR : ${LAPACKE_INCLUDE_DIR} ")
         endif()
     endif()
-endif()
 
 
 
-if(NOT TARGET lapacke::lapacke)
-    message(FATAL_ERROR "Library LAPACKE could not be found.")
-endif()
+
+    if (NOT TARGET lapacke::lapacke)
+        if (TARGET openblas::openblas)
+            message(STATUS "Searching for Lapacke in OpenBLAS")
+            if(LAPACKE_DEBUG)
+                include(cmake-modules/PrintTargetProperties.cmake)
+                print_target_properties(openblas::openblas)
+            endif()
+            CheckLapackeCompiles("OpenBLAS" "" "" "" "" "openblas::openblas")
+            if(LAPACKE_COMPILES_OpenBLAS)
+                add_library(lapacke::lapacke INTERFACE IMPORTED)
+                target_link_libraries(lapacke::lapacke INTERFACE openblas::openblas)
+                if(Lapacke_FIND_VERBOSE)
+                    message(STATUS "Searching for Lapacke in OpenBLAS - Success")
+                endif()
+            else()
+                if(Lapacke_FIND_VERBOSE)
+                    message(STATUS "Searching for Lapacke in OpenBLAS - failed")
+                endif()
+            endif()
+        endif()
+    endif()
+
+
+
+    if (NOT TARGET lapacke::lapacke)
+        if(TARGET lapack::lapack)
+            if(Lapacke_FIND_VERBOSE)
+                message(STATUS "Searching for Lapacke in system")
+            endif()
+            find_path(LAPACKE_INCLUDE_DIR
+                    NAMES lapacke.h
+                    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
+                    PATHS $ENV{EBROOTBLAS} $ENV{BLAS_DIR} $ENV{BLAS_ROOT}
+                    PATH_SUFFIXES
+                        OpenBLAS openblas openblas/include OpenBLAS/include lapack)
+            find_library(LAPACKE_LIBRARY
+                    NAMES lapacke
+                    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS} ${CONDA_HINTS}
+                    PATHS $ENV{EBROOTBLAS} $ENV{BLAS_DIR} $ENV{BLAS_ROOT}
+                    PATH_SUFFIXES
+                        OpenBLAS openblas openblas/lib OpenBLAS/lib lapack lapack/lib blas blas/lib
+                    )
+            if(LAPACKE_INCLUDE_DIR AND LAPACKE_LIBRARY)
+                CheckLapackeCompiles("lib_header" " "   " "
+                        "${LAPACKE_LIBRARY}"
+                        "${LAPACKE_INCLUDE_DIR}"
+                        "lapack::lapack"
+                        )
+                if(LAPACKE_COMPILES_lib_header)
+                    add_library(lapacke::lapacke ${LINK_TYPE} IMPORTED)
+                    set_target_properties(lapacke::lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
+                    target_include_directories(lapacke::lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
+                endif()
+            endif()
+            if(NOT TARGET lapacke::lapacke AND LAPACKE_INCLUDE_DIR)
+                CheckLapackeCompiles("header" " "   " "
+                        ""
+                        "${LAPACKE_INCLUDE_DIR}"
+                        "lapack::lapack"
+                        )
+                if(LAPACKE_COMPILES_header)
+                    add_library(lapacke::lapacke INTERFACE IMPORTED)
+                    target_include_directories(lapacke::lapacke SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
+                endif()
+            endif()
+            if(NOT TARGET lapacke::lapacke AND LAPACKE_LIBRARY)
+                CheckLapackeCompiles("lib" " "   " "
+                        "${LAPACKE_LIBRARY}"
+                        ""
+                        "lapack::lapack"
+                        )
+                if(LAPACKE_COMPILES_lib)
+                    add_library(lapacke::lapacke ${LINK_TYPE} IMPORTED)
+                    set_target_properties(lapacke::lapacke PROPERTIES IMPORTED_LOCATION "${LAPACKE_LIBRARY}")
+                endif()
+            endif()
+            if(TARGET lapacke::lapacke)
+                target_link_libraries(lapacke::lapacke INTERFACE blas::blas lapack::lapack gfortran::gfortran)
+                if(Lapacke_FIND_VERBOSE)
+                    message(STATUS "Searching for Lapacke in system - Success: ${LAPACKE_LIBRARY}")
+                endif()
+            else()
+                if(Lapacke_FIND_VERBOSE)
+                    message(STATUS "Searching for Lapacke in system - failed")
+                    message(STATUS "Tried LAPACKE_LIBRARY     : ${LAPACKE_LIBRARY} ")
+                    message(STATUS "Tried LAPACKE_INCLUDE_DIR : ${LAPACKE_INCLUDE_DIR} ")
+                endif()
+            endif()
+        endif()
+    endif()
+
+    if(TARGET lapacke::lapacke)
+#        message(STATUS "Found Lapacke: ${LAPACKE_INCLUDE_DIR}")
+        set(Lapacke_INCLUDE_DIR ${LAPACKE_INCLUDE_DIR}  PARENT_SCOPE)
+        set(Lapacke_TARGET      lapack::lapacke         PARENT_SCOPE)
+        set(Lapacke_FOUND       lapack::lapacke         PARENT_SCOPE)
+    endif()
+endfunction()
+
+find_Lapacke()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(
+        Lapacke
+        FOUND_VAR Lapacke_FOUND
+        REQUIRED_VARS LAPACKE_INCLUDE_DIR Lapacke_TARGET
+        HANDLE_COMPONENTS
+        FAIL_MESSAGE "Failed to find Lapacke"
+)
