@@ -10,7 +10,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -b | --build-type [=arg]        : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
 -c | --clear-cmake              : Clear CMake files before build (delete ./build)
 -d | --dry-run                  : Dry run
-   | --download-method          : Download libraries using [ native | conan ] (default = native)
+   | --download-method          : Download method for dependencies [ find | find-or-fetch | fetch | conan | find-or-conan |  native ] (default = find)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
 -g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
 -G | --generator [=arg]         : CMake generator  | many options... | (default = "CodeBlocks - Unix Makefiles")
