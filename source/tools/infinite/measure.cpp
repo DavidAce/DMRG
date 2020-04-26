@@ -415,7 +415,7 @@ double tools::infinite::measure::norm(const class_state_infinite & state){
 }
 
 
-int tools::infinite::measure::bond_dimension(const class_state_infinite & state){
+long tools::infinite::measure::bond_dimension(const class_state_infinite & state){
     if(state.measurements.bond_dimension){return state.measurements.bond_dimension.value();}
     return (int) state.MPS->MPS_A->get_chiR();
 }

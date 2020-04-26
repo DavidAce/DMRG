@@ -45,10 +45,8 @@ double tools::finite::measure::norm(const class_state_finite & state){
         chain = temp;
     }
     double norm_chain = std::abs(Textra::TensorMatrixMap(chain).trace());
-    if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error){
-        tools::log->warn("Measure: Norm far from unity: {:.16f}", norm_chain);
-//        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
-    }
+    if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error)
+        tools::log->debug("Norm far from unity: {:.16f}", norm_chain);
     state.measurements.norm = norm_chain;
     return state.measurements.norm.value();
 }
@@ -286,7 +284,7 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const class_s
 }
 
 
-std::vector<double> tools::finite::measure::spin_components(const class_state_finite &state){
+std::array<double,3> tools::finite::measure::spin_components(const class_state_finite &state){
     if (state.measurements.spin_components){return state.measurements.spin_components.value();}
     state.measurements.spin_component_sx                      = measure::spin_component(state, qm::spinOneHalf::sx);
     state.measurements.spin_component_sy                      = measure::spin_component(state, qm::spinOneHalf::sy);
