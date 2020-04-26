@@ -27,7 +27,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
    | --no-modules               : Disable use of "module load"
 -v | --verbose                  : Verbose makefiles
 EXAMPLE:
-./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-method=native
+./build.sh --arch native -b Release  --make-threads 8   --enable-shared  --with-openmp --with-eigen3  --download-method=find
 EOF
   exit 1
 }
@@ -68,7 +68,7 @@ build_type="Release"
 target="all"
 march="haswell"
 enable_shared="OFF"
-download_method="native"
+download_method="find"
 enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
@@ -228,12 +228,12 @@ cat << EOF >&2
           -DBUILD_SHARED_LIBS=$enable_shared
           -DCMAKE_VERBOSE_MAKEFILE=$verbose
           -DDMRG_PRINT_INFO=$verbose
-          -DDOWNLOAD_METHOD=$download_method
-          -DPREFER_CONDA_LIBS:BOOL=$prefer_conda
-          -DMARCH=$march
-          -DENABLE_TESTS:BOOL=$enable_tests
-          -DENABLE_OPENMP=$enable_openmp
-          -DENABLE_MKL=$enable_mkl
+          -DDMRG_DOWNLOAD_METHOD=$download_method
+          -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda
+          -DDMRG_MARCH=$march
+          -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
+          -DDMRG_ENABLE_OPENMP=$enable_openmp
+          -DDMRG_ENABLE_MKL=$enable_mkl
           -DGCC_TOOLCHAIN=$gcc_toolchain
            -G $generator
            ../../
@@ -247,12 +247,12 @@ if [ -z "$dry_run" ] ;then
           -DBUILD_SHARED_LIBS=$enable_shared \
           -DCMAKE_VERBOSE_MAKEFILE=$verbose \
           -DDMRG_PRINT_INFO=$verbose \
-          -DDOWNLOAD_METHOD=$download_method \
-          -DPREFER_CONDA_LIBS:BOOL=$prefer_conda \
-          -DMARCH=$march \
-          -DENABLE_TESTS:BOOL=$enable_tests \
-          -DENABLE_OPENMP=$enable_openmp \
-          -DENABLE_MKL=$enable_mkl \
+          -DDMRG_DOWNLOAD_METHOD=$download_method \
+          -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda \
+          -DDMRG_MARCH=$march \
+          -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
+          -DDMRG_ENABLE_OPENMP=$enable_openmp \
+          -DDMRG_ENABLE_MKL=$enable_mkl \
           -DGCC_TOOLCHAIN=$gcc_toolchain \
            -G "$generator" \
            ../../
