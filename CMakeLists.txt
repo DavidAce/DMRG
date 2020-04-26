@@ -274,6 +274,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)  # Link everythi
 
 
 include(cmake-modules/PrintTargetInfo.cmake)
+include(cmake-modules/getExpandedTarget.cmake)
 expand_target_all_targets(project-settings DMRG_TARGETS_EXPANDED)
 foreach(tgt ${DMRG_TARGETS_EXPANDED})
     print_target_info(${tgt})
