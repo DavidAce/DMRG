@@ -10,7 +10,7 @@
 
 void tools::infinite::debug::check_integrity(const class_state_infinite & state)
 {
-    tools::log->debug("Checking integrity...");
+    tools::log->debug("Checking integrity");
    try{
         state.assert_positions();
         check_integrity_of_mps(state);
@@ -24,7 +24,7 @@ void tools::infinite::debug::check_integrity(const class_state_infinite & state)
 
 
 void tools::infinite::debug::check_integrity_of_mps(const class_state_infinite &state){
-    tools::log->debug("Checking integrity of MPS...");
+    tools::log->debug("Checking integrity of MPS");
     tools::log->debug("Checking norms");
     auto norm_block = tools::infinite::measure::norm(state);
     if(std::abs(norm_block - 1.0) > 1e-10) {
