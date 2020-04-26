@@ -5,13 +5,10 @@ project(DMRG++
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 
 
-#  Make sure we use DMRG's own find modules
+# Make sure we use DMRG's own find modules
 list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
 
-################################################################
-### Set options for compilation                              ###
-################################################################
-option(BUILD_SHARED_LIBS             "Sets shared linking on/off"                          OFF)
+# Set options this build
 option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"         OFF)
 option(DMRG_ENABLE_OPENMP            "Use OpenMP"                                          OFF)
 option(DMRG_ENABLE_MKL               "Enable Intel Math Kernel Library"                    OFF)
@@ -21,19 +18,19 @@ option(DMRG_BUILD_EXAMPLES           "Build examples"                           
 option(DMRG_PRINT_INFO               "Print information during cmake configure"            OFF)
 
 
-#################################################################
-### Make an "enum" for valid download methods                 ###
-#################################################################
-set(VALID_DMRG_DOWNLOAD_METHODS none find-only conan native)
-set(DMRG_DOWNLOAD_METHOD find-only CACHE STRING "Download method for external dependencies")
-set_property(CACHE DMRG_DOWNLOAD_METHOD  PROPERTY STRINGS ${VALID_DMRG_DOWNLOAD_METHODS})
-if(NOT DMRG_DOWNLOAD_METHOD IN_LIST VALID_DMRG_DOWNLOAD_METHODS)
-    message(FATAL_ERROR "DMRG_DOWNLOAD_METHOD must be one of ${VALID_DMRG_DOWNLOAD_METHODS}")
-endif()
 
-#################################################################
-### Set default policies if CMake is new enough               ###
-#################################################################
+# Make an "enum" for valid download methods
+set(DMRG_DOWNLOAD_METHODS_VALID find fetch native conan find-or-fetch find-or-conan)
+set(DMRG_DOWNLOAD_METHOD none CACHE STRING "Download method for external dependencies")
+set_property(CACHE DMRG_DOWNLOAD_METHOD PROPERTY STRINGS ${DMRG_DOWNLOAD_METHODS_VALID})
+if (NOT DMRG_DOWNLOAD_METHOD IN_LIST DMRG_DOWNLOAD_METHODS_VALID)
+    message(FATAL_ERROR "DMRG_DOWNLOAD_METHOD must be one of ${DMRG_DOWNLOAD_METHODS_VALID}")
+endif ()
+
+
+
+
+# Set default policies if CMake is new enough
 if (CMAKE_VERSION VERSION_LESS 3.12)
     message(STATUS "Not setting policies")
 else()
@@ -55,24 +52,48 @@ endif()
 include(cmake-modules/gitversion.cmake)
 
 
-
-
 ##################################################################
-### Print host properties                                      ###
+### Setup dependency paths                                     ###
 ##################################################################
-cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
-cmake_host_system_information(RESULT _proc_type   QUERY PROCESSOR_DESCRIPTION)
-cmake_host_system_information(RESULT _os_name     QUERY OS_NAME)
-cmake_host_system_information(RESULT _os_release  QUERY OS_RELEASE)
-cmake_host_system_information(RESULT _os_version  QUERY OS_VERSION)
-cmake_host_system_information(RESULT _os_platform QUERY OS_PLATFORM)
-message("========= HOST INFO =========")
-message("${_host_name}")
-message("${_os_name} ${_os_platform} ${_os_release}")
-message("${_proc_type}")
-message("${_os_version}")
-message("===============================")
+include(GNUInstallDirs)
+string(TOLOWER ${CMAKE_BUILD_TYPE} cmake_build_type)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    message(STATUS "Setting default install prefix -- CMAKE_INSTALL_PREFIX --> ${CMAKE_BINARY_DIR}/dmrg-deps-install")
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dmrg-deps-install" CACHE PATH "..." FORCE)
+endif()
 
+
+
+
+
+if(DMRG_PRINT_INFO)
+
+    # Print host properties
+    cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
+    cmake_host_system_information(RESULT _proc_type QUERY PROCESSOR_DESCRIPTION)
+    cmake_host_system_information(RESULT _os_name QUERY OS_NAME)
+    cmake_host_system_information(RESULT _os_release QUERY OS_RELEASE)
+    cmake_host_system_information(RESULT _os_version QUERY OS_VERSION)
+    cmake_host_system_information(RESULT _os_platform QUERY OS_PLATFORM)
+    message(STATUS "| DMRG BUILD INFO:\n"
+            "-- |----------------\n"
+            "-- | ${_host_name}\n"
+            "-- | ${_os_name} ${_os_platform} ${_os_release}\n"
+            "-- | ${_proc_type}\n"
+            "-- | ${_os_version}")
+
+    # Print CMake options
+    message(STATUS  "|----------------\n"
+            "-- | BUILD_SHARED_LIBS       : ${BUILD_SHARED_LIBS}\n"
+            "-- | CMAKE_INSTALL_PREFIX    : ${CMAKE_INSTALL_PREFIX}\n"
+            "-- | DMRG_BUILD_EXAMPLES     : ${DMRG_BUILD_EXAMPLES}\n"
+            "-- | DMRG_ENABLE_TESTS       : ${DMRG_ENABLE_TESTS}\n"
+            "-- | DMRG_ENABLE_OPENMP      : ${DMRG_ENABLE_OPENMP}\n"
+            "-- | DMRG_ENABLE_LTO         : ${DMRG_ENABLE_LTO}\n"
+            "-- | DMRG_DOWNLOAD_METHOD    : ${DMRG_DOWNLOAD_METHOD}\n"
+            "-- | DMRG_PREFER_CONDA_LIBS  : ${DMRG_PREFER_CONDA_LIBS}\n"
+            "-- | DMRG_PRINT_INFO         : ${DMRG_PRINT_INFO}\n")
+endif ()
 
 
 ###########################
@@ -196,17 +217,6 @@ if(DMRG_ENABLE_LTO)
 endif()
 
 
-##################################################################
-### Setup dependency paths                                     ###
-##################################################################
-include(GNUInstallDirs)
-string(TOLOWER ${CMAKE_BUILD_TYPE} cmake_build_type)
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    message(STATUS "Setting default install prefix -- CMAKE_INSTALL_PREFIX --> ${CMAKE_BINARY_DIR}/dmrg-deps-install")
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/dmrg-deps-install" CACHE PATH "..." FORCE)
-endif()
-
-
 
 
 
@@ -220,22 +230,6 @@ if(DMRG_PREFER_CONDA_LIBS)
             $ENV{HOME}/miniconda
             )
 endif()
-
-##################################################################
-### Print summary of CMake options                       ###
-##################################################################
-message("================= DMRG++: CMake options =====================================")
-message(STATUS "CMAKE_INSTALL_PREFIX            : ${CMAKE_INSTALL_PREFIX}")
-message(STATUS "BUILD_SHARED_LIBS               : ${BUILD_SHARED_LIBS}")
-message(STATUS "DMRG_PREFER_CONDA_LIBS          : ${DMRG_PREFER_CONDA_LIBS}")
-message(STATUS "DMRG_DOWNLOAD_METHOD            : ${DMRG_DOWNLOAD_METHOD}")
-message(STATUS "DMRG_ENABLE_OPENMP              : ${DMRG_ENABLE_OPENMP}")
-message(STATUS "DMRG_ENABLE_OPENMP              : ${DMRG_ENABLE_OPENMP}")
-message(STATUS "DMRG_ENABLE_LTO                 : ${DMRG_ENABLE_LTO}")
-message(STATUS "DMRG_ENABLE_TESTS               : ${DMRG_ENABLE_TESTS}")
-message(STATUS "DMRG_BUILD_EXAMPLES             : ${DMRG_BUILD_EXAMPLES}")
-message(STATUS "DMRG_PRINT_INFO                 : ${DMRG_PRINT_INFO}")
-message("=============================================================================")
 
 
 ##################################################################
@@ -256,13 +250,34 @@ endif()
 ###########################################
 ### Fetch or find all the dependencies  ###
 ###########################################
-if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
-    include(cmake-modules/SetupDependenciesConan.cmake)
-elseif(DMRG_DOWNLOAD_METHOD MATCHES "find|native")
-    include(cmake-modules/SetupDependenciesNative.cmake)
+include(cmake-modules/SetupDependenciesNative.cmake)
+include(cmake-modules/SetupDependenciesConan.cmake)
+
+##################################################################
+### Link all the things!                                       ###
+##################################################################
+target_link_libraries(project-settings INTERFACE  ${CONAN_TARGETS} ${NATIVE_TARGETS}) # Order is important here
+
+
+if(TARGET openmp::openmp)
+    target_link_libraries(project-settings INTERFACE openmp::openmp)
+    target_compile_definitions(project-settings INTERFACE -DEIGEN_USE_THREADS)
+else()
+    message(WARNING "We need OpenMP when using conan libraries!")
+    target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
-include(cmake-modules/PrintTargetInfo.cmake)
+target_link_libraries(project-settings INTERFACE arpack::arpack++) # Last to use blas
+target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
 target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)  # Link everything to main project
+
+
+
+
+include(cmake-modules/PrintTargetInfo.cmake)
+expand_target_all_targets(project-settings DMRG_TARGETS_EXPANDED)
+foreach(tgt ${DMRG_TARGETS_EXPANDED})
+    print_target_info(${tgt})
+endforeach()
 print_target_info(${PROJECT_NAME})
 
 ###################

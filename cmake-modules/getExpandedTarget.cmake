@@ -55,13 +55,14 @@ function(expand_target_libs target_names expanded_list)
 endfunction()
 
 
+
 function(expand_target_libs_interface_only target_names expanded_list)
     foreach(lib ${target_names})
-#        message("Checking if ${lib} is a target")
+        #        message("Checking if ${lib} is a target")
         if(TARGET ${lib})
             unset(interface_libs)
             unset(imported_lib)
-#            message("Expanding target ${lib}")
+            #            message("Expanding target ${lib}")
             get_target_property(interface_libs  ${lib} INTERFACE_LINK_LIBRARIES)
             # Now we have all the libs in the target "lib".
             # interface_libs may contain many other targets. That's ok, for now we only do one level of expansion.
@@ -69,7 +70,7 @@ function(expand_target_libs_interface_only target_names expanded_list)
                 list(APPEND target_expanded_${lib}  ${interface_libs})
             endif()
             list(APPEND target_expanded ${lib})
-#            message("Expanded target ${lib} into ${target_expanded_${lib}}")
+            #            message("Expanded target ${lib} into ${target_expanded_${lib}}")
         endif()
     endforeach()
 
@@ -100,6 +101,63 @@ function(expand_target_libs_interface_only target_names expanded_list)
     # Return the expanded targets
     set(${expanded_list} ${target_names_expanded} PARENT_SCOPE)
 endfunction()
+
+function(expand_target_one_level target_names expanded_list)
+    foreach(target_name ${target_names})
+        if(TARGET ${target_name})
+            list(APPEND target_names_expanded ${target_name})
+            unset(interface_libs)
+            unset(imported_lib)
+            get_target_property(interface_libs  ${target_name} INTERFACE_LINK_LIBRARIES)
+            # Now we have all the libs in the target "lib".
+            # interface_libs may contain many other targets. That's ok, for now we only do one level of expansion.
+            foreach(elem ${interface_libs})
+                if(TARGET ${elem})
+                    list(APPEND target_names_expanded ${elem})
+                endif()
+            endforeach()
+        endif()
+    endforeach()
+    # Remove duplicates in a way that retains linking order, i.e. keep last occurrence
+    list(REVERSE "target_names_expanded")
+    list(REMOVE_DUPLICATES "target_names_expanded")
+    list(REVERSE "target_names_expanded")
+    # Return the expanded targets
+    set(${expanded_list} ${target_names_expanded} PARENT_SCOPE)
+endfunction()
+
+
+
+function(expand_target_all_targets target_names expanded_list)
+    foreach(target_name ${target_names})
+        if(TARGET ${target_name} AND NOT ${target_name} IN_LIST ${expanded_list})
+            list(APPEND target_names_expanded ${target_name})
+            unset(interface_libs)
+            get_target_property(interface_libs  ${target_name} INTERFACE_LINK_LIBRARIES)
+            foreach(elem ${interface_libs})
+                if(TARGET ${elem} AND NOT ${elem} IN_LIST ${expanded_list} AND NOT ${elem} IN_LIST target_names AND NOT ${elem} IN_LIST target_names_expanded)
+                    expand_target_all_targets(${elem} recursed_list)
+                    foreach(rec ${recursed_list})
+                        if(TARGET ${rec} AND NOT ${rec} IN_LIST target_names_expanded AND NOT ${rec} IN_LIST ${expanded_list})
+                            list(APPEND target_names_expanded ${rec})
+                        endif()
+                    endforeach()
+                endif()
+            endforeach()
+        endif()
+    endforeach()
+
+    # Remove duplicates in a way that retains linking order, i.e. keep last occurrence
+    if(target_names_expanded)
+        list(REVERSE target_names_expanded)
+        list(REMOVE_DUPLICATES "target_names_expanded")
+        list(REVERSE "target_names_expanded")
+        list(APPEND ${target_names_expanded} "${${expanded_list}}")
+    endif()
+    list(APPEND ${expanded_list} "${target_names_expanded}")
+    set(${expanded_list} "${${expanded_list}}" PARENT_SCOPE)
+endfunction()
+
 
 function(expand_target_incs target_names expanded_list)
     foreach(target_name ${target_names})

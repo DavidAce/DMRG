@@ -1,65 +1,80 @@
-
-include(cmake-modules/CheckCeresCompiles.cmake)
-
-# Can't use conda here since they only have shared libraries.
-# Can't use config-mode on anaconda either since they have weird requirements
-# on predefined targets for gflags and glog. Therefore -> NO_DEFAULT_PATH
-find_package(Ceres
-        HINTS ${CMAKE_INSTALL_PREFIX}
-        PATH_SUFFIXES ceres ceres/lib
-        NO_DEFAULT_PATH)
-
-if(NOT TARGET ceres)
-    message(STATUS "Looking for ceres in system")
-    find_path   (CERES_INCLUDE_DIR        NAMES  ceres/ceres.h                       HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
-    find_path   (SUITESPARSE_INCLUDE_DIR  NAMES  suitesparse/SuiteSparse_config.h    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
-    if(CERES_INCLUDE_DIR AND SUITESPARSE_INCLUDE_DIR)
-        # We may have a chance at finding Ceres in the system
-        find_library(CERES_LIB                NAMES ceres                            HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
-        find_library(SUITESPARSE_LIB          NAMES suitesparse suitesparseconfig    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
-        find_library(CXSPARSE_LIB             NAMES cxsparse                         HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCXSPARSE})
-        find_library(METIS_LIB                NAMES metis metis_static               HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTMETIS})
-        find_library(CHOLMOD_LIB              NAMES cholmod                          HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCHOLMOD})
-        find_library(COLAMD_LIB               NAMES colamd                           HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCOLAMD})
-        find_library(CCOLAMD_LIB              NAMES ccolamd                          HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCCOLAMD})
-        find_library(AMD_LIB                  NAMES amd                              HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTAMD})
-        find_library(CAMD_LIB                 NAMES camd                             HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCAMD})
-        # Make sure this is the correct linking order
-        set(ceres_lib_names ceres cholmod colamd ccolamd amd camd metis cxsparse suitesparse)
-        # Check that all libs are present before going forward with defining targets
-        foreach(lib ${ceres_lib_names})
-            string(TOUPPER ${lib} LIB)
-            if(NOT EXISTS "${${LIB}_LIB}")
-                set(CERES_MISSING_LIBS TRUE)
-                message(STATUS "Missing Ceres dependency in system: ${lib}")
-            endif()
-        endforeach()
-        if(NOT CERES_MISSING_LIBS)
-            # Now we are confident all libraries are in the system. Note that metis (static) is not available on bionic
-            # which is why we do this
-            foreach(lib ${ceres_lib_names})
-                string(TOUPPER ${lib} LIB)
-                if(EXISTS "${${LIB}_LIB}")
-                    add_library(ceres::${lib} ${LINK_TYPE} IMPORTED)
-                    set_target_properties(ceres::${lib} PROPERTIES IMPORTED_LOCATION "${${LIB}_LIB}")
-                    if(NOT "${lib}" MATCHES "ceres")
-                        target_link_libraries(ceres::ceres INTERFACE ceres::${lib})
-                    endif()
-                    if(NOT "${lib}" MATCHES "ceres|suitesparse")
-                        target_link_libraries(ceres::${lib} INTERFACE ceres::suitesparse)
-                    endif()
-                endif()
-            endforeach()
-            target_include_directories(ceres::ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
-            target_include_directories(ceres::ceres SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
-        endif()
+foreach (tgt glog::glog;gflags::gflags;Eigen3::Eigen)
+    if(NOT TARGET ${tgt})
+        list(APPEND CERES_MISSING_TARGET ${tgt})
     endif()
+endforeach()
+if(CERES_MISSING_TARGET AND DMRG_DOWNLOAD_METHOD MATCHES "conan")
+    message(STATUS "Skipped Ceres: dependencies missing [${CERES_MISSING_TARGETS}]")
+    mark_as_advanced(CERES_MISSING_TARGETS)
+    return()
 endif()
 
 
 
-if(TARGET ceres::ceres OR TARGET ceres)
-elseif(NOT ${DMRG_DOWNLOAD_METHOD} MATCHES "none")
+if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
+    include(cmake-modules/CheckCeresCompiles.cmake)
+
+    # Can't use conda here since they only have shared libraries.
+    # Can't use config-mode on anaconda either since they have weird requirements
+    # on predefined targets for gflags and glog. Therefore -> NO_DEFAULT_PATH
+    find_package(Ceres
+            HINTS ${CMAKE_INSTALL_PREFIX}
+            PATH_SUFFIXES ceres ceres/lib
+            NO_DEFAULT_PATH)
+
+    if(NOT TARGET ceres)
+        message(STATUS "Looking for ceres in system")
+        find_path   (CERES_INCLUDE_DIR        NAMES  ceres/ceres.h                       HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
+        find_path   (SUITESPARSE_INCLUDE_DIR  NAMES  suitesparse/SuiteSparse_config.h    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
+        if(CERES_INCLUDE_DIR AND SUITESPARSE_INCLUDE_DIR)
+            # We may have a chance at finding Ceres in the system
+            find_library(CERES_LIB                NAMES ceres                            HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCERES})
+            find_library(SUITESPARSE_LIB          NAMES suitesparse suitesparseconfig    HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTSUITESPARSE})
+            find_library(CXSPARSE_LIB             NAMES cxsparse                         HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCXSPARSE})
+            find_library(METIS_LIB                NAMES metis metis_static               HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTMETIS})
+            find_library(CHOLMOD_LIB              NAMES cholmod                          HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCHOLMOD})
+            find_library(COLAMD_LIB               NAMES colamd                           HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCOLAMD})
+            find_library(CCOLAMD_LIB              NAMES ccolamd                          HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCCOLAMD})
+            find_library(AMD_LIB                  NAMES amd                              HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTAMD})
+            find_library(CAMD_LIB                 NAMES camd                             HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTCAMD})
+            # Make sure this is the correct linking order
+            set(ceres_lib_names ceres cholmod colamd ccolamd amd camd metis cxsparse suitesparse)
+            # Check that all libs are present before going forward with defining targets
+            foreach(lib ${ceres_lib_names})
+                string(TOUPPER ${lib} LIB)
+                if(NOT EXISTS "${${LIB}_LIB}")
+                    set(CERES_MISSING_LIBS TRUE)
+                    message(STATUS "Missing Ceres dependency in system: ${lib}")
+                endif()
+            endforeach()
+            if(NOT CERES_MISSING_LIBS)
+                # Now we are confident all libraries are in the system. Note that metis (static) is not available on bionic
+                # which is why we do this
+                foreach(lib ${ceres_lib_names})
+                    string(TOUPPER ${lib} LIB)
+                    if(EXISTS "${${LIB}_LIB}")
+                        add_library(ceres::${lib} ${LINK_TYPE} IMPORTED)
+                        set_target_properties(ceres::${lib} PROPERTIES IMPORTED_LOCATION "${${LIB}_LIB}")
+                        if(NOT "${lib}" MATCHES "ceres")
+                            target_link_libraries(ceres::ceres INTERFACE ceres::${lib})
+                        endif()
+                        if(NOT "${lib}" MATCHES "ceres|suitesparse")
+                            target_link_libraries(ceres::${lib} INTERFACE ceres::suitesparse)
+                        endif()
+                    endif()
+                endforeach()
+                target_include_directories(ceres::ceres SYSTEM INTERFACE ${CERES_INCLUDE_DIR})
+                target_include_directories(ceres::ceres SYSTEM INTERFACE ${SUITESPARSE_INCLUDE_DIR})
+            endif()
+        endif()
+    endif()
+    if(TARGET ceres::ceres OR TARGET ceres)
+        message(STATUS "Found Ceres")
+    endif()
+endif()
+
+
+if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
     message(STATUS "Ceres will be installed into ${CMAKE_INSTALL_PREFIX} on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
     list (GET EIGEN3_INCLUDE_DIR 0 EIGEN3_INCLUDE_DIR)
@@ -117,10 +132,8 @@ elseif(NOT ${DMRG_DOWNLOAD_METHOD} MATCHES "none")
     if(TARGET ceres)
         message(STATUS "ceres installed successfully")
     else()
-        message(FATAL_ERROR "ceres could not be downloaded.")
+        message(WARNING "ceres could not be installed")
     endif()
-else()
-    message(FATAL_ERROR "Dependency ceres not found and DMRG_DOWNLOAD_METHOD = ${DMRG_DOWNLOAD_METHOD}")
 endif()
 
 

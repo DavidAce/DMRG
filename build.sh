@@ -132,7 +132,7 @@ for lib in "${clear_libs[@]}"; do
     fi
 done
 
-if [[ ! "$download_method" =~ native|conan|find|none ]]; then
+if [[ ! "$download_method" =~ find|fetch|native|conan ]]; then
     echo "Download method unsupported: $download_method"
     exit 1
 fi

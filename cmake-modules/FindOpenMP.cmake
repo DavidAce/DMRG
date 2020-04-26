@@ -29,7 +29,7 @@ function(check_omp_compiles REQUIRED_FLAGS REQUIRED_LIBRARIES_UNPARSED REQUIRED_
     set(CMAKE_REQUIRED_LIBRARIES "${expanded_libs}") # Can be a ;list
     set(CMAKE_REQUIRED_INCLUDES  "${REQUIRED_INCLUDES};${expanded_incs}") # Can be a ;list
     string(REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${REQUIRED_FLAGS} ${expanded_opts}") # Needs to be a space-separated list
-    if(DMRG_PRINT_INFO)
+    if(DMRG_PRINT_CHECKS)
         message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
         message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
         message(STATUS "OPENMP TEST COMPILE CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
@@ -140,12 +140,12 @@ find_package_handle_standard_args(OpenMP DEFAULT_MSG OMP_COMPILES)
 
 
 
-if(OMP_COMPILES)
+if(OMP_COMPILES AND NOT TARGET openmp::openmp)
     add_library(openmp::openmp INTERFACE IMPORTED)
     if(TARGET OpenMP::OpenMP_CXX)
         target_link_libraries(openmp::openmp INTERFACE OpenMP::OpenMP_CXX)
     else()
-        target_link_libraries(openmp::openmp INTERFACE ${OMP_LIBRARY} pthread rt dl)
+        target_link_libraries(openmp::openmp INTERFACE ${OMP_LIBRARY} Threads::Threads rt dl)
         target_compile_definitions(openmp::openmp INTERFACE -D_OPENMP)
     endif()
 endif()
