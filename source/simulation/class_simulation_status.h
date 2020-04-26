@@ -16,13 +16,12 @@
 class class_simulation_status{
     public:
     // common variables
-    size_t iteration                      = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
+    size_t iter                           = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
     size_t step                           = 0; //How many dmrg steps have been taken (each step may cover multiple sites)
     size_t position                       = 0;
-    size_t moves                          = 0; //In fdmrg and xdmrg: how many individual moves along the chain.
     size_t num_resets                     = 0;
-    size_t num_states                     = 0;  /*!< xDMRG can produce several states per disorder realization. This counts states produced */
-    size_t min_sweeps                     = 0;
+    size_t state_number                   = 0;  /*!< xDMRG can produce several states per disorder realization. This counts states produced */
+    size_t min_iters                      = 0;
     long   chi_max                        = 0;
     long   chi_lim                        = 0;
     double energy_min                     = 0;
