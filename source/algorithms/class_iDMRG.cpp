@@ -6,6 +6,7 @@
 #include <h5pp/h5pp.h>
 #include <tools/infinite/opt.h>
 #include <tools/common/prof.h>
+#include <tools/common/log.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_infinite.h>
 using namespace std;
@@ -13,7 +14,7 @@ using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
     : class_algorithm_infinite(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
-    log->trace("Constructing class_iDMRG");
+    tools::log->trace("Constructing class_iDMRG");
 
 }
 
@@ -21,13 +22,13 @@ class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 
 void class_iDMRG::run_simulation() {
     if (not settings::idmrg::on) { return; }
-    log->info("Starting {} simulation", sim_name);
+    tools::log->info("Starting {} simulation", sim_name);
     while(true){
         single_DMRG_step("SR");
-        write_state();
-        write_measurements();
-        write_sim_status();
-        write_profiling();
+        write_to_file();
+//        write_measurements();
+//        write_sim_status();
+//        write_profiling();
         copy_from_tmp();
         print_status_update();
         check_convergence();
@@ -35,7 +36,7 @@ void class_iDMRG::run_simulation() {
         // It's important not to perform the last swap.
         // That last state would not get optimized
 
-        if (sim_status.iteration >= settings::idmrg::max_steps)  {stop_reason = StopReason::MAX_ITERS; break;}
+        if (sim_status.iter >= settings::idmrg::max_steps)  {stop_reason = StopReason::MAX_ITERS; break;}
         if (sim_status.simulation_has_succeeded)                 {stop_reason = StopReason::SUCCEEDED; break;}
         if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
 
@@ -43,10 +44,10 @@ void class_iDMRG::run_simulation() {
         enlarge_environment();
         update_bond_dimension_limit();
         swap();
-        sim_status.iteration++;
+        sim_status.iter++;
         sim_status.step++;
     }
-    log->info("Finished {} simulation -- reason: {}",sim_name,enum2str(stop_reason));
+    tools::log->info("Finished {} simulation -- reason: {}",sim_name,enum2str(stop_reason));
 }
 
 
@@ -54,7 +55,7 @@ void class_iDMRG::single_DMRG_step(std::string ritz){
 /*!
  * \fn void single_DMRG_step(class_superblock &state)
  */
-    log->trace("Starting infinite DMRG step");
+    tools::log->trace("Starting infinite DMRG step");
     tools::common::profile::t_sim->tic();
     Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
     tools::infinite::opt::truncate_theta(theta, *state);
@@ -67,7 +68,7 @@ void class_iDMRG::single_DMRG_step(std::string ritz){
 
 
 void class_iDMRG::check_convergence(){
-    log->trace("Checking convergence");
+    tools::log->trace("Checking convergence");
     tools::common::profile::t_con->tic();
     check_convergence_entg_entropy();
     check_convergence_variance_mpo();
@@ -89,7 +90,6 @@ void class_iDMRG::check_convergence(){
 
 bool   class_iDMRG::sim_on()   {return settings::idmrg::on;}
 long   class_iDMRG::chi_max()   {return settings::idmrg::chi_max;}
-size_t class_iDMRG::num_sites() {return 2u;}
 size_t class_iDMRG::write_freq(){return settings::idmrg::write_freq;}
 size_t class_iDMRG::print_freq(){return settings::idmrg::print_freq;}
 bool   class_iDMRG::chi_grow()  {return settings::idmrg::chi_grow;}

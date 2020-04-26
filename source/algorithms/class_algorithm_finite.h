@@ -13,7 +13,7 @@ class class_algorithm_finite : public class_algorithm_base {
     public:
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
-    explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type, size_t num_sites);
+    explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type);
 
     // Tables
 //    std::shared_ptr<h5pp_table_measurements_finite> h5pp_measurements; // Written every sweep
@@ -61,22 +61,19 @@ class class_algorithm_finite : public class_algorithm_base {
     void         reset_to_random_product_state(const std::string &parity_sector = "random") final;
     void         reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt) final;
     void         reset_to_initial_state() final;
-    void         write_state        (StorageReason storage_reason = StorageReason::JOURNAL) final;
-    void         write_measurements (StorageReason storage_reason = StorageReason::JOURNAL) final;
-    void         write_sim_status   (StorageReason storage_reason = StorageReason::JOURNAL) final;
-    void         write_profiling    (StorageReason storage_reason = StorageReason::JOURNAL) final;
+    void         write_to_file(StorageReason storage_reason = StorageReason::JOURNAL) final;
     void         copy_from_tmp      (StorageReason storage_reason = StorageReason::JOURNAL) final;
     void         print_status_update() final;
     void         print_status_full() final;
     void         check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);
     void         check_convergence_entg_entropy(double slope_threshold = quietNaN);
-    void         write_projection(const class_state_finite &state_projected, std::string parity_sector);
-
+    void         write_to_file(StorageReason storage_reason, const class_state_finite &state);
+//
     std::list<double> V_mpo_vec;    // History of variances
-    std::list<int>    X_mpo_vec;    // History of moves numbers
+    std::list<size_t> X_mpo_vec;    // History of moves numbers
     std::list<double> V_mpo_slopes; // History of variance slopes
 
     std::vector<std::list<double>> S_mat;
-    std::vector<std::list<int>>    X_mat;
+    std::vector<std::list<size_t>> X_mat;
     std::list<double>              S_slopes; // History of variance slopes
 };
