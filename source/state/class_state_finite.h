@@ -39,10 +39,10 @@ class class_state_finite {
     using MType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using VType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     template<auto rank>
-    using TType                    = Eigen::Tensor<Scalar, rank>;
-    size_t              num_sweeps = 0;
-    size_t              num_moves  = 0;
-    int                 direction  = 1;
+    using TType                   = Eigen::Tensor<Scalar, rank>;
+    size_t              iter      = 0;
+    size_t              step      = 0;
+    int                 direction = 1;
     std::optional<long> chi_lim;
     std::optional<long> chi_max;
 
@@ -65,15 +65,15 @@ class class_state_finite {
     const TType<1> &current_bond() const;
     void            do_all_measurements();
 
-    size_t  get_sweeps() const;
-    size_t  reset_sweeps();
-    void    set_sweeps(int num_sweeps_);
-    void    increment_sweeps();
+    size_t get_iteration() const;
+    size_t reset_iter();
+    void   set_iter(size_t iter_);
+    void   increment_iter();
 
-    size_t  get_moves() const;
-    size_t  reset_moves();
-    void    set_moves(int num_moves_);
-    void    increment_moves();
+    size_t get_step() const;
+    size_t reset_step();
+    void   set_step(size_t step_);
+    void   increment_step();
 
     long                   get_chi_lim() const;
     void                   set_chi_lim(long chi_lim_);
@@ -123,7 +123,7 @@ class class_state_finite {
     // For multisite
     std::list<size_t>      active_sites;
     std::list<size_t>      activate_sites(const long threshold, const size_t max_sites, const size_t min_sites = 2);
-    std::list<size_t>      activate_truncated_sites(const long threshold,const size_t chi_lim, const size_t max_sites, const size_t min_sites = 2);
+    std::list<size_t>      activate_truncated_sites(const long threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites = 2);
     Eigen::DSizes<long, 3> active_dimensions() const;
     size_t                 active_problem_size() const;
 
@@ -150,28 +150,28 @@ class class_state_finite {
     double                     get_truncated_variance() const;
     const std::vector<double> &get_truncated_variances() const;
 
-    size_t                     num_sites_truncated(double threshold = 1e-8) const;
-    size_t                     num_bonds_at_limit() const;
-    bool                       is_bond_limited(double threshold = 1e-8) const;
+    size_t num_sites_truncated(double threshold = 1e-8) const;
+    size_t num_bonds_at_limit() const;
+    bool   is_bond_limited(double threshold = 1e-8) const;
 
     private:
     struct Measurements {
-        std::optional<size_t>              length                        = {};
-        std::optional<size_t>              bond_dimension_midchain       = {};
-        std::optional<size_t>              bond_dimension_current        = {};
-        std::optional<std::vector<size_t>> bond_dimensions               = {};
-        std::optional<double>              norm                          = {};
-        std::optional<double>              energy                        = {};
-        std::optional<double>              energy_per_site               = {};
-        std::optional<double>              energy_variance               = {};
-        std::optional<double>              energy_variance_per_site      = {};
-        std::optional<double>              spin_component_sx             = {};
-        std::optional<double>              spin_component_sy             = {};
-        std::optional<double>              spin_component_sz             = {};
-        std::optional<std::vector<double>> spin_components               = {};
-        std::optional<double>              entanglement_entropy_midchain = {};
-        std::optional<double>              entanglement_entropy_current  = {};
-        std::optional<std::vector<double>> entanglement_entropies        = {};
+        std::optional<size_t>                length                        = {};
+        std::optional<size_t>                bond_dimension_midchain       = {};
+        std::optional<size_t>                bond_dimension_current        = {};
+        std::optional<std::vector<size_t>>   bond_dimensions               = {};
+        std::optional<double>                norm                          = {};
+        std::optional<double>                energy                        = {};
+        std::optional<double>                energy_per_site               = {};
+        std::optional<double>                energy_variance               = {};
+        std::optional<double>                energy_variance_per_site      = {};
+        std::optional<double>                spin_component_sx             = {};
+        std::optional<double>                spin_component_sy             = {};
+        std::optional<double>                spin_component_sz             = {};
+        std::optional<std::array<double, 3>> spin_components               = {};
+        std::optional<double>                entanglement_entropy_midchain = {};
+        std::optional<double>                entanglement_entropy_current  = {};
+        std::optional<std::vector<double>>   entanglement_entropies        = {};
     };
 
     public:
