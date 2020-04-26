@@ -28,24 +28,25 @@ class class_tic_toc {
     hresclock::duration delta_time;
     hresclock::duration measured_time;
 
-    void        set_properties(bool on_off, int prec, std::string output_text);
-    void        set_label(std::string output_text);
-    void        set_time(double measured_time);
-    std::string get_name() const;
-    double      get_age() const;
-    double      get_last_time_interval() const ;
-    double      get_measured_time() const;
-    double      get_measured_time_and_reset();
+    void                      set_properties(bool on_off, int prec, std::string output_text);
+    void                      set_label(std::string output_text);
+    void                      set_time(double measured_time);
+    void                      print_age() const;
+    void                      print_measured_time() const;
+    void                      print_last_time_interval() const;
+    void                      print_measured_time_w_percent(double cmp = std::numeric_limits<double>::quiet_NaN()) const;
+    [[nodiscard]] std::string get_name() const;
+    [[nodiscard]] double      get_age() const;
+    [[nodiscard]] double      get_measured_time() const;
+    [[nodiscard]] double      get_last_time_interval() const;
+    [[nodiscard]] std::string string(double tgt = std::numeric_limits<double>::quiet_NaN(), double cmp = std::numeric_limits<double>::quiet_NaN()) const;
+    [[nodiscard]] std::string string_age() const;
+    [[nodiscard]] std::string string_measured_time() const;
+    [[nodiscard]] std::string string_last_time_interval() const;
+    [[nodiscard]] std::string string_measured_time_w_percent(double cmp = std::numeric_limits<double>::quiet_NaN()) const;
 
-    void print_age() const;
-    void print_measured_time() const;
-    void print_measured_time_and_reset();
-    void print_last_time_interval() const;
-    void print_measured_time_w_percent() const;
-    void print_measured_time_w_percent(class_tic_toc &parent) const;
-    void print_measured_time_w_percent_if_nonzero(class_tic_toc &parent) const;
     void reset();
 
-    class_tic_toc & operator= (double measured_time);
+    class_tic_toc &      operator=(double measured_time);
     friend std::ostream &operator<<(std::ostream &, const class_tic_toc &);
 };
