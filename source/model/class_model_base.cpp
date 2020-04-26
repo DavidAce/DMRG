@@ -96,16 +96,19 @@ void class_model_base::print_parameter_values() const {
     std::cout << std::endl;
 }
 //
-const std::any &class_model_base::find_val(const Parameters &parameters, std::string_view key) const {
-    for(auto &param : parameters) {
-        if(key == param.first) return param.second;
-    }
-    throw std::runtime_error("No parameter named [" + std::string(key) + "]");
-}
+//const std::any &class_model_base::find_val(const Parameters &parameters, std::string_view key) const {
+//    for(auto &param : parameters) {
+//        if(key == param.first) return param.second;
+//    }
+//    throw std::runtime_error("No parameter named [" + std::string(key) + "]");
+//}
+//
+//std::any &class_model_base::find_val(Parameters &parameters, std::string_view key) const {
+//    for(auto &param : parameters) {
+//        if(key == param.first) return param.second;
+//    }
+//    throw std::runtime_error("No parameter named [" + std::string(key) + "]");
+//}
+//
+//
 
-std::any &class_model_base::find_val(Parameters &parameters, std::string_view key) const {
-    for(auto &param : parameters) {
-        if(key == param.first) return param.second;
-    }
-    throw std::runtime_error("No parameter named [" + std::string(key) + "]");
-}
