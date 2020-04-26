@@ -1,16 +1,26 @@
 function(get_num_threads num_threads)
-    cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
-    if(${_host_name} MATCHES "travis|TRAVIS|Travis|fv-")
-        message(STATUS "Using make -j 2 (ci)")
-        set(${num_threads} 2 PARENT_SCOPE)
-        return()
-    endif()
+
     if(CMAKE_BUILD_PARALLEL_LEVEL)
         message(STATUS "Using make -j ${CMAKE_BUILD_PARALLEL_LEVEL} (as defined in CMAKE_BUILD_PARALLEL_LEVEL)")
         set(${num_threads} ${CMAKE_BUILD_PARALLEL_LEVEL} PARENT_SCOPE)
         set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${CMAKE_BUILD_PARALLEL_LEVEL})
         return()
     endif()
+    if($ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+        message(STATUS "Using make -j $ENV{CMAKE_BUILD_PARALLEL_LEVEL} (as defined in ENV CMAKE_BUILD_PARALLEL_LEVEL)")
+        set(${num_threads} $ENV{CMAKE_BUILD_PARALLEL_LEVEL} PARENT_SCOPE)
+        set(${CMAKE_BUILD_PARALLEL_LEVEL} $ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+        return()
+    endif()
+
+
+    cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
+    if(${_host_name} MATCHES "travis|TRAVIS|Travis|fv-")
+        message(STATUS "Using make -j 2 (ci)")
+        set(${num_threads} 2 PARENT_SCOPE)
+        return()
+    endif()
+
 
     if(${_host_name} MATCHES "ThinkStation")
         message(STATUS "Using make -j 8 (${_host_name})")
