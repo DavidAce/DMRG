@@ -11,9 +11,9 @@ class class_state_finite;
 namespace tools::finite::mps {
     using Scalar = std::complex<double>;
 
-    extern void initialize                          (class_state_finite & state, size_t length,const std::string &model_type);
+    extern void initialize                          (class_state_finite & state, const std::string &model_type, size_t num_sites, size_t position);
     extern void normalize                           (class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt,std::optional<double> svd_threshold = std::nullopt);
-    extern void random_product_state                (class_state_finite & state, const std::string &parity_sector, const long state_number, const bool use_pauli_eigenstates = false);
+    extern void random_product_state                (class_state_finite & state, const std::string & parity_sector, const long state_number, const bool use_pauli_eigenstates = false);
     extern void random_current_state                (class_state_finite & state, const std::string & parity_sector1, const std::string & parity_sector2);
     extern void rebuild_environments                (class_state_finite & state);
     extern void move_center_point                   (class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt); /*!< Move current position to the left (`direction=1`) or right (`direction=-1`), and store the **newly enlarged** environment. Turn direction around if the edge is reached. */
