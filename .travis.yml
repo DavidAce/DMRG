@@ -10,7 +10,7 @@ branches:
 matrix:
   fast_finish: true
   include:
-    - name: "xenial gcc-7"
+    - name: "xenial gcc-7 | static | find-or-fetch"
       dist: xenial
       os: linux
       compiler: gcc
@@ -18,7 +18,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -29,7 +29,7 @@ matrix:
             - g++-7
             - gfortran-7
 
-    - name: "xenial gcc-8"
+    - name: "xenial gcc-8 | static | find-or-fetch"
       dist: xenial
       os: linux
       compiler: gcc
@@ -37,7 +37,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -49,7 +49,7 @@ matrix:
             - gfortran-8
 
 
-    - name: "xenial clang-7"
+    - name: "xenial clang-7 | static | find-or-fetch"
       dist: xenial
       os: linux
       compiler: clang
@@ -57,7 +57,7 @@ matrix:
         - CXX=clang++-7
         - CC=clang-7
         - FC=gfortran-8
-        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -72,7 +72,7 @@ matrix:
             - gfortran-8
 
 
-    - name: "xenial gcc-7 (apt libs)"
+    - name: "xenial gcc-7 | static |  apt | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: xenial
       os: linux
@@ -81,7 +81,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -105,7 +105,7 @@ matrix:
             - libunwind-dev
             - lzma
 
-    - name: "bionic gcc-8 (apt libs)"
+    - name: "bionic gcc-8 | static | apt | find-or-fetch"
       dist: bionic
       os: linux
       compiler: gcc
@@ -113,7 +113,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-method=native --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -137,7 +137,7 @@ matrix:
             - libunwind-dev
             - lzma
 
-    - name: "bionic gcc-7 (conda-forge libs)"
+    - name: "bionic gcc-7 | static | conda-forge | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
@@ -146,7 +146,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-method=native --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -166,14 +166,14 @@ matrix:
         - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
-    - name: "bionic clang-7 (conda-forge libs)"
+    - name: "bionic clang-7 | static | conda-forge | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: clang
       env:
         - FC=gfortran-8
-        - FLAGS="--download-method=native --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -193,14 +193,14 @@ matrix:
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
 
-    - name: "bionic clang (conda-forge libs) (shared)"
+    - name: "bionic clang | shared | conda-forge | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: clang
       env:
         - FC=gfortran-8
-        - FLAGS="--download-method=native --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
       addons:
         apt:
           update: true
@@ -220,7 +220,7 @@ matrix:
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
 
 
-    - name: "bionic clang conan + conda-forge libs"
+    - name: "bionic clang | static | conda-forge | conan"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux

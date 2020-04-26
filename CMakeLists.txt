@@ -21,7 +21,7 @@ option(DMRG_PRINT_INFO               "Print information during cmake configure" 
 
 # Make an "enum" for valid download methods
 set(DMRG_DOWNLOAD_METHODS_VALID find fetch native conan find-or-fetch find-or-conan)
-set(DMRG_DOWNLOAD_METHOD none CACHE STRING "Download method for external dependencies")
+set(DMRG_DOWNLOAD_METHOD find CACHE STRING "Download method for external dependencies")
 set_property(CACHE DMRG_DOWNLOAD_METHOD PROPERTY STRINGS ${DMRG_DOWNLOAD_METHODS_VALID})
 if (NOT DMRG_DOWNLOAD_METHOD IN_LIST DMRG_DOWNLOAD_METHODS_VALID)
     message(FATAL_ERROR "DMRG_DOWNLOAD_METHOD must be one of ${DMRG_DOWNLOAD_METHODS_VALID}")
