@@ -6,7 +6,7 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
     if (bfgs_log.empty()) return;
     std::string format_hdr = "{:<24} {:<7} {:<7} {:<20} {:<12} {:<18} {:<18} {:<5} {:<7} {:<18} {:<18}";
     std::string format_num = "- {:<22} {:<7} {:<7} {:<20.16f} {:<12.8f} {:<18.16f} {:<18.16f} {:<5} {:<7} {:<18.4f} {:<18.4f}";
-    tools::log->debug(format_hdr,
+    tools::log->debug(format_hdr.c_str(),
                       "Algorithm",
                       "size",
                       "rank",
@@ -20,7 +20,7 @@ void tools::finite::opt::internal::reports::print_bfgs_report(){
                       "Time per count [ms]");
 
     for(auto &item : bfgs_log){
-        tools::log->debug(format_num,
+        tools::log->debug(format_num.c_str(),
         std::get<0>(item),
         std::get<1>(item),
         std::get<2>(item),
@@ -41,7 +41,7 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
     if (eigs_log.empty()) return;
     std::string format_hdr = "- {:<5} {:<22} {:<22} {:<23} {:<12} {:<12} {:<12}"; //Thetas are not counted
     std::string format_num = "- {:<5} {:<20.16f} {:<20.16f} {:<21.8f} {:<12.3f} {:<12.3f} {:<12.3f}";
-    tools::log->debug(format_hdr,
+    tools::log->debug(format_hdr.c_str(),
                        "nev",
                        "max <θ_i|θ>",
                        "min <θ_i|θ>",
@@ -51,7 +51,7 @@ void tools::finite::opt::internal::reports::print_eigs_report(){
                        "LU Time[ms]");
 
     for(auto &item : eigs_log){
-        tools::log->debug(format_num,
+        tools::log->debug(format_num.c_str(),
                           std::get<0>(item),
                           std::get<1>(item),
                           std::get<2>(item),
@@ -71,7 +71,7 @@ void tools::finite::opt::internal::reports::print_time_report(){
     if(time_log.empty()) return;
     std::string format_hdr = "LBFGS Time report [ms] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}";
     std::string format_num = "                       {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f} {:<10.3f}";
-    tools::log->debug(format_hdr,
+    tools::log->debug(format_hdr.c_str(),
                       "vH2v",
                       "vHv",
                       "vH2",
@@ -79,7 +79,7 @@ void tools::finite::opt::internal::reports::print_time_report(){
                       "tot",
                       "op");
     for(auto &item : time_log){
-    tools::log->debug(format_num,
+    tools::log->debug(format_num.c_str(),
                      1000 * std::get<0>(item),
                      1000 * std::get<1>(item),
                      1000 * std::get<2>(item),

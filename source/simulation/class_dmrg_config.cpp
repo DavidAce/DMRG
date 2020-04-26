@@ -15,7 +15,7 @@ class_dmrg_config::class_dmrg_config(const fs::path &cfg_or_h5_file) {
 
 void class_dmrg_config::load() {
     // Extract the parameters and generate a key-value map
-    if(not file_exists) return tools::log->error("Can't load config file [{}]: it does not exist", file_path);
+    if(not file_exists) return tools::log->error("Can't load config file [{}]: it does not exist", file_path.string());
     if(not param_map.empty()) return;
 
     std::istringstream file_stream(get_config_file_as_string());
@@ -49,7 +49,7 @@ std::string class_dmrg_config::get_config_file_as_string() {
         try {
             file.open(file_path);
         } catch(std::exception &ex) {
-            throw std::runtime_error(fmt::format("Could not open file [ {} ]: {}", file_path, ex.what()));
+            throw std::runtime_error(fmt::format("Could not open file [ {} ]: {}", file_path.string(), ex.what()));
         }
         if(file.is_open()) {
             file.clear();
@@ -61,7 +61,7 @@ std::string class_dmrg_config::get_config_file_as_string() {
         h5pp::File file(file_path.string(), h5pp::FilePermission::READONLY);
         return file.readDataset<std::string>("common/config_file_contents");
     } else {
-        throw std::runtime_error(fmt::format("Tried to read config from file with unknown extension [{}], expected .h5 or .cfg", file_path.filename()));
+        throw std::runtime_error(fmt::format("Tried to read config from file with unknown extension [{}], expected .h5 or .cfg", file_path.filename().string()));
     }
     return std::string();
 }
