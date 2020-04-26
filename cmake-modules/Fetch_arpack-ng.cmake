@@ -1,10 +1,13 @@
-find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX}/arpack-ng)
+include(GNUInstallDirs)
+unset(arpack_ng_LIBRARIES)
+unset(arpack_ng_INCLUDE_DIRS)
+find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX} PATH_SUFFIXES lib lib/cmake arpack-ng/${CMAKE_INSTALL_LIBDIR} NO_DEFAULT_PATH )
 if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
+    message(STATUS "Found arpack-ng")
     add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
     set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${arpack_ng_LIBRARIES}")
     target_include_directories(arpack::arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
     target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack gfortran::gfortran)
-
 endif()
 
 if (NOT TARGET arpack::arpack)
@@ -56,41 +59,24 @@ if(NOT TARGET arpack::arpack)
 
     ####################################################################
     set(ARPACK_FLAGS "-w -m64 -fPIC")
-    include(ExternalProject)
-    include(GNUInstallDirs)
-    ExternalProject_Add(external_ARPACK
-            GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
-#            GIT_TAG             master
-            GIT_TAG             3.7.0
-            GIT_PROGRESS false
-            GIT_SHALLOW true
-            PREFIX      ${CMAKE_BINARY_DIR}/dmrg-deps-build/arpack-ng
-            INSTALL_DIR ${CMAKE_BINARY_DIR}/dmrg-deps-install/arpack-ng
-            UPDATE_COMMAND ""
-            BUILD_IN_SOURCE 1
-            CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
-            CMAKE_ARGS
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-            -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
-            -DCMAKE_C_FLAGS=${ARPACK_FLAGS}
-            -DCMAKE_Fortran_FLAGS=${ARPACK_FLAGS}
-            -DEXAMPLES=OFF
-            -DMPI=OFF
-            -DINTERFACE64=OFF
-            -DBLAS_LIBRARIES=${EXPANDED_BLAS_GENERATOR}
-            -DLAPACK_LIBRARIES=${EXPANDED_LAPACK_GENERATOR}
-            DEPENDS blas::blas lapack::lapack gfortran::gfortran
-            BUILD_BYPRODUCTS <INSTALL_DIR>/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX}
-            )
-    ExternalProject_Get_Property(external_ARPACK INSTALL_DIR)
-    set(ARPACK_LIBRARIES ${INSTALL_DIR}/${CMAKE_INSTALL_LIBDIR}/libarpack${ARPACK_SUFFIX})
-    set(ARPACK_INCLUDE_DIRS ${INSTALL_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
+    message(STATUS "arpack-ng will be installed into ${CMAKE_INSTALL_PREFIX}")
+    include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
+    list(APPEND ARPACK_CMAKE_OPTIONS   -DARPACK_FLAGS=${ARPACK_FLAGS})
+    list(APPEND ARPACK_CMAKE_OPTIONS   -DBLAS_LIBRARIES=${EXPANDED_BLAS_GENERATOR})
+    list(APPEND ARPACK_CMAKE_OPTIONS   -DLAPACK_LIBRARIES=${EXPANDED_LAPACK_GENERATOR})
+    mark_as_advanced(ARPACK_CMAKE_OPTIONS)
+    build_dependency(arpack-ng "${CMAKE_INSTALL_PREFIX}/arpack-ng" "${ARPACK_CMAKE_OPTIONS}")
 
-    add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
-    set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${ARPACK_LIBRARIES}")
-    target_include_directories(arpack::arpack SYSTEM INTERFACE ${ARPACK_INCLUDE_DIRS})
-    target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack gfortran::gfortran)
-    add_dependencies(arpack::arpack external_ARPACK)
+    find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX} PATH_SUFFIXES lib lib/cmake arpack-ng/${CMAKE_INSTALL_LIBDIR} REQUIRED NO_DEFAULT_PATH )
+    if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
+        message(STATUS "Successfully installed arpack-ng")
+        message(STATUS "arpack_ng_LIBRARIES     : ${arpack_ng_LIBRARIES}")
+        message(STATUS "arpack_ng_INCLUDE_DIRS  : ${arpack_ng_INCLUDE_DIRS}")
+        add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
+        set_target_properties(arpack::arpack PROPERTIES IMPORTED_LOCATION "${arpack_ng_LIBRARIES}")
+        target_include_directories(arpack::arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
+        target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack gfortran::gfortran)
+    else()
+        message(FATAL_ERROR "arpack-ng could not be downloaded.")
+    endif()
 endif()
