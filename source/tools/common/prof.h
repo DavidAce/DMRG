@@ -26,7 +26,7 @@ namespace tools::common::profile{
     inline std::unique_ptr<class_tic_toc> t_var_ham;
     inline std::unique_ptr<class_tic_toc> t_var_mom;
     inline std::unique_ptr<class_tic_toc> t_ham;
-    inline std::unique_ptr<class_tic_toc> t_ham_sq;
+    inline std::unique_ptr<class_tic_toc> t_hsq;
     inline std::unique_ptr<class_tic_toc> t_mpo ;
     inline std::unique_ptr<class_tic_toc> t_vH2v;
     inline std::unique_ptr<class_tic_toc> t_vHv ;
@@ -37,4 +37,12 @@ namespace tools::common::profile{
 
     extern void print_profiling();
     extern void init_profiling();
+
+    extern void print_mem_usage();
+
+    extern double mem_usage_in_mb(std::string_view name);
+    extern double mem_rss_in_mb();
+    extern double mem_hwm_in_mb();
+    extern double mem_vm_in_mb();
+
 }
