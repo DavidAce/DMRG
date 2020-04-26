@@ -11,7 +11,7 @@
 Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(const class_state_finite & state){
     auto mpo = state.get_multimpo();
     tools::common::profile::t_ham->tic();
-    tools::log->trace("Contracting multisite hamiltonian...");
+    tools::log->trace("Contracting multisite hamiltonian");
     auto & envL = state.get_ENVL(state.active_sites.front());
     auto & envR = state.get_ENVR(state.active_sites.back());
     if (envL.get_position() != state.active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", envL.get_position() , state.active_sites.front()));
@@ -28,7 +28,6 @@ Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamilt
                     .contract(mpo           , Textra::idx({2},{0}))
                     .contract(envR.block    , Textra::idx({2},{2}))
                     .shuffle(Textra::array6{2,0,4,3,1,5});
-    tools::log->trace("Contracting multisite hamiltonian... OK");
     auto cols       = ham.dimension(0)* ham.dimension(1)* ham.dimension(2);
     auto rows       = ham.dimension(3)* ham.dimension(4)* ham.dimension(5);
     long size       = state.active_problem_size();
@@ -49,8 +48,8 @@ Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamilt
 
 Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(const class_state_finite & state) {
     auto mpo = state.get_multimpo();
-    tools::common::profile::t_ham_sq->tic();
-    tools::log->trace("Contracting multisite hamiltonian squared...");
+    tools::common::profile::t_hsq->tic();
+    tools::log->trace("Contracting multisite hamiltonian squared");
     auto & env2L = state.get_ENV2L(state.active_sites.front());
     auto & env2R = state.get_ENV2R(state.active_sites.back());
     if (env2L.get_position() != state.active_sites.front()) throw std::runtime_error(fmt::format("Mismatch in ENVL and active site positions: {} != {}", env2L.get_position() , state.active_sites.front()));
@@ -67,8 +66,6 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hami
                     .contract(mpo             , Textra::idx({5,2},{2,0}))
                     .contract(env2R.block     , Textra::idx({2,4},{2,3}))
                     .shuffle(Textra::array6{2,0,4,3,1,5});
-    tools::log->trace("Contracting multisite hamiltonian squared... OK");
-
     auto cols       = ham_sq.dimension(0)* ham_sq.dimension(1)* ham_sq.dimension(2);
     auto rows       = ham_sq.dimension(3)* ham_sq.dimension(4)* ham_sq.dimension(5);
     long size = state.active_problem_size();
@@ -83,7 +80,7 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hami
     if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
     if(ham_sq_map.hasNaN())     throw std::runtime_error("multisite hamiltonian squared has NaN's!");
     tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity*100);
-    tools::common::profile::t_ham_sq->toc();
+    tools::common::profile::t_hsq->toc();
     return ham_sq;
 }
 
@@ -105,11 +102,11 @@ Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_ham
 
 Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs ){
     auto mpo = state.get_multimpo();
-    tools::common::profile::t_ham_sq->tic();
+    tools::common::profile::t_hsq->tic();
     auto & env2L = state.get_ENV2L(state.active_sites.front()).block;
     auto & env2R = state.get_ENV2R(state.active_sites.back()).block;
 
-    tools::log->trace("Contracting subspace hamiltonian squared new...");
+    tools::log->trace("Contracting subspace hamiltonian squared new");
     auto dims = state.active_dimensions();
     size_t log2chiL  = std::log2(dims[1]);
     size_t log2chiR  = std::log2(dims[2]);
@@ -181,8 +178,6 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     }
 
     H2 = H2.selfadjointView<Eigen::Lower>();
-    tools::log->trace("Contracting subspace hamiltonian squared new... OK");
-
     double non_hermiticity = (H2 - H2.adjoint()).cwiseAbs().sum()/H2.size();
     double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
 
@@ -190,7 +185,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
     if(H2.hasNaN())     throw std::runtime_error("subspace hamiltonian squared has NaN's!");
     tools::log->trace("multisite hamiltonian squared nonzeros: {:.8f} %", sparcity*100);
-    tools::common::profile::t_ham_sq->toc();
+    tools::common::profile::t_hsq->toc();
     return H2;
 
 }
@@ -200,7 +195,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
 Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_subspace_matrix(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs ){
 //    if(cache.multiham_sq_sub) return cache.multiham_sq_sub.value();
     auto mpo = state.get_multimpo();
-    tools::log->trace("Contracting hamiltonian squared matrix in subspace old...");
+    tools::log->trace("Contracting hamiltonian squared matrix in subspace old");
     auto dims = state.active_dimensions();
     Eigen::DSizes<long,4> eigvecs_dims {dims[0],dims[1],dims[2],eigvecs.cols()};
     auto eigvecs_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(eigvecs.data(), eigvecs_dims );
@@ -255,8 +250,6 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                     .contract(env2R,                      Textra::idx({0,4,2,3},{0,1,2,3}))
                     .shuffle(                             Textra::array2{1,0});
     }
-    tools::log->trace("Contracting hamiltonian squared matrix in subspace old... OK");
-
     auto H2_map = Eigen::Map<Eigen::MatrixXcd>(H2.data(),H2.dimension(0),H2.dimension(1));
     double non_hermiticity = (H2_map - H2_map.adjoint()).cwiseAbs().sum()/H2.size();
     double sparcity = (H2_map.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
