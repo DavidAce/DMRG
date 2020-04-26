@@ -3,10 +3,9 @@
 //
 
 #pragma once
-#include <general/nmspc_tensor_omp.h>
 #include <complex>
+#include <general/nmspc_tensor_omp.h>
 #include <vector>
-
 
 /* clang-format off */
 class class_state_finite;
@@ -27,7 +26,7 @@ namespace tools::finite::measure{
     extern double entanglement_entropy_current                (const class_state_finite & state);
     extern double entanglement_entropy_midchain               (const class_state_finite & state);
     extern std::vector<double> entanglement_entropies         (const class_state_finite & state);
-    extern std::vector<double> spin_components                (const class_state_finite & state);
+    extern std::array<double,3> spin_components               (const class_state_finite & state);
 
     namespace twosite{
         extern double energy_minus_energy_reduced                 (const class_state_finite & state, const Eigen::Tensor<Scalar,4> & theta);
