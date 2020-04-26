@@ -59,7 +59,6 @@ endif()
 
 
 if(TARGET ceres::ceres OR TARGET ceres)
-    message(STATUS "ceres found")
 elseif(NOT ${DMRG_DOWNLOAD_METHOD} MATCHES "none")
     message(STATUS "Ceres will be installed into ${CMAKE_INSTALL_PREFIX} on first build.")
     get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
