@@ -10,9 +10,13 @@
 #include <tools/finite/ops.h>
 #include <tools/finite/debug.h>
 
-void tools::finite::mps::initialize(class_state_finite &state, const size_t length,const std::string &model_type){
-    log->info("Initializing mps");
-    using Scalar = class_state_finite::Scalar;
+void tools::finite::mps::initialize(class_state_finite &state, const std::string &model_type, size_t num_sites, size_t position){
+
+    log->info("Initializing mps with {} sites at position {}", num_sites,position);
+    if (num_sites < 2    )      throw std::logic_error("Tried to initialize MPS with less than 2 sites");
+    if (num_sites > 2048 )      throw std::logic_error("Tried to initialize MPS with more than 2048 sites");
+    if (position >= num_sites ) throw std::logic_error("Tried to initialize MPS at a position larger than the number of sites");
+
     size_t spin_dim = 2; //Default is a two-level system
     if(model_type == "tf_ising")
         spin_dim = settings::model::tf_ising::d;
@@ -21,6 +25,8 @@ void tools::finite::mps::initialize(class_state_finite &state, const size_t leng
     if(model_type == "selfdual_tf_rf_ising")
         spin_dim = settings::model::selfdual_tf_rf_ising::d;
 
+    state.MPS_L.clear();
+    state.MPS_R.clear();
 
     //Generate a simple MPS with all spins equal
     Eigen::Tensor<Scalar,3> M(spin_dim,1,1);
@@ -28,14 +34,19 @@ void tools::finite::mps::initialize(class_state_finite &state, const size_t leng
     M(0,0,0) = 0;
     M(1,0,0) = 1;
     L(0) = 1;
-    size_t pos = 0;
-    state.MPS_L.emplace_back(class_mps_site(M, L, pos++));
-    state.MPS_L.back().set_LC(L);
-    while(true){
-        state.MPS_R.emplace_back(class_mps_site(M, L, pos++));
-        if(state.MPS_L.size() + state.MPS_R.size() >= length){break;}
+    for(size_t site = 0; site < num_sites; site++){
+        if(site <= position){
+            state.MPS_L.emplace_back(class_mps_site(M, L, site));
+            if(site == position) state.MPS_L.back().set_LC(L);
+        }else{
+            state.MPS_R.emplace_back(class_mps_site(M, L, site));
+        }
     }
-    state.site_update_tags = std::vector<bool>(length,false);
+    if(state.MPS_L.size() + state.MPS_R.size() != num_sites) throw std::logic_error("Initialized MPS with wrong size");
+    if(not state.get_MPS(position).isCenter()) throw std::logic_error("Initialized center matrix at the wrong position");
+    if(state.get_position() != position) throw std::logic_error("Initialized MPS at the wrong position");
+
+    state.site_update_tags = std::vector<bool>(num_sites,false);
 }
 
 
