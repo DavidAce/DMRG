@@ -6,22 +6,38 @@
 #include <tools/infinite/measure.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
+#include <tools/common/prof.h>
+#include <model/class_model_base.h>
 #include <state/class_state_infinite.h>
 #include <io/table_types.h>
 #include <h5pp/h5pp.h>
 
-void tools::infinite::io::h5table::write_measurements(h5pp::File & h5ppFile, const std::string & path, const StorageLevel & storage_level, const class_simulation_status & sim_status, const class_state_infinite & state) {
-    if(storage_level == StorageLevel::NONE) return;
-    log->trace("Appending measurement entry to table: {}...", path);
-    h5pp_table_measurements_infinite::register_table_type();
-    if(not h5ppFile.linkExists(path))
-        h5ppFile.createTable(h5pp_table_measurements_infinite::h5_type, path, "measurements");
+/*! Write down the Hamiltonian model type and site info as attributes */
+void tools::infinite::io::h5table::write_model(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel & storage_level, const class_state_infinite & state) {
+    if(storage_level < StorageLevel::LIGHT) return;
+    tools::log->trace("Writing Hamiltonian model");
+    tools::common::profile::t_hdf->tic();
+    std::string table_name = prefix + "/model/Hamiltonian";
+    state.HA->write_parameters(h5ppFile,table_name);
+    state.HB->write_parameters(h5ppFile,table_name);
+    h5ppFile.writeAttribute(settings::model::model_type, "model_type", prefix + "/model/Hamiltonian");
+    h5ppFile.writeAttribute(state.get_length(),"sites",  prefix + "/model/Hamiltonian");
+    tools::common::profile::t_hdf->toc();
+}
 
-    h5pp_table_measurements_infinite::table measurement_entry;
-    measurement_entry.step                            = sim_status.step;
-    measurement_entry.iteration                       = sim_status.iteration;
-    measurement_entry.position                        = sim_status.position;
-    measurement_entry.length                          = tools::infinite::measure::length(state);
+
+void tools::infinite::io::h5table::write_measurements(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel & storage_level, const class_simulation_status & sim_status, const class_state_infinite & state) {
+    if(storage_level == StorageLevel::NONE) return;
+    log->trace("Appending measurement entry to table: {}", prefix);
+    h5pp_table_measurements_infinite::register_table_type();
+    if(not h5ppFile.linkExists(prefix))
+        h5ppFile.createTable(h5pp_table_measurements_infinite::h5_type, prefix, "measurements");
+
+    h5pp_table_measurements_infinite::table measurement_entry{};
+    measurement_entry.step                            = (uint64_t) sim_status.step;
+    measurement_entry.iter                            = (uint64_t) sim_status.iter;
+    measurement_entry.position                        = (uint64_t) sim_status.position;
+    measurement_entry.length                          = (uint64_t) tools::infinite::measure::length(state);
     measurement_entry.bond_dimension                  = tools::infinite::measure::bond_dimension(state);
     measurement_entry.bond_dimension_limit            = state.get_chi_lim();
     measurement_entry.bond_dimension_maximum          = state.get_chi_max();
@@ -39,8 +55,7 @@ void tools::infinite::io::h5table::write_measurements(h5pp::File & h5ppFile, con
     measurement_entry.wall_time                       = sim_status.wall_time;
     measurement_entry.phys_time                       = sim_status.phys_time;
     measurement_entry.time_step                       = sim_status.delta_t;
-    h5ppFile.appendTableEntries(measurement_entry, path);
-    log->trace("Appending measurement entry to table: {}... OK", path);
+    h5ppFile.appendTableEntries(measurement_entry, prefix);
 }
 
 
