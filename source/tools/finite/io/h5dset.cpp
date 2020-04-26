@@ -5,84 +5,99 @@
 #include <tools/finite/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
+#include <tools/finite/measure.h>
 #include <h5pp/h5pp.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <general/nmspc_tensor_extra.h>
 #include <model/class_model_factory.h>
 #include <simulation/class_simulation_status.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
-#include <state/class_state_infinite.h>
-#include <stdexcept>
-
+#include <regex>
 using Scalar = std::complex<double>;
 
 H5D_layout_t decide_layout(std::string_view prefix_path) {
-    if(prefix_path.find("/log") != std::string::npos) // A logged dataset is not supposed to be chunked, just written once.
+    std::string str(prefix_path);
+    std::regex rx(R"(journal/iter_[0-9])"); // Declare the regex with a raw string literal
+    std::smatch m;
+    if (regex_search(str, m, rx))
         return H5D_CONTIGUOUS;
     else
         return H5D_CHUNKED;
 }
 
-void tools::finite::io::h5dset::write_all_state(h5pp::File & h5ppFile, const std::string &path, const StorageLevel & storage_level, const class_state_finite & state) {
-    tools::log->trace("Writing state to path: {}...", path + "/state");
-    write_bond_matrix(h5ppFile,path, storage_level,state);
-    write_bond_matrices(h5ppFile,path, storage_level,state);
-    h5ppFile.writeDataset(state.get_length(), path + "/state/sites");
-    h5ppFile.writeDataset(state.get_position(), path + "/state/position");
-    h5ppFile.writeDataset(state.get_truncation_error_midchain(), path + "/state/truncation_error_midchain");
-    h5ppFile.writeDataset(state.get_truncation_error(), path + "/state/truncation_error_current");
-    write_full_mps(h5ppFile,path, storage_level,state);
-    write_full_mpo(h5ppFile,path, storage_level,state);
-    tools::log->trace("Writing state to datasets in path: {}... OK", path + "/state");
+void tools::finite::io::h5dset::write_all(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel & storage_level, const class_state_finite & state) {
+    if(storage_level == StorageLevel::NONE) return;
+
+    tools::log->trace("Writing {} state to prefix: {}", enum2str(storage_level), prefix);
+    write_mps(h5ppFile, prefix, storage_level, state);
+    write_mpo(h5ppFile, prefix, storage_level, state);
 }
 
-/*! Writes down all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily. */
-void tools::finite::io::h5dset::write_bond_matrices(h5pp::File & h5ppFile, const std::string &path, const StorageLevel & storage_level, const class_state_finite & state){
+void tools::finite::io::h5dset::write_mps(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel & storage_level, const class_state_finite & state){
+    if(storage_level < StorageLevel::LIGHT) return;
+    /*! Writes down midchain and/or all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily. */
+    tools::log->trace("Writing mid bond matrix");
     tools::common::profile::t_hdf->tic();
-    H5D_layout_t layout = decide_layout(path);
+    H5D_layout_t layout = decide_layout(prefix);
+    /*! Writes down the center "Lambda" bond matrix (singular values). */
+    std::string dsetName = prefix + "/schmidt_midchain";
+    h5ppFile.writeDataset(state.midchain_bond(), dsetName , layout);
+    h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error" , dsetName);
+    h5ppFile.writeAttribute((state.get_length()-1) / 2, "position" , dsetName);
+    h5ppFile.writeAttribute(state.get_iteration(), "iteration", dsetName);
+    h5ppFile.writeAttribute(state.get_step(), "step", dsetName);
+    h5ppFile.writeAttribute(state.get_chi_lim(),"chi_lim",dsetName);
+    h5ppFile.writeAttribute(state.get_chi_max(),"chi_max",dsetName);
+    tools::common::profile::t_hdf->toc();
+
+
+    if(storage_level < StorageLevel::NORMAL) return;
+    tools::log->trace("Writing all bond matrices");
+    tools::common::profile::t_hdf->tic();
     size_t count = 0; // There should be one more sites+1 number of L's, because there is also a center bond
     for(size_t i = 0; i < state.get_length(); i++) {
-        h5ppFile.writeDataset(state.get_MPS(i).get_L(), path + "/state/mps/L_" + std::to_string(count++), layout);
-        if(state.get_MPS(i).isCenter())
-            h5ppFile.writeDataset(state.get_MPS(i).get_LC(), path + "/state/mps/L_" + std::to_string(count++), layout);
+        dsetName = prefix + "/mps/L_" + std::to_string(count++);
+        h5ppFile.writeDataset(state.get_MPS(i).get_L(),dsetName , layout);
+        h5ppFile.writeAttribute(state.get_truncation_error(i), "truncation_error" , dsetName);
+        h5ppFile.writeAttribute(i, "position" , dsetName);
+        if(state.get_MPS(i).isCenter()){
+            dsetName = prefix + "/mps/L_C";
+            h5ppFile.writeDataset(state.get_MPS(i).get_LC(), dsetName, layout);
+            h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error" , dsetName);
+            h5ppFile.writeAttribute(count++, "position" , dsetName);
+        }
     }
-    h5ppFile.writeDataset(state.get_truncation_errors(), path + "/state/truncation_errors", layout);
+    h5ppFile.writeAttribute(state.get_length(), "sites" , prefix + "/mps");
+    h5ppFile.writeAttribute(state.get_position(), "position", prefix + "/mps");
+    h5ppFile.writeAttribute(state.get_iteration(), "iteration", prefix + "/mps");
+    h5ppFile.writeAttribute(state.get_step(), "step", prefix + "/mps");
+    h5ppFile.writeAttribute(state.get_chi_lim(),"chi_lim",prefix + "/mps");
+    h5ppFile.writeAttribute(state.get_chi_max(),"chi_max",prefix + "/mps");
     tools::common::profile::t_hdf->toc();
-}
 
-/*! Writes down the center "Lambda" bond matrix (singular values), so we can obtain the entanglement spectrum easily. */
-void tools::finite::io::h5dset::write_bond_matrix(h5pp::File & h5ppFile, const std::string &path, const StorageLevel & storage_level, const class_state_finite & state){
+
+    /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
+    if(storage_level < StorageLevel::FULL) return;
+    tools::log->trace("Writing MPS tensors");
     tools::common::profile::t_hdf->tic();
-    H5D_layout_t layout = decide_layout(path);
-    h5ppFile.writeDataset(state.midchain_bond(), path + "/state/mps/L_C", layout);
-    tools::common::profile::t_hdf->toc();
-}
-
-
-/*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
-void tools::finite::io::h5dset::write_full_mps(h5pp::File & h5ppFile, const std::string &path, const StorageLevel & storage_level, const class_state_finite & state){
-    tools::common::profile::t_hdf->tic();
-    H5D_layout_t layout = decide_layout(path);
-    std::string mpstype = "A";
     for(size_t i = 0; i < state.get_length(); i++) {
-        h5ppFile.writeDataset(state.get_MPS(i).get_M(), path + "/state/mps/" + mpstype + "_" + std::to_string(i), layout);
-        if(state.get_MPS(i).isCenter())
-            mpstype = "B";
+        dsetName = prefix + "/mps/M_" + std::to_string(i);
+        h5ppFile.writeDataset(state.get_MPS(i).get_M(),dsetName, layout);
+        h5ppFile.writeAttribute(i, "position" , dsetName);
     }
     tools::common::profile::t_hdf->toc();
 }
 
 /*! Write all the MPO's with site info in attributes */
-void tools::finite::io::h5dset::write_full_mpo(h5pp::File & h5ppFile, const std::string &path, const StorageLevel & storage_level, const class_state_finite & state) {
-    if(settings::output::storage_level_results == StorageLevel::NONE) return;
+void tools::finite::io::h5dset::write_mpo(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel & storage_level, const class_state_finite & state) {
+    if(storage_level < StorageLevel::FULL) return;
+    tools::log->trace("Writing MPO tensors");
     tools::common::profile::t_hdf->tic();
-    H5D_layout_t layout = decide_layout(path);
+    H5D_layout_t layout = decide_layout(prefix);
     for(auto site = 0ul; site < state.get_length(); site++) {
-        std::string dataset_name = path + "/state/mpo/H_" + std::to_string(site);
+        std::string dataset_name = prefix + "/mpo/H_" + std::to_string(site);
         h5ppFile.writeDataset(state.get_MPO(site).MPO(), dataset_name, layout);
         // Write MPO properties as attributes
-        h5ppFile.writeDataset(site, dataset_name);
         for(auto &params : state.get_MPO(site).get_parameters()) {
             if(params.second.type() == typeid(double)) h5ppFile.writeAttribute(std::any_cast<double>(params.second), params.first, dataset_name);
             if(params.second.type() == typeid(size_t)) h5ppFile.writeAttribute(std::any_cast<size_t>(params.second), params.first, dataset_name);
@@ -91,29 +106,21 @@ void tools::finite::io::h5dset::write_full_mpo(h5pp::File & h5ppFile, const std:
             if(params.second.type() == typeid(std::string)) h5ppFile.writeAttribute(std::any_cast<std::string>(params.second), params.first, dataset_name);
         }
     }
-    tools::common::profile::t_hdf->toc();
-}
-
-/*! Write down the Hamiltonian model type and site info as attributes */
-void tools::finite::io::h5dset::write_model(h5pp::File & h5ppFile, const std::string &path, const StorageLevel & storage_level, const class_state_finite & state) {
-    if(settings::output::storage_level_results == StorageLevel::NONE) return;
-    tools::common::profile::t_hdf->tic();
-    h5ppFile.writeDataset(settings::model::model_type, path + "/model/model_type");
-    std::string table_name = path + "/model/Hamiltonian";
-    for(auto site = 0ul; site < state.get_length(); site++)
-        state.get_MPO(site).write_parameters(h5ppFile,table_name);
+    h5ppFile.writeAttribute(state.get_length(), "sites" , prefix + "/mpo");
+    h5ppFile.writeAttribute(state.get_position(), "position", prefix + "/mpo");
+    h5ppFile.writeAttribute(state.get_iteration(), "iteration", prefix + "/mpo");
+    h5ppFile.writeAttribute(state.get_step(), "step", prefix + "/mpo");
     tools::common::profile::t_hdf->toc();
 }
 
 /*! Write down measurements that can't fit in a table */
-void tools::finite::io::h5dset::write_array_measurements(h5pp::File & h5ppFile, const std::string &path, const StorageLevel & storage_level, const class_state_finite & state) {
-    if(settings::output::storage_level_results == StorageLevel::NONE) return;
+void tools::finite::io::h5dset::write_array_measurements(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel & storage_level, const class_state_finite & state) {
+    if(storage_level < StorageLevel::NORMAL) return;
     state.do_all_measurements();
-    tools::log->trace("Writing all measurements...");
+    tools::log->trace("Writing array measurements");
     tools::common::profile::t_hdf->tic();
-    h5ppFile.writeDataset(state.measurements.bond_dimensions.value(), path + "/bond_dimensions");
-    h5ppFile.writeDataset(state.measurements.entanglement_entropies.value(), path + "/entanglement_entropies");
-    h5ppFile.writeDataset(state.measurements.spin_components.value(), path + "/spin_components");
+    h5ppFile.writeDataset(tools::finite::measure::bond_dimensions(state), prefix + "/bond_dimensions");
+    h5ppFile.writeDataset(tools::finite::measure::entanglement_entropies(state), prefix + "/entanglement_entropies");
+    h5ppFile.writeDataset(state.get_truncation_errors(), prefix + "/truncation_errors");
     tools::common::profile::t_hdf->toc();
-    tools::log->trace("Writing all measurements... OK");
 }
