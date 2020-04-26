@@ -23,8 +23,6 @@ namespace spdlog {
 
 class class_algorithm_base {
     protected:
-    std::shared_ptr<spdlog::logger> log;
-
     public:
     using Scalar           = std::complex<double>;
     class_algorithm_base() = default;
@@ -42,14 +40,10 @@ class class_algorithm_base {
     virtual void   run()                                                                                         = 0;
     virtual void   run_old()                                                                                     = 0;
     virtual void   check_convergence()                                                                           = 0;
-    virtual void   write_state        (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
-    virtual void   write_measurements (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
-    virtual void   write_sim_status   (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
-    virtual void   write_profiling    (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
+    virtual void   write_to_file(StorageReason storage_reason = StorageReason::JOURNAL)                          = 0;
     virtual void   copy_from_tmp      (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
     virtual bool   sim_on()                                                                                      = 0;
     virtual long   chi_max()                                                                                     = 0;
-    virtual size_t num_sites()                                                                                   = 0;
     virtual size_t write_freq()                                                                                  = 0;
     virtual size_t print_freq()                                                                                  = 0;
     virtual bool   chi_grow()                                                                                    = 0;
@@ -75,14 +69,7 @@ class class_algorithm_base {
         double slope;
         double avgY;
     };
-//    struct SaturationReport2 {
-//        bool                has_computed  = false;
-//        bool                has_saturated = false;
-//        size_t              saturated_for = 0;
-//        std::vector<double> slopes;
-//        std::vector<double> avgY;
-//    };
 
-    SaturationReport  check_saturation_using_slope(std::list<double> &Y_vec, std::list<int> &X_vec, double new_data, int iter, int rate, double tolerance);
+    SaturationReport  check_saturation_using_slope(std::list<double> &Y_vec, std::list<size_t> &X_vec, double new_data, size_t iter, size_t rate, double tolerance);
 //    SaturationReport2 check_saturation_using_slope2(std::list<double> &Y_vec, std::list<int> &X_vec, double new_data, int iter, int rate, double tolerance);
 };
