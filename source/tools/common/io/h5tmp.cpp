@@ -1,61 +1,127 @@
 //
 // Created by david on 2019-11-07.
 //
-#include <tools/common/io.h>
-#include <tools/common/log.h>
-#include <simulation/nmspc_settings.h>
+#include <algorithm>
+#include <cstdlib>
+#include <fstream>
 #include <h5pp/h5pp.h>
 #include <io/nmspc_filesystem.h>
-#include <fstream>
-#include <stdlib.h>
-
+#include <regex>
+#include <simulation/nmspc_settings.h>
+#include <tools/common/io.h>
+#include <tools/common/log.h>
+#include <chrono>
 
 std::string get_dirname(){
-    return "DMRG." + std::string(getenv("USER")) + "/";
+    return "DMRG." + std::string(getenv("USER"));
 }
 
-
-std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string & output_filename) {
-    fs::path temp_path;
-    if(fs::exists(settings::output::temp_dir))
-         temp_path = settings::output::temp_dir/ fs::path(get_dirname());
-    else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
-
-    std::string::size_type pos = output_filename.find(temp_path.string());
-    if (pos != std::string::npos)
-        return std::string(output_filename);
-    else
-        return fs::absolute(temp_path / output_filename).string();
-}
-
-std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string & output_filename) {
-    fs::path temp_path;
-    if(fs::exists(settings::output::temp_dir))
-        temp_path = settings::output::temp_dir / fs::path(get_dirname());
-    else if (fs::exists("/dev/shm"))
-        temp_path = "/dev/shm" / fs::path(get_dirname());
-    else if (fs::exists("/scratch/local"))
-        temp_path = "/scratch/local" / fs::path(get_dirname());
-    else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
-
-    std::string::size_type pos = output_filename.find(temp_path.string());
-    if (pos != std::string::npos){
-        std::string new_filename(output_filename);
-        new_filename.erase(pos, temp_path.string().length());
-        return fs::current_path() / fs::path(new_filename);
-    }else{
-        return output_filename;
+std::string replace_substr(std::string text, const std::string& search, const std::string& replace) {
+    size_t pos = 0;
+    while((pos = text.find(search, pos)) != std::string::npos) {
+        text.replace(pos, search.length(), replace);
+        pos += replace.length();
     }
-
+    return text;
 }
 
-void tools::common::io::h5tmp::create_directory(const std::string & path){
+
+std::string tools::common::io::h5tmp::internal::get_tmp_dir() {
+    if(fs::exists(settings::output::temp_dir))
+        return settings::output::temp_dir;
+    else if (fs::exists("/dev/shm"))
+        return "/dev/shm";
+    else if (fs::exists("/scratch/local"))
+        return "/scratch/local";
+    else return fs::temp_directory_path();
+}
+
+
+
+const tools::common::io::h5tmp::internal::pathpair & tools::common::io::h5tmp::internal::register_paths(const std::string &filepath) {
+    if(not fs::path(filepath).has_filename())
+        throw std::runtime_error(fmt::format("Given output file path has no filename: [{}]", filepath));
+    std::string filename = fs::path(filepath).filename();
+    if(internal::file_register.find(filename) != internal::file_register.end()) return internal::file_register[filename];
+    std::string original_path         = fs::absolute(filepath);
+    std::string temporary_path        = fs::path(get_tmp_dir()) / fs::path(get_dirname()) / filename;
+    internal::file_register[filename] = {original_path, temporary_path};
+    return internal::file_register[filename];
+}
+
+const tools::common::io::h5tmp::internal::pathpair & tools::common::io::h5tmp::internal::get_paths(const std::string &filepath) {
+    if(not fs::path(filepath).has_filename())
+        throw std::runtime_error(fmt::format("Given output file path has no filename: [{}]", filepath));
+    std::string filename = fs::path(filepath).filename();
+    return internal::file_register[filename];
+}
+
+
+const std::string & tools::common::io::h5tmp::get_temporary_filepath(const std::string & filepath){
+    return internal::get_paths(filepath).temporary_path;
+}
+const std::string & tools::common::io::h5tmp::get_original_filepath(const std::string & filepath){
+    return internal::get_paths(filepath).original_path;
+}
+
+
+void tools::common::io::h5tmp::register_new_file(const std::string &filepath) {
+    internal::register_paths(filepath);
+}
+
+//std::string tools::common::io::h5tmp::set_tmp_prefix(const std::string &filepath) {
+//    return internal::register_paths(filepath).temporary_path;
+
+//
+//
+//    fs::path temp_path = fs::path(get_tmp_dir()) / fs::path(get_dirname());
+//    if (output_filepath.find(temp_path.string()) != std::string::npos) {
+//        tools::log->debug("Already temporary path [{}]", output_filepath);
+//        return output_filepath;
+//    } else {
+//        fs::path concat_filepath;
+//        if(fs::path(output_filepath).is_absolute()){
+//            concat_filepath = temp_path.string() + output_filepath;
+//        }else{
+//            concat_filepath = temp_path / output_filepath;
+//        }
+//        // The filename may be relative or full, just make sure to replace .. with __
+//        fs::path new_filepath = replace_substr(concat_filepath, "..", "__");
+//        tools::log->debug("Temp path       [{}]", temp_path.string());
+//        tools::log->debug("output_filepath [{}]", output_filepath);
+//        tools::log->debug("concat_filepath [{}]", concat_filepath.string());
+//        tools::log->debug("new_filepath    [{}]", new_filepath.string());
+//        tools::log->debug("Set temporary path [{}] -> [{}]", output_filepath, new_filepath.string());
+//        return new_filepath;
+//    }
+//}
+
+//std::string tools::common::io::h5tmp::unset_tmp_prefix(const std::string &filepath) {
+//    return internal::register_paths(filepath).original_path;
+//    fs::path temp_path = fs::path(get_tmp_dir()) / fs::path(get_dirname());
+//    std::string::size_type pos = output_filepath.find(temp_path.string());
+//    if (pos != std::string::npos){
+//        std::string new_filepath = output_filepath;
+//        new_filepath.erase(pos, temp_path.string().length());
+//        new_filepath = fs::current_path() / std::regex_replace(new_filepath, std::regex("__"), "..");
+//        tools::log->debug("Unset temporary path [{}] -> [{}]", output_filepath, new_filepath);
+//        return new_filepath;
+//    }else{
+//        tools::log->debug("Already final path [{}]", output_filepath);
+//        return output_filepath;
+//    }
+
+//}
+
+void tools::common::io::h5tmp::create_directory(const std::string &path){
     if(path.empty()) return;
     if(tools::log == nullptr){
         if(spdlog::get("DMRG") == nullptr)
              tools::log = spdlog::default_logger();
         else tools::log = spdlog::get("DMRG");
     }
+
+
     fs::path dir = fs::absolute(path);
     if(dir.has_filename() and dir.has_extension()) dir = dir.parent_path();
 
@@ -72,14 +138,22 @@ void tools::common::io::h5tmp::create_directory(const std::string & path){
 }
 
 
-void tools::common::io::h5tmp::copy_from_tmp(const std::string & output_filename){
-    if(output_filename.empty()) return;
-    copy_file(output_filename,unset_tmp_prefix(output_filename));
+void tools::common::io::h5tmp::copy_from_tmp(const std::string &filepath){
+    if(filepath.empty()) return;
+    copy_file(get_temporary_filepath(filepath), get_original_filepath(filepath));
+}
+
+void tools::common::io::h5tmp::copy_into_tmp(const std::string &filepath){
+    if(filepath.empty()) return;
+    copy_file(get_original_filepath(filepath), get_temporary_filepath(filepath));
 }
 
 
 void tools::common::io::h5tmp::copy_file(const std::string & src, const std::string & tgt ){
-    if(src == tgt) return;
+    if(src == tgt) {
+        tools::log->info("Skipping file copy. Identical paths: [{}] == [{}]", src,tgt);
+        return;
+    }
     fs::path target_path = tgt;
     fs::path source_path = src;
 
@@ -97,34 +171,27 @@ void tools::common::io::h5tmp::copy_file(const std::string & src, const std::str
             return;
         }
     }
-    tools::log->debug("Copying hdf5 file: {} -> {}",src,tgt);
-    fs::copy(source_path, target_path, fs::copy_options::update_existing);
+    tools::log->debug("Copying file: {} -> {}",src,tgt);
+    fs::copy(source_path, target_path, fs::copy_options::overwrite_existing);
 }
 
 
 
-void tools::common::io::h5tmp::remove_from_temp(const std::string & output_filename){
-    if(output_filename.empty()) {std::cout << "Nothing to delete" << std::endl << std::flush; return;}
-    fs::path temp_path;
-    if(fs::exists(settings::output::temp_dir))
-        temp_path = settings::output::temp_dir / fs::path(get_dirname());
-    else if (fs::exists("/dev/shm"))
-        temp_path = "/dev/shm" / fs::path(get_dirname());
-    else if (fs::exists("/scratch/local"))
-        temp_path = "/scratch/local" / fs::path(get_dirname());
-    else temp_path = fs::temp_directory_path() / fs::path(get_dirname());
-
-
-    std::string::size_type pos = output_filename.find(temp_path);
-    if (pos != std::string::npos){
-        // Path points to the temp directory!
-        if(fs::exists(output_filename)){
-            tools::log->debug("Deleting temporary file: {}",output_filename);
-            fs::remove(output_filename);
-        }else{
-            tools::log->debug("Nothing to delete");
-        }
+void tools::common::io::h5tmp::remove_from_tmp(const std::string &filepath){
+    if(filepath.empty()) {std::cout << "Nothing to delete" << std::endl << std::flush; return;}
+    const auto &[orig,temp] = internal::get_paths(filepath);
+    if(temp == orig) {
+        tools::log->debug("Final path and temporary paths are identical. Skipping removal: [{}] == [{}]", orig,temp);
+        return;
+    }
+    if (temp.empty()) {
+        tools::log->debug("No temp file path defined - nothing to delete");
     }else{
-        tools::log->debug("Temp file is disabled - nothing to delete");
+        if(fs::exists(temp)){
+            tools::log->debug("Deleting temporary file: {}", temp);
+            fs::remove(temp);
+        }else{
+            tools::log->debug("File does not exist [{}]. Nothing to delete", temp);
+        }
     }
 }
