@@ -3,6 +3,7 @@
 //
 #include "class_iTEBD.h"
 #include <tools/common/prof.h>
+#include <tools/common/log.h>
 #include <tools/infinite/opt.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_infinite.h>
@@ -34,18 +35,18 @@ void class_iTEBD::run_preprocessing() {
 
 
 void class_iTEBD::run_simulation()    {
-    log->info("Starting {} simulation", sim_name);
-    while(sim_status.iteration < settings::itebd::max_steps and not sim_status.simulation_has_converged) {
+    tools::log->info("Starting {} simulation", sim_name);
+    while(sim_status.iter < settings::itebd::max_steps and not sim_status.simulation_has_converged) {
         single_TEBD_step();
         sim_status.phys_time += sim_status.delta_t;
-        write_state();
-        write_measurements();
-        write_sim_status();
-        write_profiling();
+        write_to_file();
+//        write_measurements();
+//        write_sim_status();
+//        write_profiling();
         copy_from_tmp();
         print_status_update();
         check_convergence();
-        sim_status.iteration++;
+        sim_status.iter++;
     }
 }
 
@@ -136,7 +137,6 @@ void class_iTEBD::check_convergence_time_step(){
 
 bool   class_iTEBD::sim_on()    {return settings::itebd::on;}
 long   class_iTEBD::chi_max()   {return settings::itebd::chi_max;}
-size_t class_iTEBD::num_sites() {return 2u;}
 size_t class_iTEBD::write_freq(){return settings::itebd::write_freq;}
 size_t class_iTEBD::print_freq(){return settings::itebd::print_freq;}
 bool   class_iTEBD::chi_grow()  {return settings::itebd::chi_grow;}

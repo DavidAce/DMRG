@@ -38,10 +38,10 @@ public:
     void reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt)                    final;
     void reset_to_initial_state()                                                                       final;
     void clear_saturation_status()                                                                      override;
-    void write_state        (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
-    void write_measurements (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
-    void write_sim_status   (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
-    void write_profiling    (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+    void write_to_file      (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+//    void write_measurements (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+//    void write_sim_status   (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+//    void write_profiling    (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
     void copy_from_tmp      (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
     void print_status_update()                                                                          final;
     void print_status_full()                                                                            final;
@@ -55,21 +55,21 @@ public:
 
     std::list<bool>   B_mpo_vec; //History of saturation true/false
     std::list<double> V_mpo_vec; //History of variances
-    std::list<int>    X_mpo_vec; //History of moves numbers
+    std::list<size_t> X_mpo_vec; //History of moves numbers
     double V_mpo_slope = 0;
 
     std::list<bool>   B_ham_vec; //History of saturation true/false
     std::list<double> V_ham_vec;
-    std::list<int>    X_ham_vec;
+    std::list<size_t> X_ham_vec;
     double V_ham_slope = 0;
 
     std::list<bool>   B_mom_vec; //History of saturation true/false
     std::list<double> V_mom_vec;
-    std::list<int>    X_mom_vec;
+    std::list<size_t> X_mom_vec;
     double V_mom_slope = 0;
 
     std::list<bool>   BS_vec; //History of saturation true/false
     std::list<double> S_vec;
-    std::list<int>    XS_vec;
+    std::list<size_t> XS_vec;
     double S_slope = 0;
 };
