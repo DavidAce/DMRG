@@ -10,82 +10,19 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 
-std::string tools::common::io::h5find::find_latest_root(const h5pp::File & h5ppFile, const std::string & sim_name){
 
-    // Try to find the latest entry
-    std::string              table_path;
-    std::vector<std::string> found_states = h5ppFile.findGroups("state_", sim_name);
-    if(found_states.empty()) {
-        auto found_profiling = h5ppFile.findDatasets("results/sim_status", sim_name);
-        if(found_profiling.empty()) {
-            tools::log->warn("Could not load sim_status from root {}", sim_name);
-            return sim_name;
-        } else
-            table_path = sim_name + '/' + found_profiling.back();
-    } else {
-        auto found_profiling = h5ppFile.findDatasets("results/sim_status", found_states.back());
-        if(found_profiling.empty()) {
-            tools::log->warn("Could not load sim_status from root {}", found_states.back());
-            return sim_name;
-        } else
-            table_path = sim_name + '/' + found_states.back() + '/' + found_profiling.back();
-    }
-
-}
-
-
-class_simulation_status tools::common::io::h5restore::load_sim_status_from_hdf5(const h5pp::File &h5ppFile, const std::string & sim_name) {
+void tools::common::io::h5resume::load_sim_status_from_hdf5(const h5pp::File &h5ppFile, const std::string &prefix,class_simulation_status & sim_status) {
     tools::common::profile::t_hdf->tic();
-    class_simulation_status sim_status;
-
-    // Try to find the latest entry
-    std::string              table_path;
-    std::vector<std::string> found_states = h5ppFile.findGroups("state_", sim_name);
-    if(found_states.empty()) {
-        auto found_profiling = h5ppFile.findDatasets("results/sim_status", sim_name);
-        if(found_profiling.empty()) {
-            tools::log->warn("Could not load sim_status from root {}", sim_name);
-            return sim_status;
-        } else
-            table_path = sim_name + '/' + found_profiling.back();
-    } else {
-        auto found_profiling = h5ppFile.findDatasets("results/sim_status", found_states.back());
-        if(found_profiling.empty()) {
-            tools::log->warn("Could not load sim_status from root {}", found_states.back());
-            return sim_status;
-        } else
-            table_path = sim_name + '/' + found_states.back() + '/' + found_profiling.back();
-    }
-
-    h5ppFile.readTableEntries(sim_status, table_path); // Reads the last entry by default
+    h5ppFile.readTableEntries(sim_status,prefix + "/sim_status");  // Reads the last entry by default
     tools::common::profile::t_hdf->toc();
-    return sim_status;
 }
 
-void tools::common::io::h5restore::load_profiling_from_hdf5(const h5pp::File &h5ppFile, const std::string & sim_name) {
+void tools::common::io::h5resume::load_profiling_from_hdf5(const h5pp::File &h5ppFile, const std::string &prefix) {
     if(not settings::profiling::on) return;
-    std::string              table_path;
-    std::vector<std::string> found_states = h5ppFile.findGroups("state_", sim_name);
-    if(found_states.empty()) {
-        auto found_profiling = h5ppFile.findDatasets("results/profiling", sim_name);
-        if(found_profiling.empty()) {
-            tools::log->warn("Could not load profiling information from root {}", sim_name);
-            return;
-        } else
-            table_path = sim_name + '/' + found_profiling.back();
-    } else {
-        auto found_profiling = h5ppFile.findDatasets("results/profiling", found_states.back());
-        if(found_profiling.empty()) {
-            tools::log->warn("Could not load profiling information from root {}", found_states.back());
-            return;
-        } else
-            table_path = sim_name + '/' + found_states.back() + '/' + found_profiling.back();
-    }
-
+    tools::common::profile::t_hdf->tic();
     h5pp_table_profiling::table prof_entry;
-
-
-    h5ppFile.readTableEntries(prof_entry, table_path);
+    h5ppFile.readTableEntries(prof_entry, prefix + "/profiling");
+    tools::common::profile::t_hdf->toc();
     *tools::common::profile::t_tot     = prof_entry.t_tot;
     *tools::common::profile::t_pre     = prof_entry.t_pre;
     *tools::common::profile::t_pos     = prof_entry.t_pos;
@@ -107,7 +44,7 @@ void tools::common::io::h5restore::load_profiling_from_hdf5(const h5pp::File &h5
     *tools::common::profile::t_var_ham = prof_entry.t_var_ham;
     *tools::common::profile::t_var_mom = prof_entry.t_var_mom;
     *tools::common::profile::t_ham     = prof_entry.t_ham;
-    *tools::common::profile::t_ham_sq  = prof_entry.t_ham_sq;
+    *tools::common::profile::t_hsq     = prof_entry.t_hsq;
     *tools::common::profile::t_mpo     = prof_entry.t_mpo;
     *tools::common::profile::t_vH2v    = prof_entry.t_vH2v;
     *tools::common::profile::t_vHv     = prof_entry.t_vHv;
