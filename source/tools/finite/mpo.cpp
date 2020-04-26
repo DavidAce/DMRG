@@ -11,23 +11,30 @@
 #include <model/class_model_factory.h>
 #include <math/nmspc_random.h>
 
-void tools::finite::mpo::initialize(class_state_finite & state, const size_t length, const std::string &model_type){
-    tools::log->trace("Initializing mpo");
+void tools::finite::mpo::initialize(class_state_finite & state, const std::string &model_type, const size_t num_sites, size_t position){
+    tools::log->trace("Initializing mpo with {} sites at position {}", num_sites,position);
+    if (num_sites < 2    )      throw std::logic_error("Tried to initialize MPO with less than 2 sites");
+    if (num_sites > 2048 )      throw std::logic_error("Tried to initialize MPO with more than 2048 sites");
+    if (position >= num_sites ) throw std::logic_error("Tried to initialize MPO at a position larger than the number of sites");
+    state.MPO_L.clear();
+    state.MPO_R.clear();
     //Generate MPO
-    size_t pos = 0;
-    state.MPO_L.emplace_back(class_model_factory::create_mpo(pos++,model_type));
-    while(true){
-        state.MPO_R.emplace_back(class_model_factory::create_mpo(pos++,model_type));
-        if(state.MPO_L.size() + state.MPO_R.size() >= length){break;}
+    for(size_t site = 0; site < num_sites; site++){
+        if(site <= position)
+            state.MPO_L.emplace_back(class_model_factory::create_mpo(site,model_type));
+        else
+            state.MPO_R.emplace_back(class_model_factory::create_mpo(site,model_type));
     }
-    tools::finite::mpo::randomize(state);
-    tools::finite::debug::check_integrity(state);
+    if(state.MPO_L.size() + state.MPO_R.size() != num_sites) throw std::logic_error("Initialized MPO with wrong size");
+    if(state.MPO_L.size()-1 != position) throw std::logic_error("Initialized MPO at the wrong position");
+    if(state.MPO_L.back()->get_position() != position) throw std::logic_error("Initialized MPO at the wrong position");
+
 }
 
 
 void tools::finite::mpo::randomize(class_state_finite &state) {
     tools::log->trace("Setting random fields in MPO's");
-    std::vector<class_model_base::Parameters> all_params;
+    std::vector<class_model_base::TableMap> all_params;
 
     for (auto &mpo : state.MPO_L){
         mpo->randomize_hamiltonian();
@@ -39,10 +46,10 @@ void tools::finite::mpo::randomize(class_state_finite &state) {
     }
 
     for (auto &mpo : state.MPO_L){
-        mpo->set_full_lattice_parameters(all_params,false);
+        mpo->set_averages(all_params, false);
     }
     for (auto &mpo : state.MPO_R){
-        mpo->set_full_lattice_parameters(all_params,false);
+        mpo->set_averages(all_params, false);
     }
 
     for (size_t pos = 0; pos < state.get_length(); pos++){
@@ -55,7 +62,7 @@ void tools::finite::mpo::randomize(class_state_finite &state) {
 
 
 void tools::finite::mpo::perturb_hamiltonian(class_state_finite &state, double coupling_ptb, double field_ptb, PerturbMode perturbMode){
-    std::vector<class_model_base::Parameters> all_params;
+    std::vector<class_model_base::TableMap> all_params;
     for (auto &mpo : state.MPO_L){
         mpo->set_perturbation(coupling_ptb, field_ptb, perturbMode);
         all_params.push_back(mpo->get_parameters());
@@ -65,10 +72,10 @@ void tools::finite::mpo::perturb_hamiltonian(class_state_finite &state, double c
         all_params.push_back(mpo->get_parameters());
     }
     for (auto &mpo : state.MPO_L){
-        mpo->set_full_lattice_parameters(all_params, false);
+        mpo->set_averages(all_params, false);
     }
     for (auto &mpo : state.MPO_R){
-        mpo->set_full_lattice_parameters(all_params, false);
+        mpo->set_averages(all_params, false);
     }
 
     state.clear_cache();
