@@ -131,6 +131,7 @@ endif()
 ##############################
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
+
 #######################################################
 ###  Check  #include<optional> or                   ###
 ###  or     #include<experimental/optional>         ###
@@ -161,11 +162,12 @@ endif ()
 ###########################################
 ###  Apply RELEASE/DEBUG compile flags  ###
 ###########################################
+# Segfault from -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC when using ceres, but -D_GLIBCXX_DEBUG fixes gdb incomplete types
 message(STATUS "Using microarchitechture: ${CXX_MARCH}")
 target_compile_options(project-settings INTERFACE $<$<COMPILE_LANGUAGE:CXX>: -Wall -march=${CXX_MARCH} -mtune=${CXX_MARCH}>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELEASE>>:          -O3 -g -DNDEBUG>)
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:            -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2>) # Segfault from -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC when using ceres
-target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2>) # Segfault from -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC when using ceres
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:DEBUG>>:            -O0 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2>)
+target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:RELWITHDEBINFO>>:   -O1 -g3 -Wpedantic -Wextra -fstack-protector -D_FORTIFY_SOURCE=2>)
 target_compile_options(project-settings INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:PROFILE>>:          -O3 -g  -DNDEBUG  -lprofiler  -ftime-report>)
 target_compile_features(project-settings INTERFACE cxx_std_17)
 
@@ -220,11 +222,9 @@ if(DMRG_PREFER_CONDA_LIBS)
 endif()
 
 ##################################################################
-### Print summary of CMake configuration                       ###
+### Print summary of CMake options                       ###
 ##################################################################
-message("=============================================================================")
-message("===               DMRG++: SUMMARY OF CMAKE CONFIGURATION                  ===")
-message("=============================================================================")
+message("================= DMRG++: CMake options =====================================")
 message(STATUS "CMAKE_INSTALL_PREFIX            : ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "BUILD_SHARED_LIBS               : ${BUILD_SHARED_LIBS}")
 message(STATUS "DMRG_PREFER_CONDA_LIBS          : ${DMRG_PREFER_CONDA_LIBS}")
