@@ -9,7 +9,8 @@ include(cmake-modules/CheckGlogCompiles.cmake)
 #       undefined reference to
 #       `ceres::GradientProblemSolver::Summary::Summary()'
 # This could also be caused by using openblas from anaconda on Clang builds.
-# In any case the above error is more likely on Clang.
+#   UPDATE: The statement above may just be due to weird ABI incompatibility with conda libs sometimes.
+#           A better solution may be to avoid conda when that happens.
 
 find_package(Unwind) # If found defines target unwind::unwind
 find_library(LZMA_LIB NAMES lzma)
