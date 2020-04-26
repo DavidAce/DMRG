@@ -11,6 +11,7 @@
 #include <algorithms/class_iTEBD.h>
 #include <tools/common/log.h>
 #include <tools/common/io.h>
+#include <tools/common/prof.h>
 #include <h5pp/h5pp.h>
 #include <memory>
 #include <gitversion.h>
@@ -24,77 +25,132 @@ using namespace std;
 static std::string hdf5_temp_path;
 static std::string hdf5_final_path;
 
-void class_algorithm_launcher::remove_temp_file() {
-    tools::common::io::h5tmp::remove_from_temp(hdf5_temp_path);
+class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_):h5ppFile(std::move(h5ppFile_)){
+    setLogger("DMRG");
+    setup_temp_path();
+    //Called in reverse order
+    std::atexit(tools::common::profile::print_mem_usage);
+    std::atexit(tools::common::profile::print_profiling);
+}
+
+
+class_algorithm_launcher::class_algorithm_launcher(){
+    setLogger("DMRG");
+    start_h5pp_file();
+    setup_temp_path();
+    //Called in reverse order
+    std::atexit(tools::common::profile::print_mem_usage);
+    std::atexit(tools::common::profile::print_profiling);
+    std::at_quick_exit(tools::common::profile::print_mem_usage);
+    std::at_quick_exit(tools::common::profile::print_profiling);
 }
 
 
 
-void class_algorithm_launcher::setLogger(std::string name){
+void class_algorithm_launcher::clean_up() {
+    H5garbage_collect();
+    H5Eprint(H5E_DEFAULT, stderr);
+    H5close();
+    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(3));
+    tools::common::io::h5tmp::copy_from_tmp(hdf5_temp_path);
+    tools::common::io::h5tmp::remove_from_tmp(hdf5_temp_path);
+}
+
+
+void class_algorithm_launcher::setLogger(const std::string& name){
     if(spdlog::get(name) == nullptr){
         log = spdlog::stdout_color_mt(name);
         log->set_pattern("[%Y-%m-%d %H:%M:%S][%n]%^[%=8l]%$ %v");
         log->set_level(spdlog::level::trace);
-    }else{
+    }else
         log = spdlog::get(name);
-    }
-
 }
 
 
+void class_algorithm_launcher::start_h5pp_file(){
+    if( settings::output::storage_level_journal == StorageLevel::NONE and
+        settings::output::storage_level_results == StorageLevel::NONE and
+        settings::output::storage_level_chi_update == StorageLevel::NONE and
+        settings::output::storage_level_projection == StorageLevel::NONE)
+        return;
 
-class_algorithm_launcher::class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_):h5ppFile(std::move(h5ppFile_)){
+    // There are two possibilities depending on settings::output::output_filename
+    // 1) The .h5 file exists
+    //    It is important to honor settings::output::file_policy
+    //      A) Load simulation state from existing .h5, resume the simulation and continue appending data to the same file.
+    //      B) Load simulation state from existing .h5, resume the simulation but add new data to a new file.
+    //      C) Remove the .h5 file and start from scratch (i.e. go to 2))
 
-    setLogger("DMRG");
-    hdf5_temp_path  = h5ppFile->getFilePath();
-    hdf5_final_path = h5ppFile->getFilePath();
-
-}
+    // 2) The .h5 file does not exist yet -> start new simulation
 
 
-class_algorithm_launcher::class_algorithm_launcher()
-{
-    setLogger("DMRG");
-    std::at_quick_exit(class_algorithm_launcher::remove_temp_file);
-
-    if (settings::output::storage_level_results == StorageLevel::NONE){return;}
-
-    if(settings::output::use_temp_dir){
-        hdf5_temp_path = tools::common::io::h5tmp::set_tmp_prefix(settings::output::output_filename);
-        tools::common::io::h5tmp::create_directory(hdf5_temp_path);
-        h5ppFile = std::make_shared<h5pp::File>(hdf5_temp_path,h5pp::AccessMode::READWRITE,settings::output::create_mode);
+    if(h5pp::fs::exists(settings::output::output_filepath)){
+        switch(settings::output::file_collision_policy){
+            case FileCollisionPolicy::RESUME: {
+                h5ppFile = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::READWRITE);
+                break;
+            }
+            case FileCollisionPolicy::RENAME: {
+                h5ppFile = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::RENAME);
+                std::string new_filepath = h5ppFile->getFilePath();
+                log->info("Renamed output file: [{}] -> [{}]", settings::output::output_filepath,new_filepath );
+                settings::output::output_filepath = new_filepath;
+                break;
+            }
+            case FileCollisionPolicy::BACKUP: {
+                h5ppFile = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::BACKUP);
+                log->info("Renamed existing file: [{}] -> [{}]", settings::output::output_filepath,settings::output::output_filepath +".bak");
+                break;
+            }
+            case FileCollisionPolicy::REPLACE: {
+                h5ppFile = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::REPLACE);
+                break;
+            }
+        }
     }else{
-        tools::common::io::h5tmp::create_directory(settings::output::output_filename);
-        h5ppFile = std::make_shared<h5pp::File>(settings::output::output_filename,h5pp::AccessMode::READWRITE,settings::output::create_mode);
+        h5ppFile = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::COLLISION_FAIL);
     }
-
-    hdf5_final_path = tools::common::io::h5tmp::unset_tmp_prefix(h5ppFile->getFilePath());
-    hdf5_final_path = tools::common::io::h5tmp::unset_tmp_prefix(h5ppFile->getFilePath());
-
-
-    if (settings::output::create_mode == h5pp::CreateMode::TRUNCATE or settings::output::create_mode == h5pp::CreateMode::RENAME){
+    h5ppFile->setCompressionLevel(settings::output::compression_level);
+    if (h5ppFile->getFilePermission() != h5pp::FilePermission::READWRITE){
         //Put git revision in file attribute
         h5ppFile->writeAttribute(GIT::BRANCH      , "GIT BRANCH", "/");
         h5ppFile->writeAttribute(GIT::COMMIT_HASH , "GIT COMMIT", "/");
         h5ppFile->writeAttribute(GIT::REVISION    , "GIT REVISION", "/");
     }
-
-
 }
 
 
+
+void class_algorithm_launcher::setup_temp_path(){
+    if(not h5ppFile)
+        return log->warn("Can't set temporary path to a nullptr h5pp file");
+
+    hdf5_temp_path  = h5ppFile->getFilePath();
+    hdf5_final_path = h5ppFile->getFilePath();
+    if(not settings::output::use_temp_dir) return;
+    if(not h5pp::fs::exists(settings::output::output_filepath))
+        throw std::runtime_error("Can't set temporary path to non-existent file path: " + settings::output::output_filepath);
+    h5ppFile->flush();
+    tools::common::io::h5tmp::register_new_file(settings::output::output_filepath);
+    tools::common::io::h5tmp::copy_into_tmp(settings::output::output_filepath);
+    auto & temp_filepath = tools::common::io::h5tmp::get_temporary_filepath(settings::output::output_filepath);
+    h5ppFile = std::make_shared<h5pp::File>(temp_filepath, h5pp::FilePermission::READWRITE);
+    h5ppFile->setLogLevel(0);
+    std::at_quick_exit(class_algorithm_launcher::clean_up);
+    std::atexit(class_algorithm_launcher::clean_up);
+}
+
+
+
 void class_algorithm_launcher::run_algorithms(){
-    if(h5ppFile) h5ppFile->writeDataset(false, "/common/finOK");
+    if(h5ppFile) h5ppFile->writeDataset(false, "common/finished_all");
     run_iDMRG();
     run_fDMRG();
     run_xDMRG();
     run_iTEBD();
 
     if(h5ppFile) {
-        h5ppFile->writeDataset(true, "/common/finOK");
-        tools::common::io::h5tmp::copy_from_tmp(hdf5_temp_path);
-        h5ppFile.reset();// Kill the file pointer
-        tools::common::io::h5tmp::remove_from_temp(hdf5_temp_path);
+        h5ppFile->writeDataset(true, "common/finished_all");
         log->info("Simulation data written to file: {}", hdf5_final_path);
     }
     log->info("All simulations finished");

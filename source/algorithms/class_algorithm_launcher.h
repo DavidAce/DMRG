@@ -10,13 +10,17 @@ namespace h5pp{class File;}
 class class_algorithm_launcher  {
 private:
     std::shared_ptr<spdlog::logger> log;
-    void setLogger(std::string name);
+    void setLogger(const std::string& name);
 public:
 
     std::shared_ptr<h5pp::File> h5ppFile;
 
-    class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_);
+    explicit class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_);
     class_algorithm_launcher();
+
+    void start_h5pp_file();
+    void setup_temp_path();
+    static void clean_up();
 
     void run_algorithms();
     void run_iDMRG();
@@ -24,7 +28,6 @@ public:
     void run_xDMRG();
     void run_iTEBD();
 
-    static void remove_temp_file();
 
 };
 
