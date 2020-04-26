@@ -27,7 +27,7 @@ ceres_base_functor::ceres_base_functor(
     energy_upper_bound       = sim_status.energy_ubound;
     energy_target_dens       = sim_status.energy_dens_target;
     energy_window            = sim_status.energy_dens_window;
-    iteration                = sim_status.iteration;
+    iteration                = sim_status.iter;
 }
 
 
