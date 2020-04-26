@@ -14,7 +14,7 @@ using namespace std;
  */
 
 void settings::load_config(class_dmrg_config &dmrg_config) {
-    if(not dmrg_config.file_exists) throw std::runtime_error(fmt::format("Could not load config [{}]: File does not exist", dmrg_config.file_path));
+    if(not dmrg_config.file_exists) throw std::runtime_error(fmt::format("Could not load config [{}]: File does not exist", dmrg_config.file_path.string()));
     dmrg_config.load();
     input::config_filename      = dmrg_config.file_path.string();
     input::config_file_contents = dmrg_config.get_config_file_as_string();

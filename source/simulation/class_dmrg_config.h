@@ -30,7 +30,6 @@ class class_dmrg_config {
 
         } catch(std::exception &ex) {
             tools::log->info("Failed to read parameter [{}]: {}", param_name, ex.what());
-            tools::log->info("Using default parameter: [{}] = [{}]", param_name, param_value);
         }
     }
 
