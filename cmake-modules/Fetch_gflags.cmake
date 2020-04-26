@@ -2,10 +2,12 @@
 set(GFLAGS_HINTS $ENV{EBROOTGFLAGS} ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS})
 
 
-#find_package(gflags COMPONENTS nothreads_static HINTS ${GFLAGS_HINTS}
-#        PATHS $ENV{EBROOTGFLAGS}
-#        PATH_SUFFIXES gflags gflags/lib
-#        NO_CMAKE_PACKAGE_REGISTRY)
+find_package(gflags COMPONENTS nothreads_static HINTS ${GFLAGS_HINTS}
+        PATHS $ENV{EBROOTGFLAGS}
+        PATH_SUFFIXES gflags gflags/lib
+        NO_CMAKE_PACKAGE_REGISTRY
+        NO_DEFAULT_PATH
+        )
 
 
 if(TARGET gflags)
