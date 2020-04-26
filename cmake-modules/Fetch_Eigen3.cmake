@@ -6,6 +6,7 @@ find_package(Eigen3
 
 if(TARGET Eigen3::Eigen)
     message(STATUS "Eigen3 found")
+    target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
 else()
     if("${DMRG_DOWNLOAD_METHOD}" MATCHES "none")
         message(WARNING "Eigen3 will be downloaded anyway because we need a patched version, "
