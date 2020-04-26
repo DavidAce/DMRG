@@ -30,42 +30,13 @@ class_tf_ising::class_tf_ising(size_t position_) : class_model_base(position_) {
     qm::spinOneHalf::SZ = qm::gen_manybody_spin(sz, 2);
     qm::spinOneHalf::II = qm::gen_manybody_spin(Id, 2);
 
-    h5table_define();
+    h5tb_sdual_trf_ising::register_table_type();
     all_mpo_parameters_have_been_set = true; // There are no full lattice parameters on this model so we set it true immediately!
     class_tf_ising::build_mpo();
 }
 
 double class_tf_ising::get_field() const { return pm.h_field + std::pow(pm.h_ptb + pm.h_rnd, 1 - beta); }
 double class_tf_ising::get_coupling() const { return std::pow(pm.J_nn, 1 - alpha); }
-
-
-
-void class_tf_ising::h5table_define() {
-    // Create a type for the char array from the template H5T_C_S1
-    // The template describes a string with a single char.
-    // Set the size with H5Tset_size, or h5pp::hdf5::setStringSize(...)
-    h5pp::hid::h5t h5t_custom_string = H5Tcopy(H5T_C_S1);
-    H5Tset_size(h5t_custom_string, settings::model::model_type.size());
-
-    // Optionally set the null terminator '\0'
-    H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
-
-
-    // Define the compound type
-    h5paramtype = H5Tcreate(H5T_COMPOUND, sizeof(p_tf_ising));
-    H5Tinsert(h5paramtype, "J_nn", HOFFSET(p_tf_ising, J_nn), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5paramtype, "J_nnn", HOFFSET(p_tf_ising, J_nnn), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5paramtype, "h_field", HOFFSET(p_tf_ising, h_field), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5paramtype, "h_rnd", HOFFSET(p_tf_ising, h_rnd), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5paramtype, "h_ptb", HOFFSET(p_tf_ising, h_ptb), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5paramtype, "h_mean", HOFFSET(p_tf_ising, h_mean), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5paramtype, "h_sigma", HOFFSET(p_tf_ising, h_sigma), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5paramtype, "spin_dim", HOFFSET(p_tf_ising, spin_dim), H5T_NATIVE_ULONG);
-    H5Tinsert(h5paramtype, "distribution", HOFFSET(p_tf_ising, distribution), h5t_custom_string);
-
-}
-
-
 
 
 void class_tf_ising::build_mpo()
@@ -157,10 +128,10 @@ Eigen::Tensor<Scalar, 4> class_tf_ising::MPO_reduced_view(double site_energy) co
     return temp;
 }
 
-Eigen::MatrixXcd class_tf_ising::single_site_hamiltonian(int position, int sites, std::vector<Eigen::MatrixXcd> &SX,
+Eigen::MatrixXcd class_tf_ising::single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX,
                                                          std::vector<Eigen::MatrixXcd> &SY [[maybe_unused]], std::vector<Eigen::MatrixXcd> &SZ) const {
-    int i = math::mod(position, sites);
-    int j = math::mod(position + 1, sites);
+    auto i = math::mod(position, sites);
+    auto j = math::mod(position + 1, sites);
     return -(pm.J_nn * SZ[i] * SZ[j] + pm.h_field * 0.5 * (SX[i] + SX[j]));
 }
 
@@ -182,55 +153,55 @@ Eigen::Tensor<Scalar, 1> class_tf_ising::get_MPO_edge_right() const {
     return redge;
 }
 
-void class_tf_ising::set_parameters(const Parameters &parameters) {
-    pm.J_nn         = get_val<double>(parameters, "J_nn");
-    pm.J_nnn        = get_val<double>(parameters, "J_nnn");
-    pm.h_field      = get_val<double>(parameters, "h_field");
-    pm.h_rnd        = get_val<double>(parameters, "h_rnd");
-    pm.h_mean       = get_val<double>(parameters, "h_mean");
-    pm.h_sigma      = get_val<double>(parameters, "h_sigma");
-    pm.spin_dim     = get_val<size_t>(parameters, "spin_dim");
+void class_tf_ising::set_parameters(TableMap &parameters) {
+    pm.J_nn         = std::any_cast<double>(parameters["J_nn"]);
+    pm.J_nnn        = std::any_cast<double>(parameters["J_nnn"]);
+    pm.h_field      = std::any_cast<double>(parameters["h_field"]);
+    pm.h_rnd        = std::any_cast<double>(parameters["h_rnd"]);
+    pm.h_mean       = std::any_cast<double>(parameters["h_mean"]);
+    pm.h_sigma      = std::any_cast<double>(parameters["h_sigma"]);
+    pm.spin_dim     = std::any_cast<size_t>(parameters["spin_dim"]);
     std::strcpy(pm.distribution,
-                get_val<std::string>(parameters, "distribution").c_str());
+                std::any_cast<std::string>(parameters["distribution"]).c_str());
 
     if(pm.J_nnn != 0.0) throw std::runtime_error("Use of [J_nnn] - Next-nearest neighbor coupling - is not implemented yet");
     all_mpo_parameters_have_been_set = true;
 }
 
-class_tf_ising::Parameters class_tf_ising::get_parameters() const {
+class_tf_ising::TableMap class_tf_ising::get_parameters() const {
     /* clang-format off */
-    Parameters parameters;
-    parameters.push_back({"J_nn", pm.J_nn});
-    parameters.push_back({"J_nnn", pm.J_nnn});
-    parameters.push_back({"h_field", pm.h_field});
-    parameters.push_back({"h_rnd", pm.h_rnd});
-    parameters.push_back({"h_ptb", pm.h_ptb});
-    parameters.push_back({"h_mean", pm.h_mean});
-    parameters.push_back({"h_sigma", pm.h_sigma});
-    parameters.push_back({"spin_dim", pm.spin_dim});
-    parameters.push_back({"distribution", std::string(pm.distribution)});
+    TableMap parameters;
+    parameters["J_nn"]          =        pm.J_nn;
+    parameters["J_nnn"]         =        pm.J_nnn;
+    parameters["h_field"]       =        pm.h_field;
+    parameters["h_rnd"]         =        pm.h_rnd;
+    parameters["h_ptb"]         =        pm.h_ptb;
+    parameters["h_mean"]        =        pm.h_mean;
+    parameters["h_sigma"]       =        pm.h_sigma;
+    parameters["spin_dim"]      =        pm.spin_dim;
+    parameters["distribution"]  =        std::string(pm.distribution);
 
     return parameters;
     /* clang-format on */
 }
 
 
-void class_tf_ising::set_full_lattice_parameters([[maybe_unused]] std::vector<Parameters> lattice_parameters, bool reverse) {
+void class_tf_ising::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool reverse) {
     if(reverse) {
         std::reverse(lattice_parameters.begin(), lattice_parameters.end());
         for(size_t pos = 0; pos < lattice_parameters.size(); pos++)
-        find_val(lattice_parameters[pos], "position") = pos;
+        lattice_parameters[pos]["position"] = pos;
     }
-    find_val(lattice_parameters.back(), "J_nn")  = 0.0;
-    find_val(lattice_parameters.back(), "J_nnn") = 0.0;
+    lattice_parameters.back()["J_nn"]  = 0.0;
+    lattice_parameters.back()["J_nnn"] = 0.0;
     // Recompute J_avg and h_avg from given J_rnd and h_rnd on all sites
     double J_sum = 0;
     double h_sum = 0;
     for(auto &site_params : lattice_parameters) {
-        double J_nn_    = get_val<double>(site_params,"J_nn");
-        double J_nnn_   = get_val<double>(site_params,"J_nnn");
-        double h_field_ = get_val<double>(site_params,"h_field");
-        double h_rnd_   = get_val<double>(site_params,"h_rnd");
+        auto J_nn_    = std::any_cast<double>(site_params["J_nn"]);
+        auto J_nnn_   = std::any_cast<double>(site_params["J_nnn"]);
+        auto h_field_ = std::any_cast<double>(site_params["h_field"]);
+        auto h_rnd_   = std::any_cast<double>(site_params["h_rnd"]);
         J_sum += J_nn_ + J_nnn_;
         h_sum += h_field_ + h_rnd_;
     }
@@ -242,14 +213,10 @@ void class_tf_ising::set_full_lattice_parameters([[maybe_unused]] std::vector<Pa
 
 void  class_tf_ising::write_parameters (h5pp::File & file, std::string_view table_name) const{
     if(not file.linkExists(table_name))
-        file.createTable(h5paramtype,table_name, "Transverse-field Ising");
-
+        file.createTable(h5tb_tf_ising::h5_type,table_name, "Transverse-field Ising");
     file.appendTableEntries(pm,table_name);
-
-
 }
 
-
-void  class_tf_ising::read_parameters (h5pp::File & file, std::string_view table_name, size_t position ){
-    file.readTableEntries(pm,table_name,position);
+void  class_tf_ising::read_parameters (const h5pp::File & file, std::string_view table_name){
+    pm = file.readTableEntries<h5tb_tf_ising::table>(table_name,position);
 }
