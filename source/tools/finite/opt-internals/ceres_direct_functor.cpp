@@ -153,7 +153,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
         tools::log->warn("vHv             = {:.16f} + i{:.16f}" , std::real(vHv)  ,std::imag(vHv)  );
         tools::log->warn("var             = {:.16f} + i{:.16f}" , std::real(var)  ,std::imag(var));
         tools::log->warn("ene             = {:.16f} + i{:.16f}" , std::real(ene)  ,std::imag(ene));
-        tools::log->warn("log10(var/L)    = {:.16f}" , std::log10(variance/length) );
+        tools::log->warn("log10(var/L)    = {:.16f}" , std::log10(variance/(double)length) );
         tools::log->warn("energy offset   = {:.16f}" , energy_offset );
         tools::log->warn("norm   offset   = {:.16f}" , norm_offset );
         throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter) );
@@ -173,9 +173,9 @@ template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
 
     tools::common::profile::t_vH2->tic();
-    size_t log2chiL  = std::log2(dsizes[1]);
-    size_t log2chiR  = std::log2(dsizes[2]);
-    size_t log2spin  = std::log2(dsizes[0]);
+    auto log2chiL  = std::log2(dsizes[1]);
+    auto log2chiR  = std::log2(dsizes[2]);
+    auto log2spin  = std::log2(dsizes[0]);
     Eigen::Tensor<Scalar,3> vH2;
 
     if (log2spin >= std::max(log2chiL, log2chiR)){
@@ -223,8 +223,8 @@ void ceres_direct_functor<Scalar>::get_H2v (const VectorType &v)const{
 template<typename Scalar>
 void ceres_direct_functor<Scalar>::get_Hv (const VectorType &v)const{
     tools::common::profile::t_vH->tic();
-    size_t log2chiL  = std::log2(dsizes[1]);
-    size_t log2chiR  = std::log2(dsizes[2]);
+    auto log2chiL  = std::log2(dsizes[1]);
+    auto log2chiR  = std::log2(dsizes[2]);
 //            size_t log2spin  = std::log2(multiComponents.dsizes[0]);
     if (log2chiL > log2chiR){
         if (print_path) tools::log->trace("get_Hv path: log2chiL > log2chiR ");
