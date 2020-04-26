@@ -106,19 +106,19 @@ message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}"
 ### Set  the same microarchitecture for c++ and OpenBLAS ###
 ############################################################
 
-if(NOT MARCH)
-    set(MARCH "native")
+if(NOT DMRG_MARCH)
+    set(DMRG_MARCH "native")
 endif()
-if(MARCH)
-    if (${MARCH} STREQUAL "zen")
-        string(TOUPPER ${MARCH} OPENBLAS_MARCH)
+if(DMRG_MARCH)
+    if (${DMRG_MARCH} STREQUAL "zen")
+        string(TOUPPER ${DMRG_MARCH} OPENBLAS_MARCH)
         set(CXX_MARCH znver1)
-    elseif (${MARCH} STREQUAL "native")
+    elseif (${DMRG_MARCH} STREQUAL "native")
         set(OPENBLAS_MARCH HASWELL)
         set(CXX_MARCH native)
     else()
-        string(TOUPPER ${MARCH} OPENBLAS_MARCH)
-        string(TOLOWER ${MARCH} CXX_MARCH)
+        string(TOUPPER ${DMRG_MARCH} OPENBLAS_MARCH)
+        string(TOLOWER ${DMRG_MARCH} CXX_MARCH)
     endif()
 endif()
 
