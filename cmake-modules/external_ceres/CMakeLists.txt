@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 project(external-ceres)
 
-include(../GetNumThreads.cmake)
-get_num_threads(NUM_THREADS)
-set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${NUM_THREADS})
+#include(../GetNumThreads.cmake)
+#get_num_threads(NUM_THREADS)
+#set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${NUM_THREADS})
 
 option(CMAKE_VERBOSE_MAKEFILE "Verbosity" OFF)
 option(GLOG_PREFER_EXPORTED_GLOG_CMAKE_CONFIGURATION        ""  TRUE)
@@ -18,7 +18,7 @@ ExternalProject_Add(external_ceres
         GIT_SHALLOW false
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/ceres
-        BUILD_COMMAND ${CMAKE_COMMAND} --build . -- -j ${NUM_THREADS}
+#        BUILD_COMMAND ${CMAKE_COMMAND} --build . -- -j ${NUM_THREADS}
         CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
