@@ -29,7 +29,11 @@ function(build_dependency dep_name install_dir extra_flags)
         endif()
     endif()
 
-    execute_process(COMMAND  ${CMAKE_COMMAND} --build . --parallel
+
+    include(cmake-modules/GetNumThreads.cmake)
+    get_num_threads(num_threads)
+    set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${num_threads})
+    execute_process(COMMAND  ${CMAKE_COMMAND} --build . --parallel ${num_threads}
             WORKING_DIRECTORY "${build_dir}"
             RESULT_VARIABLE build_result
             ERROR_VARIABLE  build_error
