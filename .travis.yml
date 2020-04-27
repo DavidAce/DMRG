@@ -5,7 +5,7 @@ notifications:
 branches:
   only:
     - master
-#    - multisite_dmrg
+    - multisite_dmrg
 
 matrix:
   fast_finish: true
@@ -29,6 +29,7 @@ matrix:
             - g++-7
             - gfortran-7
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
@@ -51,6 +52,7 @@ matrix:
             - g++-8
             - gfortran-8
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
@@ -76,6 +78,7 @@ matrix:
             - libstdc++-8-dev
             - gfortran-8
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
@@ -112,6 +115,7 @@ matrix:
             - libunwind-dev
             - lzma
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
     - name: "bionic gcc-8 | static | apt | find-or-fetch"
@@ -146,6 +150,7 @@ matrix:
             - libunwind-dev
             - lzma
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
@@ -159,6 +164,7 @@ matrix:
         - CC=gcc-7
         - FC=gfortran-7
         - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
       addons:
         apt:
           update: true
@@ -168,18 +174,11 @@ matrix:
             - gcc-7
             - g++-7
             - gfortran-7
-      before_install:
-        # Here we just install Miniconda, which you shouldn't have to change.
-        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-        - chmod +x miniconda.sh
-        - ./miniconda.sh -b -p $HOME/miniconda
-        - export PATH=$HOME/miniconda/bin:$PATH
-        - conda config --add channels conda-forge
-        - conda update --yes conda
-        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
+          - $HOME/miniconda
 
     - name: "bionic clang-7 | static | conda-forge | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
@@ -189,6 +188,7 @@ matrix:
       env:
         - FC=gfortran-8
         - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
       addons:
         apt:
           update: true
@@ -197,16 +197,8 @@ matrix:
           packages:
             - libstdc++-8-dev
             - gfortran-8
-      before_install:
-        # Here we just install Miniconda, which you shouldn't have to change.
-        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-        - chmod +x miniconda.sh
-        - ./miniconda.sh -b -p $HOME/miniconda
-        - export PATH=$HOME/miniconda/bin:$PATH
-        - conda config --add channels conda-forge
-        - conda update --yes conda
-        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
           - $HOME/miniconda
@@ -219,6 +211,7 @@ matrix:
       env:
         - FC=gfortran-8
         - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
+        - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
       addons:
         apt:
           update: true
@@ -227,16 +220,8 @@ matrix:
           packages:
             - libstdc++-8-dev
             - gfortran-8
-      before_install:
-        # Here we just install Miniconda, which you shouldn't have to change.
-        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-        - chmod +x miniconda.sh
-        - ./miniconda.sh -b -p $HOME/miniconda
-        - export PATH=$HOME/miniconda/bin:$PATH
-        - conda config --add channels conda-forge
-        - conda update --yes conda
-        - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
           - $HOME/miniconda
@@ -250,6 +235,7 @@ matrix:
       env:
         - FC=gfortran-8
         - FLAGS="--download-method=conan --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
       addons:
         apt:
           update: true
@@ -258,27 +244,77 @@ matrix:
           packages:
             - libstdc++-8-dev
             - gfortran-8
-      before_install:
-        # Here we just install Miniconda, which you shouldn't have to change.
-        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-        - chmod +x miniconda.sh
-        - ./miniconda.sh -b -p $HOME/miniconda
-        - export PATH=$HOME/miniconda/bin:$PATH
-        - conda config --add channels conda-forge
-        - conda update --yes conda
-        # Install conan
-        - conda install --yes  conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
-        # Automatic detection of your arch, compiler, etc.
-        - conan user
-        - conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
       cache:
+        pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
           - $HOME/miniconda
           - $HOME/.conan/data
 
 
+# The pre-install script. On windows it will install conan via chocolatey
+before_install:
+  - echo "Starting before_install"
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then
+      choco upgrade cmake
+      if [[ "$H5PP_DOWNLOAD_METHOD" =~ conan ]]; then
+        choco install python3 --version 3.7.4
+        export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+        python -m pip install --upgrade pip
+      fi
+    elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      export PATH=/Users/travis/Library/Python/2.7/bin:$PATH
+    else
+      pip install --user --upgrade pip
+    fi
+    cmake --version
+  - echo "Finished before_install"
 
+
+install:
+  - echo "Starting install"
+  - |
+    if [[ "$H5PP_DOWNLOAD_METHOD" =~ conan ]]; then
+      if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then
+        pip install conan
+        export PATH=/c/Program\ Files/Conan/conan:$PATH
+      elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        pip install --user conan --upgrade
+      fi
+    fi
+  - echo "Finished install of pip"
+
+
+# Setup Build
+before_script:
+  # On windows PATH's do not get set properly because travis does not restart the shell, so we add them manually
+  - echo "Starting before_script"
+  - |
+    if [[ "$TRAVIS_JOB_NAME" =~ conan ]]; then
+      conan user
+      conan profile new default --detect
+      conan profile update settings.compiler.libcxx=libstdc++11 default
+      conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
+    fi
+    if [[ "$TRAVIS_JOB_NAME" =~ conda ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      # Here we just install Miniconda
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+      chmod +x miniconda.sh
+      bash miniconda.sh -b -p $HOME/miniconda
+      source "$HOME/miniconda/etc/profile.d/conda.sh"
+      export PATH=$HOME/miniconda/bin:$PATH
+      hash -r
+      conda config --set always_yes yes --set changeps1 no
+      # Useful for debugging any issues with conda
+      conda info -a
+      # conda update --yes conda
+      # conda update -q conda
+      conda config --add channels conda-forge
+      conda install --yes ${CONDA_PACKAGES}
+    fi
+  - echo "Finished before_script"
+  - cmake --version
 
 script:
   - ./build.sh --verbose ${FLAGS}
