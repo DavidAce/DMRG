@@ -14,7 +14,7 @@ endif()
 include(cmake-modules/FindGFortran.cmake)
 include(cmake-modules/Find_dont_install_INTELMKL.cmake)         # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
 include(cmake-modules/Fetch_OpenBLAS.cmake)                     # If MKL is not on openblas will be used instead. Includes lapack.
-find_package(Lapacke) # Lapacke needed by arpack++
+find_package(Lapacke REQUIRED)                                  # Lapacke needed by arpack++
 include(cmake-modules/Fetch_arpack-ng.cmake)                    # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 include(cmake-modules/Fetch_arpack++.cmake)                     # C++ frontend for arpack-ng
 include(cmake-modules/Fetch_Eigen3.cmake)                       # Eigen3 numerical library (needed by ceres and h5pp)
