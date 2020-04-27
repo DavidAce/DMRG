@@ -7,13 +7,13 @@
 #include <math/class_svd_wrapper.h>
 
 int main(){
-    namespace fs = tools::fs;
     using reciter = fs::recursive_directory_iterator;
-    for (auto & item : reciter(std::string(TEST_DIR) + "/testmatrices")){
+    for (auto & item : reciter(std::string(TEST_MATRIX_DIR))){
+        if(item.path().filename().string().find("svdmatrix") == std::string::npos) continue;
         if(item.path().extension() != ".h5") continue;
         std::cout <<  "item: " << item << std::endl;
-        int logLevel = 0;
-        h5pp::File file(item.path().string(), h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN, logLevel);
+        int logLevel = 1;
+        h5pp::File file(item.path().string(), h5pp::FilePermission::READONLY, logLevel);
         Eigen::MatrixXcd matrix;
         file.readDataset(matrix,"svdmatrix");
         class_SVD SVD;
@@ -22,8 +22,6 @@ int main(){
         auto [U2,S2,V2] = SVD.decompose(matrix);
 
         std::cout << "Abs diff S2-S1: " << (S2.array()-S1.array()).cwiseAbs().sum() << std::endl;
-//        h5pp::File file2(std::string(TEST_DIR) + "/testmatrices_new2/"+ item.path().filename().string(), h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE, logLevel);
-//        file2.writeDataset(matrix,"svdmatrix",H5D_CONTIGUOUS);
     }
 
     return 0;
