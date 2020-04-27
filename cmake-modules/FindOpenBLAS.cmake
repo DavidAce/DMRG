@@ -91,28 +91,30 @@ function(find_OpenBLAS)
                     IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}"
                     INTERFACE_COMPILE_DEFINITIONS "OpenBLAS_AVAILABLE")
             target_include_directories(openblas::openblas SYSTEM INTERFACE ${OpenBLAS_INCLUDE_DIRS})
-
-
         endif()
     endif()
 
-    if(TARGET openblas::openblas)
-        message(STATUS "Found OpenBLAS: ${OpenBLAS_LIBRARIES}")
-        set(OpenBLAS_TARGET         openblas::openblas          PARENT_SCOPE)
-        set(OpenBLAS_LIBRARIES      ${OpenBLAS_LIBRARIES}       PARENT_SCOPE)
-        set(OpenBLAS_INCLUDE_DIRS   ${OpenBLAS_INCLUDE_DIRS}    PARENT_SCOPE)
-        set(OpenBLAS_FOUND          TRUE                        PARENT_SCOPE)
-
-        target_link_libraries(openblas::openblas INTERFACE gfortran::gfortran pthread)
-        #For convenience, define these targes
-        add_library(blas::blas                  INTERFACE IMPORTED)
-        add_library(lapack::lapack              INTERFACE IMPORTED)
-        target_link_libraries(blas::blas        INTERFACE openblas::openblas)
-        target_link_libraries(lapack::lapack    INTERFACE openblas::openblas)
-    endif()
 endfunction()
 
+
 find_OpenBLAS()
+if(TARGET openblas::openblas)
+    message(STATUS "Found OpenBLAS: ${OpenBLAS_LIBRARIES}")
+    get_target_property(OpenBLAS_LIBRARIES openblas::openblas LOCATION)
+    get_target_property(OpenBLAS_INCLUDE_DIRS openblas::openblas INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
+    set(OpenBLAS_TARGET openblas::openbla)
+    set(OpenBLAS_FOUND  TRUE)
+    target_link_libraries(openblas::openblas INTERFACE gfortran::gfortran pthread)
+    #For convenience, define these targes
+    add_library(blas::blas                  INTERFACE IMPORTED)
+    add_library(lapack::lapack              INTERFACE IMPORTED)
+    target_link_libraries(blas::blas        INTERFACE openblas::openblas)
+    target_link_libraries(lapack::lapack    INTERFACE openblas::openblas)
+else()
+    set(OpenBLAS_FOUND FALSE)
+endif()
+
+
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
