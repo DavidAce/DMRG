@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include <spdlog/logger.h>
+#include <spdlog/spdlog.h>
 #if defined(SPDLOG_FMT_EXTERNAL)
 #include <fmt/ranges.h>
 #include <fmt/ostream.h>
