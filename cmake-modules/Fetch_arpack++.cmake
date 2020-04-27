@@ -16,7 +16,7 @@ if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native|co
     if (TARGET arpack::arpack++)
         message(STATUS "Successfully installed Arpack++")
     else()
-        message(WARNING "arpack-ng could not be installed")
+        message(FATAL_ERROR "arpack-ng could not be installed")
     endif()
 endif()
 

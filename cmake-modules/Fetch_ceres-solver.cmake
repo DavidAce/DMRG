@@ -132,7 +132,7 @@ if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES
     if(TARGET ceres)
         message(STATUS "ceres installed successfully")
     else()
-        message(WARNING "ceres could not be installed")
+        message(FATAL_ERROR "ceres could not be installed")
     endif()
 endif()
 

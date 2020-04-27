@@ -79,6 +79,6 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native|cona
         target_include_directories(arpack::arpack SYSTEM INTERFACE ${arpack_ng_INCLUDE_DIRS})
         target_link_libraries(arpack::arpack INTERFACE blas::blas lapack::lapack gfortran::gfortran)
     else()
-        message(FATAL_ERROR "arpack-ng could not be downloaded.")
+        message(FATAL_ERROR "arpack-ng could not be installed")
     endif()
 endif()

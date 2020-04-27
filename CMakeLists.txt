@@ -298,32 +298,38 @@ message("")
 #############################
 ## UNIT TEST
 #############################
-if(DMRG_ENABLE_TESTS)
+# Simple testing with ctest
+if (DMRG_ENABLE_TESTS)
     enable_testing()
-    add_subdirectory(tests/arpack++_simple)
-    add_subdirectory(tests/arpack++_mps   )
-    add_subdirectory(tests/file_io        )
-    add_subdirectory(tests/eigsolver      )
-    add_subdirectory(tests/svdwrapper     )
-    add_subdirectory(tests/eigen_openmp   )
-    add_subdirectory(tests/ceres_pthread  )
-
-    add_custom_target(all-tests
-            DEPENDS test-arpack++_simple
-            DEPENDS test-arpack++_mps
-            DEPENDS test-file_io
-            DEPENDS test-eigsolver
-            DEPENDS test-eigen_openmp
-            DEPENDS test-svdwrapper
-            DEPENDS test-ceres_pthread
-            )
-
-    add_custom_command(TARGET all-tests
-            POST_BUILD
-            COMMENT "Running Tests"
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --output-on-failure)
-endif()
+    add_subdirectory(tests)
+endif ()
+#
+#if(DMRG_ENABLE_TESTS)
+#    enable_testing()
+#    add_subdirectory(tests/arpack++_simple)
+#    add_subdirectory(tests/arpack++_mps   )
+#    add_subdirectory(tests/file_io        )
+#    add_subdirectory(tests/eigsolver      )
+#    add_subdirectory(tests/svdwrapper     )
+#    add_subdirectory(tests/eigen_openmp   )
+#    add_subdirectory(tests/ceres_pthread  )
+#
+#    add_custom_target(all-tests
+#            DEPENDS test-arpack++_simple
+#            DEPENDS test-arpack++_mps
+#            DEPENDS test-file_io
+#            DEPENDS test-eigsolver
+#            DEPENDS test-eigen_openmp
+#            DEPENDS test-svdwrapper
+#            DEPENDS test-ceres_pthread
+#            )
+#
+#    add_custom_command(TARGET all-tests
+#            POST_BUILD
+#            COMMENT "Running Tests"
+#            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+#            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --output-on-failure)
+#endif()
 
 
 
