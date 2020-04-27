@@ -28,6 +28,9 @@ matrix:
             - gcc-7
             - g++-7
             - gfortran-7
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
     - name: "xenial gcc-8 | static | find-or-fetch"
       dist: xenial
@@ -47,7 +50,9 @@ matrix:
             - gcc-8
             - g++-8
             - gfortran-8
-
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
     - name: "xenial clang-7 | static | find-or-fetch"
       dist: xenial
@@ -70,7 +75,9 @@ matrix:
             - clang-7
             - libstdc++-8-dev
             - gfortran-8
-
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
     - name: "xenial gcc-7 | static |  apt | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
@@ -104,7 +111,9 @@ matrix:
             - libceres-dev
             - libunwind-dev
             - lzma
-
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
     - name: "bionic gcc-8 | static | apt | find-or-fetch"
       dist: bionic
       os: linux
@@ -136,6 +145,9 @@ matrix:
             - libceres-dev
             - libunwind-dev
             - lzma
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
     - name: "bionic gcc-7 | static | conda-forge | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
@@ -158,13 +170,16 @@ matrix:
             - gfortran-7
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
-        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
         - chmod +x miniconda.sh
         - ./miniconda.sh -b -p $HOME/miniconda
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda config --add channels conda-forge
         - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
     - name: "bionic clang-7 | static | conda-forge | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
@@ -184,14 +199,17 @@ matrix:
             - gfortran-8
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
-        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
         - chmod +x miniconda.sh
         - ./miniconda.sh -b -p $HOME/miniconda
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda config --add channels conda-forge
         - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
-
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
+          - $HOME/miniconda
 
     - name: "bionic clang | shared | conda-forge | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
@@ -211,13 +229,17 @@ matrix:
             - gfortran-8
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
-        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
         - chmod +x miniconda.sh
         - ./miniconda.sh -b -p $HOME/miniconda
         - export PATH=$HOME/miniconda/bin:$PATH
         - conda config --add channels conda-forge
         - conda update --yes conda
         - conda install --yes spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
+          - $HOME/miniconda
 
 
     - name: "bionic clang | static | conda-forge | conan"
@@ -238,7 +260,7 @@ matrix:
             - gfortran-8
       before_install:
         # Here we just install Miniconda, which you shouldn't have to change.
-        - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+        - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
         - chmod +x miniconda.sh
         - ./miniconda.sh -b -p $HOME/miniconda
         - export PATH=$HOME/miniconda/bin:$PATH
@@ -249,6 +271,11 @@ matrix:
         # Automatic detection of your arch, compiler, etc.
         - conan user
         - conan remote add conan-dmrg https://api.bintray.com/conan/davidace/conan-dmrg
+      cache:
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
+          - $HOME/miniconda
+          - $HOME/.conan/data
 
 
 
