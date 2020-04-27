@@ -6,9 +6,6 @@ endif()
 
 if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
     find_package(OpenBLAS)
-#    if(TARGET openblas::openblas)
-#        message(STATUS "Found OpenBLAS")
-#    endif()
 endif()
 
 if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
@@ -36,7 +33,7 @@ if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native"
     list(APPEND OpenBLAS_CMAKE_OPTIONS  -DFFLAGS:STRING=${FFLAGS})
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(OpenBLAS "${CMAKE_INSTALL_PREFIX}" "${OpenBLAS_CMAKE_OPTIONS}")
-    find_OpenBLAS()
+    find_package(OpenBLAS)
     if(TARGET openblas::openblas)
         message(STATUS "OpenBLAS installed successfully")
     else()
