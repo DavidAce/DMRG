@@ -102,10 +102,10 @@ int main(){
     Eigen::VectorXd overlapsA1, overlapsA2;
     Eigen::VectorXd overlapsB1, overlapsB2;
 
-    h5pp::File fileA1(std::string(TEST_MATRIX_DIR) + "/testmatrices-A/lapacke_matrix-1.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
-    h5pp::File fileA2(std::string(TEST_MATRIX_DIR) + "/testmatrices-A/lapacke_matrix-2.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
-    h5pp::File fileB1(std::string(TEST_MATRIX_DIR) + "/testmatrices-B/lapacke_matrix-1.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
-    h5pp::File fileB2(std::string(TEST_MATRIX_DIR) + "/testmatrices-B/lapacke_matrix-2.h5", h5pp::AccessMode::READONLY, h5pp::CreateMode::OPEN);
+    h5pp::File fileA1(std::string(TEST_MATRIX_DIR) + "/lapacke_matrix-1A.h5", h5pp::FilePermission::READONLY);
+    h5pp::File fileA2(std::string(TEST_MATRIX_DIR) + "/lapacke_matrix-2A.h5", h5pp::FilePermission::READONLY);
+    h5pp::File fileB1(std::string(TEST_MATRIX_DIR) + "/lapacke_matrix-1B.h5", h5pp::FilePermission::READONLY);
+    h5pp::File fileB2(std::string(TEST_MATRIX_DIR) + "/lapacke_matrix-2B.h5", h5pp::FilePermission::READONLY);
     fileA1.readDataset(H_localA1,"matrix");
     fileA2.readDataset(H_localA2,"matrix");
     fileB1.readDataset(H_localB1,"matrix");

@@ -4,7 +4,7 @@
 
 
 #include <general/nmspc_tensor_extra.h>
-#include <general/nmspc_type_check.h>
+#include <general/nmspc_sfinae.h>
 #include <iomanip>
 #include <iostream>
 #include <h5pp/h5pp.h>
@@ -32,9 +32,7 @@ int main()
 {
     using Scalar = std::complex<double>;
 
-    static_assert(TypeCheck::has_member_data<std::vector<double>>() and "Compile time type-checker failed. Could not properly detect class member data. Check that you are using a supported compiler!");
-    static_assert(TypeCheck::has_member_data<std::vector<double>>() and "Compile time type-checker failed. Could not properly detect class member data. Check that you are using a supported compiler!");
-    static_assert(TypeCheck::has_member_data<std::vector<double>>() and "Compile time type-checker failed. Could not properly detect class member data. Check that you are using a supported compiler!");
+    static_assert(sfinae::has_data<std::vector<double>>() and "Compile time type-checker failed. Could not properly detect class member data. Check that you are using a supported compiler!");
 
     // Generate dummy data
     std::vector<double> vectorD = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
@@ -48,8 +46,8 @@ int main()
     std::string stringX = "Dummy string with spaces";
 
 
-    std::string output_filename         = "Testing/h5pp_test.h5";
-    h5pp::File h5ppFile (output_filename, h5pp::AccessMode::READWRITE, h5pp::CreateMode::TRUNCATE,0);
+    std::string output_filename         = "test_output/file_io.h5";
+    h5pp::File h5ppFile (output_filename, h5pp::FilePermission::REPLACE,0);
     std::cout << "Writing vectorD: " <<  vectorD  << std::endl;
     std::cout << "Writing vectorC: " <<  vectorC  << std::endl;
     std::cout << "Writing tensorC: " <<  tensorC  << std::endl;
