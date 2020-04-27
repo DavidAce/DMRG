@@ -39,7 +39,7 @@ endif()
 
 
 if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native|conan")
-    message(STATUS "Arpack-ng will be installed into ${CMAKE_INSTALL_PREFIX}/arpack-ng")
+    message(STATUS "arpack-ng will be installed into ${CMAKE_INSTALL_PREFIX}/arpack-ng")
     if(BUILD_SHARED_LIBS)
         set(ARPACK_SUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
     else()
@@ -52,16 +52,21 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native|cona
     ### of the list to be passed.
     ####################################################################
     include(${PROJECT_SOURCE_DIR}/cmake-modules/getExpandedTarget.cmake)
-    include(${PROJECT_SOURCE_DIR}/cmake-modules/TargetFilters.cmake)
-    include(${PROJECT_SOURCE_DIR}/cmake-modules/PrintTargetInfo.cmake)
+    if(NOT TARGET blas::blas)
+        message(FATAL_ERROR "arpack-ng build could not detect target blas::blas")
+    endif()
+    if(NOT TARGET lapack::lapack)
+        message(FATAL_ERROR "arpack-ng build could not detect target blas::blas")
+    endif()
     expand_target_libs(blas::blas       EXPANDED_BLAS)
     expand_target_libs(lapack::lapack   EXPANDED_LAPACK)
     string (REPLACE ";" "$<SEMICOLON>" EXPANDED_BLAS_GENERATOR      "${EXPANDED_BLAS}")
     string (REPLACE ";" "$<SEMICOLON>" EXPANDED_LAPACK_GENERATOR    "${EXPANDED_LAPACK}")
-
+    message("EXPANDED_BLAS_GENERATOR    ${EXPANDED_BLAS_GENERATOR}")
+    message("EXPANDED_LAPACK_GENERATOR  ${EXPANDED_LAPACK_GENERATOR}")
+#    message(FATAL_ERROR "")
     ####################################################################
     set(ARPACK_FLAGS "-w -m64 -fPIC")
-    message(STATUS "arpack-ng will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     list(APPEND ARPACK_CMAKE_OPTIONS   -DARPACK_FLAGS=${ARPACK_FLAGS})
     list(APPEND ARPACK_CMAKE_OPTIONS   -DBLAS_LIBRARIES=${EXPANDED_BLAS_GENERATOR})
