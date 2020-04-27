@@ -1,0 +1,5 @@
+set(test_inc
+${CMAKE_SOURCE_DIR}/source/math/class_svd_wrapper.h
+${CMAKE_SOURCE_DIR}/source/math/class_svd_wrapper.cpp
+${CMAKE_SOURCE_DIR}/source/math/class_svd_wrapper_lapacke.cpp
+)

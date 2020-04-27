@@ -64,7 +64,7 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
     if(TARGET glog::glog)
         message(STATUS "glog installed successfully")
     else()
-        message(WARNING "glog could not be installed.")
+        message(FATAL_ERROR "glog could not be installed")
     endif()
 endif()
 

@@ -40,6 +40,6 @@ if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native"
     if(TARGET openblas::openblas)
         message(STATUS "OpenBLAS installed successfully")
     else()
-        message(WARNING "OpenBLAS could not be installed")
+        message(FATAL_ERROR "OpenBLAS could not be installed")
     endif()
 endif()

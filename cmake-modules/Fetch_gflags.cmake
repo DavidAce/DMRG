@@ -14,7 +14,7 @@ endif()
 if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native" )
     message(STATUS "gflags will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
-    build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")
+    build_dependency(gflags "${CMAKE_INSTALL_PREFIX}/gflags" "")
     find_package(gflags
             HINTS ${CMAKE_INSTALL_PREFIX}
             PATH_SUFFIXES gflags gflags/lib
@@ -22,7 +22,7 @@ if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native" )
     if(TARGET gflags)
         message(STATUS "gflags installed successfully")
     else()
-        message(WARNING "gflags could not be installed")
+        message(FATAL_ERROR "gflags could not be installed")
     endif()
 endif()
 

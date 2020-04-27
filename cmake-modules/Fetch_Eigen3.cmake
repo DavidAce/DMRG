@@ -28,7 +28,7 @@ if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
         message(STATUS "Eigen3 installed successfully")
         target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
     else()
-        message(WARNING "Eigen3 could not be installed")
+        message(FATAL_ERROR "Eigen3 could not be installed")
     endif()
 endif()
 

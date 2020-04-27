@@ -1,6 +1,0 @@
-cmake_minimum_required(VERSION 3.10)
-project(test-eigen_openmp)
-add_executable(${PROJECT_NAME} eigen_openmp.cpp)
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
-target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)
-add_test(NAME ${PROJECT_NAME} COMMAND test-eigen_openmp)

@@ -1,0 +1,10 @@
+set(test_inc
+${CMAKE_SOURCE_DIR}/source/math/class_eigsolver.cpp
+${CMAKE_SOURCE_DIR}/source/math/arpack_extra/arpackpp_solver.cpp
+${CMAKE_SOURCE_DIR}/source/math/arpack_extra/matrix_product_hamiltonian.cpp
+${CMAKE_SOURCE_DIR}/source/math/arpack_extra/matrix_product_hamiltonian_sq.cpp
+${CMAKE_SOURCE_DIR}/source/math/arpack_extra/matrix_product_dense.cpp
+${CMAKE_SOURCE_DIR}/source/math/arpack_extra/matrix_product_sparse.cpp
+${CMAKE_SOURCE_DIR}/source/math/arpack_extra/matrix_product_stl.cpp
+${CMAKE_SOURCE_DIR}/source/general/class_tic_toc.cpp
+)
