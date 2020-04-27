@@ -15,6 +15,7 @@ matrix:
       os: linux
       compiler: gcc
       env:
+        - CACHE_NAME=xenial-gcc-7-static-ff
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
@@ -38,6 +39,7 @@ matrix:
       os: linux
       compiler: gcc
       env:
+        - CACHE_NAME=xenial-gcc-8-static-ff
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
@@ -61,6 +63,7 @@ matrix:
       os: linux
       compiler: clang
       env:
+        - CACHE_NAME=xenial-clang-7-static-ff
         - CXX=clang++-7
         - CC=clang-7
         - FC=gfortran-8
@@ -88,6 +91,7 @@ matrix:
       os: linux
       compiler: gcc
       env:
+        - CACHE_NAME=xenial-gcc-7-static-apt-ff
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
@@ -118,11 +122,13 @@ matrix:
         pip: true
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
+
     - name: "bionic gcc-8 | static | apt | find-or-fetch"
       dist: bionic
       os: linux
       compiler: gcc
       env:
+        - CACHE_NAME=bionic-gcc-8-static-apt-ff
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
@@ -160,6 +166,7 @@ matrix:
       os: linux
       compiler: gcc
       env:
+        - CACHE_NAME=bionic-gcc-7-static-conda-forge-ff
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
@@ -186,6 +193,7 @@ matrix:
       os: linux
       compiler: clang
       env:
+        - CACHE_NAME=bionic-clang-7-static--conda-forge-ff
         - FC=gfortran-8
         - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
         - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
@@ -209,6 +217,7 @@ matrix:
       os: linux
       compiler: clang
       env:
+        - CACHE_NAME=bionic-clang-shared-conda-forge-ff
         - FC=gfortran-8
         - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
         - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
@@ -233,6 +242,7 @@ matrix:
       os: linux
       compiler: clang
       env:
+        - CACHE_NAME=bionic-clang-static-conda-forge-conan
         - FC=gfortran-8
         - FLAGS="--download-method=conan --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
         - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
