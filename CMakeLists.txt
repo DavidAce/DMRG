@@ -64,37 +64,11 @@ endif()
 
 
 
-
-
-if(DMRG_PRINT_INFO)
-
-    # Print host properties
-    cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
-    cmake_host_system_information(RESULT _proc_type QUERY PROCESSOR_DESCRIPTION)
-    cmake_host_system_information(RESULT _os_name QUERY OS_NAME)
-    cmake_host_system_information(RESULT _os_release QUERY OS_RELEASE)
-    cmake_host_system_information(RESULT _os_version QUERY OS_VERSION)
-    cmake_host_system_information(RESULT _os_platform QUERY OS_PLATFORM)
-    message(STATUS "| DMRG BUILD INFO:\n"
-            "-- |----------------\n"
-            "-- | ${_host_name}\n"
-            "-- | ${_os_name} ${_os_platform} ${_os_release}\n"
-            "-- | ${_proc_type}\n"
-            "-- | ${_os_version}")
-
-    # Print CMake options
-    message(STATUS  "|----------------\n"
-            "-- | BUILD_SHARED_LIBS       : ${BUILD_SHARED_LIBS}\n"
-            "-- | CMAKE_INSTALL_PREFIX    : ${CMAKE_INSTALL_PREFIX}\n"
-            "-- | DMRG_BUILD_EXAMPLES     : ${DMRG_BUILD_EXAMPLES}\n"
-            "-- | DMRG_ENABLE_TESTS       : ${DMRG_ENABLE_TESTS}\n"
-            "-- | DMRG_ENABLE_OPENMP      : ${DMRG_ENABLE_OPENMP}\n"
-            "-- | DMRG_ENABLE_MKL         : ${DMRG_ENABLE_MKL}\n"
-            "-- | DMRG_ENABLE_LTO         : ${DMRG_ENABLE_LTO}\n"
-            "-- | DMRG_DOWNLOAD_METHOD    : ${DMRG_DOWNLOAD_METHOD}\n"
-            "-- | DMRG_PREFER_CONDA_LIBS  : ${DMRG_PREFER_CONDA_LIBS}\n"
-            "-- | DMRG_PRINT_INFO         : ${DMRG_PRINT_INFO}\n")
-endif ()
+############################################################
+### Print extra info during CMake configure              ###
+############################################################
+include(cmake-modules/PrintHostInfo.cmake)
+include(cmake-modules/PrintOptionInfo.cmake)
 
 
 
@@ -155,24 +129,6 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 #######################################################
 include(${PROJECT_SOURCE_DIR}/cmake-modules/CheckCXXOptional.cmake)
 CheckCXXOptional()
-
-
-# DMRG++ requires the filesystem header (and possibly stdc++fs library)
-find_package(Filesystem COMPONENTS Final Experimental)
-if (TARGET std::filesystem)
-    target_link_libraries(project-settings INTERFACE std::filesystem)
-elseif (DMRG_DMRG_DOWNLOAD_METHOD MATCHES "find|none")
-    message(STATUS "Your compiler lacks std::filesystem. Set DMRG_DMRG_DOWNLOAD_METHOD to 'conan' or 'native' to get the ghc::filesystem replacement")
-    message(STATUS "Read more about ghc::filesystem here: https://github.com/gulrak/filesystem")
-    message(FATAL_ERROR "<filesystem> header and/or library not found")
-else ()
-    message(STATUS "Your compiler lacks std::filesystem. Getting ghc::filesystem replacement")
-    message(STATUS "Read more about ghc::filesystem here: https://github.com/gulrak/filesystem")
-    include(cmake/Fetch_ghcFilesystem.cmake)
-    target_link_libraries(project-settings INTERFACE ghcFilesystem::ghc_filesystem)
-    list(APPEND DMRG_DIRECTORY_HINTS ${ghcfilesystem_install_prefix})
-endif ()
-
 
 
 
