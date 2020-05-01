@@ -19,7 +19,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch"
       addons:
         apt:
           update: true
@@ -43,7 +43,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch"
       addons:
         apt:
           update: true
@@ -67,7 +67,7 @@ matrix:
         - CXX=clang++-7
         - CC=clang-7
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch"
       addons:
         apt:
           update: true
@@ -95,7 +95,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch"
       addons:
         apt:
           update: true
@@ -132,7 +132,7 @@ matrix:
         - CXX=g++-8
         - CC=gcc-8
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch"
       addons:
         apt:
           update: true
@@ -170,7 +170,7 @@ matrix:
         - CXX=g++-7
         - CC=gcc-7
         - FC=gfortran-7
-        - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --prefer-conda"
         - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
       addons:
         apt:
@@ -195,7 +195,7 @@ matrix:
       env:
         - CACHE_NAME=bionic-clang-7-static--conda-forge-ff
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --prefer-conda"
         - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
       addons:
         apt:
@@ -219,7 +219,7 @@ matrix:
       env:
         - CACHE_NAME=bionic-clang-shared-conda-forge-ff
         - FC=gfortran-8
-        - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-tests --enable-shared  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=find-or-fetch --prefer-conda --enable-shared"
         - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
       addons:
         apt:
@@ -244,7 +244,7 @@ matrix:
       env:
         - CACHE_NAME=bionic-clang-static-conda-forge-conan
         - FC=gfortran-8
-        - FLAGS="--download-method=conan --prefer-conda --enable-tests  -a haswell  -j 2 --build-type=Debug"
+        - FLAGS="--download-method=conan --prefer-conda"
         - CONDA_PACKAGES="spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver"
       addons:
         apt:
@@ -327,5 +327,5 @@ before_script:
   - cmake --version
 
 script:
-  - ./build.sh --verbose ${FLAGS}
+  - ./build.sh --verbose --enable-tests  -a native  -j 2 --build-type=Debug ${FLAGS}
 
