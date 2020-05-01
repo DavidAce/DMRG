@@ -75,7 +75,11 @@ endfunction()
 
 
 if(NOT OpenMP_FOUND AND NOT TARGET openmp::openmp AND BUILD_SHARED_LIBS)
+    set(BACKUP ${CMAKE_MODULE_PATH})
+    unset(CMAKE_MODULE_PATH)
     find_package(OpenMP)
+    list(APPEND CMAKE_MODULE_PATH ${BACKUP})
+    unset(BACKUP)
 endif()
 
 
@@ -87,19 +91,17 @@ if(NOT OpenMP_FOUND)
         # MKL comes with a useable iomp5 library
         find_path(MKL_ROOT_DIR
                 include/mkl.h
-                HINTS ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS}
+                HINTS ${CMAKE_INSTALL_PREFIX}
                 PATHS
                 $ENV{MKL_DIR}  ${MKL_DIR}
                 $ENV{MKLDIR}   ${MKLDIR}
                 $ENV{MKLROOT}  ${MKLROOT}
                 $ENV{MKL_ROOT} ${MKL_ROOT}
                 $ENV{mkl_root} ${mkl_root}
-                $ENV{EBROOTIMKL}
                 $ENV{HOME}/intel/mkl
                 /opt/intel/mkl
                 /opt/intel
                 $ENV{BLAS_DIR}
-                $ENV{CONDA_PREFIX}
                 /usr/lib/x86_64-linux-gnu
                 /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
                 "Program Files (x86)/Intel/ComposerXE-2011/mkl"

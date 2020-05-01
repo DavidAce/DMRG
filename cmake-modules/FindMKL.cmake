@@ -63,12 +63,9 @@ set(MKL_ROOT_SEARCH_PATHS
         $ENV{MKL_ROOT} ${MKL_ROOT}
         $ENV{mkl_root} ${mkl_root}
         $ENV{HOME}/intel/mkl
-        $ENV{EBROOTIMKL}
         /opt/intel/mkl
         /opt/intel
         /opt
-        $ENV{BLAS_DIR}
-        $ENV{CONDA_PREFIX}
         /usr/lib/x86_64-linux-gnu
         /usr
         /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
@@ -89,9 +86,7 @@ endif()
 
 find_path(MKL_ROOT_DIR
         include/mkl.h
-        HINTS ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS}
-        PATHS
-        ${MKL_ROOT_SEARCH_PATHS}
+        PATHS ${MKL_ROOT_SEARCH_PATHS}
         PATH_SUFFIXES
         ${MKL_PATH_SUFFIXES}
         )

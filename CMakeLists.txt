@@ -20,7 +20,7 @@ option(DMRG_PRINT_INFO               "Print information during cmake configure" 
 
 
 # Make an "enum" for valid download methods
-set(DMRG_DOWNLOAD_METHODS_VALID find fetch native conan find-or-fetch find-or-conan)
+set(DMRG_DOWNLOAD_METHODS_VALID find fetch find-or-fetch conan)
 set(DMRG_DOWNLOAD_METHOD find CACHE STRING "Download method for external dependencies")
 set_property(CACHE DMRG_DOWNLOAD_METHOD PROPERTY STRINGS ${DMRG_DOWNLOAD_METHODS_VALID})
 if (NOT DMRG_DOWNLOAD_METHOD IN_LIST DMRG_DOWNLOAD_METHODS_VALID)
@@ -89,17 +89,13 @@ if(DMRG_PRINT_INFO)
             "-- | DMRG_BUILD_EXAMPLES     : ${DMRG_BUILD_EXAMPLES}\n"
             "-- | DMRG_ENABLE_TESTS       : ${DMRG_ENABLE_TESTS}\n"
             "-- | DMRG_ENABLE_OPENMP      : ${DMRG_ENABLE_OPENMP}\n"
+            "-- | DMRG_ENABLE_MKL         : ${DMRG_ENABLE_MKL}\n"
             "-- | DMRG_ENABLE_LTO         : ${DMRG_ENABLE_LTO}\n"
             "-- | DMRG_DOWNLOAD_METHOD    : ${DMRG_DOWNLOAD_METHOD}\n"
             "-- | DMRG_PREFER_CONDA_LIBS  : ${DMRG_PREFER_CONDA_LIBS}\n"
             "-- | DMRG_PRINT_INFO         : ${DMRG_PRINT_INFO}\n")
 endif ()
 
-
-###########################
-### Print compiler info ###
-###########################
-message("Compiling with: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
 
 
 ############################################################
@@ -250,7 +246,8 @@ endif()
 ###########################################
 ### Fetch or find all the dependencies  ###
 ###########################################
-include(cmake-modules/SetupDependenciesNative.cmake)
+include(cmake-modules/SetupDependenciesFind.cmake)
+include(cmake-modules/SetupDependenciesFetch.cmake)
 include(cmake-modules/SetupDependenciesConan.cmake)
 
 ##################################################################
@@ -259,27 +256,29 @@ include(cmake-modules/SetupDependenciesConan.cmake)
 target_link_libraries(project-settings INTERFACE  ${CONAN_TARGETS} ${NATIVE_TARGETS}) # Order is important here
 
 
-if(TARGET openmp::openmp)
-    target_link_libraries(project-settings INTERFACE openmp::openmp)
-    target_compile_definitions(project-settings INTERFACE -DEIGEN_USE_THREADS)
-else()
-    message(WARNING "We need OpenMP when using conan libraries!")
+if(NOT TARGET openmp::openmp)
     target_compile_options(project-settings INTERFACE -Wno-unknown-pragmas)
 endif()
-target_link_libraries(project-settings INTERFACE arpack::arpack++) # Last to use blas
 target_link_libraries(project-settings INTERFACE -Wl,--whole-archive pthread -Wl,--no-whole-archive -lrt -ldl )
 target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)  # Link everything to main project
 
 
 
 
-include(cmake-modules/PrintTargetInfo.cmake)
-include(cmake-modules/getExpandedTarget.cmake)
-expand_target_all_targets(project-settings DMRG_TARGETS_EXPANDED)
-foreach(tgt ${DMRG_TARGETS_EXPANDED})
-    print_target_info(${tgt})
-endforeach()
-print_target_info(${PROJECT_NAME})
+
+
+# Print summary of CMake configuration
+if (DMRG_PRINT_INFO)
+    include(cmake-modules/PrintTargetInfo.cmake)
+    include(cmake-modules/getExpandedTarget.cmake)
+    expand_target_all_targets(project-settings DMRG_TARGETS_EXPANDED)
+    message(STATUS "| DMRG TARGET SUMMARY")
+    message(STATUS "|--------------------")
+    foreach(tgt ${DMRG_TARGETS_EXPANDED})
+        print_target_info(${tgt} "| ")
+    endforeach()
+endif()
+
 
 ###################
 ### INFORMATION ###
