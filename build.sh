@@ -247,6 +247,7 @@ if [ -z "$dry_run" ] ;then
           -DBUILD_SHARED_LIBS=$enable_shared \
           -DCMAKE_VERBOSE_MAKEFILE=$verbose \
           -DDMRG_PRINT_INFO=$verbose \
+          -DDMRG_PRINT_CHECKS=$verbose \
           -DDMRG_DOWNLOAD_METHOD=$download_method \
           -DDMRG_PREFER_CONDA_LIBS:BOOL=$prefer_conda \
           -DDMRG_MARCH=$march \
