@@ -85,7 +85,7 @@ matrix:
         directories:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
-    - name: "xenial gcc-7 | static |  apt | find-or-fetch"
+    - name: "xenial gcc-7 | static | apt | find-or-fetch"
       # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: xenial
       os: linux
