@@ -1,4 +1,8 @@
 function(CheckLapackeCompiles TARGETS LIBS INCS OPTS DEFS)
+    list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS})
+    list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
+    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS})
+    list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
     include(cmake-modules/getExpandedTarget.cmake)
     foreach(elem ${TARGETS})
         if(TARGET ${elem})
@@ -12,10 +16,7 @@ function(CheckLapackeCompiles TARGETS LIBS INCS OPTS DEFS)
             list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${defs})
         endif()
     endforeach()
-    list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS})
-    list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
-    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS})
-    list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
+
 
     list(TRANSFORM "CMAKE_REQUIRED_DEFINITIONS" PREPEND "-D")  # Definitions should start with "-D"
     string(REPLACE ";" " "  CMAKE_REQUIRED_FLAGS          "${CMAKE_REQUIRED_FLAGS}")        # Needs to be a space-separated list
