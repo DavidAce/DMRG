@@ -53,6 +53,7 @@ function(find_Lapacke)
     if (NOT TARGET lapacke::lapacke)
         if(TARGET lapack::lapack)
             lapacke_message(STATUS "Looking for Lapacke in system")
+            message(WARNING "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
             find_library(LAPACKE_LIBRARY
                     NAMES lapacke
                     PATH_SUFFIXES
