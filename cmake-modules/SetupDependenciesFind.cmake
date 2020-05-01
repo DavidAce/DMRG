@@ -1,4 +1,7 @@
 if(DMRG_DOWNLOAD_METHOD MATCHES "find")
+    # Let cmake find our Find<package>.cmake modules
+    list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+
     if(DMRG_PREFER_CONDA_LIBS)
         list(APPEND CMAKE_PREFIX_PATH
                 $ENV{CONDA_PREFIX}
@@ -39,4 +42,5 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find")
             $ENV{BLAS_ROOT}
             $ENV{ARPACKPP_DIR}
             )
+
 endif()
