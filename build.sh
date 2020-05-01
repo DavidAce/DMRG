@@ -268,9 +268,9 @@ if [ -z "$dry_run" ] ;then
 
     if [ "$enable_tests" = "ON" ] ;then
         if [[ "$target" == *"test-"* ]]; then
-            ctest -C $build_type --verbose -R $target
+            ctest  --build-config $build_type --verbose --build-and-test --build-target $target -R $target
         else
-           ctest -C $build_type --output-on-failure
+           ctest  --build-config $build_type --build-and-test --output-on-failure
         fi
     fi
 
