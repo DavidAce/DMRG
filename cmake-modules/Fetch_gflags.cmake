@@ -1,9 +1,8 @@
 
 if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
     # Gflags comes in static flavor in conda also!
-    set(GFLAGS_HINTS $ENV{EBROOTGFLAGS} ${CMAKE_INSTALL_PREFIX} ${CONDA_HINTS})
     find_package(gflags COMPONENTS nothreads_static
-            HINTS ${GFLAGS_HINTS}
+            HINTS ${CMAKE_INSTALL_PREFIX}
             PATH_SUFFIXES gflags gflags/lib
             NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET gflags)

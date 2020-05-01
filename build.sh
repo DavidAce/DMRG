@@ -10,7 +10,7 @@ Usage            : $PROGNAME [-option | --option ] <=argument>
 -b | --build-type [=arg]        : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
 -c | --clear-cmake              : Clear CMake files before build (delete ./build)
 -d | --dry-run                  : Dry run
-   | --download-method          : Download method for dependencies [ find | find-or-fetch | fetch | conan | find-or-conan |  native ] (default = find)
+   | --download-method          : Download method for dependencies [ find | fetch | find-or-fetch | conan ] (default = find)
 -f | --extra-flags [=arg]       : Extra CMake flags (defailt = none)
 -g | --compiler [=arg]          : Compiler        | GNU | Clang | (default = "")
 -G | --generator [=arg]         : CMake generator  | many options... | (default = "CodeBlocks - Unix Makefiles")
@@ -132,7 +132,7 @@ for lib in "${clear_libs[@]}"; do
     fi
 done
 
-if [[ ! "$download_method" =~ find|fetch|native|conan ]]; then
+if [[ ! "$download_method" =~ find|fetch|conan ]]; then
     echo "Download method unsupported: $download_method"
     exit 1
 fi
@@ -265,6 +265,22 @@ if [ -z "$dry_run" ] ;then
             cat CMakeFiles/CMakeError.log
             exit "$exit_code"
     fi
+
+    if [ "$enable_tests" = "ON" ] ;then
+        if [[ "$target" == *"test-"* ]]; then
+            ctest -C $build_type --verbose -R $target
+        else
+           ctest -C $build_type --output-on-failure
+        fi
+    fi
+
+    exit_code=$?
+    if [ "$exit_code" != "0" ]; then
+            echo "Exit code: $exit_code"
+            exit "$exit_code"
+    fi
+
+
     cmake --build . --target $target --parallel $make_threads
     exit_code=$?
     if [ "$exit_code" != "0" ]; then
@@ -277,16 +293,4 @@ if [ -z "$dry_run" ] ;then
     fi
 fi
 
-if [ "$enable_tests" = "ON" ] ;then
-    if [[ "$target" == *"test-"* ]]; then
-        ctest -C $build_type --verbose -R $target
-    else
-       ctest -C $build_type --output-on-failure
-    fi
-fi
 
-exit_code=$?
-if [ "$exit_code" != "0" ]; then
-        echo "Exit code: $exit_code"
-        exit "$exit_code"
-fi
