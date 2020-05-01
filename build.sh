@@ -82,7 +82,7 @@ echo "Enabled options:"
 while true;
 do
   case "$1" in
-    -h|--help)                      usage                                                                       ; shift   ;;
+    -h|--help)                      usage                                                                          ; shift   ;;
     -a|--arch)                      march=$2                        ; echo " * Architecture             : $2"      ; shift 2 ;;
     -b|--build-type)                build_type=$2                   ; echo " * Build type               : $2"      ; shift 2 ;;
     -c|--clear-cmake)               clear_cmake="ON"                ; echo " * Clear CMake              : ON"      ; shift   ;;
