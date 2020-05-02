@@ -75,12 +75,11 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     list(APPEND ARPACK_CMAKE_OPTIONS   -DCMAKE_VERBOSE_MAKEFILE=ON)
     mark_as_advanced(ARPACK_CMAKE_OPTIONS)
     mark_as_advanced(ARPACK_FLAGS)
-    build_dependency(arpack-ng "${CMAKE_INSTALL_PREFIX}/arpack-ng" "${ARPACK_CMAKE_OPTIONS}")
+    build_dependency(arpack-ng "${CMAKE_INSTALL_PREFIX}" "${ARPACK_CMAKE_OPTIONS}")
 
     find_package(arpack-ng
             HINTS ${CMAKE_INSTALL_PREFIX}
-            REQUIRED
-            NO_DEFAULT_PATH )
+            REQUIRED)
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Successfully installed arpack-ng")
         add_library(arpack::arpack ${LINK_TYPE} IMPORTED)

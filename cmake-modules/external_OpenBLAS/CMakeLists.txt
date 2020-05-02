@@ -8,7 +8,7 @@ ExternalProject_Add(external_OpenBLAS
         URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.9.tar.gz
         URL_MD5  28cc19a6acbf636f5aab5f10b9a0dfe1
         PREFIX      ${CMAKE_BINARY_DIR}
-        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/OpenBLAS
+        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 #        UPDATE_COMMAND ""
 #        TEST_COMMAND ""
 #        CONFIGURE_COMMAND ""

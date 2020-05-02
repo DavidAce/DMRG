@@ -13,7 +13,7 @@ ExternalProject_Add(external_eigen3
         GIT_SHALLOW 1
         PATCH_COMMAND git apply ${PROJECT_SOURCE_DIR}/Eigen_3.3.7.patch
         PREFIX      ${CMAKE_BINARY_DIR}
-        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/Eigen3
+        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 #        BUILD_COMMAND ${CMAKE_COMMAND} --build . -- -j ${NUM_THREADS}
         CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>

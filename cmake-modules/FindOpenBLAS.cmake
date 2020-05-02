@@ -67,7 +67,6 @@ function(find_OpenBLAS)
         find_library(OpenBLAS_LIBRARIES
                 NAMES openblas
                 HINTS ${CMAKE_INSTALL_PREFIX}
-                PATHS
                 PATH_SUFFIXES
                 lib openblas/lib OpenBLAS/lib openblas OpenBLAS lib/x86_64-linux-gnu
                 ${NO_DEFAULT_PATH}
