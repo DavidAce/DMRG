@@ -327,4 +327,4 @@ before_script:
 
 script:
   - ./build.sh --verbose --enable-tests  -a native  -j 2 --build-type=Debug ${FLAGS}
-  - cat $(find -name h5ppConfig*)
+  - cat $(find -name h5ppTargets*)
