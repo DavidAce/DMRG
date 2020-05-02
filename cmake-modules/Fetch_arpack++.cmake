@@ -26,7 +26,7 @@ if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     endif()
 endif()
 
-if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native|conan")
+if(NOT TARGET arpack::arpack++ AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     message(STATUS "arpack++ will be installed into ${CMAKE_BINARY_DIR}/dmrg-deps-install/arpack++ on first build.")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(arpack++ "${CMAKE_INSTALL_PREFIX}/arpack++" "")

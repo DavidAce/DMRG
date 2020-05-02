@@ -7,8 +7,7 @@ if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     # We want to find our own Eigen3 to make sure we patch it properly
     find_package(Eigen3
         HINTS ${CMAKE_INSTALL_PREFIX}
-        PATH_SUFFIXES Eigen3 eigen3 include/Eigen3 include/eigen3
-        NO_DEFAULT_PATH)
+        NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET Eigen3::Eigen)
         message(STATUS "Found Eigen3: ${EIGEN3_INCLUDE_DIR}")
         target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
@@ -20,9 +19,8 @@ if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(Eigen3 "${CMAKE_INSTALL_PREFIX}" "")
     find_package(Eigen3 3.3.7
-            HINTS ${CMAKE_INSTALL_PREFIX}/Eigen3
-            PATH_SUFFIXES Eigen3 eigen3 include/Eigen3 include/eigen3
-            NO_CMAKE_PACKAGE_REGISTRY NO_DEFAULT_PATH)
+            HINTS ${CMAKE_INSTALL_PREFIX}
+            NO_DEFAULT_PATH)
     if(TARGET Eigen3::Eigen)
         message(STATUS "Eigen3 installed successfully")
         target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})

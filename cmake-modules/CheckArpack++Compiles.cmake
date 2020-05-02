@@ -33,6 +33,7 @@ function(CheckArpackppCompiles TAG TARGETS LIBS INCS OPTS DEFS)
     #   Test features
     check_cxx_source_compiles("
         #include <complex>
+        #include <vector>
         #if __has_include(<arpackpp/arcomp.h>)
             #include <arpackpp/arcomp.h>
             #include <arpackpp/ardscomp.h>

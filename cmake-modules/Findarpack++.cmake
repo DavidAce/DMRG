@@ -27,18 +27,21 @@ function(find_Arpackpp)
         arpackpp_message(STATUS "Looking for arpack++")
         find_library(ARPACKPP_LIBRARY
                 NAMES arpackpp arpack++
+                HINTS ${CMAKE_INSTALL_PREFIX}
                 PATH_SUFFIXES arpack++/${CMAKE_INSTALL_LIBDIR} arpackpp/${CMAKE_INSTALL_LIBDIR}
                 ${NO_DEFAULT_PATH}
                 ${NO_CMAKE_PACKAGE_REGISTRY}
                 )
         find_path(ARPACKPP_INCLUDE_DIR
-                NAMES arpack++/ardsnsym.h arpackpp/ardsnsym.h
+                NAMES arpack++/arcomp.h arpackpp/arcomp.h
+                HINTS ${CMAKE_INSTALL_PREFIX}
                 PATH_SUFFIXES
-                    arpack++/include/arpack++
-                    arpackpp/include/arpackpp
+                    include
+                    arpack++ arpackpp
                     arpack++/include arpackpp/include
                     include/arpack++ include/arpackpp
-                    arpack++ arpackpp include
+                    arpack++/include/arpack++
+                    arpackpp/include/arpackpp
                 ${NO_DEFAULT_PATH}
                 ${NO_CMAKE_PACKAGE_REGISTRY}
                 )
@@ -47,6 +50,7 @@ function(find_Arpackpp)
             set(ARPACKPP_LIBRARY "")
         endif()
         if(NOT ARPACKPP_INCLUDE_DIR)
+            message(WARNING "Could not find arpack++ headers")
             set(ARPACKPP_INCLUDE_DIR "")
         endif()
         CheckArpackppCompiles("system" "lapack::lapack;arpack::arpack" "${ARPACKPP_LIBRARY}"  "${ARPACKPP_INCLUDE_DIR}"  "" "" "")
