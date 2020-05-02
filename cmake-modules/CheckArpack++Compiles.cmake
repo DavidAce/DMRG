@@ -4,22 +4,6 @@ function(CheckArpackppCompiles TAG TARGETS LIBS INCS OPTS DEFS)
     list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
     list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS} -std=c++17)
     list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
-#
-#
-#    include(cmake-modules/getExpandedTarget.cmake)
-#    # Target libraries needs to go after
-#    foreach(elem ${TARGETS})
-#        if(TARGET ${elem})
-#            expand_target_libs(${elem} libs)
-#            expand_target_incs(${elem} incs)
-#            expand_target_opts(${elem} opts)
-#            expand_target_defs(${elem} defs)
-#            list(APPEND CMAKE_REQUIRED_LIBRARIES     ${libs})
-#            list(APPEND CMAKE_REQUIRED_INCLUDES      ${incs})
-#            list(APPEND CMAKE_REQUIRED_FLAGS         ${opts})
-#            list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${defs})
-#        endif()
-#    endforeach()
 
 
     list(TRANSFORM "CMAKE_REQUIRED_DEFINITIONS" PREPEND "-D")  # Definitions should start with "-D"
@@ -69,6 +53,10 @@ function(CheckArpackppCompiles TAG TARGETS LIBS INCS OPTS DEFS)
             if (solver.EigenvaluesFound()){return 0;}
             else {return 1;}
         }
-        " ARPACKPP_COMPILES_${TAG})
-    set(ARPACKPP_COMPILES ${ARPACKPP_COMPILES_${TAG}} PARENT_SCOPE)
+        " ARPACKPP_COMPILES)
+    set(ARPACKPP_COMPILES ${ARPACKPP_COMPILES} PARENT_SCOPE)
+    if(NOT ARPACKPP_COMPILES)
+        unset(ARPACKPP_COMPILES CACHE)
+        unset(ARPACKPP_COMPILES PARENT_SCOPE)
+    endif()
 endfunction()

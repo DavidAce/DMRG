@@ -53,6 +53,10 @@ function(CheckLapackeCompiles TAG TARGETS LIBS INCS OPTS DEFS)
            info = LAPACKE_dgels(LAPACK_ROW_MAJOR,'N',m,n,nrhs,*a,lda,*b,ldb);
            return(info);
         }
-        " LAPACKE_COMPILES_${TAG})
-    set(LAPACKE_COMPILES ${LAPACKE_COMPILES_${TAG}} PARENT_SCOPE)
+        " LAPACKE_COMPILES)
+    set(LAPACKE_COMPILES ${LAPACKE_COMPILES} PARENT_SCOPE)
+    if(NOT LAPACKE_COMPILES)
+        unset(LAPACKE_COMPILES CACHE)
+        unset(LAPACKE_COMPILES PARENT_SCOPE)
+    endif()
 endfunction()
