@@ -1,5 +1,5 @@
 function(lapacke_message TYPE MSG)
-    if(LAPACKE_FIND_VERBOSE)
+    if(NOT Lapacke_FIND_QUIETLY)
         message(${TYPE} ${MSG})
     endif()
 endfunction()

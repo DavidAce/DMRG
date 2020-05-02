@@ -2,8 +2,6 @@
 if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
     # Gflags comes in static flavor in conda also!
     find_package(gflags COMPONENTS nothreads_static
-            HINTS ${CMAKE_INSTALL_PREFIX}
-            PATH_SUFFIXES gflags gflags/lib
             NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET gflags)
         message(STATUS "Found gflags")
@@ -15,9 +13,7 @@ if(NOT TARGET gflags AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native" )
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(gflags "${CMAKE_INSTALL_PREFIX}" "")
     find_package(gflags
-            HINTS ${CMAKE_INSTALL_PREFIX}
-            PATH_SUFFIXES gflags gflags/lib
-            NO_CMAKE_PACKAGE_REGISTRY NO_DEFAULT_PATH)
+            NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET gflags)
         message(STATUS "gflags installed successfully")
     else()

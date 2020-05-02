@@ -1,5 +1,5 @@
 function(arpackpp_message TYPE MSG)
-    if(ARPACKPP_FIND_VERBOSE)
+    if(NOT arpack++_FIND_QUIETLY)
         message(${TYPE} ${MSG})
     endif()
 endfunction()
@@ -27,8 +27,6 @@ function(find_Arpackpp)
         arpackpp_message(STATUS "Looking for arpack++")
         find_library(ARPACKPP_LIBRARY
                 NAMES arpackpp arpack++
-                HINTS ${CMAKE_INSTALL_PREFIX}
-                PATH_SUFFIXES arpack++/${CMAKE_INSTALL_LIBDIR} arpackpp/${CMAKE_INSTALL_LIBDIR}
                 ${NO_DEFAULT_PATH}
                 ${NO_CMAKE_PACKAGE_REGISTRY}
                 )

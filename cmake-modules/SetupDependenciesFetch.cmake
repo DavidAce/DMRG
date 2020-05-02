@@ -1,9 +1,18 @@
 if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
-    #  Make sure we use DMRG's own find modules
+    # Let cmake find our Find<package>.cmake modules
     list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-    # Make sure find_package looks for the packages we just built instead of rebuilding them
-    # when we rerun the cmake config.
-    list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
+    list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX}) # Works like HINTS but can be ignored by NO_DEFAULT_PATH NO_CMAKE_PATH and NO_CMAKE_ENVIRONMENT_PATH
+    #list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX}) # Works like HINTS but can be ignored by NO_DEFAULT_PATH NO_CMAKE_PATH and NO_CMAKE_ENVIRONMENT_PATH
+    #list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_INSTALL_PREFIX}) # Prepends stuff like ${CMAKE_INSTALL_PREFIX} to absolute paths
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8 OR CMAKE_GENERATOR MATCHES "64")
+        set(FIND_LIBRARY_USE_LIB64_PATHS ON)
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(FIND_LIBRARY_USE_LIB32_PATHS ON)
+    endif()
+
+    set(CMAKE_FIND_DEBUG_MODE ON)
+    message(STATUS "CMAKE_LIBRARY_ARCHITECTURE :${CMAKE_LIBRARY_ARCHITECTURE}")
+
 
     ##############################################################################
     ###  Optional OpenMP support                                               ###

@@ -9,8 +9,8 @@ ExternalProject_Add(external_ARPACK++
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         UPDATE_COMMAND ""
         TEST_COMMAND ""
-        INSTALL_COMMAND ""
+        BUILD_COMMAND ""
         CONFIGURE_COMMAND ""
-        BUILD_COMMAND
+        INSTALL_COMMAND
         ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include/arpack++
         )

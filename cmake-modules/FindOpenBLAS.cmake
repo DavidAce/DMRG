@@ -1,5 +1,5 @@
 function(openblas_message TYPE MSG)
-    if(OPENBLAS_FIND_VERBOSE)
+    if(NOT OpenBLAS_FIND_QUIETLY)
         message(${TYPE} ${MSG})
     endif()
 endfunction()
@@ -19,10 +19,10 @@ function(find_OpenBLAS)
     if(NOT TARGET openblas::openblas)
         openblas_message(STATUS "Looking for OpenBLAS config")
         find_package(OpenBLAS 0.3
-                HINTS ${CMAKE_INSTALL_PREFIX}
-                PATH_SUFFIXES
-                openblas lib/x86_64-linux-gnu
-                ${NO_DEFAULT_PATH} ${NO_CMAKE_PACKAGE_REGISTRY}
+                #HINTS ${CMAKE_INSTALL_PREFIX}
+                #PATH_SUFFIXES
+                #openblas lib/x86_64-linux-gnu
+                #${NO_DEFAULT_PATH} ${NO_CMAKE_PACKAGE_REGISTRY}
                 CONFIG
                 )
 
@@ -66,19 +66,19 @@ function(find_OpenBLAS)
 
         find_library(OpenBLAS_LIBRARIES
                 NAMES openblas
-                HINTS ${CMAKE_INSTALL_PREFIX}
-                PATH_SUFFIXES
-                lib openblas/lib OpenBLAS/lib openblas OpenBLAS lib/x86_64-linux-gnu
-                ${NO_DEFAULT_PATH}
-                ${NO_CMAKE_PACKAGE_REGISTRY}
+                #HINTS ${CMAKE_INSTALL_PREFIX}
+                #PATH_SUFFIXES
+                #lib openblas/lib OpenBLAS/lib openblas OpenBLAS lib/x86_64-linux-gnu
+                #${NO_DEFAULT_PATH}
+                #${NO_CMAKE_PACKAGE_REGISTRY}
                 )
         find_path(OpenBLAS_INCLUDE_DIRS
                 NAMES openblas_config.h
-                HINTS ${CMAKE_INSTALL_PREFIX}
-                PATH_SUFFIXES
-                include openblas openblas/include OpenBLAS OpenBLAS/include blas/include include/x86_64-linux-gnu
-                ${NO_DEFAULT_PATH}
-                ${NO_CMAKE_PACKAGE_REGISTRY}
+                #HINTS ${CMAKE_INSTALL_PREFIX}
+                #PATH_SUFFIXES
+                #include openblas openblas/include OpenBLAS OpenBLAS/include blas/include include/x86_64-linux-gnu
+                #${NO_DEFAULT_PATH}
+                #${NO_CMAKE_PACKAGE_REGISTRY}
                 )
         if (OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
             add_library(openblas::openblas ${LINK_TYPE} IMPORTED)
