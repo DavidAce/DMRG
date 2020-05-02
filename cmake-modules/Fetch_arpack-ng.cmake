@@ -1,12 +1,12 @@
 if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     foreach (tgt blas::blas;lapack::lapack;gfortran::gfortran)
         if(NOT TARGET ${tgt})
-            list(APPEND ARPACKNG_MISSING_TARGET ${tgt})
-            mark_as_advanced(ARPACKNG_MISSING_TARGET)
+            list(APPEND arpack_ng_MISSING_TARGET ${tgt})
+            mark_as_advanced(arpack_ng_MISSING_TARGET)
         endif()
     endforeach()
-    if(ARPACKNG_MISSING_TARGET)
-        message(FATAL_ERROR "arpack-ng: dependencies missing [${ARPACKNG_MISSING_TARGET}]")
+    if(arpack_ng_MISSING_TARGET)
+        message(FATAL_ERROR "arpack-ng: dependencies missing [${arpack_ng_MISSING_TARGET}]")
     endif()
 endif()
 
@@ -16,7 +16,10 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     unset(arpack_ng_LIBRARIES)
     unset(arpack_ng_INCLUDE_DIRS)
     find_package(arpack-ng
-            PATHS ${CMAKE_INSTALL_PREFIX}
+            # This fixes a find_package search bug
+            # where it would search for paths such as
+            # install/arpack-ng/lib/cmake/arpack-ng-config.cmake/arpack-ng-config.cmake
+            PATH_SUFFIXES arpack-ng/lib/cmake arpack-ng/lib64/cmake
             NO_CMAKE_PACKAGE_REGISTRY)
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Found arpack-ng")
@@ -74,8 +77,12 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     mark_as_advanced(ARPACK_FLAGS)
     build_dependency(arpack-ng "${CMAKE_INSTALL_PREFIX}" "${ARPACK_CMAKE_OPTIONS}")
 
-    find_package(arpack-ng
-            PATHS ${CMAKE_INSTALL_PREFIX}
+    find_package(arpack-ng 3.7.0
+            # This fixes a find_package search bug
+            # where it would search for paths such as
+            # install/arpack-ng/lib/cmake/arpack-ng-config.cmake/arpack-ng-config.cmake
+            PATH_SUFFIXES arpack-ng/lib/cmake arpack-ng/lib64/cmake
+            NO_CMAKE_PACKAGE_REGISTRY
             REQUIRED)
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Successfully installed arpack-ng")
