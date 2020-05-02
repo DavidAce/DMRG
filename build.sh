@@ -250,6 +250,7 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
           -DDMRG_ENABLE_OPENMP=$enable_openmp \
           -DDMRG_ENABLE_MKL=$enable_mkl \
+          --debug-find
            -G "$generator" \
            ../../
     exit_code=$?
