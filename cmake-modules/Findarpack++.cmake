@@ -32,7 +32,6 @@ function(find_Arpackpp)
                 )
         find_path(ARPACKPP_INCLUDE_DIR
                 NAMES arpack++/arcomp.h arpackpp/arcomp.h
-                HINTS ${CMAKE_INSTALL_PREFIX}
                 PATH_SUFFIXES
                     include
                     arpack++ arpackpp
