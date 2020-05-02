@@ -1,3 +1,4 @@
+include(GNUInstallDirs)
 if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     foreach (tgt blas::blas;lapack::lapack;gfortran::gfortran)
         if(NOT TARGET ${tgt})
@@ -17,6 +18,7 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     unset(arpack_ng_INCLUDE_DIRS)
     find_package(arpack-ng
             HINTS ${CMAKE_INSTALL_PREFIX}
+            PATH_SUFFIXES arpack-ng/${CMAKE_INSTALL_LIBDIR}/cmake
             NO_CMAKE_PACKAGE_REGISTRY)
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Found arpack-ng")
@@ -31,7 +33,7 @@ if (NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD STREQUAL "find")
     message(STATUS "Looking for arpack-ng in system")
     find_library(arpack_ng_LIBRARIES
             NAMES arpack
-            PATH_SUFFIXES arpack-ng arpack arpack/lib arpack-ng/lib
+            PATH_SUFFIXES arpack-ng arpack arpack/lib arpack-ng/${CMAKE_INSTALL_LIBDIR}
             REQUIRED
             )
     if(NOT arpack_ng_LIBRARIES)
@@ -77,6 +79,7 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
 
     find_package(arpack-ng
             HINTS ${CMAKE_INSTALL_PREFIX}
+            PATH_SUFFIXES arpack-ng/${CMAKE_INSTALL_LIBDIR}/cmake
             REQUIRED)
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Successfully installed arpack-ng")
