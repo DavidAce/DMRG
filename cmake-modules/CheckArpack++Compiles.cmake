@@ -1,9 +1,11 @@
-function(CheckArpackppCompiles TARGETS LIBS INCS OPTS DEFS)
+function(CheckArpackppCompiles TAG TARGETS LIBS INCS OPTS DEFS)
+    # Tag is needed for the compilation to actually take place multiple times!
     list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS})
     list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
     list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS} -std=c++17)
     list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
     include(cmake-modules/getExpandedTarget.cmake)
+    # Target libraries needs to go after
     foreach(elem ${TARGETS})
         if(TARGET ${elem})
             expand_target_libs(${elem} libs)
@@ -23,10 +25,10 @@ function(CheckArpackppCompiles TARGETS LIBS INCS OPTS DEFS)
 
     include(CheckCXXSourceCompiles)
     if(DMRG_PRINT_CHECKS OR ARPACKPP_FIND_VERBOSE)
-        message(STATUS "ARPACK++ TEST COMPILE CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
-        message(STATUS "ARPACK++ TEST COMPILE CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
-        message(STATUS "ARPACK++ TEST COMPILE CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
-        message(STATUS "ARPACK++ TEST COMPILE CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
+        message(STATUS "ARPACK++ COMPILE TEST ${TAG} CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
+        message(STATUS "ARPACK++ COMPILE TEST ${TAG} CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
+        message(STATUS "ARPACK++ COMPILE TEST ${TAG} CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
+        message(STATUS "ARPACK++ COMPILE TEST ${TAG} CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
     endif()
     #   Test features
     check_cxx_source_compiles("
@@ -64,6 +66,6 @@ function(CheckArpackppCompiles TARGETS LIBS INCS OPTS DEFS)
             if (solver.EigenvaluesFound()){return 0;}
             else {return 1;}
         }
-        " ARPACKPP_COMPILES)
-    set(ARPACKPP_COMPILES ${ARPACKPP_COMPILES} PARENT_SCOPE)
+        " ARPACKPP_COMPILES_${TAG})
+    set(ARPACKPP_COMPILES ${ARPACKPP_COMPILES_${TAG}} PARENT_SCOPE)
 endfunction()
