@@ -10,12 +10,8 @@ function(find_OpenBLAS)
     # We seem to be able to use the one from apt though, so we add /usr to
     # the hints.
     # This means we are more likely to build it from source on Clang.
-    list(APPEND OPENBLAS_HINTS ${CMAKE_INSTALL_PREFIX} $ENV{EBROOTOPENBLAS})
     if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
-        list(APPEND OPENBLAS_HINTS /usr)
         set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
-    else()
-        list(APPEND OPENBLAS_HINTS )
     endif()
 
 
@@ -23,11 +19,10 @@ function(find_OpenBLAS)
     if(NOT TARGET openblas::openblas)
         openblas_message(STATUS "Looking for OpenBLAS config")
         find_package(OpenBLAS 0.3
-                HINTS ${OPENBLAS_HINTS}
+                HINTS ${CMAKE_INSTALL_PREFIX}
                 PATH_SUFFIXES
-                lib share OpenBLAS/share/cmake/OpenBLAS OpenBLAS OpenBLAS/lib OpenBLAS/share openblas lib/x86_64-linux-gnu
-#                ${NO_DEFAULT_PATH}
-#                QUIET
+                openblas lib/x86_64-linux-gnu
+                ${NO_DEFAULT_PATH} ${NO_CMAKE_PACKAGE_REGISTRY}
                 CONFIG
                 )
 
@@ -71,28 +66,23 @@ function(find_OpenBLAS)
 
         find_library(OpenBLAS_LIBRARIES
                 NAMES openblas
-                HINTS ${OPENBLAS_HINTS}
+                HINTS ${CMAKE_INSTALL_PREFIX}
                 PATHS
-                $ENV{EBROOTBLAS}
-                $ENV{BLAS_DIR}
-                $ENV{BLAS_ROOT}
                 PATH_SUFFIXES
                 lib openblas/lib OpenBLAS/lib openblas OpenBLAS lib/x86_64-linux-gnu
                 ${NO_DEFAULT_PATH}
+                ${NO_CMAKE_PACKAGE_REGISTRY}
                 )
         find_path(OpenBLAS_INCLUDE_DIRS
                 NAMES openblas_config.h
-                HINTS ${OPENBLAS_HINTS}
-                PATHS
-                $ENV{EBROOTBLAS}
-                $ENV{BLAS_DIR}
-                $ENV{BLAS_ROOT}
+                HINTS ${CMAKE_INSTALL_PREFIX}
                 PATH_SUFFIXES
                 include openblas openblas/include OpenBLAS OpenBLAS/include blas/include include/x86_64-linux-gnu
                 ${NO_DEFAULT_PATH}
+                ${NO_CMAKE_PACKAGE_REGISTRY}
                 )
         if (OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
-            add_library(openblas::openblas STATIC IMPORTED)
+            add_library(openblas::openblas ${LINK_TYPE} IMPORTED)
             set_target_properties(openblas::openblas PROPERTIES
                     IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}"
                     INTERFACE_COMPILE_DEFINITIONS "OPENBLAS_AVAILABLE")

@@ -13,13 +13,11 @@ endif()
 
 
 if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
-    include(GNUInstallDirs)
     unset(arpack_ng_LIBRARIES)
     unset(arpack_ng_INCLUDE_DIRS)
     find_package(arpack-ng
             HINTS ${CMAKE_INSTALL_PREFIX}
-            PATH_SUFFIXES lib lib/cmake arpack-ng/${CMAKE_INSTALL_LIBDIR}
-            NO_DEFAULT_PATH )
+            NO_CMAKE_PACKAGE_REGISTRY)
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Found arpack-ng")
         add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
@@ -79,7 +77,10 @@ if(NOT TARGET arpack::arpack AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     mark_as_advanced(ARPACK_FLAGS)
     build_dependency(arpack-ng "${CMAKE_INSTALL_PREFIX}/arpack-ng" "${ARPACK_CMAKE_OPTIONS}")
 
-    find_package(arpack-ng HINTS ${CMAKE_INSTALL_PREFIX} PATH_SUFFIXES lib lib/cmake arpack-ng/${CMAKE_INSTALL_LIBDIR} REQUIRED NO_DEFAULT_PATH )
+    find_package(arpack-ng
+            HINTS ${CMAKE_INSTALL_PREFIX}
+            REQUIRED
+            NO_DEFAULT_PATH )
     if(arpack_ng_LIBRARIES AND arpack_ng_INCLUDE_DIRS)
         message(STATUS "Successfully installed arpack-ng")
         add_library(arpack::arpack ${LINK_TYPE} IMPORTED)
