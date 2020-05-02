@@ -212,7 +212,6 @@ matrix:
           - $HOME/miniconda
 
     - name: "bionic clang | shared | conda-forge | find-or-fetch"
-      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: clang
@@ -328,4 +327,4 @@ before_script:
 
 script:
   - ./build.sh --verbose --enable-tests  -a native  -j 2 --build-type=Debug ${FLAGS}
-
+  - cat $(find -name h5ppConfig*)
