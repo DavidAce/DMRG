@@ -15,7 +15,7 @@ ExternalProject_Add(external_ARPACK-NG
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-        -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
+        #-DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
         -DCMAKE_C_FLAGS=${ARPACK_FLAGS}
         -DCMAKE_Fortran_FLAGS=${ARPACK_FLAGS}
         -DEXAMPLES=OFF
