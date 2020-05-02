@@ -1,30 +1,32 @@
 function(CheckArpackppCompiles TAG TARGETS LIBS INCS OPTS DEFS)
     # Tag is needed for the compilation to actually take place multiple times!
-    list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS})
+    list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS} ${TARGETS})
     list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
     list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS} -std=c++17)
     list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
-    include(cmake-modules/getExpandedTarget.cmake)
-    # Target libraries needs to go after
-    foreach(elem ${TARGETS})
-        if(TARGET ${elem})
-            expand_target_libs(${elem} libs)
-            expand_target_incs(${elem} incs)
-            expand_target_opts(${elem} opts)
-            expand_target_defs(${elem} defs)
-            list(APPEND CMAKE_REQUIRED_LIBRARIES     ${libs})
-            list(APPEND CMAKE_REQUIRED_INCLUDES      ${incs})
-            list(APPEND CMAKE_REQUIRED_FLAGS         ${opts})
-            list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${defs})
-        endif()
-    endforeach()
+#
+#
+#    include(cmake-modules/getExpandedTarget.cmake)
+#    # Target libraries needs to go after
+#    foreach(elem ${TARGETS})
+#        if(TARGET ${elem})
+#            expand_target_libs(${elem} libs)
+#            expand_target_incs(${elem} incs)
+#            expand_target_opts(${elem} opts)
+#            expand_target_defs(${elem} defs)
+#            list(APPEND CMAKE_REQUIRED_LIBRARIES     ${libs})
+#            list(APPEND CMAKE_REQUIRED_INCLUDES      ${incs})
+#            list(APPEND CMAKE_REQUIRED_FLAGS         ${opts})
+#            list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${defs})
+#        endif()
+#    endforeach()
 
 
     list(TRANSFORM "CMAKE_REQUIRED_DEFINITIONS" PREPEND "-D")  # Definitions should start with "-D"
     string(REPLACE ";" " "  CMAKE_REQUIRED_FLAGS          "${CMAKE_REQUIRED_FLAGS}")        # Needs to be a space-separated list
 
     include(CheckCXXSourceCompiles)
-    if(DMRG_PRINT_CHECKS OR ARPACKPP_FIND_VERBOSE)
+    if(DMRG_PRINT_CHECKS OR NOT arpack++_FIND_VERBOSE)
         message(STATUS "ARPACK++ COMPILE TEST ${TAG} CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
         message(STATUS "ARPACK++ COMPILE TEST ${TAG} CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
         message(STATUS "ARPACK++ COMPILE TEST ${TAG} CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")

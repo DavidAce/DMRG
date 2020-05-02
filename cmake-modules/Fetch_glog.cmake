@@ -1,5 +1,5 @@
 
-if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
+if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
 
     include(cmake-modules/CheckGlogCompiles.cmake)
 
@@ -24,12 +24,12 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
     endif()
 
     # Glog should only look in conda on shared builds! Conda does not give us the static version
-    find_package(glog 0.4 PATH_SUFFIXES glog glog/lib NO_DEFAULT_PATH)
+    find_package(glog 0.4 NO_CMAKE_PACKAGE_REGISTRY)
 
     if(NOT TARGET glog::glog)
         message(STATUS "Looking for glog in system")
-        find_library(GLOG_LIBRARIES     glog           HINTS ${CMAKE_INSTALL_PREFIX} )
-        find_path   (GLOG_INCLUDE_DIR   glog/logging.h HINTS ${CMAKE_INSTALL_PREFIX} )
+        find_library(GLOG_LIBRARIES     glog           )
+        find_path   (GLOG_INCLUDE_DIR   glog/logging.h )
         if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
             check_glog_compiles("lib_header" "" "" "${GLOG_LIBRARIES};unwind::full;gflags::gflags;pthread" "${GLOG_INCLUDE_DIR}" "")
         endif()
@@ -52,10 +52,7 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
     build_dependency(glog "${CMAKE_INSTALL_PREFIX}" "${GLOG_CMAKE_OPTIONS}")
-    find_package(glog 0.4
-            HINTS ${CMAKE_INSTALL_PREFIX}
-            PATH_SUFFIXES glog glog/lib
-            NO_DEFAULT_PATH)
+    find_package(glog 0.4 NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET glog::glog)
         message(STATUS "glog installed successfully")
     else()
