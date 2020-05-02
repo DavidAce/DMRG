@@ -16,6 +16,7 @@ option(DMRG_ENABLE_LTO               "Enable link time optimization"            
 option(DMRG_ENABLE_TESTS             "Enable unit testing with ctest"                      OFF)
 option(DMRG_BUILD_EXAMPLES           "Build examples"                                      OFF)
 option(DMRG_PRINT_INFO               "Print information during cmake configure"            OFF)
+option(DMRG_APPEND_LIBSUFFIX         "Install dependencies to separate subfolders"         ON)
 
 
 

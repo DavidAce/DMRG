@@ -12,7 +12,7 @@ ExternalProject_Add(external_glog
         GIT_PROGRESS false
         GIT_SHALLOW true
         PREFIX          ${CMAKE_BINARY_DIR}
-        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/glog
+        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
 #        BUILD_COMMAND ${CMAKE_COMMAND} --build . -- -j ${NUM_THREADS}
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}

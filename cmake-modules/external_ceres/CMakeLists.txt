@@ -17,7 +17,7 @@ ExternalProject_Add(external_ceres
         GIT_PROGRESS false
         GIT_SHALLOW false
         PREFIX          ${CMAKE_BINARY_DIR}
-        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}/ceres
+        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
 #        BUILD_COMMAND ${CMAKE_COMMAND} --build . -- -j ${NUM_THREADS}
         CMAKE_GENERATOR "CodeBlocks - Unix Makefiles"
         CMAKE_ARGS

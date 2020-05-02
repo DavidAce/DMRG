@@ -128,7 +128,7 @@ if(NOT TARGET ceres::ceres AND NOT TARGET ceres AND DMRG_DOWNLOAD_METHOD MATCHES
     message(STATUS "ceres options: ${CERES_CMAKE_OPTIONS}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     build_dependency(ceres "${CMAKE_INSTALL_PREFIX}" "${CERES_CMAKE_OPTIONS}" )
-    find_package(Ceres HINTS ${CMAKE_INSTALL_PREFIX}/ceres NO_DEFAULT_PATH)
+    find_package(Ceres HINTS ${CMAKE_INSTALL_PREFIX} NO_DEFAULT_PATH)
     if(TARGET ceres)
         message(STATUS "ceres installed successfully")
     else()
