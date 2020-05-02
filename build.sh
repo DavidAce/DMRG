@@ -93,7 +93,6 @@ do
     -f|--extra-flags)               extra_flags=$2                  ; echo " * Extra CMake flags        : $2"      ; shift 2 ;;
     -g|--compiler)                  compiler=$2                     ; echo " * C++ Compiler             : $2"      ; shift 2 ;;
     -G|--generator)                 generator=$2                    ; echo " * CMake generator          : $2"      ; shift 2 ;;
-       --gcc-toolchain)             gcc_toolchain=$2                ; echo " * GCC toolchain            : $2"      ; shift 2 ;;
     -j|--make-threads)              make_threads=$2                 ; echo " * MAKE threads             : $2"      ; shift 2 ;;
     -s|--enable-shared)             enable_shared="ON"              ; echo " * Link shared libraries    : ON"      ; shift   ;;
        --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
@@ -167,7 +166,6 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
         module load GCC/8.2.0-2.31.1
         if [ "$compiler" = "Clang" ] ; then
             module load Clang/8.0.0-GCCcore-8.2.0
-            if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
         fi
     fi
 
@@ -190,7 +188,6 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
         module load GCCcore
         if [ "$compiler" = "Clang" ] ; then
             module load Clang
-            if [ -z "$gcc_toolchain" ] ; then gcc_toolchain=--gcc-toolchain=$EBROOTGCCCORE ; fi
         fi
         module list
     fi
@@ -234,7 +231,6 @@ cat << EOF >&2
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests
           -DDMRG_ENABLE_OPENMP=$enable_openmp
           -DDMRG_ENABLE_MKL=$enable_mkl
-          -DGCC_TOOLCHAIN=$gcc_toolchain
            -G $generator
            ../../
     cmake --build . --target $target --parallel $make_threads
@@ -254,7 +250,6 @@ if [ -z "$dry_run" ] ;then
           -DDMRG_ENABLE_TESTS:BOOL=$enable_tests \
           -DDMRG_ENABLE_OPENMP=$enable_openmp \
           -DDMRG_ENABLE_MKL=$enable_mkl \
-          -DGCC_TOOLCHAIN=$gcc_toolchain \
            -G "$generator" \
            ../../
     exit_code=$?

@@ -25,7 +25,6 @@ function(find_Arpackpp)
     if (NOT TARGET arpack::arpack++)
         include(GNUInstallDirs)
         arpackpp_message(STATUS "Looking for arpack++ in system")
-        message(WARNING "CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
         find_library(ARPACKPP_LIBRARY
                 NAMES arpackpp arpack++
                 PATH_SUFFIXES arpack++/${CMAKE_INSTALL_LIBDIR} arpackpp/${CMAKE_INSTALL_LIBDIR}

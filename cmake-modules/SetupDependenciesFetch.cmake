@@ -1,9 +1,9 @@
 if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     #  Make sure we use DMRG's own find modules
-    list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
+    list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
     # Make sure find_package looks for the packages we just built instead of rebuilding them
     # when we rerun the cmake config.
-    list(INSERT CMAKE_PREFIX_PATH 0 ${CMAKE_INSTALL_PREFIX})
+    list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 
     ##############################################################################
     ###  Optional OpenMP support                                               ###
