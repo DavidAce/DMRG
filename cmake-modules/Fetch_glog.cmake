@@ -24,7 +24,12 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     endif()
 
     # Glog should only look in conda on shared builds! Conda does not give us the static version
-    find_package(glog 0.4 NO_CMAKE_PACKAGE_REGISTRY)
+    if(NOT BUILD_SHARED_LIBS AND DMRG_PREFER_CONDA_LIBS)
+        # Static case - conda should not be searched
+        find_package(glog 0.4 HINTS ${CMAKE_INSTALL_PREFIX} PATHS $ENV{EBROOTGLOG} NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH)
+    elseif(DMRG_PREFER_CONDA_LIBS)
+        find_package(glog 0.4 NO_CMAKE_PACKAGE_REGISTRY)
+    endif()
 
     if(NOT TARGET glog::glog)
         message(STATUS "Looking for glog in system")
