@@ -60,10 +60,11 @@ function(build_dependency dep_name install_dir extra_flags)
     endif()
 
     # Copy the install manifest if it exists
-    file(GLOB_RECURSE INSTALL_MANIFEST "${build_dir}/*/install_manifest.txt")
-    if(INSTALL_MANIFEST)
-        message(STATUS "Copying install manifest: ${INSTALL_MANIFEST}")
-        configure_file(${INSTALL_MANIFEST} ${CMAKE_CURRENT_BINARY_DIR}/install_manifest_${dep_name}.txt)
-    endif()
+    file(GLOB_RECURSE INSTALL_MANIFEST "${build_dir}/*/install_manifest*.txt")
+    foreach(manifest ${INSTALL_MANIFEST})
+        get_filename_component(manifest_filename ${manifest} NAME_WE)
+        message(STATUS "Copying install manifest: ${manifest}")
+        configure_file(${manifest} ${CMAKE_CURRENT_BINARY_DIR}/${manifest_filename}_${dep_name}.txt)
+    endforeach()
 
 endfunction()
