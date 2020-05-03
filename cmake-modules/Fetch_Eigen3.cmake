@@ -7,7 +7,7 @@ if(NOT TARGET Eigen3::Eigen AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     # We want to find our own Eigen3 to make sure we patch it properly
     find_package(Eigen3
         HINTS ${CMAKE_INSTALL_PREFIX}
-        NO_CMAKE_PACKAGE_REGISTRY)
+        NO_DEFAULT_PATH) # IMPORTANT TO ONLY LOOK IN DMRG'S OWN PLACE
     if(TARGET Eigen3::Eigen)
         message(STATUS "Found Eigen3: ${EIGEN3_INCLUDE_DIR}")
         target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
