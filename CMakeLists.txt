@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 project(DMRG++
-        VERSION 2.0.0
+        VERSION 2.1.0
         DESCRIPTION "DMRG algorithms for 1D quantum spin chains"
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 
@@ -9,14 +9,14 @@ project(DMRG++
 list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 # Set options this build
-option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"         OFF)
-option(DMRG_ENABLE_OPENMP            "Use OpenMP"                                          OFF)
-option(DMRG_ENABLE_MKL               "Enable Intel Math Kernel Library"                    OFF)
-option(DMRG_ENABLE_LTO               "Enable link time optimization"                       OFF)
-option(DMRG_ENABLE_TESTS             "Enable unit testing with ctest"                      OFF)
-option(DMRG_BUILD_EXAMPLES           "Build examples"                                      OFF)
-option(DMRG_PRINT_INFO               "Print information during cmake configure"            OFF)
-option(DMRG_APPEND_LIBSUFFIX         "Install dependencies to separate subfolders"         ON)
+option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"                  OFF)
+option(DMRG_ENABLE_OPENMP            "Use OpenMP"                                                   OFF)
+option(DMRG_ENABLE_MKL               "Enable Intel Math Kernel Library"                             OFF)
+option(DMRG_ENABLE_LTO               "Enable link time optimization"                                OFF)
+option(DMRG_ENABLE_TESTS             "Enable unit testing with ctest"                               OFF)
+option(DMRG_BUILD_EXAMPLES           "Build examples"                                               OFF)
+option(DMRG_PRINT_INFO               "Print information during cmake configure"                     OFF)
+option(DMRG_DEPS_IN_SUBDIR           "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>"     ON)
 
 
 
@@ -222,6 +222,16 @@ target_link_libraries(${PROJECT_NAME} PRIVATE project-settings)  # Link everythi
 
 
 
+# Uninstall target
+if(NOT TARGET uninstall)
+    configure_file(
+            ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/DMRGUninstall.cmake.in
+            ${CMAKE_CURRENT_BINARY_DIR}/DMRGUninstall.cmake
+            IMMEDIATE @ONLY)
+
+    add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/DMRGUninstall.cmake)
+endif()
 
 
 # Print summary of CMake configuration
@@ -235,6 +245,7 @@ if (DMRG_PRINT_INFO)
         print_target_info(${tgt} "| ")
     endforeach()
 endif()
+
 
 
 ###################
@@ -259,33 +270,6 @@ if (DMRG_ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif ()
-#
-#if(DMRG_ENABLE_TESTS)
-#    enable_testing()
-#    add_subdirectory(tests/arpack++_simple)
-#    add_subdirectory(tests/arpack++_mps   )
-#    add_subdirectory(tests/file_io        )
-#    add_subdirectory(tests/eigsolver      )
-#    add_subdirectory(tests/svdwrapper     )
-#    add_subdirectory(tests/eigen_openmp   )
-#    add_subdirectory(tests/ceres_pthread  )
-#
-#    add_custom_target(all-tests
-#            DEPENDS test-arpack++_simple
-#            DEPENDS test-arpack++_mps
-#            DEPENDS test-file_io
-#            DEPENDS test-eigsolver
-#            DEPENDS test-eigen_openmp
-#            DEPENDS test-svdwrapper
-#            DEPENDS test-ceres_pthread
-#            )
-#
-#    add_custom_command(TARGET all-tests
-#            POST_BUILD
-#            COMMENT "Running Tests"
-#            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-#            COMMAND ${CMAKE_CTEST_COMMAND} -C $<CONFIG> --output-on-failure)
-#endif()
 
 
 
