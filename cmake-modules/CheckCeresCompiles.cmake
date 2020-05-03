@@ -1,69 +1,25 @@
-function(ceres_message TYPE MSG)
-    if(DMRG_PRINT_INFO)
-        message(${TYPE} ${MSG})
-    endif()
-endfunction()
 
-function(check_ceres_compiles TAG REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_LIBRARIES_UNPARSED REQUIRED_INCLUDES REQUIRED_TARGETS)
-    if(REQUIRED_LIBRARIES_UNPARSED AND REQUIRED_TARGETS)
-        message(FATAL_ERROR "Please use EITHER required libs or required targets to honor linking order")
+function(check_ceres_compiles TARGETS LIBS INCS OPTS DEFS)
+    if(NOT BUILD_SHARED_LIBS)
+        list(APPEND CMAKE_REQUIRED_LIBRARIES -static)
     endif()
 
-    ceres_message(STATUS "Checking if ceres compiles")
+    list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS} ${TARGETS})
+    list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
+    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS} -std=c++17)
+    list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
+
+    list(TRANSFORM "CMAKE_REQUIRED_DEFINITIONS" PREPEND "-D")  # Definitions should start with "-D"
+    string(REPLACE ";" " "  CMAKE_REQUIRED_FLAGS          "${CMAKE_REQUIRED_FLAGS}")        # Needs to be a space-separated list
 
     if(DMRG_PRINT_CHECKS)
-        message(STATUS "CERES TEST [${TAG}] REQUIRED_FLAGS                 ${REQUIRED_FLAGS}")
-        message(STATUS "CERES TEST [${TAG}] REQUIRED_DEFINITIONS           ${REQUIRED_DEFINITIONS}")
-        message(STATUS "CERES TEST [${TAG}] REQUIRED_LIBRARIES_UNPARSED    ${REQUIRED_LIBRARIES_UNPARSED}")
-        message(STATUS "CERES TEST [${TAG}] REQUIRED_INCLUDES              ${REQUIRED_INCLUDES}")
-        message(STATUS "CERES TEST [${TAG}] REQUIRED_TARGETS               ${REQUIRED_TARGETS}")
+        message(STATUS "CERES COMPILE TEST CMAKE_REQUIRED_LIBRARIES         ${CMAKE_REQUIRED_LIBRARIES}")
+        message(STATUS "CERES COMPILE TEST CMAKE_REQUIRED_INCLUDES          ${CMAKE_REQUIRED_INCLUDES}")
+        message(STATUS "CERES COMPILE TEST CMAKE_REQUIRED_FLAGS             ${CMAKE_REQUIRED_FLAGS}")
+        message(STATUS "CERES COMPILE TEST CMAKE_REQUIRED_DEFINITIONS       ${CMAKE_REQUIRED_DEFINITIONS}")
     endif()
-
-
-    if(NOT BUILD_SHARED_LIBS)
-        list(APPEND REQUIRED_LIBRARIES -static)
-    endif()
-
-    include(cmake-modules/getExpandedTarget.cmake)
-    foreach(elem ${REQUIRED_LIBRARIES_UNPARSED})
-        if(TARGET ${elem})
-            expand_target_libs(${elem} expanded_libs)
-            expand_target_incs(${elem} expanded_incs)
-            expand_target_opts(${elem} expanded_opts)
-            list(APPEND REQUIRED_LIBRARIES "${expanded_libs}")
-            list(APPEND REQUIRED_INCLUDES  "${expanded_incs}")
-            list(APPEND REQUIRED_FLAGS     "${expanded_opts}")
-        else()
-            list(APPEND REQUIRED_LIBRARIES "${elem}")
-        endif()
-    endforeach()
-
-    foreach(elem ${REQUIRED_TARGETS})
-        if(TARGET ${elem})
-            expand_target_libs(${elem} expanded_libs)
-            expand_target_incs(${elem} expanded_incs)
-            expand_target_opts(${elem} expanded_opts)
-            list(APPEND REQUIRED_LIBRARIES "${expanded_libs}")
-            list(APPEND REQUIRED_INCLUDES  "${expanded_incs}")
-            list(APPEND REQUIRED_FLAGS     "${expanded_opts}")
-        endif()
-    endforeach()
-    string(REPLACE ";" " " REQUIRED_FLAGS      "${REQUIRED_FLAGS}") # Needs to be a space-separated list
-    list(FILTER REQUIRED_LIBRARIES EXCLUDE REGEX "NOTFOUND") # Make sure every item is valid
-    list(FILTER REQUIRED_INCLUDES  EXCLUDE REGEX "NOTFOUND")
 
     #   Test features
-    set(CMAKE_REQUIRED_FLAGS        ${REQUIRED_FLAGS})
-    set(CMAKE_REQUIRED_DEFINITIONS  ${REQUIRED_DEFINITIONS})
-    set(CMAKE_REQUIRED_LIBRARIES    ${REQUIRED_LIBRARIES})
-    set(CMAKE_REQUIRED_INCLUDES     ${REQUIRED_INCLUDES})
-    if(DMRG_PRINT_CHECKS)
-        message(STATUS "CERES TEST [${TAG}] CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
-        message(STATUS "CERES TEST [${TAG}] CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
-        message(STATUS "CERES TEST [${TAG}] CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
-        message(STATUS "CERES TEST [${TAG}] CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
-    endif()
-
     include(CheckCXXSourceCompiles)
     check_cxx_source_compiles("
             #include <ceres/ceres.h>
@@ -97,15 +53,14 @@ function(check_ceres_compiles TAG REQUIRED_FLAGS REQUIRED_DEFINITIONS REQUIRED_L
               std::cout << summary.FullReport() << std::endl;
               return 0;
             }
-        " CERES_COMPILES_${TAG})
-    if(CERES_COMPILES_${TAG})
-        set(CERES_COMPILES_${TAG} TRUE PARENT_SCOPE)
-        ceres_message(STATUS "Ceres compilation test successful")
-    else()
-        set(CERES_COMPILES_${TAG} FALSE PARENT_SCOPE)
+        " CERES_COMPILES)
+    set(CERES_COMPILES ${CERES_COMPILES} PARENT_SCOPE)
+    if(NOT CERES_COMPILES)
+        unset(CERES_COMPILES CACHE)
+        unset(CERES_COMPILES PARENT_SCOPE)
         if(DMRG_PRINT_CHECKS AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
             file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
-            message(STATUS ${ERROR_LOG})
+            message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
         endif()
     endif()
 endfunction()
