@@ -1,7 +1,7 @@
 if(DMRG_DOWNLOAD_METHOD MATCHES "find")
     # Let cmake find our Find<package>.cmake modules
     list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-    #list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
+    list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX})
 
 
     if(CMAKE_SIZEOF_VOID_P EQUAL 8 OR CMAKE_GENERATOR MATCHES "64")
@@ -26,7 +26,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "find")
                 $ENV{HOME}/miniconda
                 $ENV{HOME}/.conda
                 )
-        endif()
+    endif()
     list(APPEND CMAKE_PREFIX_PATH
             $ENV{EBROOTIMKL}
             $ENV{EBROOTOPENBLAS}
