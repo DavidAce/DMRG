@@ -1,6 +1,6 @@
 function(build_dependency dep_name install_dir extra_flags)
     set(build_dir    ${CMAKE_BINARY_DIR}/dmrg-deps-build/${dep_name})
-    if (DMRG_APPEND_LIBSUFFIX)
+    if (DMRG_DEPS_IN_SUBDIR) # h5pp is run with append libsuffix so we don't need to append it again
         set(install_dir ${install_dir}/${dep_name})
         mark_as_advanced(install_dir)
     endif()
@@ -59,5 +59,11 @@ function(build_dependency dep_name install_dir extra_flags)
         endif()
     endif()
 
+    # Copy the install manifest if it exists
+    file(GLOB_RECURSE INSTALL_MANIFEST "${build_dir}/*/install_manifest.txt")
+    if(INSTALL_MANIFEST)
+        message(STATUS "Copying install manifest: ${INSTALL_MANIFEST}")
+        configure_file(${INSTALL_MANIFEST} ${CMAKE_CURRENT_BINARY_DIR}/install_manifest_${dep_name}.txt)
+    endif()
 
 endfunction()
