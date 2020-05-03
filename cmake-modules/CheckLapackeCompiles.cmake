@@ -1,36 +1,23 @@
-function(CheckLapackeCompiles TAG TARGETS LIBS INCS OPTS DEFS)
-    # Tag is needed for the compilation to actually take place multiple times!
-    list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS})
+function(check_lapacke_compiles TARGETS LIBS INCS OPTS DEFS)
+    if(NOT BUILD_SHARED_LIBS)
+        list(APPEND CMAKE_REQUIRED_LIBRARIES -static)
+    endif()
+    list(APPEND CMAKE_REQUIRED_LIBRARIES     ${LIBS} ${TARGETS})
     list(APPEND CMAKE_REQUIRED_INCLUDES      ${INCS})
-    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS})
+    list(APPEND CMAKE_REQUIRED_FLAGS         ${OPTS} -std=c++17)
     list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${DEFS})
-    include(cmake-modules/getExpandedTarget.cmake)
-    # Target libraries needs to go after
-    foreach(elem ${TARGETS})
-        if(TARGET ${elem})
-            expand_target_libs(${elem} libs)
-            expand_target_incs(${elem} incs)
-            expand_target_opts(${elem} opts)
-            expand_target_defs(${elem} defs)
-            list(APPEND CMAKE_REQUIRED_LIBRARIES     ${libs})
-            list(APPEND CMAKE_REQUIRED_INCLUDES      ${incs})
-            list(APPEND CMAKE_REQUIRED_FLAGS         ${opts})
-            list(APPEND CMAKE_REQUIRED_DEFINITIONS   ${defs})
-        endif()
-    endforeach()
-
 
     list(TRANSFORM "CMAKE_REQUIRED_DEFINITIONS" PREPEND "-D")  # Definitions should start with "-D"
-    string(REPLACE ";" " "  CMAKE_REQUIRED_FLAGS          "${CMAKE_REQUIRED_FLAGS}")        # Needs to be a space-separated list
+    string(REPLACE ";" " "  CMAKE_REQUIRED_FLAGS  "${CMAKE_REQUIRED_FLAGS}")        # Needs to be a space-separated list
 
-    include(CheckCXXSourceCompiles)
-    if(DMRG_PRINT_CHECKS OR NOT Lapacke_FIND_QUIETLY)
-        message(STATUS "LAPACKE COMPILE TEST ${TAG} CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
-        message(STATUS "LAPACKE COMPILE TEST ${TAG} CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
-        message(STATUS "LAPACKE COMPILE TEST ${TAG} CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
-        message(STATUS "LAPACKE COMPILE TEST ${TAG} CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
+    if(DMRG_PRINT_CHECKS)
+        message(STATUS "LAPACKE COMPILE TEST CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
+        message(STATUS "LAPACKE COMPILE TEST CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
+        message(STATUS "LAPACKE COMPILE TEST CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
+        message(STATUS "LAPACKE COMPILE TEST CMAKE_REQUIRED_DEFINITIONS  ${CMAKE_REQUIRED_DEFINITIONS}")
     endif()
     #   Test features
+    include(CheckCXXSourceCompiles)
     check_cxx_source_compiles("
         #include <complex>
         #ifdef MKL_AVAILABLE
@@ -58,5 +45,9 @@ function(CheckLapackeCompiles TAG TARGETS LIBS INCS OPTS DEFS)
     if(NOT LAPACKE_COMPILES)
         unset(LAPACKE_COMPILES CACHE)
         unset(LAPACKE_COMPILES PARENT_SCOPE)
+        if(DMRG_PRINT_CHECKS AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
+            file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
+            message(STATUS ${ERROR_LOG})
+        endif()
     endif()
 endfunction()
