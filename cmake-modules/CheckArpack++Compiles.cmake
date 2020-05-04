@@ -12,7 +12,7 @@ function(check_arpackpp_compiles TARGETS LIBS INCS OPTS DEFS)
     string(REPLACE ";" " "  CMAKE_REQUIRED_FLAGS          "${CMAKE_REQUIRED_FLAGS}")        # Needs to be a space-separated list
 
     include(CheckCXXSourceCompiles)
-    if(DMRG_PRINT_CHECKS OR NOT arpack++_FIND_VERBOSE)
+    if(DMRG_PRINT_CHECKS)
         message(STATUS "ARPACK++ COMPILE TEST CMAKE_REQUIRED_LIBRARIES    ${CMAKE_REQUIRED_LIBRARIES}")
         message(STATUS "ARPACK++ COMPILE TEST CMAKE_REQUIRED_INCLUDES     ${CMAKE_REQUIRED_INCLUDES}")
         message(STATUS "ARPACK++ COMPILE TEST CMAKE_REQUIRED_FLAGS        ${CMAKE_REQUIRED_FLAGS}")
