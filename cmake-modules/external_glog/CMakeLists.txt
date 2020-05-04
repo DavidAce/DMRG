@@ -9,17 +9,15 @@ include(ExternalProject)
 ExternalProject_Add(external_glog
         GIT_REPOSITORY https://github.com/google/glog.git
         GIT_TAG v0.4.0
-        GIT_PROGRESS false
-        GIT_SHALLOW true
+        GIT_PROGRESS FALSE
+        GIT_SHALLOW TRUE
+        BUILD_ALWAYS TRUE
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
-#        BUILD_COMMAND ${CMAKE_COMMAND} --build . -- -j ${NUM_THREADS}
         CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-#        -DCMAKE_CXX_STANDARD=11
-        -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=ON
-        -DCMAKE_CXX_EXTENSIONS:BOOL=OFF
-        -DBUILD_SHARED_LIBS:BOOL=OFF
+        -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
         -Dgflags_DIR:BOOL:PATH=${gflags_DIR}
+        -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
         )

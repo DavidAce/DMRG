@@ -1,3 +1,11 @@
+if(DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+    if(NOT TARGET gflags::gflags)
+        message(FATAL_ERROR "glog::glog: dependencies missing [gflags::gflags]")
+    endif()
+endif()
+
+
+
 
 if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
 
@@ -27,7 +35,7 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     if(NOT BUILD_SHARED_LIBS AND DMRG_PREFER_CONDA_LIBS)
         # Static case - conda should not be searched
         find_package(glog 0.4 HINTS ${CMAKE_INSTALL_PREFIX} PATHS $ENV{EBROOTGLOG} NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH)
-    elseif(DMRG_PREFER_CONDA_LIBS)
+    else()
         find_package(glog 0.4 NO_CMAKE_PACKAGE_REGISTRY)
     endif()
 
@@ -37,13 +45,16 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
         find_path   (GLOG_INCLUDE_DIR   glog/logging.h )
         if(GLOG_LIBRARIES AND GLOG_INCLUDE_DIR)
             check_glog_compiles("" "${GLOG_LIBRARIES};unwind::full;gflags::gflags;pthread" "${GLOG_INCLUDE_DIR}" "" "")
+            if (GLOG_COMPILES)
+                add_library(glog::glog ${LINK_TYPE} IMPORTED)
+                set_target_properties(glog::glog PROPERTIES IMPORTED_LOCATION "${GLOG_LIBRARIES}")
+                target_include_directories(glog::glog SYSTEM INTERFACE ${GLOG_INCLUDE_DIR})
+                message(STATUS "Looking for glog in system - found: ${GLOG_LIBRARIES}")
+            endif()
+        else()
+            message(STATUS "Looking for glog in system - not found")
         endif()
-        if (GLOG_COMPILES_lib_header)
-            add_library(glog::glog ${LINK_TYPE} IMPORTED)
-            set_target_properties(glog::glog PROPERTIES IMPORTED_LOCATION "${GLOG_LIBRARIES}")
-            target_include_directories(glog::glog SYSTEM INTERFACE ${GLOG_INCLUDE_DIR})
-            message(STATUS "Looking for glog in system - found: ${GLOG_LIBRARIES}")
-        endif()
+
     endif()
 
     if(TARGET glog::glog)
@@ -55,7 +66,8 @@ endif()
 if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
     message(STATUS "glog will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
-    list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
+    list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags/lib/cmake/gflags)
+    list(APPEND GLOG_CMAKE_OPTIONS -DCMAKE_PREFIX_PATH:PATH=${CMAKE_INSTALL_PREFIX}/gflags)
     build_dependency(glog "${CMAKE_INSTALL_PREFIX}" "${GLOG_CMAKE_OPTIONS}")
     find_package(glog 0.4 NO_CMAKE_PACKAGE_REGISTRY)
     if(TARGET glog::glog)
