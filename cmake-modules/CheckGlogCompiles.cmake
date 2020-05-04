@@ -18,7 +18,6 @@ function(check_glog_compiles TARGETS LIBS INCS OPTS DEFS)
     endif()
     #   Test features
     include(CheckCXXSourceCompiles)
-    include(CheckCXXSourceCompiles)
     check_cxx_source_compiles("
            #include <glog/logging.h>
            int main(int argc, char* argv[]) {
