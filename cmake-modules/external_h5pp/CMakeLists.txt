@@ -9,6 +9,7 @@ ExternalProject_Add(external_h5pp
         GIT_TAG master
         GIT_PROGRESS 1
         GIT_SHALLOW 1
+        BUILD_ALWAYS TRUE
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
         CMAKE_ARGS

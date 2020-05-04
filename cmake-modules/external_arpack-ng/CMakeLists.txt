@@ -8,6 +8,7 @@ ExternalProject_Add(external_ARPACK-NG
         GIT_TAG             3.7.0
         GIT_PROGRESS false
         GIT_SHALLOW true
+        BUILD_ALWAYS TRUE
         PREFIX           ${CMAKE_BINARY_DIR}
         INSTALL_DIR      ${CMAKE_INSTALL_PREFIX}
         UPDATE_COMMAND ""

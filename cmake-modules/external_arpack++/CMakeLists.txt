@@ -7,6 +7,7 @@ ExternalProject_Add(external_ARPACK++
         URL_MD5     1b09e35b6c44e118003922643b99978a
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+        BUILD_ALWAYS TRUE
         UPDATE_COMMAND ""
         TEST_COMMAND ""
         BUILD_COMMAND ""

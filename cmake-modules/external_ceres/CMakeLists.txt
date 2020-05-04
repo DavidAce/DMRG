@@ -16,6 +16,7 @@ ExternalProject_Add(external_ceres
         GIT_TAG "edb8322bdabef336db290be1cc557145b6d4bf80"
         GIT_PROGRESS false
         GIT_SHALLOW false
+        BUILD_ALWAYS TRUE
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
 #        BUILD_COMMAND ${CMAKE_COMMAND} --build . -- -j ${NUM_THREADS}
