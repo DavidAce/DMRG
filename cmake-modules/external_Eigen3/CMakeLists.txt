@@ -11,6 +11,7 @@ ExternalProject_Add(external_eigen3
         GIT_TAG 3.3.7
         GIT_PROGRESS 1
         GIT_SHALLOW 1
+        BUILD_ALWAYS TRUE
         PATCH_COMMAND git apply ${PROJECT_SOURCE_DIR}/Eigen_3.3.7.patch
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
