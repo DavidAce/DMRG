@@ -46,12 +46,15 @@ if(NOT TARGET mkl::mkl AND DMRG_ENABLE_MKL)
         # Make a handle library for convenience. This "mkl" library is available throughout this cmake project later.
         add_library(mkl::mkl INTERFACE IMPORTED)
         add_definitions(-DMKL_AVAILABLE)
-        target_link_libraries(mkl::mkl INTERFACE mkl::mkl_gf_lp_gthread)
-        target_compile_definitions(mkl::mkl INTERFACE MKL_AVAILABLE )
-
-        if(TARGET openmp::openmp)
-            target_link_libraries(mkl::mkl INTERFACE openmp::openmp)
+        if(MKL_MULTI_THREADED)
+            target_link_libraries(mkl::mkl INTERFACE mkl::mkl_gf_lp_gthread)
+            if(TARGET openmp::openmp)
+                target_link_libraries(mkl::mkl INTERFACE openmp::openmp)
+            endif()
+        else()
+            target_link_libraries(mkl::mkl INTERFACE mkl::mkl_gf_lp_seq)
         endif()
+        target_compile_definitions(mkl::mkl INTERFACE MKL_AVAILABLE )
         target_link_libraries(mkl::mkl INTERFACE gfortran::gfortran)
 
         # Make the rest of the build structure aware of blas and lapack included in MKL.
