@@ -1,5 +1,5 @@
 function(openblas_message TYPE MSG)
-    if(NOT OpenBLAS_FIND_QUIETLY)
+    if(OpenBLAS_FIND_VERBOSE)
         message(${TYPE} ${MSG})
     endif()
 endfunction()
@@ -18,13 +18,7 @@ function(find_OpenBLAS)
 
     if(NOT TARGET openblas::openblas)
         openblas_message(STATUS "Looking for OpenBLAS config")
-        find_package(OpenBLAS 0.3
-                #HINTS ${CMAKE_INSTALL_PREFIX}
-                #PATH_SUFFIXES
-                #openblas lib/x86_64-linux-gnu
-                #${NO_DEFAULT_PATH} ${NO_CMAKE_PACKAGE_REGISTRY}
-                CONFIG
-                )
+        find_package(OpenBLAS 0.3 CONFIG)
 
 
         # Some OpenBLAS cmake builds generate an OpenBLAS::OpenBLAS target. Ignore it.
@@ -33,11 +27,18 @@ function(find_OpenBLAS)
         if(TARGET OpenBLAS::OpenBLAS)
             get_target_property(OpenBLAS_LIBRARIES    OpenBLAS::OpenBLAS LOCATION)
             get_target_property(OpenBLAS_INCLUDE_DIRS OpenBLAS::OpenBLAS INTERFACE_INCLUDE_DIRECTORIES)
+            message(STATUS "Found candidate openblas library: ${OpenBLAS_LIBRARIES}")
+            if(NOT EXISTS ${OpenBLAS_LIBRARIES})
+                message(WARNING "The found library may not actually exist: ${OpenBLAS_LIBRARIES}")
+            endif()
         endif()
 
         if(OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
             get_filename_component(OpenBLAS_LIBRARIES_EXT ${OpenBLAS_LIBRARIES} EXT)
             if(NOT "${OpenBLAS_LIBRARIES_EXT}" MATCHES "${CMAKE_STATIC_LIBRARY_SUFFIX}" AND NOT BUILD_SHARED_LIBS)
+                # Found a shared library on a static build...
+                unset(OpenBLAS_LIBRARIES)
+                unset(OpenBLAS_LIBRARIES CACHE)
                 get_filename_component(OpenBLAS_LIBRARIES_WE ${OpenBLAS_LIBRARIES} NAME_WE)
                 get_filename_component(OPENBLAS_ROOT ${OpenBLAS_LIBRARIES} DIRECTORY)
                 if(EXISTS  ${OPENBLAS_ROOT}/${OpenBLAS_LIBRARIES_WE}${CMAKE_STATIC_LIBRARY_SUFFIX} )
@@ -47,13 +48,10 @@ function(find_OpenBLAS)
                     openblas_message(STATUS "Could not find OpenBLAS library with correct suffix (i.e. static/shared as requested): ${OpenBLAS_LIBRARIES}")
                 endif()
             endif()
-            if(NOT TARGET openblas::openblas)
+            if(NOT TARGET openblas::openblas AND OpenBLAS_LIBRARIES)
                 add_library(openblas::openblas ${LINK_TYPE} IMPORTED)
-                set_target_properties(openblas::openblas PROPERTIES
-                        IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}"
-                        INTERFACE_COMPILE_DEFINITIONS "OPENBLAS_AVAILABLE")
+                set_target_properties(openblas::openblas PROPERTIES IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}")
                 target_include_directories(openblas::openblas SYSTEM INTERFACE ${OpenBLAS_INCLUDE_DIRS})
-
             endif()
         endif()
     endif()
@@ -63,28 +61,11 @@ function(find_OpenBLAS)
 
     if(NOT TARGET openblas::openblas)
         openblas_message(STATUS "Looking for OpenBLAS in system")
-
-        find_library(OpenBLAS_LIBRARIES
-                NAMES openblas
-                #HINTS ${CMAKE_INSTALL_PREFIX}
-                #PATH_SUFFIXES
-                #lib openblas/lib OpenBLAS/lib openblas OpenBLAS lib/x86_64-linux-gnu
-                #${NO_DEFAULT_PATH}
-                #${NO_CMAKE_PACKAGE_REGISTRY}
-                )
-        find_path(OpenBLAS_INCLUDE_DIRS
-                NAMES openblas_config.h
-                #HINTS ${CMAKE_INSTALL_PREFIX}
-                #PATH_SUFFIXES
-                #include openblas openblas/include OpenBLAS OpenBLAS/include blas/include include/x86_64-linux-gnu
-                #${NO_DEFAULT_PATH}
-                #${NO_CMAKE_PACKAGE_REGISTRY}
-                )
+        find_library(OpenBLAS_LIBRARIES NAMES openblas)
+        find_path(OpenBLAS_INCLUDE_DIRS NAMES openblas_config.h)
         if (OpenBLAS_LIBRARIES AND OpenBLAS_INCLUDE_DIRS)
             add_library(openblas::openblas ${LINK_TYPE} IMPORTED)
-            set_target_properties(openblas::openblas PROPERTIES
-                    IMPORTED_LOCATION "${OpenBLAS_LIBRARIES}"
-                    INTERFACE_COMPILE_DEFINITIONS "OPENBLAS_AVAILABLE")
+            set_target_properties(openblas::openblas PROPERTIES IMPORTED_LOCATION ${OpenBLAS_LIBRARIES})
             target_include_directories(openblas::openblas SYSTEM INTERFACE ${OpenBLAS_INCLUDE_DIRS})
         endif()
     endif()
@@ -103,6 +84,7 @@ if(TARGET openblas::openblas)
     target_link_libraries(openblas::openblas INTERFACE gfortran::gfortran pthread)
 
     # Fix for OpenBLAS 0.3.9, which otherwise includes <complex> inside of an extern "C" scope.
+    target_compile_definitions(openblas::openblas INTERFACE OPENBLAS_AVAILABLE)
     target_compile_definitions(openblas::openblas INTERFACE LAPACK_COMPLEX_CUSTOM)
     target_compile_definitions(openblas::openblas INTERFACE lapack_complex_float=std::complex<float>)
     target_compile_definitions(openblas::openblas INTERFACE lapack_complex_double=std::complex<double>)
