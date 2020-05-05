@@ -40,7 +40,17 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
                     )
             list(APPEND NATIVE_TARGETS mkl::mkl)
         endif()
+    else()
+        cmake_host_system_information(RESULT _host_name   QUERY HOSTNAME)
+        if(${_host_name} MATCHES "travis|TRAVIS|Travis|fv-")
+            message(STATUS "Setting dynamic arch for openblas")
+            list(APPEND DMRG_CONAN_OPTIONS
+                    OPTIONS openblas:dynamic_arch=True)
+        endif()
     endif()
+
+
+
 
     list(APPEND NATIVE_TARGETS openmp::openmp)
 
