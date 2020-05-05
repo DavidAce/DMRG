@@ -86,7 +86,6 @@ matrix:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
     - name: "xenial gcc-7 | static | apt | find-or-fetch"
-      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: xenial
       os: linux
       compiler: gcc
@@ -161,7 +160,6 @@ matrix:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
 
     - name: "bionic gcc-7 | static | conda-forge | find-or-fetch"
-      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: gcc
@@ -188,7 +186,6 @@ matrix:
           - $HOME/miniconda
 
     - name: "bionic clang-7 | static | conda-forge | find-or-fetch"
-      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: clang
@@ -236,7 +233,6 @@ matrix:
 
 
     - name: "bionic clang | static | conda-forge | conan"
-      # Note that xenial gives a TLS error "Bad symbol" when linking openblas from conda-forge
       dist: bionic
       os: linux
       compiler: clang
@@ -259,6 +255,34 @@ matrix:
           - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
           - $HOME/miniconda
           - $HOME/.conan/data
+
+    - name: "bionic gcc-8 | static | conan"
+      dist: bionic
+      os: linux
+      compiler: gcc
+      env:
+        - CACHE_NAME=bionic-gcc-8-static-conan
+        - CXX=g++-8
+        - CC=gcc-8
+        - FC=gfortran-8
+        - FLAGS="--download-method=conan"
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:ubuntu-toolchain-r/test'
+          packages:
+            - libstdc++-8-dev
+            - gcc-8
+            - g++-8
+            - gfortran-8
+      cache:
+        pip: true
+        directories:
+          - $TRAVIS_BUILD_DIR/build/Debug/dmrg-deps-install
+          - $HOME/miniconda
+          - $HOME/.conan/data
+
 
 
 # The pre-install script. On windows it will install conan via chocolatey
