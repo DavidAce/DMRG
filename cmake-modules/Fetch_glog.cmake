@@ -30,15 +30,20 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     if(TARGET unwind::unwind AND LZMA_LIB AND GCC_EH_LIB)
         target_link_libraries(unwind::full INTERFACE gcc_eh unwind::unwind lzma)
     endif()
-
+    message(STATUS "Looking for glog config")
     # Glog should only look in conda on shared builds! Conda does not give us the static version
-    if(NOT BUILD_SHARED_LIBS AND DMRG_PREFER_CONDA_LIBS)
+    if(DMRG_PREFER_CONDA_LIBS AND NOT BUILD_SHARED_LIBS)
         # Static case - conda should not be searched
-        find_package(glog 0.4 HINTS ${CMAKE_INSTALL_PREFIX} PATHS $ENV{EBROOTGLOG} NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH)
+        message(STATUS "Excluding conda from glog search in static builds")
+        find_package(glog 0.4 HINTS ${CMAKE_INSTALL_PREFIX} PATHS $ENV{EBROOTGLOG} NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PACKAGE_REGISTRY)
     else()
         find_package(glog 0.4 NO_CMAKE_PACKAGE_REGISTRY)
     endif()
-
+    if(TARGET glog::glog)
+        message(STATUS "Looking for glog config - found")
+    else()
+        message(STATUS "Looking for glog config - not found")
+    endif()
     if(NOT TARGET glog::glog)
         message(STATUS "Looking for glog in system")
         find_library(GLOG_LIBRARIES     glog           )
@@ -56,14 +61,10 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
         endif()
 
     endif()
-
-    if(TARGET glog::glog)
-        message(STATUS "Found glog")
-    endif()
 endif()
 
 
-if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "fetch|native")
+if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "fetch")
     message(STATUS "glog will be installed into ${CMAKE_INSTALL_PREFIX}")
     include(${PROJECT_SOURCE_DIR}/cmake-modules/BuildDependency.cmake)
     list(APPEND GLOG_CMAKE_OPTIONS -Dgflags_DIR:PATH=${CMAKE_INSTALL_PREFIX}/gflags/lib/cmake/gflags)
