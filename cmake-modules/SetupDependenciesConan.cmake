@@ -22,7 +22,7 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
 
     if(DMRG_ENABLE_MKL)
         find_package(Fortran REQUIRED)
-        include(cmake-modules/Find_dont_install_INTELMKL.cmake)         # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+        include(cmake-modules/SetupMKL.cmake)         # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
         if(TARGET mkl::mkl)
             expand_target_libs(mkl::mkl MKL_LIBRARIES)
             # Passing MKL_LIBRARIES as-is will result in cmake-conan injecting -o= between each element
@@ -43,8 +43,6 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
     endif()
 
     list(APPEND NATIVE_TARGETS openmp::openmp)
-
-
 
     find_program (
             CONAN_COMMAND
