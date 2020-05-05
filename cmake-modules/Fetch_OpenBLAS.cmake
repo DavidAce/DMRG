@@ -5,7 +5,8 @@ if(TARGET mkl::mkl)
 endif()
 
 
-if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch|native")
+if(NOT TARGET openblas::openblas AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
+    set(OpenBLAS_FIND_VERBOSE ON)
     find_package(OpenBLAS)
 endif()
 
