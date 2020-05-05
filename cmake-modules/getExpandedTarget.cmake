@@ -38,7 +38,7 @@ function(expand_target_libs target_names expanded_list)
         set(repl ${tgt})
         foreach(lib ${target_expanded}) # Has no duplicates -> match only happens once
             if("${tgt}" STREQUAL "${lib}")
-                message(STATUS "Replacing ${repl} with ${target_expanded_${lib}}")
+                #message(STATUS "Replacing ${repl} with ${target_expanded_${lib}}")
                 set(repl ${target_expanded_${lib}})
             endif()
         endforeach()
