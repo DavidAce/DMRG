@@ -29,7 +29,7 @@ jobs:
             os: ubuntu-18.04
             compiler: gcc
             version: "8"
-            flags:  --download-method=native
+            flags:  --download-method=find-or-fetch
             sources: apt
             apt: gcc-8 g++-8 gfortran-8 libsz2 zlibc libopenblas-dev libarpack2-dev libarpack++2-dev liblapacke-dev libhdf5-dev libspdlog-dev libgflags-dev libgoogle-glog-dev libceres-dev libunwind-dev lzma libaec-dev
           
@@ -38,20 +38,20 @@ jobs:
             compiler: gcc
             version: "9"
             sources: conda conan
-            conda: conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
-            flags: --download-method=conan --prefer-conda
+            conda: conan
+            flags: --download-method=conan
 
           - name: ubuntu-18.04-clang-8
             os: ubuntu-18.04
             compiler: clang
             version: "8"
-            flags: --download-method=native
+            flags: --download-method=find-or-fetch
 
           - name: ubuntu-18.04-clang-9
             os: ubuntu-18.04
             compiler: clang
             version: "9"
-            flags: --download-method=native
+            flags: --download-method=find-or-fetch
 
           - name: ubuntu-18.04-clang-9-conda
             os: ubuntu-18.04
@@ -59,15 +59,15 @@ jobs:
             version: "9"
             sources: conda
             conda: spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
-            flags: --download-method=native --prefer-conda
+            flags: --download-method=find-or-fetch --prefer-conda
 
           - name: ubuntu-18.04-clang-9-conan
             os: ubuntu-18.04
             compiler: clang
             version: "9"
             sources: conda conan
-            conda: conan spdlog hdf5 hdf5-static eigen arpack arpackpp openblas ceres-solver
-            flags: --download-method=conan --prefer-conda
+            conda: conan
+            flags: --download-method=conan
           #- name: windows-2019-clang
           #  os: windows-2019
           #  compiler: clang
