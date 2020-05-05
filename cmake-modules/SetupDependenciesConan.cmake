@@ -47,6 +47,8 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             list(APPEND DMRG_CONAN_OPTIONS
                     OPTIONS openblas:dynamic_arch=True)
         endif()
+        find_package(Fortran REQUIRED)
+        list(APPEND NATIVE_TARGETS gfortran::gfortran)
     endif()
 
 
