@@ -35,7 +35,7 @@ if(NOT TARGET glog::glog AND DMRG_DOWNLOAD_METHOD MATCHES "find|fetch")
     if(DMRG_PREFER_CONDA_LIBS AND NOT BUILD_SHARED_LIBS)
         # Static case - conda should not be searched
         message(STATUS "Excluding conda from glog search in static builds")
-        find_package(glog 0.4 HINTS ${CMAKE_INSTALL_PREFIX} PATHS $ENV{EBROOTGLOG} NO_CMAKE_PATH NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PACKAGE_REGISTRY)
+        find_package(glog 0.4 HINTS ${CMAKE_INSTALL_PREFIX} PATHS $ENV{EBROOTGLOG} /usr /usr/local NO_DEFAULT_PATH)
     else()
         find_package(glog 0.4 NO_CMAKE_PACKAGE_REGISTRY)
     endif()

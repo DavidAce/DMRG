@@ -13,8 +13,9 @@ namespace tools::finite::opt{
         static constexpr auto REAL = EnumType::REAL;
         static constexpr auto CPLX = EnumType::CPLX;
         OptType(const EnumType & otherEnum): enum_(otherEnum){}
+        OptType(const OptType & otherOpt) = default;
         operator EnumType(){return enum_;}
-        std::string string() const {
+        [[nodiscard]] std::string string() const {
             switch (enum_){
                 case EnumType::REAL : return "REAL";
                 case EnumType::CPLX : return "CPLX";
@@ -22,10 +23,10 @@ namespace tools::finite::opt{
             return "ERROR";
         }
 
-        operator std::string() const {
+        explicit operator std::string() const {
             return this->string();
         }
-        explicit             operator std::string_view() const { return this->string(); }
+//        explicit             operator std::string_view() const { return this->string(); }
 
         friend std::ostream& operator<<(std::ostream& str, const OptType & optType){
             return str << optType.string();
@@ -52,18 +53,19 @@ namespace tools::finite::opt{
         static constexpr auto OVERLAP  = EnumMode::OVERLAP;
         static constexpr auto VARIANCE = EnumMode::VARIANCE;
         OptMode(const EnumMode & otherEnum): enum_(otherEnum){}
+        OptMode(const OptMode & otherOpt) = default;
         operator EnumMode(){return enum_;}
-        std::string string() const {
+        [[nodiscard]] std::string string() const {
             switch (enum_){
                 case EnumMode::OVERLAP  : return "OVERLAP";
                 case EnumMode::VARIANCE : return "VARIANCE";
             }
             return "ERROR";
         }
-        operator std::string() const {
+        explicit operator std::string() const {
             return this->string();
         }
-        explicit             operator std::string_view() const { return this->string(); }
+//        explicit             operator std::string_view() const { return this->string(); }
 
         friend std::ostream& operator<<(std::ostream& str, const OptMode & optMode){
             return str << optMode.string();
@@ -94,7 +96,8 @@ namespace tools::finite::opt{
         static constexpr auto DIRECT = EnumSpace::DIRECT;
         OptSpace(const EnumSpace &other): enum_(other){}
         operator EnumSpace(){return enum_;}
-        std::string string() const {
+        OptSpace(const OptSpace & otherOpt) = default;
+        [[nodiscard]] std::string string() const {
             switch (enum_){
                 case EnumSpace::SUBSPACE_ONLY : return "SUBSPACE_ONLY";
                 case EnumSpace::SUBSPACE_AND_DIRECT : return "SUBSPACE_AND_DIRECT";
@@ -102,10 +105,11 @@ namespace tools::finite::opt{
             }
             return "ERROR";
         }
-        operator std::string() const {
+
+        explicit operator std::string() const {
             return this->string();
         }
-        explicit             operator std::string_view() const { return this->string(); }
+//        explicit             operator std::string_view() const { return this->string(); }
         friend std::ostream& operator<<(std::ostream& str, const OptSpace & optSpace){
             return str << optSpace.string();
         }
