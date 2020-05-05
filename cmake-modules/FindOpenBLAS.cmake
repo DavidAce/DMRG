@@ -89,11 +89,18 @@ if(TARGET openblas::openblas)
     target_compile_definitions(openblas::openblas INTERFACE lapack_complex_float=std::complex<float>)
     target_compile_definitions(openblas::openblas INTERFACE lapack_complex_double=std::complex<double>)
 
+    if(OpenBLAS_INCLUDE_DIRS MATCHES "conda")
+        find_package(OpenMP)
+    endif()
+    if(TARGET openmp::openmp)
+        target_link_libraries(openblas::openblas INTERFACE openmp::openmp)
+    endif()
     #For convenience, define these targes
     add_library(blas::blas                  INTERFACE IMPORTED)
     add_library(lapack::lapack              INTERFACE IMPORTED)
     target_link_libraries(blas::blas        INTERFACE openblas::openblas)
     target_link_libraries(lapack::lapack    INTERFACE openblas::openblas)
+
 endif()
 
 

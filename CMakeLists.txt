@@ -10,7 +10,7 @@ list(INSERT CMAKE_MODULE_PATH 0  ${PROJECT_SOURCE_DIR}/cmake-modules)
 
 # Set options this build
 option(DMRG_PREFER_CONDA_LIBS        "Prefer libraries installed through anaconda"                  OFF)
-option(DMRG_ENABLE_OPENMP            "Use OpenMP"                                                   OFF)
+option(DMRG_ENABLE_OPENMP            "Use OpenMP"                                                   ON)
 option(DMRG_ENABLE_MKL               "Enable Intel Math Kernel Library"                             OFF)
 option(DMRG_ENABLE_LTO               "Enable link time optimization"                                OFF)
 option(DMRG_ENABLE_TESTS             "Enable unit testing with ctest"                               OFF)
