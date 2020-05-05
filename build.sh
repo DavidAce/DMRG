@@ -179,11 +179,16 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
 
 elif [[ "$HOSTNAME" == *"raken"* ]];then
     if [ -z "$no_module" ]; then
-        if [ "$enable_mkl" = "ON" ] ; then module load imkl; else module load OpenBLAS; fi
+        if [ "$enable_mkl" = "ON" ] ; then
+            module load imkl
+        else
+            module load OpenBLAS
+
+        fi
         module load arpack-ng
         module load ARPACK++
         module load HDF5/1.10.5-GCCcore-8.2.0
-        module load Eigen # We want our own patched eigen though.
+        #module load Eigen # We want our own patched eigen though.
         module load CMake
         module load GCCcore
         if [ "$compiler" = "Clang" ] ; then
