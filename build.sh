@@ -98,7 +98,7 @@ do
        --enable-tests)              enable_tests="ON"               ; echo " * CTest Testing            : ON"      ; shift   ;;
     -t|--target)                    target=$2                       ; echo " * CMake Build target       : $2"      ; shift 2 ;;
        --enable-openmp)             enable_openmp="ON"              ; echo " * Enable OpenMP            : ON"      ; shift   ;;
-       --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel enable_mkl  : ON"      ; shift   ;;
+       --enable-mkl)                enable_mkl="ON"                 ; echo " * Enable Intel MKL         : ON"      ; shift   ;;
        --no-modules)                no_modules="ON"                 ; echo " * Disable module load      : ON"      ; shift   ;;
        --prefer-conda)              prefer_conda="ON"               ; echo " * Prefer anaconda libs:    : ON"      ; shift   ;;
     -v|--verbose)                   verbose="ON"                    ; echo " * Verbose makefiles        : ON"      ; shift   ;;
@@ -190,22 +190,14 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
                     module load OpenBLAS
                 fi
         fi
-
         if [[ "$compiler" =~ Clang|clang|cl ]] ; then
             module try-load clang/6.0.1
         fi
+        module list
     fi
 
 
     cmake --version
-    if [[ "$compiler" =~ GCC|Gcc|gcc|cc|G++|g++|c++ ]] ; then
-        export CC=gcc
-        export CXX=g++
-    elif [[ "$compiler" =~ Clang|clang|cl ]] ; then
-        export CC=clang
-        export CXX=clang++
-    fi
-
 elif [[ "$HOSTNAME" == *"raken"* ]];then
     if [ -z "$no_module" ]; then
         module load CMake/3.16.5
@@ -225,15 +217,19 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
         fi
         module list
     fi
-    cmake --version
-    if [[ "$compiler" =~ GCC|Gcc|gcc|cc|G++|g++|c++ ]] ; then
-        export CC=gcc
-        export CXX=g++
-    elif [[ "$compiler" =~ Clang|clang|cl ]] ; then
-        export CC=clang
-        export CXX=clang++
-    fi
 fi
+
+
+if [[ "$compiler" =~ GCC|Gcc|gcc|cc|GNU|gnu|Gnu ]] ; then
+    echo "Exporting compiler flags for GCC"
+    export CC=gcc
+    export CXX=g++
+elif [[ "$compiler" =~ Clang|clang|cl ]] ; then
+    echo "Exporting compiler flags for Clang"
+    export CC=clang
+    export CXX=clang++
+fi
+
 
 export MAKEFLAGS=-j$make_threads
 export CMAKE_BUILD_PARALLEL_LEVEL=$make_threads
