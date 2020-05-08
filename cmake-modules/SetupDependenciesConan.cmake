@@ -60,8 +60,9 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             CONAN_COMMAND
             conan
             HINTS ${CONAN_PREFIX} $ENV{CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONDA_PREFIX}
-            PATHS $ENV{HOME}/anaconda3 $ENV{HOME}/miniconda3 $ENV{HOME}/.conda
+            PATHS $ENV{HOME}/anaconda3  $ENV{HOME}/miniconda3 $ENV{HOME}/anaconda $ENV{HOME}/miniconda $ENV{HOME}/.conda
             PATH_SUFFIXES bin envs/dmrg/bin
+            REQUIRED
     )
     message(STATUS "Found conan: ${CONAN_COMMAND}")
 
