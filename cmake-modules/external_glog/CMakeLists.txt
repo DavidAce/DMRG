@@ -7,10 +7,8 @@ project(external-glog)
 
 include(ExternalProject)
 ExternalProject_Add(external_glog
-        GIT_REPOSITORY https://github.com/google/glog.git
-        GIT_TAG v0.4.0
-        GIT_PROGRESS FALSE
-        GIT_SHALLOW TRUE
+        URL https://github.com/google/glog/archive/v0.4.0.tar.gz
+        URL_MD5 "0daea8785e6df922d7887755c3d100d0"
         BUILD_ALWAYS TRUE
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}

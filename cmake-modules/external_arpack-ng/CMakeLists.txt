@@ -3,11 +3,8 @@ project(external-arpack-ng)
 
 include(ExternalProject)
 ExternalProject_Add(external_ARPACK-NG
-        GIT_REPOSITORY      https://github.com/opencollab/arpack-ng.git
-        #            GIT_TAG             master
-        GIT_TAG             3.7.0
-        GIT_PROGRESS false
-        GIT_SHALLOW true
+        URL https://github.com/opencollab/arpack-ng/archive/3.7.0.tar.gz
+        URL_MD5 "6fc6c6bf78dbd4f144595ef0675c8430"
         BUILD_ALWAYS TRUE
         PREFIX           ${CMAKE_BINARY_DIR}
         INSTALL_DIR      ${CMAKE_INSTALL_PREFIX}
