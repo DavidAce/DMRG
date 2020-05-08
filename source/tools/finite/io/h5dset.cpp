@@ -54,17 +54,19 @@ void tools::finite::io::h5dset::write_mps(h5pp::File & h5ppFile, const std::stri
     if(storage_level < StorageLevel::NORMAL) return;
     tools::log->trace("Writing all bond matrices");
     tools::common::profile::t_hdf->tic();
-    size_t count = 0; // There should be one more sites+1 number of L's, because there is also a center bond
-    for(size_t i = 0; i < state.get_length(); i++) {
-        dsetName = prefix + "/mps/L_" + std::to_string(count++);
-        h5ppFile.writeDataset(state.get_MPS(i).get_L(),dsetName , layout);
-        h5ppFile.writeAttribute(state.get_truncation_error(i), "truncation_error" , dsetName);
-        h5ppFile.writeAttribute(i, "position" , dsetName);
-        if(state.get_MPS(i).isCenter()){
+    // There should be one more sites+1 number of L's, because there is also a center bond
+    // However L_i always belongs M_i. Stick to this rule!
+    // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
+    for(size_t pos = 0; pos < state.get_length(); pos++) {
+        dsetName = prefix + "/mps/L_" + std::to_string(pos);
+        h5ppFile.writeDataset(state.get_MPS(pos).get_L(),dsetName , layout);
+        h5ppFile.writeAttribute(pos, "position" , dsetName);
+        h5ppFile.writeAttribute( state.get_MPS(pos).get_L().dimensions(), "dimensions", dsetName);
+        if(state.get_MPS(pos).isCenter()){
             dsetName = prefix + "/mps/L_C";
-            h5ppFile.writeDataset(state.get_MPS(i).get_LC(), dsetName, layout);
-            h5ppFile.writeAttribute(state.get_truncation_error_midchain(), "truncation_error" , dsetName);
-            h5ppFile.writeAttribute(count++, "position" , dsetName);
+            h5ppFile.writeDataset(state.get_MPS(pos).get_LC(), dsetName, layout);
+            h5ppFile.writeAttribute(pos, "position" , dsetName);
+            h5ppFile.writeAttribute(state.get_MPS(pos).get_LC().dimensions(), "dimensions" , dsetName);
         }
     }
     h5ppFile.writeAttribute(state.get_length(), "sites" , prefix + "/mps");
@@ -73,6 +75,7 @@ void tools::finite::io::h5dset::write_mps(h5pp::File & h5ppFile, const std::stri
     h5ppFile.writeAttribute(state.get_step(), "step", prefix + "/mps");
     h5ppFile.writeAttribute(state.get_chi_lim(),"chi_lim",prefix + "/mps");
     h5ppFile.writeAttribute(state.get_chi_max(),"chi_max",prefix + "/mps");
+    h5ppFile.writeAttribute(state.get_truncation_errors(),"truncation_errors",prefix + "/mps");
     tools::common::profile::t_hdf->toc();
 
 
@@ -80,10 +83,11 @@ void tools::finite::io::h5dset::write_mps(h5pp::File & h5ppFile, const std::stri
     if(storage_level < StorageLevel::FULL) return;
     tools::log->trace("Writing MPS tensors");
     tools::common::profile::t_hdf->tic();
-    for(size_t i = 0; i < state.get_length(); i++) {
-        dsetName = prefix + "/mps/M_" + std::to_string(i);
-        h5ppFile.writeDataset(state.get_MPS(i).get_M(),dsetName, layout);
-        h5ppFile.writeAttribute(i, "position" , dsetName);
+    for(size_t pos = 0; pos < state.get_length(); pos++) {
+        dsetName = prefix + "/mps/M_" + std::to_string(pos);
+        h5ppFile.writeDataset(state.get_MPS(pos).get_M(),dsetName, layout);
+        h5ppFile.writeAttribute(pos, "position" , dsetName);
+        h5ppFile.writeAttribute(state.get_MPS(pos).get_M().dimensions(), "dimensions" , dsetName);
     }
     tools::common::profile::t_hdf->toc();
 }
