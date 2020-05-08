@@ -7,10 +7,8 @@ project(external-gflags)
 
 include(ExternalProject)
 ExternalProject_Add(external_gflags
-        GIT_REPOSITORY https://github.com/gflags/gflags.git
-        GIT_TAG v2.2.2
-        GIT_PROGRESS false
-        GIT_SHALLOW true
+        URL https://github.com/gflags/gflags/archive/v2.2.2.tar.gz
+        URL_MD5 "1a865b93bacfa963201af3f75b7bd64c"
         BUILD_ALWAYS TRUE
         PREFIX          ${CMAKE_BINARY_DIR}
         INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}

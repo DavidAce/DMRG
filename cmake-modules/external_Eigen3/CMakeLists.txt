@@ -1,24 +1,17 @@
 cmake_minimum_required(VERSION 3.12)
 project(external-eigen3)
-
-#include(../GetNumThreads.cmake)
-#get_num_threads(NUM_THREADS)
-#set(ENV{CMAKE_BUILD_PARALLEL_LEVEL} ${NUM_THREADS})
-
 include(ExternalProject)
 ExternalProject_Add(external_eigen3
-        GIT_REPOSITORY https://github.com/eigenteam/eigen-git-mirror.git
-        GIT_TAG 3.3.7
-        GIT_PROGRESS 1
-        GIT_SHALLOW 1
-        BUILD_ALWAYS TRUE
+        URL  https://gitlab.com/libeigen/eigen/-/archive/3.3.7/eigen-3.3.7.tar.gz
+        URL_MD5 "9e30f67e8531477de4117506fe44669b"
         PATCH_COMMAND git apply ${PROJECT_SOURCE_DIR}/Eigen_3.3.7.patch
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
-#        BUILD_COMMAND ${CMAKE_COMMAND} --build . -- -j ${NUM_THREADS}
+        BUILD_ALWAYS TRUE
         CMAKE_ARGS
+        -DEIGEN_TEST_CXX11:BOOL=ON
+        -DCMAKE_GENERATOR=${CMAKE_GENERATOR}
+        -DCMAKE_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
         -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DCMAKE_CXX_STANDARD=17
-        -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=ON
-        -DCMAKE_CXX_EXTENSIONS:BOOL=OFF
+        -DCMAKE_INSTALL_MESSAGE=NEVER #Avoid unnecessary output to console
         )
