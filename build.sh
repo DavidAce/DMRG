@@ -180,7 +180,8 @@ if [[ "$HOSTNAME" == *"tetralith"* ]];then
     if [ -z "$no_module" ]; then
         module load CMake/3.16.5
         if [ "$enable_mkl" = "ON" ] ; then
-            module load imkl
+            export MKLROOT=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a/mkl
+            export EBROOTIMKL=/software/sse/easybuild/prefix/software/imkl/2019.1.144-iimpi-2019a
         fi
         if [[ "$download_method" =~ find ]] ; then
                 module load buildenv-gcc/2018a-eb
@@ -213,7 +214,7 @@ elif [[ "$HOSTNAME" == *"raken"* ]];then
         fi
         if [[ "$download_method" =~ find ]] ; then
                 module load buildenv-gcc/2018a-eb
-                module load foss/2019a
+                module load foss/2019b
                 module load HDF5/1.10.5-GCCcore-8.3.0
                 if [ "$enable_mkl" = "OFF" ] ; then
                     module load OpenBLAS
