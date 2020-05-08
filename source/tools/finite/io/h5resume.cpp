@@ -56,14 +56,15 @@ void tools::finite::io::h5resume::load_mps(const h5pp::File &h5ppFile, const std
     auto num_sites              = h5ppFile.readAttribute<size_t>("sites", prefix+"/mps");
     auto position               = h5ppFile.readAttribute<size_t>("position", prefix+"/mps");
     tools::finite::mps::initialize(state, settings::model::model_type, num_sites, position);
-    size_t passed_LC = 0; // There are num_sites+1 L's when including LC!
     for(size_t pos = 0; pos < num_sites; pos++) {
         if( state.get_MPS(pos).isCenter()) {
+            if(not h5ppFile.linkExists(prefix + "/mps/L_C")) throw std::runtime_error("Dataset does not exist: " + prefix + "/mps/L_C");
             auto LC = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(prefix + "/mps/L_C");
             state.get_MPS(pos).set_LC(LC);
-            passed_LC++; // This one is important!! From this point on, L is to the right of M!
         }
-        auto  L   = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(prefix + "/mps/L_" + std::to_string(pos + passed_LC));
+        if(not h5ppFile.linkExists(prefix + "/mps/L_" + std::to_string(pos))) throw std::runtime_error("Dataset does not exist: " + prefix + "/mps/L_" + std::to_string(pos));
+        if(not h5ppFile.linkExists(prefix + "/mps/M_" + std::to_string(pos))) throw std::runtime_error("Dataset does not exist: " + prefix + "/mps/M_" + std::to_string(pos));
+        auto  L   = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(prefix + "/mps/L_" + std::to_string(pos));
         auto  M   = h5ppFile.readDataset<Eigen::Tensor<Scalar, 3>>(prefix + "/mps/M_" + std::to_string(pos));
         state.get_MPS(pos).set_mps(M, L);
         //Sanity checks
@@ -71,7 +72,7 @@ void tools::finite::io::h5resume::load_mps(const h5pp::File &h5ppFile, const std
             throw std::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");
         if(pos != position and  state.get_MPS(pos).isCenter())
             throw std::logic_error("A site not at current position claims to be a state center");
-        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
+//        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
 
     }
     if(state.MPS_L.size() + state.MPS_R.size() != num_sites) throw std::logic_error("Initialized MPS with the wrong number of sites");

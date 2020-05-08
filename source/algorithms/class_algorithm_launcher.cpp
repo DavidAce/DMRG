@@ -135,7 +135,7 @@ void class_algorithm_launcher::setup_temp_path(){
     tools::common::io::h5tmp::copy_into_tmp(settings::output::output_filepath);
     auto & temp_filepath = tools::common::io::h5tmp::get_temporary_filepath(settings::output::output_filepath);
     h5ppFile = std::make_shared<h5pp::File>(temp_filepath, h5pp::FilePermission::READWRITE);
-    h5ppFile->setLogLevel(0);
+//    h5ppFile->setLogLevel(0);
     std::at_quick_exit(class_algorithm_launcher::clean_up);
     std::atexit(class_algorithm_launcher::clean_up);
 }

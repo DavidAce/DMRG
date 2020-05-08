@@ -2,12 +2,11 @@
 // Created by david on 2019-01-29.
 //
 
-
-#include <tools/finite/print.h>
+#include <iomanip>
 #include <state/class_state_finite.h>
 #include <string>
-#include <iomanip>
-
+#include <tools/common/log.h>
+#include <tools/finite/print.h>
 
 using Scalar         = std::complex<double>;
 
@@ -30,44 +29,29 @@ void tools::finite::print::print_full_state(const class_state_finite &state) {
 
 void tools::finite::print::print_state(const class_state_finite &state){
     using namespace Textra;
-    auto & MPS_L  = state.MPS_L;
-    auto & MPS_R  = state.MPS_R;
-    auto & MPS_C  = state.midchain_bond();
-    auto & ENV_L  = state.ENV_L;
-    auto & ENV_R  = state.ENV_R;
-
     int i = 0;
-    std::cout << std::setprecision(10);
-    std::cout << "State length              : " << state.get_length() << std::endl;
-    std::cout << "State position            : "    << state.get_position() << std::endl;
-    std::cout << "Environment L size        : "    << ENV_L.size() << std::endl;
-    std::cout << "Environment R size        : "    << ENV_R.size() << std::endl;
+    tools::log->info("State length              {}", state.get_length());
+    tools::log->info("State position            {}", state.get_position());
+    tools::log->info("Environment L size        {}", state.ENV_L.size());
+    tools::log->info("Environment R size        {}", state.ENV_R.size());
 
-    auto envitL = ENV_L.begin();
-    std::cout << std::left;
-    for(auto &it : MPS_L){
-        std::cout << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions()<< std::setw(5) << "   "
-                  << "M[" << std::setw(3) << i  <<  "]: " << it.get_M().dimensions()<< std::setw(5) << " pos: " << it.get_position() << "   ";
-        if (envitL != ENV_L.end()){std::cout << " ENV_" << envitL->side << ": " << envitL->block.dimensions() << " pos: " << envitL->get_position() << "   " << " env spins: " << envitL++->sites << " ";}
-        if(&it == &MPS_L.back()){
-            std::cout << " <--- Position A";
+    for(size_t pos = 0; pos < state.get_length(); pos++){
+        std::string tag;
+        if(pos == state.get_position())   tag = "<---- Position A";
+        if(pos == state.get_position()+1) tag = "<---- Position B";
+        const auto & mps = state.get_MPS(pos);
+        if(pos <= state.get_position()) {
+            const auto & env = state.get_ENVL(pos).block;
+            tools::log->info("Pos {:2}: L [{:^4}] M [{:>2} {:>3} {:>3}] ENV [{:>3} {:>3} {:>2}] {}", pos, mps.get_L().dimension(0), mps.get_spin_dim(),
+                             mps.get_chiL(), mps.get_chiR(), env.dimension(0), env.dimension(1), env.dimension(2), tag);
+        } else {
+            const auto & env = state.get_ENVR(pos).block;
+            tools::log->info("Pos {:2}: M [{:>2} {:>3} {:>3}] L [{:^4}] ENV [{:>3} {:>3} {:>2}] {}", pos, mps.get_spin_dim(), mps.get_chiL(), mps.get_chiR(),
+                             mps.get_L().dimension(0), env.dimension(0), env.dimension(1), env.dimension(2), tag);
         }
-        std::cout << std::endl;
-        i++;
+        if(state.get_MPS(pos).isCenter())
+        tools::log->info("Pos {:2}: L [{:^4}] {:>44}", pos, state.get_MPS(pos).get_L().dimension(0),"<---- Center");
     }
-    std::cout << "L[" << std::setw(3) << '*'  <<  "]: " << MPS_C.dimensions() << std::setw(80) << std::right << "<--- Center" << std::left << std::endl;
-    auto envitR = ENV_R.begin();
-    for(auto &it : MPS_R){
-        std::cout << "M[" << std::setw(3) << i  <<  "]: " << it.get_M().dimensions() << std::setw(5) << "  "
-                  << "L[" << std::setw(3) << i  <<  "]: " << it.get_L().dimensions() << std::setw(5) << " pos: " << it.get_position() << "  ";
-        if (envitR != ENV_R.end()){std::cout << " ENV_" << envitR->side << ": " << envitR->block.dimensions() << " pos: " << envitR->get_position()  << "   "<< " env spins: " << envitR++->sites << " ";}
-        if(&it == &MPS_R.front()){
-            std::cout << " <--- Position B" ;
-        }
-        std::cout << std::endl;
-        i++;
-    }
-
 }
 
 

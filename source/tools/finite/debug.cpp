@@ -56,9 +56,13 @@ void tools::finite::debug::check_integrity_of_mps(const class_state_finite &stat
             throw std::runtime_error(fmt::format("Mismatch in ENV_R size+1 and length-position: {} != {}", state.ENV_R.front().sites, state.get_length() - state.get_position() - 2));
 
         for(size_t pos = 0; pos < state.get_length(); pos++){
+            if(state.get_MPS(pos).get_L().size() == 0)
+                throw std::runtime_error(fmt::format("Bond dimension is zero at position {}", pos));
             if(pos != state.get_MPS(pos).get_position())
                 throw std::runtime_error(fmt::format("Position mismatch {} != {}", pos, state.get_MPS(pos).get_position()));
             if(state.get_MPS(pos).isCenter()){
+                if(state.get_MPS(pos).get_LC().size() == 0)
+                    throw std::runtime_error(fmt::format("Center bond dimension is zero at position {}", pos));
                 if(pos != state.MPS_L.back().get_position())
                     throw std::runtime_error(fmt::format("Center position mismatch {} != {}", pos, state.MPS_L.back().get_position()));
                 if(state.MPS_L.back().get_chiR() != state.MPS_L.back().get_LC().dimension(0) )

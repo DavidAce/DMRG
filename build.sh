@@ -72,7 +72,7 @@ download_method="find"
 enable_tests="OFF"
 enable_openmp="OFF"
 enable_mkl="OFF"
-make_threads=1
+make_threads=8
 prefer_conda="OFF"
 verbose="OFF"
 generator="CodeBlocks - Unix Makefiles"
@@ -137,6 +137,22 @@ if [[ ! "$download_method" =~ find|fetch|conan ]]; then
 fi
 
 
+if [[ "$prefer_conda" =~ OFF|off|False|false ]] && [ -n "$CONDA_PREFIX" ] ; then
+    if [ -f "$CONDA_PREFIX_1/etc/profile.d/conda.sh" ]; then
+        source $CONDA_PREFIX_1/etc/profile.d/conda.sh
+    fi
+    if [ -f "$CONDA_PREFIX/etc/profile.d/conda.sh" ]; then
+        source $CONDA_PREFIX/etc/profile.d/conda.sh
+    fi
+    counter=0
+    while [ -n "$CONDA_PREFIX" ] && [  $counter -lt 10 ]; do
+        let counter=counter+1
+        echo "Deactivating conda environment $CONDA_PREFIX"
+        conda deactivate
+    done
+    conda info --envs
+fi
+
 
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -162,45 +178,58 @@ fi
 if [[ "$HOSTNAME" == *"tetralith"* ]];then
     echo "Running on tetralith"
     if [ -z "$no_module" ]; then
-        module load zlib
-        module load GCC/8.2.0-2.31.1
-        if [ "$compiler" = "Clang" ] ; then
-            module load Clang/8.0.0-GCCcore-8.2.0
+        module load CMake/3.16.5
+        if [ "$enable_mkl" = "ON" ] ; then
+            module load imkl
+        fi
+        if [[ "$download_method" =~ find ]] ; then
+                module load buildenv-gcc/2018a-eb
+                module load foss/2019a
+                if [ "$enable_mkl" = "OFF" ] ; then
+                    module load OpenBLAS
+                fi
+        fi
+
+        if [[ "$compiler" =~ Clang|clang|cl ]] ; then
+            module try-load clang/6.0.1
         fi
     fi
 
-    if [ "$compiler" = "GNU" ] ; then
+
+    cmake --version
+    if [[ "$compiler" =~ GCC|Gcc|gcc|cc|G++|g++|c++ ]] ; then
         export CC=gcc
         export CXX=g++
-    elif [ "$compiler" = "Clang" ] ; then
+    elif [[ "$compiler" =~ Clang|clang|cl ]] ; then
         export CC=clang
         export CXX=clang++
     fi
 
 elif [[ "$HOSTNAME" == *"raken"* ]];then
     if [ -z "$no_module" ]; then
+            if [ -z "$no_module" ]; then
+        module load CMake/3.16.5
         if [ "$enable_mkl" = "ON" ] ; then
             module load imkl
-        else
-            module load OpenBLAS
-
         fi
-        module load arpack-ng
-        module load ARPACK++
-        module load HDF5/1.10.5-GCCcore-8.2.0
-        #module load Eigen # We want our own patched eigen though.
-        module load CMake
-        module load GCCcore
-        if [ "$compiler" = "Clang" ] ; then
+        if [[ "$download_method" =~ find ]] ; then
+                module load buildenv-gcc/2018a-eb
+                module load foss/2019a
+                module load HDF5/1.10.5-GCCcore-8.3.0
+                if [ "$enable_mkl" = "OFF" ] ; then
+                    module load OpenBLAS
+                fi
+        fi
+        if [[ "$compiler" =~ Clang|clang|cl ]] ; then
             module load Clang
         fi
         module list
     fi
-
-    if [ "$compiler" = "GNU" ] ; then
+    cmake --version
+    if [[ "$compiler" =~ GCC|Gcc|gcc|cc|G++|g++|c++ ]] ; then
         export CC=gcc
         export CXX=g++
-    elif [ "$compiler" = "Clang" ] ; then
+    elif [[ "$compiler" =~ Clang|clang|cl ]] ; then
         export CC=clang
         export CXX=clang++
     fi
