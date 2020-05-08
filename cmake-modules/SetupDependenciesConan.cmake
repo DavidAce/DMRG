@@ -62,9 +62,12 @@ if(DMRG_DOWNLOAD_METHOD MATCHES "conan")
             HINTS ${CONAN_PREFIX} $ENV{CONAN_PREFIX} ${CONDA_PREFIX} $ENV{CONDA_PREFIX}
             PATHS $ENV{HOME}/anaconda3  $ENV{HOME}/miniconda3 $ENV{HOME}/anaconda $ENV{HOME}/miniconda $ENV{HOME}/.conda
             PATH_SUFFIXES bin envs/dmrg/bin
-            REQUIRED
     )
-    message(STATUS "Found conan: ${CONAN_COMMAND}")
+    if(NOT CONAN_COMMAND)
+        message(FATAL_ERROR "Could not find conan program executable")
+    else()
+        message(STATUS "Found conan: ${CONAN_COMMAND}")
+    endif()
 
     # Download cmake-conan automatically, you can also just copy the conan.cmake file
     if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
