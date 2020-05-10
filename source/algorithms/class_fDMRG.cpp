@@ -7,13 +7,13 @@
 #include <state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
+#include <tools/finite/measure.h>
 #include <tools/finite/ops.h>
 
 using namespace std;
 using namespace Textra;
 
-class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
-    : class_algorithm_finite(std::move(h5ppFile_), "fDMRG", SimulationType::fDMRG) {
+class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), "fDMRG", SimulationType::fDMRG) {
     tools::log->trace("Constructing class_fDMRG");
     settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
 }
@@ -21,20 +21,24 @@ class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
 void class_fDMRG::run_simulation() {
     tools::log->info("Starting {} simulation", sim_name);
     while(true) {
-        single_DMRG_step("SR");
+        single_DMRG_step(ritz);
+        print_status_update();
         write_to_file();
         copy_from_tmp();
         check_convergence();
-        print_status_update();
+        update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
+        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
 
-        // It's important not to perform the last step.
+        try_projection();
+
+        // It's important not to perform the last move.
         // That last state would not get optimized
-        if(sim_status.iter >= settings::fdmrg::min_sweeps and state->position_is_the_middle_any_direction()) {
-            if(sim_status.iter >= settings::fdmrg::max_sweeps) {
+        if(state->position_is_any_edge()) {
+            if(sim_status.iter >= settings::xdmrg::max_sweeps) {
                 stop_reason = StopReason::MAX_ITERS;
                 break;
             }
-            if(sim_status.simulation_has_converged) {
+            if(sim_status.simulation_has_succeeded) {
                 stop_reason = StopReason::SUCCEEDED;
                 break;
             }
@@ -42,12 +46,18 @@ void class_fDMRG::run_simulation() {
                 stop_reason = StopReason::SATURATED;
                 break;
             }
+            if(sim_status.num_resets > settings::precision::max_resets) {
+                stop_reason = StopReason::MAX_RESET;
+                break;
+            }
+            if(settings::strategy::randomize_early and sim_status.state_number == 0 and state->find_largest_chi() >= 32 and
+               tools::finite::measure::energy_variance(*state) < 1e-4) {
+                stop_reason = StopReason::RANDOMIZE;
+                break;
+            }
         }
-        update_bond_dimension_limit();
-        tools::log->trace("Finished step {}, iteration {}, direction {}", sim_status.step, sim_status.iter, state->get_direction());
-        sim_status.iter     = state->get_iteration();
-        sim_status.step     = state->get_step();
-        sim_status.position = state->get_position();
+        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", sim_status.step, sim_status.iter, state->get_position(), state->get_direction());
+        move_center_point();
     }
     tools::log->info("Finished {} simulation -- reason: {}", sim_name, enum2str(stop_reason));
 }

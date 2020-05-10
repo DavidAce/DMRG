@@ -50,7 +50,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3>
         auto options                                      = ceres_default_options;
         options.line_search_sufficient_curvature_decrease = bfgs_tol;
         ceres::GradientProblemSolver::Summary summary;
-        int                                   counter, iter;
+        size_t                                counter = 0, iter = 0;
         double                                variance_ceres, energy_ceres;
         t_local.tic();
         Eigen::VectorXcd theta_new;
@@ -62,7 +62,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3>
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running L-BFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
-                iter           = (int) summary.iterations.size();
+                iter           = summary.iterations.size();
                 counter        = functor->get_count();
                 variance_ceres = functor->get_variance();
                 energy_ceres   = functor->get_energy();
@@ -75,7 +75,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3>
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running L-BFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
-                iter           = (int) summary.iterations.size();
+                iter           = summary.iterations.size();
                 counter        = functor->get_count();
                 variance_ceres = functor->get_variance();
                 energy_ceres   = functor->get_energy();

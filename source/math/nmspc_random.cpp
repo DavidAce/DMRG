@@ -38,11 +38,6 @@ namespace rn{
         return internal::rand_int_01(internal::rng);
     }
 
-    int uniform_integer_box(const int min, const int max){
-        std::uniform_int_distribution<>  rand_int(std::min(min,max),std::max(min,max));
-        return rand_int(internal::rng);
-    }
-
     double uniform_double_01(){
         return internal::rand_double_01(internal::rng);
     }

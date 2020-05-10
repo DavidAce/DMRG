@@ -48,8 +48,8 @@ public:
 
 
     // Functions used in in Arpack++ solver
-    int rows() const {return L;};
-    int cols() const {return L;};
+    [[nodiscard]] int rows() const {return L;};
+    [[nodiscard]] int cols() const {return L;};
     void FactorOP();                                      //  Factors (A-sigma*I) into PLU
     void MultOPv(Scalar* x_in_ptr, Scalar* x_out_ptr);    //   Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultAx (Scalar* x_in_ptr, Scalar* x_out_ptr);    //   Computes the matrix-vector multiplication x_out <- A*x_in.

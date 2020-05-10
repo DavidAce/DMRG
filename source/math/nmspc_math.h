@@ -46,11 +46,12 @@ namespace math
         catch(std::exception &err){throw std::range_error("mean: " + std::string(err.what()));}
         if(not start_point.has_value()) start_point = 0;
         if(not end_point.has_value())   end_point = X.size();
-        if(end_point == start_point) return 0.0;
+        if(end_point.value() == start_point.value()) return 0.0;
+        if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
 
         auto x_it_start = X.begin();
         auto x_it_end   = X.begin();
-        double n  = end_point.value() - start_point.value();
+        double n  = static_cast<double>(end_point.value() - start_point.value());
         std::advance(x_it_start, start_point.value());
         std::advance(x_it_end  , end_point.value());
         return accumulate(x_it_start, x_it_end, 0.0) / n;
@@ -66,11 +67,11 @@ namespace math
         catch(std::exception &err){throw std::range_error("stdev: " + std::string(err.what()));}
         if(not start_point.has_value()) start_point = 0;
         if(not end_point.has_value())   end_point = X.size();
-        if(end_point == start_point) return 0.0;
+        if(end_point.value() == start_point.value()) return 0.0;
+        if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
 
         double X_mean = math::mean(X,start_point,end_point);
-//        std::cout << "X_mean: " << X_mean << std::endl;
-        double n = end_point.value() - start_point.value();
+        double n  = static_cast<double>(end_point.value() - start_point.value());
         auto x_it = X.begin();
         auto x_en = X.begin();
 
@@ -93,7 +94,8 @@ namespace math
         catch(std::exception &err){throw std::range_error("slope: " + std::string(err.what()));}
         if(not start_point.has_value()) start_point = 0;
         if(not end_point.has_value())   end_point =  X.size();
-        if(end_point == start_point) return 0.0;
+        if(end_point.value() == start_point.value()) return 0.0;
+        if(end_point.value() < start_point.value()) throw std::runtime_error("end_point < start_point");
 
         auto x_it = X.begin();
         auto x_en = X.begin();
@@ -103,15 +105,15 @@ namespace math
         std::advance(y_it, start_point.value());
         std::advance(x_en  , end_point.value());
         std::advance(y_en  , end_point.value());
-        double n    = end_point.value() - start_point.value();
+        double n  = static_cast<double>(end_point.value() - start_point.value());
         double avgX = accumulate(x_it, x_en, 0.0) / n;
         double avgY = accumulate(y_it, y_en, 0.0) / n;
 
         double numerator   = 0.0;
         double denominator = 0.0;
         while(x_it != x_en){
-            numerator   += (*x_it - avgX) * (*y_it - avgY);
-            denominator += (*x_it - avgX) * (*x_it - avgX);
+            numerator   += (static_cast<double>(*x_it) - avgX) * (static_cast<double>(*y_it) - avgY);
+            denominator += (static_cast<double>(*x_it) - avgX) * (static_cast<double>(*x_it) - avgX);
             y_it++;
             x_it++;
         }
@@ -140,13 +142,13 @@ namespace math
         if (step == 0) throw std::runtime_error("Range cannot have step size zero");
         if (first > last and step > 0 ) return range(first,last,-step);
         if (first < last and step < 0 ) return range(first,last,-step);
-        if (first == last) return std::vector<T2>{first};
+        if (first == last) return std::vector<T2>{static_cast<T2>(first)};
         T1 current = first;
         std::vector<T2> vec;
         size_t num_steps = std::abs(int((last-first+step) / step));
         if(num_steps > 1000000) throw std::runtime_error("Too many steps");
         while(current <= last){
-            vec.push_back(current);
+            vec.push_back(static_cast<T2>(current));
             current += step;
         }
         return vec;

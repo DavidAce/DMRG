@@ -490,12 +490,12 @@ void tools::finite::mps::truncate_next_sites(class_state_finite & state, const s
     state.clear_measurements();
     if(not state.active_sites.empty()) throw std::logic_error("Make sure the active site list is empty before reaching this point");
 
-    int from = state.get_direction() > 0 ? state.get_position() : state.get_position() + 1;
-    int upto = from + (int) (state.get_direction() * (num_sites - 1));
-    from = std::max(from,0);
-    from = std::min(from,(int)state.get_length()-1);
-    upto = std::max(upto,0);
-    upto = std::min(upto,(int)state.get_length()-1);
+    size_t from = state.get_direction() > 0 ? state.get_position() : state.get_position() + 1;
+    size_t upto = from + (static_cast<size_t>(state.get_direction()) * (num_sites - 1));
+    from = std::max(from,0ul);
+    from = std::min(from,state.get_length()-1);
+    upto = std::max(upto,0ul);
+    upto = std::min(upto,state.get_length()-1);
     tools::log->trace("Truncating starting from {} upto {}, num sites = {}",from,upto,num_sites);
 
     auto sites  =  math::range(std::min(from,upto),std::max(from,upto),1);

@@ -118,7 +118,7 @@ void tools::finite::mpo::reduce_mpo_energy_multi(class_state_finite &state){
     const auto theta                                    = state.get_multitheta();
     double energy_per_site_before                       = tools::finite::measure::energy_per_site(state,theta);
     double energy_per_site_reduced_before               = state.get_energy_per_site_reduced();
-    double energy_per_site_minus_reduced_before         = tools::finite::measure::energy_minus_energy_reduced(state,theta)/state.get_length();
+    double energy_per_site_minus_reduced_before         = tools::finite::measure::energy_minus_energy_reduced(state,theta)/static_cast<double>(state.get_length());
     double energy_variance_per_site_before              = tools::finite::measure::energy_variance_per_site(state,theta);
     log->debug("Variance check before reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(state,theta)));
     log->debug("Status before reduce (multi)          : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
@@ -131,7 +131,7 @@ void tools::finite::mpo::reduce_mpo_energy_multi(class_state_finite &state){
     state.set_reduced_energy_per_site(energy_per_site_before);
     double energy_per_site_after                        = tools::finite::measure::energy_per_site(state,theta);
     double energy_per_site_reduced_after                = state.get_energy_per_site_reduced();
-    double energy_per_site_minus_reduced_after          = tools::finite::measure::energy_minus_energy_reduced(state,theta)/state.get_length();
+    double energy_per_site_minus_reduced_after          = tools::finite::measure::energy_minus_energy_reduced(state,theta)/static_cast<double>(state.get_length());
     double energy_variance_per_site_after               = tools::finite::measure::energy_variance_per_site(state,theta);
     log->debug("Variance check after reduce           : {:.16f}", std::log10(measure::energy_variance_per_site(state,theta)));
     log->debug("Status after reduce (multi)           : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
@@ -155,7 +155,7 @@ void tools::finite::mpo::reduce_mpo_energy_2site(class_state_finite &state){
     auto   theta = state.get_theta();
     double energy_per_site_before                       = tools::finite::measure::energy_per_site(state,theta);
     double energy_per_site_reduced_before               = state.get_energy_per_site_reduced();
-    double energy_per_site_minus_reduced_before         = tools::finite::measure::energy_minus_energy_reduced(state,theta)/state.get_length();
+    double energy_per_site_minus_reduced_before         = tools::finite::measure::energy_minus_energy_reduced(state,theta)/static_cast<double>(state.get_length());
     double energy_variance_per_site_before              = tools::finite::measure::energy_variance_per_site(state,theta);
 //    log->debug("Variance check before reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(state)));
     log->debug("Status before reduce (2site)          : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
@@ -172,7 +172,7 @@ void tools::finite::mpo::reduce_mpo_energy_2site(class_state_finite &state){
     theta = state.get_theta();
     double energy_per_site_after                        = tools::finite::measure::energy_per_site(state,theta);
     double energy_per_site_reduced_after                = state.get_energy_per_site_reduced();
-    double energy_per_site_minus_reduced_after          = tools::finite::measure::energy_minus_energy_reduced(state,theta)/state.get_length();
+    double energy_per_site_minus_reduced_after          = tools::finite::measure::energy_minus_energy_reduced(state,theta)/static_cast<double>(state.get_length());
     double energy_variance_per_site_after               = tools::finite::measure::energy_variance_per_site(state,theta);
     //    log->debug("Variance check after reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(state)));
     log->debug("Status after reduce (2site)           : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",

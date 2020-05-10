@@ -30,14 +30,14 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::opt
     if (A.isZero(0))            throw std::runtime_error("SVD error: matrix is all zeros");
 
     int info   = 0;
-    int rowsU  = (int) rows;
-    int colsU  = (int) std::min(rows,cols);
-    int rowsVT = (int) std::min(rows,cols);
-    int colsVT = (int) cols;
-    int sizeS  = (int) std::min(rows,cols);
-    int lda    = (int) rows;
-    int ldu    = (int) rowsU;
-    int ldvt   = (int) rowsVT;
+    int rowsU  = static_cast<int>(rows);
+    int colsU  = static_cast<int>(std::min(rows,cols));
+    int rowsVT = static_cast<int>(std::min(rows,cols));
+    int colsVT = static_cast<int>(cols);
+    int sizeS  = static_cast<int>(std::min(rows,cols));
+    int lda    = static_cast<int>(rows);
+    int ldu    = static_cast<int>(rowsU);
+    int ldvt   = static_cast<int>(rowsVT);
 
 
     MatrixType<Scalar> U(rowsU,colsU);
@@ -46,10 +46,10 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::opt
     VectorType<Scalar> work(1);
 
     if constexpr (std::is_same<Scalar,double>::value){
-        info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), -1);
+        info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', static_cast<int>(rows),static_cast<int>(cols), A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), -1);
         int lwork  = (int) work(0);
         work.resize(lwork);
-        info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), lwork);
+        info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', static_cast<int>(rows),static_cast<int>(cols), A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, work.data(), lwork);
     }
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
         int lrwork = (int) (5 * std::min(rows,cols));
@@ -59,11 +59,11 @@ class_SVD::do_svd_lapacke(const Scalar * mat_ptr, long rows, long cols, std::opt
         auto VTp     =  reinterpret_cast< lapack_complex_double *>(VT.data());
         auto Wp_qry  =  reinterpret_cast< lapack_complex_double *>(work.data());
 
-        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp_qry, -1,rwork.data());
+        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', static_cast<int>(rows),static_cast<int>(cols), Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp_qry, -1,rwork.data());
         int lwork  = (int) std::real(work(0));
         work.resize(lwork);
         auto Wp  =  reinterpret_cast< lapack_complex_double *>(work.data());
-        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rows,cols, Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork,rwork.data());
+        info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', static_cast<int>(rows),static_cast<int>(cols), Ap, lda, S.data(), Up, ldu, VTp, ldvt, Wp, lwork,rwork.data());
     }
 
     long max_size    =  std::min(S.size(),rank_max.value());

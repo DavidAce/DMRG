@@ -40,14 +40,14 @@ class DenseHamiltonianSqProduct {
     eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC;
     eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R;
     std::shared_ptr<OMP> omp;
-    size_t num_threads = 1; /*!< Number of threads */
+    int num_threads = 1; /*!< Number of threads */
     public:
     DenseHamiltonianSqProduct(const Scalar_ *           env2L_,          /*!< The left block tensor.  */
                               const Scalar_ *           env2R_,          /*!< The right block tensor.  */
                               const Scalar_ *           mpo_,            /*!< The left Hamiltonian MPO's  */
                               const std::array<long, 3> shape_theta_,    /*!< An array containing the dimensions of the multisite theta  */
                               const std::array<long, 4> shape_mpo_,      /*!< An array containing the dimensions of the multisite mpo  */
-                              const size_t              num_threads_ = 1 /*!< Number of threads */
+                              const int                 num_threads_ = 1 /*!< Number of threads */
     ) :                           env2L_ptr(env2L_),
                                   env2R_ptr(env2R_),
                                   mpo_ptr(mpo_),

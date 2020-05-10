@@ -30,7 +30,7 @@ Eigen::Tensor<Scalar,4>
             state.HA->MPO().data(), state.HB->MPO().data(), shape_theta4, shape_mpo4,
             settings::threading::num_threads);
     class_eigsolver solver;
-    solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
+    solver.eigs_dense(matrix, nev, static_cast<int>(eig_max_ncv), NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
     auto eigvec  = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
     tools::common::profile::t_eig->toc();

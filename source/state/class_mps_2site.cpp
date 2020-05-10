@@ -20,10 +20,14 @@ using Scalar = class_mps_2site::Scalar;
 //class_mps_2site::class_mps_2site(){
 //    tools::log->trace("Constructing 2site MPS");
 
-//    if      (model_type_str == "tf_ising")             spin_dimension = 2;
-//    else if (model_type_str == "tf_nn_ising")          spin_dimension = 2;
-//    else if (model_type_str == "selfdual_tf_rf_ising") spin_dimension = 2;
-//
+//size_t spin_dim = 2;
+//if(model_type_str == "ising_tf_rf_nn")
+//spin_dim = settings::model::ising_tf_rf_nn::spin_dim;
+//else if(model_type_str == "ising_selfdual_tf_rf_nn")
+//spin_dim = settings::model::ising_selfdual_tf_rf_nn::spin_dim;
+//else
+//throw std::runtime_error(fmt::format("Unexpected model string: {}", model_type_str));
+////
 //    Eigen::Tensor<Scalar,3> A(spin_dimension,1,1);
 //    Eigen::Tensor<Scalar,3> B(spin_dimension,1,1);
 //    Eigen::Tensor<Scalar,1> LA(1);

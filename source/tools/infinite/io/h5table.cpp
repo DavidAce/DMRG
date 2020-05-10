@@ -18,10 +18,10 @@ void tools::infinite::io::h5table::write_model(h5pp::File & h5ppFile, const std:
     tools::log->trace("Writing Hamiltonian model");
     tools::common::profile::t_hdf->tic();
     std::string table_name = prefix + "/model/Hamiltonian";
-    state.HA->write_parameters(h5ppFile,table_name);
-    state.HB->write_parameters(h5ppFile,table_name);
+    state.HA->write_hamiltonian(h5ppFile, table_name);
+    state.HB->write_hamiltonian(h5ppFile, table_name);
     h5ppFile.writeAttribute(settings::model::model_type, "model_type", prefix + "/model/Hamiltonian");
-    h5ppFile.writeAttribute(state.get_length(),"sites",  prefix + "/model/Hamiltonian");
+    h5ppFile.writeAttribute(settings::model::model_size, "model_size", prefix + "/model/Hamiltonian");
     tools::common::profile::t_hdf->toc();
 }
 

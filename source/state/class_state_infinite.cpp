@@ -335,7 +335,7 @@ void class_state_infinite::enlarge_environment(int direction){
 }
 
 
-void class_state_infinite::set_positions(int position){
+void class_state_infinite::set_positions(size_t position){
     MPS->MPS_A->set_position(position);
     MPS->MPS_B->set_position(position+1);
     Lblock->set_position(position);

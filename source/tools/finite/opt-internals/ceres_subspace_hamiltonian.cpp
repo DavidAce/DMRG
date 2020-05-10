@@ -30,13 +30,13 @@ Eigen::Tensor<std::complex<double>,6> tools::finite::opt::internal::local_hamilt
                     .shuffle(Textra::array6{2,0,4,3,1,5});
     auto cols       = ham.dimension(0)* ham.dimension(1)* ham.dimension(2);
     auto rows       = ham.dimension(3)* ham.dimension(4)* ham.dimension(5);
-    long size       = state.active_problem_size();
+    long size       = static_cast<long>(state.active_problem_size());
     if(rows != size) throw std::runtime_error (fmt::format("Mismatch in multisite hamiltonian dim0*dim1*dim2 and cols: {} != {}",cols, size));
     if(cols != size) throw std::runtime_error (fmt::format("Mismatch in multisite hamiltonian dim3*dim4*dim5 and rows: {} != {}",rows, size));
 
     auto ham_map = Eigen::Map<Eigen::MatrixXcd>(ham.data(), rows,cols);
-    double non_hermiticity = (ham_map - ham_map.adjoint()).cwiseAbs().sum()/ham_map.size();
-    double sparcity = (ham_map.array().cwiseAbs2() != 0.0).count()/(double)ham_map.size();
+    double non_hermiticity = (ham_map - ham_map.adjoint()).cwiseAbs().sum()/static_cast<double>(ham_map.size());
+    double sparcity = static_cast<double>((ham_map.array().cwiseAbs2() != 0.0).count())/static_cast<double>(ham_map.size());
 
     if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("multisite hamiltonian is not hermitian: {:.16f}",non_hermiticity));
     if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian is slightly non-hermitian: {:.16f}",non_hermiticity);
@@ -68,13 +68,13 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hami
                     .shuffle(Textra::array6{2,0,4,3,1,5});
     auto cols       = ham_sq.dimension(0)* ham_sq.dimension(1)* ham_sq.dimension(2);
     auto rows       = ham_sq.dimension(3)* ham_sq.dimension(4)* ham_sq.dimension(5);
-    long size = state.active_problem_size();
+    long size = static_cast<long>(state.active_problem_size());
     if(rows != size) throw std::runtime_error (fmt::format("Mismatch in multisite hamiltonian squared dim0*dim1*dim2 and cols: {} != {}",cols, size));
     if(cols != size) throw std::runtime_error (fmt::format("Mismatch in multisite hamiltonian squared dim3*dim4*dim5 and rows: {} != {}",rows, size));
 
     auto ham_sq_map = Eigen::Map<Eigen::MatrixXcd>(ham_sq.data(), rows,cols);
-    double non_hermiticity = (ham_sq_map - ham_sq_map.adjoint()).cwiseAbs().sum()/ham_sq_map.size();
-    double sparcity = (ham_sq_map.array().cwiseAbs2() != 0.0).count()/(double)ham_sq_map.size();
+    double non_hermiticity = (ham_sq_map - ham_sq_map.adjoint()).cwiseAbs().sum()/static_cast<double>(ham_sq_map.size());
+    double sparcity = static_cast<double>((ham_sq_map.array().cwiseAbs2() != 0.0).count())/static_cast<double>(ham_sq_map.size());
 
     if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("multisite hamiltonian squared is not hermitian: {:.16f}",non_hermiticity));
     if(non_hermiticity > 1e-14) tools::log->warn("multisite hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
@@ -87,14 +87,14 @@ Eigen::Tensor<std::complex<double>,6>   tools::finite::opt::internal::local_hami
 
 
 Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_matrix(const class_state_finite & state) {
-    long size = state.active_problem_size();
+    long size = static_cast<long>(state.active_problem_size());
     auto ham_tensor = tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_tensor(state);
     return Eigen::Map<Eigen::MatrixXcd> (ham_tensor.data(),size,size).transpose().selfadjointView<Eigen::Lower>();
 }
 
 
 Eigen::MatrixXcd tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_matrix(const class_state_finite & state) {
-    long size = state.active_problem_size();
+    long size = static_cast<long>(state.active_problem_size());
     auto ham_squared_tensor = tools::finite::opt::internal::local_hamiltonians::get_multi_hamiltonian_squared_tensor(state);
     return Eigen::Map<Eigen::MatrixXcd> (ham_squared_tensor.data(),size,size).transpose().selfadjointView<Eigen::Lower>();
 }
@@ -108,11 +108,11 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
 
     tools::log->trace("Contracting subspace hamiltonian squared new");
     auto dims = state.active_dimensions();
-    size_t log2chiL  = std::log2(dims[1]);
-    size_t log2chiR  = std::log2(dims[2]);
-    size_t log2spin  = std::log2(dims[0]);
-    size_t eignum    = eigvecs.cols(); //Number of eigenvectors
-    size_t eigdim    = eigvecs.rows(); //Length of each eigenvector
+    double log2chiL  = std::log2(dims[1]);
+    double log2chiR  = std::log2(dims[2]);
+    double log2spin  = std::log2(dims[0]);
+    long   eignum    = eigvecs.cols(); //Number of eigenvectors
+    long   eigdim    = eigvecs.rows(); //Length of each eigenvector
     using map        = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>;
 
     Eigen::Tensor<Scalar,0> H2_ij;
@@ -124,7 +124,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     if(log2spin >= std::max(log2chiL,log2chiR)){
         if (log2chiL >= log2chiR){
             tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL >= log2chiR");
-            for (size_t col = 0; col < eignum; col++ ){
+            for (auto col = 0; col < eignum; col++ ){
                 auto theta_j = map(eigvecs.data() + col*eigdim, dims);
                 Hv.device(omp.dev) =
                     theta_j
@@ -133,7 +133,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                      .contract(env2R , Textra::idx({0,3}, {0,2}))
                      .contract(mpo   , Textra::idx({2,1,4}, {2,0,1}))
                      .shuffle(         Textra::array3{2,0,1});
-                for (size_t row = col; row < eignum; row++ ){
+                for (auto row = col; row < eignum; row++ ){
                     auto theta_i = map(eigvecs.data()+row*eigdim, dims);
                     H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
                     H2(row,col) = H2_ij(0);
@@ -142,7 +142,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
         }
         else{
             tools::log->trace("get_H2 path: log2spin >= std::max(log2chiL, log2chiR)  and  log2chiL < log2chiR");
-            for (size_t col = 0; col < eignum; col++ ){
+            for (auto col = 0; col < eignum; col++ ){
                 auto theta_j = map(eigvecs.data() + col*eigdim, dims);
                 Hv.device(omp.dev) =
                     theta_j
@@ -151,7 +151,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                      .contract(env2L    , Textra::idx({0,3}, {0,2}))
                      .contract(mpo      , Textra::idx({2,4,1}, {2,0,1}))
                      .shuffle(            Textra::array3{2,1,0});
-                for (size_t row = col; row < eignum; row++ ){
+                for (auto row = col; row < eignum; row++ ){
                     auto theta_i = map(eigvecs.data()+ row*eigdim, dims);
                     H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
                     H2(row,col) = H2_ij(0);
@@ -160,7 +160,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
         }
     }else{
         tools::log->trace("get_H2 path: log2spin <= log2chiL + log2chiR");
-        for (size_t col = 0; col < eignum; col++ ){
+        for (auto col = 0; col < eignum; col++ ){
             auto theta_j = map(eigvecs.data()+ col*eigdim, dims);
             Hv.device(omp.dev) =
                 theta_j
@@ -169,7 +169,7 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                  .contract(mpo   , Textra::idx({4,2}, {2,0}))
                  .contract(env2R , Textra::idx({0,2,3}, {0,2,3}))
                  .shuffle(         Textra::array3{1,0,2});
-            for (size_t row = col; row < eignum; row++ ){
+            for (auto row = col; row < eignum; row++ ){
                 auto theta_i = map(eigvecs.data() + row*eigdim, dims);
                 H2_ij.device(omp.dev) = theta_i.conjugate().contract(Hv, Textra::idx({0,1,2},{0,1,2}));
                 H2(row,col) = H2_ij(0);
@@ -178,8 +178,8 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     }
 
     H2 = H2.selfadjointView<Eigen::Lower>();
-    double non_hermiticity = (H2 - H2.adjoint()).cwiseAbs().sum()/H2.size();
-    double sparcity = (H2.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
+    double non_hermiticity = (H2 - H2.adjoint()).cwiseAbs().sum()/static_cast<double>(H2.size());
+    double sparcity = static_cast<double>((H2.array().cwiseAbs2() != 0.0).count())/static_cast<double>(H2.size());
 
     if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("subspace hamiltonian squared is not hermitian: {:.16f}",non_hermiticity));
     if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);
@@ -203,9 +203,9 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
     auto & env2L = state.get_ENV2L(state.active_sites.front()).block;
     auto & env2R = state.get_ENV2R(state.active_sites.back()).block;
 
-    size_t log2chiL  = std::log2(dims[1]);
-    size_t log2chiR  = std::log2(dims[2]);
-    size_t log2spin  = std::log2(dims[0]);
+    double log2chiL  = std::log2(dims[1]);
+    double log2chiR  = std::log2(dims[2]);
+    double log2spin  = std::log2(dims[0]);
     long dimH2 = eigvecs.cols();
     Eigen::Tensor<Scalar,2> H2(dimH2,dimH2);
 
@@ -251,8 +251,8 @@ Eigen::MatrixXcd  tools::finite::opt::internal::local_hamiltonians::get_multi_ha
                     .shuffle(                             Textra::array2{1,0});
     }
     auto H2_map = Eigen::Map<Eigen::MatrixXcd>(H2.data(),H2.dimension(0),H2.dimension(1));
-    double non_hermiticity = (H2_map - H2_map.adjoint()).cwiseAbs().sum()/H2.size();
-    double sparcity = (H2_map.array().cwiseAbs2() != 0.0).count()/(double)H2.size();
+    double non_hermiticity = (H2_map - H2_map.adjoint()).cwiseAbs().sum()/static_cast<double>(H2.size());
+    double sparcity = static_cast<double>((H2_map.array().cwiseAbs2() != 0.0).count())/static_cast<double>(H2.size());
 
     if(non_hermiticity > 1e-12) throw std::runtime_error(fmt::format("subspace hamiltonian squared is not hermitian: {:.16f}",non_hermiticity));
     if(non_hermiticity > 1e-14) tools::log->warn("subspace hamiltonian squared is slightly non-hermitian: {:.16f}",non_hermiticity);

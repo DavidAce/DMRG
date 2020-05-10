@@ -14,23 +14,23 @@
 
 class OMP{
 public:
-    unsigned int num_threads;
+    int num_threads = 1;
     #if defined(_OPENMP) && defined(EIGEN_USE_THREADS)
     Eigen::ThreadPool       tp;
     Eigen::ThreadPoolDevice dev;
-    explicit OMP(unsigned int num_threads_):
-        num_threads(num_threads_),
-        tp((int)num_threads),
-        dev(&tp, (int)num_threads)
+    explicit OMP([[maybe_unused]] int num_threads_):
+        num_threads(num_threads_ > 1 ? num_threads_ : static_cast<int>(std::thread::hardware_concurrency())),
+        tp(num_threads),
+        dev(&tp, num_threads)
         {}
     explicit OMP():
-        num_threads(std::thread::hardware_concurrency()),
-        tp((int) std::thread::hardware_concurrency()),
-        dev(&tp, (int) num_threads)
+        num_threads(static_cast<int>(std::thread::hardware_concurrency())),
+        tp(num_threads),
+        dev(&tp, num_threads)
         {}
     #else
     Eigen::DefaultDevice dev;
-    OMP(unsigned int num_threads_):
+    OMP(int num_threads_):
         num_threads(num_threads_)
         {}
     explicit OMP():

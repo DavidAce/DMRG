@@ -39,12 +39,12 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ham_sq
             solver.solverConf.eigThreshold = 1e-6;
             int nev = 1;
             Ritz ritz = stringToRitz("SM");
-            solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, false,theta.data());
+            solver.eigs_dense(matrix, nev, static_cast<int>(eig_max_ncv), NAN, Form::SYMMETRIC, ritz, Side::R, true, false,theta.data());
             [[maybe_unused]] auto eigvals = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
             [[maybe_unused]] auto eigvecs = Eigen::Map<const Eigen::VectorXd> (solver.solution.get_eigvecs<Type::REAL, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
 
             Eigen::VectorXcd theta_new (eigvecs.size());
-            for(size_t idx = 0; idx < eigvecs.size();idx++)
+            for(long idx = 0; idx < eigvecs.size();idx++)
                 theta_new(idx) = eigvecs(idx);
             tools::common::profile::t_eig->toc();
             return  Textra::MatrixTensorMap(theta_new, state.active_dimensions());
@@ -66,7 +66,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ham_sq
             class_eigsolver solver;
             int nev = 1;
             Ritz ritz = stringToRitz("SM");
-            solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
+            solver.eigs_dense(matrix, nev, static_cast<int>(eig_max_ncv), NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
             [[maybe_unused]] auto eigvals = Eigen::Map<const Eigen::VectorXd>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
             [[maybe_unused]] auto eigvecs = Eigen::Map<const Eigen::VectorXcd> (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);
             tools::common::profile::t_eig->toc();

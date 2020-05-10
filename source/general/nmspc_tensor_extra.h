@@ -174,7 +174,7 @@ namespace Textra {
 
     //Helpful overload
     template<typename Derived, typename... Dims>
-    constexpr Eigen::Tensor<typename Derived::Scalar, sizeof... (Dims)> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const Dims... dims) {
+    constexpr Eigen::Tensor<typename Derived::Scalar,static_cast<int>(sizeof... (Dims))> Matrix_to_Tensor(const Eigen::EigenBase<Derived> &matrix, const Dims... dims) {
         return Matrix_to_Tensor(matrix, array<sizeof...(Dims)>{dims...});
     }
     //Helpful overload
@@ -210,7 +210,7 @@ namespace Textra {
 
     template<typename Derived, typename... Dims>
     constexpr auto MatrixTensorMap(const Eigen::EigenBase<Derived> &matrix,const Dims... dims){
-        return MatrixTensorMap(matrix, Eigen::DSizes<long,sizeof...(Dims)>{dims...});
+        return MatrixTensorMap(matrix, Eigen::DSizes<long,static_cast<int>(sizeof...(Dims))>{dims...});
     }
 
     template<typename Derived>
@@ -243,6 +243,11 @@ namespace Textra {
     template<typename Scalar,auto rank, typename sizeType>
     constexpr MatrixType<Scalar> Tensor_to_Matrix(const Eigen::Tensor<Scalar,rank> &tensor,const sizeType rows,const sizeType cols){
         return Eigen::Map<const MatrixType<Scalar>> (tensor.data(), rows,cols);
+    }
+
+    template<typename Scalar,auto rank>
+    constexpr MatrixType<Scalar> Tensor_to_Vector(const Eigen::Tensor<Scalar,rank> &tensor){
+        return Eigen::Map<const VectorType<Scalar>> (tensor.data(), tensor.size());
     }
 
     template <typename Scalar>

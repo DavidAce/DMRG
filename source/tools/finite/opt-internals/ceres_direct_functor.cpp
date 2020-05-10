@@ -50,7 +50,7 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(
 
     Hv_tensor.resize(dsizes);
     H2v_tensor.resize(dsizes);
-    num_parameters = dsizes[0] * dsizes[1] * dsizes[2];
+    num_parameters = static_cast<int>(dsizes[0] * dsizes[1] * dsizes[2]);
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){ num_parameters *= 2;}
 }
 
@@ -112,8 +112,8 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
     var             = std::real(var) == 0.0 ? std::numeric_limits<double>::epsilon() : std::real(var);
 
 
-    energy         = std::real(ene + energy_reduced) / length;
-    variance       = std::abs(var)/length;
+    energy         = std::real(ene + energy_reduced) / static_cast<double>(length);
+    variance       = std::abs(var) / static_cast<double>(length);
     norm_offset    = std::abs(vv) - 1.0 ;
     std::tie(norm_func,norm_grad) = windowed_func_grad(norm_offset,0.2);
     double epsilon = 1e-14;
@@ -153,7 +153,7 @@ bool ceres_direct_functor<Scalar>::Evaluate(const double* v_double_double,
         tools::log->warn("vHv             = {:.16f} + i{:.16f}" , std::real(vHv)  ,std::imag(vHv)  );
         tools::log->warn("var             = {:.16f} + i{:.16f}" , std::real(var)  ,std::imag(var));
         tools::log->warn("ene             = {:.16f} + i{:.16f}" , std::real(ene)  ,std::imag(ene));
-        tools::log->warn("log10(var/L)    = {:.16f}" , std::log10(variance/(double)length) );
+        tools::log->warn("log10(var/L)    = {:.16f}" , std::log10(variance/static_cast<double>(length)) );
         tools::log->warn("energy offset   = {:.16f}" , energy_offset );
         tools::log->warn("norm   offset   = {:.16f}" , norm_offset );
         throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter) );

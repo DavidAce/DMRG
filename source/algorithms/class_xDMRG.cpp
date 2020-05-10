@@ -7,21 +7,21 @@
 #include <math/nmspc_random.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
+#include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/debug.h>
+#include <tools/finite/io.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
 
-class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
-    : class_algorithm_finite(std::move(h5ppFile_), "xDMRG", SimulationType::xDMRG) {
+class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), "xDMRG", SimulationType::xDMRG) {
     tools::log->trace("Constructing class_xDMRG");
     settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
-    if(settings::xdmrg::max_states > 0) sim_tag = "/state_" + std::to_string(sim_status.state_number);
-
+    state_name = "state_" + std::to_string(sim_status.state_number);
     tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
     tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
 }
@@ -55,9 +55,6 @@ void class_xDMRG::run_simulation() {
             single_xDMRG_step();
             print_status_update();
             write_to_file();
-            //            write_sim_status();
-            //            write_profiling();
-            //            write_measurements();
             copy_from_tmp();
             check_convergence();
             update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
@@ -93,13 +90,8 @@ void class_xDMRG::run_simulation() {
                     break;
                 }
             }
-            tools::log->trace("Finished step {}, iteration {}, position {}, direction {}", sim_status.step, sim_status.iter, state->get_position(),
-                              state->get_direction());
+            tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", sim_status.step, sim_status.iter, state->get_position(), state->get_direction());
             move_center_point();
-
-            sim_status.iter     = state->get_iteration();
-            sim_status.step     = state->get_step();
-            sim_status.position = state->get_position();
         }
         tools::log->info("Finished {} simulation -- reason: {}", sim_name, enum2str(stop_reason));
         if(++sim_status.state_number >= settings::xdmrg::max_states)
@@ -107,14 +99,13 @@ void class_xDMRG::run_simulation() {
         else {
             run_postprocessing(); // Saves and prints full status update
             reset_to_random_current_state(32);
-            sim_tag = "/state_" + std::to_string(sim_status.state_number);
+            state_name = "state_" + std::to_string(sim_status.state_number);
         }
     }
 }
 
 void class_xDMRG::single_xDMRG_step() {
-    tools::log->debug("Starting xDMRG step {} | iteration {} | position {} | direction {}", sim_status.step, sim_status.iter, state->get_position(),
-                      state->get_direction());
+    tools::log->debug("Starting xDMRG step {} | iter {} | pos {} | dir {}", sim_status.step, sim_status.iter, sim_status.position, sim_status.direction);
 
     using namespace tools::finite;
     using namespace tools::finite::opt;
@@ -422,12 +413,12 @@ bool class_xDMRG::state_is_within_energy_window(Eigen::Tensor<Scalar, 3> &theta)
     double energy_dif = std::abs(energy_old - energy_new);
     // We can accept a new candidate state if it is less than +-2 standard deviation away from the current energy
     if(energy_dif < 1 * energy_std) {
-        sim_status.energy_target      = energy_new / state->get_length();
-        sim_status.energy_ubound      = std::min(sim_status.energy_ubound, sim_status.energy_target + 1 * energy_std / state->get_length());
-        sim_status.energy_lbound      = std::max(sim_status.energy_lbound, sim_status.energy_target - 1 * energy_std / state->get_length());
-        sim_status.energy_ubound      = std::max(sim_status.energy_ubound, sim_status.energy_lbound);
-        sim_status.energy_lbound      = std::min(sim_status.energy_ubound, sim_status.energy_lbound);
-        sim_status.energy_dens        = (sim_status.energy_target - sim_status.energy_min) / (sim_status.energy_max - sim_status.energy_min);
+        sim_status.energy_target = energy_new / static_cast<double>(state->get_length());
+        sim_status.energy_ubound = std::min(sim_status.energy_ubound, sim_status.energy_target + 1 * energy_std / static_cast<double>(state->get_length()));
+        sim_status.energy_lbound = std::max(sim_status.energy_lbound, sim_status.energy_target - 1 * energy_std / static_cast<double>(state->get_length()));
+        sim_status.energy_ubound = std::max(sim_status.energy_ubound, sim_status.energy_lbound);
+        sim_status.energy_lbound = std::min(sim_status.energy_ubound, sim_status.energy_lbound);
+        sim_status.energy_dens   = (sim_status.energy_target - sim_status.energy_min) / (sim_status.energy_max - sim_status.energy_min);
         sim_status.energy_dens_target = (sim_status.energy_target - sim_status.energy_min) / (sim_status.energy_max - sim_status.energy_min);
         sim_status.energy_dens_window = (sim_status.energy_ubound - sim_status.energy_lbound) / (sim_status.energy_max - sim_status.energy_min);
         tools::log->info("Energy maximum (per site) = {:.16f}", sim_status.energy_max);
@@ -443,56 +434,61 @@ bool class_xDMRG::state_is_within_energy_window(Eigen::Tensor<Scalar, 3> &theta)
 
 void class_xDMRG::find_energy_range() {
     tools::log->trace("Finding energy range");
-    if(state->get_length() != settings::model::sites) throw std::runtime_error("find_energy_range: state lenght mismatch");
+    if(state->get_length() != settings::model::model_size) throw std::runtime_error("find_energy_range: state lenght mismatch");
     size_t max_sweeps_during_f_range = 4;
-    sim_status.iter                  = state->reset_iter();
-    sim_status.step                  = state->reset_step();
-    reset_to_random_product_state("random");
+    // Backup the state and current sim_status
+    class_simulation_status sim_status_backup = sim_status;
+    class_state_finite      state_backup      = *state;
+
     update_bond_dimension_limit(16);
+
     // Find energy minimum
+    tools::finite::mps::random_product_state(*state, "random", -1, true);
+    sim_status.iter = state->reset_iter();
+    sim_status.step = state->reset_step();
     while(true) {
         class_algorithm_finite::single_DMRG_step("SR");
         print_status_update();
-        // It's important not to perform the last moves.
-        // That last state would not get optimized
-        if(state->position_is_any_edge()) {
-            if(sim_status.iter >= max_sweeps_during_f_range or tools::finite::measure::energy_variance_per_site(*state) < 1e-8) {
-                break;
-            }
-        }
+        // It's important not to perform the last moves. That last state would not get optimized
+        if(state->position_is_any_edge())
+            if(sim_status.iter >= max_sweeps_during_f_range or tools::finite::measure::energy_variance_per_site(*state) < 1e-8) break;
         move_center_point();
-        sim_status.iter = state->get_iteration();
     }
-    sim_status.energy_min = tools::finite::measure::energy_per_site(*state);
-    reset_to_random_product_state("random");
+    double energy_min = tools::finite::measure::energy_per_site(*state);
+    tools::finite::mps::normalize(*state);
+    write_to_file(StorageReason::EMIN_STATE);
+
     // Find energy maximum
+    tools::finite::mps::random_product_state(*state, "random", -1, true);
+    sim_status.iter = state->reset_iter();
+    sim_status.step = state->reset_step();
     while(true) {
         class_algorithm_finite::single_DMRG_step("LR");
         print_status_update();
-        // It's important not to perform the last moves.
-        // That last state would not get optimized
-        if(state->position_is_any_edge()) {
-            if(sim_status.iter >= max_sweeps_during_f_range or tools::finite::measure::energy_variance_per_site(*state) < 1e-8) {
-                break;
-            }
-        }
-
+        // It's important not to perform the last moves. That last state would not get optimized
+        if(state->position_is_any_edge())
+            if(sim_status.iter >= max_sweeps_during_f_range or tools::finite::measure::energy_variance_per_site(*state) < 1e-8) break;
         move_center_point();
-        sim_status.iter = state->get_iteration();
     }
-    sim_status.energy_max    = tools::finite::measure::energy_per_site(*state);
+    double energy_max = tools::finite::measure::energy_per_site(*state);
+    tools::finite::mps::normalize(*state);
+    write_to_file(StorageReason::EMAX_STATE);
+
+    // Recover the backup
+    sim_status = sim_status_backup;
+    *state     = state_backup;
+
+    // Define energy targets and bounds
+    sim_status.energy_min    = energy_min;
+    sim_status.energy_max    = energy_max;
     sim_status.energy_target = sim_status.energy_min + sim_status.energy_dens_target * (sim_status.energy_max - sim_status.energy_min);
     sim_status.energy_ubound = sim_status.energy_target + sim_status.energy_dens_window * (sim_status.energy_max - sim_status.energy_min);
     sim_status.energy_lbound = sim_status.energy_target - sim_status.energy_dens_window * (sim_status.energy_max - sim_status.energy_min);
-    tools::log->info("Energy minimum (per site) = {}", sim_status.energy_min);
-    tools::log->info("Energy maximum (per site) = {}", sim_status.energy_max);
-    tools::log->info("Energy target  (per site) = {}", sim_status.energy_target);
-    tools::log->info("Energy lbound  (per site) = {}", sim_status.energy_lbound);
-    tools::log->info("Energy ubound  (per site) = {}", sim_status.energy_ubound);
-
-    move_center_point(); // Move once more to flip the initial direction to +1
-    state->reset_step();
-    state->reset_iter();
+    tools::log->info("Energy minimum (per site) = {:.8f}", sim_status.energy_min);
+    tools::log->info("Energy maximum (per site) = {:.8f}", sim_status.energy_max);
+    tools::log->info("Energy target  (per site) = {:.8f}", sim_status.energy_target);
+    tools::log->info("Energy lbound  (per site) = {:.8f}", sim_status.energy_lbound);
+    tools::log->info("Energy ubound  (per site) = {:.8f}", sim_status.energy_ubound);
 }
 
 bool   class_xDMRG::sim_on() { return settings::xdmrg::on; }

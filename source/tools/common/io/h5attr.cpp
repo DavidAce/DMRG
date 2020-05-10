@@ -1,48 +1,69 @@
 
 #include <h5pp/h5pp.h>
+#include <simulation/class_simulation_status.h>
 #include <simulation/enums.h>
 #include <string>
 #include <tools/common/io.h>
-void tools::common::io::h5attr::write_prefix_meta(h5pp::File &h5ppFile, const std::string &prefix, const std::string &sim_name, const std::string &sim_tag, const std::string & model_type,
-                                                  const StorageLevel &storage_level, size_t iteration, size_t step, size_t position) {
+#include <tools/common/log.h>
+void tools::common::io::h5attr::write_meta(h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix, const std::string &model_prefix,
+                                           const std::string &model_type, const StorageLevel &storage_level, const class_simulation_status &sim_status) {
     std::string storage_level_str = enum2str(storage_level);
-    std::string model_path = sim_name + "/model/Hamiltonian";
-    // Add the storage level of all prefixes as an attribute of this simulation group.
-    h5ppFile.writeAttribute(storage_level_str, prefix, sim_name);
+    std::string ham_path          = model_prefix + "/Hamiltonian";
+    std::string mpo_path          = model_prefix + "/mpo";
+    std::string mps_path          = state_prefix + "/mps";
 
-    // Write storage level into an attribute of the current prefix that is being written to
-    h5ppFile.writeAttribute(storage_level_str, "storage_level", prefix);
+    // Add the storage level of all states as an attribute of this simulation group.
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", state_prefix, enum2str(storage_level), sim_name);
+    h5ppFile.writeAttribute(storage_level_str, state_prefix, sim_name);
+
+    // Write storage level into an attribute of the current state that is being written to
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", "storage_level", enum2str(storage_level), state_prefix);
+    h5ppFile.writeAttribute(storage_level_str, "storage_level", state_prefix);
 
     // Collect the storage level of all states that have been written on any simulation
-    std::string help_storage = "The attributes on this dataset specify the storage level of each written state";
-    h5ppFile.writeDataset(help_storage, "common/storage_level");
-    h5ppFile.writeAttribute(storage_level_str, prefix, "common/storage_level");
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", "common/storage_level", state_prefix, enum2str(storage_level));
+    h5ppFile.writeDataset("The attributes on this dataset are the storage level of each state", "common/storage_level");
+    h5ppFile.writeAttribute(storage_level_str, state_prefix, "common/storage_level");
 
-    // Write the iteration and step number of this prefix (useful when resuming to compare state freshness)
-    h5ppFile.writeAttribute(iteration, "iteration", prefix);
-    h5ppFile.writeAttribute(step, "step", prefix);
-    h5ppFile.writeAttribute(position, "position", prefix);
-    h5ppFile.writeAttribute(model_type, "model_type", prefix);
-    h5ppFile.writeAttribute(model_path, "model_path", prefix);
+    // Write the iteration and step number of this state (useful when resuming to compare state freshness)
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", "iteration", sim_status.iter, state_prefix);
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", "step", sim_status.step, state_prefix);
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", "position", sim_status.position, state_prefix);
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", "model_type", model_type, state_prefix);
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", "ham_path", ham_path, state_prefix);
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", "mpo_path", mpo_path, state_prefix);
+    h5ppFile.writeAttribute(sim_status.iter, "iteration", state_prefix);
+    h5ppFile.writeAttribute(sim_status.step, "step", state_prefix);
+    h5ppFile.writeAttribute(sim_status.position, "position", state_prefix);
+    h5ppFile.writeAttribute(model_type, "model_type", state_prefix);
+    h5ppFile.writeAttribute(ham_path, "ham_path", state_prefix);
+    h5ppFile.writeAttribute(mpo_path, "mpo_path", state_prefix);
 
-    // Collect the iteration and step number of all states that have been written on any simulation
-    std::string help_iter = "The attributes on this dataset specify the iteration number reached on each state";
-    h5ppFile.writeDataset(help_iter, "common/iteration");
-    h5ppFile.writeAttribute(iteration, prefix, "common/iteration");
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", state_prefix, sim_status.iter, "common/iteration");
+    h5ppFile.writeDataset("The attributes on this dataset are the current step of each state", "common/iteration");
+    h5ppFile.writeAttribute(sim_status.iter, state_prefix, "common/iteration");
 
-    std::string help_step = "The attributes on this dataset specify the step number reached on each state";
-    h5ppFile.writeDataset(help_step, "common/step");
-    h5ppFile.writeAttribute(step, prefix, "common/step");
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", state_prefix, sim_status.step, "common/step");
+    h5ppFile.writeDataset("The attributes on this dataset are the current step of each state", "common/step");
+    h5ppFile.writeAttribute(sim_status.step, state_prefix, "common/step");
 
-    std::string help_position = "The attributes on this dataset specify the current position on the chain for each state";
-    h5ppFile.writeDataset(help_step, "common/position");
-    h5ppFile.writeAttribute(position, prefix, "common/position");
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", state_prefix, ham_path, "common/ham_path");
+    h5ppFile.writeDataset("The attributes on this dataset are paths to the Hamiltonian Table", "common/ham_path");
+    h5ppFile.writeAttribute(ham_path, state_prefix, "common/ham_path");
 
-    std::string help_model_type = "The attributes on this dataset specify the model type used on the simulation";
-    h5ppFile.writeDataset(help_model_type, "common/model_type");
-    h5ppFile.writeAttribute(model_type, prefix, "common/model_type");
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", state_prefix, mpo_path, "common/mpo_path");
+    h5ppFile.writeDataset("The attributes on this dataset are paths to MPOs", "common/mpo_path");
+    h5ppFile.writeAttribute(mpo_path, state_prefix, "common/mpo_path");
 
-    std::string help_model_path = "The attributes on this dataset specify path to the model Hamiltonian table used on the simulation";
-    h5ppFile.writeDataset(help_model_path, "common/model_path");
-    h5ppFile.writeAttribute(model_path, prefix, "common/model_path");
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", state_prefix, mps_path, "common/mps_path");
+    h5ppFile.writeDataset("The attributes on this dataset are paths to MPSs", "common/mps_path");
+    h5ppFile.writeAttribute(mps_path, state_prefix, "common/mps_path");
+
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", state_prefix, sim_status.simulation_has_succeeded, "common/success");
+    h5ppFile.writeDataset("The attributes on this dataset tell if the simulation succeeded", "common/success");
+    h5ppFile.writeAttribute(sim_status.simulation_has_succeeded, state_prefix, "common/success");
+
+    tools::log->trace("Attribute -- {: <20} = {: <20} on dset: {}", state_prefix, sim_status.simulation_has_finished, "common/finish");
+    h5ppFile.writeDataset("The attributes on this dataset tell if the simulation finished", "common/finish");
+    h5ppFile.writeAttribute(sim_status.simulation_has_finished, state_prefix, "common/finish");
 }

@@ -29,7 +29,7 @@ class class_algorithm_base {
     class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name_, SimulationType sim_type_);
     std::shared_ptr<h5pp::File> h5pp_file;
     StopReason                  stop_reason = StopReason::NONE;
-    std::string                 sim_tag;
+    std::string                 state_name;
     std::string                 sim_name;
     SimulationType              sim_type;
     class_simulation_status     sim_status;

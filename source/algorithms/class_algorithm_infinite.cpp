@@ -221,7 +221,7 @@ void class_algorithm_infinite::reset_to_random_product_state(const std::string &
     clear_saturation_status();
 }
 
-void class_algorithm_infinite::reset_to_random_current_state(std::optional<double> chi_lim) {
+void class_algorithm_infinite::reset_to_random_current_state([[maybe_unused]] std::optional<double> chi_lim) {
     tools::log->critical("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
     throw std::runtime_error("Resetting MPS state based on current is not currently implemented for infinite MPS algorithms");
 }
@@ -372,7 +372,7 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason){
     if(settings::output::storage_level_journal == StorageLevel::NONE and
         settings::output::storage_level_results == StorageLevel::NONE and
         settings::output::storage_level_chi_update == StorageLevel::NONE and
-        settings::output::storage_level_projection == StorageLevel::NONE)
+        settings::output::storage_level_proj_state == StorageLevel::NONE)
         return;
 
     std::string prefix;
@@ -381,29 +381,42 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason){
         case StorageReason::JOURNAL: {
             if (settings::output::storage_level_journal == StorageLevel::NONE) return;
             if (math::mod(sim_status.iter, write_freq()) != 0) return;
-            prefix = sim_name + sim_tag + "/journal";
+            prefix = sim_name + state_name + "/journal";
             storage_level = settings::output::storage_level_journal;
             break;
         }
         case StorageReason::RESULTS: {
             if(settings::output::storage_level_results == StorageLevel::NONE ) return;
-            prefix = sim_name + sim_tag + "/results";
+            prefix = sim_name + state_name + "/results";
             storage_level = settings::output::storage_level_results;
             break;
         }
         case StorageReason::CHI_UPDATE: {
             if(settings::output::storage_level_chi_update == StorageLevel::NONE) return;
             if(not chi_grow()) return;
-            prefix = sim_name + sim_tag + "/results_chi_" + std::to_string(state->get_chi_lim());
+            prefix = sim_name + state_name + "/results_chi_" + std::to_string(state->get_chi_lim());
             storage_level = settings::output::storage_level_chi_update;
             break;
         }
-        case StorageReason::PROJECTION: {
-            if(settings::output::storage_level_projection == StorageLevel::NONE) return;
-            prefix = sim_name + sim_tag + "/projection";
-            storage_level = settings::output::storage_level_projection;
+        case StorageReason::PROJ_STATE: {
+            if(settings::output::storage_level_proj_state == StorageLevel::NONE) return;
+            prefix = sim_name + state_name + "/projection";
+            storage_level = settings::output::storage_level_proj_state;
             break;
         }
+        case StorageReason::INIT_STATE: {
+            if(settings::output::storage_level_init_state == StorageLevel::NONE) return;
+            prefix = sim_name + "/state_init";
+            storage_level = settings::output::storage_level_init_state;
+            break;
+        }
+        case StorageReason::EMIN_STATE: {
+            return;
+        }
+        case StorageReason::EMAX_STATE: {
+            return;
+        }
+
     }
 
     if(prefix.empty()) throw std::runtime_error("Prefix is empty");
@@ -451,7 +464,7 @@ void class_algorithm_infinite::write_to_file(StorageReason storage_reason){
 void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
     if(settings::output::storage_level_results == StorageLevel::NONE and
        settings::output::storage_level_journal == StorageLevel::NONE and
-       settings::output::storage_level_projection == StorageLevel::NONE)
+       settings::output::storage_level_proj_state == StorageLevel::NONE)
         return;
 
     switch(storage_reason) {
@@ -459,8 +472,10 @@ void class_algorithm_infinite::copy_from_tmp(StorageReason storage_reason) {
             if(math::mod(sim_status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
         case StorageReason::RESULTS:
         case StorageReason::CHI_UPDATE:
-        case StorageReason::PROJECTION: break;
-
+        case StorageReason::PROJ_STATE:
+        case StorageReason::INIT_STATE:
+        case StorageReason::EMIN_STATE:
+        case StorageReason::EMAX_STATE: break;
     }
     tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
 }
@@ -544,11 +559,13 @@ void class_algorithm_infinite::print_status_update() {
     }
     report << left  << "]";
     report << left  << " Time: "                          << setw(10) << setprecision(2)    << fixed   << tools::common::profile::t_tot->get_age() ;
-    report << left << " Memory [";
-    report << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
-    report << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
-    report << left << "VmPeak: "  << process_memory_in_mb("VmPeak")<< " MB";
+//    report << left << " Memory [";
+//    report << left << "Rss: "     << process_memory_in_mb("VmRSS")<< " MB ";
+//    report << left << "RssPeak: "  << process_memory_in_mb("VmHWM")<< " MB ";
+//    report << left << "VmPeak: "  << process_memory_in_mb("VmPeak")<< " MB";
     report << left << "]";
+    report << fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
+                          tools::common::profile::mem_vm_in_mb());
     tools::log->info(report.str());
 }
 
@@ -619,6 +636,7 @@ void class_algorithm_infinite::print_status_full(){
     }
     tools::log->info("S slope               = {:<16.16f} | Converged : {} \t\t Saturated: {}" , S_slope,sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
     tools::log->info("Time                  = {:<16.16f}" , tools::common::profile::t_tot->get_age());
-    tools::log->info("Peak memory           = {:<6.1f} MB" , process_memory_in_mb("VmPeak"));
+
+    tools::log->info("Peak memory           = {:<6.1f} MB" , tools::common::profile::mem_hwm_in_mb());
 }
 

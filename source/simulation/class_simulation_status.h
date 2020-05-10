@@ -19,6 +19,7 @@ class class_simulation_status{
     size_t iter                           = 0; //In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
     size_t step                           = 0; //How many dmrg steps have been taken (each step may cover multiple sites)
     size_t position                       = 0;
+    int    direction                      = 1;
     size_t num_resets                     = 0;
     size_t state_number                   = 0;  /*!< xDMRG can produce several states per disorder realization. This counts states produced */
     size_t min_iters                      = 0;
@@ -41,6 +42,7 @@ class class_simulation_status{
     size_t variance_mpo_saturated_for     = 0;
     size_t variance_ham_saturated_for     = 0;
     size_t variance_mom_saturated_for     = 0;
+    bool   simulation_has_finished        = false;
     bool   simulation_has_converged       = false;
     bool   simulation_has_saturated       = false;
     bool   simulation_has_succeeded       = false;
@@ -56,9 +58,7 @@ class class_simulation_status{
     bool   variance_mom_has_converged     = false;
     bool   variance_mom_has_saturated     = false;
     bool   time_step_has_converged        = false;
-
-    void clear();
-    friend std::ostream& operator <<(std::ostream& os, const class_simulation_status & sim_status);
+    void clear(){*this = class_simulation_status();}
 };
 
 

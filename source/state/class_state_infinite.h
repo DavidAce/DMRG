@@ -116,7 +116,7 @@ public:
             const Eigen::Tensor<Scalar,4> &Rblock2_
             );
 
-    void set_positions(int position);
+    void set_positions(size_t position);
 
 //    void set_current_dimensions()      ;                /*!< Update variables for dimensions */
     void swap_AB();                                     /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
@@ -124,7 +124,7 @@ public:
 
     struct Measurements {
         std::optional<size_t> length                            = {};
-        std::optional<size_t> bond_dimension                    = {};
+        std::optional<long>   bond_dimension                    = {};
         std::optional<double> current_entanglement_entropy      = {};
         std::optional<double> norm                              = {};
         std::optional<double> energy_mpo                        = {};

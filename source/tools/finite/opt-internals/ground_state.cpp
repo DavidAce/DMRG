@@ -12,7 +12,7 @@
 
 Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_state_finite & state, std::string ritzstring){
     tools::log->trace("Starting ground state optimization");
-    using Scalar = std::complex<double>;
+//    using Scalar = std::complex<double>;
     using namespace internal;
     using namespace settings::precision;
     using namespace eigutils::eigSetting;
@@ -35,7 +35,7 @@ Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground
             settings::threading::num_threads);
 
     class_eigsolver solver;
-    solver.eigs_dense(matrix, nev, eig_max_ncv, NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
+    solver.eigs_dense(matrix, nev, static_cast<int>(eig_max_ncv), NAN, Form::SYMMETRIC, ritz, Side::R, true, true);
 
     [[maybe_unused]] auto eigvals           = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data() ,solver.solution.meta.cols);
     [[maybe_unused]] auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX, Form::SYMMETRIC>().data(),solver.solution.meta.rows);

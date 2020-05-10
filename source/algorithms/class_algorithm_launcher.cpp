@@ -71,7 +71,7 @@ void class_algorithm_launcher::start_h5pp_file(){
     if( settings::output::storage_level_journal == StorageLevel::NONE and
         settings::output::storage_level_results == StorageLevel::NONE and
         settings::output::storage_level_chi_update == StorageLevel::NONE and
-        settings::output::storage_level_projection == StorageLevel::NONE)
+        settings::output::storage_level_proj_state == StorageLevel::NONE)
         return;
 
     // There are two possibilities depending on settings::output::output_filename

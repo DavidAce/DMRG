@@ -28,7 +28,6 @@ namespace rn{
     //Random functions
     extern void seed(std::optional<long> n = std::nullopt);
     extern int uniform_integer_01();
-    extern int uniform_integer_box(const int min, const int max);
     extern double  uniform_double_01();
     extern double  uniform_double_box(const double min, const double max);
     extern std::complex<double>  uniform_complex_1();
@@ -37,6 +36,13 @@ namespace rn{
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata);
     extern Eigen::ArrayXd random_with_replacement(const Eigen::ArrayXd & indata, const int num_choose);
     extern double gaussian_truncated(const double lowerLimit, const double upperLimit, const double mean, const double std) ;
+
+    template<typename T, typename = std::enable_if<std::is_integral_v<T>>>
+    T uniform_integer_box(const T min, const T max){
+        std::uniform_int_distribution<T>  rand_int(std::min(min,max),std::max(min,max));
+        return rand_int(internal::rng);
+    }
+
 
     template<typename T>
     std::vector<T> uniform_unit_n_sphere(int n){

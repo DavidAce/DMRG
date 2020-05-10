@@ -45,7 +45,7 @@ namespace settings {
         inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
         inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
         inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
-        inline size_t              compression_level               = 0;                            /*!< Attempt to use this compression level with HDF5. Choose between [0-9] (0 = off, 9 = max compression) */
+        inline unsigned            compression_level               = 0;                            /*!< Attempt to use this compression level with HDF5. Choose between [0-9] (0 = off, 9 = max compression) */
         inline FileCollisionPolicy file_collision_policy           = FileCollisionPolicy::RESUME;  /*!< What to do when a prior output file is found. Choose between RESUME,RENAME,DELETE */
 
         // Storage Levels.  NOTE: A simulation can only be resumed from FULL storage.
@@ -57,8 +57,10 @@ namespace settings {
         inline StorageLevel     storage_level_journal    = StorageLevel::LIGHT;              /*!< Storage level for journaling, a snapshot taken at the end of each iteration */
         inline StorageLevel     storage_level_results    = StorageLevel::NORMAL;             /*!< Storage level for final results written when a simulation terminates or an important stage is reached (like bond dimension update) */
         inline StorageLevel     storage_level_chi_update = StorageLevel::LIGHT;              /*!< Storage level for snapshot taken right before updating the bond dimension */
-        inline StorageLevel     storage_level_projection = StorageLevel::LIGHT;              /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
-
+        inline StorageLevel     storage_level_proj_state = StorageLevel::LIGHT;              /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
+        inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;              /*!< Storage level for the initial states anytime a state is begun */
+        inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;              /*!< Storage level for the minimum energy state (ground state) */
+        inline StorageLevel     storage_level_emax_state = StorageLevel::LIGHT;              /*!< Storage level for the maximum energy state */
     }
 
 
@@ -83,35 +85,30 @@ namespace settings {
 
     //Parameters for the model Hamiltonian
     namespace model {
-        inline std::string  model_type    = "tf_ising";         /*!< Choice of model type: {tf_ising, tf_nn_ising, selfdual_tf_rf_ising selfdual_tf_rf_ising_normal}  */
-        inline size_t       sites         = 16;                 /*!< Number of sites on the chain. Only relevant for finite algorithms: fDMRG and xDMRG */
-        //Parameters for the transverse-field Ising model
-        namespace tf_ising {
-            inline double       J  = 1;                         /*!< Ferromagnetic coupling. J < 0  Gives a ferromagnet. J > 0 an antiferromagnet. */
-            inline double       g  = 1;                         /*!< Transverse field strength */
-            inline double       w  = 0;                         /*!< Randomness strength for the random field */
-            inline size_t       d  = 2;                         /*!< Spin dimension */
+        inline std::string  model_type    = "ising_tf_rf_nn";   /*!< Choice of model type: {ising_tf_rf_nn, ising_selfdual_tf_rf_nn}  */
+        inline size_t       model_size    = 16;                 /*!< Number of sites on the chain. Only relevant for finite algorithms: fDMRG and xDMRG */
+
+        //Parameters for the transvese-field next-nearest neighbor Ising model with a random field
+        namespace ising_tf_rf_nn {
+            inline double       J1  = 1;                        /*!< Ferromagnetic coupling for nearest neighbors.*/
+            inline double       J2  = 1;                        /*!< Ferromagnetic coupling for next-nearest neighbors.*/
+            inline double       h_tran     = 1;                 /*!< Transverse field strength */
+            inline double       h_mean     = 0;                 /*!< Random field mean of distribution */
+            inline double       h_stdv     = 0;                 /*!< Random field standard deviation. In distribution this is N(h_mean,h_stdv) or U(h_mean-h_stdv,h_mean+h_stdv) */
+            inline size_t       spin_dim   = 2;                 /*!< Spin dimension */
+            inline std::string  distribution  = "uniform";      /*!< Random distribution for couplings and fields */
         }
 
-        //Parameters for the transvese-field next-nearest neighbor Ising model
-        namespace tf_nn_ising {
-            inline double       J1  = 1;                         /*!< Ferromagnetic coupling for nearest neighbors.*/
-            inline double       J2  = 1;                         /*!< Ferromagnetic coupling for next-nearest neighbors.*/
-            inline double       g   = 1;                         /*!< Transverse field strength */
-            inline double       w   = 0;                         /*!< Randomness strength for the random field */
-            inline size_t       d   = 2;                         /*!< Spin dimension */
-        }
-
-        //Parameters for the selfdual transverse-field random-field next-neighbor Ising model
-        namespace selfdual_tf_rf_ising {
-            inline double       J_mean        = 1;               /*!< Mean for the distribution defining random ferromagnetic coupling strength.*/
-            inline double       h_mean        = 1;               /*!< Mean for the distribution defining random transverse magnetic field strength */
-            inline double       J_sigma       = 1;               /*!< Standard deviation for the log-normal distribution defining ferromagnetic coupling */
-            inline double       h_sigma       = 1;               /*!< Standard deviation for the log-normal distribution defining transverse magnetic field */
-            inline double       lambda        = 0;               /*!< Lambda parameter related to next nearest neighbor coupling */
-            inline bool         parity_sep    = false;           /*!< Separation of +-X parity sectors */
-            inline std::string  distribution  = "lognormal";     /*!< Random distribution for couplings and fields */
-            inline size_t       d             = 2;               /*!< Spin dimension */
+        //Parameters for the selfdual transverse-field random-field next-nearest neighbor Ising model
+        namespace ising_selfdual_tf_rf_nn {
+            inline double       J_mean        = 1;              /*!< Mean for the distribution defining random ferromagnetic coupling strength.*/
+            inline double       h_mean        = 1;              /*!< Mean for the distribution defining random transverse magnetic field strength */
+            inline double       J_stdv        = 1;              /*!< Standard deviation for the log-normal distribution defining ferromagnetic coupling */
+            inline double       h_stdv        = 1;              /*!< Standard deviation for the log-normal distribution defining transverse magnetic field */
+            inline double       lambda        = 0;              /*!< Lambda parameter related to next nearest neighbor coupling */
+            inline bool         parity_sep    = false;          /*!< Separation of +-X parity sectors */
+            inline size_t       spin_dim      = 2;              /*!< Spin dimension */
+            inline std::string  distribution  = "lognormal";    /*!< Random distribution for couplings and fields */
         }
     }
 
@@ -137,7 +134,7 @@ namespace settings {
         inline double   eig_threshold                   = 1e-12 ;   /*!< Minimum threshold for halting eigenvalue solver. */
         inline size_t   eig_max_ncv                     = 16    ;   /*!< Parameter controlling the column space? of the Lanczos solver. */
         inline double   svd_threshold                   = 1e-10 ;   /*!< Minimum threshold value for keeping singular values. */
-        inline double   variance_convergence_threshold = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
+        inline double   variance_convergence_threshold  = 1e-11 ;   /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_slope_threshold        = 5     ;   /*!< Variance saturation slope threshold [0-100%]. The variance has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration */
         inline double   entropy_slope_threshold         = 0.1   ;   /*!< Entanglement Entropy saturation slope threshold [0-100%]. The entanglement entropy has saturated when its (absolute) slope reaches below this value. 2 would mean the data saturates when it changes less than 2% per iteration*/
         inline double   subspace_error_factor           = 1     ;   /*!< The subspace quality threshold = energy_variance * SubspaceQualityFactor decides if we go ahead in variance optimization. If the subspace error is too high, direct optimization is done instead */
@@ -151,9 +148,8 @@ namespace settings {
         inline bool     use_reduced_energy              = true  ;   /*!< Whether to subtract E/L from each mpo to avoid catastrophic cancellation when computing the variance */
         inline double   overlap_high                    = 0.99;
         inline double   overlap_cat                     = 0.70710678;
-        inline size_t   max_sites_multidmrg             = 8     ;   /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
+        inline size_t   max_sites_multidmrg             = 8     ;    /*!< Maximum number of sites in multi-site dmrg. Too many sites (>10 or so) makes the contractions slow. */
         inline std::string move_sites_multidmrg         = "one" ;    /*!< How many sites to move after a multi-site dmrg step, choose between {one,mid,max} */
-
     }
 
     //Parameters controlling iDMRG

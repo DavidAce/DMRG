@@ -77,7 +77,7 @@ namespace tools::finite::opt::internal{
 
         inline bool no_state_in_window = false;
 
-        extern std::vector<int> generate_size_list(size_t shape);
+        extern std::vector<int> generate_size_list(int shape);
 
 
         template <typename T>  int sgn(const T val) {return (T(0) < val) - (val < T(0)); }
@@ -122,7 +122,7 @@ namespace tools::finite::opt::internal{
             mutable double norm;
             mutable int    counter = 0;
             size_t length;
-            int    iteration;
+            size_t iteration;
             int    num_parameters;
             bool   have_bounds_on_energy = false;
             OMP omp;
