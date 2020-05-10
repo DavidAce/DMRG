@@ -132,11 +132,11 @@ Eigen::DSizes<long, 3> class_state_finite::dimensions_2site() const {
 
 size_t class_state_finite::size_2site() const {
     auto dims = dimensions_2site();
-    return dims[0] * dims[1] * dims[2];
+    return static_cast<size_t>(dims[0] * dims[1] * dims[2]);
 }
 
-bool class_state_finite::position_is_the_middle() const { return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0) and direction == 1; }
-bool class_state_finite::position_is_the_middle_any_direction() const { return (size_t) get_position() + 1 == (size_t)(get_length() / 2.0); }
+bool class_state_finite::position_is_the_middle() const { return (size_t) get_position() + 1 == (size_t)(static_cast<double>(get_length()) / 2.0) and direction == 1; }
+bool class_state_finite::position_is_the_middle_any_direction() const { return (size_t) get_position() + 1 == (size_t)(static_cast<double>(get_length()) / 2.0); }
 
 bool class_state_finite::position_is_left_edge() const { return get_position() == 0 and direction == -1; }
 
@@ -238,7 +238,7 @@ const class_mps_site &class_state_finite::get_MPS(size_t pos) const {
 class_mps_site &class_state_finite::get_MPS(size_t pos) { return const_cast<class_mps_site &>(static_cast<const class_state_finite &>(*this).get_MPS(pos)); }
 
 const class_model_base &class_state_finite::get_MPO(size_t pos) const {
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_MPO(pos) pos out of range: {}", pos));
+    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_MPO(pos) pos out of range: {}", pos));
     if(pos <= MPO_L.back()->get_position()) {
         auto mpo_it = std::next(MPO_L.begin(), pos)->get();
         if(mpo_it->get_position() != pos)
@@ -261,7 +261,7 @@ class_model_base &class_state_finite::get_MPO(size_t pos) {
 const class_environment &class_state_finite::get_ENVL(size_t pos) const {
     if(pos > ENV_L.back().get_position()) throw std::range_error(fmt::format("get_ENVL(pos):  pos is not in left side: {}", pos));
     if(pos >= ENV_L.size()) throw std::range_error(fmt::format("get_ENVL(pos) pos out of range: {}", pos));
-    auto env_it = std::next(ENV_L.begin(), pos);
+    auto env_it = std::next(ENV_L.begin(), static_cast<long>(pos));
     if(env_it->get_position() != pos)
         throw std::range_error(fmt::format("get_ENVL(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
     return *env_it;
@@ -269,11 +269,8 @@ const class_environment &class_state_finite::get_ENVL(size_t pos) const {
 
 const class_environment &class_state_finite::get_ENVR(size_t pos) const {
     if(pos < ENV_R.front().get_position()) throw std::range_error(fmt::format("get_ENVR(pos):  pos is not in right side: {}", pos));
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_ENVR(pos):  pos out of range: {}", pos));
-    if(pos < ENV_R.front().get_position())
-        throw std::range_error(fmt::format("get_ENVR(pos): Mismatch in pos and ENVR front position: {} < {}", pos, ENV_R.front().get_position()));
-
-    auto env_it = std::next(ENV_R.begin(), pos - ENV_R.front().get_position());
+    if(pos >= ENV_L.size() + ENV_R.size()) throw std::range_error(fmt::format("get_ENVR(pos):  pos out of range: {}", pos));
+    auto env_it = std::next(ENV_R.begin(), static_cast<long>(pos - ENV_R.front().get_position()));
     if(env_it->get_position() != pos)
         throw std::range_error(fmt::format("get_ENVR(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
     return *env_it;
@@ -282,7 +279,7 @@ const class_environment &class_state_finite::get_ENVR(size_t pos) const {
 const class_environment_var &class_state_finite::get_ENV2L(size_t pos) const {
     if(pos > ENV2_L.back().get_position()) throw std::range_error(fmt::format("get_ENV2L(pos):  pos is not in left side: {}", pos));
     if(pos >= ENV2_L.size()) throw std::range_error(fmt::format("get_ENV2L(pos) pos out of range: {}", pos));
-    auto env2_it = std::next(ENV2_L.begin(), pos);
+    auto env2_it = std::next(ENV2_L.begin(), static_cast<long>(pos));
     if(env2_it->get_position() != pos)
         throw std::range_error(fmt::format("get_ENV2L(pos): Mismatch in env position and pos: {} != {}", env2_it->get_position(), pos));
     return *env2_it;
@@ -290,11 +287,8 @@ const class_environment_var &class_state_finite::get_ENV2L(size_t pos) const {
 
 const class_environment_var &class_state_finite::get_ENV2R(size_t pos) const {
     if(pos < ENV2_R.front().get_position()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}", pos));
-    if(pos > ENV2_R.back().get_position()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}", pos));
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos out of range: {}", pos));
-    if(pos < ENV2_R.front().get_position())
-        throw std::range_error(fmt::format("get_ENV2R(pos): Mismatch in pos and ENV2R front position: {} < {}", pos, ENV2_R.front().get_position()));
-    auto env2_it = std::next(ENV2_R.begin(), pos - ENV2_R.front().get_position());
+    if(pos >= ENV2_L.size() + ENV2_R.size()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos out of range: {}", pos));
+    auto env2_it = std::next(ENV2_R.begin(), static_cast<long>(pos - ENV2_R.front().get_position()));
     if(env2_it->get_position() != pos)
         throw std::range_error(fmt::format("get_ENV2R(pos): Mismatch in env2 position and pos: {} != {}", env2_it->get_position(), pos));
     return *env2_it;
@@ -317,19 +311,17 @@ bool class_state_finite::isReduced() const {
     return reduced;
 }
 
-double class_state_finite::get_energy_reduced() const { return get_energy_per_site_reduced() * get_length(); }
+double class_state_finite::get_energy_reduced() const { return get_energy_per_site_reduced() * static_cast<double>(get_length()); }
 
 double class_state_finite::get_energy_per_site_reduced() const {
     // Check that all energies are the same
     double e_reduced = MPO_L.front()->get_reduced_energy();
     for(auto &mpo : MPO_L) {
-        mpo->get_reduced_energy();
         if(mpo->get_reduced_energy() != e_reduced) {
             throw std::runtime_error("Reduced energy mismatch!");
         }
     }
     for(auto &mpo : MPO_R) {
-        mpo->get_reduced_energy();
         if(mpo->get_reduced_energy() != e_reduced) {
             throw std::runtime_error("Reduced energy mismatch!");
         }
@@ -337,7 +329,7 @@ double class_state_finite::get_energy_per_site_reduced() const {
     return e_reduced;
 }
 
-void class_state_finite::set_reduced_energy(double total_energy) { set_reduced_energy_per_site(total_energy / get_length()); }
+void class_state_finite::set_reduced_energy(double total_energy) { set_reduced_energy_per_site(total_energy / static_cast<double>(get_length())); }
 
 void class_state_finite::set_reduced_energy_per_site(double site_energy) {
     if(get_energy_per_site_reduced() == site_energy) return;
@@ -368,7 +360,7 @@ bool class_state_finite::is_damped() const {
     return false;
 }
 
-std::list<size_t> class_state_finite::activate_sites(const long threshold, const size_t max_sites, const size_t min_sites) {
+std::list<size_t> class_state_finite::activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites) {
     clear_cache();
     return active_sites = tools::finite::multisite::generate_site_list(*this, threshold, max_sites, min_sites);
 }
@@ -513,7 +505,7 @@ size_t class_state_finite::num_sites_truncated(double threshold) const {
 
 size_t class_state_finite::num_bonds_at_limit() const {
     auto   bond_dims    = tools::finite::measure::bond_dimensions(*this);
-    size_t bonds_at_lim = (size_t) std::count_if(bond_dims.begin(), bond_dims.end(), [this](auto const &val) { return val >= (size_t) get_chi_lim(); });
+    auto   bonds_at_lim = (size_t) std::count_if(bond_dims.begin(), bond_dims.end(), [this](auto const &val) { return val >= (size_t) get_chi_lim(); });
     return bonds_at_lim;
 }
 

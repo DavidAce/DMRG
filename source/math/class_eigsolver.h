@@ -256,7 +256,7 @@ void class_eigsolver::eig(const Eigen::EigenBase<Derived> &matrix,
                           const bool compute_eigvecs_,
                           const bool remove_phase_   )
 {
-    eig<type,form>(matrix.derived().data(),matrix.rows(), compute_eigvecs_,remove_phase_);
+    eig<type,form>(matrix.derived().data(), static_cast<int>(matrix.rows()), compute_eigvecs_,remove_phase_);
 }
 
 

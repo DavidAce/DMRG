@@ -131,7 +131,7 @@ namespace qm::timeEvolution{
     }
 
 
-    std::vector<Eigen::Tensor<std::complex<double>,4>> get_2site_evolution_gates(const std::complex<double> t,const int susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
+    std::vector<Eigen::Tensor<std::complex<double>,4>> get_2site_evolution_gates(const std::complex<double> t,const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
     /*! Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3.
      * These gates need to be applied to the MPS one at a time with a swap in between.
      */
@@ -158,7 +158,7 @@ namespace qm::timeEvolution{
 //        }
 
 
-    std::vector<Eigen::Tensor<std::complex<double>,4>> compute_G(const std::complex<double> a, const int susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
+    std::vector<Eigen::Tensor<std::complex<double>,4>> compute_G(const std::complex<double> a, const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
     /*! Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 4 tensor.
     *   G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO.
     *   Note that G(-a) = G(a)* if  exp(iaM) !
@@ -346,7 +346,7 @@ qm::mpo::random_pauli_mpos(const Eigen::MatrixXcd &paulimatrix, const size_t sit
     std::vector<int> binary(sites,-1);
     int sum = 0;
     while(true){
-        binary[rn::uniform_integer_box(0,sites)] *= -1;
+        binary[rn::uniform_integer_box(0,static_cast<int>(sites))] *= -1;
         sum = std::accumulate(binary.begin(),binary.end(), 0);
         if((math::mod(sites,2) == 0 and sum == 0) or( math::mod(sites,2) == 1 and sum == 1 ) ) break;
     }
@@ -418,7 +418,7 @@ qm::mpo::random_pauli_mpos_x2(const Eigen::MatrixXcd &paulimatrix1,const Eigen::
     std::vector<int> binary(sites,-1);
     int sum = 0;
     while(true){
-        binary[rn::uniform_integer_box(0,sites)] *= -1;
+        binary[rn::uniform_integer_box(0,static_cast<int>(sites))] *= -1;
         sum = std::accumulate(binary.begin(),binary.end(), 0);
         if((math::mod(sites,2) == 0 and sum == 0) or( math::mod(sites,2) == 1 and sum == 1 ) ) break;
     }

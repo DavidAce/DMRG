@@ -13,7 +13,7 @@ class class_model_base;
 class class_simulation_status;
 namespace tools::finite::measure{
     using Scalar = std::complex<double>;
-    extern int length                                         (const class_state_finite & state);
+    extern size_t length                                      (const class_state_finite & state);
     extern size_t bond_dimension_current                      (const class_state_finite & state);
     extern size_t bond_dimension_midchain                     (const class_state_finite & state);
     extern std::vector<size_t> bond_dimensions                (const class_state_finite & state);

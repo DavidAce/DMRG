@@ -21,8 +21,8 @@ class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppF
     state->set_chi_lim(2); // Can't call chi_init() <-- it's a pure virtual function
     if(state->hasNaN()) throw std::runtime_error("State has NAN's before initializing it");
 
-    tools::finite::mps::initialize(*state, settings::model::model_type, settings::model::sites, 0);
-    tools::finite::mpo::initialize(*state, settings::model::model_type, settings::model::sites, 0);
+    tools::finite::mps::initialize(*state, settings::model::model_type, settings::model::model_size, 0);
+    tools::finite::mpo::initialize(*state, settings::model::model_type, settings::model::model_size, 0);
     tools::finite::mpo::randomize(*state);
     tools::finite::mps::random_product_state(*state, settings::strategy::initial_parity_sector, settings::input::bitfield,
                                              settings::strategy::use_pauli_eigvecs);
@@ -65,24 +65,27 @@ void class_algorithm_finite::run() {
     if(settings::output::file_collision_policy == FileCollisionPolicy::RESUME and h5pp_file->linkExists("common/storage_level")) {
         // We may want to resume this simulation.
         // Resume can imply many things
-        // 1) Resume a simulation only if it terminated prematurely
-        // 2) Resume a previously successful simulation. This may be deseirable if the config
+        // 1) Resume a simulation which terminated prematurely
+        // 2) Resume a previously successful simulation. This may be desireable if the config
         //    wants something that is not present in the file.
         //      a) A certain number of states
         //      b) A state inside of a particular energy window
         //      c) The ground or "roof" states
-
         // To guide the behavior, we check the setting ResumePolicy.
 
         try {
-            auto prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, sim_name);
-            tools::log->info("Resuming state [{}]", prefix);
-            tools::finite::io::h5resume::load_all(*h5pp_file, prefix, sim_status, *state);
+            auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, sim_name);
+            if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid resume candidates found");
+            tools::log->info("Resuming state [{}]", state_prefix);
+            tools::finite::io::h5resume::load_all(*h5pp_file, state_prefix, *state,sim_status);
             // Now we decide what to do
             // Let's consider case 1
-            if(sim_status)
-            while(h5pp_file->linkExists(sim_name + sim_tag)) sim_tag = "/state_" + std::to_string(sim_status.state_number++);
-            tools::finite::debug::check_integrity(*state);
+
+//            if(sim_status.simulation_has_succeeded){
+//
+//            }
+            exit(0);
+            while(h5pp_file->linkExists(sim_name + state_name)) state_name = "state_" + std::to_string(sim_status.state_number++);
         } catch(std::exception &ex) {
             tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
             exit(0);
@@ -201,7 +204,7 @@ void class_algorithm_finite::run_old()
             // We can go ahead and load the state from output
             tools::log->trace("Loading MPS from file");
             try {
-                tools::finite::io::h5resume::load_all(*h5pp_file, sim_name, sim_status, *state);
+                tools::finite::io::h5resume::load_all(*h5pp_file, sim_name, *state,sim_status);
             } catch(std::exception &ex) {
                 tools::log->error("Failed to load from output: {}", ex.what());
                 throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
@@ -234,7 +237,7 @@ void class_algorithm_finite::run_old()
 void class_algorithm_finite::run_preprocessing() {
     tools::log->info("Running {} preprocessing (base)", sim_name);
     tools::common::profile::t_pre->tic();
-    tools::finite::io::h5table::write_model(*h5pp_file, sim_name, settings::output::storage_level_results, *state);
+    tools::finite::io::h5table::write_model(*h5pp_file, sim_name + "/model", settings::output::storage_level_results, *state);
     state->set_chi_max(chi_max());
     sim_status.chi_max = chi_max();
     update_bond_dimension_limit(chi_init());
@@ -242,11 +245,11 @@ void class_algorithm_finite::run_preprocessing() {
     tools::log->info("Finished {} preprocessing (base)", sim_name);
 }
 
-void class_algorithm_finite::single_DMRG_step(std::string ritz) {
+void class_algorithm_finite::single_DMRG_step(const std::string & ritz) {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    tools::log->trace("Starting single xDMRG step");
+    tools::log->trace("Starting single xDMRG step with ritz: [{}]", ritz);
     tools::common::profile::t_sim->tic();
     Eigen::Tensor<Scalar, 4> theta = tools::finite::opt::find_ground_state(*state, ritz);
     tools::finite::opt::truncate_theta(theta, *state);
@@ -259,11 +262,11 @@ void class_algorithm_finite::single_DMRG_step(std::string ritz) {
 void class_algorithm_finite::run_postprocessing() {
     tools::log->info("Running {} postprocessing", sim_name);
     tools::common::profile::t_pos->tic();
+    sim_status.simulation_has_finished = true;
     tools::finite::debug::check_integrity(*state);
     state->clear_measurements();
-
     write_to_file(StorageReason::RESULTS);
-    if(not has_projected) write_to_file(StorageReason::PROJECTION);
+    if(not has_projected) write_to_file(StorageReason::PROJ_STATE);
     print_status_full();
     tools::common::profile::t_pos->toc();
     tools::log->info("Finished {} postprocessing", sim_name);
@@ -284,6 +287,7 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
                                    settings::precision::move_sites_multidmrg + "]");
         }
     }
+
     tools::log->trace("Moving center point {} steps in direction {}", num_moves.value(), state->get_direction());
     state->clear_cache();
     try {
@@ -302,6 +306,12 @@ void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) 
         tools::finite::print::print_state(*state);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
+    sim_status.iter      = state->get_iteration();
+    sim_status.step      = state->get_step();
+    sim_status.position  = state->get_position();
+    sim_status.direction = state->get_direction();
+
+
 }
 
 void class_algorithm_finite::update_truncation_limit() {
@@ -400,7 +410,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
                 *state        = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
                 has_projected = true;
             }
-            write_to_file(StorageReason::PROJECTION);
+            write_to_file(StorageReason::PROJ_STATE);
             if(settings::strategy::randomize_on_chi_update and state->get_chi_lim() >= 32) reset_to_random_current_state();
         } else {
             // Here the settings specify to just set the limit to maximum chi directly
@@ -418,7 +428,7 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
 void class_algorithm_finite::reset_to_initial_state() {
     tools::log->trace("Resetting MPS to initial product state in parity sector: {}, state number {}", settings::strategy::initial_parity_sector,
                       settings::input::bitfield, settings::strategy::use_pauli_eigvecs);
-    if(state->get_length() != settings::model::sites) throw std::range_error("System size mismatch");
+    if(state->get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
     // Initialize state
     tools::finite::mps::random_product_state(*state, settings::strategy::initial_parity_sector, settings::input::bitfield,
                                              settings::strategy::use_pauli_eigvecs);
@@ -429,12 +439,13 @@ void class_algorithm_finite::reset_to_initial_state() {
 
 void class_algorithm_finite::reset_to_random_product_state(const std::string &parity_sector) {
     tools::log->trace("Resetting MPS to random product state in parity sector: {}", parity_sector);
-    if(state->get_length() != settings::model::sites) throw std::range_error("System size mismatch");
+    if(state->get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
     // Randomize state
     tools::finite::mps::random_product_state(*state, parity_sector, -1, settings::strategy::use_pauli_eigvecs);
     clear_saturation_status();
     state->lowest_recorded_variance = 1;
     sim_status.iter                 = state->reset_iter();
+    sim_status.step                 = state->reset_step();
     auto spin_components            = tools::finite::measure::spin_components(*state);
     tools::log->info("Successfully reset to product state with global spin components: {}", spin_components);
 }
@@ -442,7 +453,7 @@ void class_algorithm_finite::reset_to_random_product_state(const std::string &pa
 void class_algorithm_finite::reset_to_random_current_state(std::optional<double> chi_lim) {
     if(not state->position_is_any_edge()) return;
     tools::log->info("Resetting MPS by flipping random spins on current state");
-    if(state->get_length() != settings::model::sites) throw std::range_error("System size mismatch");
+    if(state->get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
     tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
     // Randomize state
     tools::log->info("Flipping random spins");
@@ -471,7 +482,7 @@ void class_algorithm_finite::try_projection() {
         tools::log->info("Trying projection to {}", settings::strategy::target_parity_sector);
         *state        = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
         has_projected = true;
-        write_to_file(StorageReason::PROJECTION);
+        write_to_file(StorageReason::PROJ_STATE);
     }
 }
 
@@ -690,12 +701,7 @@ void class_algorithm_finite::clear_saturation_status() {
 }
 
 void class_algorithm_finite::write_to_file(StorageReason storage_reason) {
-    if(not state->position_is_any_edge()) return;
-    if(math::mod(sim_status.iter, write_freq()) != 0) return;
-    if(settings::output::storage_level_journal == StorageLevel::NONE and settings::output::storage_level_results == StorageLevel::NONE and
-       settings::output::storage_level_chi_update == StorageLevel::NONE and settings::output::storage_level_projection == StorageLevel::NONE)
-        return;
-    if(storage_reason == StorageReason::PROJECTION and not has_projected) {
+    if(storage_reason == StorageReason::PROJ_STATE and not has_projected) {
         auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
         write_to_file(storage_reason, state_projected);
     } else {
@@ -704,56 +710,70 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason) {
 }
 
 void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state) {
-    if(not state.position_is_any_edge()) return;
-    if(math::mod(sim_status.iter, write_freq()) != 0) return;
-    if(settings::output::storage_level_journal == StorageLevel::NONE and settings::output::storage_level_results == StorageLevel::NONE and
-       settings::output::storage_level_chi_update == StorageLevel::NONE and settings::output::storage_level_projection == StorageLevel::NONE)
-        return;
-
     StorageLevel storage_level;
-    std::string  prefix;
-
+    std::string  state_prefix = sim_name + "/" + state_name;
+    std::string  model_prefix = sim_name + "/model";
     switch(storage_reason) {
         case StorageReason::JOURNAL: {
+            if(not state.position_is_any_edge()) return;
+            if(math::mod(sim_status.iter, write_freq()) != 0) return;
             if(settings::output::storage_level_journal == StorageLevel::NONE) return;
-            prefix        = sim_name + sim_tag + "/journal";
+            state_prefix  = state_prefix + "/journal";
             storage_level = settings::output::storage_level_journal;
             if(settings::output::journal_keep_only_last_iter)
-                prefix.append("/iter_last");
+                state_prefix.append("/iter_last");
             else
-                prefix.append("/iter_" + std::to_string(sim_status.iter));
+                state_prefix.append("/iter_" + std::to_string(sim_status.iter));
             break;
         }
         case StorageReason::RESULTS: {
             if(settings::output::storage_level_results == StorageLevel::NONE) return;
-            prefix        = sim_name + sim_tag + "/results";
             storage_level = settings::output::storage_level_results;
+            state_prefix  = state_prefix + "/results";
             break;
         }
         case StorageReason::CHI_UPDATE: {
             if(settings::output::storage_level_chi_update == StorageLevel::NONE) return;
             if(not chi_grow()) return;
-            prefix        = sim_name + sim_tag + "/results_chi_" + std::to_string(state.get_chi_lim());
             storage_level = settings::output::storage_level_chi_update;
+            state_prefix  = state_prefix + "/results_chi_" + std::to_string(state.get_chi_lim());
             break;
         }
-        case StorageReason::PROJECTION: {
-            if(settings::output::storage_level_projection == StorageLevel::NONE) return;
-            prefix        = sim_name + sim_tag + "/projection";
-            storage_level = settings::output::storage_level_projection;
+        case StorageReason::PROJ_STATE: {
+            if(settings::output::storage_level_proj_state == StorageLevel::NONE) return;
+            storage_level = settings::output::storage_level_proj_state;
+            state_prefix  = state_prefix + "/projection";
+            break;
+        }
+        case StorageReason::INIT_STATE: {
+            if(settings::output::storage_level_init_state == StorageLevel::NONE) return;
+            storage_level = settings::output::storage_level_init_state;
+            state_prefix  = state_prefix + "/state_init";
+            break;
+        }
+        case StorageReason::EMIN_STATE: {
+            if(settings::output::storage_level_emin_state == StorageLevel::NONE) return;
+            storage_level = settings::output::storage_level_emin_state;
+            state_prefix  = sim_name + "/state_emin";
+            break;
+        }
+        case StorageReason::EMAX_STATE: {
+            if(settings::output::storage_level_emax_state == StorageLevel::NONE) return;
+            storage_level = settings::output::storage_level_emax_state;
+            state_prefix  = sim_name + "/state_emax";
             break;
         }
     }
 
-    if(prefix.empty()) throw std::runtime_error("Prefix is empty");
-    tools::finite::io::h5dset::write_all(*h5pp_file, prefix, storage_level, state);
-    tools::finite::io::h5table::write_measurements(*h5pp_file, prefix, storage_level, sim_status, state);
-    tools::finite::io::h5dset::write_array_measurements(*h5pp_file, prefix, storage_level, state);
-    tools::finite::io::h5table::write_sim_status(*h5pp_file, prefix, storage_level, sim_status);
-    tools::finite::io::h5table::write_profiling(*h5pp_file, prefix, storage_level, sim_status);
-    tools::finite::io::h5table::write_mem_usage(*h5pp_file, prefix, storage_level, sim_status);
-    tools::common::io::h5attr::write_prefix_meta(*h5pp_file, prefix, sim_name, sim_tag, settings::model::model_type, storage_level, sim_status.iter,
-                                                 sim_status.step, sim_status.position);
+    if(state_prefix.empty()) throw std::runtime_error("Prefix is empty");
+    tools::finite::io::h5dset::write_mps(*h5pp_file, state_prefix, storage_level, state);
+    tools::finite::io::h5dset::write_mpo(*h5pp_file, model_prefix, storage_level, state);
+    tools::finite::io::h5dset::write_measurements(*h5pp_file, state_prefix, storage_level, state);
+    tools::finite::io::h5table::write_measurements(*h5pp_file, state_prefix, storage_level, state,sim_status);
+    tools::finite::io::h5table::write_sim_status(*h5pp_file, state_prefix, storage_level, sim_status);
+    tools::finite::io::h5table::write_profiling(*h5pp_file, state_prefix, storage_level, sim_status);
+    tools::finite::io::h5table::write_mem_usage(*h5pp_file, state_prefix, storage_level, sim_status);
+    tools::common::io::h5attr::write_meta(*h5pp_file,sim_name, state_prefix, model_prefix, settings::model::model_type, storage_level, sim_status);
 }
 
 void class_algorithm_finite::copy_from_tmp(StorageReason storage_reason) {
@@ -761,14 +781,17 @@ void class_algorithm_finite::copy_from_tmp(StorageReason storage_reason) {
     if(not settings::output::use_temp_dir) return;
     if(not state->position_is_any_edge()) return;
     if(settings::output::storage_level_results == StorageLevel::NONE and settings::output::storage_level_chi_update == StorageLevel::NONE and
-       settings::output::storage_level_journal == StorageLevel::NONE and settings::output::storage_level_projection == StorageLevel::NONE)
+       settings::output::storage_level_journal == StorageLevel::NONE and settings::output::storage_level_proj_state == StorageLevel::NONE)
         return;
     switch(storage_reason) {
         case StorageReason::JOURNAL:
             if(math::mod(sim_status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
         case StorageReason::RESULTS:
         case StorageReason::CHI_UPDATE:
-        case StorageReason::PROJECTION: break;
+        case StorageReason::PROJ_STATE:
+        case StorageReason::INIT_STATE:
+        case StorageReason::EMIN_STATE:
+        case StorageReason::EMAX_STATE:break;
     }
     tools::common::io::h5tmp::copy_from_tmp(h5pp_file->getFilePath());
 }
@@ -795,7 +818,7 @@ void class_algorithm_finite::print_status_update() {
     }
     report += fmt::format("Sₑ(l): {:<10.8f} ", entanglement_entropy_current(*state));
     report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(energy_variance_per_site(*state)),
-                          std::log10(state->lowest_recorded_variance / state->get_length()));
+                          std::log10(state->lowest_recorded_variance / static_cast<double>(state->get_length())));
     report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", chi_max(), state->get_chi_lim(), bond_dimension_current(*state));
     report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(state->get_truncation_error(state->get_position())));
     report += fmt::format("stk: {:<1} ", sim_status.simulation_has_stuck_for);

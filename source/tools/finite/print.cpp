@@ -29,7 +29,6 @@ void tools::finite::print::print_full_state(const class_state_finite &state) {
 
 void tools::finite::print::print_state(const class_state_finite &state){
     using namespace Textra;
-    int i = 0;
     tools::log->info("State length              {}", state.get_length());
     tools::log->info("State position            {}", state.get_position());
     tools::log->info("Environment L size        {}", state.ENV_L.size());

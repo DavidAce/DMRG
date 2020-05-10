@@ -4,7 +4,7 @@
 class class_state_infinite;
 namespace tools::infinite::measure{
     using Scalar = std::complex<double>;
-    extern int    length                          (const class_state_infinite & state);
+    extern size_t length                          (const class_state_infinite & state);
     extern long   bond_dimension                  (const class_state_infinite & state);
     extern double truncation_error                (const class_state_infinite & state);
     extern double norm                            (const class_state_infinite & state);

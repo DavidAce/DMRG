@@ -42,7 +42,7 @@ class DenseHamiltonianProduct {
     eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC;
     eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R;
     std::shared_ptr<OMP> omp;
-    size_t num_threads = 1; /*!< Number of threads */
+    int num_threads = 1; /*!< Number of threads */
     public:
     DenseHamiltonianProduct(const Scalar_ *           Lblock_,        /*!< The left block tensor.  */
                             const Scalar_ *           Rblock_,        /*!< The right block tensor.  */
@@ -50,7 +50,7 @@ class DenseHamiltonianProduct {
                             const Scalar_ *           HB_,            /*!< The right Hamiltonian MPO's */
                             const std::array<long, 4> shape_theta4_,  /*!< An array containing the shapes of theta  */
                             const std::array<long, 4> shape_mpo4_,    /*!< An array containing the shapes of the MPO  */
-                            const size_t              num_threads_ = 1 /*!< Number of threads */
+                            const int                 num_threads_ = 1 /*!< Number of threads */
     );
 
     // Functions used in in Arpack++ solver
@@ -78,7 +78,7 @@ DenseHamiltonianProduct<T>::DenseHamiltonianProduct(const Scalar *            Lb
                                                     const Scalar *            HB_,           /*!< The right Hamiltonian MPO's */
                                                     const std::array<long, 4> shape_theta4_, /*!< An array containing the shapes of theta  */
                                                     const std::array<long, 4> shape_mpo4_,   /*!< An array containing the shapes of the MPO  */
-                                                    const size_t              num_threads_)
+                                                    const int                 num_threads_)
     : Lblock(Lblock_), Rblock(Rblock_), HA(HA_), HB(HB_), shape_theta4(shape_theta4_),
       shape_theta2({shape_theta4[0] * shape_theta4[1], shape_theta4[2] * shape_theta4[3]}),
       shape_theta1({shape_theta4[0] * shape_theta4[1] * shape_theta4[2] * shape_theta4[3]}), shape_mpo4(shape_mpo4_), num_threads(num_threads_)

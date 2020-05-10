@@ -46,8 +46,8 @@ class class_algorithm_finite : public class_algorithm_base {
     virtual void run_simulation() = 0;
     virtual void run_preprocessing();
     virtual void run_postprocessing();
-    virtual void single_DMRG_step(std::string ritz);
     virtual bool store_wave_function() = 0;
+    void         single_DMRG_step(const std::string & ritz = "SR");
     void         try_projection();
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();

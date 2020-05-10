@@ -25,9 +25,8 @@ source/math/class_svd_wrapper_lapacke.cpp
 source/math/nmspc_random.cpp
 source/model/class_model_base.cpp
 source/model/class_model_factory.cpp
-source/model/class_selfdual_tf_rf_ising.cpp
-source/model/class_tf_ising.cpp
-source/simulation/class_simulation_status.cpp
+source/model/class_ising_selfdual_tf_rf_nn.cpp
+source/model/class_ising_tf_rf_nn.cpp
 source/simulation/class_dmrg_config.cpp
 source/simulation/nmspc_settings.cpp
 source/state/class_environment.cpp
@@ -110,8 +109,8 @@ source/math/nmspc_random.h
 source/model/class_model_base.h
 source/model/class_model_factory.h
 source/model/class_model_parameters.h
-source/model/class_selfdual_tf_rf_ising.h
-source/model/class_tf_ising.h
+source/model/class_ising_selfdual_tf_rf_nn.h
+source/model/class_ising_tf_rf_nn.h
 source/simulation/class_simulation_status.h
 source/simulation/enums.h
 source/simulation/class_dmrg_config.h

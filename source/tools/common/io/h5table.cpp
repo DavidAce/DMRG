@@ -11,7 +11,7 @@
 void tools::common::io::h5table::write_sim_status(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel &storage_level, const class_simulation_status &sim_status) {
     if(storage_level < StorageLevel::LIGHT) return;
     std::string table_path = prefix + "/sim_status";
-    log->trace("Appending simulation status table: {}", table_path);
+    log->trace("Appending to table: {}", table_path);
     h5pp_table_sim_status::register_table_type();
     if(not h5ppFile.linkExists(table_path))
         h5ppFile.createTable(h5pp_table_sim_status::h5_type, table_path, "simulation status");
@@ -22,7 +22,7 @@ void tools::common::io::h5table::write_sim_status(h5pp::File & h5ppFile, const s
 void tools::common::io::h5table::write_profiling(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel &storage_level, const class_simulation_status &sim_status) {
     if(storage_level < StorageLevel::LIGHT) return;
     std::string table_path = prefix + "/profiling";
-    log->trace("Appending profiling data to table: {}", table_path);
+    log->trace("Appending to table: {}", table_path);
 
     h5pp_table_profiling::register_table_type();
     if(not h5ppFile.linkExists(table_path))
@@ -66,7 +66,7 @@ void tools::common::io::h5table::write_profiling(h5pp::File & h5ppFile, const st
 void tools::common::io::h5table::write_mem_usage(h5pp::File & h5ppFile, const std::string &prefix, const StorageLevel &storage_level, const class_simulation_status &sim_status) {
     if(storage_level < StorageLevel::LIGHT) return;
     std::string table_path = prefix + "/mem_usage";
-    log->trace("Appending memory usage data to table: {}", table_path);
+    log->trace("Appending to table: {}", table_path);
 
     h5pp_table_memory_usage::register_table_type();
     if(not h5ppFile.linkExists(table_path))

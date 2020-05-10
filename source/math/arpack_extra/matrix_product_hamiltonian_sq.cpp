@@ -12,9 +12,9 @@ void DenseHamiltonianSqProduct<T>::MultAx(T* theta_in_, T* theta_out_) {
     Eigen::TensorMap<Eigen::Tensor<const T, 3>>       theta_in  (theta_in_, shape_theta);
     Eigen::TensorMap<Eigen::Tensor<T, 3>>             theta_out (theta_out_, shape_theta);
 
-    size_t log2spin  = std::log2(shape_theta[0]);
-    size_t log2chiL  = std::log2(shape_theta[1]);
-    size_t log2chiR  = std::log2(shape_theta[2]);
+    double log2spin  = std::log2(shape_theta[0]);
+    double log2chiL  = std::log2(shape_theta[1]);
+    double log2chiR  = std::log2(shape_theta[2]);
 
     if (log2spin >= std::max(log2chiL, log2chiR)){
         if (log2chiL > log2chiR){

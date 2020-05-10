@@ -174,7 +174,7 @@ double tools::finite::measure::multisite::energy(const class_state_finite &state
 
 
 double tools::finite::measure::multisite::energy_per_site(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
-        return multisite::energy(state,multitheta)/state.get_length();
+        return multisite::energy(state,multitheta)/static_cast<double>(state.get_length());
 }
 
 
@@ -196,9 +196,9 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
 
 
     auto dsizes      = state.active_dimensions();
-    size_t log2chiL  = std::log2(dsizes[1]);
-    size_t log2chiR  = std::log2(dsizes[2]);
-    size_t log2spin  = std::log2(dsizes[0]);
+    double log2chiL  = std::log2(dsizes[1]);
+    double log2chiR  = std::log2(dsizes[2]);
+    double log2spin  = std::log2(dsizes[0]);
     Eigen::Tensor<Scalar, 0> H2;
     OMP omp(settings::threading::num_threads);
     if (log2spin >= std::max(log2chiL, log2chiR)){
@@ -270,7 +270,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
 
 
 double tools::finite::measure::multisite::energy_variance_per_site(const class_state_finite &state, const Eigen::Tensor<Scalar,3> & multitheta){
-        return multisite::energy_variance(state,multitheta)/state.get_length();
+        return multisite::energy_variance(state,multitheta)/static_cast<double>(state.get_length());
 }
 
 
@@ -289,7 +289,7 @@ double tools::finite::measure::multisite::energy_per_site(const class_state_fini
     if (state.measurements.energy_per_site){return state.measurements.energy_per_site.value();}
     else{
         if (state.active_sites.empty()) return tools::finite::measure::energy_per_site(state);
-        state.measurements.energy_per_site = multisite::energy(state)/state.get_length();
+        state.measurements.energy_per_site = multisite::energy(state)/static_cast<double>(state.get_length());
         return state.measurements.energy_per_site.value();
     }
 }
@@ -310,7 +310,7 @@ double tools::finite::measure::multisite::energy_variance_per_site(const class_s
     if (state.measurements.energy_variance_per_site){return state.measurements.energy_variance_per_site.value();}
     else{
         if (state.active_sites.empty()) return tools::finite::measure::energy_variance_per_site(state);
-        state.measurements.energy_variance_per_site = multisite::energy_variance(state)/state.get_length();
+        state.measurements.energy_variance_per_site = multisite::energy_variance(state)/static_cast<double>(state.get_length());
         return state.measurements.energy_variance_per_site.value();
     }
 }

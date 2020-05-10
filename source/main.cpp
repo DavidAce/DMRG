@@ -182,9 +182,9 @@ int main(int argc, char *argv[]) {
     // B: Override settings
     if(seed >= 0) settings::input::seed = seed;
     if(bitfield >= 0) settings::input::bitfield = bitfield;
-    if(num_threads >= 0) settings::threading::num_threads = num_threads;
+    if(num_threads >= 0) settings::threading::num_threads = static_cast<int>(num_threads);
     if(not output.empty()) settings::output::output_filepath = output;
-    if(verbosity >= 0) settings::console::verbosity = verbosity;
+    if(verbosity >= 0) settings::console::verbosity = static_cast<size_t>(verbosity);
     tools::log = Logger::setLogger("DMRG++ init", settings::console::verbosity, settings::console::timestamp);
 
     // C: Generate the correct output filename based on given seeds
@@ -192,6 +192,10 @@ int main(int argc, char *argv[]) {
         settings::output::output_filepath = filename_append_number(settings::output::output_filepath, settings::input::seed);
         settings::output::output_filepath = filename_append_number(settings::output::output_filepath, settings::input::bitfield);
     }
+
+    // Seed with random::device initially (This also takes care of srand used by Eigen)
+    // This is to make reproducible simulations
+    rn::seed(settings::input::seed);
 
 // Set the number of threads to be used
 #ifdef _OPENMP
@@ -223,9 +227,7 @@ int main(int argc, char *argv[]) {
 
 #endif
 
-    // Seed with random::device initially (This also takes care of srand used by Eigen)
-    // This is to make reproducible simulations
-    rn::seed(settings::input::seed);
+
 
     // Initialize the algorithm class
     // This class stores simulation data automatically to a file specified in the config file

@@ -122,7 +122,7 @@ class class_state_finite {
     bool is_damped() const;
     // For multisite
     std::list<size_t>      active_sites;
-    std::list<size_t>      activate_sites(const long threshold, const size_t max_sites, const size_t min_sites = 2);
+    std::list<size_t>      activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
     std::list<size_t>      activate_truncated_sites(const long threshold, const size_t chi_lim, const size_t max_sites, const size_t min_sites = 2);
     Eigen::DSizes<long, 3> active_dimensions() const;
     size_t                 active_problem_size() const;
@@ -156,22 +156,22 @@ class class_state_finite {
 
     private:
     struct Measurements {
-        std::optional<size_t>                length                        = {};
-        std::optional<size_t>                bond_dimension_midchain       = {};
-        std::optional<size_t>                bond_dimension_current        = {};
-        std::optional<std::vector<size_t>>   bond_dimensions               = {};
-        std::optional<double>                norm                          = {};
-        std::optional<double>                energy                        = {};
-        std::optional<double>                energy_per_site               = {};
-        std::optional<double>                energy_variance               = {};
-        std::optional<double>                energy_variance_per_site      = {};
-        std::optional<double>                spin_component_sx             = {};
-        std::optional<double>                spin_component_sy             = {};
-        std::optional<double>                spin_component_sz             = {};
-        std::optional<std::array<double, 3>> spin_components               = {};
-        std::optional<double>                entanglement_entropy_midchain = {};
-        std::optional<double>                entanglement_entropy_current  = {};
-        std::optional<std::vector<double>>   entanglement_entropies        = {};
+        std::optional<size_t>                length                        = std::nullopt;
+        std::optional<size_t>                bond_dimension_midchain       = std::nullopt;
+        std::optional<size_t>                bond_dimension_current        = std::nullopt;
+        std::optional<std::vector<size_t>>   bond_dimensions               = std::nullopt;
+        std::optional<double>                norm                          = std::nullopt;
+        std::optional<double>                energy                        = std::nullopt;
+        std::optional<double>                energy_per_site               = std::nullopt;
+        std::optional<double>                energy_variance               = std::nullopt;
+        std::optional<double>                energy_variance_per_site      = std::nullopt;
+        std::optional<double>                spin_component_sx             = std::nullopt;
+        std::optional<double>                spin_component_sy             = std::nullopt;
+        std::optional<double>                spin_component_sz             = std::nullopt;
+        std::optional<std::array<double, 3>> spin_components               = std::nullopt;
+        std::optional<double>                entanglement_entropy_midchain = std::nullopt;
+        std::optional<double>                entanglement_entropy_current  = std::nullopt;
+        std::optional<std::vector<double>>   entanglement_entropies        = std::nullopt;
     };
 
     public:
@@ -191,9 +191,9 @@ class class_state_finite {
 
     private:
     struct Cache {
-        std::optional<TType<4>> theta      = {};
-        std::optional<TType<4>> multimpo   = {};
-        std::optional<TType<3>> multitheta = {};
+        std::optional<TType<4>> theta      = std::nullopt;
+        std::optional<TType<4>> multimpo   = std::nullopt;
+        std::optional<TType<3>> multitheta = std::nullopt;
     };
     mutable Cache cache;
 };

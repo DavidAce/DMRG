@@ -19,7 +19,7 @@ using namespace tools::finite::opt::internal;
 template<typename T>
 using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
-std::vector<int> tools::finite::opt::internal::generate_size_list(size_t shape) {
+std::vector<int> tools::finite::opt::internal::generate_size_list(int shape) {
     int max_nev;
     if(shape <= 512)
         max_nev = shape / 2;
@@ -197,7 +197,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace_full(const MatrixTyp
     double                             min_overlap    = overlaps.minCoeff();
     double                             sq_sum_overlap = overlaps.cwiseAbs2().sum();
     double                             subspace_error = 1.0 - sq_sum_overlap;
-    int                                nev            = eigvecs.cols();
+    int                                nev            = static_cast<int>(eigvecs.cols());
     reports::eigs_log.emplace_back(nev, max_overlap, min_overlap, std::log10(subspace_error), t_ham->get_last_time_interval(), t_eig->get_last_time_interval(),
                                    0);
     return std::make_tuple(eigvecs, eigvals);
@@ -210,7 +210,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace_part(const MatrixTyp
     using namespace tools::common::profile;
     tools::log->trace("Finding subspace -- partial");
     // You need to copy the data into StlMatrixProduct, because the PartialPivLU will overwrite the data in H_local otherwise.
-    StlMatrixProduct<Scalar> hamiltonian(H_local.data(), H_local.rows(), true, Form::SYMMETRIC, Side::R);
+    StlMatrixProduct<Scalar> hamiltonian(H_local.data(), static_cast<int>(H_local.rows()), true, Form::SYMMETRIC, Side::R);
     hamiltonian.set_shift(energy_target);
     hamiltonian.FactorOP();
     double time_lu  = hamiltonian.t_factorOp.get_last_time_interval();
@@ -223,7 +223,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace_part(const MatrixTyp
     Eigen::VectorXd                    eigvals;
     Eigen::MatrixXcd                   eigvecs;
     Eigen::Map<const Eigen::VectorXcd> theta_vec(theta.data(), theta.size());
-    for(auto nev : generate_size_list(theta.size())) {
+    for(auto nev : generate_size_list(static_cast<int>(theta.size()))) {
         t_eig->tic();
         solver.eigs_stl(hamiltonian, nev, -1, energy_target, Form::SYMMETRIC, Ritz::LM, Side::R, true, false);
         t_eig->toc();
@@ -290,13 +290,13 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_state_fi
         else
             energy_target = tools::finite::measure::energy(state, multitheta);
         //        tools::log->debug("Energy target, per site: {}",energy_target/state.get_length());
-        tools::log->trace("Energy target + energy reduced = energy per site: {} + {} = {}", energy_target / state.get_length(),
-                          state.get_energy_reduced() / state.get_length(), (energy_target + state.get_energy_reduced()) / state.get_length());
+        tools::log->trace("Energy target + energy reduced = energy per site: {} + {} = {}", energy_target /  static_cast<double>(state.get_length()),
+                          state.get_energy_reduced() / static_cast<double>(state.get_length()), (energy_target + state.get_energy_reduced()) /  static_cast<double>(state.get_length()));
 
         std::tie(eigvecs, eigvals) = find_subspace_part(H_local, multitheta, energy_target, subspace_error_threshold, optMode, optSpace);
     }
-    tools::log->trace("Eigenvalue range: {} --> {}", (eigvals.minCoeff() + state.get_energy_reduced()) / state.get_length(),
-                      (eigvals.maxCoeff() + state.get_energy_reduced()) / state.get_length());
+    tools::log->trace("Eigenvalue range: {} --> {}", (eigvals.minCoeff() + state.get_energy_reduced()) /  static_cast<double>(state.get_length()),
+                      (eigvals.maxCoeff() + state.get_energy_reduced()) /  static_cast<double>(state.get_length()));
     //    eigvals = eigvals.array() + state.get_energy_reduced();
     //    tools::log->debug("Eigenvalue range: {} --> {}", eigvals.minCoeff()/state.get_length(),eigvals.maxCoeff()/state.get_length());
     reports::print_eigs_report();
@@ -455,8 +455,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
             double           vv           = theta_start.squaredNorm();
             Scalar           ene          = vHv / vv;
             Scalar           var          = vH2v / vv - ene * ene;
-            double           ene_init_san = std::real(ene + state.get_energy_reduced()) / state.get_length();
-            double           var_init_san = std::real(var) / state.get_length();
+            double           ene_init_san = std::real(ene + state.get_energy_reduced()) / static_cast<double>(state.get_length());
+            double           var_init_san = std::real(var) / static_cast<double>(state.get_length());
             tools::common::profile::t_opt->toc();
             reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count) + " (matrix)", theta_start.size(), 0, ene_init_san,
                                            std::log10(var_init_san), overlap_0, theta_start.norm(), 1, 1,
@@ -471,7 +471,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
         ceres::GradientProblemSolver::Summary summary;
         tools::common::profile::t_opt->tic();
         using namespace tools::finite::opt::internal;
-        int counter, iter;
+        size_t counter = 0, iter = 0;
         switch(optType) {
             case OptType::CPLX: {
                 Eigen::VectorXd        theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(theta_start.data()), 2 * theta_start.size());
@@ -479,7 +479,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running L-BFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
-                iter         = (int) summary.iterations.size();
+                iter         = summary.iterations.size();
                 counter      = functor->get_count();
                 norm         = functor->get_norm();
                 energy_new   = functor->get_energy();
@@ -495,7 +495,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running LBFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
-                iter         = (int) summary.iterations.size();
+                iter         = summary.iterations.size();
                 counter      = functor->get_count();
                 norm         = functor->get_norm();
                 energy_new   = functor->get_energy();

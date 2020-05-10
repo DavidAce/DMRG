@@ -211,6 +211,7 @@ class h5pp_table_sim_status {
         H5Tinsert(h5_type, "iter", HOFFSET(table, iter), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "direction", HOFFSET(table, direction), H5T_NATIVE_INT);
         H5Tinsert(h5_type, "num_resets", HOFFSET(table, num_resets), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "state_number", HOFFSET(table, state_number), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "min_iters", HOFFSET(table, min_iters), H5T_NATIVE_UINT64);
@@ -233,6 +234,7 @@ class h5pp_table_sim_status {
         H5Tinsert(h5_type, "variance_mpo_saturated_for", HOFFSET(table, variance_mpo_saturated_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "variance_ham_saturated_for", HOFFSET(table, variance_ham_saturated_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "variance_mom_saturated_for", HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "simulation_has_finished", HOFFSET(table, simulation_has_finished), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "simulation_has_converged", HOFFSET(table, simulation_has_converged), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "simulation_has_saturated", HOFFSET(table, simulation_has_saturated), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "simulation_has_succeeded", HOFFSET(table, simulation_has_succeeded), H5T_NATIVE_UINT8);

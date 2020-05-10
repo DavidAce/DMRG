@@ -15,21 +15,22 @@ namespace tools::common::io {
     }
 
     namespace h5table{
-        extern void write_sim_status   (h5pp::File & h5ppFile, const std::string & prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
-        extern void write_profiling    (h5pp::File & h5ppFile, const std::string & prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
-        extern void write_mem_usage    (h5pp::File & h5ppFile, const std::string & prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
+        extern void write_sim_status   (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
+        extern void write_profiling    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
+        extern void write_mem_usage    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
     }
 
     namespace h5attr{
-//        extern void write_prefix_meta (h5pp::File & h5ppFile, const std::string & prefix, const std::string & sim_name, const std::string &sim_tag, const StorageLevel & storage_level );
-        extern void write_prefix_meta (h5pp::File & h5ppFile, const std::string & prefix, const std::string & sim_name, const std::string &sim_tag, const std::string & model_type, const StorageLevel & storage_level, size_t iter, size_t step, size_t position );
+        extern void write_meta (h5pp::File & h5ppFile,
+                                const std::string & sim_name, const std::string &state_prefix,const std::string &model_prefix, const std::string & model_type,
+                                const StorageLevel & storage_level, const class_simulation_status &sim_status);
     }
 
 
     namespace h5resume{
         extern std::string             find_resumable_state     (const h5pp::File & h5ppFile, const std::string & sim_name, const std::string & search = "");
-        extern void                    load_sim_status_from_hdf5(const h5pp::File & h5ppFile, const std::string & prefix,class_simulation_status & sim_status);
-        extern void                    load_profiling_from_hdf5 (const h5pp::File & h5ppFile, const std::string & prefix);
+        extern void                    load_sim_status_from_hdf5(const h5pp::File & h5ppFile, const std::string & state_prefix, class_simulation_status & sim_status);
+        extern void                    load_profiling_from_hdf5 (const h5pp::File & h5ppFile, const std::string & state_prefix);
     }
 
     namespace h5tmp{
