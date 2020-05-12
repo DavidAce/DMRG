@@ -2,20 +2,21 @@
 // Created by david on 2018-01-18.
 //
 #include "class_iTEBD.h"
-#include <tools/common/prof.h>
-#include <tools/common/log.h>
-#include <tools/infinite/opt.h>
-#include <simulation/nmspc_settings.h>
-#include <state/class_state_infinite.h>
-#include <state/class_mps_2site.h>
-#include <model/class_model_base.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <h5pp/h5pp.h>
+#include <model/class_mpo_base.h>
+#include <simulation/nmspc_settings.h>
+#include <state/class_mps_2site.h>
+#include <state/class_state_infinite.h>
+#include <tools/common/log.h>
+#include <tools/common/prof.h>
+#include <tools/infinite/opt.h>
 using namespace std;
 using namespace Textra;
 
 class_iTEBD::class_iTEBD(std::shared_ptr<h5pp::File> h5ppFile_)
-        : class_algorithm_infinite(std::move(h5ppFile_),"iTEBD", SimulationType::iTEBD) {
+        : class_algorithm_infinite(std::move(h5ppFile_), SimulationType::iTEBD) {
+    tools::log->trace("Constructing class {}", sim_name);
     sim_status.delta_t      = settings::itebd::delta_t0;
     auto SX = qm::gen_manybody_spin(qm::spinOneHalf::sx,2);
     auto SY = qm::gen_manybody_spin(qm::spinOneHalf::sy,2);
@@ -36,13 +37,10 @@ void class_iTEBD::run_preprocessing() {
 
 void class_iTEBD::run_simulation()    {
     tools::log->info("Starting {} simulation", sim_name);
-    while(sim_status.iter < settings::itebd::max_steps and not sim_status.simulation_has_converged) {
+    while(sim_status.iter < settings::itebd::max_iters and not sim_status.simulation_has_converged) {
         single_TEBD_step();
         sim_status.phys_time += sim_status.delta_t;
         write_to_file();
-//        write_measurements();
-//        write_sim_status();
-//        write_profiling();
         copy_from_tmp();
         print_status_update();
         check_convergence();
@@ -137,7 +135,7 @@ void class_iTEBD::check_convergence_time_step(){
 
 bool   class_iTEBD::sim_on()    {return settings::itebd::on;}
 long   class_iTEBD::chi_max()   {return settings::itebd::chi_max;}
-size_t class_iTEBD::write_freq(){return settings::itebd::write_freq;}
+//size_t class_iTEBD::write_freq(){return settings::itebd::write_freq;}
 size_t class_iTEBD::print_freq(){return settings::itebd::print_freq;}
 bool   class_iTEBD::chi_grow()  {return settings::itebd::chi_grow;}
 long   class_iTEBD::chi_init()  {return settings::itebd::chi_init;}

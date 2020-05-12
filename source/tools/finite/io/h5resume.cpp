@@ -4,7 +4,7 @@
 #include <complex>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
-#include <model/class_model_factory.h>
+#include <model/class_mpo_factory.h>
 #include <simulation/class_simulation_status.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
@@ -54,28 +54,28 @@ void tools::finite::io::h5resume::load_mpo(const h5pp::File &h5ppFile, const std
         tools::log->trace("Initializing MPOs from Hamiltonian table on file: [{}]", ham_path);
         auto model_type = h5ppFile.readAttribute<std::string>("model_type", ham_path);
         auto model_size = h5ppFile.readAttribute<size_t>("model_size", ham_path);
-        if(model_type != settings::model::model_type)
-            throw std::runtime_error(
-                fmt::format("Mismatch when loading MPO: model_type [{}] != settings::model::model_type [{}]", model_type, settings::model::model_type));
+        if(str2enum<ModelType>(model_type) != settings::model::model_type)
+            throw std::runtime_error(fmt::format("Mismatch when loading MPO: model_type [{}] != settings::model::model_type [{}]", model_type,
+                                                 enum2str(settings::model::model_type)));
         if(model_size != settings::model::model_size)
             throw std::runtime_error(
                 fmt::format("Mismatch when loading MPO: model_size [{}] != settings::model::model_size [{}]", model_type, settings::model::model_size));
 
-        tools::finite::mpo::initialize(state, model_type, model_size, position);
+        tools::finite::mpo::initialize(state, settings::model::model_type, model_size, position);
         for(size_t pos = 0; pos < model_size; pos++) state.get_MPO(pos).read_hamiltonian(h5ppFile, ham_path);
 
     } else if(h5ppFile.linkExists(mpo_path)) {
         tools::log->trace("Initializing MPOs from MPO's on file: [{}]", mpo_path);
         auto model_type = h5ppFile.readAttribute<std::string>("model_type", mpo_path);
         auto model_size = h5ppFile.readAttribute<size_t>("model_size", mpo_path);
-        if(model_type != settings::model::model_type)
+        if(str2enum<ModelType>(model_type) != settings::model::model_type)
             throw std::runtime_error(fmt::format("Mismatch when loading MPO: Hamiltonian model_type [{}] != settings::model::model_type [{}]", model_type,
-                                                 settings::model::model_type));
+                                                 enum2str(settings::model::model_type)));
         if(model_size != settings::model::model_size)
             throw std::runtime_error(
                 fmt::format("Mismatch when loading MPO: Hamiltonian sites [{}] != settings::model::model_size [{}]", model_type, settings::model::model_size));
 
-        tools::finite::mpo::initialize(state, model_type, model_size, position);
+        tools::finite::mpo::initialize(state, settings::model::model_type, model_size, position);
         for(size_t pos = 0; pos < model_size; pos++) state.get_MPO(pos).read_mpo(h5ppFile, mpo_path);
     }
 }
@@ -90,14 +90,14 @@ void tools::finite::io::h5resume::load_mps(const h5pp::File &h5ppFile, const std
     auto        position   = h5ppFile.readAttribute<size_t>("position", mps_path);
     if(position != sim_status.position)
         throw std::runtime_error(fmt::format("Mismatch when loading MPS: position [{}] != sim_status.position [{}]", position, sim_status.position));
-    if(model_type != settings::model::model_type)
+    if(str2enum<ModelType>(model_type) != settings::model::model_type)
         throw std::runtime_error(
-            fmt::format("Mismatch when loading MPS: model_type [{}] != settings::model::model_type [{}]", model_type, settings::model::model_type));
+            fmt::format("Mismatch when loading MPS: model_type [{}] != settings::model::model_type [{}]", model_type, enum2str(settings::model::model_type)));
     if(model_size != settings::model::model_size)
         throw std::runtime_error(
             fmt::format("Mismatch when loading MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
 
-    tools::finite::mps::initialize(state, model_type, model_size, position);
+    tools::finite::mps::initialize(state, settings::model::model_type, model_size, position);
     for(size_t pos = 0; pos < model_size; pos++) {
         std::string pos_str = std::to_string(pos);
         if(state.get_MPS(pos).isCenter()) {
@@ -141,17 +141,18 @@ void tools::finite::io::h5resume::validate(const h5pp::File &h5ppFile, const std
             "Energy per site");
 }
 
-
-
-std::vector<ResumeReason> tools::finite::io::h5resume::findResumeReasons (const h5pp::File &h5ppFile, const std::string &sim_name, const std::string &state_prefix,const class_state_finite & state, const class_simulation_status & sim_status){
+std::list<SimulationTask> tools::finite::io::h5resume::getTaskList(const h5pp::File &h5ppFile, const std::string &sim_name,
+                                                                         const std::string &state_prefix, const class_state_finite &state,
+                                                                         const class_simulation_status &sim_status) {
     // Here we try to find reasons for resuming the previous simulation.
     // The simplest one: it may not have finished
 
-    std::vector<ResumeReason> reasons;
-    if(not sim_status.simulation_has_finished) reasons.push_back(ResumeReason::NOT_FINISHED);
-    if(not sim_status.simulation_has_converged) reasons.push_back(ResumeReason::NOT_CONVERGED);
-
+    std::list<SimulationTask> tasks;
+//    if(not sim_status.simulation_has_succeeded) reasons.push_back(ResumeTasks::FINISH);
+//    if(not sim_status.simulation_has_converged) reasons.push_back(ResumeTasks::NOT_CONVERGED);
+//    if(sim_status.state_number < settings::xdmrg::max_states) reasons.push_back(ResumeTasks::APPEND_STATES);
+//    if(sim_status.chi_lim_has_reached_chi_max and settings::xdmrg::chi_max)
+//        ResumeTasks::
     // There may also be
-    return reasons;
-
+    return tasks;
 }

@@ -5,7 +5,7 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <math/class_eigsolver.h>
 #include <math/class_svd_wrapper.h>
-#include <model/class_model_base.h>
+#include <model/class_mpo_base.h>
 #include <state/class_environment.h>
 #include <state/class_mps_2site.h>
 #include <state/class_mps_site.h>

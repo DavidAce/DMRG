@@ -21,7 +21,6 @@ class class_simulation_status{
     size_t position                       = 0;
     int    direction                      = 1;
     size_t num_resets                     = 0;
-    size_t state_number                   = 0;  /*!< xDMRG can produce several states per disorder realization. This counts states produced */
     size_t min_iters                      = 0;
     long   chi_max                        = 0;
     long   chi_lim                        = 0;

@@ -8,19 +8,21 @@
 
 //class class_h5table_measurements_finite;
 class class_state_finite;
+class class_model_finite;
+class class_edges_finite;
+
 //class h5pp_table_measurements_finite;
 class class_algorithm_finite : public class_algorithm_base {
     public:
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
-    explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name, SimulationType sim_type);
+    explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, SimulationType sim_type);
+    ~class_algorithm_finite(); // Read comment on implementation
 
-    // Tables
-//    std::shared_ptr<h5pp_table_measurements_finite> h5pp_measurements; // Written every sweep
-//    std::shared_ptr<class_h5table_buffer<class_h5table_measurements_finite>> h5tbuf_measurements; // Written every sweep
-
-    // MPS
-    std::unique_ptr<class_state_finite> state;
+    std::unique_ptr<class_state_finite> state;// The finite chain state
+    std::unique_ptr<class_model_finite> model;// The finite chain model
+    std::unique_ptr<class_edges_finite> edges;// The finite chain edges
+    size_t state_number = 0;
 
     // Control behavior when stuck
     size_t              min_stuck_iters      = 1;     /*!< If stuck for this many sweeps -> do subspace instead of direct */
@@ -47,7 +49,6 @@ class class_algorithm_finite : public class_algorithm_base {
     virtual void run_preprocessing();
     virtual void run_postprocessing();
     virtual bool store_wave_function() = 0;
-    void         single_DMRG_step(const std::string & ritz = "SR");
     void         try_projection();
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();
@@ -61,8 +62,8 @@ class class_algorithm_finite : public class_algorithm_base {
     void         reset_to_random_product_state(const std::string &parity_sector = "random") final;
     void         reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt) final;
     void         reset_to_initial_state() final;
-    void         write_to_file(StorageReason storage_reason = StorageReason::JOURNAL) final;
-    void         copy_from_tmp      (StorageReason storage_reason = StorageReason::JOURNAL) final;
+    void         write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
+    void         copy_from_tmp      (StorageReason storage_reason = StorageReason::CHECKPOINT) final;
     void         print_status_update() final;
     void         print_status_full() final;
     void         check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);

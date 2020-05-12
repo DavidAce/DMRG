@@ -3,10 +3,13 @@
 //
 
 #include "class_xDMRG.h"
+#include "class_fDMRG.h"
 #include <math/nmspc_math.h>
 #include <math/nmspc_random.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
+#include <model/class_model_finite.h>
+#include <edges/class_edges_finite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -18,12 +21,8 @@
 #include <tools/finite/ops.h>
 #include <tools/finite/opt.h>
 
-class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), "xDMRG", SimulationType::xDMRG) {
-    tools::log->trace("Constructing class_xDMRG");
-    settings::xdmrg::min_sweeps = std::max(settings::xdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
-    state_name = "state_" + std::to_string(sim_status.state_number);
-    tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
-    tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
+class_xDMRG::class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), SimulationType::xDMRG) {
+    tools::log->trace("Constructing class {}", sim_name);
 }
 
 void class_xDMRG::run_preprocessing() {
@@ -48,60 +47,59 @@ void class_xDMRG::run_preprocessing() {
 }
 
 void class_xDMRG::run_simulation() {
-    tools::log->info("Starting {} simulation", sim_name);
+    sim_status.clear();
+    state_name = "state_" + std::to_string(state_number);
+    tools::log->info("Starting {} simulation of model [{}] for state [{}]", sim_name, enum2str(settings::model::model_type), state_name);
     while(true) {
-        // Reset counters
-        while(true) {
-            single_xDMRG_step();
-            print_status_update();
-            write_to_file();
-            copy_from_tmp();
-            check_convergence();
-            update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
-            update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        single_xDMRG_step();
+        print_status_update();
+        write_to_file();
+        copy_from_tmp();
+        check_convergence();
+        update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
+        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
 
-            try_projection();
-            try_bond_dimension_quench();
-            try_disorder_damping();
-            try_hamiltonian_perturbation();
+        try_projection();
+        try_bond_dimension_quench();
+        try_disorder_damping();
+        try_hamiltonian_perturbation();
 
-            // It's important not to perform the last move.
-            // That last state would not get optimized
-            if(state->position_is_any_edge() and not state->is_perturbed() and not state->is_damped()) {
-                if(sim_status.iter >= settings::xdmrg::max_sweeps) {
-                    stop_reason = StopReason::MAX_ITERS;
-                    break;
-                }
-                if(sim_status.simulation_has_succeeded) {
-                    stop_reason = StopReason::SUCCEEDED;
-                    break;
-                }
-                if(sim_status.simulation_has_to_stop) {
-                    stop_reason = StopReason::SATURATED;
-                    break;
-                }
-                if(sim_status.num_resets > settings::precision::max_resets) {
-                    stop_reason = StopReason::MAX_RESET;
-                    break;
-                }
-                if(settings::strategy::randomize_early and sim_status.state_number == 0 and state->find_largest_chi() >= 32 and
-                   tools::finite::measure::energy_variance(*state) < 1e-4) {
-                    stop_reason = StopReason::RANDOMIZE;
-                    break;
-                }
+        // It's important not to perform the last move.
+        // That last state would not get optimized
+        if(state->position_is_any_edge() and not model->is_perturbed() and not model->is_damped()) {
+            if(sim_status.iter >= settings::xdmrg::max_iters) {
+                stop_reason = StopReason::MAX_ITERS;
+                break;
             }
-            tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", sim_status.step, sim_status.iter, state->get_position(), state->get_direction());
-            move_center_point();
+            if(sim_status.simulation_has_succeeded) {
+                stop_reason = StopReason::SUCCEEDED;
+                break;
+            }
+            if(sim_status.simulation_has_to_stop) {
+                stop_reason = StopReason::SATURATED;
+                break;
+            }
+            if(sim_status.num_resets > settings::precision::max_resets) {
+                stop_reason = StopReason::MAX_RESET;
+                break;
+            }
+            if(settings::strategy::randomize_early and state_number == 0 and state->find_largest_chi() >= 32 and
+               tools::finite::measure::energy_variance(*state) < 1e-4) {
+                stop_reason = StopReason::RANDOMIZE;
+                break;
+            }
         }
-        tools::log->info("Finished {} simulation -- reason: {}", sim_name, enum2str(stop_reason));
-        if(++sim_status.state_number >= settings::xdmrg::max_states)
-            break;
-        else {
-            run_postprocessing(); // Saves and prints full status update
-            reset_to_random_current_state(32);
-            state_name = "state_" + std::to_string(sim_status.state_number);
-        }
+        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", sim_status.step, sim_status.iter, state->get_position(), state->get_direction());
+        move_center_point();
     }
+    tools::log->info("Finished {} simulation of state [{}] -- status: {}", sim_name, state_name, enum2str(stop_reason));
+//    if(++sim_status.state_number >= settings::xdmrg::max_states)
+//        break;
+//    else {
+//        run_postprocessing(); // Saves and prints full status update
+//        reset_to_random_current_state(32);
+//        state_name = "state_" + std::to_string(sim_status.state_number);
+//    }
 }
 
 void class_xDMRG::single_xDMRG_step() {
@@ -124,12 +122,12 @@ void class_xDMRG::single_xDMRG_step() {
     //        should erase the any biasing that may have occurred due to the selection of initial product state.
 
     // Setup normal conditions
-    if(sim_status.state_number == 0 and state->get_chi_lim() <= 12) {
+    if(state_number == 0 and state->get_chi_lim() <= 12) {
         optMode  = OptMode::VARIANCE;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
 
-    if(sim_status.state_number == 0 and (state->get_chi_lim() <= 8 or sim_status.iter < 2)) {
+    if(state_number == 0 and (state->get_chi_lim() <= 8 or sim_status.iter < 2)) {
         optMode  = OptMode::OVERLAP;
         optSpace = OptSpace::SUBSPACE_AND_DIRECT;
     }
@@ -224,7 +222,7 @@ void class_xDMRG::single_xDMRG_step() {
         //            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
         //        }else{
         //            tools::log->info("Rejecting state found out of energy window");
-        //            theta = state->get_multitheta();
+        //            theta = state->get_multisite_mps();
         //            variance_new = measure::energy_variance_per_site(*state);
         //            results.insert({variance_new, {theta, state->active_sites, theta_count++}});
         //        }
@@ -275,7 +273,7 @@ void class_xDMRG::single_xDMRG_step() {
         tools::finite::mps::rebuild_environments(*state);
     }
     if(settings::precision::use_reduced_energy and state->position_is_any_edge()) {
-        tools::finite::mpo::reduce_mpo_energy(*state);
+        tools::finite::mpo::reduce_mpo_energy(*model,*state);
     }
 
     debug::check_integrity(*state);
@@ -323,7 +321,7 @@ void class_xDMRG::check_convergence() {
 
     sim_status.simulation_has_saturated =
         ((sim_status.variance_mpo_saturated_for >= min_saturation_iters and sim_status.entanglement_saturated_for >= min_saturation_iters) or
-         (state->get_iteration() > settings::xdmrg::min_sweeps and not state->any_sites_updated()));
+         (state->get_iteration() > settings::xdmrg::min_iters and not state->any_sites_updated()));
 
     sim_status.simulation_has_succeeded = sim_status.simulation_has_converged and sim_status.simulation_has_saturated;
 
@@ -434,7 +432,17 @@ bool class_xDMRG::state_is_within_energy_window(Eigen::Tensor<Scalar, 3> &theta)
 
 void class_xDMRG::find_energy_range() {
     tools::log->trace("Finding energy range");
-    if(state->get_length() != settings::model::model_size) throw std::runtime_error("find_energy_range: state lenght mismatch");
+    class_fDMRG fDMRG(h5pp_file);
+    fDMRG.ritz = StateRitz::SR;
+    fDMRG.run_simulation();
+    fDMRG.state->do_all_measurements();
+
+    exit(0);
+
+    if(state->get_length() != settings::model::model_size) throw std::runtime_error("find_energy_range: state length mismatch");
+
+
+
     size_t max_sweeps_during_f_range = 4;
     // Backup the state and current sim_status
     class_simulation_status sim_status_backup = sim_status;
@@ -447,7 +455,7 @@ void class_xDMRG::find_energy_range() {
     sim_status.iter = state->reset_iter();
     sim_status.step = state->reset_step();
     while(true) {
-        class_algorithm_finite::single_DMRG_step("SR");
+//        class_algorithm_finite::single_fDMRG_step();
         print_status_update();
         // It's important not to perform the last moves. That last state would not get optimized
         if(state->position_is_any_edge())
@@ -463,7 +471,7 @@ void class_xDMRG::find_energy_range() {
     sim_status.iter = state->reset_iter();
     sim_status.step = state->reset_step();
     while(true) {
-        class_algorithm_finite::single_DMRG_step("LR");
+//        class_algorithm_finite::single_fDMRG_step();
         print_status_update();
         // It's important not to perform the last moves. That last state would not get optimized
         if(state->position_is_any_edge())
@@ -493,7 +501,7 @@ void class_xDMRG::find_energy_range() {
 
 bool   class_xDMRG::sim_on() { return settings::xdmrg::on; }
 long   class_xDMRG::chi_max() { return settings::xdmrg::chi_max; }
-size_t class_xDMRG::write_freq() { return settings::xdmrg::write_freq; }
+//size_t class_xDMRG::write_freq() { return settings::xdmrg::write_freq; }
 size_t class_xDMRG::print_freq() { return settings::xdmrg::print_freq; }
 bool   class_xDMRG::chi_grow() { return settings::xdmrg::chi_grow; }
 long   class_xDMRG::chi_init() { return settings::xdmrg::chi_init; }

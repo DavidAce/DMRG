@@ -63,7 +63,7 @@ template<typename Scalar>
 void matrix_recast<Scalar>::check_if_sparse() {
     Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> matrix (matrix_ptr,L,L);
     sparcity = (matrix.array().cwiseAbs() > 1e-14 )
-                       .select(Eigen::MatrixXd::Ones(L,L),0).sum() / matrix.size();
+                       .select(Eigen::MatrixXd::Ones(L,L),0).sum() / static_cast<double>(matrix.size());
     isSparse =  sparcity < 0.1;
 }
 

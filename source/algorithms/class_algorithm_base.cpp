@@ -14,17 +14,18 @@
 
 using Scalar = class_algorithm_base::Scalar;
 
-class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name_, SimulationType sim_type_)
-    : h5pp_file(std::move(h5ppFile_)), sim_name(std::move(sim_name_)), sim_type(sim_type_) {
+class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, SimulationType sim_type_)
+    : h5pp_file(std::move(h5ppFile_)), sim_type(sim_type_) {
+    sim_name   = enum2str(sim_type_);
     state_name = "state";
-    tools::log = Logger::setLogger(sim_name, settings::console::verbosity, settings::console::timestamp);
+    tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
+    tools::log = Logger::setLogger(std::string(enum2str(sim_type)), settings::console::verbosity, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
     tools::common::profile::init_profiling();
-
-    if(h5pp_file) tools::log->trace("Writing input file: {}", settings::input::config_filename);
-    if(h5pp_file) h5pp_file->writeDataset(settings::input::config_filename, "common/config_filename");
-    if(h5pp_file) h5pp_file->writeDataset(settings::input::config_file_contents, "common/config_file_contents");
 }
+
+
+
 
 /*! \brief Checks convergence based on slope.
  * We want to check once every "rate" steps. First, check the sim_state.iteration number when you last measured.

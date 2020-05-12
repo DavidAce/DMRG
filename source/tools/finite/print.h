@@ -1,9 +1,9 @@
 #pragma once
 
 class class_state_finite;
+class class_model_finite;
+class class_edges_finite;
 namespace tools::finite::print {
-    extern void print_full_state    (const class_state_finite & state);
-    extern void print_state         (const class_state_finite & state); /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
-    extern void print_state_compact (const class_state_finite & state); /*!< Print the tensor dimensions for all \f$\Gamma\f$-tensors. */
-    extern void print_hamiltonians  (const class_state_finite & state);
+    extern void print_system        (const class_state_finite & state,const class_model_finite & model,const class_edges_finite & edges);
+    extern void print_model         (const class_state_finite & state);
 }

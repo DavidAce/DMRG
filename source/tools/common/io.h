@@ -3,6 +3,7 @@
 #include <string>
 class class_simulation_status;
 enum class StorageLevel;
+enum class ModelType;
 
 namespace h5pp {
     class File;
@@ -22,10 +23,9 @@ namespace tools::common::io {
 
     namespace h5attr{
         extern void write_meta (h5pp::File & h5ppFile,
-                                const std::string & sim_name, const std::string &state_prefix,const std::string &model_prefix, const std::string & model_type,
+                                const std::string & sim_name, const std::string &state_prefix, const std::string &model_prefix, ModelType model_type,
                                 const StorageLevel & storage_level, const class_simulation_status &sim_status);
     }
-
 
     namespace h5resume{
         extern std::string             find_resumable_state     (const h5pp::File & h5ppFile, const std::string & sim_name, const std::string & search = "");

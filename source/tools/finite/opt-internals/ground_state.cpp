@@ -10,7 +10,11 @@
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
 #include <math/class_eigsolver.h>
 
-Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_state_finite & state, std::string ritzstring){
+Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_state_finite & state, StateRitz ritz){
+    return ground_state_optimization(state,enum2str(ritz));
+}
+
+Eigen::Tensor<class_state_finite::Scalar,4> tools::finite::opt::internal::ground_state_optimization(const class_state_finite & state, std::string_view ritzstring){
     tools::log->trace("Starting ground state optimization");
 //    using Scalar = std::complex<double>;
     using namespace internal;

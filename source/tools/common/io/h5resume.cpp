@@ -11,6 +11,11 @@ std::string tools::common::io::h5resume::find_resumable_state(const h5pp::File &
         if(candidate.find(sim_name) != std::string::npos and h5ppFile.readAttribute<std::string>(candidate, "common/storage_level") == "FULL")
             prefix_candidates.push_back(candidate);
 
+    // Filter off states belonging to other simulation types
+    auto sim_filter = [sim_name](std::string_view x) { return x.find(sim_name) != std::string::npos; };
+    prefix_candidates.erase(std::remove_if(prefix_candidates.begin(), prefix_candidates.end(), sim_filter), prefix_candidates.end());
+
+
     // Apply the search filter
     auto search_filter = [search](std::string_view x) { return x.find(search) == std::string::npos; };
     prefix_candidates.erase(std::remove_if(prefix_candidates.begin(), prefix_candidates.end(), search_filter), prefix_candidates.end());

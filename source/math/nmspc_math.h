@@ -208,16 +208,21 @@ namespace math
 *   \param args any number of values
 *   \return bool, true if all args are equal
 */
-    template <class... Args>
-    bool all_equal(Args const&... args) {
-        if constexpr (sizeof...(Args) == 0) {
-            return true;
-        } else {
-            return [](auto const& a0, auto const&... rest){
-                return ((a0 == rest) && ...);
-            }(args...);
-        }
+    template<typename First, typename... T>
+    bool all_equal(First &&first, T &&... t) {
+        return ((first == t) && ...);
     }
+//
+//    template <class... Args>
+//    bool all_equal(Args const&... args) {
+//        if constexpr (sizeof...(Args) == 0) {
+//            return true;
+//        } else {
+//            return [](auto const& a0, auto const&... rest){
+//                return ((a0 == rest) && ...);
+//            }(args...);
+//        }
+//    }
 
 
 }

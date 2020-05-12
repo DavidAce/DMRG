@@ -10,15 +10,14 @@
 #include <tools/infinite/mps.h>
 
 using Scalar = std::complex<double>;
-void tools::infinite::mps::initialize(class_state_infinite &state, const std::string &model_type_str) {
+void tools::infinite::mps::initialize(class_state_infinite &state, ModelType model_type) {
     tools::log->trace("Constructing 2site MPS");
     size_t spin_dim = 2;
-    if(model_type_str == "ising_tf_rf_nn")
-        spin_dim = settings::model::ising_tf_rf_nn::spin_dim;
-    else if(model_type_str == "ising_selfdual_tf_rf_nn")
-        spin_dim = settings::model::ising_selfdual_tf_rf_nn::spin_dim;
-    else
-        throw std::runtime_error(fmt::format("Unexpected model string: {}", model_type_str));
+    switch(model_type){
+        case ModelType::ising_tf_rf: spin_dim = settings::model::ising_tf_rf::spin_dim;break;
+        case ModelType::ising_sdual: spin_dim = settings::model::ising_sdual::spin_dim;break;
+        default: spin_dim = 2;
+    }
     Eigen::Tensor<Scalar, 3> M(static_cast<long>(spin_dim), 1, 1);
     Eigen::Tensor<Scalar, 1> L(1);
 

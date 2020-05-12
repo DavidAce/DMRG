@@ -13,30 +13,46 @@ using namespace std;
 using namespace Textra;
 
 class_iDMRG::class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_)
-    : class_algorithm_infinite(std::move(h5ppFile_),"iDMRG", SimulationType::iDMRG) {
-    tools::log->trace("Constructing class_iDMRG");
+    : class_algorithm_infinite(std::move(h5ppFile_), SimulationType::iDMRG) {
+    tools::log->trace("Constructing class {}", sim_name);
 
 }
 
 
 
 void class_iDMRG::run_simulation() {
-    if (not settings::idmrg::on) { return; }
-    tools::log->info("Starting {} simulation", sim_name);
+    if(ritz == StateRitz::SR) state_name = "state_emin";
+    else state_name = "state_emax";
+    tools::log->info("Starting {} simulation of model [{}] for state [{}]", sim_name, enum2str(settings::model::model_type), state_name);
     while(true){
-        single_DMRG_step("SR");
-        write_to_file();
-//        write_measurements();
-//        write_sim_status();
-//        write_profiling();
-        copy_from_tmp();
+        single_iDMRG_step();
         print_status_update();
+        write_to_file();
+        copy_from_tmp();
         check_convergence();
+        update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
+        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
 
-        // It's important not to perform the last swap.
+        // It's important not to perform the last move.
         // That last state would not get optimized
+        if(sim_status.iter >= settings::idmrg::max_iters) {
+            stop_reason = StopReason::MAX_ITERS;
+            break;
+        }
+        if(sim_status.simulation_has_succeeded) {
+            stop_reason = StopReason::SUCCEEDED;
+            break;
+        }
+        if(sim_status.simulation_has_to_stop) {
+            stop_reason = StopReason::SATURATED;
+            break;
+        }
+        if(sim_status.num_resets > settings::precision::max_resets) {
+            stop_reason = StopReason::MAX_RESET;
+            break;
+        }
 
-        if (sim_status.iter >= settings::idmrg::max_steps)  {stop_reason = StopReason::MAX_ITERS; break;}
+        if (sim_status.iter >= settings::idmrg::max_iters)  {stop_reason = StopReason::MAX_ITERS; break;}
         if (sim_status.simulation_has_succeeded)                 {stop_reason = StopReason::SUCCEEDED; break;}
         if (sim_status.simulation_has_to_stop)                   {stop_reason = StopReason::SATURATED; break;}
 
@@ -51,11 +67,11 @@ void class_iDMRG::run_simulation() {
 }
 
 
-void class_iDMRG::single_DMRG_step(std::string ritz){
+void class_iDMRG::single_iDMRG_step(){
 /*!
  * \fn void single_DMRG_step(class_superblock &state)
  */
-    tools::log->trace("Starting infinite DMRG step");
+    tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2str(ritz));
     tools::common::profile::t_sim->tic();
     Eigen::Tensor<Scalar,4> theta = tools::infinite::opt::find_ground_state(*state,ritz);
     tools::infinite::opt::truncate_theta(theta, *state);
@@ -90,7 +106,7 @@ void class_iDMRG::check_convergence(){
 
 bool   class_iDMRG::sim_on()   {return settings::idmrg::on;}
 long   class_iDMRG::chi_max()   {return settings::idmrg::chi_max;}
-size_t class_iDMRG::write_freq(){return settings::idmrg::write_freq;}
+//size_t class_iDMRG::write_freq(){return settings::idmrg::write_freq;}
 size_t class_iDMRG::print_freq(){return settings::idmrg::print_freq;}
 bool   class_iDMRG::chi_grow()  {return settings::idmrg::chi_grow;}
 long   class_iDMRG::chi_init()  {return settings::idmrg::chi_init;}

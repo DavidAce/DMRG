@@ -16,22 +16,23 @@
 /*! Write down the Hamiltonian model type and site info as attributes */
 void tools::finite::io::h5table::write_model(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level,
                                              const class_state_finite &state) {
-    if(storage_level < StorageLevel::LIGHT) return;
+    if(storage_level == StorageLevel::NONE) return;
     std::string table_path = model_prefix + "/Hamiltonian";
     if(h5ppFile.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
     tools::log->trace("Storing table: [{}]", table_path);
     tools::common::profile::t_hdf->tic();
     for(auto site = 0ul; site < state.get_length(); site++) state.get_MPO(site).write_hamiltonian(h5ppFile, table_path);
-    h5ppFile.writeAttribute(settings::model::model_type, "model_type", table_path);
+    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", table_path);
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", table_path);
+
     tools::common::profile::t_hdf->toc();
 }
 
-void tools::finite::io::h5table::write_measurements(h5pp::File &h5ppFile, const std::string &prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5table::write_measurements(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
                                                     const class_state_finite &state, const class_simulation_status &sim_status) {
-    if(storage_level < StorageLevel::LIGHT) return;
-    std::string table_path = prefix + "/measurements";
+    if(storage_level == StorageLevel::NONE) return;
+    std::string table_path = table_prefix + "/measurements";
     log->trace("Appending to table: {}", table_path);
     h5pp_table_measurements_finite::register_table_type();
     if(not h5ppFile.linkExists(table_path)) h5ppFile.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
@@ -62,17 +63,17 @@ void tools::finite::io::h5table::write_measurements(h5pp::File &h5ppFile, const 
     tools::common::profile::t_hdf->toc();
 }
 
-void tools::finite::io::h5table::write_sim_status(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
+void tools::finite::io::h5table::write_sim_status(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
                                                   const class_simulation_status &sim_status) {
-    tools::common::io::h5table::write_sim_status(h5ppFile, table_path, storage_level, sim_status);
+    tools::common::io::h5table::write_sim_status(h5ppFile, table_prefix, storage_level, sim_status);
 }
 
-void tools::finite::io::h5table::write_profiling(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
+void tools::finite::io::h5table::write_profiling(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
                                                  const class_simulation_status &sim_status) {
-    tools::common::io::h5table::write_profiling(h5ppFile, table_path, storage_level, sim_status);
+    tools::common::io::h5table::write_profiling(h5ppFile, table_prefix, storage_level, sim_status);
 }
 
-void tools::finite::io::h5table::write_mem_usage(h5pp::File &h5ppFile, const std::string &table_path, const StorageLevel &storage_level,
+void tools::finite::io::h5table::write_mem_usage(h5pp::File &h5ppFile, const std::string &table_prefix, const StorageLevel &storage_level,
                                                  const class_simulation_status &sim_status) {
-    tools::common::io::h5table::write_mem_usage(h5ppFile, table_path, storage_level, sim_status);
+    tools::common::io::h5table::write_mem_usage(h5ppFile, table_prefix, storage_level, sim_status);
 }

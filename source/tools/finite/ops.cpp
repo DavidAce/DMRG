@@ -5,19 +5,19 @@
 #include <general/nmspc_quantum_mechanics.h>
 #include <general/nmspc_tensor_extra.h>
 #include <math/nmspc_random.h>
-#include <model/class_model_base.h>
+#include <model/class_mpo_base.h>
 #include <state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
+#include <tools/finite/debug.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
-#include <tools/finite/debug.h>
 
 using Scalar         = std::complex<double>;
 using namespace Textra;
 
-std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::unique_ptr<class_model_base>> & mpos_L, const std::list<std::unique_ptr<class_model_base>> & mpos_R){
+std::list<Eigen::Tensor<Scalar,4>> tools::finite::ops::make_mpo_list (const std::list<std::unique_ptr<class_mpo_base>> & mpos_L, const std::list<std::unique_ptr<class_mpo_base>> & mpos_R){
     std::list<Eigen::Tensor<Scalar,4>> mpos;
     for(auto &mpo_L : mpos_L){
         mpos.push_back(mpo_L->MPO());

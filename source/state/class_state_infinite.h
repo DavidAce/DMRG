@@ -13,7 +13,7 @@
 #include <simulation/nmspc_settings.h>
 #include <io/nmspc_logger.h>
 class class_mps_2site;
-class class_model_base;
+class class_mpo_base;
 class class_environment;
 class class_environment_var;
 
@@ -25,17 +25,14 @@ class class_environment_var;
 
 
 class class_state_infinite {
-public:
-    SimulationType sim_type;
-    std::string sim_name;
 private:
     std::optional<long> chi_lim;
     std::optional<long> chi_max;
     std::shared_ptr<spdlog::logger> log;
 public:
     using Scalar = std::complex<double>;
-
-    class_state_infinite(SimulationType sim_type_, std::string sim_name_);
+    SimulationType sim_type;
+    class_state_infinite(SimulationType sim_type_);
 
 //    // we can use the default move constructor
 //    class_state_infinite(class_state_infinite&&);
@@ -48,8 +45,8 @@ public:
 
 
     std::shared_ptr<class_mps_2site>         MPS;        /*!< A matrix product state for two sites , A and B, and a center bond. In Vidal Canonical Form \f$\Lambda^A\Gamma^A \Lambda^C \Gamma^B\Lambda^B\f$. */
-    std::shared_ptr<class_model_base>        HA;         /*!< Left hamiltonian MPO */
-    std::shared_ptr<class_model_base>        HB;         /*!< Right hamiltonian MPO */
+    std::shared_ptr<class_mpo_base>        HA;         /*!< Left hamiltonian MPO */
+    std::shared_ptr<class_mpo_base>        HB;         /*!< Right hamiltonian MPO */
     std::shared_ptr<class_environment>       Lblock;     /*!< Left  environment block. */
     std::shared_ptr<class_environment>       Rblock;     /*!< Right environment block. */
     std::shared_ptr<class_environment_var>   Lblock2;    /*!< Left  environment block used for variance calculation */

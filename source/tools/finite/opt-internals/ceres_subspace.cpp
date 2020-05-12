@@ -275,7 +275,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_state_fi
     tools::common::profile::t_ham->tic();
     MatrixType<Scalar> H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix<Scalar>(state);
     tools::common::profile::t_ham->toc();
-    auto multitheta = state.get_multitheta();
+    auto multitheta = state.get_multisite_mps();
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
@@ -321,7 +321,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     double theta_old_variance       = tools::finite::measure::energy_variance_per_site(state);
     double subspace_error_threshold = settings::precision::min_subspace_error;
 
-    auto &theta_old     = state.get_multitheta();
+    auto &theta_old     = state.get_multisite_mps();
     auto  theta_old_vec = Eigen::Map<const Eigen::VectorXcd>(theta_old.data(), theta_old.size());
 
     Eigen::MatrixXcd eigvecs;
@@ -352,7 +352,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 
     tools::log->trace("Current energy          : {:.16f}", tools::finite::measure::energy_per_site(state));
     tools::log->trace("Current energy (2site)  : {:.16f}", tools::finite::measure::twosite::energy_per_site(state, state.get_theta()));
-    tools::log->trace("Current energy (multi)  : {:.16f}", tools::finite::measure::multisite::energy_per_site(state, state.get_multitheta()));
+    tools::log->trace("Current energy (multi)  : {:.16f}", tools::finite::measure::multisite::energy_per_site(state, state.get_multisite_mps()));
     tools::log->trace("Current variance: {:.16f}", std::log10(theta_old_variance));
     //    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound,
     //    sim_status.energy_ubound);

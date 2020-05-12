@@ -16,13 +16,13 @@ public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_infinite::class_algorithm_infinite;
     explicit class_iDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
-
-    void single_DMRG_step(std::string ritz);
+    StateRitz ritz;
+    void single_iDMRG_step();
     void run_simulation()                                   final;
     void check_convergence()                                final;
     bool    sim_on ()                                       final;
     long    chi_max()                                       final;
-    size_t  write_freq()                                    final;
+//    size_t  write_freq()                                    final;
     size_t  print_freq()                                    final;
     bool    chi_grow()                                      final;
     long    chi_init()                                      final;

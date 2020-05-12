@@ -22,8 +22,6 @@ private:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_finite::class_algorithm_finite;
     explicit class_xDMRG(std::shared_ptr<h5pp::File> h5ppFile_);
-
-
     void find_energy_range();
     void inflate_initial_state();
     void single_xDMRG_step();
@@ -34,7 +32,7 @@ private:
     void check_convergence()                final;
     bool   sim_on()                         final;
     long   chi_max()                        final;
-    size_t write_freq()                     final;
+//    size_t write_freq()                     final;
     size_t print_freq()                     final;
     bool   chi_grow()                       final;
     long   chi_init()                       final;

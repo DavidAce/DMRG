@@ -24,5 +24,5 @@ tools::finite::opt::internal::ceres_rosenbrock_optimization(const class_state_fi
     std::cout << "Final   x: " << parameters[0]
               << " y: " << parameters[1] << "\n";
 
-    return state.get_multitheta();
+    return state.get_multisite_mps();
 }
