@@ -10,7 +10,7 @@
 #include <math/arpack_extra/matrix_product_hamiltonian_sq.h>
 #include <math/class_eigsolver.h>
 
-Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ham_sq_optimization(const class_state_finite & state, OptType optType, OptMode optMode, OptSpace optSpace,std::string ritzstring){
+Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ham_sq_optimization(const class_state_finite & state, OptType optType, OptMode optMode, OptSpace optSpace){
     tools::log->trace("Starting hamiltonian squared optimization");
     using Scalar = std::complex<double>;
     using namespace internal;
@@ -19,7 +19,7 @@ Eigen::Tensor<class_state_finite::Scalar,3> tools::finite::opt::internal::ham_sq
 //    optType = OptType::CPLX;
     switch(optType){
         case OptType::REAL: {
-            Eigen::Tensor<double,3> theta   = state.get_multitheta().real();
+            Eigen::Tensor<double,3> theta   = state.get_multisite_mps().real();
             Eigen::Tensor<double,4> mpo   = state.get_multimpo().real();
             Eigen::Tensor<double,4> env2L = state.get_ENV2L(state.active_sites.front()).block.real();
             Eigen::Tensor<double,4> env2R = state.get_ENV2R(state.active_sites.back()).block.real();

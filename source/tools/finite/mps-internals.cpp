@@ -134,7 +134,7 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
         state.clear_measurements();
         spin_component   = tools::finite::measure::spin_component(state,axis);
     }
-    log->info("Done reset to product state with global spin component {} = {}",axis, spin_component);
+    log->info("Finished reset to product state with global spin component {} = {}",axis, spin_component);
     if (spin_component * sector < 0) throw std::logic_error("Could not initialize in the correct parity sector");
 
 }

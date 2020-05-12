@@ -41,6 +41,7 @@ void tools::common::io::h5table::write_profiling(h5pp::File & h5ppFile, const st
     profiling_entry.t_svd           = tools::common::profile::t_svd->get_measured_time();
     profiling_entry.t_ham           = tools::common::profile::t_ham->get_measured_time();
     profiling_entry.t_hsq           = tools::common::profile::t_hsq->get_measured_time();
+    profiling_entry.t_mps           = tools::common::profile::t_mps->get_measured_time();
     profiling_entry.t_mpo           = tools::common::profile::t_mpo->get_measured_time();
     profiling_entry.t_opt           = tools::common::profile::t_opt->get_measured_time();
     profiling_entry.t_evo           = tools::common::profile::t_evo->get_measured_time();

@@ -31,11 +31,11 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
     this->chi_max    = other.chi_max;
     this->MPS_L      = other.MPS_L;
     this->MPS_R      = other.MPS_R;
-    this->ENV_L      = other.ENV_L;
-    this->ENV_R      = other.ENV_R;
-    this->ENV2_L     = other.ENV2_L;
-    this->ENV2_R     = other.ENV2_R;
-
+//    this->ENV_L      = other.ENV_L;
+//    this->ENV_R      = other.ENV_R;
+//    this->ENV2_L     = other.ENV2_L;
+//    this->ENV2_R     = other.ENV2_R;
+//
     this->active_sites       = other.active_sites;
     this->truncation_error   = other.truncation_error;
     this->truncated_variance = other.truncated_variance;
@@ -44,10 +44,10 @@ class_state_finite &class_state_finite::operator=(const class_state_finite &othe
     this->cache              = other.cache;
 
     // The MPO's are special and the whole point of doing this manually
-    this->MPO_L.clear();
-    this->MPO_R.clear();
-    for(auto &mpo : other.MPO_L) this->MPO_L.emplace_back(mpo->clone());
-    for(auto &mpo : other.MPO_R) this->MPO_R.emplace_back(mpo->clone());
+//    this->MPO_L.clear();
+//    this->MPO_R.clear();
+//    for(auto &mpo : other.MPO_L) this->MPO_L.emplace_back(mpo->clone());
+//    for(auto &mpo : other.MPO_R) this->MPO_R.emplace_back(mpo->clone());
     return *this;
 }
 
@@ -72,15 +72,15 @@ void class_state_finite::set_positions() {
     size_t pos = 0;
     for(auto &MPS : MPS_L) MPS.set_position(pos++);
     for(auto &MPS : MPS_R) MPS.set_position(pos++);
-    pos = 0;
-    for(auto &ENV : ENV_L) ENV.set_position(pos++);
-    for(auto &ENV : ENV_R) ENV.set_position(pos++);
-    pos = 0;
-    for(auto &ENV2 : ENV2_L) ENV2.set_position(pos++);
-    for(auto &ENV2 : ENV2_R) ENV2.set_position(pos++);
-    pos = 0;
-    for(auto &MPO : MPO_L) MPO->set_position(pos++);
-    for(auto &MPO : MPO_R) MPO->set_position(pos++);
+//    pos = 0;
+//    for(auto &ENV : ENV_L) ENV.set_position(pos++);
+//    for(auto &ENV : ENV_R) ENV.set_position(pos++);
+//    pos = 0;
+//    for(auto &ENV2 : ENV2_L) ENV2.set_position(pos++);
+//    for(auto &ENV2 : ENV2_R) ENV2.set_position(pos++);
+//    pos = 0;
+//    for(auto &MPO : MPO_L) MPO->set_position(pos++);
+//    for(auto &MPO : MPO_R) MPO->set_position(pos++);
 }
 
 size_t class_state_finite::get_length() const { return MPS_L.size() + MPS_R.size(); }
@@ -110,15 +110,18 @@ long class_state_finite::get_chi_max() const {
     // Should get the the current limit on allowed bond dimension for the duration of the simulation
     return chi_max.value();
 }
+
 void class_state_finite::set_chi_max(long chi_max_) {
     // Should set the the highest limit on allowed bond dimension for the duration of the simulation
     if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
     chi_max = chi_max_;
 }
+
 long class_state_finite::find_largest_chi() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
     return *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
 }
+
 int  class_state_finite::get_direction() const { return direction; }
 void class_state_finite::flip_direction() { direction *= -1; }
 
@@ -152,12 +155,12 @@ bool class_state_finite::isReal() const {
     bool env_real = true;
     for(auto &mps : MPS_L) mps_real = mps_real and mps.isReal();
     for(auto &mps : MPS_R) mps_real = mps_real and mps.isReal();
-    for(auto &mpo : MPO_L) mpo_real = mpo_real and mpo->isReal();
-    for(auto &mpo : MPO_R) mpo_real = mpo_real and mpo->isReal();
-    for(auto &env : ENV_L) env_real = env_real and env.isReal();
-    for(auto &env : ENV_R) env_real = env_real and env.isReal();
-    for(auto &env : ENV2_R) env_real = env_real and env.isReal();
-    for(auto &env : ENV2_L) env_real = env_real and env.isReal();
+//    for(auto &mpo : MPO_L) mpo_real = mpo_real and mpo->isReal();
+//    for(auto &mpo : MPO_R) mpo_real = mpo_real and mpo->isReal();
+//    for(auto &env : ENV_L) env_real = env_real and env.isReal();
+//    for(auto &env : ENV_R) env_real = env_real and env.isReal();
+//    for(auto &env : ENV2_R) env_real = env_real and env.isReal();
+//    for(auto &env : ENV2_L) env_real = env_real and env.isReal();
     return mps_real and mpo_real and env_real;
 }
 
@@ -166,30 +169,30 @@ bool class_state_finite::hasNaN() const {
         if(mps.hasNaN()) return true;
     for(auto &mps : MPS_R)
         if(mps.hasNaN()) return true;
-    for(auto &mpo : MPO_L)
-        if(mpo->hasNaN()) return true;
-    for(auto &mpo : MPO_R)
-        if(mpo->hasNaN()) return true;
-    for(auto &env : ENV_L)
-        if(env.hasNaN()) return true;
-    for(auto &env : ENV_R)
-        if(env.hasNaN()) return true;
-    for(auto &env : ENV2_L)
-        if(env.hasNaN()) return true;
-    for(auto &env : ENV2_R)
-        if(env.hasNaN()) return true;
+//    for(auto &mpo : MPO_L)
+//        if(mpo->hasNaN()) return true;
+//    for(auto &mpo : MPO_R)
+//        if(mpo->hasNaN()) return true;
+//    for(auto &env : ENV_L)
+//        if(env.hasNaN()) return true;
+//    for(auto &env : ENV_R)
+//        if(env.hasNaN()) return true;
+//    for(auto &env : ENV2_L)
+//        if(env.hasNaN()) return true;
+//    for(auto &env : ENV2_R)
+//        if(env.hasNaN()) return true;
     return false;
 }
 
 void class_state_finite::assertValidity() const {
     for(auto &mps : MPS_L) mps.assertValidity();
     for(auto &mps : MPS_R) mps.assertValidity();
-    for(auto &mpo : MPO_L) mpo->assertValidity();
-    for(auto &mpo : MPO_R) mpo->assertValidity();
-    for(auto &env : ENV_L) env.assertValidity();
-    for(auto &env : ENV_R) env.assertValidity();
-    for(auto &env : ENV2_L) env.assertValidity();
-    for(auto &env : ENV2_R) env.assertValidity();
+//    for(auto &mpo : MPO_L) mpo->assertValidity();
+//    for(auto &mpo : MPO_R) mpo->assertValidity();
+//    for(auto &env : ENV_L) env.assertValidity();
+//    for(auto &env : ENV_R) env.assertValidity();
+//    for(auto &env : ENV2_L) env.assertValidity();
+//    for(auto &env : ENV2_R) env.assertValidity();
 }
 
 const Eigen::Tensor<class_state_finite::Scalar, 1> &class_state_finite::midchain_bond() const {
@@ -236,129 +239,129 @@ const class_mps_site &class_state_finite::get_MPS(size_t pos) const {
 }
 
 class_mps_site &class_state_finite::get_MPS(size_t pos) { return const_cast<class_mps_site &>(static_cast<const class_state_finite &>(*this).get_MPS(pos)); }
-
-const class_model_base &class_state_finite::get_MPO(size_t pos) const {
-    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_MPO(pos) pos out of range: {}", pos));
-    if(pos <= MPO_L.back()->get_position()) {
-        auto mpo_it = std::next(MPO_L.begin(), pos)->get();
-        if(mpo_it->get_position() != pos)
-            throw std::range_error(fmt::format("get_MPO(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
-        return *mpo_it;
-    } else {
-        if(pos < MPO_R.front()->get_position())
-            throw std::range_error(fmt::format("get_MPS(pos): Mismatch in pos and MPOR front position: {} < {}", pos, MPO_R.front()->get_position()));
-        auto mpo_it = std::next(MPO_R.begin(), pos - MPO_R.front()->get_position())->get();
-        if(mpo_it->get_position() != pos)
-            throw std::range_error(fmt::format("get_MPO(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
-        return *mpo_it;
-    }
-}
-
-class_model_base &class_state_finite::get_MPO(size_t pos) {
-    return const_cast<class_model_base &>(static_cast<const class_state_finite &>(*this).get_MPO(pos));
-}
-
-const class_environment &class_state_finite::get_ENVL(size_t pos) const {
-    if(pos > ENV_L.back().get_position()) throw std::range_error(fmt::format("get_ENVL(pos):  pos is not in left side: {}", pos));
-    if(pos >= ENV_L.size()) throw std::range_error(fmt::format("get_ENVL(pos) pos out of range: {}", pos));
-    auto env_it = std::next(ENV_L.begin(), static_cast<long>(pos));
-    if(env_it->get_position() != pos)
-        throw std::range_error(fmt::format("get_ENVL(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
-    return *env_it;
-}
-
-const class_environment &class_state_finite::get_ENVR(size_t pos) const {
-    if(pos < ENV_R.front().get_position()) throw std::range_error(fmt::format("get_ENVR(pos):  pos is not in right side: {}", pos));
-    if(pos >= ENV_L.size() + ENV_R.size()) throw std::range_error(fmt::format("get_ENVR(pos):  pos out of range: {}", pos));
-    auto env_it = std::next(ENV_R.begin(), static_cast<long>(pos - ENV_R.front().get_position()));
-    if(env_it->get_position() != pos)
-        throw std::range_error(fmt::format("get_ENVR(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
-    return *env_it;
-}
-
-const class_environment_var &class_state_finite::get_ENV2L(size_t pos) const {
-    if(pos > ENV2_L.back().get_position()) throw std::range_error(fmt::format("get_ENV2L(pos):  pos is not in left side: {}", pos));
-    if(pos >= ENV2_L.size()) throw std::range_error(fmt::format("get_ENV2L(pos) pos out of range: {}", pos));
-    auto env2_it = std::next(ENV2_L.begin(), static_cast<long>(pos));
-    if(env2_it->get_position() != pos)
-        throw std::range_error(fmt::format("get_ENV2L(pos): Mismatch in env position and pos: {} != {}", env2_it->get_position(), pos));
-    return *env2_it;
-}
-
-const class_environment_var &class_state_finite::get_ENV2R(size_t pos) const {
-    if(pos < ENV2_R.front().get_position()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}", pos));
-    if(pos >= ENV2_L.size() + ENV2_R.size()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos out of range: {}", pos));
-    auto env2_it = std::next(ENV2_R.begin(), static_cast<long>(pos - ENV2_R.front().get_position()));
-    if(env2_it->get_position() != pos)
-        throw std::range_error(fmt::format("get_ENV2R(pos): Mismatch in env2 position and pos: {} != {}", env2_it->get_position(), pos));
-    return *env2_it;
-}
-
-// For reduced energy MPO's
-
-bool class_state_finite::isReduced() const {
-    bool reduced = MPO_L.front()->is_reduced();
-    for(auto &mpo : MPO_L)
-        if(reduced != mpo->is_reduced()) {
-            throw std::runtime_error(
-                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
-        }
-    for(auto &mpo : MPO_R)
-        if(reduced != mpo->is_reduced()) {
-            throw std::runtime_error(
-                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
-        }
-    return reduced;
-}
-
-double class_state_finite::get_energy_reduced() const { return get_energy_per_site_reduced() * static_cast<double>(get_length()); }
-
-double class_state_finite::get_energy_per_site_reduced() const {
-    // Check that all energies are the same
-    double e_reduced = MPO_L.front()->get_reduced_energy();
-    for(auto &mpo : MPO_L) {
-        if(mpo->get_reduced_energy() != e_reduced) {
-            throw std::runtime_error("Reduced energy mismatch!");
-        }
-    }
-    for(auto &mpo : MPO_R) {
-        if(mpo->get_reduced_energy() != e_reduced) {
-            throw std::runtime_error("Reduced energy mismatch!");
-        }
-    }
-    return e_reduced;
-}
-
-void class_state_finite::set_reduced_energy(double total_energy) { set_reduced_energy_per_site(total_energy / static_cast<double>(get_length())); }
-
-void class_state_finite::set_reduced_energy_per_site(double site_energy) {
-    if(get_energy_per_site_reduced() == site_energy) return;
-    clear_measurements();
-    cache.multimpo = {};
-    for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
-    for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
-    tools::finite::mps::rebuild_environments(*this);
-}
-
-void class_state_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
-    tools::finite::mpo::perturb_hamiltonian(*this, coupling_ptb, field_ptb, perturbMode);
-}
-
-void class_state_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_hamiltonian(*this, coupling_damp, field_damp); }
-
-bool class_state_finite::is_perturbed() const {
-    for(size_t pos = 0; pos < get_length(); pos++) {
-        if(get_MPO(pos).is_perturbed()) return true;
-    }
-    return false;
-}
-
-bool class_state_finite::is_damped() const {
-    for(size_t pos = 0; pos < get_length(); pos++) {
-        if(get_MPO(pos).is_damped()) return true;
-    }
-    return false;
-}
+//
+//const class_mpo_base &class_state_finite::get_MPO(size_t pos) const {
+//    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_MPO(pos) pos out of range: {}", pos));
+//    if(pos <= MPO_L.back()->get_position()) {
+//        auto mpo_it = std::next(MPO_L.begin(), pos)->get();
+//        if(mpo_it->get_position() != pos)
+//            throw std::range_error(fmt::format("get_MPO(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
+//        return *mpo_it;
+//    } else {
+//        if(pos < MPO_R.front()->get_position())
+//            throw std::range_error(fmt::format("get_MPS(pos): Mismatch in pos and MPOR front position: {} < {}", pos, MPO_R.front()->get_position()));
+//        auto mpo_it = std::next(MPO_R.begin(), pos - MPO_R.front()->get_position())->get();
+//        if(mpo_it->get_position() != pos)
+//            throw std::range_error(fmt::format("get_MPO(pos): Mismatch in mpo position and pos: {} != {}", mpo_it->get_position(), pos));
+//        return *mpo_it;
+//    }
+//}
+//
+//class_mpo_base &class_state_finite::get_MPO(size_t pos) {
+//    return const_cast<class_mpo_base &>(static_cast<const class_state_finite &>(*this).get_MPO(pos));
+//}
+//
+//const class_environment &class_state_finite::get_ENVL(size_t pos) const {
+//    if(pos > ENV_L.back().get_position()) throw std::range_error(fmt::format("get_ENVL(pos):  pos is not in left side: {}", pos));
+//    if(pos >= ENV_L.size()) throw std::range_error(fmt::format("get_ENVL(pos) pos out of range: {}", pos));
+//    auto env_it = std::next(ENV_L.begin(), static_cast<long>(pos));
+//    if(env_it->get_position() != pos)
+//        throw std::range_error(fmt::format("get_ENVL(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
+//    return *env_it;
+//}
+//
+//const class_environment &class_state_finite::get_ENVR(size_t pos) const {
+//    if(pos < ENV_R.front().get_position()) throw std::range_error(fmt::format("get_ENVR(pos):  pos is not in right side: {}", pos));
+//    if(pos >= ENV_L.size() + ENV_R.size()) throw std::range_error(fmt::format("get_ENVR(pos):  pos out of range: {}", pos));
+//    auto env_it = std::next(ENV_R.begin(), static_cast<long>(pos - ENV_R.front().get_position()));
+//    if(env_it->get_position() != pos)
+//        throw std::range_error(fmt::format("get_ENVR(pos): Mismatch in env position and pos: {} != {}", env_it->get_position(), pos));
+//    return *env_it;
+//}
+//
+//const class_environment_var &class_state_finite::get_ENV2L(size_t pos) const {
+//    if(pos > ENV2_L.back().get_position()) throw std::range_error(fmt::format("get_ENV2L(pos):  pos is not in left side: {}", pos));
+//    if(pos >= ENV2_L.size()) throw std::range_error(fmt::format("get_ENV2L(pos) pos out of range: {}", pos));
+//    auto env2_it = std::next(ENV2_L.begin(), static_cast<long>(pos));
+//    if(env2_it->get_position() != pos)
+//        throw std::range_error(fmt::format("get_ENV2L(pos): Mismatch in env position and pos: {} != {}", env2_it->get_position(), pos));
+//    return *env2_it;
+//}
+//
+//const class_environment_var &class_state_finite::get_ENV2R(size_t pos) const {
+//    if(pos < ENV2_R.front().get_position()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos is not in right side: {}", pos));
+//    if(pos >= ENV2_L.size() + ENV2_R.size()) throw std::range_error(fmt::format("get_ENV2R(pos):  pos out of range: {}", pos));
+//    auto env2_it = std::next(ENV2_R.begin(), static_cast<long>(pos - ENV2_R.front().get_position()));
+//    if(env2_it->get_position() != pos)
+//        throw std::range_error(fmt::format("get_ENV2R(pos): Mismatch in env2 position and pos: {} != {}", env2_it->get_position(), pos));
+//    return *env2_it;
+//}
+//
+//// For reduced energy MPO's
+//
+//bool class_state_finite::isReduced() const {
+//    bool reduced = MPO_L.front()->is_reduced();
+//    for(auto &mpo : MPO_L)
+//        if(reduced != mpo->is_reduced()) {
+//            throw std::runtime_error(
+//                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
+//        }
+//    for(auto &mpo : MPO_R)
+//        if(reduced != mpo->is_reduced()) {
+//            throw std::runtime_error(
+//                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
+//        }
+//    return reduced;
+//}
+//
+//double class_state_finite::get_energy_reduced() const { return get_energy_per_site_reduced() * static_cast<double>(get_length()); }
+//
+//double class_state_finite::get_energy_per_site_reduced() const {
+//    // Check that all energies are the same
+//    double e_reduced = MPO_L.front()->get_reduced_energy();
+//    for(auto &mpo : MPO_L) {
+//        if(mpo->get_reduced_energy() != e_reduced) {
+//            throw std::runtime_error("Reduced energy mismatch!");
+//        }
+//    }
+//    for(auto &mpo : MPO_R) {
+//        if(mpo->get_reduced_energy() != e_reduced) {
+//            throw std::runtime_error("Reduced energy mismatch!");
+//        }
+//    }
+//    return e_reduced;
+//}
+//
+//void class_state_finite::set_reduced_energy(double total_energy) { set_reduced_energy_per_site(total_energy / static_cast<double>(get_length())); }
+//
+//void class_state_finite::set_reduced_energy_per_site(double site_energy) {
+//    if(get_energy_per_site_reduced() == site_energy) return;
+//    clear_measurements();
+//    cache.multimpo = {};
+//    for(auto &mpo : MPO_L) mpo->set_reduced_energy(site_energy);
+//    for(auto &mpo : MPO_R) mpo->set_reduced_energy(site_energy);
+//    tools::finite::mps::rebuild_environments(*this);
+//}
+//
+//void class_state_finite::perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
+//    tools::finite::mpo::perturb_hamiltonian(*this, coupling_ptb, field_ptb, perturbMode);
+//}
+//
+//void class_state_finite::damp_hamiltonian(double coupling_damp, double field_damp) { tools::finite::mpo::damp_hamiltonian(*this, coupling_damp, field_damp); }
+//
+//bool class_state_finite::is_perturbed() const {
+//    for(size_t pos = 0; pos < get_length(); pos++) {
+//        if(get_MPO(pos).is_perturbed()) return true;
+//    }
+//    return false;
+//}
+//
+//bool class_state_finite::is_damped() const {
+//    for(size_t pos = 0; pos < get_length(); pos++) {
+//        if(get_MPO(pos).is_damped()) return true;
+//    }
+//    return false;
+//}
 
 std::list<size_t> class_state_finite::activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites) {
     clear_cache();
@@ -374,8 +377,8 @@ Eigen::DSizes<long, 3> class_state_finite::active_dimensions() const { return to
 
 size_t class_state_finite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
 
-const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_multitheta() const {
-    if(cache.multitheta) return cache.multitheta.value();
+const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_multisite_mps() const {
+    if(cache.multisite_mps) return cache.multisite_mps.value();
     tools::log->trace("Contracting multi theta");
     if(active_sites.empty()) {
         throw std::runtime_error("No active sites on which to build multitheta");
@@ -389,7 +392,7 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
             first      = false;
             continue;
         }
-        if(site != get_MPS(site).get_position()) throw std::runtime_error("Site mismatch in get_multitheta");
+        if(site != get_MPS(site).get_position()) throw std::runtime_error("Site mismatch in get_multisite_mps");
         auto M     = get_MPS(site).get_M();
         long dim0  = multitheta.dimension(0) * M.dimension(0);
         long dim1  = multitheta.dimension(1);
@@ -399,46 +402,46 @@ const Eigen::Tensor<class_state_finite::Scalar, 3> &class_state_finite::get_mult
     }
     //    auto & L = get_L(active_sites.back()+1);
     //    temp = multitheta.contract(Textra::asDiagonal(L), Textra::idx({2},{0}));
-    cache.multitheta = temp;
-    return cache.multitheta.value();
+    cache.multisite_mps = temp;
+    return cache.multisite_mps.value();
 }
 
-const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_multimpo() const {
-    if(cache.multimpo) return cache.multimpo.value();
-    tools::common::profile::t_mpo->tic();
-    tools::log->trace("Contracting multi mpo");
-    if(active_sites.empty()) {
-        throw std::runtime_error("No active sites on which to build multimpo");
-    }
-    Eigen::Tensor<Scalar, 4> multimpo;
-    bool                     first = true;
-    for(auto &site : active_sites) {
-        if(first) {
-            multimpo = get_MPO(site).MPO();
-            first    = false;
-            continue;
-        }
-        auto &                   mpo  = get_MPO(site).MPO();
-        long                     dim0 = multimpo.dimension(0);
-        long                     dim1 = mpo.dimension(1);
-        long                     dim2 = multimpo.dimension(2) * mpo.dimension(2);
-        long                     dim3 = multimpo.dimension(3) * mpo.dimension(3);
-        Eigen::Tensor<Scalar, 4> temp(dim0, dim1, dim2, dim3);
-        temp     = multimpo.contract(mpo, Textra::idx({1}, {0})).shuffle(Textra::array6{0, 3, 1, 4, 2, 5}).reshape(Textra::array4{dim0, dim1, dim2, dim3});
-        multimpo = temp;
-    }
-    tools::common::profile::t_mpo->toc();
-    cache.multimpo = multimpo;
-    return cache.multimpo.value();
-}
+//const Eigen::Tensor<class_state_finite::Scalar, 4> &class_state_finite::get_multimpo() const {
+//    if(cache.multimpo) return cache.multimpo.value();
+//    tools::common::profile::t_mpo->tic();
+//    tools::log->trace("Contracting multi mpo");
+//    if(active_sites.empty()) {
+//        throw std::runtime_error("No active sites on which to build multimpo");
+//    }
+//    Eigen::Tensor<Scalar, 4> multimpo;
+//    bool                     first = true;
+//    for(auto &site : active_sites) {
+//        if(first) {
+//            multimpo = get_MPO(site).MPO();
+//            first    = false;
+//            continue;
+//        }
+//        auto &                   mpo  = get_MPO(site).MPO();
+//        long                     dim0 = multimpo.dimension(0);
+//        long                     dim1 = mpo.dimension(1);
+//        long                     dim2 = multimpo.dimension(2) * mpo.dimension(2);
+//        long                     dim3 = multimpo.dimension(3) * mpo.dimension(3);
+//        Eigen::Tensor<Scalar, 4> temp(dim0, dim1, dim2, dim3);
+//        temp     = multimpo.contract(mpo, Textra::idx({1}, {0})).shuffle(Textra::array6{0, 3, 1, 4, 2, 5}).reshape(Textra::array4{dim0, dim1, dim2, dim3});
+//        multimpo = temp;
+//    }
+//    tools::common::profile::t_mpo->toc();
+//    cache.multimpo = multimpo;
+//    return cache.multimpo.value();
+//}
 
-std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>> class_state_finite::get_multienv() const {
-    return std::make_pair(get_ENVL(active_sites.front()), get_ENVR(active_sites.back()));
-}
-
-std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> class_state_finite::get_multienv2() const {
-    return std::make_pair(get_ENV2L(active_sites.front()), get_ENV2R(active_sites.back()));
-}
+//std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>> class_state_finite::get_multienv() const {
+//    return std::make_pair(get_ENVL(active_sites.front()), get_ENVR(active_sites.back()));
+//}
+//
+//std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> class_state_finite::get_multienv2() const {
+//    return std::make_pair(get_ENV2L(active_sites.front()), get_ENV2R(active_sites.back()));
+//}
 
 void class_state_finite::set_truncation_error(size_t left_site, double error)
 /*! The truncation error vector has length + 1 elements, as many as there are bond matrices.

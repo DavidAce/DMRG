@@ -23,17 +23,17 @@ namespace eigutils{
         enum class Side {L,R};                          // Left or right eigenvectors
         enum class Type {REAL,CPLX};                    // Real or complex, i.e. double or std::complex<double> matrix
 
-        inline Ritz stringToRitz(std::string ritzstring){
+        inline Ritz stringToRitz(std::string_view ritzstring){
             if (ritzstring == "LA") return Ritz::LA;
-            else if (ritzstring == "SA") return Ritz::SA;
-            else if (ritzstring == "LM") return Ritz::LM;
-            else if (ritzstring == "SM") return Ritz::SM;
-            else if (ritzstring == "LR") return Ritz::LR;
-            else if (ritzstring == "SR") return Ritz::SR;
-            else if (ritzstring == "LI") return Ritz::LI;
-            else if (ritzstring == "SI") return Ritz::SI;
-            else if (ritzstring == "BE") return Ritz::BE;
-            else throw std::runtime_error("Wrong ritz string: " + ritzstring);
+            if (ritzstring == "SA") return Ritz::SA;
+            if (ritzstring == "LM") return Ritz::LM;
+            if (ritzstring == "SM") return Ritz::SM;
+            if (ritzstring == "LR") return Ritz::LR;
+            if (ritzstring == "SR") return Ritz::SR;
+            if (ritzstring == "LI") return Ritz::LI;
+            if (ritzstring == "SI") return Ritz::SI;
+            if (ritzstring == "BE") return Ritz::BE;
+            throw std::runtime_error("Wrong ritz string: " + std::string(ritzstring));
         }
     }
 

@@ -19,7 +19,7 @@ class class_simulation_status;
 namespace tools::finite::opt{
     using Scalar = std::complex<double>;
     extern Eigen::Tensor<Scalar,3> find_excited_state(const class_state_finite & state, const class_simulation_status & sim_status, OptMode optMode, OptSpace optSpace, OptType optType);
-    extern Eigen::Tensor<Scalar,4> find_ground_state (const class_state_finite & state, std::string ritz = "SR");
+    extern Eigen::Tensor<Scalar,4> find_ground_state (const class_state_finite & state, StateRitz ritz);
     extern void truncate_theta(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_left (const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
     extern void truncate_right(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
@@ -46,8 +46,9 @@ namespace tools::finite::opt::internal{
                                                                                     const class_simulation_status & sim_status,
                                                                                     OptType optType, OptMode optMode,OptSpace optSpace);
         extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_state_finite & state, const class_simulation_status & sim_status);
-        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_state_finite & state, std::string ritzstring = "SR");
-        extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const class_state_finite & state, OptType optType, OptMode optMode, OptSpace optSpace,std::string ritzstring = "SR");
+        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_state_finite & state, StateRitz ritz);
+        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_state_finite & state, std::string_view ritz);
+        extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const class_state_finite & state, OptType optType, OptMode optMode, OptSpace optSpace);
         extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const class_state_finite & state);
 
         namespace local_hamiltonians{

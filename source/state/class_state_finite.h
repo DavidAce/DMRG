@@ -7,7 +7,7 @@
 #include <Eigen/Core>
 #include <complex>
 #include <memory>
-#include <model/class_model_base.h>
+#include <model/class_mpo_base.h>
 #include <optional>
 #include <state/class_environment.h>
 #include <state/class_mps_site.h>
@@ -54,12 +54,12 @@ class class_state_finite {
 
     std::list<class_mps_site>                    MPS_L; /*!< A list of stored \f$ \Lambda^B \Gamma^A...  \f$-tensors. */
     std::list<class_mps_site>                    MPS_R; /*!< A list of stored \f$ \Gamma^B \Lambda^B...  \f$-tensors. */
-    std::list<class_environment>                 ENV_L;
-    std::list<class_environment>                 ENV_R;
-    std::list<class_environment_var>             ENV2_L;
-    std::list<class_environment_var>             ENV2_R;
-    std::list<std::unique_ptr<class_model_base>> MPO_L; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
-    std::list<std::unique_ptr<class_model_base>> MPO_R; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+//    std::list<class_environment>                 ENV_L;
+//    std::list<class_environment>                 ENV_R;
+//    std::list<class_environment_var>             ENV2_L;
+//    std::list<class_environment_var>             ENV2_R;
+//    std::list<std::unique_ptr<class_model_base>> MPO_L; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
+//    std::list<std::unique_ptr<class_model_base>> MPO_R; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
 
     const TType<1> &midchain_bond() const;
     const TType<1> &current_bond() const;
@@ -100,8 +100,8 @@ class class_state_finite {
 
     const class_mps_site &       get_MPS(size_t pos) const;
     class_mps_site &             get_MPS(size_t pos);
-    const class_model_base &     get_MPO(size_t pos) const;
-    class_model_base &           get_MPO(size_t pos);
+//    const class_model_base &     get_MPO(size_t pos) const;
+//    class_model_base &           get_MPO(size_t pos);
     const class_environment &    get_ENVL(size_t pos) const;
     const class_environment &    get_ENVR(size_t pos) const;
     const class_environment_var &get_ENV2L(size_t pos) const;
@@ -110,16 +110,16 @@ class class_state_finite {
     TType<4> get_theta() const;
 
     // For reduced energy MPO's
-    bool   isReduced() const;
-    double get_energy_reduced() const;
-    double get_energy_per_site_reduced() const;
-    void   set_reduced_energy(double total_energy);
-    void   set_reduced_energy_per_site(double site_energy);
+//    bool   isReduced() const;
+//    double get_energy_reduced() const;
+//    double get_energy_per_site_reduced() const;
+//    void   set_reduced_energy(double total_energy);
+//    void   set_reduced_energy_per_site(double site_energy);
+//    void perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
+//    void damp_hamiltonian(double coupling_damp, double field_damp);
+//    bool is_perturbed() const;
+//    bool is_damped() const;
 
-    void perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
-    void damp_hamiltonian(double coupling_damp, double field_damp);
-    bool is_perturbed() const;
-    bool is_damped() const;
     // For multisite
     std::list<size_t>      active_sites;
     std::list<size_t>      activate_sites(const size_t threshold, const size_t max_sites, const size_t min_sites = 2);
@@ -127,10 +127,10 @@ class class_state_finite {
     Eigen::DSizes<long, 3> active_dimensions() const;
     size_t                 active_problem_size() const;
 
-    const TType<3> &                                                                                                    get_multitheta() const;
-    const TType<4> &                                                                                                    get_multimpo() const;
-    std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>>         get_multienv() const;
-    std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> get_multienv2() const;
+    const TType<3> &get_multisite_mps() const;
+//    const TType<4> &                                                                                                    get_multimpo() const;
+//    std::pair<std::reference_wrapper<const class_environment>, std::reference_wrapper<const class_environment>>         get_multienv() const;
+//    std::pair<std::reference_wrapper<const class_environment_var>, std::reference_wrapper<const class_environment_var>> get_multienv2() const;
 
     private:
     std::vector<double> truncation_error;
@@ -191,9 +191,10 @@ class class_state_finite {
 
     private:
     struct Cache {
-        std::optional<TType<4>> theta      = std::nullopt;
-        std::optional<TType<4>> multimpo   = std::nullopt;
-        std::optional<TType<3>> multitheta = std::nullopt;
+        std::optional<TType<4>>          theta        = std::nullopt;
+//        std::optional<TType<4>>          multimpo     = std::nullopt;
+        std::optional<TType<3>> multisite_mps = std::nullopt;
     };
+    public:
     mutable Cache cache;
 };

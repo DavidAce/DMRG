@@ -26,13 +26,13 @@ class class_algorithm_base {
     public:
     using Scalar           = std::complex<double>;
     class_algorithm_base() = default;
-    class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, std::string sim_name_, SimulationType sim_type_);
+    class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, SimulationType sim_type_);
     std::shared_ptr<h5pp::File> h5pp_file;
-    StopReason                  stop_reason = StopReason::NONE;
-    std::string                 state_name;
-    std::string                 sim_name;
-    SimulationType              sim_type;
     class_simulation_status     sim_status;
+    StopReason                  stop_reason = StopReason::NONE;
+    SimulationType              sim_type;
+    std::string                 sim_name;
+    std::string                 state_name;
 
     static constexpr double quietNaN = std::numeric_limits<double>::quiet_NaN();
 
@@ -40,11 +40,11 @@ class class_algorithm_base {
     virtual void   run()                                                                                         = 0;
     virtual void   run_old()                                                                                     = 0;
     virtual void   check_convergence()                                                                           = 0;
-    virtual void   write_to_file(StorageReason storage_reason = StorageReason::JOURNAL)                          = 0;
-    virtual void   copy_from_tmp      (StorageReason storage_reason = StorageReason::JOURNAL)                    = 0;
+    virtual void   write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT)                       = 0;
+    virtual void   copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT)                       = 0;
     virtual bool   sim_on()                                                                                      = 0;
     virtual long   chi_max()                                                                                     = 0;
-    virtual size_t write_freq()                                                                                  = 0;
+//    virtual size_t write_freq()                                                                                = 0;
     virtual size_t print_freq()                                                                                  = 0;
     virtual bool   chi_grow()                                                                                    = 0;
     virtual long   chi_init()                                                                                    = 0;

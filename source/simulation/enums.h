@@ -4,10 +4,12 @@
 #include <string_view>
 #include <type_traits>
 enum class SimulationType { iDMRG, fDMRG, xDMRG, iTEBD };
+enum class SimulationTask {FIND_ENERGY_RANGE, ADD_INIT_STATE, ADD_STATE, FINISH_STATE, STORAGE_LEVEL_UP};
+enum class StateRitz {LR,SR}; //Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fDMRG.
+enum class ModelType{ising_tf_rf,ising_sdual};
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason { JOURNAL, RESULTS, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE };
+enum class StorageReason {CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE };
 enum class StopReason { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
-enum class ResumeReason {NOT_FINISHED, NOT_CONVERGED, NEW_STORAGE_LEVELS, NEW_SIMULATION_PARAMS, APPEND_STATES, NONE };
 enum class FileCollisionPolicy { RESUME, BACKUP, RENAME, REPLACE};
 enum class PerturbMode {
     PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
@@ -18,12 +20,20 @@ enum class PerturbMode {
 
 /* clang-format off */
 template<typename T>
-constexpr auto enum2str(const T &item) {
+constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, SimulationType>) {
         if(item == SimulationType::iDMRG) return "iDMRG";
         if(item == SimulationType::fDMRG) return "fDMRG";
         if(item == SimulationType::xDMRG) return "xDMRG";
         if(item == SimulationType::iTEBD) return "iDMRG";
+    }
+    if constexpr(std::is_same_v<T, StateRitz>) {
+        if(item == StateRitz::SR) return "SR";
+        if(item == StateRitz::LR) return "LR";
+    }
+    if constexpr(std::is_same_v<T, ModelType>) {
+        if(item == ModelType::ising_tf_rf) return "ising_tf_rf";
+        if(item == ModelType::ising_sdual) return "ising_sdual";
     }
     if constexpr(std::is_same_v<T, StopReason>) {
         if(item == StopReason::SUCCEEDED) return "SUCCEEDED";
@@ -31,7 +41,7 @@ constexpr auto enum2str(const T &item) {
         if(item == StopReason::MAX_ITERS) return "MAX_ITERS";
         if(item == StopReason::MAX_RESET) return "MAX_RESET";
         if(item == StopReason::RANDOMIZE) return "RANDOMIZE";
-        if(item == StopReason::NONE) return "NONE";
+        if(item == StopReason::NONE)      return "NONE";
     }
     if constexpr(std::is_same_v<T, StorageLevel>) {
         if(item == StorageLevel::NONE)      return "NONE";
@@ -40,8 +50,8 @@ constexpr auto enum2str(const T &item) {
         if(item == StorageLevel::FULL)      return "FULL";
     }
     if constexpr(std::is_same_v<T, StorageReason>) {
-        if(item == StorageReason::JOURNAL)      return "JOURNAL";
-        if(item == StorageReason::RESULTS)      return "RESULTS";
+        if(item == StorageReason::CHECKPOINT)   return "CHECKPOINT";
+        if(item == StorageReason::FINISHED)     return "FINISHED";
         if(item == StorageReason::CHI_UPDATE)   return "CHI_UPDATE";
         if(item == StorageReason::PROJ_STATE)   return "PROJ_STATE";
         if(item == StorageReason::INIT_STATE)   return "INIT_STATE";
@@ -81,6 +91,14 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "xDMRG") return SimulationType::xDMRG;
         if(item == "iDMRG") return SimulationType::iTEBD;
     }
+    if constexpr(std::is_same_v<T, StateRitz>) {
+        if(item == "SR") return StateRitz::SR;
+        if(item == "LR") return StateRitz::LR;
+    }
+    if constexpr(std::is_same_v<T, ModelType>) {
+        if(item == "ising_tf_rf") return ModelType::ising_tf_rf;
+        if(item == "ising_sdual") return ModelType::ising_sdual;
+    }
     if constexpr(std::is_same_v<T, StopReason>) {
         if(item == "SUCCEEDED") return StopReason::SUCCEEDED;
         if(item == "SATURATED") return StopReason::SATURATED;
@@ -96,8 +114,8 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "FULL")      return StorageLevel::FULL;
     }
     if constexpr(std::is_same_v<T, StorageReason>) {
-        if(item == "JOURNAL")   return StorageReason::JOURNAL;
-        if(item == "RESULTS")   return StorageReason::RESULTS;
+        if(item == "CHECKPOINT")return StorageReason::CHECKPOINT;
+        if(item == "FINISHED")  return StorageReason::FINISHED;
         if(item == "CHI_UPDATE")return StorageReason::CHI_UPDATE;
         if(item == "PROJ_STATE")return StorageReason::PROJ_STATE;
         if(item == "INIT_STATE")return StorageReason::INIT_STATE;
@@ -125,6 +143,6 @@ constexpr auto str2enum(std::string_view item) {
         if(item == "REPLACE")           return h5pp::FilePermission::REPLACE;
     }
 
-    throw std::runtime_error("Given invalid string item: " + std::string(item));
+    throw std::runtime_error("str2enum given invalid string item: " + std::string(item));
 }
 /* clang-format on */

@@ -3,6 +3,7 @@
 #include <complex>
 #include <optional>
 #include <tools/finite/opt-internals/enum_classes.h>
+enum class ModelType;
 
 /* clang-format off */
 
@@ -11,7 +12,7 @@ class class_state_finite;
 namespace tools::finite::mps {
     using Scalar = std::complex<double>;
 
-    extern void initialize                          (class_state_finite & state, const std::string &model_type, size_t num_sites, size_t position);
+    extern void initialize                          (class_state_finite & state, ModelType model_type, size_t num_sites, size_t position);
     extern void normalize                           (class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt,std::optional<double> svd_threshold = std::nullopt);
     extern void random_product_state                (class_state_finite & state, const std::string & parity_sector, const long state_number, const bool use_pauli_eigenstates = false);
     extern void random_current_state                (class_state_finite & state, const std::string & parity_sector1, const std::string & parity_sector2);

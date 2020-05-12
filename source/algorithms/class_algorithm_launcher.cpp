@@ -68,10 +68,14 @@ void class_algorithm_launcher::setLogger(const std::string& name){
 
 
 void class_algorithm_launcher::start_h5pp_file(){
-    if( settings::output::storage_level_journal == StorageLevel::NONE and
-        settings::output::storage_level_results == StorageLevel::NONE and
-        settings::output::storage_level_chi_update == StorageLevel::NONE and
-        settings::output::storage_level_proj_state == StorageLevel::NONE)
+    if( settings::output::storage_level_model      == StorageLevel::NONE and
+        settings::output::storage_level_checkpoint == StorageLevel::NONE and
+        settings::output::storage_level_good_state == StorageLevel::NONE and
+        settings::output::storage_level_fail_state == StorageLevel::NONE and
+        settings::output::storage_level_proj_state == StorageLevel::NONE and
+        settings::output::storage_level_init_state == StorageLevel::NONE and
+        settings::output::storage_level_emin_state == StorageLevel::NONE and
+        settings::output::storage_level_emax_state == StorageLevel::NONE)
         return;
 
     // There are two possibilities depending on settings::output::output_filename
@@ -111,11 +115,17 @@ void class_algorithm_launcher::start_h5pp_file(){
         h5ppFile = std::make_shared<h5pp::File>(settings::output::output_filepath,h5pp::FilePermission::COLLISION_FAIL);
     }
     h5ppFile->setCompressionLevel(settings::output::compression_level);
-    if (h5ppFile->getFilePermission() != h5pp::FilePermission::READWRITE){
-        //Put git revision in file attribute
-        h5ppFile->writeAttribute(GIT::BRANCH      , "GIT BRANCH", "/");
-        h5ppFile->writeAttribute(GIT::COMMIT_HASH , "GIT COMMIT", "/");
-        h5ppFile->writeAttribute(GIT::REVISION    , "GIT REVISION", "/");
+    if (not h5ppFile->linkExists("git")){
+        //Put git metadata in file
+        h5ppFile->writeDataset(GIT::BRANCH      , "git/branch");
+        h5ppFile->writeDataset(GIT::COMMIT_HASH , "git/commit");
+        h5ppFile->writeDataset(GIT::REVISION    , "git/revision");
+    }
+
+    if(not h5ppFile->linkExists("common")) {
+        tools::log->trace("Copying config to h5pp file: {} --> {}", settings::input::config_filename, h5ppFile->getFileName());
+        h5ppFile->writeDataset(settings::input::config_filename, "common/config_filename");
+        h5ppFile->writeDataset(settings::input::config_file_contents, "common/config_file_contents");
     }
 }
 

@@ -10,10 +10,14 @@
 #include <tools/common/prof.h>
 #include <iostream>
 #include <state/class_state_finite.h>
+#include <model/class_model_finite.h>
+#include <edges/class_edges_finite.h>
 #include <general/nmspc_quantum_mechanics.h>
 #include <simulation/nmspc_settings.h>
 
-void tools::finite::debug::check_integrity(const class_state_finite &state)
+void tools::finite::debug::check_integrity(const class_state_finite & state,
+                                           const class_model_finite & model,
+                                           const class_edges_finite & edges)
 {
     if(not settings::debug) return;
 
@@ -21,11 +25,12 @@ void tools::finite::debug::check_integrity(const class_state_finite &state)
     state.clear_measurements();
 
     try{
-        check_integrity_of_mps(state);
-        check_integrity_of_mpo(state);
+        check_integrity_of_state(state);
+        check_integrity_of_model(model);
+        check_integrity_of_edges(edges);
     }
     catch(std::exception & ex){
-        tools::finite::print::print_state(state) ;
+        tools::finite::print::print_system(state, model, edges);
 //        tools::finite::debug::print_parity_properties(state) ;
         throw std::runtime_error(fmt::format("Check failed: {}", ex.what()));
     }
@@ -34,7 +39,7 @@ void tools::finite::debug::check_integrity(const class_state_finite &state)
 
 
 
-void tools::finite::debug::check_integrity_of_mps(const class_state_finite &state){
+void tools::finite::debug::check_integrity_of_state(const class_state_finite &state){
     if constexpr (not settings::debug) return;
     tools::log->trace("Checking integrity of MPS");
     tools::common::profile::t_chk->tic();
@@ -251,7 +256,7 @@ void tools::finite::debug::check_integrity_of_mps(const class_state_finite &stat
 }
 
 
-void tools::finite::debug::check_integrity_of_mpo(const class_state_finite &state) {
+void tools::finite::debug::check_integrity_of_model(const class_state_finite &state) {
     if constexpr (not settings::debug) return;
     tools::common::profile::t_chk->tic();
 

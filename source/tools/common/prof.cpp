@@ -22,6 +22,7 @@ void tools::common::profile::print_profiling() {
         tools::log->info("{:<30}{:>10.3f} s ({:<3.2f} % of parent)", " |- Svd. decomp.          ",t_svd->get_measured_time(), t_svd->get_measured_time() * t_sim_percent);
         tools::log->info("{:<30}{:>10.3f} s ({:<3.2f} % of parent)", " |- Hamiltonian Matrix    ",t_ham->get_measured_time(), t_ham->get_measured_time() * t_sim_percent);
         tools::log->info("{:<30}{:>10.3f} s ({:<3.2f} % of parent)", " |- Hamiltonian Matrix Sq ",t_hsq->get_measured_time(), t_hsq->get_measured_time() * t_sim_percent);
+        tools::log->info("{:<30}{:>10.3f} s ({:<3.2f} % of parent)", " |- Multisite-MPS         ",t_mps->get_measured_time(), t_mps->get_measured_time() * t_sim_percent);
         tools::log->info("{:<30}{:>10.3f} s ({:<3.2f} % of parent)", " |- Multisite-MPO         ",t_mpo->get_measured_time(), t_mpo->get_measured_time() * t_sim_percent);
         tools::log->info("{:<30}{:>10.3f} s ({:<3.2f} % of parent)", " |- Optimization (Ceres)  ",t_opt->get_measured_time(), t_opt->get_measured_time() * t_sim_percent);
         tools::log->info("{:<30}{:>10.3f} s ({:<3.2f} % of parent)", " |- Time evolution        ",t_evo->get_measured_time(), t_evo->get_measured_time() * t_sim_percent);
@@ -50,6 +51,7 @@ void tools::common::profile::init_profiling() {
     t_svd     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Svd. decomp.          ");
     t_ham     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Hamiltonian Matrix    ");
     t_hsq     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Hamiltonian Matrix Sq ");
+    t_mps     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPS         ");
     t_mpo     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Multisite-MPO         ");
     t_opt     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Optimization (Ceres)  ");
     t_evo     = std::make_unique<class_tic_toc>(settings::profiling::on, settings::profiling::precision, " |- Time evolution        ");

@@ -15,7 +15,6 @@ public:
     using class_algorithm_base::class_algorithm_base;
     explicit class_algorithm_infinite(
             std::shared_ptr<h5pp::File> h5ppFile_,
-            std::string sim_name,
             SimulationType sim_type
     );
     std::shared_ptr<class_state_infinite> state;
@@ -38,11 +37,8 @@ public:
     void reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt)                    final;
     void reset_to_initial_state()                                                                       final;
     void clear_saturation_status()                                                                      override;
-    void write_to_file      (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
-//    void write_measurements (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
-//    void write_sim_status   (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
-//    void write_profiling    (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
-    void copy_from_tmp      (StorageReason storage_reason = StorageReason::JOURNAL)                     final;
+    void write_to_file      (StorageReason storage_reason = StorageReason::CHECKPOINT)                  final;
+    void copy_from_tmp      (StorageReason storage_reason = StorageReason::CHECKPOINT)                  final;
     void print_status_update()                                                                          final;
     void print_status_full()                                                                            final;
 

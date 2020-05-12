@@ -9,7 +9,9 @@
 
 /* clang-format off */
 class class_state_finite;
-class class_model_base;
+class class_model_finite;
+class class_edges_finite;
+class class_mpo_base;
 class class_simulation_status;
 namespace tools::finite::measure{
     using Scalar = std::complex<double>;
@@ -41,22 +43,33 @@ namespace tools::finite::measure{
             inline double digits;
             double significant_digits(double H2, double E2);
         }
-        extern double energy_minus_energy_reduced             (const class_state_finite & state, const Eigen::Tensor<Scalar,3> & multitheta);
-        extern double energy                                  (const class_state_finite & state, const Eigen::Tensor<Scalar,3> & multitheta);
-        extern double energy_per_site                         (const class_state_finite & state, const Eigen::Tensor<Scalar,3> & multitheta);
-        extern double energy_variance                         (const class_state_finite & state, const Eigen::Tensor<Scalar,3> & multitheta);
-        extern double energy_variance_per_site                (const class_state_finite & state, const Eigen::Tensor<Scalar,3> & multitheta);
-        extern double energy                                  (const class_state_finite & state);
-        extern double energy_per_site                         (const class_state_finite & state);
-        extern double energy_variance                         (const class_state_finite & state);
-        extern double energy_variance_per_site                (const class_state_finite & state);
+
+        namespace moments{
+            extern double first(const Eigen::Tensor<Scalar,3> &mps,const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar,3> &envL, const Eigen::Tensor<Scalar,3> &envR);
+            extern double second(const Eigen::Tensor<Scalar,3> &mps,const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar,4> &envL, const Eigen::Tensor<Scalar,4> &envR);
+        }
+        template<typename state_or_mps_type>
+        extern double energy_minus_energy_reduced             (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges);
+        template<typename state_or_mps_type>
+        extern double energy                                  (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges);
+        template<typename state_or_mps_type>
+        extern double energy_per_site                         (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges);
+        template<typename state_or_mps_type>
+        extern double energy_variance                         (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges);
+        template<typename state_or_mps_type>
+        extern double energy_variance_per_site                (const state_or_mps_type & state, const class_model_finite & model, const class_edges_finite & edges);
+//
+//        extern double energy_minus_energy_reduced             (const Eigen::Tensor<Scalar,3> &mps, const class_model_finite & model, const class_edges_finite & edges);
+//        extern double energy                                  (const Eigen::Tensor<Scalar,3> &mps, const class_model_finite & model, const class_edges_finite & edges);
+//        extern double energy_variance                         (const Eigen::Tensor<Scalar,3> &mps, const class_model_finite & model, const class_edges_finite & edges);
+//        extern double energy_variance_per_site                (const Eigen::Tensor<Scalar,3> &mps, const class_model_finite & model, const class_edges_finite & edges);
     }
 
-    extern double energy                                      (const class_state_finite & state);
-    extern double energy_per_site                             (const class_state_finite & state);
-    extern double energy_variance                             (const class_state_finite & state);
-    extern double energy_variance_per_site                    (const class_state_finite & state);
-    extern double energy_normalized                           (const class_state_finite & state, const class_simulation_status & sim_status);
+    extern double energy                                      (const class_state_finite & state, const class_model_finite & model, const class_edges_finite & edges);
+    extern double energy_per_site                             (const class_state_finite & state, const class_model_finite & model, const class_edges_finite & edges);
+    extern double energy_variance                             (const class_state_finite & state, const class_model_finite & model, const class_edges_finite & edges);
+    extern double energy_variance_per_site                    (const class_state_finite & state, const class_model_finite & model, const class_edges_finite & edges);
+    extern double energy_normalized                           (const class_state_finite & state, const class_model_finite & model, const class_edges_finite & edges, const class_simulation_status & sim_status);
 
     template<typename Derived>
     double energy_minus_energy_reduced(const class_state_finite & state, const Eigen::TensorBase<Derived,Eigen::ReadOnlyAccessors> & theta){

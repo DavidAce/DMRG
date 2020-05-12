@@ -3,19 +3,19 @@
 //
 
 //#include <state/class_optimize_mps.h>
-#include <state/class_state_infinite.h>
-#include <state/class_environment.h>
-#include <state/class_mps_site.h>
-#include <state/class_mps_2site.h>
-#include <math/class_eigsolver.h>
+#include <iomanip>
 #include <math/arpack_extra/matrix_product_hamiltonian.h>
-#include <simulation/nmspc_settings.h>
-#include <model/class_model_factory.h>
+#include <math/class_eigsolver.h>
 #include <math/nmspc_math.h>
-#include <tools/infinite/measure.h>
+#include <model/class_mpo_factory.h>
+#include <simulation/nmspc_settings.h>
+#include <state/class_environment.h>
+#include <state/class_mps_2site.h>
+#include <state/class_mps_site.h>
+#include <state/class_state_infinite.h>
 #include <tools/common/log.h>
 #include <tools/common/views.h>
-#include <iomanip>
+#include <tools/infinite/measure.h>
 
 #define profile_optimization 0
 
@@ -23,9 +23,8 @@ using namespace std;
 using namespace Textra;
 using Scalar = class_state_infinite::Scalar;
 
-class_state_infinite::class_state_infinite(SimulationType sim_type_, std::string sim_name_):
+class_state_infinite::class_state_infinite(SimulationType sim_type_):
         sim_type(sim_type_),
-        sim_name(sim_name_),
         MPS(std::make_unique<class_mps_2site>()),
         Lblock(std::make_unique<class_environment>("L",0)),
         Rblock(std::make_unique<class_environment>("R",1)),
@@ -62,8 +61,8 @@ class_state_infinite::class_state_infinite(SimulationType sim_type_, std::string
 //}
 
 void class_state_infinite::clear(){
-    tools::log->trace("Copying state to state");
-    *this = class_state_infinite(sim_type, sim_name);
+    tools::log->trace("Clearing state");
+    *this = class_state_infinite(sim_type);
 }
 
 size_t class_state_infinite::get_length() const {

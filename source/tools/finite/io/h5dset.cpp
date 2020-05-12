@@ -3,7 +3,7 @@
 //
 
 #include <h5pp/h5pp.h>
-#include <model/class_model_factory.h>
+#include <model/class_mpo_factory.h>
 #include <regex>
 #include <simulation/class_simulation_status.h>
 #include <simulation/nmspc_settings.h>
@@ -14,9 +14,9 @@
 #include <tools/finite/measure.h>
 using Scalar = std::complex<double>;
 
-H5D_layout_t decide_layout(std::string_view prefix_path) {
+int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
     std::string str(prefix_path);
-    std::regex  rx(R"(journal/iter_[0-9])"); // Declare the regex with a raw string literal
+    std::regex  rx(R"(checkpoint/iter_[0-9])"); // Declare the regex with a raw string literal
     std::smatch m;
     if(regex_search(str, m, rx))
         return H5D_CONTIGUOUS;
@@ -24,13 +24,14 @@ H5D_layout_t decide_layout(std::string_view prefix_path) {
         return H5D_CHUNKED;
 }
 
-void tools::finite::io::h5dset::write_mps(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level, const class_state_finite &state) {
+void tools::finite::io::h5dset::write_mps(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
+                                          const class_state_finite &state) {
     if(storage_level == StorageLevel::NONE) return;
 
     /*! Writes down midchain and/or all the "Lambda" bond matrices (singular value matrices), so we can obtain the entanglement spectrum easily. */
     tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();
-    H5D_layout_t layout = decide_layout(state_prefix);
+    auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
     /*! Writes down the center "Lambda" bond matrix (singular values). */
     std::string dsetName = state_prefix + "/schmidt_midchain";
     h5ppFile.writeDataset(state.midchain_bond(), dsetName, layout);
@@ -84,11 +85,11 @@ void tools::finite::io::h5dset::write_mps(h5pp::File &h5ppFile, const std::strin
 }
 
 /*! Write all the MPO's with site info in attributes */
-void tools::finite::io::h5dset::write_mpo(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level, const class_state_finite &state) {
+void tools::finite::io::h5dset::write_mpo(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level,
+                                          const class_state_finite &state) {
     if(storage_level < StorageLevel::FULL) return;
     // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
     if(h5ppFile.linkExists(model_prefix + "/mpo")) return tools::log->trace("The MPO's have already been written to [{}]", model_prefix + "/mpo");
-
 
     tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();
@@ -96,21 +97,21 @@ void tools::finite::io::h5dset::write_mpo(h5pp::File &h5ppFile, const std::strin
         state.get_MPO(pos).write_mpo(h5ppFile, model_prefix);
     }
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", model_prefix + "/mpo");
-    h5ppFile.writeAttribute(settings::model::model_type, "model_type", model_prefix + "/mpo");
+    h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", model_prefix + "/mpo");
     tools::common::profile::t_hdf->toc();
 }
 
 /*! Write down measurements that can't fit in a table */
-void tools::finite::io::h5dset::write_measurements(h5pp::File &h5ppFile, const std::string &prefix, const StorageLevel &storage_level,
-                                                   const class_state_finite &state) {
+void tools::finite::io::h5dset::write_ent(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
+                                          const class_state_finite &state) {
     if(storage_level < StorageLevel::NORMAL) return;
     state.do_all_measurements();
     tools::common::profile::t_hdf->tic();
     tools::log->trace("Storing [{: ^6}]: bond dims", enum2str(storage_level));
-    h5ppFile.writeDataset(tools::finite::measure::bond_dimensions(state), prefix + "/bond_dimensions");
+    h5ppFile.writeDataset(tools::finite::measure::bond_dimensions(state), state_prefix + "/bond_dimensions");
     tools::log->trace("Storing [{: ^6}]: entanglement entropies", enum2str(storage_level));
-    h5ppFile.writeDataset(tools::finite::measure::entanglement_entropies(state), prefix + "/entanglement_entropies");
+    h5ppFile.writeDataset(tools::finite::measure::entanglement_entropies(state), state_prefix + "/entanglement_entropies");
     tools::log->trace("Storing [{: ^6}]: truncation errors", enum2str(storage_level));
-    h5ppFile.writeDataset(state.get_truncation_errors(), prefix + "/truncation_errors");
+    h5ppFile.writeDataset(state.get_truncation_errors(), state_prefix + "/truncation_errors");
     tools::common::profile::t_hdf->toc();
 }

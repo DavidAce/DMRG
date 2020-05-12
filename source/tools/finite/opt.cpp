@@ -2,15 +2,15 @@
 // Created by david on 2019-03-18.
 //
 
+#include <glog/logging.h>
+#include <model/class_mpo_base.h>
+#include <simulation/class_simulation_status.h>
+#include <state/class_state_finite.h>
 #include <string>
-#include <tools/finite/opt.h>
-#include <tools/finite/measure.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
-#include <state/class_state_finite.h>
-#include <simulation/class_simulation_status.h>
-#include <model/class_model_base.h>
-#include <glog/logging.h>
+#include <tools/finite/measure.h>
+#include <tools/finite/opt.h>
 
 Eigen::Tensor<class_state_finite::Scalar,3>
 tools::finite::opt::find_excited_state(const class_state_finite &state, const class_simulation_status &sim_status, OptMode optMode, OptSpace optSpace, OptType optType){
@@ -91,7 +91,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
 }
 
 Eigen::Tensor<std::complex<double>,4> tools::finite::opt::find_ground_state(
-        const class_state_finite &state, std::string ritz){
+        const class_state_finite &state,  StateRitz ritz){
     return internal::ground_state_optimization(state,ritz);
 
 }

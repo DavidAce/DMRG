@@ -140,6 +140,7 @@ class h5pp_table_profiling {
         double   t_svd     = 0;
         double   t_ham     = 0;
         double   t_hsq     = 0;
+        double   t_mps     = 0;
         double   t_mpo     = 0;
         double   t_opt     = 0;
         double   t_evo     = 0;
@@ -177,6 +178,7 @@ class h5pp_table_profiling {
         H5Tinsert(h5_type, "t_svd", HOFFSET(table, t_svd), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_ham", HOFFSET(table, t_ham), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_hsq", HOFFSET(table, t_hsq), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "t_mps", HOFFSET(table, t_mps), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_mpo", HOFFSET(table, t_mpo), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_opt", HOFFSET(table, t_opt), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "t_evo", HOFFSET(table, t_evo), H5T_NATIVE_DOUBLE);
@@ -213,7 +215,6 @@ class h5pp_table_sim_status {
         H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "direction", HOFFSET(table, direction), H5T_NATIVE_INT);
         H5Tinsert(h5_type, "num_resets", HOFFSET(table, num_resets), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "state_number", HOFFSET(table, state_number), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "min_iters", HOFFSET(table, min_iters), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "chi_max", HOFFSET(table, chi_max), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "chi_lim", HOFFSET(table, chi_lim), H5T_NATIVE_LONG);

@@ -9,32 +9,33 @@
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/ops.h>
+#include <tools/finite/opt.h>
 
 using namespace std;
 using namespace Textra;
 
-class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), "fDMRG", SimulationType::fDMRG) {
-    tools::log->trace("Constructing class_fDMRG");
-    settings::fdmrg::min_sweeps = std::max(settings::fdmrg::min_sweeps, (size_t)(std::log2(chi_max())));
+class_fDMRG::class_fDMRG(std::shared_ptr<h5pp::File> h5ppFile_) : class_algorithm_finite(std::move(h5ppFile_), SimulationType::fDMRG) {
+    tools::log->trace("Constructing class {}", sim_name);
 }
 
 void class_fDMRG::run_simulation() {
-    tools::log->info("Starting {} simulation", sim_name);
+    if(ritz == StateRitz::SR) state_name = "state_emin";
+    else state_name = "state_emax";
+    tools::log->info("Starting {} simulation of model [{}] for state [{}]", sim_name, enum2str(settings::model::model_type), state_name);
     while(true) {
-        single_DMRG_step(ritz);
+        single_fDMRG_step();
         print_status_update();
         write_to_file();
         copy_from_tmp();
         check_convergence();
         update_truncation_limit();     // Will update SVD threshold iff the state precision is being limited by truncation error
         update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
-
         try_projection();
 
         // It's important not to perform the last move.
         // That last state would not get optimized
         if(state->position_is_any_edge()) {
-            if(sim_status.iter >= settings::xdmrg::max_sweeps) {
+            if(sim_status.iter >= settings::fdmrg::max_iters) {
                 stop_reason = StopReason::MAX_ITERS;
                 break;
             }
@@ -50,16 +51,25 @@ void class_fDMRG::run_simulation() {
                 stop_reason = StopReason::MAX_RESET;
                 break;
             }
-            if(settings::strategy::randomize_early and sim_status.state_number == 0 and state->find_largest_chi() >= 32 and
-               tools::finite::measure::energy_variance(*state) < 1e-4) {
-                stop_reason = StopReason::RANDOMIZE;
-                break;
-            }
         }
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", sim_status.step, sim_status.iter, state->get_position(), state->get_direction());
         move_center_point();
     }
     tools::log->info("Finished {} simulation -- reason: {}", sim_name, enum2str(stop_reason));
+}
+
+void class_fDMRG::single_fDMRG_step() {
+    /*!
+     * \fn void single_DMRG_step(std::string ritz)
+     */
+    tools::log->trace("Starting single fDMRG step with ritz: [{}]", enum2str(ritz));
+    tools::common::profile::t_sim->tic();
+    Eigen::Tensor<Scalar, 4> theta = tools::finite::opt::find_ground_state(*state, ritz);
+    tools::finite::opt::truncate_theta(theta, *state);
+    state->clear_measurements();
+    tools::common::profile::t_sim->toc();
+    sim_status.wall_time = tools::common::profile::t_tot->get_age();
+    sim_status.simu_time = tools::common::profile::t_sim->get_measured_time();
 }
 
 void class_fDMRG::check_convergence() {
@@ -70,7 +80,7 @@ void class_fDMRG::check_convergence() {
         check_convergence_entg_entropy();
     }
 
-    if(sim_status.iter <= settings::fdmrg::min_sweeps) {
+    if(sim_status.iter <= settings::fdmrg::min_iters) {
         clear_saturation_status();
     }
 
@@ -100,7 +110,7 @@ void class_fDMRG::check_convergence() {
 
 bool   class_fDMRG::sim_on() { return settings::fdmrg::on; }
 long   class_fDMRG::chi_max() { return settings::fdmrg::chi_max; }
-size_t class_fDMRG::write_freq() { return settings::fdmrg::write_freq; }
+//size_t class_fDMRG::write_freq() { return settings::fdmrg::write_freq; }
 size_t class_fDMRG::print_freq() { return settings::fdmrg::print_freq; }
 bool   class_fDMRG::chi_grow() { return settings::fdmrg::chi_grow; }
 long   class_fDMRG::chi_init() { return settings::fdmrg::chi_init; }

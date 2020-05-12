@@ -3,6 +3,7 @@
 //
 
 #include <general/nmspc_quantum_mechanics.h>
+#include <simulation/enums.h>
 #include <simulation/nmspc_settings.h>
 #include <state/class_state_finite.h>
 #include <tools/common/log.h>
@@ -10,15 +11,18 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 
-void tools::finite::mps::initialize(class_state_finite &state, const std::string &model_type, size_t num_sites, size_t position) {
+void tools::finite::mps::initialize(class_state_finite &state, ModelType model_type, size_t num_sites, size_t position) {
     log->info("Initializing mps with {} sites at position {}", num_sites, position);
     if(num_sites < 2) throw std::logic_error("Tried to initialize MPS with less than 2 sites");
     if(num_sites > 2048) throw std::logic_error("Tried to initialize MPS with more than 2048 sites");
     if(position >= num_sites) throw std::logic_error("Tried to initialize MPS at a position larger than the number of sites");
 
     size_t spin_dim = 2; // Default is a two-level system
-    if(model_type == "ising_tf_rf_nn") spin_dim = settings::model::ising_tf_rf_nn::spin_dim;
-    if(model_type == "ising_selfdual_tf_rf_nn") spin_dim = settings::model::ising_selfdual_tf_rf_nn::spin_dim;
+    switch(model_type) {
+        case ModelType::ising_tf_rf: spin_dim = settings::model::ising_tf_rf::spin_dim; break;
+        case ModelType::ising_sdual: spin_dim = settings::model::ising_sdual::spin_dim; break;
+        default: spin_dim = 2;
+    }
 
     state.MPS_L.clear();
     state.MPS_R.clear();

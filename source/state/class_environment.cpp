@@ -2,28 +2,27 @@
 // Created by david on 2017-12-02.
 //
 
-
 #include "class_environment.h"
+#include <model/class_mpo_base.h>
 #include <state/class_mps_site.h>
-#include <model/class_model_base.h>
 using namespace std;
 using namespace Textra;
 using Scalar = class_environment_base::Scalar;
 
 
 class_environment_base::class_environment_base(std::string side_, size_t position_):position(position_),side(side_){}
-class_environment_base::class_environment_base(std::string side_, const class_mps_site & MPS, const class_model_base &MPO):side(side_)
+class_environment_base::class_environment_base(std::string side_, const class_mps_site & MPS, const class_mpo_base &MPO):side(side_)
     {
         if (MPS.get_position() != MPO.get_position())
             throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(),MPO.get_position()));
         position = MPS.get_position();
     }
 
-class_environment::class_environment(std::string side_, const class_mps_site & MPS, const class_model_base &MPO):
+class_environment::class_environment(std::string side_, const class_mps_site & MPS, const class_mpo_base &MPO):
         class_environment_base(side_,MPS,MPO){set_edge_dims(MPS,MPO);}
 
 
-class_environment_var::class_environment_var(std::string side_, const class_mps_site & MPS, const class_model_base &MPO):
+class_environment_var::class_environment_var(std::string side_, const class_mps_site & MPS, const class_mpo_base &MPO):
         class_environment_base(side_,MPS,MPO){set_edge_dims(MPS,MPO);}
 
 
@@ -54,7 +53,7 @@ void class_environment_var::assertValidity() const {
 
 
 
-class_environment class_environment::enlarge(const class_mps_site & MPS, const class_model_base &MPO){
+class_environment class_environment::enlarge(const class_mps_site & MPS, const class_mpo_base &MPO){
     if(MPS.get_position() != MPO.get_position()) throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
 
     if(not edge_has_been_set) throw std::logic_error("Have to set edge dimensions first!");
@@ -142,7 +141,7 @@ void class_environment::enlarge(const Eigen::Tensor<Scalar,3> &MPS, const Eigen:
     }
 }
 
-void class_environment::set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO) {
+void class_environment::set_edge_dims(const class_mps_site & MPS, const class_mpo_base &MPO) {
     if(edge_has_been_set) return;
     if (side == "L") {
         long mpsDim = MPS.get_chiL();
@@ -177,7 +176,7 @@ void class_environment::set_edge_dims(const class_mps_site & MPS, const class_mo
 
 
 
-class_environment_var class_environment_var::enlarge(const class_mps_site & MPS, const class_model_base &MPO){
+class_environment_var class_environment_var::enlarge(const class_mps_site & MPS, const class_mpo_base &MPO){
     if(MPS.get_position() != MPO.get_position()) throw std::logic_error("MPS and MPO not at the same position!");
     class_environment_var env = *this;
     if(env.sites == 0 and not env.edge_has_been_set){
@@ -275,7 +274,7 @@ void class_environment_var::enlarge(const Eigen::Tensor<Scalar,3>  &MPS, const E
     }
 }
 
-void class_environment_var::set_edge_dims(const class_mps_site & MPS, const class_model_base &MPO) {
+void class_environment_var::set_edge_dims(const class_mps_site & MPS, const class_mpo_base &MPO) {
     if(edge_has_been_set) return;
     if (side == "L") {
         long mpsDim = MPS.get_chiL();

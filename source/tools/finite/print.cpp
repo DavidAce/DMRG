@@ -4,41 +4,23 @@
 
 #include <iomanip>
 #include <state/class_state_finite.h>
+#include <model/class_model_finite.h>
+#include <edges/class_edges_finite.h>
 #include <string>
 #include <tools/common/log.h>
 #include <tools/finite/print.h>
 
 using Scalar         = std::complex<double>;
 
-void tools::finite::print::print_full_state(const class_state_finite &state) {
-    
-    for (auto & mps : state.MPS_L){
-        std::cout << "MPS " << mps.get_position() << "  :\n";
-        std::cout << "  L:\n"<< mps.get_L() << '\n';
-        std::cout << "  M:\n"<< mps.get_M() << '\n';
-    }
-    std::cout << "  LC:\n"<< state.MPS_L.back().get_LC() << '\n';
-    for (auto & mps : state.MPS_R){
-        std::cout << "MPS " << mps.get_position() << "  :\n";
-        std::cout << "  M:\n"<< mps.get_M() << '\n';
-        std::cout << "  L:\n"<< mps.get_L() << '\n';
-    }
-}
-
-
-
-void tools::finite::print::print_state(const class_state_finite &state){
+void tools::finite::print::print_system(const class_state_finite & state,const class_model_finite & model,const class_edges_finite & edges){
     using namespace Textra;
-    tools::log->info("State length              {}", state.get_length());
-    tools::log->info("State position            {}", state.get_position());
-    tools::log->info("Environment L size        {}", state.ENV_L.size());
-    tools::log->info("Environment R size        {}", state.ENV_R.size());
-
     for(size_t pos = 0; pos < state.get_length(); pos++){
         std::string tag;
         if(pos == state.get_position())   tag = "<---- Position A";
         if(pos == state.get_position()+1) tag = "<---- Position B";
         const auto & mps = state.get_MPS(pos);
+        const auto & mpo = model.get_MPO(pos);
+        const auto & env = edges.get_MPS(pos);
         if(pos <= state.get_position()) {
             const auto & env = state.get_ENVL(pos).block;
             tools::log->info("Pos {:2}: L [{:^4}] M [{:>2} {:>3} {:>3}] ENV [{:>3} {:>3} {:>2}] {}", pos, mps.get_L().dimension(0), mps.get_spin_dim(),
@@ -79,16 +61,7 @@ void tools::finite::print::print_state_compact(const class_state_finite &state){
 
 
 void tools::finite::print::print_hamiltonians(const class_state_finite &state) {
-    auto & MPO_L  = state.MPO_L;
-    auto & MPO_R  = state.MPO_R;
-    if (MPO_L.empty()) throw std::runtime_error("MPO_L is empty. Can't print hamiltonian");
-    if (MPO_R.empty()) throw std::runtime_error("MPO_R is empty. Can't print hamiltonian");
-
-    MPO_L.begin()->get()->print_parameter_names();
-    for(auto &it : MPO_L){
-        it->print_parameter_values();
-    }
-    for(auto &it : MPO_R){
-        it->print_parameter_values();
-    }
+    state.get_MPO(0).print_parameter_names();
+    for(size_t pos = 0; pos < state.get_length();pos++)
+        state.get_MPO(pos).print_parameter_values();
 }
