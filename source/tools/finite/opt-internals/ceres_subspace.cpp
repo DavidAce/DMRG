@@ -7,9 +7,11 @@
 #include <math/arpack_extra/matrix_product_stl.h>
 #include <math/class_eigsolver.h>
 #include <math/nmspc_random.h>
-#include <simulation/class_simulation_status.h>
-#include <simulation/nmspc_settings.h>
-#include <state/class_state_finite.h>
+#include <algorithms/class_algorithm_status.h>
+#include <config/nmspc_settings.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/model/class_model_finite.h>
+#include <tensors/class_tensors_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
@@ -90,13 +92,13 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd, Eigen::VectorXd, double> filter_st
     return std::make_tuple(eigvecs_filtered, eigvals_filtered, overlaps_filtered, subspace_error);
 }
 
-std::pair<double, int> get_best_variance_in_window(const class_state_finite &state, const Eigen::MatrixXcd &eigvecs, const Eigen::VectorXd &energies_per_site,
+std::pair<double, int> get_best_variance_in_window(const class_tensors_finite &tensors, const Eigen::MatrixXcd &eigvecs, const Eigen::VectorXd &energies_per_site,
                                                    double lbound, double ubound) {
     Eigen::VectorXd variances(eigvecs.cols());
     for(long idx = 0; idx < eigvecs.cols(); idx++) {
         if(energies_per_site(idx) <= ubound and energies_per_site(idx) >= lbound) {
-            auto multitheta = Textra::MatrixTensorMap(eigvecs.col(idx), state.active_dimensions());
-            variances(idx)  = tools::finite::measure::energy_variance_per_site(state, multitheta);
+            auto multisite_mps = Textra::MatrixTensorMap(eigvecs.col(idx), tensors.state->active_dimensions());
+            variances(idx)  = tools::finite::measure::energy_variance_per_site(multisite_mps,tensors);
         } else {
             variances(idx) = std::numeric_limits<double>::infinity();
         }
@@ -267,13 +269,15 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace_part(const MatrixTyp
 }
 
 template<typename Scalar>
-std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_state_finite &state, double subspace_error_threshold, OptMode optMode,
+std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_tensors_finite &tensors, double subspace_error_threshold, OptMode optMode,
                                                             OptSpace optSpace) {
+    const auto & state = *tensors.state;
+    const auto & model = *tensors.model;
+    const auto & edges = *tensors.edges;
     tools::log->trace("Finding subspace");
-
     using namespace eigutils::eigSetting;
     tools::common::profile::t_ham->tic();
-    MatrixType<Scalar> H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix<Scalar>(state);
+    MatrixType<Scalar> H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix<Scalar>(model,edges);
     tools::common::profile::t_ham->toc();
     auto multitheta = state.get_multisite_mps();
 
@@ -285,19 +289,19 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_state_fi
         std::tie(eigvecs, eigvals) = find_subspace_full(H_local, multitheta);
     } else {
         double energy_target;
-        if(state.isReduced())
-            energy_target = tools::finite::measure::energy_minus_energy_reduced(state, multitheta);
+        if(model.is_reduced())
+            energy_target = tools::finite::measure::energy_minus_energy_reduced(multitheta,tensors);
         else
-            energy_target = tools::finite::measure::energy(state, multitheta);
+            energy_target = tools::finite::measure::energy(multitheta,tensors);
         //        tools::log->debug("Energy target, per site: {}",energy_target/state.get_length());
         tools::log->trace("Energy target + energy reduced = energy per site: {} + {} = {}", energy_target /  static_cast<double>(state.get_length()),
-                          state.get_energy_reduced() / static_cast<double>(state.get_length()), (energy_target + state.get_energy_reduced()) /  static_cast<double>(state.get_length()));
+                          model.get_energy_reduced() / static_cast<double>(state.get_length()), (energy_target + model.get_energy_reduced()) /  static_cast<double>(state.get_length()));
 
         std::tie(eigvecs, eigvals) = find_subspace_part(H_local, multitheta, energy_target, subspace_error_threshold, optMode, optSpace);
     }
-    tools::log->trace("Eigenvalue range: {} --> {}", (eigvals.minCoeff() + state.get_energy_reduced()) /  static_cast<double>(state.get_length()),
-                      (eigvals.maxCoeff() + state.get_energy_reduced()) /  static_cast<double>(state.get_length()));
-    //    eigvals = eigvals.array() + state.get_energy_reduced();
+    tools::log->trace("Eigenvalue range: {} --> {}", (eigvals.minCoeff() + model.get_energy_reduced()) /  static_cast<double>(state.get_length()),
+                      (eigvals.maxCoeff() + model.get_energy_reduced()) /  static_cast<double>(state.get_length()));
+    //    eigvals = eigvals.array() + model.get_energy_reduced();
     //    tools::log->debug("Eigenvalue range: {} --> {}", eigvals.minCoeff()/state.get_length(),eigvals.maxCoeff()/state.get_length());
     reports::print_eigs_report();
 
@@ -310,15 +314,18 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_state_fi
     return std::make_tuple(eigvecs, eigvals);
 }
 
-Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres_subspace_optimization(const class_state_finite &     state,
-                                                                                                       const class_simulation_status &sim_status,
+Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres_subspace_optimization(const class_tensors_finite & tensors,
+                                                                                                       const class_algorithm_status &status,
                                                                                                        OptType optType, OptMode optMode, OptSpace optSpace) {
+    const auto & state = *tensors.state;
+    const auto & model = *tensors.model;
+    const auto & edges = *tensors.edges;
     tools::log->trace("Optimizing in SUBSPACE mode");
     tools::common::profile::t_opt->tic();
     using Scalar = class_state_finite::Scalar;
     using namespace eigutils::eigSetting;
     auto   options                  = ceres_default_options;
-    double theta_old_variance       = tools::finite::measure::energy_variance_per_site(state);
+    double theta_old_variance       = tools::finite::measure::energy_variance_per_site(tensors);
     double subspace_error_threshold = settings::precision::min_subspace_error;
 
     auto &theta_old     = state.get_multisite_mps();
@@ -327,18 +334,18 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
     switch(optType) {
-        case OptType::CPLX: std::tie(eigvecs, eigvals) = find_subspace<Scalar>(state, subspace_error_threshold, optMode, optSpace); break;
-        case OptType::REAL: std::tie(eigvecs, eigvals) = find_subspace<double>(state, subspace_error_threshold, optMode, optSpace); break;
+        case OptType::CPLX: std::tie(eigvecs, eigvals) = find_subspace<Scalar>(tensors, subspace_error_threshold, optMode, optSpace); break;
+        case OptType::REAL: std::tie(eigvecs, eigvals) = find_subspace<double>(tensors, subspace_error_threshold, optMode, optSpace); break;
     }
     Eigen::VectorXd eigvals_per_site_unreduced =
-        (eigvals.array() + state.get_energy_reduced()) / state.get_length(); // Remove energy reduction for energy window comparisons
+        (eigvals.array() + model.get_energy_reduced()) / state.get_length(); // Remove energy reduction for energy window comparisons
     tools::log->trace("Subspace found with {} eigenvectors", eigvecs.cols());
     Eigen::VectorXd overlaps = (theta_old_vec.adjoint() * eigvecs).cwiseAbs().real();
 
     int    idx;
     double max_overlap          = overlaps.maxCoeff(&idx);
     double max_overlap_energy   = eigvals_per_site_unreduced(idx);
-    bool   max_overlap_inwindow = sim_status.energy_lbound < max_overlap_energy and max_overlap_energy < sim_status.energy_ubound;
+    bool   max_overlap_inwindow = status.energy_lbound < max_overlap_energy and max_overlap_energy < status.energy_ubound;
     tools::log->trace("Max overlap: {} -- Energy per site: {} -- Idx: {} -- inside of window: {}", max_overlap, max_overlap_energy, idx, max_overlap_inwindow);
 
     // For options LC - E we need to filter down the set of states in case we do subspace optimization, otherwise we can easily run out of memory. 64 candidates
@@ -347,18 +354,16 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     double subspace_error_filtered;
 
     std::tie(eigvecs, eigvals, overlaps, subspace_error_filtered) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 128);
-    eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced()) / state.get_length(); // Remove energy reduction for energy window comparisons
+    eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced()) / state.get_length(); // Remove energy reduction for energy window comparisons
                                                                                                       //    bool force_accept = false;
 
-    tools::log->trace("Current energy          : {:.16f}", tools::finite::measure::energy_per_site(state));
-    tools::log->trace("Current energy (2site)  : {:.16f}", tools::finite::measure::twosite::energy_per_site(state, state.get_theta()));
-    tools::log->trace("Current energy (multi)  : {:.16f}", tools::finite::measure::multisite::energy_per_site(state, state.get_multisite_mps()));
+    tools::log->trace("Current energy          : {:.16f}", tools::finite::measure::energy_per_site(tensors));
     tools::log->trace("Current variance: {:.16f}", std::log10(theta_old_variance));
-    //    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound,
-    //    sim_status.energy_ubound);
+    //    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, status.energy_lbound,
+    //    status.energy_ubound);
     if(optMode == OptMode::OVERLAP) {
         auto [best_overlap, best_overlap_idx] =
-            get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
+            get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, status.energy_lbound, status.energy_ubound);
         if(best_overlap_idx < 0) {
             // Option A
             //            tools::log->trace("No overlapping states in energy range. Returning old theta");
@@ -375,14 +380,14 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
         } else {
             auto   best_overlap_theta    = Textra::MatrixTensorMap(eigvecs.col(best_overlap_idx), state.active_dimensions());
             double best_overlap_energy   = eigvals_per_site_unreduced(best_overlap_idx);
-            double best_overlap_variance = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
+            double best_overlap_variance = tools::finite::measure::energy_variance_per_site(best_overlap_theta,tensors);
             tools::log->trace("Candidate {:<2} has highest overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}", best_overlap_idx,
                               overlaps(best_overlap_idx), best_overlap_energy, std::log10(best_overlap_variance));
             return best_overlap_theta;
         }
     }
 
-    auto list_of_candidates = get_best_candidates_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound, sim_status.energy_ubound);
+    auto list_of_candidates = get_best_candidates_in_window(overlaps, eigvals_per_site_unreduced, status.energy_lbound, status.energy_ubound);
     if(list_of_candidates.empty()) {
         // Option A
         tools::log->warn("Went for option A -- No overlapping states in energy range. Returning old theta");
@@ -396,7 +401,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     for(auto &candidate : list_of_candidates) {
         auto   candidate_theta    = Textra::MatrixTensorMap(eigvecs.col(candidate.second), state.active_dimensions());
         double candidate_energy   = eigvals_per_site_unreduced(candidate.second);
-        double candidate_variance = tools::finite::measure::energy_variance_per_site(state, candidate_theta);
+        double candidate_variance = tools::finite::measure::energy_variance_per_site(candidate_theta,tensors);
         tools::log->trace("Candidate {:<2} has good overlap: Overlap: {:.16f} Energy: {:>20.16f} Variance: {:>20.16f}", candidate.second, candidate.first,
                           candidate_energy, std::log10(candidate_variance));
         theta_candidates.emplace_back(candidate_theta);
@@ -406,8 +411,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     if(tools::log->level() <= spdlog::level::debug) {
         // Initial sanity check
         tools::common::profile::t_opt->tic();
-        double energy_old   = tools::finite::measure::energy_per_site(state, theta_old);
-        double variance_old = tools::finite::measure::energy_variance_per_site(state, theta_old);
+        double energy_old   = tools::finite::measure::energy_per_site(theta_old,tensors);
+        double variance_old = tools::finite::measure::energy_variance_per_site(theta_old,tensors);
         tools::common::profile::t_opt->toc();
         reports::bfgs_log.emplace_back("Current state", theta_old.size(), 0, energy_old, std::log10(variance_old), 1.0, theta_old_vec.norm(), 1, 1,
                                        tools::common::profile::t_opt->get_last_time_interval());
@@ -415,7 +420,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 
     tools::log->debug("Optimizing mode {} space {} using subspace size {} with {} initial guesses", optMode, optSpace, eigvecs.cols(), theta_candidates.size());
     tools::common::profile::t_opt->tic();
-    Eigen::MatrixXcd H2_subspace = tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(state, eigvecs);
+    Eigen::MatrixXcd H2_subspace = tools::finite::opt::internal::get_multi_hamiltonian_squared_subspace_matrix_new<Scalar>(model,edges, eigvecs);
     if(optType == OptType::REAL) H2_subspace = H2_subspace.real();
 
     tools::common::profile::t_opt->toc();
@@ -436,8 +441,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
             tools::common::profile::t_opt->tic();
             Eigen::VectorXcd theta_0        = (eigvecs * theta_start.asDiagonal()).rowwise().sum().normalized();
             auto             theta_0_tensor = Textra::MatrixTensorMap(theta_0, state.active_dimensions());
-            double           energy_0       = tools::finite::measure::energy_per_site(state, theta_0_tensor);
-            double           variance_0     = tools::finite::measure::energy_variance_per_site(state, theta_0_tensor);
+            double           energy_0       = tools::finite::measure::energy_per_site(theta_0_tensor,tensors);
+            double           variance_0     = tools::finite::measure::energy_variance_per_site(theta_0_tensor,tensors);
             double           overlap_0      = std::abs(theta_old_vec.dot(theta_0));
             tools::common::profile::t_opt->toc();
             reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count), theta_old.size(), 0, energy_0, std::log10(variance_0), overlap_0,
@@ -455,7 +460,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
             double           vv           = theta_start.squaredNorm();
             Scalar           ene          = vHv / vv;
             Scalar           var          = vH2v / vv - ene * ene;
-            double           ene_init_san = std::real(ene + state.get_energy_reduced()) / static_cast<double>(state.get_length());
+            double           ene_init_san = std::real(ene + model.get_energy_reduced()) / static_cast<double>(state.get_length());
             double           var_init_san = std::real(var) / static_cast<double>(state.get_length());
             tools::common::profile::t_opt->toc();
             reports::bfgs_log.emplace_back("Candidate " + std::to_string(candidate_count) + " (matrix)", theta_start.size(), 0, ene_init_san,
@@ -475,7 +480,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
         switch(optType) {
             case OptType::CPLX: {
                 Eigen::VectorXd        theta_start_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(theta_start.data()), 2 * theta_start.size());
-                auto *                 functor          = new ceres_subspace_functor<std::complex<double>>(state, sim_status, H2_subspace, eigvals);
+                auto *                 functor          = new ceres_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running L-BFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
@@ -491,7 +496,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
             case OptType::REAL: {
                 Eigen::VectorXd        theta_start_cast = theta_start.real();
                 Eigen::MatrixXd        H2_subspace_real = H2_subspace.real();
-                auto *                 functor          = new ceres_subspace_functor<double>(state, sim_status, H2_subspace_real, eigvals);
+                auto *                 functor          = new ceres_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running LBFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
@@ -525,8 +530,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
             // Sanity check
             tools::common::profile::t_opt->tic();
             auto   theta_san    = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
-            double energy_san   = tools::finite::measure::energy_per_site(state, theta_san);
-            double variance_san = tools::finite::measure::energy_variance_per_site(state, theta_san);
+            double energy_san   = tools::finite::measure::energy_per_site(theta_san,tensors);
+            double variance_san = tools::finite::measure::energy_variance_per_site(theta_san,tensors);
             tools::common::profile::t_opt->toc();
             if(std::abs((variance_san - variance_new) / variance_san) > 0.01)
                 tools::log->warn("Variance mismatch in sanity check: {:.16f} != {:.16f}", variance_san, variance_new);
@@ -540,8 +545,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 
         if(optSpace == OptSpace::SUBSPACE_ONLY) {
             auto optimized_theta    = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
-            auto optimized_energy   = tools::finite::measure::energy_per_site(state, optimized_theta);
-            auto optimized_variance = tools::finite::measure::energy_variance_per_site(state, optimized_theta);
+            auto optimized_energy   = tools::finite::measure::energy_per_site(optimized_theta,tensors);
+            auto optimized_variance = tools::finite::measure::energy_variance_per_site(optimized_theta,tensors);
             auto optimized_vec      = Eigen::Map<const Eigen::VectorXcd>(optimized_theta.data(), optimized_theta.size());
             auto optimized_overlap  = std::abs(theta_old_vec.dot(optimized_vec));
             optimized_results.emplace_back(std::make_pair(optimized_variance, optimized_theta));
@@ -551,8 +556,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
         if(optSpace == OptSpace::SUBSPACE_AND_DIRECT) {
             tools::log->trace("Fine tuning new theta after SUBSPACE optimization");
             auto optimized_theta =
-                ceres_direct_optimization(state, Textra::MatrixTensorMap(theta_new, state.active_dimensions()), sim_status, optType, optMode, optSpace);
-            auto optimized_variance = tools::finite::measure::energy_variance_per_site(state, optimized_theta);
+                ceres_direct_optimization(tensors, Textra::MatrixTensorMap(theta_new, state.active_dimensions()), status, optType, optMode, optSpace);
+            auto optimized_variance = tools::finite::measure::energy_variance_per_site(optimized_theta,tensors);
             optimized_results.emplace_back(std::make_pair(optimized_variance, optimized_theta));
         }
         candidate_count++;
@@ -567,9 +572,9 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     // Return the best theta
     return optimized_results.front().second;
 
-    //    auto theta_direct_fine_tuned    =  ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,sim_status,
-    //    optType); auto theta_direct_best_overlap  =  ceres_direct_optimization(state, best_overlap_theta ,sim_status, optType); auto
-    //    theta_direct_current_theta =  ceres_direct_optimization(state, theta_old ,sim_status, optType);
+    //    auto theta_direct_fine_tuned    =  ceres_direct_optimization(state, Textra::Matrix_to_Tensor(theta_new, state.active_dimensions()) ,status,
+    //    optType); auto theta_direct_best_overlap  =  ceres_direct_optimization(state, best_overlap_theta ,status, optType); auto
+    //    theta_direct_current_theta =  ceres_direct_optimization(state, theta_old ,status, optType);
     //
     //    double variance_direct_fine_tuned       =  tools::finite::measure::energy_variance_per_site(state,theta_direct_fine_tuned   );
     //    double variance_direct_best_overlap     =  tools::finite::measure::energy_variance_per_site(state,theta_direct_best_overlap );
@@ -744,8 +749,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //
 //
 //
-//    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound,
-//    sim_status.energy_ubound);
+//    auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, status.energy_lbound,
+//    status.energy_ubound);
 //
 //    if (best_overlap_idx < 0){
 //        //Option A
@@ -768,13 +773,13 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //            tools::log->info("Went for option C1");
 //            tools::log->debug("... We can try subspace optimization anyway then");
 //            std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
-//            eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
+//            eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
 //            comparisons
 //        }else{
 //            //Option C2
 //            tools::log->info("Went for option C2");
 //            tools::log->debug("... Switching to DIRECT mode");
-//            return ceres_direct_optimization(state, Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions()) ,sim_status, optType);
+//            return ceres_direct_optimization(state, Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions()) ,status, optType);
 //        }
 //
 //    }
@@ -784,7 +789,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //            tools::log->info("Went for option D1");
 //            tools::log->debug("... We can try subspace optimization anyway then");
 //            std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
-//            eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
+//            eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
 //            comparisons
 //        }else{
 //            //Option D2
@@ -801,7 +806,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //            tools::log->info("Went for option E1");
 //            tools::log->debug("... We can try subspace optimization anyway then");
 //            std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
-//            eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
+//            eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
 //            comparisons
 //        }else{
 //            //Option E2
@@ -826,7 +831,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //        tools::log->info("Went for option D1");
 //        tools::log->debug("... We can try subspace anyway then", best_variance_idx, best_overlap, std::log10(best_overlap_variance));
 //        std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
-//        eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
+//        eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
 //        comparisons break;
 //    }
 
@@ -835,8 +840,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //    switch (optMode){
 //        case OptMode::OVERLAP:
 //        {
-//            auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound,
-//            sim_status.energy_ubound); if (best_overlap_idx < 0){
+//            auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, status.energy_lbound,
+//            status.energy_ubound); if (best_overlap_idx < 0){
 //                tools::log->debug("No overlapping states in energy range. Returning old theta");
 //                state.tag_active_sites_have_been_updated(false);
 //                return theta;
@@ -844,8 +849,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //            if(best_overlap < 0.1){
 //                tools::log->debug("Overlap of state {} is too low: {}. Checking for candidates with lower variance", best_overlap_idx, best_overlap);
 //                double old_variance = tools::finite::measure::energy_variance_per_site(state);
-//                auto [best_variance, best_variance_idx] = get_best_variance_in_window(state, eigvecs, eigvals_per_site_unreduced, sim_status.energy_lbound,
-//                sim_status.energy_ubound); if (best_variance_idx < 0 or overlaps(best_variance_idx) < 0.01){
+//                auto [best_variance, best_variance_idx] = get_best_variance_in_window(state, eigvecs, eigvals_per_site_unreduced, status.energy_lbound,
+//                status.energy_ubound); if (best_variance_idx < 0 or overlaps(best_variance_idx) < 0.01){
 //                    tools::log->debug("No better variance states (with sufficient overlap > 0.01) found in energy range. Returning old theta");
 //                    state.tag_active_sites_have_been_updated(false);
 //                    return theta;
@@ -880,9 +885,9 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //                    tools::log->debug("The candidate theta has worse variance than before [ idx = {} | overlap = {} | variance = {} ]...", best_overlap_idx,
 //                    best_overlap, std::log10(new_variance)); tools::log->debug("Looking for a candidate with lower variance..."); double subspace_error;
 //                    std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
-//                    eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy
+//                    eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy
 //                    window comparisons auto [best_variance, best_variance_idx] = get_best_variance_in_window(state, eigvecs, eigvals_per_site_unreduced,
-//                    sim_status.energy_lbound, sim_status.energy_ubound); if(best_variance < old_variance){
+//                    status.energy_lbound, status.energy_ubound); if(best_variance < old_variance){
 //                        tools::log->debug("... Candidate {} has better variance: {} < {}. Energy: {}, overlap: {}.",
 //                                          best_variance_idx, std::log10(best_variance), std::log10(old_variance),
 //                                          eigvals_per_site_unreduced(best_variance_idx), overlaps(best_variance_idx));
@@ -905,8 +910,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //        case OptMode::VARIANCE:
 //        {
 //            bool preferKeepingLowOverlapCandidate = true;
-//            auto  [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound,
-//            sim_status.energy_ubound);
+//            auto  [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, status.energy_lbound,
+//            status.energy_ubound);
 //
 //            double sq_sum_overlap    = overlaps.cwiseAbs2().sum();
 //            double subspace_error    = 1.0 - sq_sum_overlap;
@@ -938,8 +943,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //
 //                tools::log->debug("Subspace error is too high (log10): {} > {}. Deciding what to do...", std::log10(subspace_error),
 //                std::log10(subspace_error_threshold)); double prev_variance = tools::finite::measure::energy_variance_per_site(state); auto [best_variance,
-//                best_variance_idx] = get_best_variance_in_window(state, eigvecs, eigvals_per_site_unreduced, sim_status.energy_lbound,
-//                sim_status.energy_ubound); if (best_variance_idx < 0){
+//                best_variance_idx] = get_best_variance_in_window(state, eigvecs, eigvals_per_site_unreduced, status.energy_lbound,
+//                status.energy_ubound); if (best_variance_idx < 0){
 //                    // Option A
 //                    tools::log->info("Went for option A");
 //                    tools::log->debug("... No candidate in energy window, returning old theta");
@@ -955,8 +960,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //                    Textra::Matrix_to_Tensor(eigvecs.col(best_variance_idx), state.active_dimensions());
 //                }
 //
-//                auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, sim_status.energy_lbound,
-//                sim_status.energy_ubound); auto best_overlap_theta = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
+//                auto [best_overlap,best_overlap_idx] = get_best_overlap_in_window(overlaps, eigvals_per_site_unreduced, status.energy_lbound,
+//                status.energy_ubound); auto best_overlap_theta = Textra::Matrix_to_Tensor(eigvecs.col(best_overlap_idx), state.active_dimensions());
 //                double best_overlap_variance = tools::finite::measure::energy_variance_per_site(state, best_overlap_theta);
 //                tools::log->debug("... Candidate {} has highest overlap: {} and variance(log10): {}", best_overlap_idx, best_overlap
 //                ,std::log10(best_overlap_variance));
@@ -974,7 +979,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //                        tools::log->info("Went for option D1");
 //                        tools::log->debug("... We can try subspace anyway then", best_variance_idx, best_overlap, std::log10(best_overlap_variance));
 //                        std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
-//                        eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy
+//                        eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy
 //                        window comparisons break;
 //                    }
 //                }else{
@@ -990,7 +995,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //                        tools::log->info("Went for option D2");
 //                        tools::log->debug("... We can try subspace anyway then", best_variance_idx, best_overlap, std::log10(best_overlap_variance));
 //                        std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
-//                        eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy
+//                        eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy
 //                        window comparisons break;
 //                    }
 //                }
@@ -999,18 +1004,18 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //                // Option E
 //                tools::log->info("Went for option E");
 //                tools::log->debug("... Switching to DIRECT mode");
-//                return ceres_direct_optimization(state, sim_status, optType);
+//                return ceres_direct_optimization(state, status, optType);
 //                //////////////////////////////
 ////                tools::log->debug("Subspace error is too high (log10): {} > {}. Deciding what to do...", std::log10(subspace_error),
 /// std::log10(subspace_error_threshold)); /                double prev_variance = tools::finite::measure::energy_variance_per_site(state); / auto
-///[best_variance, best_variance_idx] = get_best_state_in_window(state,eigvecs,eigvals_per_site_unreduced,sim_status.energy_lbound,sim_status.energy_ubound); /
+///[best_variance, best_variance_idx] = get_best_state_in_window(state,eigvecs,eigvals_per_site_unreduced,status.energy_lbound,status.energy_ubound); /
 /// if (best_variance_idx < 0){ /                    tools::log->debug("Returning old theta"); / state.tag_active_sites_have_been_updated(false); / return
 /// theta; /                } /                else if(best_variance < prev_variance){ /                    tools::log->debug("... Eigenstate {} has better
 ///(log10) variance: {} < {}", best_variance_idx, std::log10(best_variance), std::log10(prev_variance)); / state.tag_active_sites_have_been_updated(true); /
 /// state.clear_measurements(); / return Textra::Matrix_to_Tensor(eigvecs.col(best_variance_idx), state.active_dimensions()); /                }
 //            }else{
 //                std::tie(eigvecs,eigvals,subspace_error) = filter_states(eigvecs, eigvals, overlaps, subspace_error_threshold, 64);
-//                eigvals_per_site_unreduced = (eigvals.array() + state.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
+//                eigvals_per_site_unreduced = (eigvals.array() + model.get_energy_reduced())/state.get_length(); // Remove energy reduction for energy window
 //                comparisons
 //            }
 //        }
@@ -1020,7 +1025,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //
 //        double prev_variance = tools::finite::measure::energy_variance_per_site(state);
 //        auto [best_variance, idx_variance] =
-//        get_best_variance_in_window(state,eigvecs,eigvals_per_site_unreduced,sim_status.energy_lbound,sim_status.energy_ubound); if (idx_variance < 0){
+//        get_best_variance_in_window(state,eigvecs,eigvals_per_site_unreduced,status.energy_lbound,status.energy_ubound); if (idx_variance < 0){
 //            tools::log->debug("Returning old theta");
 //            state.tag_active_sites_have_been_updated(false);
 //            return theta;
@@ -1031,6 +1036,6 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
 //            return Textra::Matrix_to_Tensor(eigvecs.col(idx_variance), state.active_dimensions());
 //        }else{
 //            tools::log->debug("... discarding subspace and switching to direct mode");
-//            return ceres_direct_optimization(state, sim_status, optType);
+//            return ceres_direct_optimization(state, status, optType);
 //        }
 //    }

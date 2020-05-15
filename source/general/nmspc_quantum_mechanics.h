@@ -41,8 +41,8 @@ namespace qm{
         extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_1st_order(const std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
         extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_2nd_order(const std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
         extern std::vector<Eigen::MatrixXcd> Suzuki_Trotter_4th_order(const std::complex<double> t, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::Tensor<std::complex<double>,4>> get_2site_evolution_gates(const std::complex<double> t, const size_t & susuki_trotter_order,  const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
-        extern std::vector<Eigen::Tensor<std::complex<double>,4>> compute_G(const std::complex<double> a, const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+        extern std::vector<Eigen::Tensor<std::complex<double>,2>> get_2site_evolution_gates(const std::complex<double> t, const size_t & susuki_trotter_order,  const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
+        extern std::vector<Eigen::Tensor<std::complex<double>,2>> compute_G(const std::complex<double> a, const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd);
     }
 
     namespace mpo{

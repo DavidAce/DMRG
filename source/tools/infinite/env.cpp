@@ -2,12 +2,12 @@
 // Created by david on 2019-10-24.
 //
 
-#include <state/class_environment.h>
-#include <state/class_mps_2site.h>
-#include <state/class_state_infinite.h>
+#include <tensors/state/class_environment.h>
+#include <tensors/state/class_mps_2site.h>
+#include <tensors/state/class_state_infinite.h>
 #include <tools/infinite/env.h>
-//#include <state/class_mps_site.h>
-//#include <model/class_model_base.h>
+//#include <tensors/state/class_mps_site.h>
+//#include <tensors/model/class_model_base.h>
 
 void tools::infinite::env::initialize(class_state_infinite &state) {
     state.Lblock  = std::make_unique<class_environment>("L", *state.MPS->MPS_A, *state.HA);

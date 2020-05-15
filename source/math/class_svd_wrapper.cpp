@@ -23,7 +23,7 @@
 
 //For svd debugging
 //#include <h5pp/h5pp.h>
-//#include <simulation/nmspc_settings.h>
+//#include <config/nmspc_settings.h>
 
 
 #include <Eigen/SVD>

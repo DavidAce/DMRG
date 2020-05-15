@@ -1,56 +1,47 @@
 //
 // Created by david on 2019-06-25.
 //
+#include <math/nmspc_math.h>
 #include <math/nmspc_random.h>
-#include <model/class_model_finite.h>
-#include <model/class_mpo_base.h>
-#include <model/class_mpo_factory.h>
-#include <state/class_state_finite.h>
+#include <tensors/model/class_model_finite.h>
+#include <tensors/model/class_mpo_base.h>
+#include <tensors/model/class_mpo_factory.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/edges/class_edges_finite.h>
 #include <tools/common/log.h>
 #include <tools/finite/debug.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 
-void tools::finite::mpo::initialize(class_state_finite &state, ModelType model_type, size_t num_sites, size_t position) {
-    tools::log->trace("Initializing mpo with {} sites at position {}", num_sites, position);
+void tools::finite::mpo::initialize(class_model_finite &model, ModelType model_type, size_t num_sites) {
+    tools::log->trace("Initializing mpo with {} sites", num_sites);
     if(num_sites < 2) throw std::logic_error("Tried to initialize MPO with less than 2 sites");
     if(num_sites > 2048) throw std::logic_error("Tried to initialize MPO with more than 2048 sites");
-    if(position >= num_sites) throw std::logic_error("Tried to initialize MPO at a position larger than the number of sites");
-    if(not state.MPO_L.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
-    if(not state.MPO_R.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
+    if(not model.MPO.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
+
 //    state.MPO_L.clear();
 //    state.MPO_R.clear();
     // Generate MPO
+    model.model_type = model_type;
     for(size_t site = 0; site < num_sites; site++) {
-        if(site <= position)
-            state.MPO_L.emplace_back(class_mpo_factory::create_mpo(site, model_type));
-        else
-            state.MPO_R.emplace_back(class_mpo_factory::create_mpo(site, model_type));
+        model.MPO.emplace_back(class_mpo_factory::create_mpo(site, model_type));
     }
-    if(state.MPO_L.size() + state.MPO_R.size() != num_sites) throw std::logic_error("Initialized MPO with wrong size");
-    if(state.MPO_L.size() - 1 != position) throw std::logic_error("Initialized MPO at the wrong position");
-    if(state.MPO_L.back()->get_position() != position) throw std::logic_error("Initialized MPO at the wrong position");
+    if(model.MPO.size() != num_sites) throw std::logic_error("Initialized MPO with wrong size");
 }
 
-void tools::finite::mpo::randomize(class_state_finite &state) {
+void tools::finite::mpo::randomize(class_model_finite &model) {
     tools::log->trace("Setting random fields in MPO's");
     std::vector<class_mpo_base::TableMap> all_params;
-    for(auto &mpo : state.MPO_L) {
+    for(auto &mpo : model.MPO) {
         mpo->randomize_hamiltonian();
         all_params.emplace_back(mpo->get_parameters());
     }
-    for(auto &mpo : state.MPO_R) {
-        mpo->randomize_hamiltonian();
-        all_params.emplace_back(mpo->get_parameters());
-    }
-    for(auto &mpo : state.MPO_L) mpo->set_averages(all_params, false);
-    for(auto &mpo : state.MPO_R) mpo->set_averages(all_params, false);
-    for(size_t pos = 0; pos < state.get_length(); pos++)
-        if(state.get_MPO(pos).hasNaN()) throw std::runtime_error("MPO " + std::to_string(pos) + " has initialized with NAN's");
+    for(auto &mpo : model.MPO) mpo->set_averages(all_params, false);
 
-    tools::finite::mps::rebuild_environments(state);
-    tools::finite::debug::check_integrity(state);
+//    tools::finite::mps::rebuild_edges(model);
+    std::cerr << "MUST REBUILD ENVIRONMENTS AFTER RANDOMIZING HAMILTONIAN!!" << std::endl;
+    tools::finite::debug::check_integrity(model);
 }
 
 void tools::finite::mpo::perturb_hamiltonian(class_model_finite &model, double coupling_ptb, double field_ptb, PerturbMode perturbMode) {
@@ -62,7 +53,7 @@ void tools::finite::mpo::perturb_hamiltonian(class_model_finite &model, double c
     for(auto &mpo : model.MPO) mpo->set_averages(all_params, false);
     model.clear_cache();
     std::cerr << "MUST REBUILD ENVIRONMENTS AFTER PERTURBING HAMILTONIAN!!" << std::endl;
-//    tools::finite::mps::rebuild_environments(state);
+//    tools::finite::mps::rebuild_edges(state);
     if(coupling_ptb == 0.0 and field_ptb == 0.0 and model.is_perturbed()) throw std::runtime_error("Model: Should have unperturbed!");
 }
 
@@ -73,66 +64,34 @@ void tools::finite::mpo::damp_hamiltonian(class_model_finite &model, double coup
     }
     model.clear_cache();
     std::cerr << "MUST REBUILD ENVIRONMENTS AFTER DAMPING HAMILTONIAN!!" << std::endl;
-//    tools::finite::mps::rebuild_environments(state);
+//    tools::finite::mps::rebuild_edges(state);
     if(coupling_damp == 0.0 and field_damp == 0.0 and model.is_damped()) throw std::runtime_error("State: Should have undamped!");
 }
 
-void tools::finite::mpo::reduce_mpo_energy(class_model_finite &model, const class_state_finite & state) {
-    if(model.active_sites.empty() and state.active_sites.empty())
-        reduce_mpo_energy_2site(model,state);
-    else
-        reduce_mpo_energy_multi(model,state);
-}
-
-void tools::finite::mpo::reduce_mpo_energy_multi(class_model_finite &model, const class_state_finite & state) {
-    if(model.active_sites != state.active_sites) throw std::runtime_error("Mismatch in active sites");
-    const auto theta                            = state.get_multisite_mps();
-    double     energy_per_site_before           = tools::finite::measure::energy_per_site(state, theta);
+void tools::finite::mpo::reduce_mpo_energy(class_model_finite & model, double site_energy) {
+//    if(model.active_sites.empty() and state.active_sites.empty()){}
+//    if(not math::all_equal(state.active_sites, model.active_sites, edges.active_sites)) throw std::runtime_error(fmt::format("Active sites not equal: state {} | model {} | edges {}",state.active_sites, model.active_sites, edges.active_sites));
+//    const auto mps                              = state.get_multisite_mps();
+//    double     energy_per_site_before           = tools::finite::measure::energy_per_site(mps,model,edges);
     double     energy_per_site_reduced_before   = model.get_energy_per_site_reduced();
-    double energy_per_site_minus_reduced_before = tools::finite::measure::energy_minus_energy_reduced(state, theta) / static_cast<double>(state.get_length());
-    double energy_variance_per_site_before      = tools::finite::measure::energy_variance_per_site(state, theta);
-    log->debug("Variance check before reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(state, theta)));
-    log->debug("Status before reduce (multi)          : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
-               energy_per_site_before, energy_per_site_reduced_before, energy_per_site_minus_reduced_before, std::log10(energy_variance_per_site_before));
+//    double energy_per_site_minus_reduced_before = tools::finite::measure::energy_minus_energy_reduced(mps, model, edges) / static_cast<double>(state.get_length());
+//    double energy_variance_per_site_before      = tools::finite::measure::energy_variance_per_site(mps,model,edges);
+//    log->debug("Variance check before reduce          : {:.16f}", std::log10(tools::finite::measure::energy_variance_per_site(mps,model,edges)));
+//    log->debug("Status before reduce (multi)          : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
+//               energy_per_site_before, energy_per_site_reduced_before, energy_per_site_minus_reduced_before, std::log10(energy_variance_per_site_before));
 
-    tools::log->trace("Reducing MPO energy by: {:<20.16f}", energy_per_site_before);
-    model.set_reduced_energy_per_site(energy_per_site_before);
-    double energy_per_site_after               = tools::finite::measure::energy_per_site(state, theta);
-    double energy_per_site_reduced_after       = state.get_energy_per_site_reduced();
-    double energy_per_site_minus_reduced_after = tools::finite::measure::energy_minus_energy_reduced(state, theta) / static_cast<double>(state.get_length());
-    double energy_variance_per_site_after      = tools::finite::measure::energy_variance_per_site(state, theta);
-    log->debug("Variance check after reduce           : {:.16f}", std::log10(measure::energy_variance_per_site(state, theta)));
-    log->debug("Status after reduce (multi)           : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
-               energy_per_site_after, energy_per_site_reduced_after, energy_per_site_minus_reduced_after, std::log10(energy_variance_per_site_after));
+//    tools::log->trace("Reducing MPO energy by: {:<20.16f}", energy_per_site_before);
+    model.set_reduced_energy_per_site(site_energy);
+//    double energy_per_site_after               = tools::finite::measure::energy_per_site(mps,model,edges);
+    double energy_per_site_reduced_after       = model.get_energy_per_site_reduced();
+//    double energy_per_site_minus_reduced_after = tools::finite::measure::energy_minus_energy_reduced(mps,model,edges) / static_cast<double>(state.get_length());
+//    double energy_variance_per_site_after      = tools::finite::measure::energy_variance_per_site(mps,model,edges);
+//    log->debug("Variance check after reduce           : {:.16f}", std::log10(measure::energy_variance_per_site(mps,model,edges)));
+//    log->debug("Status after reduce (multi)           : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
+//               energy_per_site_after, energy_per_site_reduced_after, energy_per_site_minus_reduced_after, std::log10(energy_variance_per_site_after));
 
-    if(std::abs(energy_per_site_before - energy_per_site_after) > 0.1) throw std::logic_error("Energy before and after mpo reduction differ");
-    if(std::abs(energy_per_site_minus_reduced_after) > 0.1) throw std::logic_error("Energy reduction failed");
+//    if(std::abs(energy_per_site_before - energy_per_site_after) > 0.1) throw std::logic_error("Energy before and after mpo reduction differ");
+//    if(std::abs(energy_per_site_minus_reduced_after) > 0.1) throw std::logic_error("Energy reduction failed");
+    std::cerr << "MUST REBUILD ENVIRONMENTS AFTER REDUCING MPO ENERGY!!" << std::endl;
 }
 
-void tools::finite::mpo::reduce_mpo_energy_2site(class_state_finite &state) {
-    state.clear_measurements();
-    state.clear_cache();
-    auto   theta                                = state.get_theta();
-    double energy_per_site_before               = tools::finite::measure::energy_per_site(state, theta);
-    double energy_per_site_reduced_before       = state.get_energy_per_site_reduced();
-    double energy_per_site_minus_reduced_before = tools::finite::measure::energy_minus_energy_reduced(state, theta) / static_cast<double>(state.get_length());
-    double energy_variance_per_site_before      = tools::finite::measure::energy_variance_per_site(state, theta);
-    //    log->debug("Variance check before reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(state)));
-    log->debug("Status before reduce (2site)          : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
-               energy_per_site_before, energy_per_site_reduced_before, energy_per_site_minus_reduced_before, std::log10(energy_variance_per_site_before));
-
-    tools::log->trace("Reducing MPO energy by: {}", energy_per_site_before);
-    state.set_reduced_energy_per_site(energy_per_site_before);
-    state.clear_measurements();
-    state.clear_cache();
-    theta                                      = state.get_theta();
-    double energy_per_site_after               = tools::finite::measure::energy_per_site(state, theta);
-    double energy_per_site_reduced_after       = state.get_energy_per_site_reduced();
-    double energy_per_site_minus_reduced_after = tools::finite::measure::energy_minus_energy_reduced(state, theta) / static_cast<double>(state.get_length());
-    double energy_variance_per_site_after      = tools::finite::measure::energy_variance_per_site(state, theta);
-    //    log->debug("Variance check after reduce          : {:.16f}", std::log10(measure::energy_variance_per_site(state)));
-    log->debug("Status after reduce (2site)           : E = {:<20.16f} | E_red = {:<20.16f} | E - E_red = {:<20.16f} | Var E = {:<20.16f}",
-               energy_per_site_after, energy_per_site_reduced_after, energy_per_site_minus_reduced_after, std::log10(energy_variance_per_site_after));
-    if(std::abs(energy_per_site_before - energy_per_site_after) > 0.1) throw std::logic_error("Energy before and after differ");
-    if(std::abs(energy_per_site_minus_reduced_after) > 0.1) throw std::logic_error("Energy reduction failed");
-}

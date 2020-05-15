@@ -3,9 +3,10 @@
 //
 
 #include <glog/logging.h>
-#include <model/class_mpo_base.h>
-#include <simulation/class_simulation_status.h>
-#include <state/class_state_finite.h>
+#include <tensors/model/class_mpo_base.h>
+#include <algorithms/class_algorithm_status.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/class_tensors_finite.h>
 #include <string>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
@@ -13,7 +14,7 @@
 #include <tools/finite/opt.h>
 
 Eigen::Tensor<class_state_finite::Scalar,3>
-tools::finite::opt::find_excited_state(const class_state_finite &state, const class_simulation_status &sim_status, OptMode optMode, OptSpace optSpace, OptType optType){
+tools::finite::opt::find_excited_state(const class_tensors_finite &tensors, const class_algorithm_status &status, OptMode optMode, OptSpace optSpace, OptType optType){
     tools::log->trace("Optimizing excited state");
     using namespace opt::internal;
     using namespace Textra;
@@ -25,13 +26,13 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     }
 
     std::stringstream problem_report;
-    auto dims = state.active_dimensions();
+    auto dims = tensors.state->active_dimensions();
     problem_report << fmt::format("Starting optimization: ")
                    << fmt::format("mode [ {} ] "             , optMode)
                    << fmt::format("space [ {} ] "            , optSpace)
                    << fmt::format("type [ {} ] "             , optType)
-                   << fmt::format("position [ {} ] "         , state.get_position())
-                   << fmt::format("shape [ {} {} {} ] = {} " , dims[0],dims[1],dims[2], state.active_problem_size());
+                   << fmt::format("position [ {} ] "         , tensors.get_position())
+                   << fmt::format("shape [ {} {} {} ] = {} " , dims[0],dims[1],dims[2], tensors.state->active_problem_size());
     tools::log->debug(problem_report.str());
 
 
@@ -58,7 +59,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
     ceres_default_options.logging_type = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
 
-    if(sim_status.simulation_has_got_stuck){
+    if(status.algorithm_has_got_stuck){
         ceres_default_options.max_num_iterations  = 4000;
         ceres_default_options.function_tolerance  = 1e-8;
         ceres_default_options.gradient_tolerance  = 1e-6;
@@ -67,7 +68,7 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration!!
         ceres_default_options.minimizer_progress_to_stdout = tools::log->level() <= spdlog::level::debug;
     }
-    if(sim_status.simulation_has_stuck_for > 1){
+    if(status.algorithm_has_stuck_for > 1){
         ceres_default_options.use_approximate_eigenvalue_bfgs_scaling = true;  // True makes a huge difference, takes longer steps at each iteration. May not always be optimal according to library.
     }
 
@@ -83,17 +84,16 @@ tools::finite::opt::find_excited_state(const class_state_finite &state, const cl
 
 
     switch (optSpace){
-        case OptSpace::SUBSPACE_ONLY:    return internal::ceres_subspace_optimization(state,sim_status, optType, optMode,optSpace);
-        case OptSpace::SUBSPACE_AND_DIRECT:  return internal::ceres_subspace_optimization(state,sim_status, optType, optMode,optSpace);
-        case OptSpace::DIRECT:      return internal::ceres_direct_optimization(state,sim_status, optType,optMode,optSpace);
+        case OptSpace::SUBSPACE_ONLY:    return internal::ceres_subspace_optimization(tensors,status, optType, optMode,optSpace);
+        case OptSpace::SUBSPACE_AND_DIRECT:  return internal::ceres_subspace_optimization(tensors,status, optType, optMode,optSpace);
+        case OptSpace::DIRECT:      return internal::ceres_direct_optimization(tensors,status, optType,optMode,optSpace);
     }
     throw std::logic_error("No valid optimization type given");
 }
 
 Eigen::Tensor<std::complex<double>,4> tools::finite::opt::find_ground_state(
-        const class_state_finite &state,  StateRitz ritz){
-    return internal::ground_state_optimization(state,ritz);
-
+        const class_tensors_finite &tensors,  StateRitz ritz){
+    return internal::ground_state_optimization(tensors,ritz);
 }
 
 

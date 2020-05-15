@@ -7,19 +7,19 @@
 #include <fstream>
 #include <h5pp/h5pp.h>
 #include <math/nmspc_math.h>
-#include <simulation/nmspc_settings.h>
+#include <config/nmspc_settings.h>
 #include <sstream>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 
 using Scalar = class_algorithm_base::Scalar;
 
-class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, SimulationType sim_type_)
-    : h5pp_file(std::move(h5ppFile_)), sim_type(sim_type_) {
-    sim_name   = enum2str(sim_type_);
+class_algorithm_base::class_algorithm_base(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_)
+    : h5pp_file(std::move(h5ppFile_)), algo_type(algo_type_) {
+    algo_name  = enum2str(algo_type_);
     state_name = "state";
     tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
-    tools::log = Logger::setLogger(std::string(enum2str(sim_type)), settings::console::verbosity, settings::console::timestamp);
+    tools::log = Logger::setLogger(std::string(enum2str(algo_type)), settings::console::verbosity, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
     tools::common::profile::init_profiling();
 }

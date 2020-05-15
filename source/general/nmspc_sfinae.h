@@ -169,6 +169,15 @@ namespace sfinae {
     template<typename T>
     inline constexpr bool is_std_complex_v = is_std_complex<T>::value;
 
+
+    template <typename T>
+    struct is_pair : std::false_type { };
+
+    template <typename T, typename U>
+    struct is_pair<std::pair<T, U>> : std::true_type { };
+    template<typename T>
+    inline constexpr bool is_pair_v = is_pair<T>::value;
+
     template<typename T>
     struct is_Scalar2 {
         private:

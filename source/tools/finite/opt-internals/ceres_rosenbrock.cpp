@@ -2,7 +2,7 @@
 // Created by david on 2019-12-10.
 //
 #include "ceres_rosenbrock.h"
-#include <state/class_state_finite.h>
+#include <tensors/state/class_state_finite.h>
 
 
 Eigen::Tensor<class_state_finite::Scalar,3>

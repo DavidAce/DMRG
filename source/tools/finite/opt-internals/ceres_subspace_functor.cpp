@@ -2,7 +2,10 @@
 // Created by david on 2019-07-15.
 //
 #include "ceres_subspace_functor.h"
-#include <state/class_state_finite.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/model/class_model_finite.h>
+#include <tensors/edges/class_edges_finite.h>
+#include <tensors/class_tensors_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 
@@ -10,17 +13,17 @@ using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
 tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_functor(
-        const class_state_finite & state,
-        const class_simulation_status & sim_status,
+        const class_tensors_finite & tensors,
+        const class_algorithm_status & status,
         const MatrixType & H2_subspace,
         const Eigen::VectorXd  & eigvals_)
         :
-        ceres_base_functor(state,sim_status),
+        ceres_base_functor(tensors,status),
         H2(H2_subspace),
         eigvals(eigvals_)
 {
 
-    energy_reduced = state.get_energy_reduced();
+    energy_reduced = tensors.model->get_energy_reduced();
     num_parameters = static_cast<int>(eigvals.size());
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){num_parameters *= 2;}
 }

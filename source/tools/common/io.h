@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 #include <string>
-class class_simulation_status;
+class class_algorithm_status;
 enum class StorageLevel;
 enum class ModelType;
 
@@ -16,20 +16,20 @@ namespace tools::common::io {
     }
 
     namespace h5table{
-        extern void write_sim_status   (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
-        extern void write_profiling    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
-        extern void write_mem_usage    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_simulation_status &sim_status);
+        extern void write_sim_status   (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
+        extern void write_profiling    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
+        extern void write_mem_usage    (h5pp::File & h5ppFile, const std::string & state_prefix, const StorageLevel & storage_level, const class_algorithm_status &status);
     }
 
     namespace h5attr{
         extern void write_meta (h5pp::File & h5ppFile,
                                 const std::string & sim_name, const std::string &state_prefix, const std::string &model_prefix, ModelType model_type,
-                                const StorageLevel & storage_level, const class_simulation_status &sim_status);
+                                const StorageLevel & storage_level, const class_algorithm_status &status);
     }
 
     namespace h5resume{
         extern std::string             find_resumable_state     (const h5pp::File & h5ppFile, const std::string & sim_name, const std::string & search = "");
-        extern void                    load_sim_status_from_hdf5(const h5pp::File & h5ppFile, const std::string & state_prefix, class_simulation_status & sim_status);
+        extern void                    load_sim_status_from_hdf5(const h5pp::File & h5ppFile, const std::string & state_prefix, class_algorithm_status & status);
         extern void                    load_profiling_from_hdf5 (const h5pp::File & h5ppFile, const std::string & state_prefix);
     }
 

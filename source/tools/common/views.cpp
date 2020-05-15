@@ -9,9 +9,9 @@
 //
 
 #include <tools/common/views.h>
-#include <state/class_state_infinite.h>
-#include <state/class_state_finite.h>
-#include <state/class_mps_2site.h>
+#include <tensors/state/class_state_infinite.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/state/class_mps_2site.h>
 #include <math/class_eigsolver.h>
 #include <math/nmspc_math.h>
 //#include "class_mps_util.h"
@@ -123,7 +123,8 @@ tools::common::views::get_theta(const class_state_finite & state, Scalar norm)
      @endverbatim
  */
 {
-    return state.MPS_L.back().get_M().contract(state.MPS_R.front().get_M(), Textra::idx({2},{1})) /norm;
+    auto pos = state.get_position();
+    return state.get_mps(pos).get_M().contract(state.get_mps(pos+1).get_M(), Textra::idx({2},{1})) /norm;
 }
 
 

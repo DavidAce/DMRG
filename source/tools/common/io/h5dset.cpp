@@ -4,16 +4,16 @@
 
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
-#include <simulation/class_simulation_status.h>
-#include <simulation/nmspc_settings.h>
+#include <algorithms/class_algorithm_status.h>
+#include <config/nmspc_settings.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 
 
-void tools::common::io::h5resume::load_sim_status_from_hdf5(const h5pp::File &h5ppFile, const std::string &prefix,class_simulation_status & sim_status) {
+void tools::common::io::h5resume::load_sim_status_from_hdf5(const h5pp::File &h5ppFile, const std::string &prefix, class_algorithm_status & status) {
     tools::common::profile::t_hdf->tic();
-    h5ppFile.readTableEntries(sim_status,prefix + "/sim_status");  // Reads the last entry by default
+    h5ppFile.readTableEntries(status,prefix + "/status");  // Reads the last entry by default
     tools::common::profile::t_hdf->toc();
 }
 

@@ -8,9 +8,9 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <general/nmspc_tensor_extra.h>
-#include <simulation/nmspc_settings.h>
-#include <state/class_state_finite.h>
-#include <model/class_model_finite.h>
+#include <config/nmspc_settings.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/model/class_model_finite.h>
 
 Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state_finite &state, std::optional<std::list<size_t>> active_sites){
     if(not active_sites) active_sites = state.active_sites;
@@ -20,11 +20,11 @@ Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state
         throw std::runtime_error(fmt::format("Active site list is not strictly increasing: {}", active_sites.value()));
     if(active_sites.value().size() < 2)
         throw std::runtime_error(fmt::format("Active site list must have 2 or more items: {}", active_sites.value()));
-    dimensions[1] = state.get_MPS(active_sites.value().front()).get_M().dimension(1);
-    dimensions[2] = state.get_MPS(active_sites.value().back()) .get_M().dimension(2);
+    dimensions[1] = state.get_mps(active_sites.value().front()).get_M().dimension(1);
+    dimensions[2] = state.get_mps(active_sites.value().back()) .get_M().dimension(2);
     dimensions[0] = 1;
     for (auto & site : active_sites.value()){
-        dimensions[0] *= state.get_MPS(site).get_M().dimension(0);
+        dimensions[0] *= state.get_mps(site).get_M().dimension(0);
     }
     return dimensions;
 }
@@ -37,13 +37,13 @@ Eigen::DSizes<long,4> tools::finite::multisite::get_dimensions(const class_model
     if(active_sites.value().size() < 2)
         throw std::runtime_error(fmt::format("Active site list must have 2 or more items: {}", active_sites.value()));
     Eigen::DSizes<long,4> dimensions;
-    dimensions[0] = model.get_MPO(active_sites.value().front()).MPO().dimension(0);
-    dimensions[1] = model.get_MPO(active_sites.value().back()) .MPO().dimension(1);
+    dimensions[0] = model.get_mpo(active_sites.value().front()).MPO().dimension(0);
+    dimensions[1] = model.get_mpo(active_sites.value().back()) .MPO().dimension(1);
     dimensions[2] = 1;
     dimensions[3] = 1;
     for (auto & site : active_sites.value()){
-        dimensions[2] *= model.get_MPO(site).MPO().dimension(2);
-        dimensions[3] *= model.get_MPO(site).MPO().dimension(3);
+        dimensions[2] *= model.get_mpo(site).MPO().dimension(2);
+        dimensions[3] *= model.get_mpo(site).MPO().dimension(3);
     }
     return dimensions;
 }
@@ -65,16 +65,17 @@ std::list<size_t> tools::finite::multisite::generate_site_list(class_state_finit
     using namespace Textra;
     int    direction = state.get_direction();
     int    position  = static_cast<int>(state.get_position());
-    int    length    = static_cast<int>(state.get_length()));
+    int    length    = static_cast<int>(state.get_length());
     std::list<size_t> costs;
     std::list<size_t> sites;
     std::vector<Eigen::DSizes<long,3>> dims;
     if (direction == -1)
         position = std::min(position+1, length-1);  // If going to the left, take position to be the site on the right of the center bond.
     while(true){
-        sites.emplace_back(position++);
+        sites.emplace_back(position);
         costs.emplace_back(get_problem_size(state,sites));
         position += direction;
+        if(position == -1 or position == length-1) break;
     }
     tools::log->trace("Activation problem sizes: {}", costs);
     // Evaluate best cost. Threshold depends on optSpace
@@ -136,18 +137,18 @@ std::list<size_t> tools::finite::multisite::generate_truncated_site_list(class_s
 
 
 
+//
+//using namespace Textra;
+//using Scalar = class_state_finite::Scalar;
 
-using namespace Textra;
-using Scalar = class_state_finite::Scalar;
-
-
-double tools::finite::measure::multisite::internal::significant_digits(double H2, double E2){
-    double max_digits    = std::numeric_limits<double>::max_digits10;
-    double lost_bits     = -std::log2(1.0 - std::abs(std::min(H2,E2)/std::max(H2,E2)));
-    double lost_digits   = std::log10(std::pow(2.0,lost_bits));
-//    tools::log->trace("Significant digits: {}",std::floor(max_digits - lost_digits));
-    return digits = std::floor(max_digits - lost_digits);
-}
+//
+//double tools::finite::measure::multisite::internal::significant_digits(double H2, double E2){
+//    double max_digits    = std::numeric_limits<double>::max_digits10;
+//    double lost_bits     = -std::log2(1.0 - std::abs(std::min(H2,E2)/std::max(H2,E2)));
+//    double lost_digits   = std::log10(std::pow(2.0,lost_bits));
+////    tools::log->trace("Significant digits: {}",std::floor(max_digits - lost_digits));
+//    return digits = std::floor(max_digits - lost_digits);
+//}
 
 
 

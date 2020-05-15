@@ -10,68 +10,67 @@
 #undef I
 #include <general/nmspc_tensor_omp.h>
 #include <ceres/ceres.h>
-#include <simulation/enums.h>
+#include <config/enums.h>
 #include <tools/finite/opt-internals/enum_classes.h>
 
 class class_state_finite;
-class class_simulation_status;
+class class_model_finite;
+class class_edges_finite;
+class class_tensors_finite;
+class class_algorithm_status;
 
 namespace tools::finite::opt{
     using Scalar = std::complex<double>;
-    extern Eigen::Tensor<Scalar,3> find_excited_state(const class_state_finite & state, const class_simulation_status & sim_status, OptMode optMode, OptSpace optSpace, OptType optType);
-    extern Eigen::Tensor<Scalar,4> find_ground_state (const class_state_finite & state, StateRitz ritz);
-    extern void truncate_theta(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
-    extern void truncate_left (const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
-    extern void truncate_right(const Eigen::Tensor<Scalar,3> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
-    extern void truncate_theta(const Eigen::Tensor<Scalar,4> & theta, class_state_finite & state, std::optional<size_t> chi_lim = std::nullopt, std::optional<double> svd_threshold = std::nullopt);
+    extern Eigen::Tensor<Scalar,3> find_excited_state(const class_tensors_finite & tensors, const class_algorithm_status & status, OptMode optMode, OptSpace optSpace, OptType optType);
+    extern Eigen::Tensor<Scalar,4> find_ground_state (const class_tensors_finite & tensors, StateRitz ritz);
 }
 
 
 
 namespace tools::finite::opt::internal{
-        extern Eigen::Tensor<std::complex<double>,3> old_subspace_optimization(const class_state_finite &state,
-                                                                               const class_simulation_status &sim_status,
+        extern Eigen::Tensor<std::complex<double>,3> old_subspace_optimization(const class_tensors_finite & tensors,
+                                                                               const class_algorithm_status &status,
                                                                                OptType optType, OptMode optMode);
-        extern Eigen::Tensor<std::complex<double>,3> old_direct_optimization(const class_state_finite &state,
-                                                                             const class_simulation_status &sim_status,
+        extern Eigen::Tensor<std::complex<double>,3> old_direct_optimization(const class_tensors_finite & tensors,
+                                                                             const class_algorithm_status &status,
                                                                              OptType optType);
-        extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_state_finite &state,
-                                                                               const class_simulation_status &sim_status,
+        extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_tensors_finite & tensors,
+                                                                               const class_algorithm_status &status,
                                                                                OptType optType, OptMode optMode,OptSpace optSpace);
-        extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_state_finite &state,
+        extern Eigen::Tensor<std::complex<double>,3> ceres_direct_optimization(const class_tensors_finite & tensors,
                                                                                const Eigen::Tensor<std::complex<double>,3> &theta,
-                                                                               const class_simulation_status &sim_status,
+                                                                               const class_algorithm_status &status,
                                                                                OptType optType, OptMode optMode,OptSpace optSpace);
-        extern Eigen::Tensor<std::complex<double>,3> ceres_subspace_optimization   (const class_state_finite & state,
-                                                                                    const class_simulation_status & sim_status,
+        extern Eigen::Tensor<std::complex<double>,3> ceres_subspace_optimization   (const class_tensors_finite & tensors,
+                                                                                    const class_algorithm_status & status,
                                                                                     OptType optType, OptMode optMode,OptSpace optSpace);
-        extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_state_finite & state, const class_simulation_status & sim_status);
-        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_state_finite & state, StateRitz ritz);
-        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_state_finite & state, std::string_view ritz);
-        extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const class_state_finite & state, OptType optType, OptMode optMode, OptSpace optSpace);
+        extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const class_tensors_finite & tensors, const class_algorithm_status & status);
+        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_tensors_finite & tensors, StateRitz ritz);
+        extern Eigen::Tensor<std::complex<double>,4> ground_state_optimization   (const class_tensors_finite & tensors, std::string_view ritz);
+        extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const class_tensors_finite & tensors, OptType optType, OptMode optMode, OptSpace optSpace);
         extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const class_state_finite & state);
 
         namespace local_hamiltonians{
-            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_tensor(const class_state_finite & state);
-            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_squared_tensor(const class_state_finite & state);
-            extern Eigen::MatrixXcd                        get_multi_hamiltonian_matrix(const class_state_finite & state);
-            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_matrix(const class_state_finite & state);
-            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs );
-            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs );
+            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_tensor(const class_model_finite & model, const class_edges_finite & edges);
+            extern Eigen::Tensor<std::complex<double>,6>   get_multi_hamiltonian_squared_tensor(const class_model_finite & model, const class_edges_finite & edges);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_matrix(const class_model_finite & model, const class_edges_finite & edges);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_matrix(const class_model_finite & model, const class_edges_finite & edges);
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix(const class_model_finite & model, const class_edges_finite & edges, const Eigen::MatrixXcd & eigvecs );
+            extern Eigen::MatrixXcd                        get_multi_hamiltonian_squared_subspace_matrix_new(const class_model_finite & model, const class_edges_finite & edges, const Eigen::MatrixXcd & eigvecs );
         }
 
         template <typename T>
-        Eigen::Tensor<T,6> get_multi_hamiltonian_tensor(const class_state_finite & state);
+        Eigen::Tensor<T,6> get_multi_hamiltonian_tensor(const class_model_finite & model, const class_edges_finite & edges);
         template <typename T>
-        Eigen::Tensor<T,6> get_multi_hamiltonian_squared_tensor(const class_state_finite & state);
+        Eigen::Tensor<T,6> get_multi_hamiltonian_squared_tensor(const class_model_finite & model, const class_edges_finite & edges);
         template <typename T>
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_matrix(const class_state_finite & state);
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_matrix(const class_model_finite & model, const class_edges_finite & edges);
         template <typename T>
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_matrix(const class_state_finite & state);
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_matrix(const class_model_finite & model, const class_edges_finite & edges);
         template <typename T>
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix(const class_model_finite & model, const class_edges_finite & edges, const Eigen::MatrixXcd & eigvecs);
         template <typename T>
-        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix_new(const class_state_finite & state, const Eigen::MatrixXcd & eigvecs);
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multi_hamiltonian_squared_subspace_matrix_new(const class_model_finite & model, const class_edges_finite & edges, const Eigen::MatrixXcd & eigvecs);
 
 
         inline ceres::GradientProblemSolver::Options ceres_default_options;
@@ -129,7 +128,7 @@ namespace tools::finite::opt::internal{
             OMP omp;
 
         public:
-            explicit ceres_base_functor(const class_state_finite & state, const class_simulation_status &sim_status);
+            explicit ceres_base_functor(const class_tensors_finite & tensors, const class_algorithm_status &status);
 
             double get_variance   () const;
             double get_energy     () const;

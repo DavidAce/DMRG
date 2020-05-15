@@ -5,19 +5,20 @@
 #pragma once
 
 #include <algorithms/class_algorithm_base.h>
-
-class class_h5table_measurements_infinite;
+#include <tensors/class_tensors_infinite.h>
 class class_state_infinite;
+class class_model_infinite;
+class class_edges_infinite;
 
 class class_algorithm_infinite: public class_algorithm_base {
 public:
     //Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
     explicit class_algorithm_infinite(
-            std::shared_ptr<h5pp::File> h5ppFile_,
-            SimulationType sim_type
+            std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType sim_type
     );
-    std::shared_ptr<class_state_infinite> state;
+    class_tensors_infinite tensors;
+//    std::shared_ptr<class_state_infinite> state;
     // Tables
 //    std::shared_ptr<class_h5table_buffer<class_h5table_measurements_infinite>>  h5tbuf_measurements; //Written every iteration
 

@@ -8,7 +8,7 @@
 #include <h5pp/details/h5ppHid.h>
 #include <hdf5.h>
 #include <hdf5_hl.h>
-#include <simulation/class_simulation_status.h>
+#include <algorithms/class_algorithm_status.h>
 #include <vector>
 
 class h5pp_table_measurements_finite {
@@ -201,12 +201,12 @@ class h5pp_table_profiling {
     }
 };
 
-class h5pp_table_sim_status {
+class h5pp_table_algorithm_status {
     public:
     static inline h5pp::hid::h5t h5_type;
-    using table = class_simulation_status;
+    using table = class_algorithm_status;
 
-    h5pp_table_sim_status() { register_table_type(); }
+    h5pp_table_algorithm_status() { register_table_type(); }
     static void register_table_type() {
         if(h5_type.valid()) return;
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
@@ -230,17 +230,17 @@ class h5pp_table_sim_status {
         H5Tinsert(h5_type, "wall_time", HOFFSET(table, wall_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "simu_time", HOFFSET(table, simu_time), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "delta_t", HOFFSET(table, delta_t), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "simulation_has_stuck_for", HOFFSET(table, simulation_has_stuck_for), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "simulation_has_stuck_for", HOFFSET(table, algorithm_has_stuck_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "entanglement_saturated_for", HOFFSET(table, entanglement_saturated_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "variance_mpo_saturated_for", HOFFSET(table, variance_mpo_saturated_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "variance_ham_saturated_for", HOFFSET(table, variance_ham_saturated_for), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "variance_mom_saturated_for", HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "simulation_has_finished", HOFFSET(table, simulation_has_finished), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "simulation_has_converged", HOFFSET(table, simulation_has_converged), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "simulation_has_saturated", HOFFSET(table, simulation_has_saturated), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "simulation_has_succeeded", HOFFSET(table, simulation_has_succeeded), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "simulation_has_got_stuck", HOFFSET(table, simulation_has_got_stuck), H5T_NATIVE_UINT8);
-        H5Tinsert(h5_type, "simulation_has_to_stop", HOFFSET(table, simulation_has_to_stop), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_finished", HOFFSET(table,  algorithm_has_finished), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_converged", HOFFSET(table, algorithm_has_converged), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_saturated", HOFFSET(table, algorithm_has_saturated), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_succeeded", HOFFSET(table, algorithm_has_succeeded), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_got_stuck", HOFFSET(table, algorithm_has_got_stuck), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "algorithm_has_to_stop", HOFFSET(table, algorithm_has_to_stop), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "chi_lim_has_reached_chi_max", HOFFSET(table, chi_lim_has_reached_chi_max), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "entanglement_has_converged", HOFFSET(table, entanglement_has_converged), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "entanglement_has_saturated", HOFFSET(table, entanglement_has_saturated), H5T_NATIVE_UINT8);

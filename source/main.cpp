@@ -7,7 +7,7 @@
 #include <io/nmspc_logger.h>
 #include <iostream>
 #include <math/nmspc_random.h>
-#include <simulation/nmspc_settings.h>
+#include <config/nmspc_settings.h>
 #include <tools/common/log.h>
 #ifdef _OPENMP
     #include <omp.h>
@@ -31,7 +31,7 @@
 #include <thread>
 
 #include <csignal>
-#include <simulation/class_dmrg_config.h>
+#include <config/class_dmrg_config.h>
 
 void signal_callback_handler(int signum) {
     switch(signum) {
