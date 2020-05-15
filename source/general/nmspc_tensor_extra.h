@@ -338,7 +338,7 @@ namespace Textra {
 
     template<typename Derived>
     bool hasNaN(const Eigen::EigenBase<Derived> &obj,[[maybe_unused]]const std::string &name = "") {
-        return obj.derived().hasNaN();
+        return obj.derived(). has_nan();
     }
 
 

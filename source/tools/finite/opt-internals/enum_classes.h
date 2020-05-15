@@ -85,7 +85,6 @@ namespace tools::finite::opt{
 
     };
 
-
     class OptSpace{
         private:
         enum class EnumSpace : int {SUBSPACE_ONLY, DIRECT, SUBSPACE_AND_DIRECT};

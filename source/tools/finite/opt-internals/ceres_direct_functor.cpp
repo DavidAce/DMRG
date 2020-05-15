@@ -3,7 +3,10 @@
 //
 
 #include "ceres_direct_functor.h"
-#include <state/class_state_finite.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/model/class_model_finite.h>
+#include <tensors/edges/class_edges_finite.h>
+#include <tensors/class_tensors_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <math/nmspc_math.h>
@@ -12,9 +15,9 @@ using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
 ceres_direct_functor<Scalar>::ceres_direct_functor(
-        const class_state_finite & state,
-        const class_simulation_status & sim_status)
-        : ceres_base_functor(state,sim_status)
+        const class_tensors_finite & tensors,
+        const class_algorithm_status & status)
+        : ceres_base_functor(tensors,status)
 {
     tools::log->trace("Constructing direct functor");
 
@@ -22,26 +25,29 @@ ceres_direct_functor<Scalar>::ceres_direct_functor(
         tools::log->trace("Parallelizing with {} threads", omp.num_threads);
     #endif
     tools::log->trace("Generating multi components");
-    energy_reduced  = state.get_energy_reduced();
-    if constexpr (std::is_same<Scalar,double>::value){
-        mpo               = state.get_multimpo().real();
-        auto & envL_cplx  = state.get_ENVL (state.active_sites.front());
-        auto & envR_cplx  = state.get_ENVR (state.active_sites.back());
-        auto & env2L_cplx = state.get_ENV2L(state.active_sites.front());
-        auto & env2R_cplx = state.get_ENV2R(state.active_sites.back());
+    const auto & state = *tensors.state;
+    const auto & model = *tensors.model;
+    const auto & edges = *tensors.edges;
 
-        envL  = envL_cplx.block.real();         envR  = envR_cplx.block.real();
-        env2L = env2L_cplx.block.real();        env2R = env2R_cplx.block.real();
+    energy_reduced  = model.get_energy_reduced();
+    if constexpr (std::is_same<Scalar,double>::value){
+        mpo               = model.get_multisite_mpo().real();
+        const auto & env_ene = edges.get_multisite_ene_blk();
+        const auto & env_var = edges.get_multisite_var_blk();
+        envL = env_ene.L.real();
+        envR = env_ene.R.real();
+        env2L = env_var.L.real();
+        env2R = env_var.R.real();
     }
 
     if constexpr (std::is_same<Scalar,std::complex<double>>::value){
-        mpo               = state.get_multimpo();
-        auto & envL_cplx  = state.get_ENVL (state.active_sites.front());
-        auto & envR_cplx  = state.get_ENVR (state.active_sites.back());
-        auto & env2L_cplx = state.get_ENV2L(state.active_sites.front());
-        auto & env2R_cplx = state.get_ENV2R(state.active_sites.back());
-        envL  = envL_cplx.block;         envR  = envR_cplx.block;
-        env2L = env2L_cplx.block;        env2R = env2R_cplx.block;
+        mpo               = model.get_multisite_mpo();
+        const auto & env_ene = edges.get_multisite_ene_blk();
+        const auto & env_var = edges.get_multisite_var_blk();
+        envL = env_ene.L;
+        envR = env_ene.R;
+        env2L = env_var.L;
+        env2R = env_var.R;
     }
 
     dsizes        = state.active_dimensions();

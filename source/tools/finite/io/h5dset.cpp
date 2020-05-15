@@ -3,11 +3,12 @@
 //
 
 #include <h5pp/h5pp.h>
-#include <model/class_mpo_factory.h>
 #include <regex>
-#include <simulation/class_simulation_status.h>
-#include <simulation/nmspc_settings.h>
-#include <state/class_state_finite.h>
+#include <algorithms/class_algorithm_status.h>
+#include <config/nmspc_settings.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/model/class_model_finite.h>
+#include <tensors/model/class_mpo_factory.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/io.h>
@@ -24,7 +25,7 @@ int tools::finite::io::h5dset::decide_layout(std::string_view prefix_path) {
         return H5D_CHUNKED;
 }
 
-void tools::finite::io::h5dset::write_mps(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
+void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::string &state_prefix, const StorageLevel &storage_level,
                                           const class_state_finite &state) {
     if(storage_level == StorageLevel::NONE) return;
 
@@ -52,14 +53,14 @@ void tools::finite::io::h5dset::write_mps(h5pp::File &h5ppFile, const std::strin
     std::string mps_path = state_prefix + "/mps";
     for(size_t pos = 0; pos < state.get_length(); pos++) {
         dsetName = mps_path + "/L_" + std::to_string(pos);
-        h5ppFile.writeDataset(state.get_MPS(pos).get_L(), dsetName, layout);
+        h5ppFile.writeDataset(state.get_mps(pos).get_L(), dsetName, layout);
         h5ppFile.writeAttribute(pos, "position", dsetName);
-        h5ppFile.writeAttribute(state.get_MPS(pos).get_L().dimensions(), "dimensions", dsetName);
-        if(state.get_MPS(pos).isCenter()) {
+        h5ppFile.writeAttribute(state.get_mps(pos).get_L().dimensions(), "dimensions", dsetName);
+        if(state.get_mps(pos).isCenter()) {
             dsetName = mps_path + "/L_C";
-            h5ppFile.writeDataset(state.get_MPS(pos).get_LC(), dsetName, layout);
+            h5ppFile.writeDataset(state.get_mps(pos).get_LC(), dsetName, layout);
             h5ppFile.writeAttribute(pos, "position", dsetName);
-            h5ppFile.writeAttribute(state.get_MPS(pos).get_LC().dimensions(), "dimensions", dsetName);
+            h5ppFile.writeAttribute(state.get_mps(pos).get_LC().dimensions(), "dimensions", dsetName);
         }
     }
     h5ppFile.writeAttribute(state.get_length(), "model_size", mps_path);
@@ -77,24 +78,24 @@ void tools::finite::io::h5dset::write_mps(h5pp::File &h5ppFile, const std::strin
     tools::common::profile::t_hdf->tic();
     for(size_t pos = 0; pos < state.get_length(); pos++) {
         dsetName = mps_path + "/M_" + std::to_string(pos);
-        h5ppFile.writeDataset(state.get_MPS(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
+        h5ppFile.writeDataset(state.get_mps(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
         h5ppFile.writeAttribute(pos, "position", dsetName);
-        h5ppFile.writeAttribute(state.get_MPS(pos).get_M_bare().dimensions(), "dimensions", dsetName);
+        h5ppFile.writeAttribute(state.get_mps(pos).get_M_bare().dimensions(), "dimensions", dsetName);
     }
     tools::common::profile::t_hdf->toc();
 }
 
 /*! Write all the MPO's with site info in attributes */
-void tools::finite::io::h5dset::write_mpo(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level,
-                                          const class_state_finite &state) {
+void tools::finite::io::h5dset::write_model(h5pp::File &h5ppFile, const std::string &model_prefix, const StorageLevel &storage_level,
+                                          const class_model_finite &model) {
     if(storage_level < StorageLevel::FULL) return;
     // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
     if(h5ppFile.linkExists(model_prefix + "/mpo")) return tools::log->trace("The MPO's have already been written to [{}]", model_prefix + "/mpo");
 
     tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2str(storage_level));
     tools::common::profile::t_hdf->tic();
-    for(size_t pos = 0; pos < state.get_length(); pos++) {
-        state.get_MPO(pos).write_mpo(h5ppFile, model_prefix);
+    for(size_t pos = 0; pos < model.get_length(); pos++) {
+        model.get_mpo(pos).write_mpo(h5ppFile, model_prefix);
     }
     h5ppFile.writeAttribute(settings::model::model_size, "model_size", model_prefix + "/mpo");
     h5ppFile.writeAttribute(enum2str(settings::model::model_type), "model_type", model_prefix + "/mpo");

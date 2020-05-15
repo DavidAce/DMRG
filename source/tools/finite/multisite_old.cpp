@@ -8,25 +8,25 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <general/nmspc_tensor_extra.h>
-#include <simulation/nmspc_settings.h>
-#include <state/class_state_finite.h>
+#include <config/nmspc_settings.h>
+#include <tensors/state/class_state_finite.h>
 
 Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state_finite &state, const std::list<size_t> &list_of_sites){
     if (list_of_sites.empty()) return  Eigen::DSizes<long,3>{0,0,0};
     Eigen::DSizes<long,3> dimensions;
     int direction = list_of_sites.back() >= list_of_sites.front() ? 1 : -1;
     if (direction == 1){
-        dimensions[1] = state.get_MPS(list_of_sites.front()).get_M().dimension(1);
-        dimensions[2] = state.get_MPS(list_of_sites.back()) .get_M().dimension(2);
+        dimensions[1] = state.get_mps(list_of_sites.front()).get_M().dimension(1);
+        dimensions[2] = state.get_mps(list_of_sites.back()) .get_M().dimension(2);
     }
     else{
-        dimensions[1] = state.get_MPS(list_of_sites.back()) .get_M().dimension(1);
-        dimensions[2] = state.get_MPS(list_of_sites.front()).get_M().dimension(2);
+        dimensions[1] = state.get_mps(list_of_sites.back()) .get_M().dimension(1);
+        dimensions[2] = state.get_mps(list_of_sites.front()).get_M().dimension(2);
     }
 
     dimensions[0] = 1;
     for (auto & site : list_of_sites){
-        dimensions[0] *= state.get_MPS(site).get_M().dimension(0);
+        dimensions[0] *= state.get_mps(site).get_M().dimension(0);
     }
     return dimensions;
 }

@@ -33,29 +33,32 @@ class DenseHamiltonianProduct {
     private:
     const Scalar_ *            Lblock;
     const Scalar_ *            Rblock;
-    const Scalar_ *            HA;
-    const Scalar_ *            HB;
-    std::array<long, 4>        shape_theta4;
-    std::array<long, 2>        shape_theta2;
-    std::array<long, 1>        shape_theta1;
-    std::array<long, 4>        shape_mpo4;
+    const Scalar_ *            mpo;
+    std::array<long, 3>        shape_mps;
+    std::array<long, 4>        shape_mpo;
+    int                        mps_size;
     eigutils::eigSetting::Form form = eigutils::eigSetting::Form::SYMMETRIC;
     eigutils::eigSetting::Side side = eigutils::eigSetting::Side::R;
-    std::shared_ptr<OMP> omp;
-    int num_threads = 1; /*!< Number of threads */
+    std::shared_ptr<OMP>       omp;
+    int                        num_threads = 1; /*!< Number of threads */
     public:
-    DenseHamiltonianProduct(const Scalar_ *           Lblock_,        /*!< The left block tensor.  */
-                            const Scalar_ *           Rblock_,        /*!< The right block tensor.  */
-                            const Scalar_ *           HA_,            /*!< The left Hamiltonian MPO's  */
-                            const Scalar_ *           HB_,            /*!< The right Hamiltonian MPO's */
-                            const std::array<long, 4> shape_theta4_,  /*!< An array containing the shapes of theta  */
-                            const std::array<long, 4> shape_mpo4_,    /*!< An array containing the shapes of the MPO  */
+    DenseHamiltonianProduct(const Scalar_ *           Lblock_,         /*!< The left block tensor.  */
+                            const Scalar_ *           Rblock_,         /*!< The right block tensor.  */
+                            const Scalar_ *           mpo_,            /*!< The Hamiltonian MPO's  */
+                            const std::array<long, 3> shape_mps_,      /*!< An array containing the shapes of theta  */
+                            const std::array<long, 4> shape_mpo_,      /*!< An array containing the shapes of the MPO  */
                             const int                 num_threads_ = 1 /*!< Number of threads */
-    );
+                            )
+        : Lblock(Lblock_), Rblock(Rblock_), mpo(mpo_), shape_mps(shape_mps_), shape_mpo(shape_mpo_), num_threads(num_threads_) {
+        t_mul.set_properties(profile_matrix_product_hamiltonian, 10, "Time multiplying");
+        if(Lblock == nullptr) throw std::runtime_error("Lblock is a nullptr!");
+        if(Rblock == nullptr) throw std::runtime_error("Rblock is a nullptr!");
+        if(mpo == nullptr) throw std::runtime_error("mpo is a nullptr!");
+    }
 
     // Functions used in in Arpack++ solver
-    int rows() const { return (int) shape_theta1[0]; }; /*!< The "matrix" \f$ H \f$ a has rows = columns = \f$d^2 \times \chi_L \times \chi_R \f$  */
-    int cols() const { return (int) shape_theta1[0]; }; /*!< The "matrix" \f$ H \f$ a has rows = columns = \f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] int rows() const { return mps_size; }; /*!< The "matrix" \f$ H \f$ a has rows = columns = \f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] int cols() const { return mps_size; }; /*!< The "matrix" \f$ H \f$ a has rows = columns = \f$d^2 \times \chi_L \times \chi_R \f$  */
 
     void MultAx(Scalar_ *theta_in_, Scalar_ *theta_out_); //   Computes the matrix-vector multiplication x_out <- A*x_in.
 
@@ -70,22 +73,3 @@ class DenseHamiltonianProduct {
     // Profiling
     class_tic_toc t_mul;
 };
-
-template<typename T>
-DenseHamiltonianProduct<T>::DenseHamiltonianProduct(const Scalar *            Lblock_,       /*!< The left block tensor.  */
-                                                    const Scalar *            Rblock_,       /*!< The right block tensor.  */
-                                                    const Scalar *            HA_,           /*!< The left Hamiltonian MPO's  */
-                                                    const Scalar *            HB_,           /*!< The right Hamiltonian MPO's */
-                                                    const std::array<long, 4> shape_theta4_, /*!< An array containing the shapes of theta  */
-                                                    const std::array<long, 4> shape_mpo4_,   /*!< An array containing the shapes of the MPO  */
-                                                    const int                 num_threads_)
-    : Lblock(Lblock_), Rblock(Rblock_), HA(HA_), HB(HB_), shape_theta4(shape_theta4_),
-      shape_theta2({shape_theta4[0] * shape_theta4[1], shape_theta4[2] * shape_theta4[3]}),
-      shape_theta1({shape_theta4[0] * shape_theta4[1] * shape_theta4[2] * shape_theta4[3]}), shape_mpo4(shape_mpo4_), num_threads(num_threads_)
-{
-    t_mul.set_properties(profile_matrix_product_hamiltonian, 10, "Time multiplying");
-    if(Lblock == nullptr) throw std::runtime_error("Lblock is a nullptr!");
-    if(Rblock == nullptr) throw std::runtime_error("Rblock is a nullptr!");
-    if(HA == nullptr) throw std::runtime_error("HA is a nullptr!");
-    if(HB == nullptr) throw std::runtime_error("HB is a nullptr!");
-}

@@ -21,7 +21,7 @@ namespace tools::finite::opt::internal{
             void get_Hv   (const VectorType &v) const;
             void get_H2v  (const VectorType &v) const;
         public:
-            explicit ceres_direct_functor(const class_state_finite & state, const class_simulation_status &sim_status);
+            explicit ceres_direct_functor(const class_tensors_finite & tensors, const class_algorithm_status &status);
             bool Evaluate(const double* v_double_double,
                           double* fx,
                           double* grad_double_double) const final;

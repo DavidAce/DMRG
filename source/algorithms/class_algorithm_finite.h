@@ -5,8 +5,7 @@
 #pragma once
 
 #include <algorithms/class_algorithm_base.h>
-
-//class class_h5table_measurements_finite;
+#include <tensors/class_tensors_finite.h>
 class class_state_finite;
 class class_model_finite;
 class class_edges_finite;
@@ -16,12 +15,13 @@ class class_algorithm_finite : public class_algorithm_base {
     public:
     // Inherit the constructor of class_algorithm_base
     using class_algorithm_base::class_algorithm_base;
-    explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, SimulationType sim_type);
+    explicit class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
     ~class_algorithm_finite(); // Read comment on implementation
+//    std::unique_ptr<class_state_finite> state;// The finite chain state
+//    std::unique_ptr<class_model_finite> model;// The finite chain model
+//    std::unique_ptr<class_edges_finite> edges;// The finite chain edges
+    class_tensors_finite tensors; // State, model and edges
 
-    std::unique_ptr<class_state_finite> state;// The finite chain state
-    std::unique_ptr<class_model_finite> model;// The finite chain model
-    std::unique_ptr<class_edges_finite> edges;// The finite chain edges
     size_t state_number = 0;
 
     // Control behavior when stuck
@@ -49,10 +49,10 @@ class class_algorithm_finite : public class_algorithm_base {
     virtual void run_preprocessing();
     virtual void run_postprocessing();
     virtual bool store_wave_function() = 0;
-    void         try_projection();
-    void         try_bond_dimension_quench();
-    void         try_hamiltonian_perturbation();
-    void         try_disorder_damping();
+    void         try_projection(class_state_finite & state);
+    void         try_bond_dimension_quench(class_state_finite & state);
+    void         try_hamiltonian_perturbation(class_state_finite & state);
+    void         try_disorder_damping(class_model_finite & model);
     void         move_center_point(std::optional<size_t> num_moves = std::nullopt);
     void         update_truncation_limit() final;
     void         update_bond_dimension_limit(std::optional<long> tmp_bond_limit = std::nullopt) final;
@@ -63,7 +63,7 @@ class class_algorithm_finite : public class_algorithm_base {
     void         reset_to_random_current_state(std::optional<double> chi_lim = std::nullopt) final;
     void         reset_to_initial_state() final;
     void         write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
-    void         copy_from_tmp      (StorageReason storage_reason = StorageReason::CHECKPOINT) final;
+    void         copy_from_tmp(StorageReason storage_reason = StorageReason::CHECKPOINT) final;
     void         print_status_update() final;
     void         print_status_full() final;
     void         check_convergence_variance(double threshold = quietNaN, double slope_threshold = quietNaN);

@@ -15,8 +15,8 @@ namespace tools::finite::opt::internal{
             const MatrixType       &H2;
             const Eigen::VectorXd  &eigvals;
         public:
-            explicit ceres_subspace_functor(const class_state_finite & state,
-                                            const class_simulation_status & sim_status,
+            explicit ceres_subspace_functor(const class_tensors_finite & tensors,
+                                            const class_algorithm_status & status,
                                             const MatrixType & H2_subspace_,
                                             const Eigen::VectorXd  & eigvals_);
             bool Evaluate(const double* v_double_double,

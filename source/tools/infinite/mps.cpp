@@ -2,10 +2,10 @@
 // Created by david on 2019-06-25.
 //
 
-#include <simulation/nmspc_settings.h>
-#include <state/class_mps_2site.h>
-#include <state/class_mps_site.h>
-#include <state/class_state_infinite.h>
+#include <config/nmspc_settings.h>
+#include <tensors/state/class_mps_2site.h>
+#include <tensors/state/class_mps_site.h>
+#include <tensors/state/class_state_infinite.h>
 #include <tools/common/log.h>
 #include <tools/infinite/mps.h>
 
@@ -30,7 +30,7 @@ void tools::infinite::mps::initialize(class_state_infinite &state, ModelType mod
     state.MPS->MPS_A->set_LC(L);
 }
 
-// void tools::infinite::mps::rebuild_environments(class_state_infinite & state){
+// void tools::infinite::mps::rebuild_edges(class_state_infinite & state){
 //
 //}
 

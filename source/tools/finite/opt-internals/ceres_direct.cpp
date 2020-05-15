@@ -4,22 +4,27 @@
 
 #include "ceres_direct_functor.h"
 #include <general/class_tic_toc.h>
-#include <simulation/class_simulation_status.h>
-#include <simulation/nmspc_settings.h>
-#include <state/class_state_finite.h>
+#include <algorithms/class_algorithm_status.h>
+#include <config/nmspc_settings.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/class_tensors_finite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/measure.h>
 
-Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite &     state,
-                                                                                                     const class_simulation_status &sim_status, OptType optType,
+Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &tensors,
+                                                                                                     const class_algorithm_status &status, OptType optType,
                                                                                                      OptMode optMode, OptSpace optSpace) {
-    return ceres_direct_optimization(state, state.get_multisite_mps(), sim_status, optType, optMode, optSpace);
+    return ceres_direct_optimization(tensors, tensors.state->get_multisite_mps(), status, optType, optMode, optSpace);
 }
 
 Eigen::Tensor<class_state_finite::Scalar, 3>
-    tools::finite::opt::internal::ceres_direct_optimization(const class_state_finite &state, const Eigen::Tensor<class_state_finite::Scalar, 3> &theta_initial,
-                                                            const class_simulation_status &sim_status, OptType optType, OptMode optMode, OptSpace optSpace) {
+    tools::finite::opt::internal::ceres_direct_optimization(const class_tensors_finite &tensors, const Eigen::Tensor<class_state_finite::Scalar, 3> &theta_initial,
+                                                            const class_algorithm_status &status, OptType optType, OptMode optMode, OptSpace optSpace) {
+    const auto & state = *tensors.state;
+    const auto & model = *tensors.model;
+    const auto & edges = *tensors.edges;
+
     tools::log->trace("Optimizing in DIRECT mode");
     tools::common::profile::t_opt->tic();
     using Scalar                    = std::complex<double>;
@@ -29,16 +34,16 @@ Eigen::Tensor<class_state_finite::Scalar, 3>
     class_tic_toc t_local(true, 5, "");
     if(tools::log->level() <= spdlog::level::debug and optSpace == OptSpace::DIRECT) {
         t_local.tic();
-        double energy_old   = tools::finite::measure::energy_per_site(state);
-        double variance_old = tools::finite::measure::energy_variance_per_site(state);
+        double energy_old   = tools::finite::measure::energy_per_site(tensors);
+        double variance_old = tools::finite::measure::energy_variance_per_site(tensors);
         t_local.toc();
         reports::bfgs_log.emplace_back("Current state", theta_old.size(), 0, energy_old, std::log10(variance_old), 1.0, theta_old_vec.norm(), 1, 1,
                                        t_local.get_last_time_interval());
     }
     if(tools::log->level() <= spdlog::level::trace and optSpace == OptSpace::DIRECT and settings::debug) {
         t_local.tic();
-        double energy_initial   = tools::finite::measure::multisite::energy_per_site(state, theta_initial);
-        double variance_initial = tools::finite::measure::multisite::energy_variance_per_site(state, theta_initial);
+        double energy_initial   = tools::finite::measure::energy_per_site(theta_initial,model,edges);
+        double variance_initial = tools::finite::measure::energy_variance_per_site(theta_initial,model,edges);
         t_local.toc();
         reports::bfgs_log.emplace_back("Initial guess", theta_initial.size(), 0, energy_initial, std::log10(variance_initial), 1.0, theta_initial_vec.norm(), 1,
                                        1, t_local.get_last_time_interval());
@@ -58,7 +63,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3>
             case OptType::CPLX: {
                 Eigen::VectorXd theta_start_cast =
                     Eigen::Map<const Eigen::VectorXd>(reinterpret_cast<const double *>(theta_initial_vec.data()), 2 * theta_initial_vec.size());
-                auto *                 functor = new ceres_direct_functor<std::complex<double>>(state, sim_status);
+                auto *                 functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running L-BFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
@@ -71,7 +76,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3>
             }
             case OptType::REAL: {
                 Eigen::VectorXd        theta_start_cast = theta_initial_vec.real();
-                auto *                 functor          = new ceres_direct_functor<double>(state, sim_status);
+                auto *                 functor          = new ceres_direct_functor<double>(tensors, status);
                 ceres::GradientProblem problem(functor);
                 tools::log->trace("Running L-BFGS");
                 ceres::Solve(options, problem, theta_start_cast.data(), &summary);
@@ -93,8 +98,8 @@ Eigen::Tensor<class_state_finite::Scalar, 3>
         if(tools::log->level() <= spdlog::level::trace and optSpace == OptSpace::DIRECT and settings::debug) {
             t_local.tic();
             auto   theta_new_map = Textra::MatrixTensorMap(theta_new, state.active_dimensions());
-            double energy_new    = tools::finite::measure::energy_per_site(state, theta_new_map);
-            double variance_new  = tools::finite::measure::energy_variance_per_site(state, theta_new_map);
+            double energy_new    = tools::finite::measure::energy_per_site(theta_new_map,tensors);
+            double variance_new  = tools::finite::measure::energy_variance_per_site(theta_new_map, tensors);
             t_local.toc();
             reports::bfgs_log.emplace_back("LBFGS check", theta_new.size(), 0, energy_new, std::log10(variance_new), overlap_new, theta_new.norm(), 1, 1,
                                            t_local.get_last_time_interval());

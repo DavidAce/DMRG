@@ -2,7 +2,7 @@
 // Created by david on 2019-06-08.
 //
 
-#include <simulation/nmspc_settings.h>
+#include <config/nmspc_settings.h>
 #include <tools/common/prof.h>
 #include <tools/common/log.h>
 #include <fstream>

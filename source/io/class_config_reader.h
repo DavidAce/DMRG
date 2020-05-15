@@ -11,7 +11,7 @@
 #include <io/nmspc_logger.h>
 #include <iomanip>
 #include <iostream>
-#include <simulation/enums.h>
+#include <config/enums.h>
 #include <string>
 #include <tools/common/log.h>
 

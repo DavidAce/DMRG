@@ -73,7 +73,7 @@ DenseMatrixProduct<double> matrix_recast<Scalar>::get_as_real_dense() {
         if (pruned){return DenseMatrixProduct<double>(matrix_pruned.data(),L,true);}
         else       {return DenseMatrixProduct<double>(matrix_ptr,L,true);}
     }else{
-//        assert(isReal and "ERROR: The given matrix has a nonzero imaginary part. Can't convert to real.");
+//        assert(is_real and "ERROR: The given matrix has a nonzero imaginary part. Can't convert to real.");
         if (not isReal){
             double sum = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic,Eigen::Dynamic>> (matrix_ptr,L,L).imag().cwiseAbs().sum();
             std::cerr << "WARNING: The given matrix has a nonzero imaginary part, yet converting to real. Imag sum: " << sum << std::endl;

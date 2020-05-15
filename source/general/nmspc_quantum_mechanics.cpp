@@ -131,11 +131,13 @@ namespace qm::timeEvolution{
     }
 
 
-    std::vector<Eigen::Tensor<std::complex<double>,4>> get_2site_evolution_gates(const std::complex<double> t,const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
+    std::vector<Eigen::Tensor<std::complex<double>,2>> get_2site_evolution_gates(const std::complex<double> t,const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
     /*! Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3.
      * These gates need to be applied to the MPS one at a time with a swap in between.
      */
     {
+        long spin_dim_evn = h_evn.rows();
+        long spin_dim_odd = h_odd.rows();
         std::vector<Eigen::MatrixXcd> matrix_vec;
         switch (susuki_trotter_order) {
             case 1:  matrix_vec = Suzuki_Trotter_1st_order(t, h_evn, h_odd);break;
@@ -143,9 +145,9 @@ namespace qm::timeEvolution{
             case 4:  matrix_vec = Suzuki_Trotter_4th_order(t, h_evn, h_odd);break;
             default: matrix_vec = Suzuki_Trotter_2nd_order(t, h_evn, h_odd);break;
         }
-        std::vector<Eigen::Tensor<std::complex<double> ,4>> tensor_vec;
+        std::vector<Eigen::Tensor<std::complex<double> ,2>> tensor_vec;
         for(auto &m : matrix_vec){
-            tensor_vec.emplace_back(Textra::MatrixTensorMap(m, 2,2,2,2));
+            tensor_vec.emplace_back(Textra::MatrixTensorMap(m, spin_dim_evn,spin_dim_evn)); // spin_dim^2  *
         }
         return tensor_vec;
     }
@@ -158,17 +160,18 @@ namespace qm::timeEvolution{
 //        }
 
 
-    std::vector<Eigen::Tensor<std::complex<double>,4>> compute_G(const std::complex<double> a, const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
-    /*! Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 4 tensor.
+    std::vector<Eigen::Tensor<std::complex<double>,2>> compute_G(const std::complex<double> a, const size_t & susuki_trotter_order, const Eigen::MatrixXcd &h_evn, const Eigen::MatrixXcd &h_odd)
+    /*! Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 2 tensor.
+     *  The legs contain two physical spin indices each
     *   G := exp(iaM) or exp(aM), where a is a small parameter and M is an MPO.
     *   Note that G(-a) = G(a)* if  exp(iaM) !
     *
     @verbatim
-                0         1
-                |         |
+                     0
+                     |
                 [ exp(aH) ]
-                |         |
-                2         3
+                     |
+                     1
     @endverbatim
     */
     {

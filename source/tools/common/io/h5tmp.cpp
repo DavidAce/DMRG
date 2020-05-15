@@ -7,7 +7,7 @@
 #include <h5pp/h5pp.h>
 #include <io/nmspc_filesystem.h>
 #include <regex>
-#include <simulation/nmspc_settings.h>
+#include <config/nmspc_settings.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <chrono>

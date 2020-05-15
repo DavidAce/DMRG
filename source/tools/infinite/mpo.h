@@ -1,10 +1,10 @@
 #pragma once
-#include <simulation/enums.h>
+#include <config/enums.h>
 #include <string>
 
-class class_state_infinite;
+class class_model_infinite;
 
 namespace tools::infinite::mpo {
-    extern void initialize(class_state_infinite &state, ModelType model_type);
-    extern void randomize(class_state_infinite &state);
+    extern void initialize(class_model_infinite &state, ModelType model_type);
+    extern void randomize(class_model_infinite &model);
 }

@@ -5,35 +5,27 @@
 #include "class_algorithm_finite.h"
 #include <h5pp/h5pp.h>
 #include <math/nmspc_math.h>
-#include <simulation/nmspc_settings.h>
-#include <state/class_state_finite.h>
-#include <model/class_model_finite.h>
-#include <edges/class_edges_finite.h>
+#include <config/nmspc_settings.h>
+#include <tensors/class_tensors_finite.h>
+#include <tensors/state/class_state_finite.h>
+#include <tensors/model/class_model_finite.h>
+#include <tensors/edges/class_edges_finite.h>
 #include <tools/common/io.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite.h>
 
-class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, SimulationType sim_type)
-    : class_algorithm_base(std::move(h5ppFile_), sim_type) {
+class_algorithm_finite::class_algorithm_finite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type)
+    : class_algorithm_base(std::move(h5ppFile_), algo_type), tensors(settings::model::model_type,settings::model::model_size,0) {
     tools::log->trace("Constructing class_algorithm_finite");
-    state = std::make_unique<class_state_finite>();
-    model = std::make_unique<class_model_finite>();
-    edges = std::make_unique<class_edges_finite>();
-    state->set_chi_lim(2); // Can't call chi_init() <-- it's a pure virtual function
-    if(state->hasNaN()) throw std::runtime_error("State has NAN's before initializing it");
-
-    tools::finite::mps::initialize(*state, settings::model::model_type, settings::model::model_size, 0);
-    tools::finite::mpo::initialize(*model, settings::model::model_type, settings::model::model_size, 0);
-    tools::finite::mpo::randomize(*model);
-    tools::finite::mps::random_product_state(*state, settings::strategy::initial_parity_sector, settings::input::bitfield,
+    tools::finite::mpo::randomize(*tensors.model);
+    tools::finite::mps::random_product_state(*tensors.state, settings::strategy::initial_parity_sector, settings::input::bitfield,
                                              settings::strategy::use_pauli_eigvecs);
-    tools::finite::debug::check_integrity(*state);
-    S_mat.resize(state->get_length() + 1);
-    X_mat.resize(state->get_length() + 1);
-
-    tools::finite::print::print_hamiltonians(*state);
-    tools::finite::print::print_system(*state);
+    tools::finite::debug::check_integrity(*tensors.state,*tensors.model,*tensors.edges);
+    S_mat.resize(tensors.get_length() + 1);
+    X_mat.resize(tensors.get_length() + 1);
+    tools::finite::print::dimensions(*tensors.model);
+    tools::finite::print::dimensions(tensors);
 }
 
 
@@ -74,7 +66,7 @@ class_algorithm_finite::~class_algorithm_finite() = default;
 
  */
 void class_algorithm_finite::run() {
-    tools::log->info("Starting {}", sim_name);
+    tools::log->info("Starting {}", algo_name);
     tools::common::profile::t_tot->tic();
     if(settings::output::file_collision_policy == FileCollisionPolicy::RESUME and h5pp_file->linkExists("common/storage_level")) {
         // We may want to resume this simulation.
@@ -88,18 +80,18 @@ void class_algorithm_finite::run() {
         // To guide the behavior, we check the setting ResumePolicy.
 
         try {
-            auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, sim_name);
+            auto state_prefix = tools::common::io::h5resume::find_resumable_state(*h5pp_file, algo_name);
             if(state_prefix.empty()) throw std::runtime_error("Could not resume: no valid resume candidates found");
             tools::log->info("Resuming state [{}]", state_prefix);
-            tools::finite::io::h5resume::load_all(*h5pp_file, state_prefix, *state, sim_status);
+            tools::finite::io::h5resume::load_tensors(*h5pp_file, state_prefix, tensors, status);
             // Now we decide what to do
             // Let's consider case 1
 
-            //            if(sim_status.simulation_has_succeeded){
+            //            if(status.algorithm_has_succeeded){
             //
             //            }
             exit(0);
-            while(h5pp_file->linkExists(sim_name + state_name)) state_name = "state_" + std::to_string(state_number++);
+            while(h5pp_file->linkExists(algo_name + state_name)) state_name = "state_" + std::to_string(state_number++);
         } catch(std::exception &ex) {
             tools::log->info("Could not resume state from file [{}]: {}", h5pp_file->getFilePath(), ex.what());
             exit(0);
@@ -114,10 +106,10 @@ void class_algorithm_finite::run() {
     tools::common::profile::t_tot->toc();
 
     //
-    //    if(not sim_on()) return;
+    //    if(not algo_on()) return;
     //    if(not settings::input::h5_load_filename.empty()){
     //        h5pp::File h5pp_load(settings::input::h5_load_filename,h5pp::AccessMode::READONLY,h5pp::CreateMode::OPEN);
-    //        tools::finite::io::h5restore::load_all(h5pp_load, sim_name, sim_status, *state);
+    //        tools::finite::io::h5restore::load_tensors(h5pp_load, sim_name, status, *tensors.state);
     //    }
 
     //
@@ -145,7 +137,7 @@ void class_algorithm_finite::run() {
     //            // We can go ahead and load the state from output
     //            tools::log->trace("Loading MPS from file");
     //            try {
-    //                tools::finite::io::h5resume::load_all(*h5pp_file, sim_name, sim_status, *state);
+    //                tools::finite::io::h5resume::load_tensors(*h5pp_file, sim_name, status, *tensors.state);
     //            } catch(std::exception &ex) {
     //                tools::log->error("Failed to load from output: {}", ex.what());
     //                throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
@@ -153,11 +145,11 @@ void class_algorithm_finite::run() {
     //                tools::log->error("Unknown error when trying to resume from file.");
     //            }
     //
-    //            bool convergence_was_reached = h5pp_file->readDataset<bool>(sim_name + "/sim_status/simulation_has_converged");
+    //            bool convergence_was_reached = h5pp_file->readDataset<bool>(sim_name + "/status/simulation_has_converged");
     //            if(not convergence_was_reached) {
     //                // Case 1 c -- resume simulation, reset the number of sweeps first.
     //                tools::log->trace("Case 1c");
-    //                settings::xdmrg::max_sweeps += state->get_iteration();
+    //                settings::xdmrg::max_sweeps += tensors.state->get_iteration();
     //                run_simulation();
     //
     //            } else {
@@ -192,15 +184,15 @@ void class_algorithm_finite::run_old()
  *
  */
 {
-    if(not sim_on()) {
+    if(not algo_on()) {
         return;
     }
-    tools::log->info("Starting {}", sim_name);
+    tools::log->info("Starting {}", algo_name);
     tools::common::profile::t_tot->tic();
     if(h5pp_file) {
         // This is case 1
         bool finOK_exists = h5pp_file->linkExists("common/finished_all");
-        bool mps_exists   = h5pp_file->linkExists(sim_name + "/state/mps");
+        bool mps_exists   = h5pp_file->linkExists(algo_name + "/state/mps");
         bool finOK        = false;
         if(finOK_exists) finOK = h5pp_file->readDataset<bool>("common/finished_all");
 
@@ -218,7 +210,7 @@ void class_algorithm_finite::run_old()
             // We can go ahead and load the state from output
             tools::log->trace("Loading MPS from file");
             try {
-                tools::finite::io::h5resume::load_all(*h5pp_file, sim_name, *state, sim_status);
+                tools::finite::io::h5resume::load_tensors(*h5pp_file, algo_name, tensors, status);
             } catch(std::exception &ex) {
                 tools::log->error("Failed to load from output: {}", ex.what());
                 throw std::runtime_error("Failed to resume from file: " + std::string(ex.what()));
@@ -226,11 +218,11 @@ void class_algorithm_finite::run_old()
                 tools::log->error("Unknown error when trying to resume from file.");
             }
 
-            bool convergence_was_reached = h5pp_file->readDataset<bool>(sim_name + "/sim_status/simulation_has_converged");
+            bool convergence_was_reached = h5pp_file->readDataset<bool>(algo_name + "/status/simulation_has_converged");
             if(not convergence_was_reached) {
                 // Case 1 c -- resume simulation, reset the number of sweeps first.
                 tools::log->trace("Case 1c");
-                settings::xdmrg::max_iters += state->get_iteration();
+                settings::xdmrg::max_iters += status.iter;
                 run_simulation();
 
             } else {
@@ -249,91 +241,92 @@ void class_algorithm_finite::run_old()
 }
 
 void class_algorithm_finite::run_preprocessing() {
-    tools::log->info("Running {} preprocessing (base)", sim_name);
+    tools::log->info("Running {} preprocessing (base)", algo_name);
     tools::common::profile::t_pre->tic();
-    tools::finite::io::h5table::write_model(*h5pp_file, sim_name + "/model", settings::output::storage_level_model, *state);
-    tools::finite::io::h5dset::write_mpo(*h5pp_file, sim_name + "/model", settings::output::storage_level_model, *state);
-    state->set_chi_max(chi_max());
-    sim_status.chi_max = chi_max();
+    tools::finite::io::h5table::write_model(*h5pp_file, algo_name + "/model", settings::output::storage_level_model, *tensors.model);
+    tools::finite::io::h5dset::write_model(*h5pp_file, algo_name + "/model", settings::output::storage_level_model, *tensors.model);
+    tensors.state->set_chi_max(chi_max());
+    status.chi_max = chi_max();
     update_bond_dimension_limit(chi_init());
     tools::common::profile::t_pre->toc();
-    tools::log->info("Finished {} preprocessing (base)", sim_name);
+    tools::log->info("Finished {} preprocessing (base)", algo_name);
 }
 
 void class_algorithm_finite::run_postprocessing() {
-    tools::log->info("Running {} postprocessing", sim_name);
+    tools::log->info("Running {} postprocessing", algo_name);
     tools::common::profile::t_pos->tic();
-    sim_status.simulation_has_finished = true;
-    tools::finite::debug::check_integrity(*state);
-    state->clear_measurements();
+    status.algorithm_has_finished = true;
+    tools::finite::debug::check_integrity(*tensors.state);
+    tensors.clear_measurements();
+    tensors.state->clear_measurements();
     write_to_file(StorageReason::FINISHED);
     if(not has_projected) write_to_file(StorageReason::PROJ_STATE);
     print_status_full();
     tools::common::profile::t_pos->toc();
-    tools::log->info("Finished {} postprocessing", sim_name);
+    tools::log->info("Finished {} postprocessing", algo_name);
 }
 
 void class_algorithm_finite::move_center_point(std::optional<size_t> num_moves) {
     if(not num_moves.has_value()) {
-        if(state->active_sites.empty())
+        if(tensors.state->active_sites.empty())
             num_moves = 1ul;
-        else if(settings::precision::move_sites_multidmrg == "one")
+        else if(settings::precision::move_multisite == "one")
             num_moves = 1ul;
-        else if(settings::precision::move_sites_multidmrg == "mid")
-            num_moves = std::max(1ul, (state->active_sites.size()) / 2);
-        else if(settings::precision::move_sites_multidmrg == "max")
-            num_moves = std::max(1ul, state->active_sites.size() - 2ul);
+        else if(settings::precision::move_multisite == "mid")
+            num_moves = std::max(1ul, (tensors.state->active_sites.size()) / 2);
+        else if(settings::precision::move_multisite == "max")
+            num_moves = std::max(1ul, tensors.state->active_sites.size() - 2ul);
         else {
             throw std::logic_error("Specify how many sites multisite should move! Expected one of {one,mid,max}, got [" +
-                                   settings::precision::move_sites_multidmrg + "]");
+                                   settings::precision::move_multisite + "]");
         }
     }
 
-    tools::log->trace("Moving center point {} steps in direction {}", num_moves.value(), state->get_direction());
-    state->clear_cache();
+    tools::log->trace("Moving center point {} steps in direction {}", num_moves.value(), tensors.state->get_direction());
+    tensors.clear_cache();
     try {
         for(size_t i = 0; i < num_moves.value(); i++) {
-            if(state->position_is_any_edge()) {
-                state->increment_iter();
+            if(tensors.state->position_is_any_edge()) {
+                tensors.state->increment_iter();
                 has_projected = false;
             }
-            tools::finite::mps::move_center_point(*state);
-            state->increment_step();
+            tools::finite::mps::move_center_point(*tensors.state);
+            tensors.state->increment_step();
             if(chi_quench_steps > 0) chi_quench_steps--;
         }
-        tools::finite::debug::check_integrity(*state);
-        state->active_sites.clear();
+        tools::finite::debug::check_integrity(*tensors.state, *tensors.model, *tensors.edges);
+        tensors.state->active_sites.clear();
     } catch(std::exception &e) {
-        tools::finite::print::print_system(*state);
+        tools::finite::print::dimensions(tensors);
         throw std::runtime_error("Failed to move center point: " + std::string(e.what()));
     }
-    sim_status.iter      = state->get_iteration();
-    sim_status.step      = state->get_step();
-    sim_status.position  = state->get_position();
-    sim_status.direction = state->get_direction();
+    status.iter      = tensors.state->get_iteration();
+    status.step      = tensors.state->get_step();
+    status.position  = tensors.state->get_position();
+    status.direction = tensors.state->get_direction();
 }
 
 void class_algorithm_finite::update_truncation_limit() {
-    if(not state->position_is_any_edge()) return;
+    if(not tensors.state->position_is_any_edge()) return;
     // Will update SVD threshold iff the energy variance is being limited by truncation error
-    size_t bond_at_lim_count = state->num_bonds_at_limit();
+    size_t bond_at_lim_count = tensors.state->num_bonds_at_limit();
     if(bond_at_lim_count > 0) return; // Return because we should rather increase bond dimension than lower the svd threshold
-    tools::log->info("Truncated variances: {}", state->get_truncated_variances());
+    tools::log->info("Truncated variances: {}", tensors.state->get_truncated_variances());
     //
     //    double truncation_threshold = settings::precision::svd_threshold;
-    //    size_t trunc_bond_count  = state->num_sites_truncated(truncation_threshold);
+    //    size_t trunc_bond_count  = tensors.state->num_sites_truncated(truncation_threshold);
     //    if(trunc_bond_count > 0) settings::precision::svd_threshold *= 0.5;
     //    tools::log->info("Lowered SVD threshold to {}",settings::precision::svd_threshold);
 }
 
 void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp_bond_limit) {
     if(tmp_bond_limit.has_value()) {
-        state->set_chi_lim(tmp_bond_limit.value());
-        sim_status.chi_lim = tmp_bond_limit.value();
+        tensors.state->set_chi_lim(tmp_bond_limit.value());
+        status.chi_lim = tmp_bond_limit.value();
         return;
     }
     try {
-        long chi_lim_now = state->get_chi_lim();
+        long chi_lim_now = tensors.state->get_chi_lim();
         if(chi_lim_now < chi_init()) throw std::logic_error("Chi limit should be larger than chi init");
     } catch(std::exception &error) {
         // If we reached this stage, either
@@ -341,163 +334,162 @@ void class_algorithm_finite::update_bond_dimension_limit(std::optional<long> tmp
         // 2) chi_lim is initialized, but it is smaller than the init value found in settings
         // Either way, we should set chi_lim to be chi_init, unless chi_init is larger than tmp_bond_limit
         tools::log->info("Setting initial bond dimension limit: {}", chi_init());
-        state->set_chi_lim(chi_init());
-        sim_status.chi_lim = chi_init();
+        tensors.state->set_chi_lim(chi_init());
+        status.chi_lim = chi_init();
         return;
     }
-    if(not state->position_is_any_edge()) return;
-    sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() >= chi_max();
-    if(not sim_status.chi_lim_has_reached_chi_max) {
+    if(not tensors.state->position_is_any_edge()) return;
+    status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() >= chi_max();
+    if(not status.chi_lim_has_reached_chi_max) {
         if(chi_grow()) {
-            sim_status.chi_lim = state->get_chi_lim();
+            status.chi_lim = tensors.state->get_chi_lim();
 
             // If we got here we want grow the bond dimension limit progressively during the simulation
             // Only increment the bond dimension if
             // * No experiments are on-going like perturbation or damping
             // * the simulation is stuck
             // * the state is limited by bond dimension
-            if(model->is_damped()) {
+            if(tensors.model->is_damped()) {
                 tools::log->info("State is undergoing disorder damping -- cannot increase bond dimension yet");
                 return;
             }
-            if(model->is_perturbed()) {
+            if(tensors.model->is_perturbed()) {
                 tools::log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
                 return;
             }
-            if(not sim_status.simulation_has_got_stuck and state->get_chi_lim() >= 16) {
-                tools::log->info("State is not stuck yet. Kept current limit {}", state->get_chi_lim());
+            if(not status.algorithm_has_got_stuck and tensors.state->get_chi_lim() >= 16) {
+                tools::log->info("State is not stuck yet. Kept current limit {}", tensors.state->get_chi_lim());
                 return;
             }
-            //            if(sim_status.simulation_has_stuck_for <= 1 and state->get_chi_lim() >= 16){
-            //                tools::log->info("State has not been stuck for long enough. Kept current limit {}", state->get_chi_lim());
+            //            if(status.algorithm_has_stuck_for <= 1 and tensors.state->get_chi_lim() >= 16){
+            //                tools::log->info("State has not been stuck for long enough. Kept current limit {}", tensors.state->get_chi_lim());
             //                return;
             //            }
             if(tools::log->level() <= spdlog::level::info) {
                 double truncation_threshold = 2 * settings::precision::svd_threshold;
-                size_t trunc_bond_count     = state->num_sites_truncated(truncation_threshold);
-                size_t bond_at_lim_count    = state->num_bonds_at_limit();
+                size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
+                size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit();
                 tools::log->info("Truncation threshold  : {:<.8e}", truncation_threshold);
-                tools::log->info("Truncation errors     : {}", state->get_truncation_errors());
-                tools::log->info("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*state));
+                tools::log->info("Truncation errors     : {}", tensors.state->get_truncation_errors());
+                tools::log->info("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*tensors.state));
                 tools::log->info("Truncated bond count  : {} ", trunc_bond_count);
                 tools::log->info("Bonds at limit  count : {} ", bond_at_lim_count);
-                tools::log->info("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*state));
+                tools::log->info("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*tensors.state));
             }
-            bool state_is_bond_limited = state->is_bond_limited(5 * settings::precision::svd_threshold);
+            bool state_is_bond_limited = tensors.state->is_bond_limited(5 * settings::precision::svd_threshold);
             if(not state_is_bond_limited) {
-                tools::log->info("State is not limited by its bond dimension. Kept current limit {}", state->get_chi_lim());
+                tools::log->info("State is not limited by its bond dimension. Kept current limit {}", tensors.state->get_chi_lim());
                 return;
             }
 
             // Write current results before updating bond dimension
             write_to_file(StorageReason::CHI_UPDATE);
-            long chi_lim_new = std::min(state->get_chi_max(), state->get_chi_lim() * 2);
-            if(state->get_chi_lim() < 16) chi_lim_new = std::min(state->get_chi_max(), state->get_chi_lim() + 1);
-            tools::log->info("Updating bond dimension limit {} -> {}", state->get_chi_lim(), chi_lim_new);
-            state->set_chi_lim(chi_lim_new);
+            long chi_lim_new = std::min(tensors.state->get_chi_max(), tensors.state->get_chi_lim() * 2);
+            if(tensors.state->get_chi_lim() < 16) chi_lim_new = std::min(tensors.state->get_chi_max(), tensors.state->get_chi_lim() + 1);
+            tools::log->info("Updating bond dimension limit {} -> {}", tensors.state->get_chi_lim(), chi_lim_new);
+            tensors.state->set_chi_lim(chi_lim_new);
             clear_saturation_status();
-            sim_status.chi_lim_has_reached_chi_max = state->get_chi_lim() == chi_max();
-            if(sim_status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
-            tools::log->info("Projecting at site {} to direction {} after updating bond dimension to χ = {} ", state->get_position(),
+            status.chi_lim_has_reached_chi_max = tensors.state->get_chi_lim() == chi_max();
+            if(status.chi_lim_has_reached_chi_max and has_projected) has_projected = false;
+            tools::log->info("Projecting at site {} to direction {} after updating bond dimension to χ = {} ", tensors.state->get_position(),
                              settings::strategy::target_parity_sector, chi_lim_new);
             copy_from_tmp(StorageReason::CHI_UPDATE);
-            if(not state->position_is_any_edge()) throw std::runtime_error("Update bond dimension: no longer at edge!");
+            if(not tensors.state->position_is_any_edge()) throw std::runtime_error("Update bond dimension: no longer at edge!");
             if(settings::strategy::project_on_chi_update) {
-                *state        = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
+                *tensors.state        = tools::finite::ops::get_projection_to_closest_parity_sector(*tensors.state, settings::strategy::target_parity_sector);
                 has_projected = true;
             }
             write_to_file(StorageReason::PROJ_STATE);
-            if(settings::strategy::randomize_on_chi_update and state->get_chi_lim() >= 32) reset_to_random_current_state();
+            if(settings::strategy::randomize_on_chi_update and tensors.state->get_chi_lim() >= 32) reset_to_random_current_state();
         } else {
             // Here the settings specify to just set the limit to maximum chi directly
             tools::log->info("Setting bond dimension limit to maximum = {}", chi_max());
-            state->set_chi_lim(chi_max());
+            tensors.state->set_chi_lim(chi_max());
         }
     } else {
-        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", chi_max(), state->get_chi_lim());
+        tools::log->debug("Chi limit has reached max: {} -> Kept current bond dimension limit {}", chi_max(), tensors.state->get_chi_lim());
     }
-    sim_status.chi_lim = state->get_chi_lim();
-    if(state->get_chi_lim() > state->get_chi_max())
-        throw std::runtime_error(fmt::format("chi_lim is larger than chi_max! {} > {}", state->get_chi_lim(), state->get_chi_max()));
+    status.chi_lim = tensors.state->get_chi_lim();
+    if(tensors.state->get_chi_lim() > tensors.state->get_chi_max())
+        throw std::runtime_error(fmt::format("chi_lim is larger than chi_max! {} > {}", tensors.state->get_chi_lim(), tensors.state->get_chi_max()));
 }
 
 void class_algorithm_finite::reset_to_initial_state() {
     tools::log->trace("Resetting MPS to initial product state in parity sector: {}, state number {}", settings::strategy::initial_parity_sector,
                       settings::input::bitfield, settings::strategy::use_pauli_eigvecs);
-    if(state->get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
+    if(tensors.state->get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
     // Initialize state
-    tools::finite::mps::random_product_state(*state, settings::strategy::initial_parity_sector, settings::input::bitfield,
+    tools::finite::mps::random_product_state(*tensors.state, settings::strategy::initial_parity_sector, settings::input::bitfield,
                                              settings::strategy::use_pauli_eigvecs);
     clear_saturation_status();
-    state->lowest_recorded_variance = 1;
-    sim_status.iter                 = state->reset_iter();
+    tensors.state->lowest_recorded_variance = 1;
+    status.iter                 = tensors.state->reset_iter();
 }
 
 void class_algorithm_finite::reset_to_random_product_state(const std::string &parity_sector) {
     tools::log->trace("Resetting MPS to random product state in parity sector: {}", parity_sector);
-    if(state->get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
     // Randomize state
-    tools::finite::mps::random_product_state(*state, parity_sector, -1, settings::strategy::use_pauli_eigvecs);
+    tools::finite::mps::random_product_state(*tensors.state, parity_sector, -1, settings::strategy::use_pauli_eigvecs);
     clear_saturation_status();
-    state->lowest_recorded_variance = 1;
-    sim_status.iter                 = state->reset_iter();
-    sim_status.step                 = state->reset_step();
-    auto spin_components            = tools::finite::measure::spin_components(*state);
+    tensors.state->lowest_recorded_variance = 1;
+    status.iter                 = tensors.state->reset_iter();
+    status.step                 = tensors.state->reset_step();
+    auto spin_components        = tools::finite::measure::spin_components(*tensors.state);
     tools::log->info("Successfully reset to product state with global spin components: {}", spin_components);
 }
 
 void class_algorithm_finite::reset_to_random_current_state(std::optional<double> chi_lim) {
-    if(not state->position_is_any_edge()) return;
+    if(not tensors.position_is_any_edge()) return;
     tools::log->info("Resetting MPS by flipping random spins on current state");
-    if(state->get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
-    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
+    if(tensors.get_length() != settings::model::model_size) throw std::range_error("System size mismatch");
+    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*tensors.state));
     // Randomize state
     tools::log->info("Flipping random spins");
-    //    tools::finite::mps::random_current_state(*state,"x");
-    tools::finite::mps::random_current_state(*state, "x", "z");
+    //    tools::finite::mps::random_current_state(*tensors.state,"x");
+    tools::finite::mps::random_current_state(*tensors.state, "x", "z");
 
     // Truncate even more on explicit request
     if(chi_lim) {
-        size_t chi_lim_parsed = chi_lim.value() < 1 ? (size_t)(chi_lim.value() * (double) state->find_largest_chi()) : (size_t) chi_lim.value();
-        tools::finite::mps::truncate_all_sites(*state, chi_lim_parsed);
+        size_t chi_lim_parsed = chi_lim.value() < 1 ? (size_t)(chi_lim.value() * (double) tensors.state->find_largest_chi()) : (size_t) chi_lim.value();
+        tools::finite::mps::truncate_all_sites(*tensors.state, chi_lim_parsed);
     }
-    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
+    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*tensors.state));
 
     clear_saturation_status();
-    state->lowest_recorded_variance = 1;
-    sim_status.iter                 = state->reset_iter();
-    auto spin_components            = tools::finite::measure::spin_components(*state);
+    tensors.state->lowest_recorded_variance = 1;
+    status.iter                 = tensors.state->reset_iter();
+    auto spin_components            = tools::finite::measure::spin_components(*tensors.state);
     tools::log->info("Successfully reset to random state based on current state. New components: {}", spin_components);
-    if(not state->position_is_any_edge()) throw std::runtime_error("Update bond dimension: no longer at edge!");
+    if(not tensors.state->position_is_any_edge()) throw std::runtime_error("Update bond dimension: no longer at edge!");
 }
 
-void class_algorithm_finite::try_projection() {
-    if(not state->position_is_any_edge()) return;
+void class_algorithm_finite::try_projection(class_state_finite & state) {
+    if(not state.position_is_any_edge()) return;
     if(has_projected) return;
-    if(settings::strategy::project_on_every_sweep or (settings::strategy::project_when_stuck and sim_status.simulation_has_got_stuck)) {
+    if(settings::strategy::project_on_every_sweep or (settings::strategy::project_when_stuck and status.algorithm_has_got_stuck)) {
         tools::log->info("Trying projection to {}", settings::strategy::target_parity_sector);
-        *state        = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
+        *tensors.state        = tools::finite::ops::get_projection_to_closest_parity_sector(*tensors.state, settings::strategy::target_parity_sector);
         has_projected = true;
         write_to_file(StorageReason::PROJ_STATE);
     }
 }
 
-void class_algorithm_finite::try_bond_dimension_quench() {
-    if(tools::finite::measure::energy_variance(*state) < 10 * settings::precision::variance_convergence_threshold) return;
+void class_algorithm_finite::try_bond_dimension_quench(class_state_finite & state) {
+    if(tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges) < 10 * settings::precision::variance_convergence_threshold) return;
     if(not settings::strategy::chi_quench_when_stuck) return;
     if(chi_quench_steps > 0) clear_saturation_status();
-    if(not state->position_is_any_edge()) return;
-    if(chi_quench_steps >= state->get_length()) {
+    if(not state.position_is_any_edge()) return;
+    if(chi_quench_steps >= state.get_length()) {
         tools::log->info("Chi quench continues -- {} steps left", chi_quench_steps);
-        tools::finite::mps::truncate_all_sites(*state, chi_lim_quench_ahead);
+        tools::finite::mps::truncate_all_sites(*tensors.state, chi_lim_quench_ahead);
         return;
     }
 
-    //    if(not sim_status.simulation_has_got_stuck) {
+    //    if(not status.algorithm_has_got_stuck) {
     //        tools::log->trace("Chi quench skipped: simulation not stuck");
     //        return;
     //    }
-    if(sim_status.simulation_has_stuck_for <= 2) {
+    if(status.algorithm_has_stuck_for <= 2) {
         tools::log->info("Chi quench skipped: simulation not been stuck for long enough");
         return;
     }
@@ -506,34 +498,34 @@ void class_algorithm_finite::try_bond_dimension_quench() {
         return;
     }
     double truncation_threshold = 5 * settings::precision::svd_threshold;
-    size_t trunc_bond_count     = state->num_sites_truncated(truncation_threshold);
-    size_t bond_at_lim_count    = state->num_bonds_at_limit();
+    size_t trunc_bond_count     = state.num_sites_truncated(truncation_threshold);
+    size_t bond_at_lim_count    = state.num_bonds_at_limit();
     tools::log->trace("Truncation threshold : {:.4e}", std::pow(truncation_threshold, 2));
-    tools::log->trace("Truncation errors    : {}", state->get_truncation_errors());
-    tools::log->trace("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*state));
-    tools::log->trace("Entanglement entr    : {}", tools::finite::measure::entanglement_entropies(*state));
+    tools::log->trace("Truncation errors    : {}", state.get_truncation_errors());
+    tools::log->trace("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*tensors.state));
+    tools::log->trace("Entanglement entr    : {}", tools::finite::measure::entanglement_entropies(*tensors.state));
     tools::log->trace("Truncated bond count : {} ", trunc_bond_count);
     tools::log->trace("Bonds at limit  count: {} ", bond_at_lim_count);
-    if(state->is_bond_limited(truncation_threshold)) {
+    if(state.is_bond_limited(truncation_threshold)) {
         tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
         return;
     }
-    auto bond_dimensions    = tools::finite::measure::bond_dimensions(*state);
+    auto bond_dimensions    = tools::finite::measure::bond_dimensions(*tensors.state);
     auto max_bond_dimension = *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
     tools::log->info("Chi quench started");
-    tools::finite::mps::truncate_all_sites(*state, max_bond_dimension / 2);
-    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*state));
+    tools::finite::mps::truncate_all_sites(*tensors.state, max_bond_dimension / 2);
+    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*tensors.state));
     clear_saturation_status();
-    chi_quench_steps = 1 * state->get_length();
+    chi_quench_steps = 1 * state.get_length();
     num_chi_quenches++;
 }
 
-void class_algorithm_finite::try_hamiltonian_perturbation() {
+void class_algorithm_finite::try_hamiltonian_perturbation(class_state_finite & state) {
     if(not settings::strategy::perturb_when_stuck) return;
-    if(not state->position_is_any_edge()) return;
-    if(model->is_perturbed()) return;
+    if(not state.position_is_any_edge()) return;
+    if(tensors.model->is_perturbed()) return;
     if(perturbation_steps > 0) return;
-    if(not sim_status.simulation_has_got_stuck) {
+    if(not status.algorithm_has_got_stuck) {
         tools::log->info("Perturbation skipped: simulation not stuck");
         return;
     }
@@ -543,18 +535,18 @@ void class_algorithm_finite::try_hamiltonian_perturbation() {
     }
 }
 
-void class_algorithm_finite::try_disorder_damping() {
-    if(not state->position_is_left_edge()) return;
+void class_algorithm_finite::try_disorder_damping(class_model_finite & model) {
+//    if(not state.position_is_left_edge()) return;
     // If there are damping exponents to process, do so
     if(not damping_exponents.empty()) {
         tools::log->info("Setting damping exponent = {}", damping_exponents.back());
-        model->damp_hamiltonian(damping_exponents.back(), 0);
+        model.damp_hamiltonian(damping_exponents.back(), 0);
         damping_exponents.pop_back();
-        if(damping_exponents.empty() and model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
+        if(damping_exponents.empty() and model.is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
     }
     if(not settings::strategy::damping_when_stuck) return;
-    if(model->is_damped()) return;
-    if(not sim_status.simulation_has_got_stuck) {
+    if(model.is_damped()) return;
+    if(not status.algorithm_has_got_stuck) {
         tools::log->info("Damping skipped: simulation not stuck");
         return;
     }
@@ -569,22 +561,22 @@ void class_algorithm_finite::try_disorder_damping() {
     has_damped = true;
     clear_saturation_status();
     tools::log->info("Setting damping exponent = {}", damping_exponents.back());
-    model->damp_hamiltonian(damping_exponents.back(), 0);
+    model.damp_hamiltonian(damping_exponents.back(), 0);
     damping_exponents.pop_back();
-    if(damping_exponents.empty() and model->is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
+    if(damping_exponents.empty() and model.is_damped()) throw std::logic_error("Damping trial ended but the state is still damped");
 }
 
 void class_algorithm_finite::check_convergence_variance(double threshold, double slope_threshold) {
     // Based on the the slope of the variance
     // We want to check every time we can because the variance is expensive to compute.
-    if(not state->position_is_any_edge()) {
-        return;
-    }
+//    if(not tensors.state->position_is_any_edge()) {
+//        return;
+//    }
     tools::log->debug("Checking convergence of variance mpo");
     threshold       = std::isnan(threshold) ? settings::precision::variance_convergence_threshold : threshold;
     slope_threshold = std::isnan(slope_threshold) ? settings::precision::variance_slope_threshold : slope_threshold;
-    auto report     = check_saturation_using_slope(V_mpo_vec, X_mpo_vec, tools::finite::measure::energy_variance(*state), sim_status.iter, 1, slope_threshold);
-    sim_status.variance_mpo_has_converged = tools::finite::measure::energy_variance(*state) < threshold;
+    auto report     = check_saturation_using_slope(V_mpo_vec, X_mpo_vec, tools::finite::measure::energy_variance(tensors), status.iter, 1, slope_threshold);
+    status.variance_mpo_has_converged = tools::finite::measure::energy_variance(*tensors.state, *tensors.model, *tensors.edges) < threshold;
     if(report.has_computed) {
         V_mpo_slopes.emplace_back(report.slope);
         auto last_nonconverged_ptr = std::find_if(V_mpo_vec.rbegin(), V_mpo_vec.rend(), [threshold](auto const &val) { return val > threshold; });
@@ -592,8 +584,8 @@ void class_algorithm_finite::check_convergence_variance(double threshold, double
             std::find_if(V_mpo_slopes.rbegin(), V_mpo_slopes.rend(), [slope_threshold](auto const &val) { return val > slope_threshold; });
         size_t converged_count                = (size_t) std::distance(V_mpo_vec.rbegin(), last_nonconverged_ptr);
         size_t saturated_count                = (size_t) std::distance(V_mpo_slopes.rbegin(), last_nonsaturated_ptr);
-        sim_status.variance_mpo_has_saturated = report.slope < slope_threshold; // or saturated_count >= min_saturation_iters;
-        sim_status.variance_mpo_saturated_for = std::max(converged_count, saturated_count);
+        status.variance_mpo_has_saturated = report.slope < slope_threshold; // or saturated_count >= min_saturation_iters;
+        status.variance_mpo_saturated_for = std::max(converged_count, saturated_count);
         tools::log->debug("Variance slope details:");
         tools::log->debug(" -- relative slope    = {} %", report.slope);
         tools::log->debug(" -- tolerance         = {} %", slope_threshold);
@@ -601,32 +593,32 @@ void class_algorithm_finite::check_convergence_variance(double threshold, double
         tools::log->debug(" -- check from        = {} ", report.check_from);
         tools::log->debug(" -- var history       = {} ", V_mpo_vec);
         tools::log->debug(" -- slope history     = {} ", V_mpo_slopes);
-        tools::log->debug(" -- has saturated     = {} ", sim_status.variance_mpo_has_saturated);
-        tools::log->debug(" -- has saturated for = {} ", sim_status.variance_mpo_saturated_for);
-        tools::log->debug(" -- has converged     = {} ", sim_status.variance_mpo_has_converged);
+        tools::log->debug(" -- has saturated     = {} ", status.variance_mpo_has_saturated);
+        tools::log->debug(" -- has saturated for = {} ", status.variance_mpo_saturated_for);
+        tools::log->debug(" -- has converged     = {} ", status.variance_mpo_has_converged);
         tools::log->debug(" -- has converged for = {} ", converged_count);
-        if(V_mpo_vec.back() < threshold and sim_status.variance_mpo_saturated_for == 0) throw std::logic_error("Variance should have saturated");
-        if(V_mpo_vec.back() < threshold and not sim_status.variance_mpo_has_converged) throw std::logic_error("Variance should have converged");
+        if(V_mpo_vec.back() < threshold and status.variance_mpo_saturated_for == 0) throw std::logic_error("Variance should have saturated");
+        if(V_mpo_vec.back() < threshold and not status.variance_mpo_has_converged) throw std::logic_error("Variance should have converged");
     }
 }
 
 void class_algorithm_finite::check_convergence_entg_entropy(double slope_threshold) {
     // Based on the the slope of entanglement entanglement_entropy_midchain
     // This one is cheap to compute.
-    if(not state->position_is_any_edge()) {
+    if(not tensors.state->position_is_any_edge()) {
         return;
     }
     tools::log->debug("Checking convergence of entanglement");
 
     slope_threshold                         = std::isnan(slope_threshold) ? settings::precision::entropy_slope_threshold : slope_threshold;
-    auto                          entropies = tools::finite::measure::entanglement_entropies(*state);
+    auto                          entropies = tools::finite::measure::entanglement_entropies(*tensors.state);
     std::vector<SaturationReport> reports(entropies.size());
 
     for(size_t site = 0; site < entropies.size(); site++) {
-        reports[site] = check_saturation_using_slope(S_mat[site], X_mat[site], entropies[site], sim_status.iter, 1, slope_threshold);
+        reports[site] = check_saturation_using_slope(S_mat[site], X_mat[site], entropies[site], status.iter, 1, slope_threshold);
     }
     bool all_computed                     = std::all_of(reports.begin(), reports.end(), [](const SaturationReport r) { return r.has_computed; });
-    sim_status.entanglement_has_saturated = false;
+    status.entanglement_has_saturated = false;
     if(all_computed) {
         // idx_max_slope is the index to the site with maximum slope
         auto idx_max_slope = (size_t) std::distance(
@@ -642,8 +634,8 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
         auto last_nonsaturated_ptr = std::find_if(S_slopes.rbegin(), S_slopes.rend(), [slope_threshold](auto const &val) { return val > slope_threshold; });
         auto saturated_count       = (size_t) std::distance(S_slopes.rbegin(), last_nonsaturated_ptr);
 
-        sim_status.entanglement_has_saturated = S_slopes.back() < slope_threshold;
-        sim_status.entanglement_saturated_for = saturated_count;
+        status.entanglement_has_saturated = S_slopes.back() < slope_threshold;
+        status.entanglement_saturated_for = saturated_count;
         std::vector<double> all_avergs;
         std::vector<double> all_slopes;
         for(auto &r : reports) all_avergs.push_back(r.avgY);
@@ -656,13 +648,13 @@ void class_algorithm_finite::check_convergence_entg_entropy(double slope_thresho
         tools::log->debug(" -- check from        = {} ", reports[idx_max_slope].check_from);
         tools::log->debug(" -- ent history       = {} ", S_mat[idx_max_slope]);
         tools::log->debug(" -- slope history     = {} ", S_slopes);
-        tools::log->debug(" -- has saturated     = {} ", sim_status.entanglement_has_saturated);
-        tools::log->debug(" -- has saturated for = {} (site {} )", sim_status.entanglement_saturated_for, saturated_count);
+        tools::log->debug(" -- has saturated     = {} ", status.entanglement_has_saturated);
+        tools::log->debug(" -- has saturated for = {} (site {} )", status.entanglement_saturated_for, saturated_count);
         tools::log->debug(" -- all averages      = {} ", all_avergs);
         tools::log->debug(" -- all slopes        = {} ", all_slopes);
-        if(reports[idx_max_slope].slope > slope_threshold and sim_status.entanglement_has_saturated) throw std::logic_error("Not supposed to be saturated!!");
+        if(reports[idx_max_slope].slope > slope_threshold and status.entanglement_has_saturated) throw std::logic_error("Not supposed to be saturated!!");
     }
-    sim_status.entanglement_has_converged = sim_status.entanglement_has_saturated;
+    status.entanglement_has_converged = status.entanglement_has_saturated;
 }
 
 void class_algorithm_finite::clear_saturation_status() {
@@ -679,40 +671,40 @@ void class_algorithm_finite::clear_saturation_status() {
     X_mpo_vec.clear();
     V_mpo_slopes.clear();
 
-    sim_status.entanglement_has_converged  = false;
-    sim_status.entanglement_has_saturated  = false;
-    sim_status.entanglement_saturated_for  = 0;
-    sim_status.variance_mpo_has_converged  = false;
-    sim_status.variance_mpo_has_saturated  = false;
-    sim_status.variance_mpo_saturated_for  = 0;
-    sim_status.chi_lim_has_reached_chi_max = false;
-    sim_status.simulation_has_to_stop      = false;
-    sim_status.simulation_has_got_stuck    = false;
-    sim_status.simulation_has_converged    = false;
-    sim_status.simulation_has_saturated    = false;
-    sim_status.simulation_has_succeeded    = false;
-    sim_status.simulation_has_stuck_for    = 0;
+    status.entanglement_has_converged  = false;
+    status.entanglement_has_saturated  = false;
+    status.entanglement_saturated_for  = 0;
+    status.variance_mpo_has_converged  = false;
+    status.variance_mpo_has_saturated  = false;
+    status.variance_mpo_saturated_for  = 0;
+    status.chi_lim_has_reached_chi_max = false;
+    status.algorithm_has_to_stop      = false;
+    status.algorithm_has_got_stuck    = false;
+    status.algorithm_has_converged    = false;
+    status.algorithm_has_saturated    = false;
+    status.algorithm_has_succeeded    = false;
+    status.algorithm_has_stuck_for    = 0;
     has_projected                          = false;
     has_damped                             = false;
 }
 
 void class_algorithm_finite::write_to_file(StorageReason storage_reason) {
     if(storage_reason == StorageReason::PROJ_STATE and not has_projected) {
-        auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*state, settings::strategy::target_parity_sector);
+        auto state_projected = tools::finite::ops::get_projection_to_closest_parity_sector(*tensors.state, settings::strategy::target_parity_sector);
         write_to_file(storage_reason, state_projected);
     } else {
-        write_to_file(storage_reason, *state);
+        write_to_file(storage_reason, *tensors.state);
     }
 }
 
 void class_algorithm_finite::write_to_file(StorageReason storage_reason, const class_state_finite &state) {
     StorageLevel      storage_level;
-    const std::string table_prefix = sim_name + "/" + state_name;
-    std::string       state_prefix = sim_name + "/" + state_name;  // May get modified
-    std::string       model_prefix = sim_name + "/model";
+    const std::string table_prefix = algo_name + "/" + state_name;
+    std::string       state_prefix = algo_name + "/" + state_name;  // May get modified
+    std::string       model_prefix = algo_name + "/model";
     switch(storage_reason) {
         case StorageReason::FINISHED: {
-            if(sim_status.simulation_has_succeeded)
+            if(status.algorithm_has_succeeded)
                 storage_level = settings::output::storage_level_good_state;
             else
                 storage_level = settings::output::storage_level_fail_state;
@@ -721,13 +713,13 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         }
         case StorageReason::CHECKPOINT: {
             if(not state.position_is_any_edge()) return;
-            if(math::mod(sim_status.iter, settings::output::checkpoint_frequency) != 0) return;
+            if(math::mod(status.iter, settings::output::checkpoint_frequency) != 0) return;
             state_prefix.append("/checkpoint");
             storage_level = settings::output::storage_level_checkpoint;
             if(settings::output::checkpoint_keep_newest_only)
                 state_prefix.append("/iter_last");
             else
-                state_prefix.append("/iter_" + std::to_string(sim_status.iter));
+                state_prefix.append("/iter_" + std::to_string(status.iter));
             break;
         }
         case StorageReason::CHI_UPDATE: {
@@ -749,20 +741,20 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
         }
         case StorageReason::EMIN_STATE: {
             storage_level = settings::output::storage_level_emin_state;
-            state_prefix  = sim_name + "/state_emin";
+            state_prefix  = algo_name + "/state_emin";
             break;
         }
         case StorageReason::EMAX_STATE: {
             storage_level = settings::output::storage_level_emax_state;
-            state_prefix  = sim_name + "/state_emax";
+            state_prefix  = algo_name + "/state_emax";
             break;
         }
     }
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
-    tools::finite::io::h5dset::write_mps(*h5pp_file, state_prefix, storage_level, state);
+    tools::finite::io::h5dset::write_state(*h5pp_file, state_prefix, storage_level, state);
     tools::finite::io::h5dset::write_ent(*h5pp_file, state_prefix, storage_level, state);
-    tools::common::io::h5attr::write_meta(*h5pp_file, sim_name, state_prefix, model_prefix, settings::model::model_type, storage_level, sim_status);
+    tools::common::io::h5attr::write_meta(*h5pp_file, algo_name, state_prefix, model_prefix, settings::model::model_type, storage_level, status);
 
 
     // The main results have now been written. Next we append data to tables
@@ -770,23 +762,24 @@ void class_algorithm_finite::write_to_file(StorageReason storage_reason, const c
     // Also we can avoid repeated entries by only allowing fresh step numbers.
     if(storage_reason == StorageReason::PROJ_STATE) return;
     static size_t last_step_written = 0;
-    if(sim_status.step == last_step_written and last_step_written > 0) return;
+    if(status.step == last_step_written and last_step_written > 0) return;
 
 
-    tools::finite::io::h5table::write_measurements(*h5pp_file, table_prefix, storage_level, state, sim_status);
-    tools::finite::io::h5table::write_sim_status(*h5pp_file, table_prefix, storage_level, sim_status);
-    tools::finite::io::h5table::write_profiling(*h5pp_file, table_prefix, storage_level, sim_status);
-    tools::finite::io::h5table::write_mem_usage(*h5pp_file, table_prefix, storage_level, sim_status);
-    last_step_written = sim_status.step;
+//    tools::finite::io::h5table::write_measurements(*h5pp_file, table_prefix, storage_level, state, status);
+    tools::finite::io::h5table::write_measurements(*h5pp_file, table_prefix, storage_level, tensors, status);
+    tools::finite::io::h5table::write_sim_status(*h5pp_file, table_prefix, storage_level, status);
+    tools::finite::io::h5table::write_profiling(*h5pp_file, table_prefix, storage_level, status);
+    tools::finite::io::h5table::write_mem_usage(*h5pp_file, table_prefix, storage_level, status);
+    last_step_written = status.step;
 }
 
 void class_algorithm_finite::copy_from_tmp(StorageReason storage_reason) {
     if(not h5pp_file) return;
     if(not settings::output::use_temp_dir) return;
-    if(not state->position_is_any_edge()) return;
+    if(not tensors.state->position_is_any_edge()) return;
     switch(storage_reason) {
         case StorageReason::CHECKPOINT:
-            if(math::mod(sim_status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
+            if(math::mod(status.iter, settings::output::copy_from_temp_freq) != 0) return; // Check that we write according to the frequency given
         case StorageReason::FINISHED:
         case StorageReason::CHI_UPDATE:
         case StorageReason::PROJ_STATE:
@@ -798,33 +791,32 @@ void class_algorithm_finite::copy_from_tmp(StorageReason storage_reason) {
 }
 
 void class_algorithm_finite::print_status_update() {
-    if(math::mod(sim_status.step, print_freq()) != 0) return;
+    if(math::mod(status.step, print_freq()) != 0) return;
     if(print_freq() == 0) return;
 
-    using namespace tools::finite::measure;
     std::string report;
-    report += fmt::format("{:<} ", sim_name);
-    report += fmt::format("iter: {:<4} ", sim_status.iter);
-    report += fmt::format("step: {:<5} ", sim_status.step);
-    report += fmt::format("L: {} ", state->get_length());
-    if(state->active_sites.empty())
-        report += fmt::format("l: {:<2} ", state->get_position());
-    else if(state->get_direction() > 0)
-        report += fmt::format("l: [{:>2}-{:<2}] ", state->active_sites.front(), state->active_sites.back());
-    else if(state->get_direction() < 0)
-        report += fmt::format("l: [{:>2}-{:<2}] ", state->active_sites.back(), state->active_sites.front());
-    report += fmt::format("E/L: {:<20.16f} ", energy_per_site(*state));
-    if(sim_type == SimulationType::xDMRG) {
-        report += fmt::format("ε: {:<6.4f} ", sim_status.energy_dens);
+    report += fmt::format("{:<} ", algo_name);
+    report += fmt::format("iter: {:<4} ", status.iter);
+    report += fmt::format("step: {:<5} ", status.step);
+    report += fmt::format("L: {} ", tensors.state->get_length());
+    if(tensors.state->active_sites.empty())
+        report += fmt::format("l: {:<2} ", tensors.state->get_position());
+    else if(tensors.state->get_direction() > 0)
+        report += fmt::format("l: [{:>2}-{:<2}] ", tensors.state->active_sites.front(), tensors.state->active_sites.back());
+    else if(tensors.state->get_direction() < 0)
+        report += fmt::format("l: [{:>2}-{:<2}] ", tensors.state->active_sites.back(), tensors.state->active_sites.front());
+    report += fmt::format("E/L: {:<20.16f} ", tools::finite::measure::energy_per_site(*tensors.state, *tensors.model, *tensors.edges));
+    if(algo_type == AlgorithmType::xDMRG) {
+        report += fmt::format("ε: {:<6.4f} ", status.energy_dens);
     }
-    report += fmt::format("Sₑ(l): {:<10.8f} ", entanglement_entropy_current(*state));
-    report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(energy_variance_per_site(*state)),
-                          std::log10(state->lowest_recorded_variance / static_cast<double>(state->get_length())));
-    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", chi_max(), state->get_chi_lim(), bond_dimension_current(*state));
-    report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(state->get_truncation_error(state->get_position())));
-    report += fmt::format("stk: {:<1} ", sim_status.simulation_has_stuck_for);
-    report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", sim_status.variance_mpo_saturated_for, sim_status.entanglement_saturated_for);
-    report += fmt::format("con: {:<5} ", sim_status.simulation_has_converged);
+    report += fmt::format("Sₑ(l): {:<10.8f} ", tools::finite::measure::entanglement_entropy_current(*tensors.state));
+    report += fmt::format("log₁₀ σ²(E)/L: {:<10.6f} [{:<10.6f}] ", std::log10(tools::finite::measure::energy_variance_per_site(*tensors.state, *tensors.model, *tensors.edges)),
+                          std::log10(tensors.state->lowest_recorded_variance / static_cast<double>(tensors.state->get_length())));
+    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", chi_max(), tensors.state->get_chi_lim(), tools::finite::measure::bond_dimension_current(*tensors.state));
+    report += fmt::format("log₁₀ trunc: {:<10.4f} ", std::log10(tensors.state->get_truncation_error(tensors.state->get_position())));
+    report += fmt::format("stk: {:<1} ", status.algorithm_has_stuck_for);
+    report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
+    report += fmt::format("con: {:<5} ", status.algorithm_has_converged);
     report += fmt::format("time: {:<8.2f}s ", tools::common::profile::t_tot->get_age());
     report += fmt::format("mem MB: [Rss {:<.1f} Peak {:<.1f} Vm {:<.1f}] ", tools::common::profile::mem_rss_in_mb(), tools::common::profile::mem_hwm_in_mb(),
                           tools::common::profile::mem_vm_in_mb());
@@ -832,33 +824,32 @@ void class_algorithm_finite::print_status_update() {
 }
 
 void class_algorithm_finite::print_status_full() {
-    using namespace tools::finite::measure;
     tools::log->info("{:=^60}", "");
-    tools::log->info("= {: ^56} =", "Final results [" + sim_name + "]");
+    tools::log->info("= {: ^56} =", "Final results [" + algo_name + "]");
     tools::log->info("{:=^60}", "");
-    tools::log->info("--- Final results  --- {} ---", sim_name);
-    tools::log->info("Sites                              = {}", state->get_length());
-    tools::log->info("Iterations (sweeps)                = {}", sim_status.iter);
-    tools::log->info("Steps                              = {}", sim_status.step);
+    tools::log->info("--- Final results  --- {} ---", algo_name);
+    tools::log->info("Sites                              = {}", tensors.state->get_length());
+    tools::log->info("Iterations (sweeps)                = {}", status.iter);
+    tools::log->info("Steps                              = {}", status.step);
     tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tools::common::profile::t_tot->get_age(),
                      tools::common::profile::t_tot->get_age() / 60);
-    tools::log->info("Energy per site E/L                = {:<.16f}", energy_per_site(*state));
-    if(sim_type == SimulationType::xDMRG) {
-        tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}", energy_normalized(*state, sim_status));
+    tools::log->info("Energy per site E/L                = {:<.16f}", tools::finite::measure::energy_per_site(*tensors.state, *tensors.model, *tensors.edges));
+    if(algo_type == AlgorithmType::xDMRG) {
+        tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}", tools::finite::measure::energy_normalized(*tensors.state, *tensors.model, *tensors.edges, status.energy_min, status.energy_max));
     }
-    tools::log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}", std::log10(energy_variance_per_site(*state)));
+    tools::log->info("Variance per site log₁₀ σ²(E)/L    = {:<.16f}", std::log10(tools::finite::measure::energy_variance_per_site(*tensors.state, *tensors.model, *tensors.edges)));
     tools::log->info("Bond dimension maximum χmax        = {}", chi_max());
-    tools::log->info("Bond dimensions χ                  = {}", bond_dimensions(*state));
-    tools::log->info("Bond dimension  χ (mid)            = {}", bond_dimension_midchain(*state));
-    tools::log->info("Entanglement entropies Sₑ          = {}", entanglement_entropies(*state));
-    tools::log->info("Entanglement entropiy Sₑ (mid)     = {}", entanglement_entropy_midchain(*state));
-    tools::log->info("Truncation Errors                  = {}", state->get_truncation_errors());
-    tools::log->info("Simulation converged               = {:<}", sim_status.simulation_has_converged);
-    tools::log->info("Simulation saturated               = {:<}", sim_status.simulation_has_saturated);
-    tools::log->info("Simulation succeeded               = {:<}", sim_status.simulation_has_succeeded);
-    tools::log->info("Simulation got stuck               = {:<}", sim_status.simulation_has_got_stuck);
+    tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
+    tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
+    tools::log->info("Entanglement entropies Sₑ          = {}", tools::finite::measure::entanglement_entropies(*tensors.state));
+    tools::log->info("Entanglement entropiy Sₑ (mid)     = {}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
+    tools::log->info("Truncation Errors                  = {}", tensors.state->get_truncation_errors());
+    tools::log->info("Simulation converged               = {:<}", status.algorithm_has_converged);
+    tools::log->info("Simulation saturated               = {:<}", status.algorithm_has_saturated);
+    tools::log->info("Simulation succeeded               = {:<}", status.algorithm_has_succeeded);
+    tools::log->info("Simulation got stuck               = {:<}", status.algorithm_has_got_stuck);
     tools::log->info("σ² slope                           = {:<8.4f} %   Converged : {:<8}  Saturated: {:<8}", V_mpo_slopes.back(),
-                     sim_status.variance_mpo_has_converged, sim_status.variance_mpo_has_saturated);
+                     status.variance_mpo_has_converged, status.variance_mpo_has_saturated);
     tools::log->info("Sₑ slope                           = {:<8.4f} %   Converged : {:<8}  Saturated: {:<8}", S_slopes.back(),
-                     sim_status.entanglement_has_converged, sim_status.entanglement_has_saturated);
+                     status.entanglement_has_converged, status.entanglement_has_saturated);
 }

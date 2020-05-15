@@ -13,7 +13,7 @@ private:
     void setLogger(const std::string& name);
 public:
 
-    std::shared_ptr<h5pp::File> h5ppFile;
+    std::shared_ptr<h5pp::File> h5pp_file;
 
     explicit class_algorithm_launcher(std::shared_ptr<h5pp::File> h5ppFile_);
     class_algorithm_launcher();
@@ -23,10 +23,10 @@ public:
     static void clean_up();
 
     void run_algorithms();
-    void run_iDMRG();
-    void run_fDMRG();
-    void run_xDMRG();
-    void run_iTEBD();
+    void run_idmrg();
+    void run_fdmrg();
+    void run_xdmrg();
+    void run_itebd();
 
 
 };

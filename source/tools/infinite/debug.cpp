@@ -6,7 +6,7 @@
 #include <tools/infinite/print.h>
 #include <tools/infinite/measure.h>
 #include <tools/common/log.h>
-#include <state/class_state_infinite.h>
+#include <tensors/state/class_state_infinite.h>
 
 void tools::infinite::debug::check_integrity(const class_state_infinite & state)
 {

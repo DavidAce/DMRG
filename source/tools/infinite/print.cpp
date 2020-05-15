@@ -3,9 +3,9 @@
 //
 
 #include <iostream>
-#include <model/class_mpo_base.h>
-#include <state/class_mps_2site.h>
-#include <state/class_state_infinite.h>
+#include <tensors/model/class_mpo_base.h>
+#include <tensors/state/class_mps_2site.h>
+#include <tensors/state/class_state_infinite.h>
 #include <tools/infinite/print.h>
 
 void tools::infinite::print::print_hamiltonians(const class_state_infinite & state){

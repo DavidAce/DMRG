@@ -2,14 +2,16 @@
 // Created by david on 2019-01-29.
 //
 
+#include <config/enums.h>
+#include <config/nmspc_settings.h>
 #include <general/nmspc_quantum_mechanics.h>
-#include <simulation/enums.h>
-#include <simulation/nmspc_settings.h>
-#include <state/class_state_finite.h>
+#include <tensors/state/class_state_finite.h>
 #include <tools/common/log.h>
 #include <tools/finite/debug.h>
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
+
+#include <utility>
 
 void tools::finite::mps::initialize(class_state_finite &state, ModelType model_type, size_t num_sites, size_t position) {
     log->info("Initializing mps with {} sites at position {}", num_sites, position);
@@ -24,8 +26,7 @@ void tools::finite::mps::initialize(class_state_finite &state, ModelType model_t
         default: spin_dim = 2;
     }
 
-    state.MPS_L.clear();
-    state.MPS_R.clear();
+    state.MPS.clear();
 
     // Generate a simple MPS with all spins equal
     Eigen::Tensor<Scalar, 3> M(static_cast<long>(spin_dim), 1, 1);
@@ -34,14 +35,12 @@ void tools::finite::mps::initialize(class_state_finite &state, ModelType model_t
     M(1, 0, 0) = 1;
     L(0)       = 1;
     for(size_t site = 0; site < num_sites; site++) {
-        if(site <= position)
-            state.MPS_L.emplace_back(class_mps_site(M, L, site));
-        else
-            state.MPS_R.emplace_back(class_mps_site(M, L, site));
+        state.MPS.emplace_back(class_mps_site(M, L, site));
+        if(site == position)
+            state.MPS.back().set_LC(L);
     }
-    state.MPS_L.back().set_LC(L);
-    if(state.MPS_L.size() + state.MPS_R.size() != num_sites) throw std::logic_error("Initialized MPS with wrong size");
-    if(not state.get_MPS(position).isCenter()) throw std::logic_error("Initialized center matrix at the wrong position");
+    if(state.MPS.size() != num_sites) throw std::logic_error("Initialized MPS with wrong size");
+    if(not state.get_mps(position).isCenter()) throw std::logic_error("Initialized center matrix at the wrong position");
     if(state.get_position() != position) throw std::logic_error("Initialized MPS at the wrong position");
     state.site_update_tags = std::vector<bool>(num_sites, false);
 }
@@ -84,7 +83,8 @@ void tools::finite::mps::random_product_state(class_state_finite &state, const s
         internals::set_product_state_in_parity_sector_from_bitset(state, parity_sector, state_number);
     else
         internals::set_product_state_randomly(state, parity_sector, use_pauli_eigenstates);
-    tools::finite::mps::rebuild_environments(state);
+    std::cerr << "MUST REBUILD ENVIRONMENTS AFTER RANDOM PRODUCT STATE INIT" << std::endl;
+    //    tools::finite::mps::rebuild_edges(state);
 }
 
 void tools::finite::mps::random_current_state(class_state_finite &state, const std::string &parity_sector1, const std::string &parity_sector2) {
@@ -115,64 +115,6 @@ void tools::finite::mps::random_current_state(class_state_finite &state, const s
     state = tools::finite::ops::get_projection_to_closest_parity_sector(state, "x");
 }
 
-void tools::finite::mps::rebuild_environments(class_state_finite &state) {
-    tools::log->trace("Rebuilding environments");
-    if(state.MPS_L.size() != state.MPO_L.size())
-        throw std::runtime_error(fmt::format("Size mismatch in MPSL and MPOL: {} != {}", state.MPS_L.size(), state.MPO_L.size()));
-    if(state.MPS_R.size() != state.MPO_R.size())
-        throw std::runtime_error(fmt::format("Size mismatch in MPSR and MPOR: {} != {}", state.MPS_R.size(), state.MPO_R.size()));
-    // Generate new environments
-
-    {
-        state.ENV_L.clear();
-        state.ENV2_L.clear();
-
-        auto mpsL_it = state.MPS_L.begin();
-        auto mpoL_it = state.MPO_L.begin();
-        auto ENV_L   = class_environment("L", *mpsL_it, *mpoL_it->get());     // Initialized envs
-        auto ENV2_L  = class_environment_var("L", *mpsL_it, *mpoL_it->get()); // Initialized envs
-        while(mpsL_it != state.MPS_L.end() and mpoL_it != state.MPO_L.end()) {
-            if(ENV_L.hasNaN()) throw std::runtime_error("ENV_L " + std::to_string(ENV_L.get_position()) + " has NAN's");
-            state.ENV_L.emplace_back(ENV_L);
-            state.ENV2_L.emplace_back(ENV2_L);
-            if(mpsL_it->get_position() != state.ENV_L.back().get_position())
-                throw std::runtime_error(fmt::format("Size mismatch in MPSL and ENVL: {} != {}", mpsL_it->get_position(), state.ENV_L.back().get_position()));
-            if(mpsL_it->get_chiL() != state.ENV_L.back().block.dimension(0))
-                throw std::runtime_error(
-                    fmt::format("Size mismatch in MPSL and ENVL dimensions {} != {}", mpsL_it->get_chiL(), state.ENV_L.back().block.dimension(2)));
-
-            ENV_L  = ENV_L.enlarge(*mpsL_it, *mpoL_it->get());
-            ENV2_L = ENV2_L.enlarge(*mpsL_it, *mpoL_it->get());
-            mpsL_it++;
-            mpoL_it++;
-        }
-    }
-
-    {
-        state.ENV_R.clear();
-        state.ENV2_R.clear();
-
-        auto mpsR_it = state.MPS_R.rbegin();
-        auto mpoR_it = state.MPO_R.rbegin();
-        auto ENV_R   = class_environment("R", *mpsR_it, *mpoR_it->get());
-        auto ENV2_R  = class_environment_var("R", *mpsR_it, *mpoR_it->get());
-        while(mpsR_it != state.MPS_R.rend() and mpoR_it != state.MPO_R.rend()) {
-            if(ENV_R.hasNaN()) throw std::runtime_error("ENV_R " + std::to_string(ENV_R.get_position()) + " has NAN's");
-            state.ENV_R.emplace_front(ENV_R);
-            state.ENV2_R.emplace_front(ENV2_R);
-            if(mpsR_it->get_position() != state.ENV_R.front().get_position())
-                throw std::runtime_error(fmt::format("Size mismatch in MPSR and ENVR: {} != {}", mpsR_it->get_position(), state.ENV_R.front().get_position()));
-            if(mpsR_it->get_chiR() != state.ENV_R.front().block.dimension(0))
-                throw std::runtime_error(
-                    fmt::format("Size mismatch in MPSR and ENVR dimensions {} != {}", mpsR_it->get_chiR(), state.ENV_R.front().block.dimension(2)));
-            ENV_R  = ENV_R.enlarge(*mpsR_it, *mpoR_it->get());
-            ENV2_R = ENV2_R.enlarge(*mpsR_it, *mpoR_it->get());
-            mpsR_it++;
-            mpoR_it++;
-        }
-    }
-}
-
-void tools::finite::mps::project_to_closest_parity_sector(class_state_finite &state, std::string parity_sector) {
+void tools::finite::mps::project_to_closest_parity_sector(class_state_finite &state, const std::string &parity_sector) {
     state = tools::finite::ops::get_projection_to_closest_parity_sector(state, parity_sector);
 }
