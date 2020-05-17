@@ -126,7 +126,7 @@ namespace math
     /*! \brief MatLab-style modulo operator
     *   \param x first number
     *   \param y second number
-    *   \return modulo of x and y. Example,  <code> mod(-0.5,10)  = 9.5 </code>, instead of <code> -0.5 </code>  as given by x%y.
+    *   \return modulo of x and y. Example, <code> mod(7,2)  = 1 </code> but <code> mod(-0.5,10)  = 9.5 </code>, instead of <code> -0.5 </code>  as given by x%y.
     */
     template<typename T1, typename T2>
     inline auto mod(const T1 x, const T2 y)

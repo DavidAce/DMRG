@@ -191,7 +191,17 @@ const class_mps_site &class_state_finite::get_mps(size_t pos) const {
     return *mps_it;
 }
 
-class_mps_site &class_state_finite::get_mps(size_t pos) { return const_cast<class_mps_site &>(static_cast<const class_state_finite &>(*this).get_mps(pos)); }
+class_mps_site &class_state_finite::get_mps(size_t pos) { return const_cast<class_mps_site &>(std::as_const(*this).get_mps(pos)); }
+
+const class_mps_site &class_state_finite::get_mps() const {
+    return get_mps(get_position());
+}
+
+class_mps_site &class_state_finite::get_mps() {
+    return get_mps(get_position());
+}
+
+
 //
 //const class_mpo_base &class_state_finite::get_mpo(size_t pos) const {
 //    if(pos >= MPO_L.size() + MPO_R.size()) throw std::range_error(fmt::format("get_mpo(pos) pos out of range: {}", pos));

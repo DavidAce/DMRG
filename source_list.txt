@@ -47,14 +47,15 @@ source/tools/common/io/h5dset.cpp
 source/tools/common/io/h5table.cpp
 source/tools/common/io/h5tmp.cpp
 source/tools/common/io/h5resume.cpp
+source/tools/common/moments.cpp
 source/tools/common/prof.cpp
 source/tools/common/views.cpp
+source/tools/common/svd.cpp
 source/tools/finite/debug.cpp
 source/tools/finite/io/h5dset.cpp
 source/tools/finite/io/h5resume.cpp
 source/tools/finite/io/h5table.cpp
 source/tools/finite/measure.cpp
-source/tools/finite/measure/moments.cpp
 source/tools/finite/mpo.cpp
 source/tools/finite/mps-internals.cpp
 source/tools/finite/mps.cpp
@@ -141,8 +142,10 @@ source/config/nmspc_settings.h
 source/tools/common.h
 source/tools/common/io.h
 source/tools/common/log.h
+source/tools/common/moments.h
 source/tools/common/prof.h
 source/tools/common/views.h
+source/tools/common/svd.h
 source/tools/finite.h
 source/tools/finite/debug.h
 source/tools/finite/io.h

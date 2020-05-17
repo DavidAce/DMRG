@@ -10,13 +10,14 @@ using Scalar = class_mps_site::Scalar;
 
 bool class_mps_site::isCenter() const {
     if(LC.has_value()) {
-        if(LC.value().dimension(0) != M.dimension(2)) throw std::runtime_error(fmt::format("M and LC dim mismatch: {} != {}", M.dimension(2), LC.value().dimension(0)));
+        if(LC.value().dimension(0) != M.dimension(2))
+            throw std::runtime_error(fmt::format("M and LC dim mismatch: {} != {}", M.dimension(2), LC.value().dimension(0)));
     }
     return LC.has_value();
 }
 
-bool class_mps_site:: is_real() const { return Textra::isReal(M, "M"); }
-bool class_mps_site:: has_nan() const { return Textra::hasNaN(M, "M"); }
+bool class_mps_site::is_real() const { return Textra::isReal(M, "M"); }
+bool class_mps_site::has_nan() const { return Textra::hasNaN(M, "M"); }
 void class_mps_site::assert_validity() const {
     if(Textra::hasNaN(M, "M")) throw std::runtime_error("MPS at position " + std::to_string(get_position()) + " has NAN's");
 }
@@ -44,11 +45,13 @@ const Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() const {
         throw std::runtime_error("Site at position " + std::to_string(get_position()) + " is not a center");
 }
 
-Eigen::Tensor<Scalar, 3> &class_mps_site::get_M_bare() { return const_cast<Eigen::Tensor<Scalar, 3> &>(static_cast<const class_mps_site &>(*this).get_M_bare()); }
+Eigen::Tensor<Scalar, 3> &class_mps_site::get_M_bare() {
+    return const_cast<Eigen::Tensor<Scalar, 3> &>(std::as_const(*this).get_M_bare());
+}
 
-Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() { return const_cast<Eigen::Tensor<Scalar, 3> &>(static_cast<const class_mps_site &>(*this).get_M()); }
+Eigen::Tensor<Scalar, 3> &class_mps_site::get_M() { return const_cast<Eigen::Tensor<Scalar, 3> &>(std::as_const(*this).get_M()); }
 Eigen::Tensor<Scalar, 1> &class_mps_site::get_L() { return L; }
-Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() { return const_cast<Eigen::Tensor<Scalar, 1> &>(static_cast<const class_mps_site &>(*this).get_LC()); }
+Eigen::Tensor<Scalar, 1> &class_mps_site::get_LC() { return const_cast<Eigen::Tensor<Scalar, 1> &>(std::as_const(*this).get_LC()); }
 
 std::tuple<long, long, long> class_mps_site::get_dims() const { return {spin_dim(), get_chiL(), get_chiR()}; }
 long                         class_mps_site::spin_dim() const { return M.dimension(0); }
@@ -67,9 +70,10 @@ size_t class_mps_site::get_position() const {
     }
 }
 
-void class_mps_site::set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_) {
+void class_mps_site::set_mps(const Eigen::Tensor<Scalar, 3> &M_, const Eigen::Tensor<Scalar, 1> &L_, double error) {
     set_M(M_);
     set_L(L_);
+    set_truncation_error(error);
 }
 
 void class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &M_) {
@@ -79,19 +83,24 @@ void class_mps_site::set_M(const Eigen::Tensor<Scalar, 3> &M_) {
     } else
         throw std::runtime_error("Can't set M: Position hasn't been set yet");
 }
-void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_) {
-    if(position)
-        L = L_;
-    else
+void class_mps_site::set_L(const Eigen::Tensor<Scalar, 1> &L_, double error) {
+    if(position) {
+        L                = L_;
+        truncation_error = error;
+    } else
         throw std::runtime_error("Can't set L: Position hasn't been set yet");
 }
-void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_) {
+void class_mps_site::set_LC(const Eigen::Tensor<Scalar, 1> &LC_, double error) {
     if(position) {
         LC = LC_;
         MC.reset();
+        truncation_error_LC = error;
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
 }
+
+void class_mps_site::set_truncation_error(double error) { truncation_error = error; }
+void class_mps_site::set_truncation_error_LC(double error) { truncation_error_LC = error; }
 
 void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
     long mpoDimL = mpo.dimension(0);
@@ -104,8 +113,9 @@ void class_mps_site::apply_mpo(const Eigen::Tensor<Scalar, 4> &mpo) {
         MC.reset();
     }
 
-    Eigen::Tensor<Scalar, 3> M_temp =
-        M.contract(mpo, Textra::idx({0}, {2})).shuffle(Textra::array5{4, 0, 2, 1, 3}).reshape(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+    Eigen::Tensor<Scalar, 3> M_temp = M.contract(mpo, Textra::idx({0}, {2}))
+                                          .shuffle(Textra::array5{4, 0, 2, 1, 3})
+                                          .reshape(Textra::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     Eigen::Tensor<Scalar, 1> L_temp = L.broadcast(Textra::array1{mpoDimL});
 
     L = L_temp;

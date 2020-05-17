@@ -100,17 +100,14 @@ namespace Textra {
 
     template <typename Scalar>
     constexpr Eigen::Tensor<Scalar,1> extractDiagonal(const Eigen::Tensor<Scalar,2> &tensor) {
-        auto rows = tensor.dimension(0);
-        auto cols = tensor.dimension(1);
         assert(tensor.dimension(0) == tensor.dimension(1) and "extractDiagonal expects a square tensor");
 
-        Eigen::Tensor<Scalar,1> diagonals(rows);
-        for (auto i = 0; i < rows; i++){
+        Eigen::Tensor<Scalar,1> diagonals(tensor.dimension(0));
+        for (auto i = 0; i < tensor.dimension(0); i++){
             diagonals(i) = tensor(i,i);
         }
-        std::cout << "diagonals: \n" << diagonals;
         return diagonals;
-//        return tensor.reshape(array1{rows*cols}).stride(array1{cols+1});
+        //        return tensor.reshape(array1{rows*cols}).stride(array1{cols+1});
     }
 
 
