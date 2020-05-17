@@ -5,17 +5,21 @@
 #include "class_idmrg.h"
 #include <h5pp/h5pp.h>
 #include <config/nmspc_settings.h>
+#include <tensors/class_tensors_infinite.h>
 #include <tensors/state/class_state_infinite.h>
+#include <tensors/model/class_model_infinite.h>
+#include <tensors/edges/class_edges_infinite.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/infinite/opt.h>
+
 using namespace std;
 using namespace Textra;
 
 class_idmrg::class_idmrg(std::shared_ptr<h5pp::File> h5ppFile_)
     : class_algorithm_infinite(std::move(h5ppFile_), AlgorithmType::iDMRG) {
     tools::log->trace("Constructing class {}", algo_name);
-    tensors.initialize(settings::model::model_type,settings::model::model_size,0);
+    tensors.initialize(settings::model::model_type);
 }
 
 
@@ -55,7 +59,6 @@ void class_idmrg::run_simulation() {
         if (status.iter >= settings::idmrg::max_iters)  {stop_reason = StopReason::MAX_ITERS; break;}
         if (status.algorithm_has_succeeded)             {stop_reason = StopReason::SUCCEEDED; break;}
         if (status.algorithm_has_to_stop)               {stop_reason = StopReason::SATURATED; break;}
-
 
         enlarge_environment();
         update_bond_dimension_limit();

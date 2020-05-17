@@ -61,6 +61,13 @@ bool class_tensors_finite::position_is_right_edge() const { return state->positi
 bool class_tensors_finite::position_is_any_edge() const { return state->position_is_any_edge(); }
 bool class_tensors_finite::position_is_at(size_t pos) const { return state->position_is_at(pos); }
 
+
+void class_tensors_finite::move_center_point() const {
+
+
+}
+
+
 void class_tensors_finite::do_all_measurements() const {
     tools::finite::measure::do_all_measurements(*this);
 }

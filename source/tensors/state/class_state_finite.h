@@ -92,6 +92,10 @@ class class_state_finite {
 
     const class_mps_site &get_mps(size_t pos) const;
     class_mps_site &      get_mps(size_t pos);
+    const class_mps_site &get_mps() const;
+    class_mps_site &      get_mps();
+
+
     //    const class_model_base &     get_mpo(size_t pos) const;
     //    class_model_base &           get_mpo(size_t pos);
     //    const class_environment &    get_ENVL(size_t pos) const;
