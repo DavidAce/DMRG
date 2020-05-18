@@ -543,7 +543,7 @@ void shuffle(Iter from, Iter to, RandType&& rng)
 
 /*
  * Although std::seed_seq is useful, it isn't everything.  Often we want to
- * initialize a random-number generator some other way, such as from a random
+ * initialize_state a random-number generator some other way, such as from a random
  * device.
  *
  * Technically, it does not meet the requirements of a SeedSequence because

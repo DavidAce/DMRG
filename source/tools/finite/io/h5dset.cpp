@@ -53,14 +53,14 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     std::string mps_path = state_prefix + "/mps";
     for(size_t pos = 0; pos < state.get_length(); pos++) {
         dsetName = mps_path + "/L_" + std::to_string(pos);
-        h5ppFile.writeDataset(state.get_mps(pos).get_L(), dsetName, layout);
+        h5ppFile.writeDataset(state.get_mps_site(pos).get_L(), dsetName, layout);
         h5ppFile.writeAttribute(pos, "position", dsetName);
-        h5ppFile.writeAttribute(state.get_mps(pos).get_L().dimensions(), "dimensions", dsetName);
-        if(state.get_mps(pos).isCenter()) {
+        h5ppFile.writeAttribute(state.get_mps_site(pos).get_L().dimensions(), "dimensions", dsetName);
+        if(state.get_mps_site(pos).isCenter()) {
             dsetName = mps_path + "/L_C";
-            h5ppFile.writeDataset(state.get_mps(pos).get_LC(), dsetName, layout);
+            h5ppFile.writeDataset(state.get_mps_site(pos).get_LC(), dsetName, layout);
             h5ppFile.writeAttribute(pos, "position", dsetName);
-            h5ppFile.writeAttribute(state.get_mps(pos).get_LC().dimensions(), "dimensions", dsetName);
+            h5ppFile.writeAttribute(state.get_mps_site(pos).get_LC().dimensions(), "dimensions", dsetName);
         }
     }
     h5ppFile.writeAttribute(state.get_length(), "model_size", mps_path);
@@ -78,9 +78,9 @@ void tools::finite::io::h5dset::write_state(h5pp::File &h5ppFile, const std::str
     tools::common::profile::t_hdf->tic();
     for(size_t pos = 0; pos < state.get_length(); pos++) {
         dsetName = mps_path + "/M_" + std::to_string(pos);
-        h5ppFile.writeDataset(state.get_mps(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
+        h5ppFile.writeDataset(state.get_mps_site(pos).get_M_bare(), dsetName, layout); // Important to write bare matrices!!
         h5ppFile.writeAttribute(pos, "position", dsetName);
-        h5ppFile.writeAttribute(state.get_mps(pos).get_M_bare().dimensions(), "dimensions", dsetName);
+        h5ppFile.writeAttribute(state.get_mps_site(pos).get_M_bare().dimensions(), "dimensions", dsetName);
     }
     tools::common::profile::t_hdf->toc();
 }

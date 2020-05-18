@@ -49,7 +49,7 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
     tools::log->info("Entanglement entropy before applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
     auto mpo = mpos.begin();
     auto mps = state.MPS.begin();
-    while(mpo != mpos.end() and mps != state.MPS.end()){
+    while(mpo != mpos.end() and mps != state.mps_sites.end()){
         mps->apply_mpo(*mpo);
         mpo++;
         mps++;
@@ -65,10 +65,10 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
                 Ledge
                         .shuffle(Textra::array3{0,2,1})
                         .reshape(Textra::array2{Ldim*mpoDimL,Ldim})
-                        .contract(state.MPS.front().get_M_bare(),Textra::idx({0},{1}))
+                        .contract(state.mps_sites.front().get_M_bare(),Textra::idx({0},{1}))
                         .shuffle(Textra::array3{1,0,2});
-        state.MPS.front().set_M(M_temp);
-        state.MPS.front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0));
+        state.mps_sites.front().set_M(M_temp);
+        state.mps_sites.front().set_L(Eigen::Tensor<Scalar,1>(Ldim).constant(1.0));
     }
     {
         long mpoDimR = mpos.back().dimension(1);
@@ -77,10 +77,10 @@ void tools::finite::ops::apply_mpos(class_state_finite & state, const std::list<
                 Redge
                         .shuffle(Textra::array3{0,2,1})
                         .reshape(Textra::array2{Rdim*mpoDimR,Rdim})
-                        .contract(state.MPS.back().get_M_bare(),Textra::idx({0},{2}))
+                        .contract(state.mps_sites.back().get_M_bare(),Textra::idx({0},{2}))
                         .shuffle(Textra::array3{1,2,0});
-        state.MPS.back().set_M(M_temp);
-        state.MPS.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
+        state.mps_sites.back().set_M(M_temp);
+        state.mps_sites.back().set_L(Eigen::Tensor<Scalar,1>(Rdim).constant(1.0));
     }
     state.clear_measurements();
     if(state.has_nan()) throw std::runtime_error("State has NAN's after applying MPO's");
@@ -184,14 +184,14 @@ double tools::finite::ops::overlap(const class_state_finite & state1, const clas
 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    auto mps1 = state1.MPS.begin();
-    auto mps2 = state2.MPS.begin();
+    auto mps1 = state1.mps_sites.begin();
+    auto mps2 = state2.mps_sites.begin();
     Eigen::Tensor<Scalar,2> overlap =
         mps1->get_M()
             .contract(mps2->get_M().conjugate(), Textra::idx({0,1},{0,1}));
     mps1++;
     mps2++;
-    while(mps1 != state1.MPS.end() and mps2 != state2.MPS.end()){
+    while(mps1 != state1.mps_sites.end() and mps2 != state2.mps_sites.end()){
         Eigen::Tensor<Scalar,2> temp = overlap
             .contract(mps1->get_M()            , Textra::idx({0},{1}))
             .contract(mps2->get_M().conjugate(), Textra::idx({0,1},{1,0}));
@@ -213,9 +213,9 @@ double tools::finite::ops::expectation_value(const class_state_finite & state1, 
     for(size_t pos = 0; pos < state1.get_length(); pos++) {
         Eigen::Tensor<Scalar,3> temp =
                 L
-                .contract(state1.get_mps(pos).get_M()              , idx({0},{1}))
+                .contract(state1.get_mps_site(pos).get_M()              , idx({0},{1}))
                 .contract(*mpo_it++                                , idx({1,2},{0,2}))
-                .contract(state2.get_mps(pos).get_M().conjugate()  , idx({0,3},{1,0}))
+                .contract(state2.get_mps_site(pos).get_M().conjugate()  , idx({0,3},{1,0}))
                 .shuffle(array3{0,2,1});
 
         L = temp;
@@ -235,10 +235,10 @@ double tools::finite::ops::exp_sq_value     (const class_state_finite & state1, 
     for(size_t pos = 0; pos < state1.get_length(); pos++) {
         Eigen::Tensor<Scalar,4> temp =
                 L
-                .contract(state1.get_mps(pos).get_M()              , idx({0},{1}))
+                .contract(state1.get_mps_site(pos).get_M()              , idx({0},{1}))
                 .contract(*mpo_it                                  , idx({1,3},{0,2}))
                 .contract(*mpo_it++                                , idx({1,4},{0,2}))
-                .contract(state2.get_mps(pos).get_M().conjugate()  , idx({0,4},{1,0}))
+                .contract(state2.get_mps_site(pos).get_M().conjugate()  , idx({0,4},{1,0}))
                 .shuffle(array4{0,3,1,2});
 
         L = temp;

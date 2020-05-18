@@ -21,6 +21,7 @@ class class_mpo_base {
     using Scalar   = std::complex<double>;
     using TableMap = std::map<std::string, std::any>;
     const ModelType model_type;
+    bool all_mpo_parameters_have_been_set = false;
 
     protected:
     // Common parameters
@@ -34,33 +35,25 @@ class class_mpo_base {
     Eigen::array<size_t, 2>  extent2;  /*!< Extent of pauli matrices in a rank-2 tensor */
     std::optional<size_t>    position; /*!< Position on a finite chain */
     Eigen::Tensor<Scalar, 4> mpo_internal;
-    //    [[nodiscard]] std::any &      find_val(Parameters &parameters, std::string_view key) const;
-    //    [[nodiscard]] const std::any &find_val(const Parameters &parameters, std::string_view key) const;
-    //    template<typename T>
-    //    [[nodiscard]] T &get_val(Parameters &parameters, std::string_view key) {
-    //        return std::any_cast<T &>(find_val(parameters, key));
-    //    }
-    //    template<typename T>
-    //    [[nodiscard]] const T &get_val(const Parameters &vec, std::string_view key) {
-    //        return std::any_cast<const T &>(find_val(vec, key));
-    //    }
+
 
     public:
-    bool all_mpo_parameters_have_been_set = false;
 
     explicit class_mpo_base(ModelType model_type_, size_t position_);
-    virtual ~class_mpo_base() = default;
+    virtual ~class_mpo_base() = 0;
+
+
 
     void set_position(size_t new_pos);
-    void assertValidity() const;
+    void assert_validity() const;
     void set_reduced_energy(double site_energy);
 
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &MPO() const;
     [[nodiscard]] size_t                          get_position() const;
     [[nodiscard]] std::vector<std::string>        get_parameter_names() const;
     [[nodiscard]] std::vector<std::any>           get_parameter_values() const;
-    [[nodiscard]] bool                             is_real() const;
-    [[nodiscard]] bool                             has_nan() const;
+    [[nodiscard]] bool                            is_real() const;
+    [[nodiscard]] bool                            has_nan() const;
     [[nodiscard]] bool                            is_damped() const;
     [[nodiscard]] bool                            is_reduced() const;
     [[nodiscard]] double                          get_reduced_energy() const;

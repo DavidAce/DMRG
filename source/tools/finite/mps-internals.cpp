@@ -78,7 +78,7 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
     L.setConstant(1.0);
     tools::log->info("Initializing state from bitfield of state number {} with eigvecs of σ{} in sector {}: {}", state_number, axis,sector, bs_vec);
     int carry_sign = 1;
-    for (auto &mps : state.MPS ){
+    for (auto &mps : state.mps_sites){
         int sign = 2*bs[mps.get_position()] - 1;
         carry_sign *= sign;
         mps.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(),2,1,1), L);
@@ -90,7 +90,7 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_from_bits
 
     if(sector * carry_sign == -1){
         //Flip the last spin to get the correct total sign.
-        auto &mps = state.MPS.back();
+        auto &mps = state.mps_sites.back();
         int sign = 2*bs[mps.get_position()] - 1;
         sign *= -1;
         mps.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(),2,1,1), L);
@@ -113,20 +113,20 @@ void tools::finite::mps::internals::set_product_state_in_parity_sector_randomly(
     int sign  = 1;
 
     L.setConstant(1.0);
-    for (auto &mps : state.MPS ){
+    for (auto &mps : state.mps_sites){
         sign = 2* rn::uniform_integer_01() - 1;
         mps.set_mps(Textra::MatrixTensorMap(get_eigvec(axis,sign).normalized(), 2, 1, 1), L);
         if(mps.isCenter())
-            state.MPS.back().set_LC(L);
+            state.mps_sites.back().set_LC(L);
     }
     auto spin_component   = tools::finite::measure::spin_component(state,axis);
     if(axis == "x" and spin_component * sector < 0 ){
-        state.MPS.back().set_mps(Textra::MatrixTensorMap(get_eigvec(axis,-sign).normalized(), 2, 1, 1), L);
+        state.mps_sites.back().set_mps(Textra::MatrixTensorMap(get_eigvec(axis,-sign).normalized(), 2, 1, 1), L);
         spin_component   = tools::finite::measure::spin_component(state,axis);
     }
     state.clear_measurements();
     log->info("Finished reset to product state with global spin component {} = {}",axis, spin_component);
-    if (spin_component * sector < 0) throw std::logic_error("Could not initialize in the correct parity sector");
+    if (spin_component * sector < 0) throw std::logic_error("Could not initialize_state in the correct parity sector");
 
 }
 
@@ -150,7 +150,7 @@ void tools::finite::mps::internals::set_product_state_randomly(class_state_finit
     }else if (parity_sector == "random") {
         Eigen::Tensor<Scalar,1> L (1);
         L.setConstant(1.0);
-        for (auto &mps : state.MPS ){
+        for (auto &mps : state.mps_sites){
             mps.set_mps(Textra::MatrixTensorMap(Eigen::VectorXcd::Random(2).normalized(), 2, 1, 1), L);
             if(mps.isCenter())
                 mps.set_LC(L);

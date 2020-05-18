@@ -2,72 +2,106 @@
 // Created by david on 7/22/17.
 //
 
-//#include <tensors/state/class_optimize_mps.h>
 #include <config/nmspc_settings.h>
-#include <iomanip>
-#include <math/arpack_extra/matrix_product_hamiltonian.h>
-#include <math/class_eigsolver.h>
-#include <math/nmspc_math.h>
-#include <tensors/model/class_mpo_factory.h>
-#include <tensors/state/class_environment.h>
-#include <tensors/state/class_mps_2site.h>
 #include <tensors/state/class_mps_site.h>
 #include <tensors/state/class_state_infinite.h>
 #include <tools/common/log.h>
+#include <tools/common/svd.h>
 #include <tools/common/views.h>
 #include <tools/infinite/measure.h>
 
-#define profile_optimization 0
-
-using namespace std;
-using namespace Textra;
 using Scalar = class_state_infinite::Scalar;
 
-class_state_infinite::class_state_infinite()
-    : MPS(std::make_unique<class_mps_2site>())
-//        Lblock2(std::make_unique<class_environment_var>("L",0)),
-//        Rblock2(std::make_unique<class_environment_var>("R",1))
-{
-    tools::log->trace("Constructing class_state_infinite");
+class_state_infinite::class_state_infinite() : MPS_A(std::make_unique<class_mps_site>()), MPS_B(std::make_unique<class_mps_site>()) {
+    tools::log->trace("Constructing state");
 }
 
-// We need to make a destructor manually for the enclosing class "class_state_infinite"
-// that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
-// own default deleter.
-// This allows us to forward declare the abstract base class "class_model_base"
+// We need to define the destructor and other special functions
+// because we enclose data in unique_ptr for this pimpl idiom.
+// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Here we follow "rule of five", so we must also define
+// our own copy/move ctor and copy/move assignments
+// This has the side effect that we must define our own
+// operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-// class_state_infinite::~class_state_infinite()=default;
+class_state_infinite::~class_state_infinite()                                     = default;            // default dtor
+class_state_infinite::class_state_infinite(class_state_infinite &&other) noexcept = default;            // default move ctor
+class_state_infinite &class_state_infinite::operator=(class_state_infinite &&other) noexcept = default; // default move assign
 
-// we could the default move constructor
-// class_state_infinite::class_state_infinite(class_state_infinite&&)  = default;
-// we could use the default move assignment operator
-// class_state_infinite & class_state_infinite::operator=(class_state_infinite&&) = default;
+/* clang-format off */
+class_state_infinite::class_state_infinite(const class_state_infinite &other):
+MPS_A(std::make_unique<class_mps_site>(*other.MPS_A)),
+MPS_B(std::make_unique<class_mps_site>(*other.MPS_B)),
+swapped(other.swapped),
+chi_lim(other.chi_lim),
+chi_max(other.chi_max),
+cache(other.cache),
+measurements(other.measurements),
+lowest_recorded_variance(other.lowest_recorded_variance)
+{}
+/* clang-format on */
 
-// ...but we would have to provide a deep copying assignment operator
-// class_state_infinite & class_state_infinite::operator=(class_state_infinite const& source) {
-//    HA = source.HA->clone();
-//    HB = source.HB->clone();
-//    return *this;
-//}
+class_state_infinite &class_state_infinite::operator=(const class_state_infinite &other) {
+    // check for self-assignment
+    if(this != &other) {
+        MPS_A                    = std::make_unique<class_mps_site>(*other.MPS_A);
+        MPS_B                    = std::make_unique<class_mps_site>(*other.MPS_B);
+        swapped                  = other.swapped;
+        chi_lim                  = other.chi_lim;
+        chi_max                  = other.chi_max;
+        cache                    = other.cache;
+        measurements             = other.measurements;
+        lowest_recorded_variance = other.lowest_recorded_variance;
+    }
+    return *this;
+}
 
+void class_state_infinite::initialize(ModelType model_type) {
+    tools::log->trace("Initializing state");
+    long spin_dim = 2;
+    switch(model_type) {
+        case ModelType::ising_tf_rf: spin_dim = settings::model::ising_tf_rf::spin_dim; break;
+        case ModelType::ising_sdual: spin_dim = settings::model::ising_sdual::spin_dim; break;
+        default: spin_dim = 2;
+    }
+    Eigen::Tensor<Scalar, 3> M(spin_dim, 1, 1);
+    Eigen::Tensor<Scalar, 1> L(1);
+    // Default is a product state, spins pointing up in z.
+    M.setZero();
+    M(0, 0, 0) = 1;
+    L.setConstant(1.0);
+    MPS_A = std::make_unique<class_mps_site>(M, L, 0);
+    MPS_B = std::make_unique<class_mps_site>(M, L, 1);
+    MPS_A->set_LC(L);
+}
 
-long class_state_infinite::get_chi() const { return MPS->chiC(); }
+std::pair<size_t, size_t> class_state_infinite::get_positions() { return std::make_pair(MPS_A->get_position(), MPS_B->get_position()); }
+size_t                    class_state_infinite::get_positionA() { return MPS_A->get_position(); }
+size_t                    class_state_infinite::get_positionB() { return MPS_B->get_position(); }
+
+long class_state_infinite::get_chi() const { return MPS_A->get_LC().dimension(0); }
+long class_state_infinite::get_chiA() const { return MPS_A->get_L().dimension(0); }
+long class_state_infinite::get_chiB() const { return MPS_B->get_L().dimension(0); }
 
 long class_state_infinite::get_chi_lim() const {
     // Should get the the current limit on allowed bond dimension
     return chi_lim.value();
 }
+long class_state_infinite::get_chi_max() const {
+    // Should get the the current limit on allowed bond dimension for the duration of the simulation
+    return chi_max.value();
+}
+
+long class_state_infinite::get_spin_dimA() const { return MPS_A->spin_dim(); }
+long class_state_infinite::get_spin_dimB() const { return MPS_B->spin_dim(); }
+
 void class_state_infinite::set_chi_lim(long chi_lim_) {
     // Should set the the current limit on allowed bond dimension
     if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
     chi_lim = chi_lim_;
 }
 
-long class_state_infinite::get_chi_max() const {
-    // Should get the the current limit on allowed bond dimension for the duration of the simulation
-    return chi_max.value();
-}
 void class_state_infinite::set_chi_max(long chi_max_) {
     // Should set the the current limit on allowed bond dimension for the duration of the simulation
     if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
@@ -79,128 +113,60 @@ double class_state_infinite::get_truncation_error() const {
     return tools::infinite::measure::truncation_error(*this);
 }
 
-Eigen::DSizes<long, 3> class_state_infinite::dimensions() const { return MPS->dimensions(); }
+Eigen::DSizes<long, 3> class_state_infinite::dimensions() const { return Eigen::DSizes<long, 3>{get_spin_dimA() * get_spin_dimB(), get_chiA(), get_chiB()}; }
 
-Eigen::Tensor<Scalar, 3> class_state_infinite::get_mps() const {
-    if(cache.mps) return cache.mps.value();
-    cache.mps = MPS->get_mps();
-    return cache.mps.value();
+const class_mps_site &class_state_infinite::get_mps_siteA() const { return *MPS_A; }
+const class_mps_site &class_state_infinite::get_mps_siteB() const { return *MPS_B; }
+class_mps_site &      class_state_infinite::get_mps_siteA() { return *MPS_A; }
+class_mps_site &      class_state_infinite::get_mps_siteB() { return *MPS_B; }
+
+const Eigen::Tensor<Scalar, 3> &class_state_infinite::A_bare() const { return MPS_A->get_M_bare(); }
+const Eigen::Tensor<Scalar, 3> &class_state_infinite::A() const { return MPS_A->get_M(); }
+const Eigen::Tensor<Scalar, 3> &class_state_infinite::B() const { return MPS_B->get_M(); }
+Eigen::Tensor<Scalar, 2>        class_state_infinite::LC() const { return Textra::asDiagonal(MPS_A->get_LC()); }
+Eigen::Tensor<Scalar, 3>        class_state_infinite::GA() const {
+    return MPS_A->get_M_bare().contract(Textra::asDiagonalInversed(MPS_A->get_L()), Textra::idx({1}, {1})).shuffle(Textra::array3{0, 2, 1});
+}
+Eigen::Tensor<Scalar, 3> class_state_infinite::GB() const {
+    return MPS_B->get_M_bare().contract(Textra::asDiagonalInversed(MPS_B->get_L()), Textra::idx({2}, {0}));
+}
+Eigen::Tensor<Scalar, 2> class_state_infinite::LA() const { return Textra::asDiagonal(MPS_A->get_L()); }
+Eigen::Tensor<Scalar, 2> class_state_infinite::LB() const { return Textra::asDiagonal(MPS_B->get_L()); }
+
+const Eigen::Tensor<Scalar, 3> &class_state_infinite::get_2site_tensor(Scalar norm) const {
+    /*!
+ * Returns a two-site tensor
+     @verbatim
+        1--[ LA ]--[ GA ]--[ LC ]-- [ GB ] -- [ LB ]--3
+                     |                 |
+                     0                 2
+       which in our notation is simply A * B  (because A = LA * GA * LC and B = GB * LB),
+       becomes
+
+        1--[ 2site_tensor ]--2
+                  |
+                  0
+
+     @endverbatim
+ */
+
+    if(cache.twosite_tensor) return cache.twosite_tensor.value();
+    long dim0            = MPS_A->spin_dim() * MPS_B->spin_dim();
+    long dim1            = MPS_A->get_chiL();
+    long dim2            = MPS_B->get_chiR();
+    cache.twosite_tensor = A().contract(B(), Textra::idx({2}, {1})).shuffle(Textra::array4{0, 2, 1, 3}).reshape(Textra::array3{dim0, dim1, dim2}) / norm;
+    return cache.twosite_tensor.value();
 }
 
-//void class_state_infinite::assert_positions() const {
-//    if(not math::all_equal(Lblock->get_position(), Lblock2->get_position(), HA->get_position(), MPS->MPS_A->get_position()))
-//        throw std::runtime_error(fmt::format("Position error: Lblock ({}), Lblock2 ({}), HA ({}), MPS_A ({})", Lblock->get_position(), Lblock2->get_position(),
-//                                             HA->get_position(), MPS->MPS_A->get_position()));
+void class_state_infinite::assert_validity() const {
+    MPS_A->assert_validity();
+    MPS_B->assert_validity();
+}
+bool class_state_infinite::is_real() const { return MPS_A->is_real() and MPS_B->is_real(); }
+bool class_state_infinite::has_nan() const { return MPS_A->has_nan() or MPS_B->has_nan(); }
 //
-//    if(not math::all_equal(Rblock->get_position(), Rblock2->get_position(), HB->get_position(), MPS->MPS_B->get_position()))
-//        throw std::runtime_error(fmt::format("Position error: Rblock ({}), Rblock2 ({}), HB ({}), MPS_B ({})", Rblock->get_position(), Rblock2->get_position(),
-//                                             HB->get_position(), MPS->MPS_B->get_position()));
-//}
-
-//============================================================================//
-// Find smallest eigenvalue using Arpack.
-//============================================================================//
-
-// Eigen::Tensor<Scalar,4> class_state_infinite::optimize_MPS(Eigen::Tensor<Scalar, 4> &theta, eigutils::eigSetting::Ritz ritz){
-//    std::array<long,4> shape_theta4 = theta.dimensions();
-//    std::array<long,4> shape_mpo4   = HA->MPO().dimensions();
-//
-//    t_eig.tic();
-//    int nev = 1;
-//    using namespace settings::precision;
-//    using namespace eigutils::eigSetting;
-//    DenseHamiltonianProduct<Scalar>  matrix (Lblock->block.data(), Rblock->block.data(), HA->MPO().data(), HB->MPO().data(), shape_theta4, shape_mpo4);
-//    class_eigsolver solver;
-//    solver.eigs_dense(matrix,nev,eig_max_ncv,NAN,Form::SYMMETRIC,ritz,Side::R,true,true);
-//
-//    auto eigvals           = Eigen::TensorMap<const Eigen::Tensor<double,1>>  (solver.solution.get_eigvals<Form::SYMMETRIC>().data()
-//    ,solver.solution.meta.cols); auto eigvecs           = Eigen::TensorMap<const Eigen::Tensor<Scalar,1>>  (solver.solution.get_eigvecs<Type::CPLX,
-//    Form::SYMMETRIC>().data(),solver.solution.meta.rows);
-//
-//    t_eig.toc();
-//    t_eig.print_last_time_interval();
-//
-//    E_optimal = std::real(eigvals(0));
-//    return eigvecs.reshape(theta.dimensions());
-//}
-
-//============================================================================//
-// Do unitary evolution on an MPS
-//============================================================================//
-// Eigen::Tensor<Scalar, 4> class_state_infinite::evolve_MPS(const Eigen::Tensor<Scalar, 4> &U)
-///*!
-//@verbatim
-//  1--[ Θ ]--3
-//     |   |
-//     0   2
-//                   1--[ Θ ]--3
-//     0   1   --->     |   |
-//     |   |            0   2
-//     [ U ]
-//     |   |
-//     2   3
-//@endverbatim
-//*/
-//
-//{
-//    return U.contract(MPS->get_theta(), idx({0,1},{0,2}))
-//            .shuffle(array4{0,2,1,3});
-//}
-//
-// Eigen::Tensor<Scalar, 4> class_state_infinite::evolve_MPS(const Eigen::Tensor<Scalar, 4> &theta, const Eigen::Tensor<Scalar, 4> &U)
-///*!
-//@verbatim
-//  1--[ Θ ]--3
-//     |   |
-//     0   2
-//                   1--[ Θ ]--3
-//     0   1   --->     |   |
-//     |   |            0   2
-//     [ U ]
-//     |   |
-//     2   3
-//@endverbatim
-//*/
-//{
-//    return U.contract(theta, idx({0,1},{0,2}))
-//            .shuffle(array4{0,2,1,3});
-//}
-
-//============================================================================//
-// Do SVD decomposition, truncation and normalization of the MPS->
-//============================================================================//
-// Eigen::Tensor<Scalar,4> class_state_infinite::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta,long chi_, double svd_threshold){
-//    class_SVD SVD;
-//    SVD.setThreshold(svd_threshold);
-//    auto[U, S, V] = SVD.schmidt(theta,chi_);
-//    MPS->truncation_error         = SVD.get_truncation_error();
-//    MPS->LC  = S;
-//    Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS->MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-//    Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(MPS->MPS_B->get_L()), idx({2},{0}));
-//    MPS->MPS_A->set_G(L_U);
-//    MPS->MPS_B->set_G(V_L);
-//    return get_theta();
-//}
-//
-// void class_state_infinite::truncate_MPS(const Eigen::Tensor<Scalar, 4> &theta, class_mps_2site &MPS_out,long chi_, double svd_threshold){
-//    class_SVD SVD;
-//    SVD.setThreshold(svd_threshold);
-//    auto[U, S, V] = SVD.schmidt(theta, chi_);
-//    MPS_out.truncation_error = SVD.get_truncation_error();
-//    MPS_out.LC  = S;
-//    Eigen::Tensor<Scalar,3> L_U = asDiagonalInversed(MPS_out.MPS_A->get_L()).contract(U,idx({1},{1})).shuffle(array3{1,0,2});
-//    Eigen::Tensor<Scalar,3> V_L = V.contract(asDiagonalInversed(MPS_out.MPS_B->get_L()), idx({2},{0}));
-//    MPS_out.MPS_A->set_G(L_U);
-//    MPS_out.MPS_B->set_G(V_L);
-//}
-//
-
-void class_state_infinite::assert_validity() const { MPS->assert_validity(); }
-bool class_state_infinite::is_real() const { return MPS->is_real(); }
-bool class_state_infinite::has_nan() const { return MPS->has_nan(); }
-//
-//template<typename T>
-//Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_matrix() const {
+// template<typename T>
+// Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_matrix() const {
 //    Eigen::Tensor<T, 5> tempL;
 //    Eigen::Tensor<T, 5> tempR;
 //    if constexpr(std::is_same<T, double>::value) {
@@ -222,16 +188,16 @@ bool class_state_infinite::has_nan() const { return MPS->has_nan(); }
 //        tempL = Lblock->block.contract(HA->MPO(), Textra::idx({2}, {0})).shuffle(Textra::array5{4, 1, 3, 0, 2});
 //        tempR = Rblock->block.contract(HB->MPO(), Textra::idx({2}, {1})).shuffle(Textra::array5{4, 1, 3, 0, 2});
 //    }
-//    long                shape   = MPS->chiA() * MPS->spindim() * MPS->chiB() * MPS->spin_dim_A();
+//    long                shape   = mps_sites->chiA() * mps_sites->spindim() * mps_sites->chiB() * mps_sites->spin_dim_A();
 //    Eigen::Tensor<T, 8> H_local = tempL.contract(tempR, Textra::idx({4}, {4})).shuffle(Textra::array8{0, 1, 4, 5, 2, 3, 6, 7});
 //    return Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>(H_local.data(), shape, shape);
 //}
 
-//template Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>               class_state_infinite::get_H_local_matrix<double>() const;
-//template Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_matrix<std::complex<double>>() const;
+// template Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>               class_state_infinite::get_H_local_matrix<double>() const;
+// template Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_matrix<std::complex<double>>() const;
 //
-//template<typename T>
-//Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_sq_matrix() const {
+// template<typename T>
+// Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_sq_matrix() const {
 //    Eigen::Tensor<T, 6> tempL;
 //    Eigen::Tensor<T, 6> tempR;
 //    if constexpr(std::is_same<T, double>::value) {
@@ -264,31 +230,31 @@ bool class_state_infinite::has_nan() const { return MPS->has_nan(); }
 //                    .shuffle(Textra::array6{5, 1, 3, 0, 2, 4});
 //    }
 //
-//    long                shape   = MPS->chiA() * MPS->spindim() * MPS->chiB() * MPS->spin_dim_A();
+//    long                shape   = mps_sites->chiA() * mps_sites->spindim() * mps_sites->chiB() * mps_sites->spin_dim_A();
 //    Eigen::Tensor<T, 8> H_local = tempL.contract(tempR, Textra::idx({4, 5}, {4, 5})).shuffle(Textra::array8{0, 1, 4, 5, 2, 3, 6, 7});
 //    return Eigen::Map<Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>>(H_local.data(), shape, shape);
 //}
 
-//template Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>               class_state_infinite::get_H_local_sq_matrix<double>() const;
-//template Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_sq_matrix<std::complex<double>>() const;
+// template Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>               class_state_infinite::get_H_local_sq_matrix<double>() const;
+// template Eigen::Matrix<std::complex<double>, Eigen::Dynamic, Eigen::Dynamic> class_state_infinite::get_H_local_sq_matrix<std::complex<double>>() const;
 
 // void class_state_infinite::enlarge_environment(int direction) {
 //    assert_positions();
-//    auto position_A_new = MPS->MPS_A->get_position() + 1;
-//    *Lblock             = Lblock->enlarge(*MPS->MPS_A, *HA);
-//    *Rblock             = Rblock->enlarge(*MPS->MPS_B, *HB);
-//    *Lblock2            = Lblock2->enlarge(*MPS->MPS_A, *HA);
-//    *Rblock2            = Rblock2->enlarge(*MPS->MPS_B, *HB);
+//    auto position_A_new = mps_sites->MPS_A->get_position() + 1;
+//    *Lblock             = Lblock->enlarge(*mps_sites->MPS_A, *HA);
+//    *Rblock             = Rblock->enlarge(*mps_sites->MPS_B, *HB);
+//    *Lblock2            = Lblock2->enlarge(*mps_sites->MPS_A, *HA);
+//    *Rblock2            = Rblock2->enlarge(*mps_sites->MPS_B, *HB);
 //    set_positions(position_A_new);
 //    if(direction != 0) throw std::runtime_error("Ooops, direction != 0");
 //    if (direction == 1){
-//        *Lblock  = Lblock->enlarge(*MPS->MPS_A,  *HA);
-//        *Lblock2 = Lblock2->enlarge(*MPS->MPS_A, *HA);
+//        *Lblock  = Lblock->enlarge(*mps_sites->MPS_A,  *HA);
+//        *Lblock2 = Lblock2->enlarge(*mps_sites->MPS_A, *HA);
 //        Lblock->set_position (HB->get_position());
 //        Lblock2->set_position(HB->get_position());
 //    }else if (direction == -1){
-//        *Rblock  = Rblock->enlarge(*MPS->MPS_B,  *HB);
-//        *Rblock2 = Rblock2->enlarge(*MPS->MPS_B, *HB);
+//        *Rblock  = Rblock->enlarge(*mps_sites->MPS_B,  *HB);
+//        *Rblock2 = Rblock2->enlarge(*mps_sites->MPS_B, *HB);
 //        Rblock->set_position (HA->get_position());
 //        Rblock2->set_position(HA->get_position());
 //    }else if(direction == 0){
@@ -300,16 +266,47 @@ bool class_state_infinite::has_nan() const { return MPS->has_nan(); }
 //}
 
 void class_state_infinite::set_positions(size_t position) {
-    MPS->MPS_A->set_position(position);
-    MPS->MPS_B->set_position(position + 1);
+    MPS_A->set_position(position);
+    MPS_B->set_position(position + 1);
+}
+
+void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor) {
+    long   chi      = get_chi_lim();
+    long   dA       = get_spin_dimA();
+    long   dB       = get_spin_dimB();
+    size_t posA     = get_positionA();
+    size_t posB     = get_positionB();
+    auto   mps_list = tools::common::svd::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, posA, chi);
+    set_mps(mps_list);
+}
+
+void class_state_infinite::set_mps(const std::list<class_mps_site> &mps_list) {
+    if(mps_list.size() != 2) throw std::runtime_error("Expected 2 sites, got: " + std::to_string(mps_list.size()));
+    const auto &mpsA = *std::next(mps_list.begin(), 0);
+    const auto &mpsB = *std::next(mps_list.begin(), 1);
+    set_mps(mpsA, mpsB);
+    clear_cache();
+}
+
+void class_state_infinite::set_mps(const class_mps_site &mpsA, const class_mps_site &mpsB) {
+    if(not mpsA.isCenter()) throw std::runtime_error("Given mps for site A is not a center");
+    MPS_A = std::make_unique<class_mps_site>(mpsA);
+    MPS_B = std::make_unique<class_mps_site>(mpsB);
+    clear_cache();
 }
 
 void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB) {
-    MPS->set_mps(MA, LC, MB);
+    MPS_A->set_M(MA);
+    MPS_A->set_LC(LC);
+    MPS_B->set_M(MB);
+    clear_cache();
 }
 void class_state_infinite::set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC,
                                    const Eigen::Tensor<Scalar, 3> &MB, const Eigen::Tensor<Scalar, 1> &LB) {
-    MPS->set_mps(LA, MA, LC, MB, LB);
+    MPS_A->set_mps(MA, LA);
+    MPS_A->set_LC(LC);
+    MPS_B->set_mps(MB, LB);
+    clear_cache();
 }
 
 void class_state_infinite::clear_cache() const { cache = Cache(); }
@@ -321,4 +318,21 @@ void class_state_infinite::clear_measurements() const {
 
 void class_state_infinite::do_all_measurements() const { tools::infinite::measure::do_all_measurements(*this); }
 
-void class_state_infinite::swap_AB() { MPS->swap_AB(); }
+void class_state_infinite::swap_AB() {
+    tools::log->trace("Swapping AB");
+    swapped = !swapped;
+    // Store the positions
+    auto position_left  = MPS_A->get_position();
+    auto position_right = MPS_B->get_position();
+
+    // Swap Gamma
+    Eigen::Tensor<Scalar, 1> LC = MPS_A->get_LC();
+    MPS_A->unset_LC();
+    MPS_B->unset_LC();
+    MPS_A.swap(MPS_B);
+    MPS_A->set_LC(MPS_A->get_L());
+    MPS_A->set_L(LC);
+    MPS_B->set_L(LC);
+    MPS_A->set_position(position_left);
+    MPS_B->set_position(position_right);
+}

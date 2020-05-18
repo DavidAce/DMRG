@@ -2,27 +2,64 @@
 #include "class_tensors_finite.h"
 #include <math/nmspc_math.h>
 #include <tensors/edges/class_edges_finite.h>
-#include <tensors/edges/class_env_ene.h>
-#include <tensors/edges/class_env_var.h>
 #include <tensors/model/class_model_finite.h>
 #include <tensors/state/class_state_finite.h>
+#include <tools/finite/env.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/mpo.h>
 #include <tools/finite/mps.h>
 
-class_tensors_finite::class_tensors_finite() {
-    state = std::make_unique<class_state_finite>();
-    model = std::make_unique<class_model_finite>();
-    edges = std::make_unique<class_edges_finite>();
+class_tensors_finite::class_tensors_finite() :
+    state(std::make_unique<class_state_finite>()),
+    model(std::make_unique<class_model_finite>()),
+    edges(std::make_unique<class_edges_finite>())
+{
+    tools::log->trace("Constructing tensors");
 }
 
-void class_tensors_finite::initialize(ModelType model_type, size_t model_size, size_t position) {
-    state->set_chi_lim(2); // Can't call chi_init() <-- it's a pure virtual function
-    if(state->has_nan()) throw std::runtime_error("State has NAN's before initializing it");
+// We need to define the destructor and other special functions
+// because we enclose data in unique_ptr for this pimpl idiom.
+// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Here we follow "rule of five", so we must also define
+// our own copy/move ctor and copy/move assignments
+// This has the side effect that we must define our own
+// operator= and copy assignment constructor.
+// Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
+// And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
+class_tensors_finite::~class_tensors_finite() = default;                                                    // default dtor
+class_tensors_finite::class_tensors_finite(class_tensors_finite &&other)  noexcept = default;               // default move ctor
+class_tensors_finite &class_tensors_finite::operator=(class_tensors_finite &&other) noexcept = default;     // default move assign
 
-    tools::finite::mps::initialize(*state, model_type, model_size, position);
-    tools::finite::mpo::initialize(*model, model_type, model_size);
-    tools::finite::mpo::randomize(*model);
+class_tensors_finite::class_tensors_finite(const class_tensors_finite &other):
+    state(std::make_unique<class_state_finite>(*other.state)),
+    model(std::make_unique<class_model_finite>(*other.model)),
+    edges(std::make_unique<class_edges_finite>(*other.edges)),
+    active_sites(other.active_sites),
+    measurements(other.measurements)
+{
+
+}
+class_tensors_finite &class_tensors_finite::operator=(const class_tensors_finite &other)
+{
+    // check for self-assignment
+    if(this != &other) {
+        state        = std::make_unique<class_state_finite>(*other.state);
+        model        = std::make_unique<class_model_finite>(*other.model);
+        edges        = std::make_unique<class_edges_finite>(*other.edges);
+        active_sites = other.active_sites;
+        measurements = other.measurements;
+    }
+    return *this;
+}
+
+
+
+
+void class_tensors_finite::initialize(ModelType model_type, size_t model_size, size_t position) {
+    state->initialize(model_type,model_size, position);
+    model->initialize(model_type,model_size);
+    edges->initialize(model_size);
+    tools::finite::env::rebuild_edges(*state,*model,*edges);
 }
 
 // Active sites
@@ -62,7 +99,7 @@ bool class_tensors_finite::position_is_any_edge() const { return state->position
 bool class_tensors_finite::position_is_at(size_t pos) const { return state->position_is_at(pos); }
 
 
-void class_tensors_finite::move_center_point() const {
+void class_tensors_finite::move_center_point() {
 
 
 }

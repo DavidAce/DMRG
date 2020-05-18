@@ -19,7 +19,7 @@ void tools::finite::print::dimensions(const class_tensors_finite &tensors) {
         std::string tag;
         if(pos == tensors.get_position()) tag = "<---- Position A";
         if(pos == tensors.get_position() + 1) tag = "<---- Position B";
-        const auto &mps = tensors.state->get_mps(pos);
+        const auto &mps = tensors.state->get_mps_site(pos);
         const auto &envl = tensors.edges->get_ene(pos).L.block.dimensions();
         const auto &envr = tensors.edges->get_ene(pos).R.block.dimensions();
         const auto &mpo  = tensors.model->get_mpo(pos).MPO().dimensions();
@@ -34,7 +34,7 @@ void tools::finite::print::dimensions(const class_tensors_finite &tensors) {
                 envl[0], envl[1], envl[2], mps.spin_dim(), mps.get_chiL(), mps.get_chiR(), mps.get_L().dimension(0), envr[0], mpo[0], mpo[1], mpo[2],
                 mpo[3], mpo[4], envr[1], envr[2], tag);
         }
-        if(tensors.state->get_mps(pos).isCenter()) tools::log->info("Pos {:2}: L [{:^4}] {:>64}", pos, tensors.state->get_mps(pos).get_L().dimension(0), "<---- Center");
+        if(tensors.state->get_mps_site(pos).isCenter()) tools::log->info("Pos {:2}: L [{:^4}] {:>64}", pos, tensors.state->get_mps_site(pos).get_L().dimension(0), "<---- Center");
     }
 }
 

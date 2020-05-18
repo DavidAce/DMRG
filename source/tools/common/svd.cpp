@@ -6,41 +6,10 @@
 #include <math/nmspc_math.h>
 #include <tensors/state/class_mps_site.h>
 
-//extern std::list<class_mps_site> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,
-//                                            long                            chi_limit,
-//                                            std::optional<double>           svd_threshold = std::nullopt);
-//
-//extern std::list<class_mps_site> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,
-//                                            const std::list<long>         & spin_dims,
-//                                            const std::list<size_t>       & positions,
-//                                            size_t                          center_position,
-//                                            long                            chi_limit,
-//                                            std::optional<double>           svd_threshold = std::nullopt);
-
-
-std::list<class_mps_site> tools::common::svd::split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,
-                                                        long                             chi_limit,
-                                                        std::optional<std::list<long>>   spin_dims,
-                                                        std::optional<double>            svd_threshold){
-    /* This function is used primarily to split 2-site infinite mps */
-    // Start by figuring out the spin dimensions d
-    if(not spin_dims) {
-        long multisite_spin_dim = multisite_mps.dimension(0);
-        if(math::mod(multisite_spin_dim, 2) != 0) throw std::runtime_error("Could not split svd: spin dimensions not given and multisite mps spin dim is not divisible by 2 (the default)");
-        auto sites = static_cast<size_t>(std::log2(multisite_spin_dim));
-        spin_dims = std::list<long>(sites, 2);
-    }
-    std::list<size_t> positions;
-    for(size_t pos = 0; pos < spin_dims->size(); pos++)
-        positions.emplace_back(pos);
-
-    return tools::common::svd::split_mps(multisite_mps,spin_dims.value(),positions,0,chi_limit,svd_threshold);
-}
-
 
 std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scalar,3> & multisite_mps,
-                                                        std::list<long>                 spin_dims,
-                                                        std::list<size_t>               positions,
+                                                        const std::list<long>         & spin_dims,
+                                                        const std::list<size_t>       & positions,
                                                         size_t                          center_position,
                                                         long                            chi_limit,
                                                         std::optional<double>           svd_threshold){
@@ -123,7 +92,7 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
      */
 
     if(center_position < positions.front() or center_position > positions.front())
-        throw std::runtime_error("Center position {} is not in the given list of positions {}", center_position, positions);
+        throw std::runtime_error("Center position [" + std::to_string(center_position) +"] is not in the given list of positions");
 
     if(spin_dims.size() != positions.size())
         throw std::runtime_error("Size mismatch in given lists: spin dims "
@@ -182,14 +151,14 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
     //////////////// DEPRECATED ////////////////////
     // We have 3 possible cases here depending on the center_position
     //  * center_point < all positions:
-    //      * dL = 1, dR = multisite_mps.dimension(0) = prod(spin_dims)
+    //      * dL = 1, dR = multisite_tensor.dimension(0) = prod(spin_dims)
     //      * mps_sites_left is empty
     //      * V_residue = U
     //      * "LC" = V_residue * S * U_residue = U * S * U_residue
     //      * Contract LC into the first B (not setting LC!)
     //      * Splice mps_sites_right onto mps_sites_left as usual
     //  * center_point > all positions:
-    //      * dL = multisite_mps.dimension(0) = prod(spin_dims) , dR = 1
+    //      * dL = multisite_tensor.dimension(0) = prod(spin_dims) , dR = 1
     //      * mps_sites_right is empty
     //      * U_residue = V
     //      * "LC" = V_residue * S * U_residue = V_residue * S * V
@@ -225,11 +194,11 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
 //    // There is a special case when there is only one site
 //    // which cannot be split further. Simply return it.
 //    if(spin_dims.size() == 1){
-//        if(multisite_mps.dimension(0) != spin_dims.front())
+//        if(multisite_tensor.dimension(0) != spin_dims.front())
 //            throw std::logic_error("Spin dimension mismatch in given mps and spin dim list");
 //        mps_sites.emplace_front(class_mps_site());
 //        mps_sites.front().set_position(0);
-//        mps_sites.front().set_M(multisite_mps);
+//        mps_sites.front().set_M(multisite_tensor);
 //        return mps_sites;
 //    }
 //
@@ -240,7 +209,7 @@ std::list<class_mps_site> tools::common::svd::split_mps(const Eigen::Tensor<Scal
 //
 //
 //    // Declare the the tensors that will catch the schmidt (SVD) decompositions
-//    Eigen::Tensor<Scalar, 3>  U = multisite_mps; // This side contains all the sites
+//    Eigen::Tensor<Scalar, 3>  U = multisite_tensor; // This side contains all the sites
 //    Eigen::Tensor<Scalar, 1>  S;                 // The singular values
 //    Eigen::Tensor<Scalar, 3>  V;                 // This will become the first site extracted
 //    Eigen::Tensor<Scalar, 1>  S_prev;            // Starts out empty, needs to be checked outside of this split
@@ -319,7 +288,7 @@ tools::common::svd::internal::split_mps_from_left(const Eigen::Tensor<Scalar,3> 
      *         d=2                                  d=2                                  d=2
      *
      *
-     * By convention, a multisite_mps is created by merging sites from left to right, that is
+     * By convention, a multisite_tensor is created by merging sites from left to right, that is
      *
      * 1-2-3-4-5
      * 12-3-4-5
@@ -344,11 +313,11 @@ tools::common::svd::internal::split_mps_from_left(const Eigen::Tensor<Scalar,3> 
     // There is a special case when there is only one site
     // which cannot be split further. Simply return it.
 //    if(spin_dims.size() == 1){
-//        if(multisite_mps.dimension(0) != spin_dims.front())
+//        if(multisite_tensor.dimension(0) != spin_dims.front())
 //            throw std::logic_error("Spin dimension mismatch in given mps and spin dim list");
 //        mps_sites.emplace_front(class_mps_site());
 //        mps_sites.front().set_position(0);
-//        mps_sites.front().set_M(multisite_mps);
+//        mps_sites.front().set_M(multisite_tensor);
 //        return mps_sites;
 //    }
 
@@ -438,7 +407,7 @@ tools::common::svd::internal::split_mps_from_right(const Eigen::Tensor<class_mps
      *         d=2                                  d=2                                  d=2
      *
      *
-     * By convention, a multisite_mps is created by merging sites from left to right, that is
+     * By convention, a multisite_tensor is created by merging sites from left to right, that is
      *
      * 1-2-3-4-5
      * 12-3-4-5
@@ -463,11 +432,11 @@ tools::common::svd::internal::split_mps_from_right(const Eigen::Tensor<class_mps
     // There is a special case when there is only one site
     // which cannot be split further. Simply return it.
 //    if(spin_dims.size() == 1){
-//        if(multisite_mps.dimension(0) != spin_dims.front())
+//        if(multisite_tensor.dimension(0) != spin_dims.front())
 //            throw std::logic_error("Spin dimension mismatch in given mps and spin dim list");
 //        mps_sites.emplace_front(class_mps_site());
 //        mps_sites.front().set_position(0);
-//        mps_sites.front().set_M(multisite_mps);
+//        mps_sites.front().set_M(multisite_tensor);
 //        return mps_sites;
 //    }
 

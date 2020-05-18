@@ -224,7 +224,7 @@ void class_xdmrg::single_xDMRG_step() {
         //            results.insert({variance_new, {theta, tensors.state->active_sites, theta_count++}});
         //        }else{
         //            tools::log->info("Rejecting state found out of energy window");
-        //            theta = tensors.state->get_multisite_mps();
+        //            theta = tensors.state->get_multisite_tensor();
         //            variance_new = measure::energy_variance_per_site(*tensors.state);
         //            results.insert({variance_new, {theta, tensors.state->active_sites, theta_count++}});
         //        }
@@ -271,7 +271,7 @@ void class_xdmrg::single_xDMRG_step() {
     // Normalize if unity was lost for some reason (numerical error buildup)
     if(std::abs(tools::finite::measure::norm(*tensors.state) - 1.0) > settings::precision::max_norm_error) {
         tools::log->warn("Norm too large: {:.18f}", tools::finite::measure::norm(*tensors.state));
-        tools::finite::mps::normalize(*tensors.state);
+        tools::finite::mps::normalize_state(*tensors.state);
         std::cerr << "MUST REBUILD ENVIRONMENTS AFTER NORMALIZATION!!" << std::endl;
 //        tools::finite::mps::rebuild_edges(*tensors.state);
     }
@@ -465,7 +465,7 @@ void class_xdmrg::find_energy_range() {
         move_center_point();
     }
     double energy_min = tools::finite::measure::energy_per_site(tensors);
-    tools::finite::mps::normalize(*tensors.state);
+    tools::finite::mps::normalize_state(*tensors.state);
     write_to_file(StorageReason::EMIN_STATE);
 
     // Find energy maximum
@@ -481,7 +481,7 @@ void class_xdmrg::find_energy_range() {
         move_center_point();
     }
     double energy_max = tools::finite::measure::energy_per_site(tensors);
-    tools::finite::mps::normalize(*tensors.state);
+    tools::finite::mps::normalize_state(*tensors.state);
     write_to_file(StorageReason::EMAX_STATE);
 
     // Recover the backup

@@ -31,7 +31,7 @@ class class_mps_site;
                               [d]    [d]
         Theta     =	[chia]__.__|__.__|__.__[chib]
 
-                           LB  GA LA GB LB
+                           LA  GA LC GB LB
   @endverbatim
  where the values in [ ] denote the dimension of each leg of the full tensor:
  - \f$d\f$ = local (or physical) dimension. Default is 2 for spin-1/2, Ising spins or qubits.
@@ -46,26 +46,21 @@ class class_mps_2site {
     using Scalar = std::complex<double>;
 
     private:
-    //    long spin_dimension = 2;                      /*!< Local (or physical) spin or qubit dimension, usually denoted \f$d\f$ elsewhere. */
-    Eigen::Tensor<Scalar, 3> tmp3; /*!< Temporary holder for swapping*/
-    Eigen::Tensor<Scalar, 1> tmp1; /*!< Temporary holder for swapping*/
-
-    template<class T>
-    std::unique_ptr<T> copy_unique(const std::unique_ptr<T> &source) {
-        return source ? std::make_unique<T>(*source) : nullptr;
-    }
-
-    public:
-    //    explicit class_mps_2site(std::string model_type_str);
-    class_mps_2site() = default;
-    explicit class_mps_2site(const class_mps_2site &other);
-
-    bool   swapped          = false; /*!< Tracks the swapped state of A and B positions. */
-    double truncation_error = 0;
-
     std::unique_ptr<class_mps_site> MPS_A;
     std::unique_ptr<class_mps_site> MPS_B;
-    void                            set_mps(const Eigen::Tensor<Scalar, 3> &A, const Eigen::Tensor<Scalar, 1> &LC_, const Eigen::Tensor<Scalar, 3> &B);
+    bool                            swapped = false; /*!< Tracks the swapped state of A and B positions. */
+    public:
+
+    class_mps_2site();
+    ~class_mps_2site();                                           // Read comment on implementation
+    class_mps_2site(class_mps_2site &&other) noexcept;            // default move ctor
+    class_mps_2site &operator=(class_mps_2site &&other) noexcept; // default move assign
+    class_mps_2site(const class_mps_2site &other);                // copy ctor
+    class_mps_2site &operator=(const class_mps_2site &other);     // copy assign
+
+
+    void set_mps(const class_mps_site & mpsA, const class_mps_site & mpsB);
+    void set_mps(const Eigen::Tensor<Scalar, 3> &A, const Eigen::Tensor<Scalar, 1> &LC_, const Eigen::Tensor<Scalar, 3> &B);
     void set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Tensor<Scalar, 3> &A, const Eigen::Tensor<Scalar, 1> &LC_, const Eigen::Tensor<Scalar, 3> &B,
                  const Eigen::Tensor<Scalar, 1> &LB);
 
@@ -85,9 +80,18 @@ class class_mps_2site {
     [[nodiscard]] Eigen::Tensor<Scalar, 3>        GB() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 2>        LA() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 2>        LB() const;
-
-    Eigen::DSizes<long, 3>   dimensions() const;
-    void                     initialize(int spin_dim);         /*!< Initializes the MPS*/
-    void                     swap_AB();                        /*!< Swaps the roles of A and B. Used in infinite DMRG.*/
-    Eigen::Tensor<Scalar, 3> get_mps(Scalar norm = 1.0) const; /*!< Returns rank 3 tensor having contracted A and B, with physical leg size d² \f$\Theta\f$.*/
+    [[nodiscard]] Eigen::DSizes<long, 3>          dimensions() const;
+    void                                          initialize(long spin_dim); /*!< Initializes the MPS*/
+    void                                          swap_AB();                 /*!< Swaps the roles of A and B. Used in infinite DMRG.*/
+    void                                          set_positions(size_t posA, size_t posB);
+    void                                          set_positionA(size_t pos);
+    void                                          set_positionB(size_t pos);
+    [[nodiscard]] const class_mps_site &          get_mps_siteA() const;
+    [[nodiscard]] const class_mps_site &          get_mps_siteB() const;
+    [[nodiscard]] class_mps_site &                get_mps_siteA();
+    [[nodiscard]] class_mps_site &                get_mps_siteB();
+    [[nodiscard]] std::pair<size_t, size_t>       get_positions() const ;
+    [[nodiscard]] size_t                          get_positionA() const ;
+    [[nodiscard]] size_t                          get_positionB() const ;
+    [[nodiscard]] Eigen::Tensor<Scalar, 3>        get_2site_tensor(Scalar norm = 1.0) const;
 };

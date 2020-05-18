@@ -37,6 +37,7 @@ source/tensors/model/class_mpo_factory.cpp
 source/tensors/model/class_ising_sdual.cpp
 source/tensors/model/class_ising_tf_rf.cpp
 source/tensors/model/class_model_finite.cpp
+source/tensors/model/class_model_infinite.cpp
 source/tensors/state/class_environment.cpp
 source/tensors/state/class_mps_2site.cpp
 source/tensors/state/class_mps_site.cpp
@@ -129,6 +130,7 @@ source/tensors/model/class_mpo_base.h
 source/tensors/model/class_mpo_factory.h
 source/tensors/model/class_mpo_parameters.h
 source/tensors/model/class_model_finite.h
+source/tensors/model/class_model_infinite.h
 source/tensors/model/class_ising_sdual.h
 source/tensors/model/class_ising_tf_rf.h
 source/tensors/state/class_environment.h

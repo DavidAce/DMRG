@@ -16,17 +16,17 @@ Eigen::DSizes<long,3> tools::finite::multisite::get_dimensions(const class_state
     Eigen::DSizes<long,3> dimensions;
     int direction = list_of_sites.back() >= list_of_sites.front() ? 1 : -1;
     if (direction == 1){
-        dimensions[1] = state.get_mps(list_of_sites.front()).get_M().dimension(1);
-        dimensions[2] = state.get_mps(list_of_sites.back()) .get_M().dimension(2);
+        dimensions[1] = state.get_mps_site(list_of_sites.front()).get_M().dimension(1);
+        dimensions[2] = state.get_mps_site(list_of_sites.back()) .get_M().dimension(2);
     }
     else{
-        dimensions[1] = state.get_mps(list_of_sites.back()) .get_M().dimension(1);
-        dimensions[2] = state.get_mps(list_of_sites.front()).get_M().dimension(2);
+        dimensions[1] = state.get_mps_site(list_of_sites.back()) .get_M().dimension(1);
+        dimensions[2] = state.get_mps_site(list_of_sites.front()).get_M().dimension(2);
     }
 
     dimensions[0] = 1;
     for (auto & site : list_of_sites){
-        dimensions[0] *= state.get_mps(site).get_M().dimension(0);
+        dimensions[0] *= state.get_mps_site(site).get_M().dimension(0);
     }
     return dimensions;
 }
@@ -279,7 +279,7 @@ double tools::finite::measure::multisite::energy(const class_state_finite &state
     if (state.measurements.energy)  return state.measurements.energy.value();
     if (state.active_sites.empty()) return tools::finite::measure::energy(state);
     tools::common::profile::t_ene->tic();
-    auto theta = state.get_multisite_mps();
+    auto theta = state.get_multisite_tensor();
     tools::common::profile::t_ene->toc();
     state.measurements.energy = multisite::energy(state,theta);
     return state.measurements.energy.value();
@@ -299,7 +299,7 @@ double tools::finite::measure::multisite::energy_variance(const class_state_fini
     else{
         if (state.active_sites.empty()) return tools::finite::measure::energy_variance(state);
         tools::common::profile::t_var->tic();
-        auto theta = state.get_multisite_mps();
+        auto theta = state.get_multisite_tensor();
         tools::common::profile::t_var->toc();
         state.measurements.energy_variance = multisite::energy_variance(state, theta);
         return state.measurements.energy_variance.value();

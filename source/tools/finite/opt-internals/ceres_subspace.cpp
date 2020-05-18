@@ -279,7 +279,7 @@ std::tuple<Eigen::MatrixXcd, Eigen::VectorXd> find_subspace(const class_tensors_
     tools::common::profile::t_ham->tic();
     MatrixType<Scalar> H_local = tools::finite::opt::internal::get_multi_hamiltonian_matrix<Scalar>(model,edges);
     tools::common::profile::t_ham->toc();
-    auto multitheta = state.get_multisite_mps();
+    auto multitheta = state.get_multisite_tensor();
 
     Eigen::MatrixXcd eigvecs;
     Eigen::VectorXd  eigvals;
@@ -328,7 +328,7 @@ Eigen::Tensor<class_state_finite::Scalar, 3> tools::finite::opt::internal::ceres
     double theta_old_variance       = tools::finite::measure::energy_variance_per_site(tensors);
     double subspace_error_threshold = settings::precision::min_subspace_error;
 
-    auto &theta_old     = state.get_multisite_mps();
+    auto &theta_old     = state.get_multisite_tensor();
     auto  theta_old_vec = Eigen::Map<const Eigen::VectorXcd>(theta_old.data(), theta_old.size());
 
     Eigen::MatrixXcd eigvecs;

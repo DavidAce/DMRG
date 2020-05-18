@@ -42,6 +42,18 @@ void tools::finite::measure::do_all_measurements(const class_state_finite &state
     state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
     state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
     state.measurements.spin_components               = measure::spin_components(state);
+
+    state.measurements.length                        = measure::length                       (state);
+    state.measurements.bond_dimension_midchain       = measure::bond_dimension_midchain      (state);
+    state.measurements.bond_dimension_current        = measure::bond_dimension_current       (state);
+    state.measurements.bond_dimensions               = measure::bond_dimensions              (state);
+    state.measurements.norm                          = measure::norm                         (state);
+    state.measurements.spin_components               = measure::spin_components              (state);
+    state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
+    state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current (state);
+    state.measurements.entanglement_entropies        = measure::entanglement_entropies       (state);
+    state.measurements.truncation_errors             = measure::truncation_errors            (state);
+
 }
 
 size_t tools::finite::measure::length(const class_state_finite &state) { return state.get_length(); }
@@ -52,7 +64,7 @@ double tools::finite::measure::norm(const class_state_finite &state) {
     Eigen::Tensor<Scalar, 2> temp;
     bool                     first = true;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        const Eigen::Tensor<Scalar, 3> &M = state.get_mps(pos).get_M(); // std::get<1>(*mpsL);
+        const Eigen::Tensor<Scalar, 3> &M = state.get_mps_site(pos).get_M(); // std::get<1>(*mpsL);
         if(first) {
             chain = M.contract(M.conjugate(), idx({0, 1}, {0, 1}));
             first = false;
@@ -89,9 +101,9 @@ std::vector<long> tools::finite::measure::bond_dimensions(const class_state_fini
     }
     state.measurements.bond_dimensions = std::vector<long>{};
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        state.measurements.bond_dimensions.value().emplace_back(state.get_mps(pos).get_L().dimension(0));
-        if(state.get_mps(pos).isCenter()) {
-            state.measurements.bond_dimensions.value().emplace_back(state.get_mps(pos).get_LC().dimension(0));
+        state.measurements.bond_dimensions.value().emplace_back(state.get_mps_site(pos).get_L().dimension(0));
+        if(state.get_mps_site(pos).isCenter()) {
+            state.measurements.bond_dimensions.value().emplace_back(state.get_mps_site(pos).get_LC().dimension(0));
         }
     }
     return state.measurements.bond_dimensions.value();
@@ -128,11 +140,11 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const class_s
     tools::common::profile::t_ent->tic();
     std::vector<double> entanglement_entropies;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        auto &                   L  = state.get_mps(pos).get_L();
+        auto &                   L  = state.get_mps_site(pos).get_L();
         Eigen::Tensor<Scalar, 0> SE = -L.square().contract(L.square().log().eval(), idx({0}, {0}));
         entanglement_entropies.emplace_back(std::real(SE(0)));
-        if(state.get_mps(pos).isCenter()) {
-            auto &LC = state.get_mps(pos).get_LC();
+        if(state.get_mps_site(pos).isCenter()) {
+            auto &LC = state.get_mps_site(pos).get_LC();
             SE       = -LC.square().contract(LC.square().log().eval(), idx({0}, {0}));
             entanglement_entropies.emplace_back(std::real(SE(0)));
             state.measurements.entanglement_entropy_current = std::real(SE(0));
@@ -158,8 +170,8 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
     Eigen::TensorRef<Eigen::Tensor<Scalar, 3>> temp;
     for(size_t pos = 0; pos < state.get_length(); pos++) {
-        temp = L.contract(state.get_mps(pos).get_M(), idx({0}, {1}))
-                   .contract(state.get_mps(pos).get_M().conjugate(), idx({0}, {1}))
+        temp = L.contract(state.get_mps_site(pos).get_M(), idx({0}, {1}))
+                   .contract(state.get_mps_site(pos).get_M().conjugate(), idx({0}, {1}))
                    .contract(mpo, idx({0, 1, 3}, {0, 2, 3}));
         L = temp;
     }
@@ -176,6 +188,24 @@ double tools::finite::measure::spin_component(const class_state_finite &state, c
     if(axis.find('z') != std::string::npos) return measure::spin_component(state, qm::spinOneHalf::sz);
     throw std::runtime_error("Unexpected axis: " + axis);
 }
+
+std::vector<double> tools::finite::measure::truncation_errors(const class_state_finite & state){
+    if(state.measurements.truncation_errors)
+        return state.measurements.truncation_errors.value();
+    std::vector<double> truncation_errors;
+    for(size_t pos = 0; pos < state.get_length(); pos++) {
+        const auto & mps = state.get_mps_site(pos);
+        truncation_errors.emplace_back(mps.get_truncation_error());
+        if(mps.isCenter()) {
+            truncation_errors.emplace_back(mps.get_truncation_error_LC());
+        }
+    }
+    state.measurements.truncation_errors = truncation_errors;
+    return state.measurements.truncation_errors.value();
+}
+
+
+
 
 Eigen::Tensor<Scalar, 1> tools::finite::measure::mps_wavefn(const class_state_finite &state) {
     Eigen::Tensor<Scalar, 2> chain(1, 1);

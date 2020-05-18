@@ -106,23 +106,23 @@ void tools::finite::io::h5resume::load_state(const h5pp::File &h5ppFile, const s
         std::string pos_str     = std::to_string(pos);
         std::string dset_L_name = fmt::format("{}/{}_{}", mps_path, "L", pos);
         std::string dset_M_name = fmt::format("{}/{}_{}", mps_path, "M", pos);
-        if(state.get_mps(pos).isCenter()) {
+        if(state.get_mps_site(pos).isCenter()) {
             std::string dset_LC_name = fmt::format("{}/{}", mps_path, "L_C");
             if(not h5ppFile.linkExists(mps_path + "/L_C")) throw std::runtime_error(fmt::format("Dataset does not exist: {}", dset_LC_name));
             auto LC          = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_LC_name);
             auto pos_on_file = h5ppFile.readAttribute<size_t>("position", dset_LC_name);
             if(pos != pos_on_file) throw std::runtime_error(fmt::format("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file));
-            state.get_mps(pos).set_LC(LC);
+            state.get_mps_site(pos).set_LC(LC);
         }
         if(not h5ppFile.linkExists(dset_L_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_L_name));
         if(not h5ppFile.linkExists(dset_M_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_M_name));
         auto L = h5ppFile.readDataset<Eigen::Tensor<Scalar, 1>>(dset_L_name);
         auto M = h5ppFile.readDataset<Eigen::Tensor<Scalar, 3>>(dset_M_name);
-        state.get_mps(pos).set_mps(M, L);
+        state.get_mps_site(pos).set_mps(M, L);
         // Sanity checks
-        if(pos == position and not state.get_mps(pos).isCenter())
+        if(pos == position and not state.get_mps_site(pos).isCenter())
             throw std::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");
-        if(pos != position and state.get_mps(pos).isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
+        if(pos != position and state.get_mps_site(pos).isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
         //        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
     }
     state.set_iter(status.iter);
